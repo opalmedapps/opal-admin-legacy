@@ -436,7 +436,7 @@ class Questionnaire extends QuestionnaireModule {
         $currentAnswers = $questionnaireResults[3];
         
         // get past results as well
-        $prevQuestionnaire = $this->$questionnaireDB->getLastAnsweredResults($questionnaireId, $patientId);
+        $prevQuestionnaire = $this->questionnaireDB->getLastAnsweredResults($questionnaireId, $patientId);
         $prevAnswers = array();
         if (!empty($prevQuestionnaire)) {
             $prevPatientQuestionnaireSer = $prevQuestionnaire[0]["PatientQuestionnaireSerNum"];

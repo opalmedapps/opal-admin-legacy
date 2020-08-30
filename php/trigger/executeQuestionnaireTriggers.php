@@ -3,7 +3,7 @@
 include_once("../config.php");
 
 $trigger = new Trigger(true); // guest status on for now
-$validatedPost = $trigger->_validateTrigger($_POST);
+$validatedPost = $trigger->_validateTrigger($_POST); // TO FIX: call to private function 
 
 $patientQuestionnaireSer = $validatedPost["id"];
 $patientId = $validatedPost['patientId'];
