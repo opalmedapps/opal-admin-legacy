@@ -27,19 +27,17 @@ require('../lib/JWadhams/JsonLogic.php');
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing trigger ID.");
 
-        if($postData["patientId"] != "")
-            $validatedTrigger["patientId"] = trim(strip_tags($postData["patientId"]));
-        else
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing patient ID.");
-
         return $validatedTrigger;
 
     }
 
-    public function getData($id, $type) {
+    public function getData($postData, $dataType) {
         // $this->checkReadAccess();
+        $validatedData = $trigger->_validateTrigger($postData);
 
-        switch ($type) {
+        $id = $validatedData["id"];
+
+        switch ($dataType) {
             case MODULE_QUESTIONNAIRE:
                 $questionnaire = new Questionnaire(true);
                 return $questionnaire->getQuestionnaireResults($id); /// there's a stored procedure for this

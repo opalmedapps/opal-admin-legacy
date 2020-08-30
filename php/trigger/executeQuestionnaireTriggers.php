@@ -2,34 +2,30 @@
 
 include_once("../config.php");
 
-$trigger = new Trigger(true); // guest status on for now
-$validatedPost = $trigger->_validateTrigger($_POST); // TO FIX: call to private function 
-
-$patientQuestionnaireSer = $validatedPost["id"];
-$patientId = $validatedPost['patientId'];
-$triggerType = MODULE_QUESTIONNAIRE; 
-
-
 /*
 -- Receive patientQuestionnaireSerial
--- Get patient serial & questionnaire data using stored procedure
--- Query database for all logic for this questionnaire using questionnaire serial
+-- Get patient id & questionnaire data using stored procedure
+-- Query database for all logic for this questionnaire 
 -- Foreach logic, test rule
 -- If passes, publish/insert secondary questionnaire using patient serial
 */
 
-$questionnaireData = $trigger->getData($patientQuestionnaireSer, $triggerType); 
+$trigger = new Trigger(true); // guest status on for now
 
-// Need questionnaire id + patient serial from questionnaireData (Results #1)
-$questionnaireId = $questionnaireData["questionnaire_id"];
-$patientId = $questionnaireData["patient_id"];
-$answers = $questionnaireData["answers"];
+$triggerType = MODULE_QUESTIONNAIRE; // define what type of trigger this is
 
+$questionnaireData = $trigger->getData($_POST, $triggerType); 
+
+$questionnaireId = $questionnaireData["questionnaire_id"]; // to pull triggers related to this questionnaire
+$patientId = $questionnaireData["patient_id"]; // which patient to trigger event on
+$answers = $questionnaireData["answers"]; // relevant questionnaire results
+
+// Retrieve all triggers for this questionnaire
 $triggers = $trigger->getTriggers($questionnaireId, $triggerType);
 
-foreach ($triggers as $index => $details) {
-    if($trigger->checkLogic($details, $questionnaireData)) {
-        $trigger->triggerEvent($details, $patientId);
+foreach ($triggers as $index => $triggerDetails) {
+    if($trigger->checkLogic($triggerDetails, $questionnaireData)) { // if trigger should be fired
+        $trigger->triggerEvent($triggerDetails, $patientId); 
     }
 }
 
