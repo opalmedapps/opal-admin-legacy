@@ -7,6 +7,137 @@ angular.module('opalAdmin.controllers.user.add.ad', ['ui.bootstrap', 'ui.grid'])
 	controller('user.add.ad', function ($scope, userCollectionService, $state, $filter, Encrypt, Session, ErrorHandler) {
 		var OAUserId = Session.retrieveObject('user').id;
 
+		$scope.userType = [
+			{
+				ID: "1",
+				name_display: $filter('translate')('USERS.ADD.HUMAN')
+			},
+			{
+				ID: "2",
+				name_display: $filter('translate')('USERS.ADD.SYSTEM')
+			},
+		];
+
+		$scope.toSubmit = {
+			username: {
+				value: "",
+			},
+			type: {
+				value: $scope.userType[0].ID,
+			},
+			role: {
+				value: null,
+			},
+			language: {
+				value: null,
+			}
+		};
+
+		$scope.validator = {
+			username: {
+				completed: false,
+				valid: true,
+				mandatory: true,
+			},
+			type: {
+				completed: true,
+				valid: true,
+				mandatory: true,
+			},
+			role: {
+				completed: false,
+				valid: true,
+				mandatory: true,
+			},
+			language: {
+				completed: false,
+				valid: true,
+				mandatory: true,
+			},
+		};
+
+		$scope.leftMenu = {
+			username: {
+				display: true,
+				open: false,
+				preview: false,
+			},
+			type: {
+				display: false,
+				open: false,
+				preview: false,
+			},
+			role: {
+				display: false,
+				open: false,
+				preview: false,
+			},
+			language: {
+				display: false,
+				open: false,
+				preview: false,
+				name: null,
+			},
+		};
+
+		$scope.totalSteps = 0;
+		$scope.completedSteps = 0;
+		$scope.formReady = false;
+
+		$scope.$watch('validator', function() {
+			var totalsteps = 0;
+			var completedSteps = 0;
+			var nonMandatoryTotal = 0;
+			var nonMandatoryCompleted = 0;
+			angular.forEach($scope.validator, function(value) {
+				if(value.mandatory)
+					totalsteps++;
+				else
+					nonMandatoryTotal++;
+				if(value.mandatory && value.completed && value.valid)
+					completedSteps++;
+				else if(!value.mandatory && value.completed && value.valid)
+					nonMandatoryCompleted++;
+			});
+
+			$scope.totalSteps = totalsteps;
+			$scope.completedSteps = completedSteps;
+			$scope.stepProgress = $scope.totalSteps > 0 ? ($scope.completedSteps / $scope.totalSteps * 100) : 0;
+			$scope.formReady = ($scope.completedSteps >= $scope.totalSteps) && (nonMandatoryCompleted >= nonMandatoryTotal);
+		}, true);
+
+		$scope.$watch('toSubmit.username.value', function() {
+			$scope.validator.username.completed = !!($scope.toSubmit.username.value && $scope.toSubmit.username.value.length > 0);
+			$scope.validator.username.valid = $scope.validator.username.completed;
+
+			$scope.leftMenu.username.display = !!($scope.toSubmit.username.value && $scope.toSubmit.username.value.length > 0);
+			$scope.leftMenu.username.open = !!($scope.toSubmit.username.value && $scope.toSubmit.username.value.length > 0);
+			$scope.leftMenu.username.preview = !!($scope.toSubmit.username.value && $scope.toSubmit.username.value.length > 0);
+
+		});
+
+		$scope.$watch('toSubmit.role.value', function() {
+			$scope.validator.role.completed = !!$scope.toSubmit.role.value;
+
+			$scope.leftMenu.role.display = $scope.validator.role.completed;
+			$scope.leftMenu.role.open = $scope.validator.role.completed;
+			$scope.leftMenu.role.preview = $scope.validator.role.completed;
+		});
+
+		$scope.$watch('toSubmit.language.value', function() {
+			$scope.validator.language.completed = !!$scope.toSubmit.language.value;
+
+			$scope.leftMenu.language.display = $scope.validator.language.completed;
+			$scope.leftMenu.language.open = $scope.validator.language.completed;
+			$scope.leftMenu.language.preview = $scope.validator.language.completed;
+
+			$scope.leftMenu.language.name = ($scope.toSubmit.language.value === "FR"?$filter('translate')('USERS.ADD.FRENCH'):$filter('translate')('USERS.ADD.ENGLISH'));
+		});
+
+		$scope.$watch('toSubmit.type.value', function() {
+			console.log($scope.toSubmit.type.value);
+		});
+
 		// Function to go to previous page
 		$scope.goBack = function () {
 			window.history.back();
@@ -26,52 +157,9 @@ angular.module('opalAdmin.controllers.user.add.ad', ['ui.bootstrap', 'ui.grid'])
 			id: 'FR'
 		}];
 
-		// completed registration steps in object notation
-		var steps = {
-			username: { completed: false },
-			role: { completed: false },
-			language: { completed: false }
-		};
-
-		// Default count of completed steps
-		$scope.numOfCompletedSteps = 0;
-
-		// Default total number of steps
-		$scope.stepTotal = 3;
-
-		// Progress bar based on default completed steps and total
-		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-
-		// Function to calculate / return step progress
-		function trackProgress(value, total) {
-			return Math.round(100 * value / total);
-		}
-
-		// Function to return number of steps completed
-		function stepsCompleted(steps) {
-
-			var numberOfTrues = 0;
-			for (var step in steps) {
-				if (steps[step].completed === true) {
-					numberOfTrues++;
-				}
-			}
-
-			return numberOfTrues;
-		}
-
-		// Initialize new user object
-		$scope.newUser = {
-			username: null,
-			role: null,
-			role_display: null,
-			language: null,
-			language_display: null
-		};
-
 		// Call our API service to get the list of possible roles
 		$scope.roles = [];
-		userCollectionService.getRoles(OAUserId).then(function (response) {
+		userCollectionService.getRoles().then(function (response) {
 			response.data.forEach(function(row) {
 				if($scope.language.toUpperCase() === "FR")
 					row.name_display = row.name_FR;
@@ -84,123 +172,48 @@ angular.module('opalAdmin.controllers.user.add.ad', ['ui.bootstrap', 'ui.grid'])
 		});
 
 		// Function to validate username
-		$scope.validUsername = { status: null, message: null };
-		$scope.validateUsername = function (username) {
+		$scope.validateUsername = function () {
 
-			if (!username) {
-				$scope.validUsername.status = null;
-				$scope.usernameUpdate();
-				return;
-			}
+			if (!$scope.validator.username.completed) return;
 
 			// Make request to check if username already in use
-			userCollectionService.usernameAlreadyInUse(username).then(function (response) {
-				if(response.data.count) {
-					$scope.validUsername.status = 'invalid';
-					$scope.validUsername.message = $filter('translate')('USERS.ADD.ERROR_USERNAME_USED');
-					$scope.usernameUpdate();
-					return;
-				}
-				else {
-					$scope.validUsername.status = 'valid';
-					$scope.validUsername.message = null;
-					$scope.usernameUpdate();
-					return;
-				}
+			userCollectionService.usernameAlreadyInUse($scope.toSubmit.username.value).then(function (response) {
+				$scope.validator.username.valid = !response.data.count;
 			}).catch(function(err) {
 				ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR_USERNAME_UNKNOWN'));
 			});
 
 		};
 
-		// Function to toggle steps when updating the username field
-		$scope.usernameUpdate = function () {
-			if ($scope.validUsername.status == 'valid') {
-				steps.username.completed = true;
-				$scope.roleSection.show = true;
-			}
-			else
-				steps.username.completed = false;
-
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-		};
-
-		// Function to toggle steps when updating the role field
-		$scope.roleUpdate = function () {
-			$scope.roleSection.open = true;
-			if ($scope.newUser.role) {
-				steps.role.completed = true;
-				$scope.languageSection.show = true;
-				$scope.newUser.role_display = $scope.newUser.role.name_display;
-			}
-			else
-				steps.role.completed = false;
-
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-
-		};
-
-		// Function to toggle steps when updating the language field
-		$scope.languageUpdate = function () {
-			$scope.languageSection.open = true;
-			if ($scope.newUser.language) {
-				steps.language.completed = true;
-				$scope.newUser.language_display = ($scope.newUser.language === "FR"?$filter('translate')('USERS.ADD.FRENCH'):$filter('translate')('USERS.ADD.ENGLISH'));
-			}
-			else
-				steps.language.completed = false;
-
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-
-		};
-
-		// Function to check registration form completion
-		$scope.checkRegistrationForm = function () {
-
-			if ($scope.stepProgress === 100)
-				return true;
-			else
-				return false;
-		};
-
 		// Function to register user
 		$scope.registerUser = function () {
 
-			if ($scope.checkRegistrationForm()) {
+			var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103;
 
+			var encrypted = {
+				username: $scope.toSubmit.username.value,
+				language: $scope.toSubmit.language.value,
+				roleId: $scope.toSubmit.role.value.ID,
+			};
 
+			encrypted = Encrypt.encode(JSON.stringify(encrypted), cypher);
+			var data = {
+				encrypted: encrypted,
+				cypher: cypher,
+			};
 
-				var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103;
-
-				var encrypted = {
-					username: $scope.newUser.username,
-					language: $scope.newUser.language,
-					roleId: $scope.newUser.role.ID,
-				};
-
-				encrypted = Encrypt.encode(JSON.stringify(encrypted), cypher);
-				var data = {
-					OAUserId: Session.retrieveObject('user').id,
-					encrypted: encrypted,
-					cypher: cypher,
-				};
-
-				$.ajax({
-					type: "POST",
-					url: 'user/insert/user',
-					data: data,
-					success: function () {},
-					error: function(err) {
-						ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR'));
-					},
-					complete: function() {
-						$state.go('users');
-					}
-				});
-			}
+			$.ajax({
+				type: "POST",
+				url: 'user/insert/user',
+				data: data,
+				success: function () {},
+				error: function(err) {
+					ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR'));
+				},
+				complete: function() {
+					$state.go('users');
+				}
+			});
 		};
 
 		var fixmeTop = $('.summary-fix').offset().top;
