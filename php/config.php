@@ -83,6 +83,8 @@ define("PRIVATE_RECORD", 1);
 define("PUBLIC_RECORD", 0);
 define("ACTIVE_RECORD", 1);
 define("INACTIVE_RECORD", 0);
+define("HUMAN_USER", 1);
+define("SYSTEM_USER", 2);
 
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php");

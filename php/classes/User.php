@@ -180,6 +180,73 @@ class User extends Module {
         return $toReturn;
     }
 
+    /**
+     * Login for a system (non-human) user. It validates the user/name password, stored in the sessions, the access
+     * level and user info. It returns an array that contains user info (ID, username, language, role and sessionID)
+     * @param $post : array - contains cypher and encrypted data
+     * @return mixed : array - contains system user ID, username, language, role and sessionID
+     */
+    public function systemUserLogin($post) {
+        $userAccess = array();
+        $post = HelpSetup::arraySanitization($post);
+        $cypher = $post["cypher"];
+        $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
+        $data = HelpSetup::arraySanitization($data);
+
+        if(!is_array($data)) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>"UNKNOWN USER"), ACCESS_DENIED, "UNKNOWN USER");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
+        }
+
+        $username = $data["username"];
+        $password = $data["password"];
+
+        if($username == "" || $password == "" || $cypher == "") {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
+        }
+
+        $result = $this->opalDB->authenticateSystemUser($username, hash("sha256", $password . USER_SALT));
+        $result = $this->_validateUserAuthentication($result, $username);
+
+        $_SESSION["ID"] = $result["id"];
+        $_SESSION["username"] = $result["username"];
+        $_SESSION["language"] = $result["language"];
+        $_SESSION["role"] = $result["role"];
+        $_SESSION['sessionId'] = HelpSetup::makeSessionId();
+        $_SESSION['lastActivity'] = time();
+        $_SESSION['created'] = time();
+
+        $this->_connectAsMain();
+        $tempAccess = $this->opalDB->getUserAccess($result["role"]);
+        if(count($tempAccess) <= 0) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "No access found. Please contact your administrator.");
+        }
+        foreach($tempAccess as $access) {
+            if(!HelpSetup::validateBitOperation($access["operation"],$access["access"])) {
+                HelpSetup::getModuleMethodName($moduleName, $methodeName);
+                $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+                HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access violation role-module. Please contact your administrator.");
+            }
+            $userAccess[$access["ID"]] = array("ID"=>$access["ID"], "access"=>$access["access"]);
+        }
+
+        $_SESSION["userAccess"] = $userAccess;
+        $result["sessionid"] = $_SESSION['sessionId'];
+
+        $this->_logActivity($result["id"], $_SESSION['sessionId'], 'Login');
+
+        //Insert in the audit table user was granted access and return nav menu
+        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_GRANTED);
+
+        return $result;
+    }
+
     /*
      * Login for registration of patient. Before each inscription, the login of the user must be validated. Validation
      * is made base on the Patient module write access. If the user got a valid user/pass and correct access level

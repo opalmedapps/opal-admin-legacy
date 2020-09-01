@@ -34,6 +34,10 @@ class HelpSetup {
         die();
     }
 
+    /**
+     * @param int $length
+     * @return string
+     */
     public static function makeSessionId($length = 10) {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
@@ -151,12 +155,12 @@ class HelpSetup {
         return HelpSetup::validateBitOperation($_SESSION["userAccess"][$moduleAccess]["access"], ACCESS_READ_WRITE_DELETE);
     }
 
-    /*
+    /**
      * Prepares the navigation menu for an user with a specific language.
-     * @params  $userMenu : array - current navigation menu
-     *          $languyage : string - language of the user
-     * @return  $newMenu : array - correct structure and language of the navigation menu
-     * */
+     * @param $userMenu : array - current navigation menu
+     * @param $language : string - language of the user
+     * @return mixed : array - correct structure and language of the navigation menu
+     */
     public static function prepareNavMenu($userMenu, $language) {
         $newMenu = $userMenu;
 
@@ -179,11 +183,11 @@ class HelpSetup {
         return $newMenu;
     }
 
-    /*
-     * Returns the real IP address of an user.
-     * @params  void
-     * @return  IP address of the user.
-     * */
+    /**
+     * Returns the real IP address of an user. It checks the IP from the Internet, check if it passed from a proxy, or
+     * as a last result, get the IP from the remote address.
+     * @return mixed - IP address of the user.
+     */
     public static function getUserIP(){
         if ( !empty($_SERVER['HTTP_CLIENT_IP']) ) {
             // Check IP from internet.
@@ -198,14 +202,13 @@ class HelpSetup {
         return $ip;
     }
 
-    /*
-     * Stores the module name and method called.
-     *
-     * This function is trickier than the other, since there is no return function: the variables are passed through
+    /**
+     * Stores the module name and method called. This function is trickier than the other, since there is no return
+     * function: the variables are passed through
      * reference.
-     * @params  $moduleName : string - name of the main module that made the call
-     *          $methodeName : string - name of the method that made the call
-     * */
+     * @param $moduleName - name of the main module that made the call
+     * @param $methodeName - name of the method that made the call
+     */
     public static function getModuleMethodName(&$moduleName, &$methodeName) {
         $debugBackTrace = debug_backtrace();
         $methodeName =  $debugBackTrace[count($debugBackTrace) - 1]["function"];
