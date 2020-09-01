@@ -55,7 +55,7 @@ if($sdb eq "true"){ #Then we want to connect to prod
 	$db = "OpalDB_PREPROD";
 	$un = 'readonly';
 	$ps = 'readonly';
-	$dbh = DBI->connect("DBI:mysql:database=$db;host=172.26.66.41", $un, $ps)
+	$dbh = DBI->connect("DBI:mysql:database=$db;host=172.26.120.187", $un, $ps)
 		or die "Couldn't connect to database: " . DBI->errstr;
 }
 
