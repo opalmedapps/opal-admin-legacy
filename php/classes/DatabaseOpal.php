@@ -867,6 +867,19 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
+     * Authenticate a username and a password of an user in opalDB (legacy system)
+     * @params  $username (string)
+     *          $password (string) already encrypted
+     * @return  array with the results found
+     * */
+    function authenticateSystemUser($username, $password) {
+        return $this->_fetchAll(SQL_OPAL_VALIDATE_SYSTEM_OAUSER_LOGIN, array(
+            array("parameter"=>":username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":password","variable"=>$password,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
      * Authenticate a username of an user in opalDB. The complete authentication should use an AD system
      * @params  $username (string)
      * @return  array with the results found
@@ -1751,9 +1764,138 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(OPAL_GET_AUDITS, array());
     }
 
+    /*
+     * Get the details of a specific audit
+     * @params  $auditId : int - ID of the audit
+     * @return  array - details of the audit
+     * */
     function getAuditDetails($auditId) {
         return $this->_fetchAll(OPAL_GET_AUDIT_DETAILS, array(
             array("parameter"=>":ID","variable"=>$auditId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get the details of a specific diagnosis
+     * @params  $diagnosisId : int - ID of the diagnosis
+     * @return  array - details of the diagnosis
+     * */
+    function getDiagnosisDetails($diagnosisId) {
+        return $this->_fetch(OPAL_GET_DIAG_TRANS_DETAILS, array(
+            array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get the diagnosis codes of a specific diagnosis
+     * @params  $diagnosisId : int - ID of the diagnosis
+     * @return  array - list of codes of the diagnosis
+     * */
+    function getDiagnosisCodes($diagnosisId) {
+        return $this->_fetchAll(OPAL_GET_DIAGNOSIS_CODES, array(
+            array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get the activate source database in the system
+     * @params  void
+     * @return  array - List of active database
+     * */
+    function getActiveSourceDatabase() {
+        return $this->_fetchAll(OPAL_GET_ACTIVATE_SOURCE_DB, array());
+    }
+
+    /*
+     * Get the list of assigned diagnoses
+     * @params  void
+     * @return  array - List of assigned diagnoses
+     * */
+    function getAssignedDiagnoses() {
+        return $this->_fetchAll(OPAL_GET_ASSIGNED_DIAGNOSES, array());
+    }
+
+    /*
+     * Get the list of diagnosis based on a list of specific DB sources
+     * @params  $sourceIds : array - List of IDs of available DB sources
+     * @return  array - list of diagnoses
+     * */
+    function getDiagnoses($sourceIds) {
+        $sql = str_replace("%%SOURCE_DB_IDS%%",implode(", ", $sourceIds), OPAL_GET_DIAGNOSES);
+        return $this->_fetchAll($sql, array());
+    }
+
+    /*
+     * Get the list of diagnosis translations
+     * @params  void
+     * @return  array - list diagnosis translations
+     * */
+    function getDiagnosisTranslations() {
+        return $this->_fetchAll(OPAL_GET_DIAGNOSIS_TRANSLATIONS, array());
+    }
+
+    /*
+     * Insert a diagnosis into the diagnosis translation table
+     * @params  $toInsert : array - list of settings of the diagnosis
+     * @return  int - last ID entered
+     * */
+    function insertDiagnosisTranslation($toInsert) {
+        $toInsert["DateAdded"] = date("Y-m-d H:i:s");
+        $toInsert["LastUpdatedBy"] = $this->getOAUserId();
+        $toInsert["SessionId"] = $this->getSessionId();
+
+        return $this->_insertRecordIntoTable(OPAL_DIAGNOSIS_TRANSLATION_TABLE, $toInsert);
+    }
+
+    /*
+     * Insert a list of diagnosis codes into the diagnosis code table
+     * @params  $toInsert : array - list of diagnosis codes
+     * @return  int - last ID entered
+     * */
+    function insertMultipleDiagnosisCodes($toInsert) {
+        foreach ($toInsert as &$item) {
+            $item["DateAdded"] = date("Y-m-d H:i:s");
+            $item["LastUpdatedBy"] = $this->getOAUserId();
+            $item["SessionId"] = $this->getSessionId();
+        }
+        return $this->_insertMultipleRecordsIntoTable(OPAL_DIAGNOSIS_CODE_TABLE, $toInsert);
+    }
+
+    /*
+     * Validate an educational material by its ID
+     * @params  $eduId : int - ID of the educational material
+     * @return  array - contains the total results
+     * */
+    function validateEduMaterialId($eduId) {
+        return $this->_fetch(OPAL_VALIDATE_EDU_MATERIAL_ID, array(
+            array("parameter"=>":EducationalMaterialControlSerNum","variable"=>$eduId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function updateDiagnosisTranslation($toUpdate) {
+        $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
+        $toUpdate["SessionId"] = $this->getSessionId();
+
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_DIAGNOSIS_TRANSLATION, $toUpdate);
+    }
+
+    function deleteDiagnosisCodes($diagnosisTranslationId, $sourceIds) {
+        $sql = str_replace("%%LIST_SOURCES_UIDS%%",implode(", ", $sourceIds), OPAL_DELETE_DIAGNOSIS_CODES);
+
+        return $this->_execute($sql, array(
+            array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisTranslationId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function deleteAllDiagnosisCodes($diagnosisTranslationId) {
+        return $this->_execute(OPAL_DELETE_ALL_DIAGNOSIS_CODES, array(
+            array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisTranslationId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function deleteDiagnosisTranslation($diagnosisTranslationId) {
+        return $this->_execute(OPAL_DELETE_DIAGNOSIS_TRANSLATION, array(
+            array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisTranslationId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 }
