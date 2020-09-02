@@ -888,6 +888,9 @@ sub transferPatientDocuments
 		my $finalfilenum = $filefields[0]; # remove extension of file
 		my $finalextension = $filefields[1]; # get the extension
 
+		# get only the filename without the extension and subdirectory
+		my $Errorfilename = (split '/', $finalfilenum)[-1];
+
 		my $clinicalDir = $ftpObject->getFTPClinicalDir(); # get local directory of documents
 		
 		my $sourcefile = "$clinicalDir/$finalfileloc"; # concatenate directory and file
@@ -992,7 +995,7 @@ sub transferPatientDocuments
 				    }
 
                     # create an error file
-                    my $sourceErrorFile = "$localDir/$finalfilenum.err";
+                    my $sourceErrorFile = "$localDir/$Errorfilename.err";
 
                     #####################################
 					# Write error file information
@@ -1153,7 +1156,7 @@ END
 				    }
 
                     # create an error file
-                    my $sourceErrorFile = "$localDir/$finalfilenum.err";
+                    my $sourceErrorFile = "$localDir/$Errorfilename.err";
 
                     #####################################
 					# Write error file information
