@@ -2658,9 +2658,11 @@
       "HUMAN": "Human (default option)",
       "SYSTEM": "Computer system",
       "TYPE_USER": "Type of user",
-      "TYPE_USER_EXPLANATION": "By default, keep it as 'Human'. Only use 'Computer system' if you want to give access of the API to an external specific system. In case of doubt, please contact your administrator.",
+      "TYPE_USER_EXPLANATION": "By default, select 'Human'. Only use 'Computer system' if you want to give access of the API to an external specific system. In case of doubt, please contact your administrator.",
       "BASIC_INFO": "Basic informations",
-      "BASIC_INFO_EXPLANATION": "Please provide the informations for the new user below."
+      "BASIC_INFO_EXPLANATION": "Please provide the informations for the new user below.",
+      "WARNING_USER": "You have selected 'Computer System'. Please be advised that type of user cannot log into the OpalAdmin as a regular user and should only be used by other external systems.",
+      "CONFIDENTIAL": "Confidential"
     },
     "EDIT": {
       "TITLE": "Edit User",
