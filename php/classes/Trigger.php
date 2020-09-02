@@ -33,7 +33,7 @@ require('../lib/JWadhams/JsonLogic.php');
 
     public function getData($postData, $dataType) {
         // $this->checkReadAccess();
-        $validatedData = $trigger->_validateTrigger($postData);
+        $validatedData = $this->_validateTrigger($postData);
 
         $id = $validatedData["id"];
 
