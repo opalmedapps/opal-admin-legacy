@@ -989,12 +989,13 @@ class DatabaseOpal extends DatabaseAccess {
      *          $language (string) preferred language
      * @return  array with the result of the insert
      * */
-    function insertUser($username, $password, $language, $roleId) {
+    function insertUser($type, $username, $password, $language, $roleId) {
         $toInsert = array(
             "Username"=>$username,
             "Password"=>$password,
-            "Language"=>$language,
             "oaRoleId"=>$roleId,
+            "type"=>$type,
+            "Language"=>$language,
             "DateAdded"=>date("Y-m-d H:i:s"),
         );
         return $this->_insertRecordIntoTable(OPAL_OAUSER_TABLE, $toInsert);

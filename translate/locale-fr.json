@@ -2701,8 +2701,9 @@
       "TYPE_USER": "Type d'utilisateur",
       "TYPE_USER_EXPLANATION": "Par défaut, conservez l'option 'Humain'. N'utilisez 'Système informatique' que si vous souhaitez donner accès à l'API à un système externet spécifique. En cas de doute, veuillez contacter votre administrateur.",
       "BASIC_INFO": "Informations de base",
-      "BASIC_INFO_EXPLANATION": "Veuillez fournir les informations pour le nouvel utilisateur ci-dessous."
-
+      "BASIC_INFO_EXPLANATION": "Veuillez fournir les informations pour le nouvel utilisateur ci-dessous.",
+      "WARNING_USER": "Vous avez sélectionné 'Système informatique'. Veuillez noter que ce type d'utilisateur ne peut pas se connecter à OpalAdmin en tant qu'utilisateur régulier et ne doit être utilisé que par des systèmes externes.",
+      "CONFIDENTIAL": "Confidentiel"
     },
     "EDIT": {
       "TITLE": "Modifier l'utilisateur",
