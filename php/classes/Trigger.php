@@ -13,11 +13,12 @@ require('../lib/JWadhams/JsonLogic.php');
 
     public function getTriggers($id, $type) { 
         // $this->checkReadAccess();
+
         return $this->opalDB->getTriggersList($id, $type);
     }
 
 
-    protected function _validateTrigger($postData) {
+    protected function _validateTrigger($postData, $triggerType) {
         $validatedTrigger = array();
         $postData = HelpSetup::arraySanitization($postData);
 
@@ -27,15 +28,18 @@ require('../lib/JWadhams/JsonLogic.php');
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing trigger ID.");
 
+        // Check id
+        if($triggerType != "")
+            $validatedTrigger["trigger_type"] = $triggerType;
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing trigger type.");
+
         return $validatedTrigger;
 
     }
 
-    public function getData($postData, $dataType) {
+    public function getData($id, $dataType) {
         // $this->checkReadAccess();
-        $validatedData = $this->_validateTrigger($postData);
-
-        $id = $validatedData["id"];
 
         switch ($dataType) {
             case MODULE_QUESTIONNAIRE:
@@ -90,6 +94,41 @@ require('../lib/JWadhams/JsonLogic.php');
                 break;
         }
 
+    }
+
+    public function executeTrigger($postData, $triggerType) {
+
+        $validatedData = $this->_validateTrigger($postData, $triggerType);
+        $id = $validatedData["id"];
+        $triggerType = $validatedData["trigger_type"];
+
+        $triggerId = "";
+        $patientId = ""; 
+
+        $dataToCheck = $this->getData($id, $triggerType); 
+
+        if (!empty($dataToCheck)) {
+            switch ($triggerType) {
+                case MODULE_QUESTIONNAIRE:
+                    $triggerId = $dataToCheck["questionnaire_id"]; // to pull triggers related to this questionnaire
+                    $patientId = $dataToCheck["patient_id"]; // which patient to trigger event on
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        
+        // Retrieve all triggers 
+        $triggers = $this->getTriggers($triggerId, $triggerType);
+
+        foreach ($triggers as $index => $triggerDetails) {
+            if($this->checkLogic($triggerDetails, $dataToCheck)) { // if trigger should be fired
+                $this->triggerEvent($triggerDetails, $patientId); 
+            }
+        }
+
+        return;
     }
 
  }
