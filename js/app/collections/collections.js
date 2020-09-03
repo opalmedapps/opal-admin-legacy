@@ -681,12 +681,9 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// Function to get the list of existing roles
-		userAPI.getRoles = function (OAUserId) {
+		userAPI.getRoles = function () {
 			return $http.post(
 				"user/get/roles",
-				$.param({
-					OAUserId: OAUserId,
-				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}

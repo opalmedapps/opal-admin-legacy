@@ -484,11 +484,15 @@ define("OPAL_COUNT_CODE_MASTER_SOURCE","
 ");
 
 define("SQL_OPAL_VALIDATE_OAUSER_LOGIN","
-    SELECT * FROM ".OPAL_LOGIN_VIEW." WHERE username = :username AND password = :password;
+    SELECT * FROM ".OPAL_LOGIN_VIEW." WHERE username = :username AND password = :password AND type = " . HUMAN_USER . ";
+");
+
+define("SQL_OPAL_VALIDATE_SYSTEM_OAUSER_LOGIN","
+    SELECT * FROM ".OPAL_LOGIN_VIEW." WHERE username = :username AND password = :password AND type = " . SYSTEM_USER . ";
 ");
 
 define("SQL_OPAL_VALIDATE_OAUSER_LOGIN_AD","
-    SELECT * FROM ".OPAL_LOGIN_VIEW." WHERE username = :username;
+    SELECT * FROM ".OPAL_LOGIN_VIEW." WHERE username = :username AND type = " . HUMAN_USER . ";
 ");
 
 define("OPAL_UPDATE_PASSWORD","
@@ -842,6 +846,64 @@ define("OPAL_GET_AUDITS","
 define("OPAL_GET_AUDIT_DETAILS",
     "SELECT * FROM ".OPAL_AUDIT_TABLE." WHERE ID = :ID;"
 );
+
+define("OPAL_GET_DIAG_TRANS_DETAILS","
+    SELECT DISTINCT DiagnosisTranslationSerNum AS serial, Name_EN AS name_EN, Name_FR AS name_FR, Description_EN AS description_EN,
+    Description_FR AS description_FR, EducationalMaterialControlSerNum AS eduMatSer, NULL AS eduMat FROM ".OPAL_DIAGNOSIS_TRANSLATION_TABLE."
+    WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum
+");
+
+define("OPAL_GET_DIAGNOSIS_CODES","
+    SELECT DISTINCT SourceUID AS sourceuid, DiagnosisCode AS code, Description AS description,
+    CONCAT(DiagnosisCode, ' (', Description, ')') AS name, 1 AS added FROM ".OPAL_DIAGNOSIS_CODE_TABLE."
+    WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum;
+");
+
+define("OPAL_GET_ACTIVATE_SOURCE_DB","
+    SELECT SourceDatabaseSerNum FROM ".OPAL_SOURCE_DATABASE_TABLE." WHERE Enabled = ".ACTIVE_RECORD."
+");
+
+define("OPAL_GET_ASSIGNED_DIAGNOSES","
+    SELECT dxc.SourceUID AS sourceuid, dxt.Name_EN AS name_EN, dxt.Name_FR AS name_FR FROM ".OPAL_DIAGNOSIS_CODE_TABLE." dxc
+    LEFT JOIN ".OPAL_DIAGNOSIS_TRANSLATION_TABLE." dxt ON dxt.DiagnosisTranslationSerNum = dxc.DiagnosisTranslationSerNum;
+");
+
+define("OPAL_GET_DIAGNOSES","
+    SELECT externalId AS sourceuid, code, description, CONCAT(code, ' (', description, ')') AS name
+    FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE deleted = ".NON_DELETED_RECORD." AND source IN(%%SOURCE_DB_IDS%%) ORDER BY code
+");
+
+define("OPAL_GET_DIAGNOSIS_TRANSLATIONS","
+    SELECT dt.DiagnosisTranslationSerNum AS serial, dt.Name_EN AS name_EN, dt.Name_FR AS name_FR,
+    (SELECT COUNT(*) FROM DiagnosisCode dc WHERE dc.DiagnosisTranslationSerNum = dt.DiagnosisTranslationSerNum) AS `count`
+    FROM ".OPAL_DIAGNOSIS_TRANSLATION_TABLE." dt;
+");
+
+define("OPAL_VALIDATE_EDU_MATERIAL_ID","
+    SELECT COUNT(*) AS total FROM ".OPAL_EDUCATION_MATERIAL_TABLE."
+    WHERE EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum;
+");
+
+define("OPAL_UPDATE_DIAGNOSIS_TRANSLATION","
+    UPDATE ".OPAL_DIAGNOSIS_TRANSLATION_TABLE." SET Name_EN = :Name_EN, Name_FR = :Name_FR, Description_EN = :Description_EN,
+    Description_FR = :Description_FR, EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum,
+    LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum
+    AND (Name_EN != :Name_EN || Name_FR != :Name_FR || Description_EN != :Description_EN || Description_FR != :Description_FR
+    || EducationalMaterialControlSerNum != :EducationalMaterialControlSerNum)
+");
+
+define("OPAL_DELETE_DIAGNOSIS_CODES","
+    DELETE FROM ".OPAL_DIAGNOSIS_CODE_TABLE." WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum AND
+    SourceUID NOT IN (%%LIST_SOURCES_UIDS%%);
+");
+
+define("OPAL_DELETE_ALL_DIAGNOSIS_CODES","
+    DELETE FROM ".OPAL_DIAGNOSIS_CODE_TABLE." WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum;
+");
+
+define("OPAL_DELETE_DIAGNOSIS_TRANSLATION","
+    DELETE FROM ".OPAL_DIAGNOSIS_TRANSLATION_TABLE." WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum;
+");
 
 define("OPAL_GET_TRIGGERS_LIST","
     SELECT ID, type, onCondition, eventType, targetId, targetType FROM ".OPAL_TRIGGER_TABLE." WHERE active = ".ACTIVE_RECORD." AND ID = :ID AND type = :TYPE;

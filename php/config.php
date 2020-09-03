@@ -84,6 +84,8 @@ define("PRIVATE_RECORD", 1);
 define("PUBLIC_RECORD", 0);
 define("ACTIVE_RECORD", 1);
 define("INACTIVE_RECORD", 0);
+define("HUMAN_USER", 1);
+define("SYSTEM_USER", 2);
 
 define("TRIGGER_EVENT_PUBLISH", 1);
 
