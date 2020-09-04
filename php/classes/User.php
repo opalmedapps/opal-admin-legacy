@@ -432,7 +432,7 @@ class User extends Module {
         if(!is_array($userDetails))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid user.");
 
-        if(!AD_LOGIN_ACTIVE) {
+        if(!AD_LOGIN_ACTIVE || intval($userDetails["type"]) == 2) {
             if($data["password"] && $data["confirmPassword"]) {
                 $result = $this->_passwordValidation($data["password"], $data["confirmPassword"]);
                 if (count($result) > 0)
