@@ -78,10 +78,6 @@ angular.module('opalAdmin.services', [])
 			var user = Session.retrieveObject('user');
 			$http.post(
 				"user/logout",
-				$.param({
-					OAUserId: user.id,
-					sessionId: user.sessionid,
-				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}

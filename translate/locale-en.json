@@ -2597,6 +2597,9 @@
       "VIEW": "View",
       "DELETE": "Delete",
       "USERNAME": "Username",
+      "TYPE": "Type",
+      "HUMAN": "Human",
+      "SYSTEM": "Computer system",
       "ROLE": "Role",
       "OPERATIONS": "Operations",
       "ERROR_USERS": "An error occurred while getting the list of users."
