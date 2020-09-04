@@ -12,11 +12,24 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			window.history.back();
 		};
 
+		$scope.userType = [
+			{
+				ID: "1",
+				name_display: $filter('translate')('USERS.ADD.HUMAN')
+			},
+			{
+				ID: "2",
+				name_display: $filter('translate')('USERS.ADD.SYSTEM')
+			},
+		];
+
 		// default booleans
 		$scope.passwordSection = {open:false, show:false};
 		$scope.roleSection = {open:false, show:false};
 		$scope.languageSection = {open:false, show:false};
 		$scope.language = Session.retrieveObject('user').language;
+
+		$scope.type_name = $scope.userType[0].name_display;
 
 		// Initialize a list of languages available
 		$scope.languages = [{
@@ -64,6 +77,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 
 		// Initialize new user object
 		$scope.newUser = {
+			type: $scope.userType[0].ID,
 			username: null,
 			password: null,
 			confirmPassword: null,
@@ -164,6 +178,15 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			}
 		};
 
+		$scope.$watch('newUser.type', function() {
+			if($scope.newUser.type !== "1") {
+				alert($filter('translate')('USERS.ADD.WARNING_USER'));
+				$scope.type_name = $scope.userType[1].name_display;
+			} else {
+				$scope.type_name = $scope.userType[0].name_display;
+			}
+		});
+
 		// Function to toggle steps when updating the username field
 		$scope.usernameUpdate = function () {
 			if ($scope.validUsername.status == 'valid') {
@@ -240,6 +263,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 				var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103;
 
 				var encrypted = {
+					type: $scope.newUser.type,
 					username: $scope.newUser.username,
 					password: $scope.newUser.password,
 					confirmPassword: $scope.newUser.confirmPassword,

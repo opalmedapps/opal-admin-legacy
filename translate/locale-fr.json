@@ -2638,6 +2638,9 @@
       "VIEW": "Voir",
       "DELETE": "Supprimer",
       "USERNAME": "Nom d'utilisateur",
+      "TYPE": "Type",
+      "HUMAN": "Humain",
+      "SYSTEM": "Système informatique",
       "ROLE": "Rôle",
       "OPERATIONS": "Opérations",
       "ERROR_USERS": "Une erreur s'est produite lors de l'obtention de la liste des utilisateurs."
@@ -2701,8 +2704,9 @@
       "TYPE_USER": "Type d'utilisateur",
       "TYPE_USER_EXPLANATION": "Par défaut, conservez l'option 'Humain'. N'utilisez 'Système informatique' que si vous souhaitez donner accès à l'API à un système externet spécifique. En cas de doute, veuillez contacter votre administrateur.",
       "BASIC_INFO": "Informations de base",
-      "BASIC_INFO_EXPLANATION": "Veuillez fournir les informations pour le nouvel utilisateur ci-dessous."
-
+      "BASIC_INFO_EXPLANATION": "Veuillez fournir les informations pour le nouvel utilisateur ci-dessous.",
+      "WARNING_USER": "Vous avez sélectionné 'Système informatique'. Veuillez noter que ce type d'utilisateur ne peut pas se connecter à OpalAdmin en tant qu'utilisateur régulier et ne doit être utilisé que par des systèmes externes.",
+      "CONFIDENTIAL": "Confidentiel"
     },
     "EDIT": {
       "TITLE": "Modifier l'utilisateur",
@@ -2723,6 +2727,9 @@
       "FRENCH": "Français",
       "ENGLISH_ABRV": "AN",
       "FRENCH_ABRV": "FR",
+      "TYPE": "Type d'utilisateur",
+      "HUMAN": "Humain",
+      "SYSTEM": "Système informatique",
       "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails de l'utilisateur.",
       "ERROR_ROLES": "Une erreur s'est produite lors de l'obtention de la liste des rôles.",
       "ERROR_PASSWORD_FORMAT": "Format de mot de passe invalide.",

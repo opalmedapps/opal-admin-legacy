@@ -39,10 +39,6 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 			});
 			return renderableRows;
 		};
-		$scope.filterLibrary = function (filterValue) {
-			$scope.filterValue = filterValue;
-			$scope.gridApi.grid.refresh();
-		};
 
 		// Templates for main question table
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">';
