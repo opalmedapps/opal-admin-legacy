@@ -432,7 +432,7 @@ class User extends Module {
         if(!is_array($userDetails))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid user.");
 
-        if(!AD_LOGIN_ACTIVE) {
+        if(!AD_LOGIN_ACTIVE || intval($userDetails["type"]) == 2) {
             if($data["password"] && $data["confirmPassword"]) {
                 $result = $this->_passwordValidation($data["password"], $data["confirmPassword"]);
                 if (count($result) > 0)
@@ -476,16 +476,17 @@ class User extends Module {
         $confirmPassword = $data["confirmPassword"];
         $roleId = $data["roleId"];
         $language = strtoupper($data["language"]);
+        $type = intval($data["type"]);
 
-        if($username == "" || $roleId == "" || $language == "")
+        if($username == "" || $roleId == "" || $language == "" || ($type != 1 && $type != 2))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data to create user.");
         if($language != "FR" && $language != "EN")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Wrong language.");
 
-        if(!AD_LOGIN_ACTIVE)
-            $userId = $this->_insertUserLegacy($username, $password, $confirmPassword, $language, $roleId);
+        if(!AD_LOGIN_ACTIVE || $type == 2)
+            $userId = $this->_insertUserWithPassword($type, $username, $password, $confirmPassword, $language, $roleId);
         else
-            $userId = $this->_insertUserAD($username, $language, $roleId);
+            $userId = $this->_insertUserAD($type, $username, $language, $roleId);
 
         $role = $this->opalDB->getRoleDetails($roleId);
         if(!is_array($role))
@@ -501,7 +502,7 @@ class User extends Module {
      *          $language (string) language of the user (EN, FR)
      * @return  userId (int) ID of the new user created
      * */
-    protected function _insertUserLegacy($username, $password, $confirmPassword, $language, $roleId) {
+    protected function _insertUserWithPassword($type, $username, $password, $confirmPassword, $language, $roleId) {
         if($password == "" || $confirmPassword == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data to create user.");
 
@@ -509,7 +510,7 @@ class User extends Module {
         if(count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
 
-        return $this->opalDB->insertUser($username, hash("sha256", $password . USER_SALT), $language, $roleId);
+        return $this->opalDB->insertUser($type, $username, hash("sha256", $password . USER_SALT), $language, $roleId);
     }
 
     /*
@@ -519,8 +520,8 @@ class User extends Module {
      *          $language (string) language of the user (EN, FR)
      * @return  userId (int) ID of the new user created
      * */
-    protected function _insertUserAD($username, $language, $roleId) {
-        return $this->opalDB->insertUser($username, hash("sha256", HelpSetup::generateRandomString() . USER_SALT), $language, $roleId);
+    protected function _insertUserAD($type, $username, $language, $roleId) {
+        return $this->opalDB->insertUser($type, $username, hash("sha256", HelpSetup::generateRandomString() . USER_SALT), $language, $roleId);
     }
 
     /*

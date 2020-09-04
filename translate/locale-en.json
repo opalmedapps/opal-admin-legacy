@@ -2597,6 +2597,9 @@
       "VIEW": "View",
       "DELETE": "Delete",
       "USERNAME": "Username",
+      "TYPE": "Type",
+      "HUMAN": "Human",
+      "SYSTEM": "Computer system",
       "ROLE": "Role",
       "OPERATIONS": "Operations",
       "ERROR_USERS": "An error occurred while getting the list of users."
@@ -2658,9 +2661,11 @@
       "HUMAN": "Human (default option)",
       "SYSTEM": "Computer system",
       "TYPE_USER": "Type of user",
-      "TYPE_USER_EXPLANATION": "By default, keep it as 'Human'. Only use 'Computer system' if you want to give access of the API to an external specific system. In case of doubt, please contact your administrator.",
+      "TYPE_USER_EXPLANATION": "By default, select 'Human'. Only use 'Computer system' if you want to give access of the API to an external specific system. In case of doubt, please contact your administrator.",
       "BASIC_INFO": "Basic informations",
-      "BASIC_INFO_EXPLANATION": "Please provide the informations for the new user below."
+      "BASIC_INFO_EXPLANATION": "Please provide the informations for the new user below.",
+      "WARNING_USER": "You have selected 'Computer System'. Please be advised that type of user cannot log into the OpalAdmin as a regular user and should only be used by other external systems.",
+      "CONFIDENTIAL": "Confidential"
     },
     "EDIT": {
       "TITLE": "Edit User",
@@ -2680,10 +2685,14 @@
       "FRENCH": "French",
       "ENGLISH_ABRV": "EN",
       "FRENCH_ABRV": "FR",
+      "TYPE": "Type of user",
+      "HUMAN": "Human",
+      "SYSTEM": "Computer system",
       "ERROR_DETAILS": "An error occurred while getting the user details.",
       "ERROR_ROLES": "An error occurred while getting the list of roles.",
       "ERROR_PASSWORD_LENGTH": "The password must contains at least 6 characters.",
       "ERROR_PASSWORD_FORMAT": "Invalid password format.",
+      "ERROR_PASSWORD_INVALID": "The passwords do not match.",
       "ERROR_UPDATE": "An error occurred while updating the user informations.",
       "SUCCESS_EDIT": "The user has being updated successfully."
     },

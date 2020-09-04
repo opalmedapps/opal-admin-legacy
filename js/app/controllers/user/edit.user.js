@@ -59,7 +59,6 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 
 	// Function that triggers when the password fields are updated
 	$scope.passwordUpdate = function () {
-
 		$scope.changesMade = true;
 	};
 	// Function to validate password
@@ -135,11 +134,8 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 
 	// Function to check for form completion
 	$scope.checkForm = function () {
-		if (($scope.changesMade && !$scope.passwordChange) ||
-			($scope.validPassword.status == 'valid' && $scope.validConfirmPassword.status == 'valid'))
-			return true;
-		else
-			return false;
+		return ($scope.changesMade && !$scope.passwordChange) ||
+			($scope.validPassword.status == 'valid' && $scope.validConfirmPassword.status == 'valid');
 	};
 
 	// Submit changes
