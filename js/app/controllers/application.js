@@ -124,18 +124,24 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 		// Trigger on idle timeout
 		$scope.$on('IdleTimeout', function () {
+			console.log("login modal 1");
+
 			closeIdleModal(); // close idle modal
 
 			LogoutService.logLogout(); // send logout report to backend
 			Session.destroy(); // destroy session
 
 			if ((pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {
+				$scope.inAuthLoginModal = true;
 				loginModal() // open login modal
 					.then(function () {
 						$scope.startIdleWatch(); // Start idle watch again
 					})
 					.catch(function () {
 						return $state.go('login'); // Failed go to login
+					})
+					.finally(function () {
+						$scope.inAuthLoginModal = false;
 					});
 			}
 		});
@@ -153,17 +159,18 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 		// Trigger on non-authentication
 		$scope.$on(AUTH_EVENTS.notAuthenticated, function () {
 			var currentState = $state.current.name;
-			if (currentState != 'login') {
+			if (currentState != 'login' && !$scope.inAuthLoginModal) {
 				$scope.inAuthLoginModal = true;
 				loginModal() // open login modal
 					.then(function () {
 						$scope.startIdleWatch(); // Start idle watch again
-						$scope.inAuthLoginModal = false;
 						return $state.go('home'); // Go to home page
 					})
 					.catch(function () {
-						$scope.inAuthLoginModal = false;
 						return $state.go('login'); // Failed go to login
+					})
+					.finally(function () {
+						$scope.inAuthLoginModal = false;
 					});
 			}
 		});

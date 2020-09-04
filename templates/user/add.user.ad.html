@@ -45,6 +45,28 @@
                         </div>
 
                         <uib-accordion class="side-navbar">
+                            <!-- SECTION: Type -->
+                            <div uib-accordion-group is-open="leftMenu.type.open" class="panel-container summary-box animated" is-disabled="!toSubmit.type.value">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="toSubmit.type.value" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'USERS.ADD.TYPE_USER'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.type.open, 'glyphicon-chevron-right': !leftMenu.type.open}" ng-if="toSubmit.type.value"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="toSubmit.type.value" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{leftMenu.name}}
+                                    </p>
+                                </div>
+                            </div>
                             <!-- SECTION: Username -->
                             <div uib-accordion-group is-open="leftMenu.username.open" class="panel-container summary-box" is-disabled="!validator.username.completed || ! validator.username.valid">
                                 <uib-accordion-heading>
@@ -65,6 +87,25 @@
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         {{toSubmit.username.value}}
                                     </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Password -->
+                            <div uib-accordion-group is-open="leftMenu.password.open" class="panel-container summary-box animated" >
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="validator.password.completed && validator.password.valid" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'USERS.ADD.PASSWORD'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.password.open, 'glyphicon-chevron-right': !leftMenu.password.open}" ng-if="toSubmit.password.value"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="toSubmit.password.value" class="description">
+                                    <p><span class="fa fa-angle-double-right" style="padding-right: 7px;"></span> {{'USERS.ADD.CONFIDENTIAL'|translate}}</p>
                                 </div>
                             </div>
                             <!-- SECTION: Role -->
@@ -168,11 +209,9 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="section-content">
-
                         <!-- SECTION: Type of user -->
-<!--                        <div class="row">
+                        <div class="row">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -198,9 +237,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>-->
-
-
+                        </div>
                         <!-- SECTION: Basic info -->
                         <div class="row">
                             <div class="col-xs-12 side-menu-title">
@@ -228,16 +265,50 @@
                                         <span ng-show="validator.username.completed && validator.username.valid" style="float:right"><em>{{'USERS.ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body form-horizontal">
-                                        <div class="form-group has-feedback" ng-class="{'has-success': validator.username.completed && validator.username.valid, 'has-error': validUsername.status == 'invalid', 'has-warning': validUsername.status == 'warning'}">
+                                        <div class="form-group has-feedback" ng-class="{'has-success': validator.username.completed && validator.username.valid, 'has-error': validator.username.completed && !validator.username.valid}">
                                             <label class="control-label col-md-2">
                                                 {{'USERS.ADD.USERNAME'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-md-7">
                                                 <input type="text" class="form-control" required="required" ng-blur="validateUsername()" ng-model="toSubmit.username.value">
-                                                <span ng-show="validUsername.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validator.username.completed && validator.username.valid, 'glyphicon-remove': validUsername.status == 'invalid', 'glyphicon-warning-sign': validUsername.status == 'warning'}" aria-hidden="true"></span>
                                             </div>
-                                            <em class="control-label col-xs-12 col-md-3" ng-hide="validator.username.valid || toSubmit.username.value == ''" ng-class="{'has-success': validator.username.completed && validator.username.valid, 'has-error':  !validator.username.completed || !validator.username.valid}" style="text-align:left;">
+                                            <em class="control-label col-xs-12 col-md-3" ng-hide="(validator.username.valid) || toSubmit.username.value == undefined || toSubmit.username.value == ''" ng-class="{'has-success': validator.username.completed && validator.username.valid, 'has-error':  !validator.username.completed || !validator.username.valid}" style="text-align:left;">
                                                 {{'USERS.ADD.ERROR_USERNAME_USED'|translate}}
+                                            </em>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-9" ng-show="toSubmit.type.value == '2'">
+                                <div class="panel" ng-class="(validator.password.completed && validator.password.valid) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'USERS.ADD.PASSWORD'|translate}}</strong>
+                                        <span ng-hide="validator.password.completed && validator.password.valid" style="float:right"><em>{{'USERS.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="validator.password.completed && validator.password.valid" style="float:right"><em>{{'USERS.ADD.COMPLETE'|translate}}</em></span>
+                                    </div>
+                                    <div class="panel-body form-horizontal">
+                                        <div class="form-group has-feedback" ng-class="{'has-success': validator.password.valid, 'has-error': !validator.password.valid}">
+                                            <label class="control-label col-xs-12 col-md-2">
+                                                {{'USERS.ADD.PASSWORD'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-md-7">
+                                                <input type="password" class="form-control" required="required" ng-model="toSubmit.password.value">
+                                                <p style="margin-bottom: 0;"><em><small>{{'USERS.ADD.PASSWORD_REQUIREMENTS'|translate}}</small></em></p>
+                                                <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validator.password.valid, 'glyphicon-remove': !validator.password.valid}" aria-hidden="true"></span>
+                                            </div>
+                                            <em class="control-label col-xs-12 col-md-3" ng-show="!validator.password.valid" ng-class="{'has-success': validator.password.valid, 'has-error': !validator.password.valid}" style="text-align:left">
+                                                {{'USERS.ADD.ERROR_PASSWORD_FORMAT'|translate}}
+                                            </em>
+                                        </div>
+                                        <div class="form-group has-feedback" ng-class="{'has-success': validator.password.valid && validator.password.completed, 'has-error': !validator.password.valid || !validator.password.completed}">
+                                            <label class="control-label col-xs-12 col-md-2">
+                                                {{'USERS.ADD.RETYPE'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-md-7">
+                                                <input type="password" class="form-control" required="required" ng-model="toSubmit.password.confirm">
+                                                <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validator.password.valid && validator.password.completed, 'glyphicon-remove': !validator.password.valid || !validator.password.completed}" aria-hidden="true"></span>
+                                            </div>
+                                            <em class="control-label col-xs-12 col-md-3 has-error" ng-show="!validator.password.valid || !validator.password.completed" style="text-align:left">
+                                                {{'USERS.ADD.ERROR_PASSWORD_INVALID'|translate}}
                                             </em>
                                         </div>
                                     </div>
