@@ -2638,6 +2638,9 @@
       "VIEW": "Voir",
       "DELETE": "Supprimer",
       "USERNAME": "Nom d'utilisateur",
+      "TYPE": "Type",
+      "HUMAN": "Humain",
+      "SYSTEM": "Système informatique",
       "ROLE": "Rôle",
       "OPERATIONS": "Opérations",
       "ERROR_USERS": "Une erreur s'est produite lors de l'obtention de la liste des utilisateurs."
