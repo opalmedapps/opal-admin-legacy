@@ -518,7 +518,7 @@ define("OPAL_GET_ROLE_DETAILS","
 ");
 
 define("OPAL_GET_USERS_LIST","
-    SELECT ou.OAUserSerNum AS serial, ou.Username AS username, r.name_EN, r.name_FR, ou.Language AS language
+    SELECT ou.OAUserSerNum AS serial, ou.Username AS username, ou.type, r.name_EN, r.name_FR, ou.Language AS language
     FROM ".OPAL_OAUSER_TABLE." ou
     LEFT JOIN ".OPAL_OA_ROLE_TABLE." r ON r.id = ou.oaRoleId
 	WHERE ou.deleted = ".NON_DELETED_RECORD.";
