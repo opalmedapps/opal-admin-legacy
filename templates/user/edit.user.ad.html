@@ -19,6 +19,60 @@
 <div class="modal-body">
     <uib-accordion close-others="false">
 
+        <!-- SECTION: Type -->
+        <div uib-accordion-group is-open="typeSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'USERS.EDIT.TYPE'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': typeSection.open, 'glyphicon-chevron-right': !typeSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-10">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <p ng-show="user.type == 1">{{'USERS.EDIT.HUMAN'|translate}}</p>
+                            <p ng-show="user.type == 2">{{'USERS.EDIT.SYSTEM'|translate}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div ng-if="user.type == 2" uib-accordion-group is-open="passwordSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'USERS.EDIT.CHANGE_PASSWORD'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': passwordSection.open, 'glyphicon-chevron-right': !passwordSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="form-horizontal">
+                <div class="form-group has-feedback" ng-class="{'has-success': validPassword.status == 'valid', 'has-error': validPassword.status == 'invalid', 'has-warning': validPassword.status == 'warning'}">
+                    <label class="control-label col-xs-12 col-md-2">
+                        {{'USERS.EDIT.PASSWORD'|translate}}
+                    </label>
+                    <div class="col-xs-12 col-md-7">
+                        <input type="password" class="form-control" ng-change="validatePassword(user.password)" ng-model="user.password">
+                        <p style="margin-bottom: 0;"><em><small>{{'USERS.EDIT.PASSWORD_REQUIREMENTS'|translate}}</small></em></p>
+                        <span ng-show="validPassword.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validPassword.status == 'valid', 'glyphicon-remove': validPassword.status == 'invalid', 'glyphicon-warning-sign': validPassword.status == 'warning'}" aria-hidden="true"></span>
+                    </div>
+                    <em class="control-label col-xs-12 col-md-3" ng-show="validPassword.status == 'invalid' || validPassword.status == 'warning'" ng-class="{'has-success': validPassword.status == 'valid', 'has-error': validPassword.status == 'invalid', 'has-warning': validPassword.status == 'warning'}" style="text-align:left">
+                        {{validPassword.message}}
+                    </em>
+                </div>
+                <div class="form-group has-feedback" ng-class="{'has-success': validConfirmPassword.status == 'valid', 'has-error': validConfirmPassword.status == 'invalid', 'has-warning': validConfirmPassword.status == 'warning'}">
+                    <label class="control-label col-xs-12 col-md-2">
+                        {{'USERS.EDIT.CONFIRM'|translate}}
+                    </label>
+                    <div class="col-xs-12 col-md-7">
+                        <input type="password" class="form-control" required="required" ng-change="validateConfirmPassword(user.confirmPassword)" ng-model="user.confirmPassword" ng-disabled="user.password.length < 6 || !user.password">
+                        <span ng-show="validConfirmPassword.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validConfirmPassword.status == 'valid', 'glyphicon-remove': validConfirmPassword.status == 'invalid', 'glyphicon-warning-sign': validConfirmPassword.status == 'warning'}" aria-hidden="true"></span>
+                    </div>
+                    <em class="control-label col-xs-12 col-md-3" ng-show="validConfirmPassword.status == 'invalid' || validConfirmPassword.status == 'warning'" ng-class="{'has-success': validConfirmPassword.status == 'valid', 'has-error': validConfirmPassword.status == 'invalid', 'has-warning': validConfirmPassword.status == 'warning'}" style="text-align:left">
+                        {{validConfirmPassword.message}}
+                    </em>
+                </div>
+            </div>
+        </div>
+
         <!-- SECTION: Role -->
         <div uib-accordion-group is-open="roleSection.open">
             <uib-accordion-heading>
