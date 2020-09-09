@@ -3,7 +3,7 @@
 include_once("../config.php");
             
 $cypher = null;
-while (isNull($cypher)) {
+while (is_null($cypher)) {
     $cypher = time() % floor( rand() * 20 ) + 103;
 }
 $creds->Username = "TriggerSystem";
