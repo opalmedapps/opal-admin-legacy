@@ -6,8 +6,7 @@ $cypher = null;
 while (is_null($cypher)) {
     $cypher = time() % floor( rand() * 20 ) + 103;
 }
-$creds->Username = "TriggerSystem";
-$creds->Password = "pcGNdtwTV8Pd79FkLhP!ejH8Y^KR&4@u";
+$creds = array("username" => "TriggerSystem", "password" => "pcGNdtwTV8Pd79FkLhP!ejH8Y^KR&4@u");
 $toEncrypt =  strval(json_encode($creds));
 
 $encrypted = Encrypt::encodeStringSystem($toEncrypt, $cypher);
@@ -40,12 +39,11 @@ else {
     echo "RESPONSE OTHER: $response";
 }
 
-die();
-
-$trigger = new Trigger(true); // guest status on for now
+echo "meep33\n";
+$trigger = new Trigger(); // guest status on for now
 $triggerType = MODULE_QUESTIONNAIRE; // define what type of trigger this is
-
-$trigger->executeTrigger($_POST, $triggerType);
+#$trigger->executeTrigger($_POST, $triggerType);
+$trigger->executeTrigger(array("id" => 12), $triggerType);
 
 header('Content-Type: application/javascript');
 http_response_code(HTTP_STATUS_SUCCESS);

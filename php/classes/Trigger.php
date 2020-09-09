@@ -43,7 +43,9 @@ require('../lib/JWadhams/JsonLogic.php');
 
         switch ($dataType) {
             case MODULE_QUESTIONNAIRE:
-                $questionnaire = new Questionnaire(true);
+		echo "1MEEEP\n";
+                $questionnaire = new Questionnaire();
+		echo "MEEEP\n";
                 return $questionnaire->getQuestionnaireResults($id); /// there's a stored procedure for this
                 break;
             
