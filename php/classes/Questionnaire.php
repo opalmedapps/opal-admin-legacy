@@ -427,16 +427,23 @@ class Questionnaire extends QuestionnaireModule {
             $this->questionnaireDB->forceUpdate($updatedQuestionnaire["ID"], QUESTIONNAIRE_TABLE);
     }
 
+    /*
+     * Gets questionnaire answers
+     *
+     * @param integer $patientQuestionnaireSer : the patient-questionnaire relation serial number
+     * @return array questionnaire results along with explicit questionnaire ID and patient ID 
+     */
     public function getQuestionnaireResults($patientQuestionnaireSer) { 
-        // $this->checkReadAccess();
+        // $this->checkReadAccess();  // don't know if this is needed yet
+
         $questionnaireResults = $this->questionnaireDB->getQuestionnaireResults($patientQuestionnaireSer);
         $questionnaireId = $questionnaireResults[0]["questionnaire_id"];
         $patientId = $questionnaireResults[0]["patient_id"];
 
         $currentAnswers = $questionnaireResults[3];
         
-        // get past results as well
-        $prevQuestionnaire = $this->questionnaireDB->getLastAnsweredResults($questionnaireId, $patientId);
+        // also need to get answers from the questionnaire just before the current (if exists)
+        $prevQuestionnaire = $this->questionnaireDB->getLastAnsweredQuestionnaire($questionnaireId, $patientId);
         $prevAnswers = array();
         if (!empty($prevQuestionnaire)) {
             $prevPatientQuestionnaireSer = $prevQuestionnaire[0]["PatientQuestionnaireSerNum"];

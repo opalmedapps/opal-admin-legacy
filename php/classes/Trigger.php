@@ -2,7 +2,7 @@
 
 require('../lib/JWadhams/JsonLogic.php');
 /*
- * Trigger class objects and method
+ * Trigger class object and methods
  * */
 
  class Trigger extends Module {
@@ -11,14 +11,25 @@ require('../lib/JWadhams/JsonLogic.php');
         parent::__construct(MODULE_TRIGGER, $guestStatus);
     }
 
-    public function getTriggers($id, $type) { 
+    /*
+     * Return the list of triggers in opalDB.
+     * @params  integer  $sourceContentId : the source content identifier to look for info
+     * @params  integer  $sourceModuleId : the module id of the source content
+     * @return  array - list of triggers 
+     * */
+    public function getTriggers($sourceContentId, $sourceModuleId) { 
         // $this->checkReadAccess();
 
-        return $this->opalDB->getTriggersList($id, $type);
+        return $this->opalDB->getTriggersList($sourceContentId, $sourceModuleId);
     }
 
-
-    protected function _validateTrigger($postData, $triggerType) {
+    /*
+     * Validate and sanitize post data and check if module id is set. If there is a problem return an error 500.
+     * @params  array  $postdata : POST data containing a starting-point identifier
+     * @params  integer  $sourceModuleId : the module id of the source content 
+     * @return array $validatedTrigger : validated response
+     * */
+    protected function _validateTrigger($postData, $moduleId) {
         $validatedTrigger = array();
         $postData = HelpSetup::arraySanitization($postData);
 
@@ -29,24 +40,28 @@ require('../lib/JWadhams/JsonLogic.php');
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing trigger ID.");
 
         // Check id
-        if($triggerType != "")
-            $validatedTrigger["trigger_type"] = $triggerType;
+        if($moduleId != "")
+            $validatedTrigger["module_id"] = $moduleId;
         else
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing trigger type.");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing module ID.");
 
         return $validatedTrigger;
 
     }
 
-    public function getData($id, $dataType) {
+    /*
+     * Function that gets the necessary data that will be used to check the logic against
+     * @params  integer  $id : starting-point identifier to search for source data
+     * @params  integer  $sourceModuleId : the module id of the source content
+     * @return  array : respective data based on module 
+     * */
+    public function getData($id, $sourceModuleId) {
         // $this->checkReadAccess();
 
-        switch ($dataType) {
+        switch ($sourceModuleId) {
             case MODULE_QUESTIONNAIRE:
-		echo "1MEEEP\n";
                 $questionnaire = new Questionnaire();
-		echo "MEEEP\n";
-                return $questionnaire->getQuestionnaireResults($id); /// there's a stored procedure for this
+                return $questionnaire->getQuestionnaireResults($id); /// ultimately there's a stored procedure for this
                 break;
             
             default:
@@ -56,14 +71,26 @@ require('../lib/JWadhams/JsonLogic.php');
         
     }
 
+    /*
+     * Use 3rd party package to check logic in json format 
+     * @params  array  $trigger : current trigger entry
+     * @params  array  $dataToCheck : data to apply logic test to
+     * @return  mixed : can be boolean/array depending on input test 
+     * */
     public function checkLogic($trigger, $dataToCheck) {
         return JWadhams\JsonLogic::apply( json_decode($trigger["onCondition"], true), $dataToCheck );
     }
 
-    public function triggerEvent($triggerDetails, $patientId) {
-        switch ($triggerDetails['eventType']) {
-            case TRIGGER_EVENT_PUBLISH:
-                $this->publish($triggerDetails, $patientId);
+    /*
+     * Execute event method when trigger logic passes 
+     * @params  array  $trigger : current trigger entry
+     * @params  integer  $patientId : patient id 
+     * @return  
+     * */
+    public function triggerEvent($trigger, $patientId) {
+        switch ($trigger['eventType']) {
+            case TRIGGER_EVENT_PUBLISH: // only one for now
+                $this->publish($trigger, $patientId);
                 break;
             
             default:
@@ -72,11 +99,17 @@ require('../lib/JWadhams/JsonLogic.php');
         }
     }
 
-    public function publish($triggerDetails, $patientId) {
-        switch ($triggerDetails["targetType"]) {
+    /*
+     * An event type method for publishing (i.e. inserting) content
+     * @params  array  $trigger : current trigger entry
+     * @params  integer  $patientId : patient id 
+     * @return  
+     * */
+    public function publish($trigger, $patientId) {
+        switch ($trigger["targetModuleId"]) {
             case MODULE_QUESTIONNAIRE:
-                //$this->opalDB->publishQuestionnaire($triggerDetails["targetId"], $patientId);
-                echo "PUBLISH QUESTIONNAIRE!";
+                //$this->opalDB->publishQuestionnaire($trigger["targetContentId"], $patientId); // commented out for now
+                echo "PUBLISHED QUESTIONNAIRE!";
                 break;
             
             case MODULE_ALERT:
@@ -84,7 +117,7 @@ require('../lib/JWadhams/JsonLogic.php');
                 break;
             
             case MODULE_EDU_MAT:
-                //$this->opalDB->publishEducationalMaterial($triggerDetails["targetId"], $patientId);
+                //$this->opalDB->publishEducationalMaterial($trigger["targetContentId"], $patientId); // Not done yet
                 break;
 
             case MODULE_POST:
@@ -98,21 +131,28 @@ require('../lib/JWadhams/JsonLogic.php');
 
     }
 
-    public function executeTrigger($postData, $triggerType) {
 
-        $validatedData = $this->_validateTrigger($postData, $triggerType);
+    /*
+     * Main method to process triggers
+     * @params  array  $postdata : POST data containing a starting-point identifier
+     * @params  integer  $sourceModuleId : the module id of the source content 
+     * @return  boolean : true if end of method is reached 
+     * */
+    public function executeTrigger($postData, $sourceModuleId) {
+
+        $validatedData = $this->_validateTrigger($postData, $sourceModuleId);
         $id = $validatedData["id"];
-        $triggerType = $validatedData["trigger_type"];
+        $sourceModuleId = $validatedData["module_id"];
 
-        $triggerId = "";
+        $sourceContentId = "";
         $patientId = ""; 
 
-        $dataToCheck = $this->getData($id, $triggerType); 
+        $dataToCheck = $this->getData($id, $sourceModuleId); 
 
         if (!empty($dataToCheck)) {
-            switch ($triggerType) {
+            switch ($sourceModuleId) {
                 case MODULE_QUESTIONNAIRE:
-                    $triggerId = $dataToCheck["questionnaire_id"]; // to pull triggers related to this questionnaire
+                    $sourceContentId = $dataToCheck["questionnaire_id"]; // to pull triggers related to this questionnaire
                     $patientId = $dataToCheck["patient_id"]; // which patient to trigger event on
                     break;
 
@@ -122,15 +162,15 @@ require('../lib/JWadhams/JsonLogic.php');
         }
         
         // Retrieve all triggers 
-        $triggers = $this->getTriggers($triggerId, $triggerType);
+        $triggers = $this->getTriggers($sourceContentId, $sourceModuleId);
 
-        foreach ($triggers as $index => $triggerDetails) {
-            if($this->checkLogic($triggerDetails, $dataToCheck)) { // if trigger should be fired
-                $this->triggerEvent($triggerDetails, $patientId); 
+        foreach ($triggers as $index => $trigger) {
+            if($this->checkLogic($trigger, $dataToCheck)) { // if trigger should be fired
+                $this->triggerEvent($trigger, $patientId); 
             }
         }
 
-        return;
+        return true;
     }
 
  }

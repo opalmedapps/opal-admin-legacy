@@ -1901,14 +1901,14 @@ class DatabaseOpal extends DatabaseAccess {
 
     /*
      * Get all the triggers
-     * @params  int : $triggerId - ID of the trigger 
-     *          int : $triggerType - type of trigger
+     * @params  int : $sourceContentId - content id the triggers are attached to
+     *          int : $sourceModuleId - module id of the source content 
      * @return  triggers found (array)
      * */
-    function getTriggersList($triggerId, $triggerType) {
+    function getTriggersList($sourceContentId, $sourceModuleId) {
         return $this->_fetchAll(OPAL_GET_TRIGGERS_LIST, array(
-            array("parameter"=>":ID","variable"=>$triggerId,"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":TYPE","variable"=>$triggerType,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":contentId","variable"=>$sourceContentId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":moduleId","variable"=>$sourceModuleId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
@@ -1924,7 +1924,7 @@ class DatabaseOpal extends DatabaseAccess {
             "PatientSerNum"=>$patientSer,
             "DateAdded"=>date("Y-m-d H:i:s")
         );
-        return $this->_insertRecordIntoTable(OPAL_TRIGGER_TABLE, $toSubmit);
+        return $this->_insertRecordIntoTable(OPAL_QUESTIONNAIRE_TABLE, $toSubmit);
     }
 
 

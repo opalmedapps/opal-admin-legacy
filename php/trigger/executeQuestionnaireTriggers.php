@@ -1,7 +1,9 @@
 <?php
 
 include_once("../config.php");
-            
+   
+/* --- BEGIN SECTION TO CONNECT TO OPALADMIN --- */
+/* --- TODO: THIS NEEDS TO BE IN A METHOD --- */
 $cypher = null;
 while (is_null($cypher)) {
     $cypher = time() % floor( rand() * 20 ) + 103;
@@ -20,30 +22,24 @@ $postData = array(
 # Form data string
 $postString = http_build_query($postData, '', '&');
 
-# You can also check..
-if(function_exists('http_post_data') == false) {
-    $ch = curl_init($loginUrl);
-  
-    # Setting our options
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $postString);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    # Get the response
-    $response = curl_exec($ch);
-    echo "RESPONSE CURL: $response";
-    curl_close($ch);
-}
+$ch = curl_init($loginUrl);
 
-else {
-    $response = http_post_data($url, $postString);
-    echo "RESPONSE OTHER: $response";
-}
+# Setting our options
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $postString);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+# Get the response
+$response = curl_exec($ch);
+echo "RESPONSE CURL: $response";
+curl_close($ch);
 
-echo "meep33\n";
-$trigger = new Trigger(); // guest status on for now
-$triggerType = MODULE_QUESTIONNAIRE; // define what type of trigger this is
-#$trigger->executeTrigger($_POST, $triggerType);
-$trigger->executeTrigger(array("id" => 12), $triggerType);
+/* --- END SECTION TO CONNECT TO OPALADMIN --- */
+
+$trigger = new Trigger();
+$sourceModuleId = MODULE_QUESTIONNAIRE; // define what type of trigger this is
+
+// Need patientQuestionnaireSerNum from caller
+$trigger->executeTrigger($_POST, $sourceModuleId);
 
 header('Content-Type: application/javascript');
 http_response_code(HTTP_STATUS_SUCCESS);

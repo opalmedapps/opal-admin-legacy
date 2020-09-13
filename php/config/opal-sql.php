@@ -906,5 +906,5 @@ define("OPAL_DELETE_DIAGNOSIS_TRANSLATION","
 ");
 
 define("OPAL_GET_TRIGGERS_LIST","
-    SELECT ID, type, onCondition, eventType, targetId, targetType FROM ".OPAL_TRIGGER_TABLE." WHERE active = ".ACTIVE_RECORD." AND ID = :ID AND type = :TYPE;
+    SELECT sourceContentId, sourceModuleId, onCondition, eventType, targetContentId, targetModuleId FROM ".OPAL_TRIGGER_TABLE." WHERE active = ".ACTIVE_RECORD." AND sourceContentId = :contentId AND sourceModuleId = :moduleId;
 ");
