@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.user.add.ad', ['ui.bootstrap', 'ui.grid'])
 	/******************************************************************************
 	 * Controller for user registration
 	 *******************************************************************************/
-	controller('user.add.ad', function ($scope, userCollectionService, $state, $filter, Encrypt, Session, ErrorHandler) {
+	controller('user.add.ad', function ($scope, userCollectionService, $state, $filter, Session, ErrorHandler) {
 		var OAUserId = Session.retrieveObject('user').id;
 
 		$scope.userType = [
@@ -228,28 +228,17 @@ angular.module('opalAdmin.controllers.user.add.ad', ['ui.bootstrap', 'ui.grid'])
 
 		// Function to register user
 		$scope.registerUser = function () {
-
-			var cypher = NaN;
-			while(isNaN(cypher)) {
-				cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103;
-			}
-
-			var encrypted = {
+			var data = {
 				username: $scope.toSubmit.username.value,
 				type: $scope.toSubmit.type.value,
 				language: $scope.toSubmit.language.value,
 				roleId: $scope.toSubmit.role.value.ID,
 			};
-			if($scope.toSubmit.type.value == "2") {
-				encrypted.password = $scope.toSubmit.password.value;
-				encrypted.confirmPassword = $scope.toSubmit.password.confirm;
-			}
 
-			encrypted = Encrypt.encode(JSON.stringify(encrypted), cypher);
-			var data = {
-				encrypted: encrypted,
-				cypher: cypher,
-			};
+			if($scope.toSubmit.type.value == "2") {
+				data.password = $scope.toSubmit.password.value;
+				data.confirmPassword = $scope.toSubmit.password.confirm;
+			}
 
 			$.ajax({
 				type: "POST",

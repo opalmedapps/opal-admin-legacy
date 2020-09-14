@@ -73,12 +73,12 @@ angular.module('opalAdmin', [
 
 		var authService = {};
 
-		authService.login = function (encrypted, cypher) {
+		authService.login = function (username, password) {
 			return $http.post(
 				"user/validate-login",
 				$.param({
-					encrypted: encrypted,
-					cypher: cypher,
+					username: username,
+					password: password,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -130,7 +130,7 @@ angular.module('opalAdmin', [
 			.state('test-result-add', { url: '/test-result/add', templateUrl: "templates/test-result/add.test-result.html", controller: "testResult.add", data: { requireLogin: true } })
 			.state('cron', { url: '/cron', templateUrl: "templates/cron/cron.html", controller: "cron", data: { requireLogin: true } })
 			.state('ad-account', { url: '/account-ad', templateUrl: "templates/user/account.ad.html", controller: "account", data: { requireLogin: true } })
-			.state('account', { url: '/account', templateUrl: "templates/user/account.html", controller: "account.ad", data: { requireLogin: true } })
+			.state('account', { url: '/account', templateUrl: "templates/user/account.html", controller: "account", data: { requireLogin: true } })
 			.state('users', { url: '/users', templateUrl: "templates/user/user.html", controller: "user", data: { requireLogin: true } })
 			.state('user-ad-register', { url: '/users/add-ad', templateUrl: "templates/user/add.user.ad.html", controller: "user.add.ad", data: { requireLogin: true } })
 			.state('user-register', { url: '/users/add', templateUrl: "templates/user/add.user.html", controller: "user.add", data: { requireLogin: true } })

@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.login', ['ngAnimate', 'ui.bootstrap']).
 /******************************************************************************
  * Login controller
  *******************************************************************************/
-controller('login', function ($scope, $rootScope, $state, $filter, $translate, AUTH_EVENTS, HTTP_CODE, AuthService, Idle, Encrypt, Session) {
+controller('login', function ($scope, $rootScope, $state, $filter, $translate, AUTH_EVENTS, HTTP_CODE, AuthService, Idle, Session) {
 
 	// Initialize login object
 	$scope.credentials = {
@@ -66,15 +66,7 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, A
 
 	$scope.submitLogin = function (credentials) {
 		if ($scope.loginFormComplete()) {
-			var cypher = NaN;
-			while(isNaN(cypher)) {
-				cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103;
-			}
-
-			var encrypted = JSON.stringify({username: credentials.username, password: credentials.password});
-			encrypted = (Encrypt.encode(encrypted, cypher));
-
-			AuthService.login(encrypted, cypher).then(function (response) {
+			AuthService.login(credentials.username, credentials.password).then(function (response) {
 				var accessLevel = [];
 				angular.forEach(response.data.access, function (row) {
 					accessLevel[row["ID"]] = row["access"];

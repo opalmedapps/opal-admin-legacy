@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.user.edit', ['ui.bootstrap', 'ui.grid']).
 
-controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter, $sce, $state, userCollectionService, Encrypt, Session, ErrorHandler) {
+controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter, $sce, $state, userCollectionService, Session, ErrorHandler) {
 	var OAUserId = Session.retrieveObject('user').id;
 	$scope.roleDisabled = false;
 
@@ -141,22 +141,13 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 	// Submit changes
 	$scope.updateUser = function () {
 		if ($scope.checkForm()) {
-			var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103;
-
-			var encrypted = {
+			var data = {
+				OAUserId: Session.retrieveObject('user').id,
 				id: $scope.user.serial,
 				password: $scope.user.password,
 				confirmPassword: $scope.user.confirmPassword,
 				language: $scope.user.language,
 				roleId: $scope.user.role.serial
-			};
-
-			encrypted = Encrypt.encode(JSON.stringify(encrypted), cypher);
-
-			var data = {
-				OAUserId: Session.retrieveObject('user').id,
-				encrypted: encrypted,
-				cypher: cypher,
 			};
 
 			// submit
