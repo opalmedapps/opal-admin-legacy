@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 	/******************************************************************************
 	 * Controller for user registration
 	 *******************************************************************************/
-	controller('user.add', function ($scope, userCollectionService, $state, $filter, Encrypt, Session, ErrorHandler) {
+	controller('user.add', function ($scope, userCollectionService, $state, $filter, Session, ErrorHandler) {
 		var OAUserId = Session.retrieveObject('user').id;
 
 		// Function to go to previous page
@@ -257,25 +257,14 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 		$scope.registerUser = function () {
 
 			if ($scope.checkRegistrationForm()) {
-
-
-
-				var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103;
-
-				var encrypted = {
+				var data = {
+					OAUserId: Session.retrieveObject('user').id,
 					type: $scope.newUser.type,
 					username: $scope.newUser.username,
 					password: $scope.newUser.password,
 					confirmPassword: $scope.newUser.confirmPassword,
 					language: $scope.newUser.language,
 					roleId: $scope.newUser.role.ID,
-				};
-
-				encrypted = Encrypt.encode(JSON.stringify(encrypted), cypher);
-				var data = {
-					OAUserId: Session.retrieveObject('user').id,
-					encrypted: encrypted,
-					cypher: cypher,
 				};
 
 				$.ajax({

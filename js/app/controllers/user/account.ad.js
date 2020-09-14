@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.account.ad', ['ui.bootstrap']).
 	/******************************************************************************
 	 * Controller for the account page
 	 *******************************************************************************/
-	controller('account.ad', function ($scope, $rootScope, $translate, $route, $filter, $templateCache, Session, Encrypt) {
+	controller('account.ad', function ($scope, $rootScope, $translate, $route, $filter, $templateCache, Session) {
 		$scope.navMenu = Session.retrieveObject('menu');
 
 		// Set current user
