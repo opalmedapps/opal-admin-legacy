@@ -1914,14 +1914,17 @@ class DatabaseOpal extends DatabaseAccess {
 
     /*
      * Publish a patient questionnaire
-     * @params  int : $questionnaireControlSer - serial number of questionnaire control
-     *          int : $patientSer - serial number of patient 
+     * @params  int : $questionnaireId - id of questionnaire (from Questionnaire DB)
+     *          int : $patientId - patient id
      * @return int - ID of the record inserted
      * */
-    function publishQuestionnaire($questionnaireControlSer, $patientSer) {
+    function publishQuestionnaire($questionnaireId, $patientId) {
+        // NOTE: Questionnaire table needs QuestionnaireControlSerNum & PatientSerNum
+        // Thus, need a WHERE clause in SQL to link current variables to what's needed
+        // NOTE 2: questionnaireId is actually QuestionnaireDBSerNum in QuestionnaireControl table in OpalDB
         $toSubmit = array(
-            "QuestionnaireControlSerNum"=>$questionnaireControlSer,
-            "PatientSerNum"=>$patientSer,
+            "QuestionnaireId"=>$questionnaireId,
+            "PatientId"=>$patientId,
             "DateAdded"=>date("Y-m-d H:i:s")
         );
         return $this->_insertRecordIntoTable(OPAL_QUESTIONNAIRE_TABLE, $toSubmit);
