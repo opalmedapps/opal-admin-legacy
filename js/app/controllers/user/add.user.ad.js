@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.user.add.ad', ['ui.bootstrap', 'ui.grid'])
 	/******************************************************************************
 	 * Controller for user registration
 	 *******************************************************************************/
-	controller('user.add.ad', function ($scope, userCollectionService, $state, $filter, Encrypt, Session, ErrorHandler) {
+	controller('user.add.ad', function ($scope, userCollectionService, $state, $filter, Session, ErrorHandler) {
 		var OAUserId = Session.retrieveObject('user').id;
 
 		$scope.userType = [
@@ -64,8 +64,9 @@ angular.module('opalAdmin.controllers.user.add.ad', ['ui.bootstrap', 'ui.grid'])
 			},
 			type: {
 				display: false,
-				open: false,
+				open: true,
 				preview: false,
+				name: $scope.userType[0].name_display,
 			},
 			role: {
 				display: false,
@@ -124,6 +125,21 @@ angular.module('opalAdmin.controllers.user.add.ad', ['ui.bootstrap', 'ui.grid'])
 			$scope.leftMenu.role.preview = $scope.validator.role.completed;
 		});
 
+		$scope.$watch('toSubmit.password', function() {
+			if ($scope.toSubmit.type.value == "2") {
+				var validationPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/;
+				$scope.validator.password.valid = !!$scope.toSubmit.password.value.match(validationPassword);
+				$scope.validator.password.completed = ($scope.validator.password.valid && $scope.toSubmit.password.value == $scope.toSubmit.password.confirm);
+
+				if($scope.toSubmit.password.value !== undefined && $scope.toSubmit.password.value.length > 0) {
+					$scope.leftMenu.password.display = true;
+					$scope.leftMenu.password.open = true;
+				}
+
+				$scope.leftMenu.password.preview = $scope.validator.password.completed;
+			}
+		}, true);
+
 		$scope.$watch('toSubmit.language.value', function() {
 			$scope.validator.language.completed = !!$scope.toSubmit.language.value;
 
@@ -135,7 +151,32 @@ angular.module('opalAdmin.controllers.user.add.ad', ['ui.bootstrap', 'ui.grid'])
 		});
 
 		$scope.$watch('toSubmit.type.value', function() {
-			console.log($scope.toSubmit.type.value);
+			if($scope.toSubmit.type.value == "1") {
+				delete $scope.toSubmit.password;
+				delete $scope.validator.password;
+				delete $scope.leftMenu.password;
+				$scope.leftMenu.name = $filter('translate')('USERS.ADD.HUMAN');
+			} else {
+				$scope.toSubmit.password = {
+					value: "",
+					confirm: "",
+				};
+				$scope.validator.password = {
+					completed: false,
+					valid: true,
+					mandatory: true,
+				};
+				$scope.leftMenu.password = {
+					display: false,
+					open: false,
+					preview: false,
+				};
+				alert($filter('translate')('USERS.ADD.WARNING_USER'));
+				$scope.leftMenu.name = $filter('translate')('USERS.ADD.SYSTEM');
+			}
+			$scope.leftMenu.type.display = true;
+			$scope.leftMenu.type.open = true;
+			$scope.leftMenu.type.preview = true;
 		});
 
 		// Function to go to previous page
@@ -187,20 +228,17 @@ angular.module('opalAdmin.controllers.user.add.ad', ['ui.bootstrap', 'ui.grid'])
 
 		// Function to register user
 		$scope.registerUser = function () {
-
-			var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103;
-
-			var encrypted = {
+			var data = {
 				username: $scope.toSubmit.username.value,
+				type: $scope.toSubmit.type.value,
 				language: $scope.toSubmit.language.value,
 				roleId: $scope.toSubmit.role.value.ID,
 			};
 
-			encrypted = Encrypt.encode(JSON.stringify(encrypted), cypher);
-			var data = {
-				encrypted: encrypted,
-				cypher: cypher,
-			};
+			if($scope.toSubmit.type.value == "2") {
+				data.password = $scope.toSubmit.password.value;
+				data.confirmPassword = $scope.toSubmit.password.confirm;
+			}
 
 			$.ajax({
 				type: "POST",

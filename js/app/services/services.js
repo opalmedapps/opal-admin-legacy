@@ -78,10 +78,6 @@ angular.module('opalAdmin.services', [])
 			var user = Session.retrieveObject('user');
 			$http.post(
 				"user/logout",
-				$.param({
-					OAUserId: user.id,
-					sessionId: user.sessionid,
-				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
@@ -91,24 +87,6 @@ angular.module('opalAdmin.services', [])
 			this.logLogout();
 			Session.destroy();
 			$state.go('login');
-		};
-	})
-
-	.service('Encrypt', function () {
-		this.encode = function (s, k) {
-			var enc = "";
-			var str = "";
-			// make sure that input is string
-			str = s.toString();
-			for (var i = 0; i < s.length; i++) {
-				// create block
-				var a = s.charCodeAt(i);
-				// bitwise XOR
-				var b = a ^ k;
-				enc = enc + String.fromCharCode(b);
-			}
-			// base 64 encode
-			return btoa(enc);
 		};
 	})
 

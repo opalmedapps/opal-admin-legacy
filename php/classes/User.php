@@ -39,6 +39,7 @@ class User extends Module {
      * @return  $result (array) details of the user info.
      * */
     protected function _userLoginActiveDirectory($username, $password) {
+
         $result = $this->opalDB->authenticateUserAD($username);
         $result = $this->_validateUserAuthentication($result, $username);
 
@@ -63,7 +64,7 @@ class User extends Module {
         if(!$requestResult["authenticate"]) {
             HelpSetup::getModuleMethodName($moduleName, $methodeName);
             $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
-            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Access denied");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Wrong username and/or password.");
         }
 
         return $result;
@@ -84,15 +85,12 @@ class User extends Module {
 
     /*
      * Validate the user, log its activity and build the nav menu to display.
-     * @param   $post (array) contains username, password and cypher
+     * @param   $post (array) contains username, password
      * @return  $result (array) basic user informations
      * */
     public function userLogin($post) {
         $userAccess = array();
-        $post = HelpSetup::arraySanitization($post);
-        $cypher = $post["cypher"];
-        $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
-        $data = HelpSetup::arraySanitization($data);
+        $data = HelpSetup::arraySanitization($post);
 
         if(!is_array($data)) {
             HelpSetup::getModuleMethodName($moduleName, $methodeName);
@@ -103,7 +101,7 @@ class User extends Module {
         $username = $data["username"];
         $password = $data["password"];
 
-        if($username == "" || $password == "" || $cypher == "") {
+        if($username == "" || $password == "") {
             HelpSetup::getModuleMethodName($moduleName, $methodeName);
             $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
@@ -183,15 +181,12 @@ class User extends Module {
     /**
      * Login for a system (non-human) user. It validates the user/name password, stored in the sessions, the access
      * level and user info. It returns an array that contains user info (ID, username, language, role and sessionID)
-     * @param $post : array - contains cypher and encrypted data
+     * @param $post : array - contains username and password
      * @return mixed : array - contains system user ID, username, language, role and sessionID
      */
     public function systemUserLogin($post) {
         $userAccess = array();
-        $post = HelpSetup::arraySanitization($post);
-        $cypher = $post["cypher"];
-        $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
-        $data = HelpSetup::arraySanitization($data);
+        $data = HelpSetup::arraySanitization($post);
 
         if(!is_array($data)) {
             HelpSetup::getModuleMethodName($moduleName, $methodeName);
@@ -202,7 +197,7 @@ class User extends Module {
         $username = $data["username"];
         $password = $data["password"];
 
-        if($username == "" || $password == "" || $cypher == "") {
+        if($username == "" || $password == "") {
             HelpSetup::getModuleMethodName($moduleName, $methodeName);
             $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
@@ -252,15 +247,11 @@ class User extends Module {
      * is made base on the Patient module write access. If the user got a valid user/pass and correct access level
      * (read and write), then it is authorized to proceed. Otherwise, return error 401. No matter what, logs the result
      * in the audit table.
-     * @param   $post (array) contains username, password and cypher
+     * @param   $post (array) contains username, password
      * @return  200 (success), 401 (denied) or 500 (server error, oops!)
      * */
     public function userLoginRegistration($post) {
-        $userAccess = array();
-        $post = HelpSetup::arraySanitization($post);
-        $cypher = $post["cypher"];
-        $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
-        $data = HelpSetup::arraySanitization($data);
+        $data = HelpSetup::arraySanitization($post);
 
         if(!is_array($data)) {
             HelpSetup::getModuleMethodName($moduleName, $methodeName);
@@ -271,7 +262,7 @@ class User extends Module {
         $username = $data["username"];
         $password = $data["password"];
 
-        if($username == "" || $password == "" || $cypher == "") {
+        if($username == "" || $password == "") {
             HelpSetup::getModuleMethodName($moduleName, $methodeName);
             $this->_insertAudit($moduleName, $methodeName, array("username"=>($data["username"] ? $data["username"] : "UNKNOWN USER")), ACCESS_DENIED, ($data["username"] ? $data["username"] : "UNKNOWN USER"));
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
@@ -354,23 +345,21 @@ class User extends Module {
 
     /*
      * Updates the password of a specific user after validating it.
-     * @param   $post (array) array of data coming from the frontend that contains encrypted data and the cypher.
+     * @param   $post (array) array of data coming from the frontend that contains username, password and confirm
+     *          password.
      * @return  number of updated record
      * */
     public function updatePassword($post) {
         $this->checkWriteAccess(ENCRYPTED_DATA);
         $post = HelpSetup::arraySanitization($post);
-        $cypher = intval($post["cypher"]);
-        $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
-        $data = HelpSetup::arraySanitization($data);
 
         $username = $this->opalDB->getUserDetails($post["OAUserId"]);
         $username = $username["username"];
-        $oldPassword = $data["oldPassword"];
-        $password = $data["password"];
-        $confirmPassword = $data["confirmPassword"];
+        $oldPassword = $post["oldPassword"];
+        $password = $post["password"];
+        $confirmPassword = $post["confirmPassword"];
 
-        if($username == "" || $password == "" || $oldPassword == "" || $confirmPassword == "" || $cypher == "" || $password == $oldPassword)
+        if($username == "" || $password == "" || $oldPassword == "" || $confirmPassword == "" || $password == $oldPassword)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing update information.");
 
         $result = $this->_passwordValidation($password, $confirmPassword);
@@ -411,20 +400,12 @@ class User extends Module {
     }
 
     /*
-     * Decypher user information, validate its password before updating it, updating the language and the role. All
-     * the updates are optionals.
-     * @oarams  $post (array) informations on the user encrypted with the cypher and the id.
+     * validate its password before updating it, updating the language and the role. All the updates are optionals.
+     * @oarams  $post (array) informations on the user and the id.
      * @return  true (boolean) means the update was successful.
      * */
     public function updateUser($post) {
-        $post = HelpSetup::arraySanitization($post);
-        $cypher = intval($post["cypher"]);
-        if($cypher == "") {
-            $this->checkWriteAccess();
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing cypher for update.");
-        }
-        $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
-        $data = HelpSetup::arraySanitization($data);
+        $data = HelpSetup::arraySanitization($post);
         $this->checkWriteAccess(array("userId"=>$data["id"], "roleId"=>$data["roleId"], "language"=>$data["language"]));
 
         $userDetails = $this->opalDB->getUserDetails($data["id"]);
@@ -432,7 +413,7 @@ class User extends Module {
         if(!is_array($userDetails))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid user.");
 
-        if(!AD_LOGIN_ACTIVE) {
+        if(!AD_LOGIN_ACTIVE || intval($userDetails["type"]) == 2) {
             if($data["password"] && $data["confirmPassword"]) {
                 $result = $this->_passwordValidation($data["password"], $data["confirmPassword"]);
                 if (count($result) > 0)
@@ -456,19 +437,11 @@ class User extends Module {
     /*
      * insert a new user into the OAUser table and its role in OAUserRole table after sanitizing and validating the
      * data. Depending if the AD system is active or not, the insertion is done differently.
-     * @params  $post (array) contains the username, password, confirmed password, role, language (all encrypted),
-     *          cypher.
+     * @params  $post (array) contains the username, password, confirmed password, role, language.
      * @returns void
      * */
     public function insertUser($post) {
-        $post = HelpSetup::arraySanitization($post);
-        $cypher = intval($post["cypher"]);
-        if($cypher == "") {
-            $this->checkWriteAccess();
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing cypher for creation.");
-        }
-        $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
-        $data = HelpSetup::arraySanitization($data);
+        $data = HelpSetup::arraySanitization($post);
         $this->checkWriteAccess(array("username"=>$data["username"], "roleId"=>$data["roleId"], "language"=>strtoupper($data["language"])));
 
         $username = $data["username"];
@@ -476,16 +449,17 @@ class User extends Module {
         $confirmPassword = $data["confirmPassword"];
         $roleId = $data["roleId"];
         $language = strtoupper($data["language"]);
+        $type = intval($data["type"]);
 
-        if($username == "" || $roleId == "" || $language == "")
+        if($username == "" || $roleId == "" || $language == "" || ($type != 1 && $type != 2))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data to create user.");
         if($language != "FR" && $language != "EN")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Wrong language.");
 
-        if(!AD_LOGIN_ACTIVE)
-            $userId = $this->_insertUserLegacy($username, $password, $confirmPassword, $language, $roleId);
+        if(!AD_LOGIN_ACTIVE || $type == 2)
+            $userId = $this->_insertUserWithPassword($type, $username, $password, $confirmPassword, $language, $roleId);
         else
-            $userId = $this->_insertUserAD($username, $language, $roleId);
+            $userId = $this->_insertUserAD($type, $username, $language, $roleId);
 
         $role = $this->opalDB->getRoleDetails($roleId);
         if(!is_array($role))
@@ -501,7 +475,7 @@ class User extends Module {
      *          $language (string) language of the user (EN, FR)
      * @return  userId (int) ID of the new user created
      * */
-    protected function _insertUserLegacy($username, $password, $confirmPassword, $language, $roleId) {
+    protected function _insertUserWithPassword($type, $username, $password, $confirmPassword, $language, $roleId) {
         if($password == "" || $confirmPassword == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data to create user.");
 
@@ -509,7 +483,7 @@ class User extends Module {
         if(count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
 
-        return $this->opalDB->insertUser($username, hash("sha256", $password . USER_SALT), $language, $roleId);
+        return $this->opalDB->insertUser($type, $username, hash("sha256", $password . USER_SALT), $language, $roleId);
     }
 
     /*
@@ -519,8 +493,8 @@ class User extends Module {
      *          $language (string) language of the user (EN, FR)
      * @return  userId (int) ID of the new user created
      * */
-    protected function _insertUserAD($username, $language, $roleId) {
-        return $this->opalDB->insertUser($username, hash("sha256", HelpSetup::generateRandomString() . USER_SALT), $language, $roleId);
+    protected function _insertUserAD($type, $username, $language, $roleId) {
+        return $this->opalDB->insertUser($type, $username, hash("sha256", HelpSetup::generateRandomString() . USER_SALT), $language, $roleId);
     }
 
     /*

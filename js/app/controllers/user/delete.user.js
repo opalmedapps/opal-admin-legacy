@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.user.delete', ['ui.bootstrap', 'ui.grid']).
 
-controller('user.delete', function ($scope, $uibModal, $uibModalInstance,  $filter, $sce, $state, userCollectionService, Encrypt, Session, ErrorHandler) {
+controller('user.delete', function ($scope, $uibModal, $uibModalInstance,  $filter, $sce, $state, userCollectionService, Session, ErrorHandler) {
 
 	// Submit delete
 	$scope.deleteUser = function () {

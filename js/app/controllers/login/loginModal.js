@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.loginModal', ['ngAnimate', 'ui.bootstrap']
 	/******************************************************************************
 	* Login controller 
 	*******************************************************************************/
-	controller('loginModal', function ($scope, $rootScope, $state, $filter, AUTH_EVENTS, AuthService, $uibModalInstance, Encrypt, Session) {
+	controller('loginModal', function ($scope, $rootScope, $state, $filter, AUTH_EVENTS, HTTP_CODE, AuthService, $uibModalInstance, Session) {
 
 		// Initialize login object
 		$scope.credentials = {
@@ -51,11 +51,7 @@ angular.module('opalAdmin.controllers.loginModal', ['ngAnimate', 'ui.bootstrap']
 
 		$scope.submitLogin = function (credentials) {
 			if ($scope.loginFormComplete()) {
-				var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103;
-				var encrypted = JSON.stringify({username: credentials.username, password: credentials.password});
-				encrypted = (Encrypt.encode(encrypted, cypher));
-
-				AuthService.login(encrypted, cypher).then(function (response) {
+				AuthService.login(credentials.username, credentials.password).then(function (response) {
 					var accessLevel = [];
 					angular.forEach(response.data.access, function (row) {
 						accessLevel[row["ID"]] = row["access"];
@@ -68,11 +64,44 @@ angular.module('opalAdmin.controllers.loginModal', ['ngAnimate', 'ui.bootstrap']
 					$rootScope.setSiteLanguage(response.data.user);
 					$uibModalInstance.close();
 				}).catch(function(err) {
-					// $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
-					$scope.bannerMessage = $filter('translate')('LOGIN.ERROR_401');
+					$rootScope.$broadcast(AUTH_EVENTS.loginFailed);
+
+					switch(err.status) {
+					case HTTP_CODE.badRequestError:
+						$errMsg = $filter('translate')('LOGIN.ERROR_400');
+						break;
+					case HTTP_CODE.notAuthenticatedError:
+						$errMsg = $filter('translate')('LOGIN.ERROR_401');
+						break;
+					case HTTP_CODE.forbiddenAccessError:
+						$errMsg = $filter('translate')('LOGIN.ERROR_403');
+						break;
+					case HTTP_CODE.notFoundError:
+						$errMsg = $filter('translate')('LOGIN.ERROR_404');
+						break;
+					case HTTP_CODE.sessionTimeoutError:
+						$errMsg = $filter('translate')('LOGIN.ERROR_419');
+						break;
+					case HTTP_CODE.loginTimeoutError:
+						$errMsg = $filter('translate')('LOGIN.ERROR_440');
+						break;
+					case HTTP_CODE.internalServerError:
+						$errMsg = $filter('translate')('LOGIN.ERROR_500');
+						break;
+					default:
+						$errMsg = $filter('translate')('LOGIN.UNKNOWN_ERROR');
+					}
+
+					$scope.bannerMessage = $errMsg;
 					$scope.setBannerClass('danger');
 					$scope.shakeForm();
 					$scope.showBanner();
+
+/*					// $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
+					$scope.bannerMessage = $filter('translate')('LOGIN.ERROR_401');
+					$scope.setBannerClass('danger');
+					$scope.shakeForm();
+					$scope.showBanner();*/
 				});
 			}
 		};
