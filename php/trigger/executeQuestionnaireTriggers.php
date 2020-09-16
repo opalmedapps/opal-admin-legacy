@@ -36,12 +36,12 @@ if(preg_match("/PHPSESSID=(.*?)(?:;|\r\n)/", $result, $matches)){
 }
 
    
-$trigger = new Trigger();
+$trigger = new Trigger(true);
 $sourceModuleId = MODULE_QUESTIONNAIRE; // define what type of trigger this is
 
 // Need patientQuestionnaireSerNum from caller
 //$trigger->executeTrigger($_POST, $sourceModuleId);
-$trigger->executeTrigger(array("id" => 12), $sourceModuleId);
+$trigger->executeTrigger(array("id" => 200), $sourceModuleId);
 
 header('Content-Type: application/javascript');
 http_response_code(HTTP_STATUS_SUCCESS);

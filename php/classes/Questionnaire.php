@@ -437,8 +437,8 @@ class Questionnaire extends QuestionnaireModule {
         // $this->checkReadAccess();  // don't know if this is needed yet
 
         $questionnaireResults = $this->questionnaireDB->getQuestionnaireResults($patientQuestionnaireSer);
-        $questionnaireId = $questionnaireResults[0]["questionnaire_id"];
-        $patientId = $questionnaireResults[0]["patient_id"];
+        $questionnaireId = $questionnaireResults[0][0]["questionnaire_id"];
+        $patientId = $questionnaireResults[0][0]["patient_id"];
 
         $currentAnswers = $questionnaireResults[3];
         

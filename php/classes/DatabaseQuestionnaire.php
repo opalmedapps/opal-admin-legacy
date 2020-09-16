@@ -1160,7 +1160,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  questionnaire results (array)
      * */
     function getQuestionnaireResults($patientQuestionnaireSer) {
-        return $this->_fetch(SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_INFO, array(
+        return $this->_fetchAllStoredProcedure(SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_INFO, array(
             array("parameter"=>":pqser","variable"=>$patientQuestionnaireSer,"data_type"=>PDO::PARAM_INT),
         ));
     }
@@ -1172,7 +1172,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  questionnaire details (array)
      * */
     function getLastAnsweredQuestionnaire($questionnaireId, $patientId) {
-        return $this->_fetch(SQL_QUESTIONNAIRE_GET_PREV_QUESTIONNAIRE, array(
+        return $this->_fetchAllStoredProcedure(SQL_QUESTIONNAIRE_GET_PREV_QUESTIONNAIRE, array(
             array("parameter"=>":questionnaireid","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":ptid","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
         ));

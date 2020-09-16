@@ -60,7 +60,7 @@ require('../lib/JWadhams/JsonLogic.php');
 
         switch ($sourceModuleId) {
             case MODULE_QUESTIONNAIRE:
-                $questionnaire = new Questionnaire();
+                $questionnaire = new Questionnaire(true);
                 return $questionnaire->getQuestionnaireResults($id); /// ultimately there's a stored procedure for this
                 break;
             
