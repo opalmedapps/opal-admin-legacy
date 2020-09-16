@@ -140,6 +140,8 @@ require('../lib/JWadhams/JsonLogic.php');
      * */
     public function executeTrigger($postData, $sourceModuleId) {
 
+        $result = array();
+
         $validatedData = $this->_validateTrigger($postData, $sourceModuleId);
         $id = $validatedData["id"];
         $sourceModuleId = $validatedData["module_id"];
@@ -170,7 +172,9 @@ require('../lib/JWadhams/JsonLogic.php');
             }
         }
 
-        return true;
+        $result["pass"] = true;
+
+        return $result;
     }
 
  }
