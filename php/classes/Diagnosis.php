@@ -216,7 +216,7 @@ class Diagnosis extends Module {
     }
 
     /*
-     * Get the list of diagnosis for a specific patient
+     * Get the list of diagnosis for a specific patient after validating the data.
      * @params  $post : array - contains the MRN of the patient
      * @return  array - contains all the diagnoses of a specific patient.
      * */
