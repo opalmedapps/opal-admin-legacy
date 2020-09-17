@@ -132,6 +132,7 @@ RewriteRule ^diagnosis-translation/get/diagnosis-translation-details php/diagnos
 RewriteRule ^diagnosis-translation/get/diagnosis-translations php/diagnosis-translation/get.diagnosis_translations.php [QSA,L]
 RewriteRule ^diagnosis-translation/get/diagnoses php/diagnosis-translation/get.diagnoses.php [QSA,L]
 RewriteRule ^diagnosis-translation/get/educational-materials php/diagnosis-translation/get.educational.materials.php [QSA,L]
+RewriteRule ^diagnosis-translation/get/patient-diagnoses php/diagnosis-translation/get.patient.diagnoses.php [QSA,L]
 RewriteRule ^diagnosis-translation/insert/diagnosis-translation php/diagnosis-translation/insert.diagnosis_translation.php [QSA,L]
 RewriteRule ^diagnosis-translation/update/diagnosis-translation php/diagnosis-translation/update.diagnosis_translation.php [QSA,L]
 

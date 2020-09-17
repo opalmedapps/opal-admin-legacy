@@ -1873,6 +1873,11 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /*
+     * Update a diagnosis code
+     * @params  $toUpdate : array - details of the diagnosis to update.
+     * @return  int - number of row affected
+     * */
     function updateDiagnosisTranslation($toUpdate) {
         $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
         $toUpdate["SessionId"] = $this->getSessionId();
@@ -1880,6 +1885,12 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_updateRecordIntoTable(OPAL_UPDATE_DIAGNOSIS_TRANSLATION, $toUpdate);
     }
 
+    /*
+     * Delete a series diagnosis code based on a specific diagnosis translation ID
+     * @params  $diagnosisTranslationId : int - ID of the diagnosis translation
+     *          $sourceIds : array - list of source IDS
+     * @return  int - number of row affected
+     * */
     function deleteDiagnosisCodes($diagnosisTranslationId, $sourceIds) {
         $sql = str_replace("%%LIST_SOURCES_UIDS%%",implode(", ", $sourceIds), OPAL_DELETE_DIAGNOSIS_CODES);
 
@@ -1888,15 +1899,63 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /*
+     * Delete a all diagnosis code based on a specific diagnosis translation ID
+     * @params  $diagnosisTranslationId : int - ID of the diagnosis translation
+     * @return  int - number of row affected
+     * */
     function deleteAllDiagnosisCodes($diagnosisTranslationId) {
         return $this->_execute(OPAL_DELETE_ALL_DIAGNOSIS_CODES, array(
             array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisTranslationId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
+    /*
+     * Delete a specific diagnosis translation
+     * @params  $diagnosisTranslationId : int - ID of the diagnosis translation to delete
+     * @return  int - number of row affected
+     * */
     function deleteDiagnosisTranslation($diagnosisTranslationId) {
         return $this->_execute(OPAL_DELETE_DIAGNOSIS_TRANSLATION, array(
             array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisTranslationId,"data_type"=>PDO::PARAM_INT),
         ));
+    }
+
+    /*
+     * Get the list patient diagnoses. MRN and site name are mandatory. If there is no source, ignore it. If there is
+     * a source, add it in the SQL as = if include value is 1 or absent, and != if value is anthing else than 1. Start
+     * and end date use the proper value or current date if no value.
+     * @params  $mrn : string - medical record number of the patient
+     *          $site : string - name of the site
+     *          $source : string - source database
+     *          $include : int - determines if != or =
+     *          $startDate : string - format Y-m-d. Start date of research
+     *          $endDate : string - format Y-m-d. End date of research
+     * @return  array - List of diagnoses found.
+     * */
+    function getPatientDiagnoses($mrn, $site, $source, $include, $startDate, $endDate) {
+        $data = array(
+            array("parameter"=>":MRN","variable"=>$mrn,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":site","variable"=>$site,"data_type"=>PDO::PARAM_STR),
+        );
+        $sql = OPAL_GET_PATIENT_DIAGNOSIS;
+        if($source == "")
+            $sql = str_replace("%%SOURCE%%", "", $sql);
+        else {
+            $sql = str_replace("%%OPERATOR%%", $include, str_replace("%%SOURCE%%", OPAL_SOURCE_DATABASE, $sql));
+            array_push($data, array("parameter"=>":SourceDatabaseName","variable"=>$source,"data_type"=>PDO::PARAM_STR));
+        }
+
+        if($startDate == SQL_CURRENT_DATE)
+            $sql = str_replace(":startDate", $startDate, $sql);
+        else
+            array_push($data, array("parameter"=>":startDate","variable"=>$startDate,"data_type"=>PDO::PARAM_STR));
+
+        if($endDate == SQL_CURRENT_DATE)
+            $sql = str_replace(":endDate", $endDate, $sql);
+        else
+            array_push($data, array("parameter"=>":endDate","variable"=>$endDate,"data_type"=>PDO::PARAM_STR));
+
+        return $this->_fetchAll($sql, $data);
     }
 }
