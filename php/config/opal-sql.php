@@ -92,6 +92,8 @@ define("OPAL_OA_ROLE_MODULE_TABLE","oaRoleModule");
 define("OPAL_SOURCE_DATABASE_TABLE","SourceDatabase");
 define("OPAL_HOSPITAL_MAP_TABLE","HospitalMap");
 define("OPAL_ALERT_TABLE","alert");
+define("OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE","Patient_Hospital_Identifier");
+define("OPAL_DIAGNOSIS_TABLE","Diagnosis");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -903,3 +905,15 @@ define("OPAL_DELETE_ALL_DIAGNOSIS_CODES","
 define("OPAL_DELETE_DIAGNOSIS_TRANSLATION","
     DELETE FROM ".OPAL_DIAGNOSIS_TRANSLATION_TABLE." WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum;
 ");
+
+define("OPAL_GET_PATIENT_DIAGNOSIS","
+    SELECT d.DiagnosisCode, d.Description_EN AS CodeDescription_EN, getDiagnosisDescription(d.DiagnosisCode,'EN') AS Description_EN,
+    d.Description_FR AS CodeDescription_FR, getDiagnosisDescription(d.DiagnosisCode,'FR') AS Description_FR, d.CreationDate, d.LastUpdated
+    FROM ".OPAL_DIAGNOSIS_TABLE." d RIGHT JOIN ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." p ON p.PatientSerNum = d.PatientSerNum
+    RIGHT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s ON s.SourceDatabaseSerNum = d.SourceDatabaseSerNum WHERE p.MRN = :MRN
+    AND p.Hospital_Identifier_Type_Code = :site
+    %%SOURCE%%
+    AND DATE(d.CreationDate) >= :startDate AND DATE(d.CreationDate) <= :endDate ORDER BY d.CreationDate DESC
+");
+
+define("OPAL_SOURCE_DATABASE","AND s.SourceDatabaseName %%OPERATOR%% :SourceDatabaseName");

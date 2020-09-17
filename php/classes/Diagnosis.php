@@ -214,4 +214,47 @@ class Diagnosis extends Module {
         $this->checkReadAccess();
         return $this->_getListEduMaterial();
     }
+
+    /*
+     * Get the list of diagnosis for a specific patient after validating the data.
+     * @params  $post : array - contains the MRN of the patient
+     * @return  array - contains all the diagnoses of a specific patient.
+     * */
+    public function getPatientDiagnoses($post) {
+        $this->checkReadAccess();
+        $post = HelpSetup::arraySanitization($post);
+        if(!is_array($post))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Empty request.");
+
+        if(!$post["mrn"] || $post["mrn"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Medical record number is missing.");
+        if(!$post["site"] || $post["site"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Site is missing.");
+        if(!array_key_exists("source", $post) || $post["source"] == "")
+            $include = null;
+        else
+            $include = ((!array_key_exists("include", $post) || intval($post["include"]) == 1) ? "=" : "!=");
+
+        echo "$include\r\n";
+        if($post["startDate"] && $post["startDate"] != "") {
+            if(!HelpSetup::verifyDate($post["startDate"], false, 'Y-m-d'))
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid start date.");
+            else
+                $startDate = date("Y-m-d", $post["startDate"]);
+        } else
+            $startDate = SQL_CURRENT_DATE;
+
+        if($post["endDate"] && $post["endDate"] != "") {
+            if(!HelpSetup::verifyDate($post["endDate"], false, 'Y-m-d'))
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid end date.");
+            else
+                $endDate = date("Y-m-d", $post["endDate"]);
+        } else
+            $endDate = SQL_CURRENT_DATE;
+
+        if($post["endDate"] && !HelpSetup::verifyDate($post["endDate"]))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid start date.");
+
+        return $this->opalDB->getPatientDiagnoses($post["mrn"], $post["site"], $post["source"], $include, $startDate, $endDate);
+    }
 }
