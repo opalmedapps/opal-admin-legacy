@@ -1899,4 +1899,30 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisTranslationId,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    function getPatientDiagnoses($mrn, $site, $source, $include, $startDate, $endDate) {
+        $data = array(
+            array("parameter"=>":MRN","variable"=>$mrn,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":site","variable"=>$site,"data_type"=>PDO::PARAM_STR),
+        );
+        $sql = OPAL_GET_PATIENT_DIAGNOSIS;
+        if($source == "")
+            $sql = str_replace("%%SOURCE%%", "", $sql);
+        else {
+            $sql = str_replace("%%OPERATOR%%", $include, str_replace("%%SOURCE%%", OPAL_SOURCE_DATABASE, $sql));
+            array_push($data, array("parameter"=>":SourceDatabaseName","variable"=>$source,"data_type"=>PDO::PARAM_STR));
+        }
+
+        if($startDate == SQL_CURRENT_DATE)
+            $sql = str_replace(":startDate", $startDate, $sql);
+        else
+            array_push($data, array("parameter"=>":startDate","variable"=>$startDate,"data_type"=>PDO::PARAM_STR));
+
+        if($endDate == SQL_CURRENT_DATE)
+            $sql = str_replace(":endDate", $endDate, $sql);
+        else
+            array_push($data, array("parameter"=>":endDate","variable"=>$endDate,"data_type"=>PDO::PARAM_STR));
+
+        return $this->_fetchAll($sql, $data);
+    }
 }
