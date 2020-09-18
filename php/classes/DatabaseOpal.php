@@ -1914,22 +1914,29 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
+     * Get patient serial number in OpalDB from a patient ID
+     * @params  string : $patientId - patient id 
+     * @return  patientSerNum (array)
+     * */
+    function getPatientSerNum($patientId) {
+        return $this->_fetch(OPAL_GET_PATIENT_SERNUM, array(
+            array("parameter"=>":patientId","variable"=>$patientId,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
      * Publish a patient questionnaire
-     * @params  int : $questionnaireId - id of questionnaire (from Questionnaire DB)
-     *          int : $patientId - patient id
+     * @params  int : $questionnaireControlSerNum - the questionnaire in OpalDB
+     *          int : $patientSerNum - patient serial in OpalDB
      * @return int - ID of the record inserted
      * */
-    function publishQuestionnaire($questionnaireId, $patientId) {
-        // NOTE: Questionnaire table needs QuestionnaireControlSerNum & PatientSerNum
-        // Thus, need a WHERE clause in SQL to link current variables to what's needed
-        // NOTE 2: questionnaireId is actually QuestionnaireDBSerNum in QuestionnaireControl table in OpalDB
+    function publishQuestionnaire($questionnaireControlSerNum, $patientSerNum) {
         $toSubmit = array(
-            "QuestionnaireId"=>$questionnaireId,
-            "PatientId"=>$patientId,
+            "QuestionnaireControlSerNum"=>$questionnaireControlSerNum,
+            "PatientSerNum"=>$patientSerNum,
             "DateAdded"=>date("Y-m-d H:i:s")
         );
         return $this->_insertRecordIntoTable(OPAL_QUESTIONNAIRE_TABLE, $toSubmit);
     }
-
 
 }

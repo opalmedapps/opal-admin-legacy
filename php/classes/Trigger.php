@@ -90,11 +90,12 @@ require('../lib/JWadhams/JsonLogic.php');
     public function triggerEvent($trigger, $patientId) {
         switch ($trigger['eventType']) {
             case TRIGGER_EVENT_PUBLISH: // only one for now
-                $this->publish($trigger, $patientId);
+                return $this->publish($trigger, $patientId);
                 break;
             
             default:
                 # code...
+                return false;
                 break;
         }
     }
@@ -106,10 +107,15 @@ require('../lib/JWadhams/JsonLogic.php');
      * @return  
      * */
     public function publish($trigger, $patientId) {
+        $reassignedPatient = $this->opalDB->getPatientSerNum($patientId);
+        if (!$reassignedPatient)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Could not find any patient with ID: $patientId");
+        
+        $patientSerNum = $reassignedPatient[0];
         switch ($trigger["targetModuleId"]) {
             case MODULE_QUESTIONNAIRE:
-                //$this->opalDB->publishQuestionnaire($trigger["targetContentId"], $patientId); // commented out for now
                 echo "PUBLISHED QUESTIONNAIRE!";
+                return $this->opalDB->publishQuestionnaire($trigger["targetContentId"], $patientSer); 
                 break;
             
             case MODULE_ALERT:
@@ -117,7 +123,7 @@ require('../lib/JWadhams/JsonLogic.php');
                 break;
             
             case MODULE_EDU_MAT:
-                //$this->opalDB->publishEducationalMaterial($trigger["targetContentId"], $patientId); // Not done yet
+                //$this->opalDB->publishEducationalMaterial($trigger["targetContentId"], $patientSerNum); // Not done
                 break;
 
             case MODULE_POST:
@@ -126,6 +132,7 @@ require('../lib/JWadhams/JsonLogic.php');
             
             default:
                 # code...
+                return false;
                 break;
         }
 
@@ -140,7 +147,7 @@ require('../lib/JWadhams/JsonLogic.php');
      * */
     public function executeTrigger($postData, $sourceModuleId) {
 
-        $result = array();
+        $eventTriggers = array();
 
         $validatedData = $this->_validateTrigger($postData, $sourceModuleId);
         $id = $validatedData["id"];
@@ -162,19 +169,22 @@ require('../lib/JWadhams/JsonLogic.php');
                     break;
             }
         }
+
+        else 
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Could not find any data with this ID: $id");
         
         // Retrieve all triggers 
         $triggers = $this->getTriggers($sourceContentId, $sourceModuleId);
 
         foreach ($triggers as $index => $trigger) {
             if($this->checkLogic($trigger, $dataToCheck)) { // if trigger should be fired
-                $this->triggerEvent($trigger, $patientId); 
+                $eventResponse = $this->triggerEvent($trigger, $patientId); 
+                if ($eventResponse)
+                    array_push($eventTriggers, $trigger);
             }
         }
 
-        $result["pass"] = true;
-
-        return $result;
+        return $eventTriggers;
     }
 
  }

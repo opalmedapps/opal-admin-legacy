@@ -31,6 +31,7 @@ define("OPAL_ALIAS_EXPRESSION_MH_TABLE","AliasExpressionMH");
 define("OPAL_DIAGNOSIS_TRANSLATION_MH_TABLE","DiagnosisTranslationMH");
 define("OPAL_DIAGNOSIS_CODE_MH_TABLE","DiagnosisCodeMH");
 define("OPAL_QUESTIONNAIRE_CONTROL_TABLE","QuestionnaireControl");
+define("OPAL_QUESTIONNAIRE_TABLE","Questionnaire");
 define("OPAL_QUESTIONNAIRE_MH_TABLE","QuestionnaireMH");
 define("OPAL_EMAIL_CONTROL_MH_TABLE","EmailControlMH");
 define("OPAL_HOSPITAL_MAP_MH_TABLE","HospitalMapMH");
@@ -907,4 +908,8 @@ define("OPAL_DELETE_DIAGNOSIS_TRANSLATION","
 
 define("OPAL_GET_TRIGGERS_LIST","
     SELECT sourceContentId, sourceModuleId, onCondition, eventType, targetContentId, targetModuleId FROM ".OPAL_TRIGGER_TABLE." WHERE active = ".ACTIVE_RECORD." AND sourceContentId = :contentId AND sourceModuleId = :moduleId;
+");
+
+define("OPAL_GET_PATIENT_SERNUM","
+    SELECT getPatientSerNum(:patientId);
 ");
