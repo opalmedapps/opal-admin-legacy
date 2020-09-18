@@ -607,5 +607,5 @@ define("SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_INFO","
 ");
 
 define("SQL_QUESTIONNAIRE_GET_PREV_QUESTIONNAIRE","
-    CALL getLastCompletedQuestionnaireByPatientId(:questionnaireid, :ptid);
+    CALL getLastAnsweredQuestionnaire(:questionnaireid, :ptser);
 ");

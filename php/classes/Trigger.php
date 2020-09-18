@@ -84,13 +84,13 @@ require('../lib/JWadhams/JsonLogic.php');
     /*
      * Execute event method when trigger logic passes 
      * @params  array  $trigger : current trigger entry
-     * @params  integer  $patientId : patient id 
+     * @params  integer  $patientSerNum : patient serial 
      * @return  
      * */
-    public function triggerEvent($trigger, $patientId) {
+    public function triggerEvent($trigger, $patientSerNum) {
         switch ($trigger['eventType']) {
             case TRIGGER_EVENT_PUBLISH: // only one for now
-                return $this->publish($trigger, $patientId);
+                return $this->publish($trigger, $patientSerNum);
                 break;
             
             default:
@@ -103,19 +103,15 @@ require('../lib/JWadhams/JsonLogic.php');
     /*
      * An event type method for publishing (i.e. inserting) content
      * @params  array  $trigger : current trigger entry
-     * @params  integer  $patientId : patient id 
+     * @params  integer  $patientSerNum : patient serial
      * @return  
      * */
-    public function publish($trigger, $patientId) {
-        $reassignedPatient = $this->opalDB->getPatientSerNum($patientId);
-        if (!$reassignedPatient)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Could not find any patient with ID: $patientId");
+    public function publish($trigger, $patientSerNum) {
         
-        $patientSerNum = $reassignedPatient[0];
         switch ($trigger["targetModuleId"]) {
             case MODULE_QUESTIONNAIRE:
                 echo "PUBLISHED QUESTIONNAIRE!";
-                return $this->opalDB->publishQuestionnaire($trigger["targetContentId"], $patientSer); 
+                return $this->opalDB->publishQuestionnaire($trigger["targetContentId"], $patientSerNum); 
                 break;
             
             case MODULE_ALERT:
@@ -154,7 +150,7 @@ require('../lib/JWadhams/JsonLogic.php');
         $sourceModuleId = $validatedData["module_id"];
 
         $sourceContentId = "";
-        $patientId = ""; 
+        $patientSerNum = "";
 
         $dataToCheck = $this->getData($id, $sourceModuleId); 
 
@@ -162,7 +158,7 @@ require('../lib/JWadhams/JsonLogic.php');
             switch ($sourceModuleId) {
                 case MODULE_QUESTIONNAIRE:
                     $sourceContentId = $dataToCheck["questionnaire_id"]; // to pull triggers related to this questionnaire
-                    $patientId = $dataToCheck["patient_id"]; // which patient to trigger event on
+                    $patientSerNum = $dataToCheck["patient_ser"]; // which patient to trigger event on
                     break;
 
                 default:
@@ -178,7 +174,7 @@ require('../lib/JWadhams/JsonLogic.php');
 
         foreach ($triggers as $index => $trigger) {
             if($this->checkLogic($trigger, $dataToCheck)) { // if trigger should be fired
-                $eventResponse = $this->triggerEvent($trigger, $patientId); 
+                $eventResponse = $this->triggerEvent($trigger, $patientSerNum); 
                 if ($eventResponse)
                     array_push($eventTriggers, $trigger);
             }

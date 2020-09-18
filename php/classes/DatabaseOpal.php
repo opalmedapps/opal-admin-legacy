@@ -1914,17 +1914,6 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Get patient serial number in OpalDB from a patient ID
-     * @params  string : $patientId - patient id 
-     * @return  patientSerNum (array)
-     * */
-    function getPatientSerNum($patientId) {
-        return $this->_fetch(OPAL_GET_PATIENT_SERNUM, array(
-            array("parameter"=>":patientId","variable"=>$patientId,"data_type"=>PDO::PARAM_STR),
-        ));
-    }
-
-    /*
      * Publish a patient questionnaire
      * @params  int : $questionnaireControlSerNum - the questionnaire in OpalDB
      *          int : $patientSerNum - patient serial in OpalDB

@@ -1168,13 +1168,13 @@ class DatabaseQuestionnaire extends DatabaseAccess
     /*
      * Returns questionnaire info (including answers) from a questionnaire
      * @params  int : $questionnaireId - id of the particular questionnaire 
-     * @params  int : $patientId - id of the patient 
+     * @params  int : $patientSerNum - serial of the patient 
      * @return  questionnaire details (array)
      * */
-    function getLastAnsweredQuestionnaire($questionnaireId, $patientId) {
+    function getLastAnsweredQuestionnaire($questionnaireId, $patientSerNum) {
         return $this->_fetchAllStoredProcedure(SQL_QUESTIONNAIRE_GET_PREV_QUESTIONNAIRE, array(
             array("parameter"=>":questionnaireid","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":ptid","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":ptser","variable"=>$patientSerNum,"data_type"=>PDO::PARAM_INT),
         ));
     }
 }

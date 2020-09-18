@@ -431,19 +431,19 @@ class Questionnaire extends QuestionnaireModule {
      * Gets questionnaire answers
      *
      * @param integer $patientQuestionnaireSer : the patient-questionnaire relation serial number
-     * @return array questionnaire results along with explicit questionnaire ID and patient ID 
+     * @return array questionnaire results along with explicit questionnaire ID and patientSerNum 
      */
     public function getQuestionnaireResults($patientQuestionnaireSer) { 
         // $this->checkReadAccess();  // don't know if this is needed yet
 
         $questionnaireResults = $this->questionnaireDB->getQuestionnaireResults($patientQuestionnaireSer);
         $questionnaireId = $questionnaireResults[0][0]["questionnaire_id"];
-        $patientId = $questionnaireResults[0][0]["patient_id"];
+        $patientSerNum = $questionnaireResults[0][0]["externalId"];
 
         $currentAnswers = $questionnaireResults[3];
         
         // also need to get answers from the questionnaire just before the current (if exists)
-        $prevQuestionnaire = $this->questionnaireDB->getLastAnsweredQuestionnaire($questionnaireId, $patientId);
+        $prevQuestionnaire = $this->questionnaireDB->getLastAnsweredQuestionnaire($questionnaireId, $patientSerNum);
         $prevAnswers = array();
         if (!empty($prevQuestionnaire)) {
             $prevPatientQuestionnaireSer = $prevQuestionnaire[0]["PatientQuestionnaireSerNum"];
@@ -453,7 +453,7 @@ class Questionnaire extends QuestionnaireModule {
 
         return array(
             "questionnaire_id"=>$questionnaireId,
-            "patient_id"=>$patientId,
+            "patient_ser"=>$patientSerNum,
             "answers"=>array("current"=>$currentAnswers, "previous"=>$prevAnswers)
         );
     }
