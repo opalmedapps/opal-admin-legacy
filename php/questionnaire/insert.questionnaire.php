@@ -3,6 +3,8 @@
 include_once('questionnaire.inc');
 $OAUserId = strip_tags($_POST['OAUserId']);
 
+var_dump($_POST);
+
 $questionnaire = new Questionnaire($OAUserId);
 $questionnaireArray = $questionnaire->validateAndSanitize($_POST);
 
