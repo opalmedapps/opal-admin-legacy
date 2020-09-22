@@ -280,12 +280,13 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	// submit
 	$scope.submitQuestionnaire = function () {
 		if ($scope.checkForm()) {
-			console.log($scope.newQuestionnaire);
-			// Submit
+
+			var formatData = copyQuestionnaireData($scope.newQuestionnaire);
+
 			$.ajax({
 				method: "POST",
 				url: "questionnaire/insert/questionnaire",
-				data: $scope.newQuestionnaire,
+				data: formatData,
 				success: function () {
 				},
 				error: function (err) {
@@ -297,6 +298,29 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 			});
 		}
 	};
+
+	function copyQuestionnaireData(oldData) {
+		var newFormat = {
+			OAUserId : oldData.OAUserId,
+			title_EN : oldData.title_EN,
+			title_FR : oldData.title_FR,
+			description_EN : oldData.description_EN,
+			description_FR : oldData.description_FR,
+			private : oldData.private,
+			questions : []
+		};
+		var temp;
+		angular.forEach(oldData.questions, function(item) {
+			temp = {
+				ID : item.ID,
+				order : item.order,
+				optional : item.optional,
+				typeId : item.typeId,
+			};
+			newFormat.questions.push(temp);
+		});
+		return newFormat;
+	}
 
 	var fixmeTop = $('.summary-fix').offset().top;
 	$(window).scroll(function () {
