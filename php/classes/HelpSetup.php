@@ -82,6 +82,8 @@ class HelpSetup {
      * */
     public static function arraySanitization($arrayForm) {
         $sanitizedArray = array();
+        if(!is_array($arrayForm))
+            return preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $arrayForm);
         foreach($arrayForm as $key=>$value) {
             $key = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $key);
             if(is_array($value))
