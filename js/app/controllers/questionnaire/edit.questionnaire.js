@@ -273,12 +273,14 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 			if ($scope.checkForm()) {
 				$scope.questionnaire.OAUserId = OAUserId;
 
+				var formatData = copyQuestionnaireData($scope.questionnaire);
+
 				// ajax POST
 				$.ajax({
 					type: "POST",
 					url: "questionnaire/update/questionnaire",
-					data: $scope.questionnaire,
-					success: function (response) {
+					data: formatData,
+					success: function () {
 						$scope.setBannerClass('success');
 						$scope.$parent.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.SUCCESS_UPDATE');
 						$scope.showBanner();
@@ -292,5 +294,30 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 				});
 			}
 		};
+
+		function copyQuestionnaireData(oldData) {
+			var newFormat = {
+				ID : oldData.ID,
+				OAUserId : oldData.OAUserId,
+				title_EN : oldData.title_EN,
+				title_FR : oldData.title_FR,
+				description_EN : oldData.description_EN,
+				description_FR : oldData.description_FR,
+				private : oldData.private,
+				final : oldData.final,
+				questions : []
+			};
+			var temp;
+			angular.forEach(oldData.questions, function(item) {
+				temp = {
+					ID : item.ID,
+					order : item.order,
+					optional : item.optional,
+					typeId : item.typeId,
+				};
+				newFormat.questions.push(temp);
+			});
+			return newFormat;
+		}
 
 	});
