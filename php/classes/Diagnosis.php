@@ -216,8 +216,11 @@ class Diagnosis extends Module {
     }
 
     /*
-     * Get the list of diagnosis for a specific patient after validating the data.
-     * @params  $post : array - contains the MRN of the patient
+     * Get the list of diagnosis for a specific patient after validating the data. MRN and site name are mandatory. If
+     * there is no source, ignore it. If there is a source, add it in the SQL as = if include value is 1 or absent, and
+     * != if value is anthing else than 1. Start and end date use the proper value or current date if no value.
+     *
+     * @params  $post : array - contains the MRN of the patient, the site, source, include, start date and end date.
      * @return  array - contains all the diagnoses of a specific patient.
      * */
     public function getPatientDiagnoses($post) {
@@ -226,17 +229,16 @@ class Diagnosis extends Module {
         if(!is_array($post))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Empty request.");
 
-        if(!$post["mrn"] || $post["mrn"] == "")
+        if(!array_key_exists("mrn", $post) || $post["mrn"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Medical record number is missing.");
-        if(!$post["site"] || $post["site"] == "")
+        if(!array_key_exists("site", $post) || $post["site"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Site is missing.");
         if(!array_key_exists("source", $post) || $post["source"] == "")
             $include = null;
         else
             $include = ((!array_key_exists("include", $post) || intval($post["include"]) == 1) ? "=" : "!=");
 
-        echo "$include\r\n";
-        if($post["startDate"] && $post["startDate"] != "") {
+        if(array_key_exists("startDate", $post) && $post["startDate"] != "") {
             if(!HelpSetup::verifyDate($post["startDate"], false, 'Y-m-d'))
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid start date.");
             else
@@ -244,7 +246,7 @@ class Diagnosis extends Module {
         } else
             $startDate = SQL_CURRENT_DATE;
 
-        if($post["endDate"] && $post["endDate"] != "") {
+        if(array_key_exists("endDate", $post) && $post["endDate"] != "") {
             if(!HelpSetup::verifyDate($post["endDate"], false, 'Y-m-d'))
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid end date.");
             else
@@ -252,9 +254,154 @@ class Diagnosis extends Module {
         } else
             $endDate = SQL_CURRENT_DATE;
 
-        if($post["endDate"] && !HelpSetup::verifyDate($post["endDate"]))
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid start date.");
-
         return $this->opalDB->getPatientDiagnoses($post["mrn"], $post["site"], $post["source"], $include, $startDate, $endDate);
+    }
+
+    /*
+     * Insert a patient diagnosis.
+     * */
+    public function insertPatientDiagnosis($post) {
+        return $this->_replacePatientDiagnosis($post);
+    }
+
+    public function updatePatientDiagnosis($post) {
+        return $this->_replacePatientDiagnosis($post, false);
+    }
+
+    protected function _replacePatientDiagnosis($post, $isInsert = true) {
+        $this->checkWriteAccess($post);
+        $patientSite = null;
+        $source = null;
+
+        $errCodes = $this->_validatePatientDiagnosis($post, $patientSite, $source);
+        if($errCodes != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, $errCodes);
+
+        $toInsert = array(
+            "PatientSerNum"=>$patientSite["PatientSerNum"],
+            "SourceDatabaseSerNum"=>$source["SourceDatabaseSerNum"],
+            "DiagnosisAriaSer"=>$post["rowId"],
+            "DiagnosisCode"=>$post["code"],
+            "Description_EN"=>$post["descriptionEn"],
+            "Description_FR"=>$post["descriptionFr"],
+            "Stage"=>$post["stage"],
+            "StageCriteria"=>$post["stageCriteria"],
+        );
+
+        if($isInsert)
+            $toInsert["CreationDate"] = $post["creationDate"];
+
+        $currentPatientDiagnosis = $this->opalDB->getPatientDiagnosisId($patientSite["PatientSerNum"], $source["SourceDatabaseSerNum"], $post["rowId"]);
+        if(count($currentPatientDiagnosis) <= 1) {
+            if(count($currentPatientDiagnosis) == 1) {
+                $currentPatientDiagnosis = $currentPatientDiagnosis[0];
+                $toInsert["DiagnosisSerNum"] = $currentPatientDiagnosis["DiagnosisSerNum"];
+                return $this->opalDB->insertPatientDiagnosis($toInsert);
+            }
+            else
+                return $this->opalDB->insertPatientDiagnosis($toInsert);
+        }
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates patient diagnosis found.");
+        return false;
+    }
+
+    /*
+     * Validate a patient diagnosis on each field.
+     * @params  $post : array - Contains the following information
+     *                          mrn : Medical Record Number of the patient (mandatory)
+     *                          site : Site acronym of the establishment (mandatory)
+     *                          source : Source database of the diagnosis (mandatory)
+     *                          rowId : External ID of the diagnosis (mandatory)
+     *                          code : Diagnosis code (mandatory)
+     *                          creationDate : creation date of the record (mandatory)
+     *                          descriptionEn : english description of the diagnosis (mandatory)
+     *                          stage : no idea, but its for Aria (optional)
+     *                          stageCriteria : no idea, but its for Aria (optional)
+     * @return  $errCode : int - error code.
+     *          $patientSite : array (reference) - site info
+     *          $source : array (reference) - source database
+     * */
+    protected function _validatePatientDiagnosis(&$post, &$patientSite, &$source) {
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = "";
+
+        if(!array_key_exists("mrn", $post) || $post["mrn"] == "") {
+            $errCode = "1" . $errCode;
+        } else {
+            $errCode = "0" . $errCode;
+        }
+        if(!array_key_exists("site", $post) || $post["site"] == "") {
+            $errCode = "1" . $errCode;
+        } else {
+            $errCode = "0" . $errCode;
+        }
+
+        if(array_key_exists("mrn", $post) && $post["mrn"] != "" && array_key_exists("site", $post) && $post["site"] != "") {
+            $patientSite = $this->opalDB->getPatientSite($post["mrn"], $post["site"]);
+            if(count($patientSite) != 1) {
+                $patientSite = array();
+                $errCode = "1" . $errCode;
+            }
+            else {
+                $patientSite = $patientSite[0];
+                $errCode = "0" . $errCode;
+            }
+        }
+
+        if(!array_key_exists("source", $post) || $post["source"] == "") {
+            $errCode = "1" . $errCode;
+        } else {
+            $source = $this->opalDB->getSourceDatabaseDetails($post["source"]);
+            if(count($source) != 1) {
+                $source = array();
+                $errCode = "1" . $errCode;
+            }  else {
+                $source = $source[0];
+                $errCode = "0" . $errCode;
+            }
+        }
+
+        if(!array_key_exists("rowId", $post) || $post["rowId"] == "") {
+            $errCode = "1" . $errCode;
+        }  else {
+            $post["rowId"] = intval($post["rowId"]);
+            $errCode = "0" . $errCode;
+        }
+
+        if(!array_key_exists("code", $post) || $post["code"] == "") {
+            $errCode = "1" . $errCode;
+        }
+        else {
+            $code = $this->opalDB->getDiagnosisCodeDetails($post["code"], $source["SourceDatabaseSerNum"], $post["rowId"]);
+            if(count($code) != 1) {
+                $errCode = "1" . $errCode;
+            } else {
+                $code = $code[0];
+                $errCode = "0" . $errCode;
+            }
+        }
+
+        if(!array_key_exists("creationDate", $post) || $post["creationDate"] == "" || !HelpSetup::verifyDate($post["creationDate"], false, "Y-m-d H:i:s")) {
+            $errCode = "1" . $errCode;
+        } else {
+            $errCode = "0" . $errCode;
+        }
+
+        if(!array_key_exists("descriptionEn", $post) || $post["descriptionEn"] == "") {
+            $errCode = "1" . $errCode;
+        } else
+            $errCode = "0" . $errCode;
+
+        if(!array_key_exists("descriptionFr", $post)) {
+            $errCode = "1" . $errCode;
+        } else
+            $errCode = "0" . $errCode;
+
+        if(!array_key_exists("stage", $post))
+            $post["stage"] = "";
+        if(!array_key_exists("stageCriteria", $post))
+            $post["stageCriteria"] = "";
+        return bindec($errCode);
     }
 }
