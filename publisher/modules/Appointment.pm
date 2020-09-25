@@ -632,7 +632,7 @@ sub getApptsFromSourceDB
 					mval.ScheduledDateTime,
 					mval.Status,
 					RTRIM(mval.AppointmentCode),
-					RTRIM(mval.ResourceDescription),
+					REPLACE(RTRIM(mval.ResourceDescription), '''', ''),
 					pi.PatientSerNum
 				FROM
 					MediVisitAppointmentList mval,
