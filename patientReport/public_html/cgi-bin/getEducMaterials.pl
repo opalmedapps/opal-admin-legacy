@@ -51,11 +51,10 @@ if($sdb eq "true"){ #Then we want to connect to prod
 	$dbh = DBI->connect("DBI:mysql:database=$db;host=172.26.120.179", $un, $ps)
 		or die "Couldn't connect to database: " . DBI->errstr;
 }else{ #we want preprod
-	#login info for the preprod server
-	$db = "OpalDB_PREPROD";
-	$un = 'readonly';
-	$ps = 'readonly';
-	$dbh = DBI->connect("DBI:mysql:database=$db;host=172.26.66.41", $un, $ps)
+$db = "OpalDB";
+	$un = 'opalAdmin';
+	$ps = 'nChs2Gfs1FeubVK0';
+	$dbh = DBI->connect("DBI:mysql:database=$db;host=172.26.120.187", $un, $ps)
 		or die "Couldn't connect to database: " . DBI->errstr;
 }
 
