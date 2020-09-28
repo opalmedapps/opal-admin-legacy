@@ -2008,11 +2008,29 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_insertRecordIntoTable(OPAL_DIAGNOSIS_TABLE, $toInsert);
     }
 
+    /*
+     * Get the ID of a specific patient diagnosis.
+     * @params  $patientId : string - patient sernum
+     *          $source : string - source database
+     *          $externalId : string - external ID from an outside source
+     * @return  Diagnosis SerNum for a specific patient in a specific DB
+     * */
     function getPatientDiagnosisId($patientId, $source, $externalId) {
         return $this->_fetchAll(OPAL_GET_PATIENT_DIAGNOSIS_ID, array(
-            array("parameter"=>":PatientSerNum","variable"=>$patientId,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":PatientSerNum","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$source,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":DiagnosisAriaSer","variable"=>$externalId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Delete a specific patient diagnosis.
+     * @params  $id : int - Diagnosis sernum
+     * @return  int - number of record deleted
+     * */
+    function deletePatientDiagnosis($id) {
+        $this->_execute(OPAL_DELETE_PATIENT_DIAGNOSIS, array(
+            array("parameter"=>":DiagnosisSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
         ));
     }
 }

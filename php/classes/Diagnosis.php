@@ -259,16 +259,28 @@ class Diagnosis extends Module {
 
     /*
      * Insert a patient diagnosis.
+     * @params  $post : array - details of the patient diagnosis to insert.
+     * @return  int : last entered diagnosis ID.
      * */
     public function insertPatientDiagnosis($post) {
         return $this->_replacePatientDiagnosis($post);
     }
 
+    /*
+     * Insert a patient diagnosis.
+     * @params  $post : array - details of the patient diagnosis to update.
+     * @return  int : number of array modified.
+     * */
     public function updatePatientDiagnosis($post) {
-        return $this->_replacePatientDiagnosis($post, false);
+        return $this->_replacePatientDiagnosis($post);
     }
 
-    protected function _replacePatientDiagnosis($post, $isInsert = true) {
+    /*
+     * This function insert or update a patient diagnosis after its validation.
+     * @params  $post : array - details of the patient diagnosis to insert/update.
+     * @return  int : number of array modified or ID of last entered diagnosis.
+     * */
+    protected function _replacePatientDiagnosis($post) {
         $this->checkWriteAccess($post);
         $patientSite = null;
         $source = null;
@@ -288,18 +300,15 @@ class Diagnosis extends Module {
             "StageCriteria"=>$post["stageCriteria"],
         );
 
-        if($isInsert)
-            $toInsert["CreationDate"] = $post["creationDate"];
+        $toInsert["CreationDate"] = $post["creationDate"];
 
         $currentPatientDiagnosis = $this->opalDB->getPatientDiagnosisId($patientSite["PatientSerNum"], $source["SourceDatabaseSerNum"], $post["rowId"]);
         if(count($currentPatientDiagnosis) <= 1) {
             if(count($currentPatientDiagnosis) == 1) {
                 $currentPatientDiagnosis = $currentPatientDiagnosis[0];
                 $toInsert["DiagnosisSerNum"] = $currentPatientDiagnosis["DiagnosisSerNum"];
-                return $this->opalDB->insertPatientDiagnosis($toInsert);
             }
-            else
-                return $this->opalDB->insertPatientDiagnosis($toInsert);
+            return $this->opalDB->insertPatientDiagnosis($toInsert);
         }
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates patient diagnosis found.");
@@ -307,23 +316,45 @@ class Diagnosis extends Module {
     }
 
     /*
-     * Validate a patient diagnosis on each field.
+     * Delete a specific patient diagnosis.
+     * @params  $post : array - contains the following info:
+     *                          mrn : Medical Record Number of the patient (mandatory)
+     *                          site : Site acronym of the establishment (mandatory)
+     *                          source : Source database of the diagnosis (mandatory)
+     *                          rowId : External ID of the diagnosis (mandatory)
+     * @return  int - number of records deleted
+     * */
+    public function deletePatientDiagnosis($post) {
+        $patientSite = null;
+        $source = null;
+        $this->checkDeleteAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validateBasicPatientInfo($post, $patientSite, $source);
+        if($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, $errCode);
+
+        $currentPatientDiagnosis = $this->opalDB->getPatientDiagnosisId($patientSite["PatientSerNum"], $source["SourceDatabaseSerNum"], $post["rowId"]);
+        if(count($currentPatientDiagnosis) > 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates patient diagnosis found.");
+        else if(count($currentPatientDiagnosis) < 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Patient diagnosis not found.");
+        $currentPatientDiagnosis = $currentPatientDiagnosis[0];
+        return $this->opalDB->deletePatientDiagnosis($currentPatientDiagnosis["DiagnosisSerNum"]);
+    }
+
+    /*
+     * Validate basic information of a specific patient and source.
      * @params  $post : array - Contains the following information
      *                          mrn : Medical Record Number of the patient (mandatory)
      *                          site : Site acronym of the establishment (mandatory)
      *                          source : Source database of the diagnosis (mandatory)
      *                          rowId : External ID of the diagnosis (mandatory)
      *                          code : Diagnosis code (mandatory)
-     *                          creationDate : creation date of the record (mandatory)
-     *                          descriptionEn : english description of the diagnosis (mandatory)
-     *                          stage : no idea, but its for Aria (optional)
-     *                          stageCriteria : no idea, but its for Aria (optional)
      * @return  $errCode : int - error code.
      *          $patientSite : array (reference) - site info
      *          $source : array (reference) - source database
      * */
-    protected function _validatePatientDiagnosis(&$post, &$patientSite, &$source) {
-        $post = HelpSetup::arraySanitization($post);
+    protected function _validateBasicPatientInfo(&$post, &$patientSite, &$source) {
         $errCode = "";
 
         if(!array_key_exists("mrn", $post) || $post["mrn"] == "") {
@@ -368,6 +399,28 @@ class Diagnosis extends Module {
             $post["rowId"] = intval($post["rowId"]);
             $errCode = "0" . $errCode;
         }
+        return $errCode;
+    }
+
+    /*
+     * Validate a patient diagnosis on each field.
+     * @params  $post : array - Contains the following information
+     *                          mrn : Medical Record Number of the patient (mandatory)
+     *                          site : Site acronym of the establishment (mandatory)
+     *                          source : Source database of the diagnosis (mandatory)
+     *                          rowId : External ID of the diagnosis (mandatory)
+     *                          code : Diagnosis code (mandatory)
+     *                          creationDate : creation date of the record (mandatory)
+     *                          descriptionEn : english description of the diagnosis (mandatory)
+     *                          stage : no idea, but its for Aria (optional)
+     *                          stageCriteria : no idea, but its for Aria (optional)
+     * @return  $errCode : int - error code.
+     *          $patientSite : array (reference) - site info
+     *          $source : array (reference) - source database
+     * */
+    protected function _validatePatientDiagnosis(&$post, &$patientSite, &$source) {
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validateBasicPatientInfo($post, $patientSite, $source);
 
         if(!array_key_exists("code", $post) || $post["code"] == "") {
             $errCode = "1" . $errCode;
