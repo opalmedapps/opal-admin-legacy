@@ -128,6 +128,7 @@ RewriteRule ^custom-code/update/custom-code php/custom-code/update.custom.code.p
 
 # Diagnosis Translation Section
 RewriteRule ^diagnosis-translation/delete/diagnosis-translation php/diagnosis-translation/delete.diagnosis_translation.php [QSA,L]
+RewriteRule ^diagnosis-translation/delete/patient-diagnosis php/diagnosis-translation/delete.patient.diagnosis.php [QSA,L]
 RewriteRule ^diagnosis-translation/get/diagnosis-translation-details php/diagnosis-translation/get.diagnosis_translation_details.php [QSA,L]
 RewriteRule ^diagnosis-translation/get/diagnosis-translations php/diagnosis-translation/get.diagnosis_translations.php [QSA,L]
 RewriteRule ^diagnosis-translation/get/diagnoses php/diagnosis-translation/get.diagnoses.php [QSA,L]
@@ -136,6 +137,7 @@ RewriteRule ^diagnosis-translation/get/patient-diagnoses php/diagnosis-translati
 RewriteRule ^diagnosis-translation/insert/diagnosis-translation php/diagnosis-translation/insert.diagnosis_translation.php [QSA,L]
 RewriteRule ^diagnosis-translation/insert/patient-diagnosis php/diagnosis-translation/insert.patient.diagnosis.php [QSA,L]
 RewriteRule ^diagnosis-translation/update/diagnosis-translation php/diagnosis-translation/update.diagnosis_translation.php [QSA,L]
+RewriteRule ^diagnosis-translation/update/patient-diagnosis php/diagnosis-translation/update.patient.diagnosis.php [QSA,L]
 
 # Educational Material Section
 RewriteRule ^educational-material/delete/educational-material php/educational-material/delete.educational_material.php [QSA,L]

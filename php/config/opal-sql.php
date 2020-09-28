@@ -936,3 +936,7 @@ define("OPAL_GET_PATIENT_DIAGNOSIS_ID","
     SELECT DiagnosisSerNum FROM ".OPAL_DIAGNOSIS_TABLE." WHERE PatientSerNum = :PatientSerNum
     AND SourceDatabaseSerNum = :SourceDatabaseSerNum AND DiagnosisAriaSer = :DiagnosisAriaSer; 
 ");
+
+define("OPAL_DELETE_PATIENT_DIAGNOSIS","
+    DELETE FROM ".OPAL_DIAGNOSIS_TABLE." WHERE DiagnosisSerNum = :DiagnosisSerNum; 
+");
