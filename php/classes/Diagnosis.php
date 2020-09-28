@@ -225,14 +225,40 @@ class Diagnosis extends Module {
      * */
     public function getPatientDiagnoses($post) {
         $this->checkReadAccess();
+        $include = $startDate = $endDate = "";
+        $errCode = $this->_validatePatientInfo($post, $include, $startDate, $endDate);
+        if($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, json_encode(array("validation"=>$errCode)));
+
+        return $this->opalDB->getPatientDiagnoses($post["mrn"], $post["site"], $post["source"], $include, $startDate, $endDate);
+    }
+
+    /*
+     * Validate patient info before getting his/her diagnosis.
+     * @params  $post : array - Contains the following information
+     *                          mrn : Medical Record Number of the patient (mandatory)
+     *                          site : Site acronym of the establishment (mandatory)
+     *                          source : Source database of the diagnosis (optional)
+     *                          include : if 0 exclude (!=). If 1, include(=) (optional, default 1)
+     *                          startDate : starting date (optional, default today date)
+     *                          endDate : ending date (optional, default today date)
+     * @return  $errCode : int - error code coded on bitwise operation. If 0, no error.
+     *          $include : string (reference) - include sign (= or !=)
+     *          $startDate : string (reference) - validated starting date
+     *          $endDate : string (reference) - validated ending date
+     * */
+    protected function _validatePatientInfo(&$post, &$include, &$startDate, &$endDate) {
+        $errCode = "";
         $post = HelpSetup::arraySanitization($post);
-        if(!is_array($post))
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Empty request.");
 
         if(!array_key_exists("mrn", $post) || $post["mrn"] == "")
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Medical record number is missing.");
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
         if(!array_key_exists("site", $post) || $post["site"] == "")
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Site is missing.");
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
         if(!array_key_exists("source", $post) || $post["source"] == "")
             $include = null;
         else
@@ -240,21 +266,28 @@ class Diagnosis extends Module {
 
         if(array_key_exists("startDate", $post) && $post["startDate"] != "") {
             if(!HelpSetup::verifyDate($post["startDate"], false, 'Y-m-d'))
-                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid start date.");
-            else
+                $errCode = "1" . $errCode;
+            else {
                 $startDate = date("Y-m-d", $post["startDate"]);
-        } else
+                $errCode = "0" . $errCode;
+            }
+        } else {
+            $errCode = "0" . $errCode;
             $startDate = SQL_CURRENT_DATE;
+        }
 
         if(array_key_exists("endDate", $post) && $post["endDate"] != "") {
             if(!HelpSetup::verifyDate($post["endDate"], false, 'Y-m-d'))
-                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid end date.");
-            else
+                $errCode = "1" . $errCode;
+            else {
                 $endDate = date("Y-m-d", $post["endDate"]);
-        } else
+                $errCode = "0" . $errCode;
+            }
+        } else {
+            $errCode = "0" . $errCode;
             $endDate = SQL_CURRENT_DATE;
-
-        return $this->opalDB->getPatientDiagnoses($post["mrn"], $post["site"], $post["source"], $include, $startDate, $endDate);
+        }
+        return bindec($errCode);
     }
 
     /*
@@ -285,9 +318,9 @@ class Diagnosis extends Module {
         $patientSite = null;
         $source = null;
 
-        $errCodes = $this->_validatePatientDiagnosis($post, $patientSite, $source);
-        if($errCodes != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, $errCodes);
+        $errCode = $this->_validatePatientDiagnosis($post, $patientSite, $source);
+        if($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, json_encode(array("validation"=>$errCode)));
 
         $toInsert = array(
             "PatientSerNum"=>$patientSite["PatientSerNum"],
@@ -331,7 +364,7 @@ class Diagnosis extends Module {
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateBasicPatientInfo($post, $patientSite, $source);
         if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, $errCode);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, json_encode(array("validation"=>$errCode)));
 
         $currentPatientDiagnosis = $this->opalDB->getPatientDiagnosisId($patientSite["PatientSerNum"], $source["SourceDatabaseSerNum"], $post["rowId"]);
         if(count($currentPatientDiagnosis) > 1)
