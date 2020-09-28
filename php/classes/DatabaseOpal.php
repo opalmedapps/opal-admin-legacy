@@ -1958,4 +1958,79 @@ class DatabaseOpal extends DatabaseAccess {
 
         return $this->_fetchAll($sql, $data);
     }
+
+    /*
+     * Get a pair of patient/site exists in the database by counting the total. In theory, should be unique.
+     * @params  $mrn : string - medical record number of a patient.
+     *          $site : string - the hospital identifier code.
+     * @return  array - details of the pait of mrn/site.
+     * */
+    function getPatientSite($mrn, $site) {
+        return $this->_fetchAll(OPAL_GET_PATIENT_SITE, array(
+            array("parameter"=>":MRN","variable"=>$mrn,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Hospital_Identifier_Type_Code","variable"=>$site,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Get the details of an active source database based on its source name. In theory, should be unique.
+     * @params  $source : string - name of the source database.
+     * @return  array - details of the source database.
+     * */
+    function getSourceDatabaseDetails($source) {
+        return $this->_fetchAll(OPAL_GET_SOURCE_DB_DETAILS, array(
+            array("parameter"=>":SourceDatabaseName","variable"=>$source,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Get the details of a diagnosis code based on its code and its source.
+     * @params  $code : string - diagnosis code
+     *          $source : int - source of the database
+     * @return  array - details of the diagnosis codes
+     * */
+    function getDiagnosisCodeDetails($code, $source, $externalId) {
+        return $this->_fetchAll(OPAL_GET_DIAGNOSIS_CODE_DETAILS, array(
+            array("parameter"=>":code","variable"=>$code,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":externalId","variable"=>$externalId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Insert a patient diagnosis in the diagnosis table
+     * @params  $toInsert : array - Contains the patient diagnosis info
+     * @return  int - last insert ID
+     * */
+    function insertPatientDiagnosis($toInsert) {
+        $toInsert["createdBy"] = $this->getUsername();
+        $toInsert["updatedBy"] = $this->getUsername();
+        return $this->_insertRecordIntoTable(OPAL_DIAGNOSIS_TABLE, $toInsert);
+    }
+
+    /*
+     * Get the ID of a specific patient diagnosis.
+     * @params  $patientId : string - patient sernum
+     *          $source : string - source database
+     *          $externalId : string - external ID from an outside source
+     * @return  Diagnosis SerNum for a specific patient in a specific DB
+     * */
+    function getPatientDiagnosisId($patientId, $source, $externalId) {
+        return $this->_fetchAll(OPAL_GET_PATIENT_DIAGNOSIS_ID, array(
+            array("parameter"=>":PatientSerNum","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":DiagnosisAriaSer","variable"=>$externalId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Delete a specific patient diagnosis.
+     * @params  $id : int - Diagnosis sernum
+     * @return  int - number of record deleted
+     * */
+    function deletePatientDiagnosis($id) {
+        $this->_execute(OPAL_DELETE_PATIENT_DIAGNOSIS, array(
+            array("parameter"=>":DiagnosisSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }

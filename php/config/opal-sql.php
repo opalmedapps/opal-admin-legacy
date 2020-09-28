@@ -911,9 +911,32 @@ define("OPAL_GET_PATIENT_DIAGNOSIS","
     d.Description_FR AS CodeDescription_FR, getDiagnosisDescription(d.DiagnosisCode,'FR') AS Description_FR, d.CreationDate, d.LastUpdated
     FROM ".OPAL_DIAGNOSIS_TABLE." d RIGHT JOIN ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." p ON p.PatientSerNum = d.PatientSerNum
     RIGHT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s ON s.SourceDatabaseSerNum = d.SourceDatabaseSerNum WHERE p.MRN = :MRN
-    AND p.Hospital_Identifier_Type_Code = :site
+    AND p.Hospital_Identifier_Type_Code = :site AND p.Is_Active = ".ACTIVE_RECORD."
     %%SOURCE%%
     AND DATE(d.CreationDate) >= :startDate AND DATE(d.CreationDate) <= :endDate ORDER BY d.CreationDate DESC
 ");
 
 define("OPAL_SOURCE_DATABASE","AND s.SourceDatabaseName %%OPERATOR%% :SourceDatabaseName");
+
+define("OPAL_GET_PATIENT_SITE","
+    SELECT * FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." WHERE Hospital_Identifier_Type_Code = :Hospital_Identifier_Type_Code
+    AND MRN = :MRN AND Is_Active = ".ACTIVE_RECORD."; 
+");
+
+define("OPAL_GET_SOURCE_DB_DETAILS","
+    SELECT * FROM ".OPAL_SOURCE_DATABASE_TABLE." WHERE SourceDatabaseName = :SourceDatabaseName AND Enabled = ".ACTIVE_RECORD."
+");
+
+define("OPAL_GET_DIAGNOSIS_CODE_DETAILS","
+    SELECT * FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE code = :code AND source = :source AND externalId = :externalId
+    AND deleted = ".NON_DELETED_RECORD."
+");
+
+define("OPAL_GET_PATIENT_DIAGNOSIS_ID","
+    SELECT DiagnosisSerNum FROM ".OPAL_DIAGNOSIS_TABLE." WHERE PatientSerNum = :PatientSerNum
+    AND SourceDatabaseSerNum = :SourceDatabaseSerNum AND DiagnosisAriaSer = :DiagnosisAriaSer; 
+");
+
+define("OPAL_DELETE_PATIENT_DIAGNOSIS","
+    DELETE FROM ".OPAL_DIAGNOSIS_TABLE." WHERE DiagnosisSerNum = :DiagnosisSerNum; 
+");
