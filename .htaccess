@@ -126,13 +126,18 @@ RewriteRule ^custom-code/get/custom-codes php/custom-code/get.custom.code.php [Q
 RewriteRule ^custom-code/insert/custom-code php/custom-code/insert.custom.code.php [QSA,L]
 RewriteRule ^custom-code/update/custom-code php/custom-code/update.custom.code.php [QSA,L]
 
+# Diagnosis Section (system 2 system API)
+RewriteRule ^diagnosis/delete/patient-diagnosis php/diagnosis/delete.patient.diagnosis.php [QSA,L]
+RewriteRule ^diagnosis/get/patient-diagnoses php/diagnosis/get.patient.diagnoses.php [QSA,L]
+RewriteRule ^diagnosis/insert/patient-diagnosis php/diagnosis/insert.patient.diagnosis.php [QSA,L]
+RewriteRule ^diagnosis/update/patient-diagnosis php/diagnosis/update.patient.diagnosis.php [QSA,L]
+
 # Diagnosis Translation Section
 RewriteRule ^diagnosis-translation/delete/diagnosis-translation php/diagnosis-translation/delete.diagnosis_translation.php [QSA,L]
 RewriteRule ^diagnosis-translation/get/diagnosis-translation-details php/diagnosis-translation/get.diagnosis_translation_details.php [QSA,L]
 RewriteRule ^diagnosis-translation/get/diagnosis-translations php/diagnosis-translation/get.diagnosis_translations.php [QSA,L]
 RewriteRule ^diagnosis-translation/get/diagnoses php/diagnosis-translation/get.diagnoses.php [QSA,L]
 RewriteRule ^diagnosis-translation/get/educational-materials php/diagnosis-translation/get.educational.materials.php [QSA,L]
-RewriteRule ^diagnosis-translation/get/patient-diagnoses php/diagnosis-translation/get.patient.diagnoses.php [QSA,L]
 RewriteRule ^diagnosis-translation/insert/diagnosis-translation php/diagnosis-translation/insert.diagnosis_translation.php [QSA,L]
 RewriteRule ^diagnosis-translation/update/diagnosis-translation php/diagnosis-translation/update.diagnosis_translation.php [QSA,L]
 
