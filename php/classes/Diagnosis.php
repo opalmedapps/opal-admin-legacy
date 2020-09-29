@@ -228,7 +228,7 @@ class Diagnosis extends Module {
         $include = $startDate = $endDate = "";
         $errCode = $this->_validatePatientInfo($post, $include, $startDate, $endDate);
         if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, json_encode(array("validation"=>$errCode)));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation"=>$errCode)));
 
         return $this->opalDB->getPatientDiagnoses($post["mrn"], $post["site"], $post["source"], $include, $startDate, $endDate);
     }
@@ -320,7 +320,7 @@ class Diagnosis extends Module {
 
         $errCode = $this->_validatePatientDiagnosis($post, $patientSite, $source);
         if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, json_encode(array("validation"=>$errCode)));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation"=>$errCode)));
 
         $toInsert = array(
             "PatientSerNum"=>$patientSite["PatientSerNum"],
@@ -364,13 +364,13 @@ class Diagnosis extends Module {
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateBasicPatientInfo($post, $patientSite, $source);
         if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, json_encode(array("validation"=>$errCode)));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation"=>$errCode)));
 
         $currentPatientDiagnosis = $this->opalDB->getPatientDiagnosisId($patientSite["PatientSerNum"], $source["SourceDatabaseSerNum"], $post["rowId"]);
         if(count($currentPatientDiagnosis) > 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates patient diagnosis found.");
         else if(count($currentPatientDiagnosis) < 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Patient diagnosis not found.");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("patient"=>1)));
         $currentPatientDiagnosis = $currentPatientDiagnosis[0];
         return $this->opalDB->deletePatientDiagnosis($currentPatientDiagnosis["DiagnosisSerNum"]);
     }
@@ -390,17 +390,21 @@ class Diagnosis extends Module {
     protected function _validateBasicPatientInfo(&$post, &$patientSite, &$source) {
         $errCode = "";
 
+        //First bit - MRN
         if(!array_key_exists("mrn", $post) || $post["mrn"] == "") {
             $errCode = "1" . $errCode;
         } else {
             $errCode = "0" . $errCode;
         }
+
+        //Second bit - Site
         if(!array_key_exists("site", $post) || $post["site"] == "") {
             $errCode = "1" . $errCode;
         } else {
             $errCode = "0" . $errCode;
         }
 
+        //Third bit - MRN and site combo
         if(array_key_exists("mrn", $post) && $post["mrn"] != "" && array_key_exists("site", $post) && $post["site"] != "") {
             $patientSite = $this->opalDB->getPatientSite($post["mrn"], $post["site"]);
             if(count($patientSite) != 1) {
@@ -413,6 +417,7 @@ class Diagnosis extends Module {
             }
         }
 
+        //Fourth bit - source
         if(!array_key_exists("source", $post) || $post["source"] == "") {
             $errCode = "1" . $errCode;
         } else {
@@ -426,6 +431,7 @@ class Diagnosis extends Module {
             }
         }
 
+        //Fifth bit - external ID
         if(!array_key_exists("rowId", $post) || $post["rowId"] == "") {
             $errCode = "1" . $errCode;
         }  else {
@@ -455,6 +461,7 @@ class Diagnosis extends Module {
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateBasicPatientInfo($post, $patientSite, $source);
 
+        //Sixth bit - code
         if(!array_key_exists("code", $post) || $post["code"] == "") {
             $errCode = "1" . $errCode;
         }
@@ -468,17 +475,20 @@ class Diagnosis extends Module {
             }
         }
 
+        //Seventh bit - creation date
         if(!array_key_exists("creationDate", $post) || $post["creationDate"] == "" || !HelpSetup::verifyDate($post["creationDate"], false, "Y-m-d H:i:s")) {
             $errCode = "1" . $errCode;
         } else {
             $errCode = "0" . $errCode;
         }
 
+        //bit eight - description EN
         if(!array_key_exists("descriptionEn", $post) || $post["descriptionEn"] == "") {
             $errCode = "1" . $errCode;
         } else
             $errCode = "0" . $errCode;
 
+        //bit nine - description FR
         if(!array_key_exists("descriptionFr", $post)) {
             $errCode = "1" . $errCode;
         } else
