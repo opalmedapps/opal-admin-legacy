@@ -655,7 +655,7 @@ sub getApptsFromSourceDB
 
 				# concatenate query
 				$apptInfo_sql .= "
-					((mval.AppointmentCode, mval.ResourceDescription) IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
+					((mval.AppointmentCode, REPLACE(RTRIM(mval.ResourceDescription), '''', '')) IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
 					AND mval.LastUpdated	> (SELECT IF ('$lastTransferDate' > pi.LastTransfer, pi.LastTransfer, '$lastTransferDate')))
 				";
 				$counter++;
