@@ -394,7 +394,7 @@ sub getResourceAppointmentsFromSourceDB
 					mval.ClinicResourcesSerNum,
 					pi.PatientSerNum,
 					mval.AppointmentCode,
-					mval.ResourceDescription
+					REPLACE(RTRIM(mval.ResourceDescription), '''', '') ResourceDescription
 				FROM
 					MediVisitAppointmentList mval,
 					Patient pt,
@@ -415,7 +415,7 @@ sub getResourceAppointmentsFromSourceDB
 
 				# concatenate query
 				$raInfo_sql .= "
-					((mval.AppointmentCode, mval.ResourceDescription) IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
+					((mval.AppointmentCode, REPLACE(RTRIM(mval.ResourceDescription), '''', '')) IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
 					AND mval.LastUpdated	> (SELECT IF ('$lastTransferDate' > pi.LastTransfer, pi.LastTransfer, '$lastTransferDate')))
 				";
 				$counter++;
