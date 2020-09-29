@@ -370,7 +370,7 @@ class Diagnosis extends Module {
         if(count($currentPatientDiagnosis) > 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates patient diagnosis found.");
         else if(count($currentPatientDiagnosis) < 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("patient"=>1)));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation"=>32)));
         $currentPatientDiagnosis = $currentPatientDiagnosis[0];
         return $this->opalDB->deletePatientDiagnosis($currentPatientDiagnosis["DiagnosisSerNum"]);
     }
