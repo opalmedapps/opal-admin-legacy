@@ -88,13 +88,13 @@ class HelpSetup {
     public static function arraySanitization($arrayForm) {
         $sanitizedArray = array();
         if(!is_array($arrayForm))
-            return preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $arrayForm);
+            return trim(preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $arrayForm));
         foreach($arrayForm as $key=>$value) {
-            $key = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $key);
+            $key = trim(preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $key));
             if(is_array($value))
                 $value = self::arraySanitization($value);
             else
-                $value = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $value);
+                $value = trim(preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $value));
             $sanitizedArray[$key] = $value;
         }
         return $sanitizedArray;

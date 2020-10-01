@@ -907,7 +907,7 @@ define("OPAL_DELETE_DIAGNOSIS_TRANSLATION","
 ");
 
 define("OPAL_GET_TRIGGERS_LIST","
-    SELECT sourceContentId, sourceModuleId, onCondition, eventType, targetContentId, targetModuleId FROM ".OPAL_TRIGGER_TABLE." WHERE active = ".ACTIVE_RECORD." AND sourceContentId = :contentId AND sourceModuleId = :moduleId;
+    SELECT sourceContentId, sourceModuleId, onCondition, eventType, targetContentId, targetModuleId FROM ".OPAL_TRIGGER_TABLE." WHERE active = ".ACTIVE_RECORD." AND sourceContentId = :sourceContentId AND sourceModuleId = :sourceModuleId;
 ");
 
 define("OPAL_GET_PATIENT_SERNUM","

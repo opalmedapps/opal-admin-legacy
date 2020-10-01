@@ -1908,8 +1908,8 @@ class DatabaseOpal extends DatabaseAccess {
      * */
     function getTriggersList($sourceContentId, $sourceModuleId) {
         return $this->_fetchAll(OPAL_GET_TRIGGERS_LIST, array(
-            array("parameter"=>":contentId","variable"=>$sourceContentId,"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":moduleId","variable"=>$sourceModuleId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":sourceContentId","variable"=>$sourceContentId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":sourceModuleId","variable"=>$sourceModuleId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 

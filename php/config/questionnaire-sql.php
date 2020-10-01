@@ -603,7 +603,7 @@ define("SQL_QUESTIONNAIRE_CONDITIONAL_INSERT","
 ");
 
 define("SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_INFO","
-    CALL getQuestionnaireInfo(:pqser,'EN');
+    CALL getQuestionnaireInfo(:pqser,:language);
 ");
 
 define("SQL_QUESTIONNAIRE_GET_PREV_QUESTIONNAIRE","

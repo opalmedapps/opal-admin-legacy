@@ -5,48 +5,44 @@ require('../lib/JWadhams/JsonLogic.php');
  * Trigger class object and methods
  * */
 
- class Trigger extends Module {
+class Trigger extends Module {
 
     public function __construct($guestStatus = false) {
         parent::__construct(MODULE_TRIGGER, $guestStatus);
     }
 
     /*
-     * Return the list of triggers in opalDB.
-     * @params  integer  $sourceContentId : the source content identifier to look for info
-     * @params  integer  $sourceModuleId : the module id of the source content
-     * @return  array - list of triggers 
-     * */
-    public function getTriggers($sourceContentId, $sourceModuleId) { 
-        // $this->checkReadAccess();
-
-        return $this->opalDB->getTriggersList($sourceContentId, $sourceModuleId);
-    }
-
-    /*
      * Validate and sanitize post data and check if module id is set. If there is a problem return an error 500.
      * @params  array  $postdata : POST data containing a starting-point identifier
      * @params  integer  $sourceModuleId : the module id of the source content 
-     * @return array $validatedTrigger : validated response
+     * @return int $errCode : error code (if any error found. 0 = no error)
      * */
-    protected function _validateTrigger($postData, $moduleId) {
-        $validatedTrigger = array();
+    protected function _validateTrigger(&$postData, &$moduleId) {
         $postData = HelpSetup::arraySanitization($postData);
+        $errCode = "";
 
         // Check id
-        if($postData["id"] != "")
-            $validatedTrigger["id"] = trim(strip_tags($postData["id"]));
+        if(strip_tags($postData["id"]) != "") {
+            $postData["id"] = strip_tags($postData["id"]);
+            $errCode = "0" . $errCode;
+        }
         else
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing trigger ID.");
+            $errCode = "1" . $errCode;
 
-        // Check id
-        if($moduleId != "")
-            $validatedTrigger["module_id"] = $moduleId;
+        // Check module id
+        if(in_array(strip_tags($moduleId), MODULE_PUBLICATION_TRIGGER)) {
+            $errCode = "0" . $errCode;
+            $moduleId = strip_tags($moduleId);
+        }
         else
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing module ID.");
+            $errCode = "1" . $errCode;
 
-        return $validatedTrigger;
+        if(strip_tags($postData["language"]) == "")
+            $postData["language"] = ABVR_FRENCH_LANGUAGE;
+        else
+            $postData["language"] = strip_tags($postData["language"]);
 
+        return bindec($errCode);
     }
 
     /*
@@ -55,30 +51,16 @@ require('../lib/JWadhams/JsonLogic.php');
      * @params  integer  $sourceModuleId : the module id of the source content
      * @return  array : respective data based on module 
      * */
-    public function getData($id, $sourceModuleId) {
-        // $this->checkReadAccess();
-
+    protected function _getData($id, $sourceModuleId, $language) {
+        $result = array();
         switch ($sourceModuleId) {
             case MODULE_QUESTIONNAIRE:
                 $questionnaire = new Questionnaire(true);
-                return $questionnaire->getQuestionnaireResults($id); /// ultimately there's a stored procedure for this
-                break;
-            
-            default:
-                return array();
+                $result = $questionnaire->getQuestionnaireResults($id, $language); /// ultimately there's a stored procedure for this
                 break;
         }
-        
-    }
+        return $result;
 
-    /*
-     * Use 3rd party package to check logic in json format 
-     * @params  array  $trigger : current trigger entry
-     * @params  array  $dataToCheck : data to apply logic test to
-     * @return  mixed : can be boolean/array depending on input test 
-     * */
-    public function checkLogic($trigger, $dataToCheck) {
-        return JWadhams\JsonLogic::apply( json_decode($trigger["onCondition"], true), $dataToCheck );
     }
 
     /*
@@ -87,17 +69,14 @@ require('../lib/JWadhams/JsonLogic.php');
      * @params  integer  $patientSerNum : patient serial 
      * @return  
      * */
-    public function triggerEvent($trigger, $patientSerNum) {
+    protected function _triggerEvent(&$trigger, &$patientSerNum) {
+        $result = false;
         switch ($trigger['eventType']) {
             case TRIGGER_EVENT_PUBLISH: // only one for now
-                return $this->publish($trigger, $patientSerNum);
-                break;
-            
-            default:
-                # code...
-                return false;
+                $result = $this->_publish($trigger, $patientSerNum);
                 break;
         }
+        return $result;
     }
 
     /*
@@ -106,34 +85,25 @@ require('../lib/JWadhams/JsonLogic.php');
      * @params  integer  $patientSerNum : patient serial
      * @return  
      * */
-    public function publish($trigger, $patientSerNum) {
-        
+    protected function _publish(&$trigger, &$patientSerNum) {
+        $result = false;
+
         switch ($trigger["targetModuleId"]) {
             case MODULE_QUESTIONNAIRE:
-                echo "PUBLISHED QUESTIONNAIRE!";
-                return $this->opalDB->publishQuestionnaire($trigger["targetContentId"], $patientSerNum); 
+                $result = $this->opalDB->publishQuestionnaire($trigger["targetContentId"], $patientSerNum);
                 break;
-            
             case MODULE_ALERT:
                 // Need an alert table for publishing alerts
                 break;
-            
             case MODULE_EDU_MAT:
                 //$this->opalDB->publishEducationalMaterial($trigger["targetContentId"], $patientSerNum); // Not done
                 break;
-
             case MODULE_POST:
-                // Need to separate post 
-                break;
-            
-            default:
-                # code...
-                return false;
+                // Need to separate post
                 break;
         }
-
+        return $result;
     }
-
 
     /*
      * Main method to process triggers
@@ -145,14 +115,17 @@ require('../lib/JWadhams/JsonLogic.php');
 
         $eventTriggers = array();
 
-        $validatedData = $this->_validateTrigger($postData, $sourceModuleId);
-        $id = $validatedData["id"];
-        $sourceModuleId = $validatedData["module_id"];
+        $errCode = $this->_validateTrigger($postData, $sourceModuleId);
+        if($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation"=>$errCode)));
+
+
+        $id = $postData["id"];
 
         $sourceContentId = "";
         $patientSerNum = "";
 
-        $dataToCheck = $this->getData($id, $sourceModuleId); 
+        $dataToCheck = $this->_getData($id, $sourceModuleId, $postData["language"]);
 
         if (!empty($dataToCheck)) {
             switch ($sourceModuleId) {
@@ -160,21 +133,18 @@ require('../lib/JWadhams/JsonLogic.php');
                     $sourceContentId = $dataToCheck["questionnaire_id"]; // to pull triggers related to this questionnaire
                     $patientSerNum = $dataToCheck["patient_ser"]; // which patient to trigger event on
                     break;
-
-                default:
-                    break;
             }
         }
 
-        else 
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Could not find any data with this ID: $id");
-        
-        // Retrieve all triggers 
-        $triggers = $this->getTriggers($sourceContentId, $sourceModuleId);
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation"=>4)));
+
+        // Retrieve all triggers
+        $triggers = $this->opalDB->getTriggersList($sourceContentId, $sourceModuleId);
 
         foreach ($triggers as $index => $trigger) {
-            if($this->checkLogic($trigger, $dataToCheck)) { // if trigger should be fired
-                $eventResponse = $this->triggerEvent($trigger, $patientSerNum); 
+            if(JWadhams\JsonLogic::apply( json_decode($trigger["onCondition"], true), $dataToCheck )) { // if trigger should be fired
+                $eventResponse = $this->_triggerEvent($trigger, $patientSerNum);
                 if ($eventResponse)
                     array_push($eventTriggers, $trigger);
             }
@@ -182,5 +152,4 @@ require('../lib/JWadhams/JsonLogic.php');
 
         return $eventTriggers;
     }
-
- }
+}

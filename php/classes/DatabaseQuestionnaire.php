@@ -1159,9 +1159,10 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @params  int : $patientQuestionnaireSer - serial number of the particular questionnaire-patient relation 
      * @return  questionnaire results (array)
      * */
-    function getQuestionnaireResults($patientQuestionnaireSer) {
+    function getQuestionnaireResults($patientQuestionnaireSer, $language) {
         return $this->_fetchAllStoredProcedure(SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_INFO, array(
             array("parameter"=>":pqser","variable"=>$patientQuestionnaireSer,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":language","variable"=>$language,"data_type"=>PDO::PARAM_STR),
         ));
     }
 
