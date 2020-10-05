@@ -6,39 +6,40 @@ angular.module('opalAdmin.services', [])
 	.service('Session', function ($cookies) {
 		this.create = function (data) {
 			angular.forEach(data.menu, function(category) {
+				category.name = (data.user.language == "EN" ? category.name_EN : category.name_FR);
 				angular.forEach(category.menu, function(menu) {
-					menu.sub = 'NAVIGATION_MENU.MODULE_ID_' + menu.ID + '_SUB';
+					menu.name = (data.user.language == "EN" ? menu.name_EN : menu.name_FR);
+					menu.sub = (data.user.language == "EN" ? menu.description_EN : menu.description_FR);
 				});
 			});
-
-			$cookies.putObject('user', data.user);
-			$cookies.putObject('access', data.access);
-			$cookies.putObject('menu', data.menu);
-			$cookies.putObject('subMenu', data.subMenu);
-		};
-		this.retrieve = function (data) {
-			return $cookies.get(data);
+			sessionStorage.setItem("user", JSON.stringify(data.user));
+			sessionStorage.setItem("access", JSON.stringify(data.access));
+			sessionStorage.setItem("menu", JSON.stringify(data.menu));
+			sessionStorage.setItem("subMenu", JSON.stringify(data.subMenu));
 		};
 		this.retrieveObject = function (data) {
-			return $cookies.getObject(data);
+			return JSON.parse(sessionStorage.getItem(data));
 		};
-		this.updateUser = function (user, menu) {
-			angular.forEach(menu, function(category) {
+		this.updateUser = function (user) {
+			navMenu = JSON.parse(sessionStorage.getItem("menu"));
+			angular.forEach(navMenu, function(category) {
+				category.name = (user.language == "EN" ? category.name_EN : category.name_FR);
 				angular.forEach(category.menu, function(menu) {
-					menu.sub = 'NAVIGATION_MENU.MODULE_ID_' + menu.ID + '_SUB';
+					menu.name = (user.language == "EN" ? menu.name_EN : menu.name_FR);
+					menu.sub = (user.language == "EN" ? menu.description_EN : menu.description_FR);
 				});
 			});
-
-			$cookies.remove('user');
-			$cookies.putObject('user', user);
-			$cookies.remove('menu');
-			$cookies.putObject('menu', menu);
+			sessionStorage.removeItem("user");
+			sessionStorage.setItem("user", JSON.stringify(user));
+			sessionStorage.removeItem("menu");
+			sessionStorage.setItem("menu", JSON.stringify(navMenu));
 		};
 		this.destroy = function () {
-			$cookies.remove('user');
-			$cookies.remove('access');
-			$cookies.remove('menu');
-			$cookies.remove('subMenu');
+			sessionStorage.removeItem("user");
+			sessionStorage.removeItem("access");
+			sessionStorage.removeItem("menu");
+			sessionStorage.removeItem("subMenu");
+
 		};
 	})
 
