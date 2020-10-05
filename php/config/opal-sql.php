@@ -813,7 +813,7 @@ SELECT ID, name_EN, name_FR FROM ".OPAL_CATEGORY_MODULE_TABLE." ORDER BY `order`
 ");
 
 define("OPAL_GET_NAV_MENU","
-    SELECT ID, operation, name_EN, name_FR, iconClass, url, subModule, subModuleMenu FROM ".OPAL_MODULE_TABLE."
+    SELECT ID, operation, name_EN, name_FR, description_EN, description_FR, iconClass, url, subModule, subModuleMenu FROM ".OPAL_MODULE_TABLE."
     WHERE active = ".ACTIVE_RECORD." AND categoryModuleId = :categoryModuleId ORDER BY `order`
 ");
 

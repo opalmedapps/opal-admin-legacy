@@ -153,7 +153,7 @@ class User extends Module {
                         $subMenu[$menu["ID"]] = json_decode(str_replace("%%REGISTRATION_URL%%", ADMIN_REGISTRATION_URL, $menu["subModule"]));
                     }
                     if(((intval($menu["operation"]) >> 0) & 1) && ((intval($userAccess[$menu["ID"]]["access"]) >> 0) & 1)) {
-                        array_push($temp["menu"], array("ID"=>$menu["ID"], "operation"=>$menu["operation"], "name_EN"=>$menu["name_EN"], "name_FR"=>$menu["name_FR"], "iconClass"=>$menu["iconClass"], "url"=>$menu["url"]));
+                        array_push($temp["menu"], array("ID"=>$menu["ID"], "operation"=>$menu["operation"], "name_EN"=>$menu["name_EN"], "name_FR"=>$menu["name_FR"], "description_EN"=>$menu["description_EN"], "description_FR"=>$menu["description_FR"], "iconClass"=>$menu["iconClass"], "url"=>$menu["url"]));
                     }
                 }
                 array_push($newMenu, $temp);
@@ -167,7 +167,7 @@ class User extends Module {
 
         $toReturn["user"] = $result;
         $toReturn["access"] = $_SESSION["userAccess"];
-        $toReturn["menu"] = HelpSetup::prepareNavMenu($_SESSION["navMenu"], $result["language"]);
+        $toReturn["menu"] = $_SESSION["navMenu"];
         $toReturn["subMenu"] = $_SESSION["subMenu"];
         $this->_logActivity($result["id"], $_SESSION['sessionId'], 'Login');
 
@@ -395,8 +395,7 @@ class User extends Module {
 
         $this->opalDB->updateUserLanguage($this->opalDB->getOAUserId(), $post["language"]);
 
-        $result = HelpSetup::prepareNavMenu($_SESSION["navMenu"], $post["language"]);
-        return $result;
+        return true;
     }
 
     /*
