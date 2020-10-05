@@ -70,7 +70,7 @@ angular.module('opalAdmin.controllers.account.ad', ['ui.bootstrap']).
 				data: toSend,
 				success: function (menu) {
 					$templateCache.removeAll();
-					Session.updateUser(user, JSON.parse(menu)); // change language in cookies
+					Session.updateUser(user); // change language in cookies
 					$translate.use($scope.currentUser.language.toLowerCase());
 					location.reload();
 				},

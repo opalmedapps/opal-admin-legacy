@@ -46,25 +46,7 @@
     "ACCOUNT": "Account",
     "ACCOUNT_SUB": "Change profile settings.",
     "LOGOUT": "Logout",
-    "ROLES": "Roles",
-    "MODULE_ID_1_SUB": "Tool for tasks, appointments, and documents.",
-    "MODULE_ID_2_SUB": "Tool for creating general announcements and treatment team messages.",
-    "MODULE_ID_3_SUB": "Tool for referencing educational material hosted on the web.",
-    "MODULE_ID_4_SUB": "Tool for referencing hospital maps.",
-    "MODULE_ID_5_SUB": "Tool for managing notifications.",
-    "MODULE_ID_6_SUB": "Tool for publishing lab test results categorized by test group.",
-    "MODULE_ID_7_SUB": "Manage patient-reported outcome questionnaires.",
-    "MODULE_ID_8_SUB": "Manage the publications and their triggers associated.",
-    "MODULE_ID_9_SUB": "Manage diagnosis codes.",
-    "MODULE_ID_10_SUB": "Control publishing event times and frequency. View publishing logs.",
-    "MODULE_ID_11_SUB": "Manage patients listing, registration and activities.",
-    "MODULE_ID_12_SUB": "Monitor user activity. Change passwords.",
-    "MODULE_ID_13_SUB": "Manage studies to which are associated patients.",
-    "MODULE_ID_14_SUB": "Tool for creating email templates.",
-    "MODULE_ID_15_SUB": "Manage custom codes for diagnosis, test results and aliases.",
-    "MODULE_ID_16_SUB": "Manage the list of roles of the users.",
-    "MODULE_ID_17_SUB": "Manage the list of alerts and triggers for conditions.",
-    "MODULE_ID_18_SUB": "Audit the users operations in OpalAdmin."
+    "ROLES": "Roles"
   },
   "BREADCRUMBS": {
     "HOME": "Home"
