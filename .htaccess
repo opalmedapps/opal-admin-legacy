@@ -184,6 +184,9 @@ RewriteRule ^install/write-configurations php/install/write_configurations.php [
 RewriteRule ^library/get/libraries php/questionnaire/get.libraries.php [QSA,L]
 RewriteRule ^library/insert/library php/questionnaire/insert.library.php [QSA,L]
 
+#Master Source Section
+RewriteRule ^master-source/get/diagnoses php/master-source/get.master.source.diagnoses.php [QSA,L]
+
 # Notification Section
 RewriteRule ^notification/delete/notification php/notification/delete.notification.php [QSA,L]
 RewriteRule ^notification/get/notification-chart-logs php/notification/get.notification_chart_logs.php [QSA,L]

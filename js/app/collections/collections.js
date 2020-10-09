@@ -774,6 +774,23 @@ angular.module('opalAdmin.collections', [])
 
 		return emailAPI;
 	})
+	// Master Source API service
+	.factory('masterSourceCollectionService', function ($http) {
+
+		var masterSourceAPI = {};
+
+		// Function to get the list of email templates
+		masterSourceAPI.getMasterSourceDiagnoses = function () {
+			return $http.post(
+				"master-source/get/diagnoses",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		return masterSourceAPI;
+	})
 
 	// Questionnaire API service
 	.factory('questionnaireCollectionService', function ($http) {
