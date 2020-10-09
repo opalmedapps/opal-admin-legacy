@@ -2033,4 +2033,13 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":DiagnosisSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    /*
+     * Get the list of all undeleted master diagnoses
+     * @params  void
+     * @return  array - List of master diagnoses
+     * */
+    function getMasterSourceDiagnoses() {
+        return $this->_fetchAll(OPAL_GET_MASTER_SOURCE_DIAGNOSIS, array());
+    }
 }
