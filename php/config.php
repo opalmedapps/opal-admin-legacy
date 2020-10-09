@@ -73,6 +73,8 @@ define("MODULE_CUSTOM_CODE", 15);
 define("MODULE_ROLE", 16);
 define("MODULE_ALERT", 17);
 define("MODULE_AUDIT", 18);
+define("MODULE_TRIGGER", 19);
+define("MODULE_MASTER_SOURCE", 20);
 define("LOCAL_SOURCE_ONLY", -1);
 
 define("DELETED_RECORD", 1);
@@ -85,6 +87,11 @@ define("ACTIVE_RECORD", 1);
 define("INACTIVE_RECORD", 0);
 define("HUMAN_USER", 1);
 define("SYSTEM_USER", 2);
+
+define("ARIA_SOURCE_DB", 1);
+define("ORMS_SOURCE_DB", 2);
+define("MOSAIQ_SOURCE_DB", 3);
+define("LOCAL_SOURCE_DB", -1);
 
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php");
@@ -112,6 +119,8 @@ include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Questionnaire.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Publication.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "CustomCode.php");
+include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "MasterSourceModule.php");
+include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "MasterSourceDiagnosis.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Study.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Alert.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Role.php");
@@ -152,11 +161,6 @@ define("LEGACY_SA", 3);
 define("LEGACY_CHECKBOX", 4);
 define("LEGACY_YESNO", 9);
 define("DEFAULT_TYPE", TEXT_BOX);
-
-define("ARIA_SOURCE_DB", 1);
-define("ORMS_SOURCE_DB", 2);
-define("MOSAIQ_SOURCE_DB", 3);
-define("LOCAL_SOURCE_DB", -1);
 
 define("USER_SALT", $config["login"]["salt"]);
 define("ACTIVE_DIRECTORY", $config["login"]["activeDirectory"]);

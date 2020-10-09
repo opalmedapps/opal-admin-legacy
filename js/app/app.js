@@ -49,6 +49,8 @@ angular.module('opalAdmin', [
 		role: 16,
 		alert: 17,
 		audit: 18,
+		trigger: 19,
+		master_source: 20,
 	})
 
 	.constant('HTTP_CODE', {
@@ -141,6 +143,7 @@ angular.module('opalAdmin', [
 			.state('questionnaire-add', { url: '/questionnaire/add', templateUrl: "templates/questionnaire/add.questionnaire.html", controller: "questionnaire.add", data: { requireLogin: true, accessible: true } })
 			.state('publication', { url: '/publication', templateUrl: "templates/publication/publication.html", controller: "publication", data: { requireLogin: true, accessible: true } })
 			.state('publication-add', { url: '/publication/add', templateUrl: "templates/publication/add.publication.html", controller: "publication.add", data: { requireLogin: true, accessible: true } })
+			.state('master-source/diagnosis', { url: '/master-source/diagnosis', templateUrl: "templates/master-source/masterSourceDiagnosis.html", controller: "masterSourceDiagnosis", data: { requireLogin: true, accessible: true } })
 			.state('questionnaire/question', { url: '/questionnaire/question', templateUrl: "templates/questionnaire/question.html", controller: "question", data: { requireLogin: true, accessible: true } })
 			.state('questionnaire/question-add', { url: '/questionnaire/question/add', templateUrl: "templates/questionnaire/add.question.html", controller: "question.add", data: { requireLogin: true, accessible: true } })
 			.state('questionnaire/template-question', { url: '/questionnaire/template-question', templateUrl: "templates/questionnaire/template.question.html", controller: "template.question", data: { requireLogin: true, accessible: true } })
