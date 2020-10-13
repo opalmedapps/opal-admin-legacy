@@ -789,6 +789,16 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
+		// Function to get the list of email templates
+		masterSourceAPI.getExternalSourceDatabase = function () {
+			return $http.post(
+				"master-source/get/external-source-db",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
 		return masterSourceAPI;
 	})
 

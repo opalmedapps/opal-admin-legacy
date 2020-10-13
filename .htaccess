@@ -186,6 +186,8 @@ RewriteRule ^library/insert/library php/questionnaire/insert.library.php [QSA,L]
 
 #Master Source Section
 RewriteRule ^master-source/get/diagnoses php/master-source/get.master.source.diagnoses.php [QSA,L]
+RewriteRule ^master-source/get/external-source-db php/master-source/get.external.source.db.php [QSA,L]
+RewriteRule ^master-source/insert/diagnosis php/master-source/insert.master.source.diagnosis.php [QSA,L]
 
 # Notification Section
 RewriteRule ^notification/delete/notification php/notification/delete.notification.php [QSA,L]

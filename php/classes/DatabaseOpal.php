@@ -2042,4 +2042,24 @@ class DatabaseOpal extends DatabaseAccess {
     function getMasterSourceDiagnoses() {
         return $this->_fetchAll(OPAL_GET_MASTER_SOURCE_DIAGNOSIS, array());
     }
+
+    /*
+     * Get the list of all active database sources (i.e. not local)
+     * @params  void
+     * @return  array - list of activate database sources with ID and name
+     * */
+    function getExternalSourceDatabase() {
+        return $this->_fetchAll(OPAL_GET_EXTERNAL_SOURCE_DB, array());
+    }
+
+    /*
+     *
+     * */
+    function insertMasterSourceDiagnoses($toInsert) {
+        foreach ($toInsert as &$item) {
+            $item["createdBy"] = $this->getUsername();
+            $item["updatedBy"] = $this->getUsername();
+        }
+        return $this->_insertMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE, $toInsert);
+    }
 }
