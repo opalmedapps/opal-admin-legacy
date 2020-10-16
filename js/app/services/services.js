@@ -56,11 +56,10 @@ angular.module('opalAdmin.services', [])
 				alert(clientErrMsg + " " + $filter('translate')('ERROR_HANDLER.500.MESSAGE') + "\r\n" + tempText);
 			}
 			else if(response.status === HTTP_CODE.unprocessableEntityError) {
-				errMsg = $filter('translate')('ERROR_HANDLER.422.MESSAGE');
+				var errMsg = $filter('translate')('ERROR_HANDLER.422.MESSAGE');
 				if (typeof (arrValidation) != "undefined") {
-					tempText = JSON.parse(JSON.parse(response.responseText).slice(1, -1));
 					for (var i = 0; i < arrValidation.length; i++) {
-						if ((parseInt(tempText.error) & (1 << i)) !== 0) {
+						if ((parseInt(response.responseText.validation) & (1 << i)) !== 0) {
 							errMsg += " " + arrValidation[i];
 						}
 					}

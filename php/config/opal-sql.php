@@ -946,8 +946,11 @@ define("OPAL_GET_MASTER_SOURCE_DIAGNOSIS","
     FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE deleted = ".NON_DELETED_RECORD." and source != ".LOCAL_SOURCE_DB.";
 ");
 
-
 define("OPAL_GET_EXTERNAL_SOURCE_DB","
     SELECT SourceDatabaseSerNum AS ID, SourceDatabaseName AS name FROM ".OPAL_SOURCE_DATABASE_TABLE." WHERE Enabled = ".ACTIVE_RECORD."
     AND SourceDatabaseSerNum != ".LOCAL_SOURCE_DB.";
+");
+
+define("OPAL_IS_MASTER_SOURCE_DIAGNOSIS_EXISTS","
+    SELECT code, description, deleted FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE externalId = :externalId AND source = :source;
 ");
