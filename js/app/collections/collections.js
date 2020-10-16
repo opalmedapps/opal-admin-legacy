@@ -799,6 +799,20 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
+		// Function to get the list of email templates
+		masterSourceAPI.isMasterSourceDiagnosisExists = function (source, externalId) {
+			return $http.post(
+				"master-source/get/diagnosis-exists",
+				$.param({
+					source: source,
+					externalId: externalId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
 		return masterSourceAPI;
 	})
 

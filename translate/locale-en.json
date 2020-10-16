@@ -680,11 +680,16 @@
       "DESCRIPTION": "Description",
       "ERROR_SOURCE": "An error occurred while getting the source databases.",
       "ADD_ERROR": "An error occurred while creating the source diagnosis.",
-      "VALIDATION_SOURCE": "Invalid Source",
+      "VALIDATE_ERROR": "An error occurred while validating with the server.",
+      "VALIDATION_SOURCE": "Invalid source.",
       "VALIDATION_EXTERNAL_ID": "Invalid external ID.",
       "VALIDATION_CODE": "Invalid code.",
       "VALIDATION_DESCRIPTION": "Invalid description.",
-      "VALIDATION_DATE": "Invalid creation date."
+      "VALIDATION_DATE": "Invalid creation date.",
+      "ALREADY_EXISTS": "The external ID and the source you have entered are already associated to the following code and description. Do you want to replace them?\r\n\r\nActual code: %%CODE%%\r\nActual description: %%DESCRIPTION%%\r\nStatus: %%STATUS%%",
+      "ACTIVE": "Active",
+      "DELETED": "Delete"
+
     },
     "DIAGNOSIS_DELETE": {
       "TITLE": "Delete Question",

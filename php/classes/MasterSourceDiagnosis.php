@@ -14,23 +14,55 @@ class MasterSourceDiagnosis extends MasterSourceModule {
     }
 
     public function insertMasterSourceDiagnoses($post) {
-        $toInsert = array();
         $this->checkWriteAccess($post);
-
-        $post = HelpSetup::arraySanitization($post);
-
+        $toInsert = array();
         $errMsgs = $this->_validateAndSanitizeMasterSourceDiagnoses($post, $toInsert);
 
-        if(count($toInsert) > 0) {
+        if(count($toInsert) > 0)
             $this->opalDB->insertMasterSourceDiagnoses($toInsert);
-        }
 
         if(count($errMsgs) > 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode($errMsgs));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, $errMsgs);
 
         return false;
     }
 
+    public function isDiagnosisExists($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = "";
+        if(!array_key_exists("source", $post) || $post["source"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+        if(!array_key_exists("externalId", $post) || $post["externalId"] == "" || !is_numeric($post["externalId"]))
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        $errCode = bindec($errCode);
+        if($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
+
+        $results = $this->opalDB->isMasterSourceDiagnosisExists($post["source"], $post["externalId"]);
+        if(count($results) <= 0) return $results;
+        else if (count($results) == 1) return $results[0];
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
+    }
+
+    /*
+     * Validate and sanitize a list of diagnoses before an insert/update. Returns one array with proper data sanitized
+     * and ready, and another array with list of invalid diagnoses.
+     * @params  $post : array - $_POST content. Each entry must contains the following:
+     *                          source : source database ID. See table SourceDatabase (mandatory)
+     *                          externalID : external ID of the diagnosis in the source database (mandatory)
+     *                          code : code of the diagnosis (mandatory)
+     *                          description : description of the diagnosis (mandatory)
+     *                          creationDate - creation date of the record in the source database (optional)
+     *  @return $toInsert : array - Contains data correctly formatted and ready to be inserted
+     *          $errMsgs : array - contains the invalid entries with an error code.
+     * */
     protected function _validateAndSanitizeMasterSourceDiagnoses(&$post, &$toInsert) {
         $errMsgs = array();
         $post = HelpSetup::arraySanitization($post);
@@ -72,7 +104,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
             if($errCode == 0)
                 array_push($toInsert, $item);
             else {
-                $item["error"] = $errCode;
+                $item["validation"] = $errCode;
                 array_push($errMsgs, $item);
             }
         }

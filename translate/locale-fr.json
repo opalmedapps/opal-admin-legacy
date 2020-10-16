@@ -686,11 +686,15 @@
       "DESCRIPTION": "Description",
       "ERROR_SOURCE": "Une erreur s'est produite lors de l'obtention de la source des bases de données",
       "ADD_ERROR": "Une erreur s'est produite lors de la création du diagnostic source.",
+      "VALIDATE_ERROR": "Une erreur s'est produite pendant la validation avec le serveur.",
       "VALIDATION_SOURCE": "Source Invalide",
       "VALIDATION_EXTERNAL_ID": "ID externe invalide.",
       "VALIDATION_CODE": "Code invalide.",
       "VALIDATION_DESCRIPTION": "Description invalide.",
-      "VALIDATION_DATE": "Date de création invalide."
+      "VALIDATION_DATE": "Date de création invalide.",
+      "ALREADY_EXISTS": "L'ID externe et la source que vous avez entrés sont déjà associés au code et à la description ci-dessous. Voulez-vous les remplacer?\r\n\r\nCode actuel: %%CODE%%\r\nDescription actuelle: %%DESCRIPTION%%\r\nStatut: %%STATUS%%",
+      "ACTIVE": "Actif",
+      "DELETED": "Supprimé"
     },
     "DIAGNOSIS_DELETE": {
       "TITLE": "Supprimer la question",
