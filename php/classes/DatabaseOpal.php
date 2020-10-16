@@ -2053,13 +2053,24 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     *
+     * Insert list of diagnoses code/description into the masterSourceTable.
+     * @params  $toInsert : array - contains the list of all the diagnoses to insert.
+     * @return  int - last inserted ID
      * */
     function insertMasterSourceDiagnoses($toInsert) {
         foreach ($toInsert as &$item) {
             $item["createdBy"] = $this->getUsername();
             $item["updatedBy"] = $this->getUsername();
+            $item["deleted"] = NON_DELETED_RECORD;
+            $item["deletedBy"] = "";
         }
         return $this->_insertMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE, $toInsert);
+    }
+
+    function isMasterSourceDiagnosisExists($source, $externalId) {
+        return $this->_fetchAll(OPAL_IS_MASTER_SOURCE_DIAGNOSIS_EXISTS, array(
+            array("parameter"=>":externalId","variable"=>$externalId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+        ));
     }
 }

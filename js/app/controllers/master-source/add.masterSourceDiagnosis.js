@@ -10,12 +10,17 @@ controller('masterSourceDiagnosis.add', function ($scope, $filter, $uibModal, ma
 		window.history.back();
 	};
 
-	var arrValidation = [
+	var arrValidationInsert = [
 		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_ADD.VALIDATION_SOURCE'),
 		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_ADD.VALIDATION_EXTERNAL_ID'),
 		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_ADD.VALIDATION_CODE'),
 		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_ADD.VALIDATION_DESCRIPTION'),
 		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_ADD.VALIDATION_DATE'),
+	];
+
+	var arrValidationExists = [
+		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_ADD.VALIDATION_SOURCE'),
+		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_ADD.VALIDATION_EXTERNAL_ID')
 	];
 
 	$scope.showAssigned = false;
@@ -149,21 +154,41 @@ controller('masterSourceDiagnosis.add', function ($scope, $filter, $uibModal, ma
 			"description": $scope.toSubmit.details.description
 		};
 
+		masterSourceCollectionService.isMasterSourceDiagnosisExists($scope.toSubmit.sourceDatabaseId.value, $scope.toSubmit.externalId.value).then(function (response) {
+			var resultServer = response.data;
+			if(response.data.code !== undefined) {
+				var warningMsg = $filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_ADD.ALREADY_EXISTS');
+				warningMsg = warningMsg.replace("%%CODE%%", response.data.code);
+				warningMsg = warningMsg.replace("%%DESCRIPTION%%", response.data.description);
+				warningMsg = warningMsg.replace("%%STATUS%%", (response.data.deleted === "0" ? $filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_ADD.ACTIVE') : $filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_ADD.DELETED') ));
+				var anwser = confirm(warningMsg);
+				if(anwser == true) {
+					submitDiagnosisAjax(ready);
+				}
+			} else
+				submitDiagnosisAjax(ready);
+		}).catch(function(err) {
+			err.responseText = err.data;
+			ErrorHandler.onError(err, $filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_ADD.VALIDATE_ERROR'), arrValidationExists);
+			$state.go('master-source/diagnosis');
+		});
+	};
 
-		$scope.toSubmit;
+	function submitDiagnosisAjax(ready) {
 		$.ajax({
 			type: 'POST',
 			url: 'master-source/insert/diagnosis',
 			data: ready,
 			success: function () {},
 			error: function (err) {
-				ErrorHandler.onError(err, $filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_ADD.ERROR_ADD'), arrValidation);
+				err.responseText = JSON.parse(err.responseText)[0];
+				ErrorHandler.onError(err, $filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_ADD.ERROR_ADD'), arrValidationInsert);
 			},
 			complete: function () {
 				$state.go('master-source/diagnosis');
 			}
 		});
-	};
+	}
 
 	var fixmeTop = $('.summary-fix').offset().top;
 	$(window).scroll(function() {
