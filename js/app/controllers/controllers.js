@@ -68,6 +68,7 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.publication.log',
 	'opalAdmin.controllers.masterSourceDiagnosis',
 	'opalAdmin.controllers.masterSourceDiagnosis.add',
+	'opalAdmin.controllers.masterSourceDiagnosis.edit',
 	'opalAdmin.controllers.question',
 	'opalAdmin.controllers.question.add',
 	'opalAdmin.controllers.question.edit',
