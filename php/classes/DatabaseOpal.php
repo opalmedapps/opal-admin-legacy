@@ -2039,8 +2039,21 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  void
      * @return  array - List of master diagnoses
      * */
-    function getMasterSourceDiagnoses() {
+    function getSourceDiagnoses() {
         return $this->_fetchAll(OPAL_GET_MASTER_SOURCE_DIAGNOSIS, array());
+    }
+
+    function getMasterSourceDiagnosisDetailsByID($id) {
+        return $this->_fetchAll(OPAL_GET_MASTER_SOURCE_DIAGNOSIS_DETAILS, array(
+            array("parameter"=>":ID","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function getMasterSourceDiagnosisDetailsByExternalIdSource($externalId, $source) {
+        return $this->_fetchAll(OPAL_GET_MASTER_SOURCE_DIAGNOSIS_DETAILS_EXT_S, array(
+            array("parameter"=>":externalId","variable"=>$externalId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+        ));
     }
 
     /*
@@ -2057,14 +2070,23 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  $toInsert : array - contains the list of all the diagnoses to insert.
      * @return  int - last inserted ID
      * */
-    function insertMasterSourceDiagnoses($toInsert) {
+    function insertSourceDiagnoses($toInsert) {
         foreach ($toInsert as &$item) {
             $item["createdBy"] = $this->getUsername();
             $item["updatedBy"] = $this->getUsername();
-            $item["deleted"] = NON_DELETED_RECORD;
-            $item["deletedBy"] = "";
         }
         return $this->_insertMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE, $toInsert);
+    }
+
+    function updateSourceDiagnoses($toUpdate) {
+        $toUpdate["updatedBy"] = $this->getUsername();
+        return $this->_execute(OPAL_UPDATE_MASTER_SOURCE_DIAGNOSIS, array(
+            array("parameter"=>":code","variable"=>$toUpdate["code"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":externalId","variable"=>$toUpdate["externalId"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":source","variable"=>$toUpdate["source"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":description","variable"=>$toUpdate["description"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+            ));
     }
 
     function isMasterSourceDiagnosisExists($source, $externalId) {
