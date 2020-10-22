@@ -3,7 +3,7 @@
 include_once("../config.php");
 
 $sourceDiag = new MasterSourceDiagnosis(); // Object
-$results = $sourceDiag->insertMasterSourceDiagnoses($_POST);
+$results = $sourceDiag->insertSourceDiagnoses($_POST);
 
 header('Content-Type: application/javascript');
-echo json_encode($results);
+http_response_code(HTTP_STATUS_SUCCESS);

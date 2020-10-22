@@ -56,7 +56,7 @@ angular.module('opalAdmin.controllers.masterSourceDiagnosis', ['ngAnimate', 'ngS
 
 		var cellTemplateCode = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editMasterSourceDiagnosis(row.entity)">' +
-			'<strong><a href="">{{row.entity.code}}</a></strong></div>';
+			'<strong><a href="">{{row.entity.description}}</a></strong></div>';
 		var cellTemplatePrivacy =
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.source == \'1\'"><p>'+$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_LIST.ARIA')+'</p></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.source == \'2\'"><p>'+$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_LIST.MEDIVISIT')+'</p></div>' +
@@ -67,8 +67,8 @@ angular.module('opalAdmin.controllers.masterSourceDiagnosis', ['ngAnimate', 'ngS
 		$scope.gridLib = {
 			data: 'sourceList',
 			columnDefs: [
-				{ field: 'code', enableColumnMenu: false, displayName: $filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_LIST.CODE'), cellTemplate: cellTemplateCode, width: '5%' },
-				{ field: 'description', enableColumnMenu: false, displayName: $filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_LIST.DESCRIPTION') },
+				{ field: 'code', enableColumnMenu: false, displayName: $filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_LIST.CODE'), width: '5%' },
+				{ field: 'description', enableColumnMenu: false, displayName: $filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_LIST.DESCRIPTION'), cellTemplate: cellTemplateCode },
 				{ field: 'externalId', enableColumnMenu: false, displayName: $filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_LIST.EXTERNAL_ID'), width: '7%' },
 				{
 					field: 'source', displayName: $filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_LIST.SOURCE'), enableColumnMenu: false, cellTemplate: cellTemplatePrivacy, width: '10%', filter: {
@@ -128,8 +128,9 @@ angular.module('opalAdmin.controllers.masterSourceDiagnosis', ['ngAnimate', 'ngS
 		// function to edit question
 		$scope.editMasterSourceDiagnosis = function (diagnosis) {
 			$scope.currentDiagnosis = diagnosis;
+			console.log($scope.currentDiagnosis);
 			var modalInstance = $uibModal.open({
-				templateUrl: ($scope.writeAccess ? 'templates/master-source/edit.master.source.diagnosis.html' : 'templates/master-source/view.master.source.diagnosis.html'),
+				templateUrl: ($scope.writeAccess ? 'templates/master-source/edit.masterSourceDiagnosis.html' : 'templates/master-source/view.masterSourceDiagnosis.html'),
 				controller: 'masterSourceDiagnosis.edit',
 				scope: $scope,
 				windowClass: 'customModal',
@@ -150,7 +151,7 @@ angular.module('opalAdmin.controllers.masterSourceDiagnosis', ['ngAnimate', 'ngS
 		$scope.deleteMasterSourceDiagnosis = function (currentDiagnosis) {
 			$scope.questionToDelete = currentDiagnosis;
 			var modalInstance;
-			if (currentDiagnosis.locked) {
+			if (currentDiagnosis.DiagnosisTranslationSerNum != null) {
 				modalInstance = $uibModal.open({
 					templateUrl: 'templates/questionnaire/cannot.delete.question.html',
 					controller: 'question.delete',

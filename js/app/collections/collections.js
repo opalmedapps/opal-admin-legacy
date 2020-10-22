@@ -813,6 +813,20 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
+		// Function to get the list of email templates
+		masterSourceAPI.getDiagnosisDetails  = function (externalId, source) {
+			return $http.post(
+				"master-source/get/diagnosis-details",
+				$.param({
+					externalId: externalId,
+					source: source,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
 		return masterSourceAPI;
 	})
 
