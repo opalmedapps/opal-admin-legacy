@@ -29,12 +29,12 @@ controller('masterSourceDiagnosis.edit', function ($scope, $filter, $uibModal, $
 		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_EDIT.VALIDATION_SOURCE'),
 		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_EDIT.VALIDATION_EXTERNAL_ID'),
 		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_EDIT.VALIDATION_CODE'),
-		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_EDIT.VALIDATION_DESCRIPTION'),
-		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_EDIT.VALIDATION_DATE'),
+		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_EDIT.VALIDATION_DESCRIPTION')
 	];
 
 	var arrValidationGetDetails = [
-		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_EDIT.NO_ID'),
+		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_ADD.VALIDATION_SOURCE'),
+		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_ADD.VALIDATION_EXTERNAL_ID'),
 		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_EDIT.NOT_FOUND')
 	];
 	
@@ -116,11 +116,12 @@ controller('masterSourceDiagnosis.edit', function ($scope, $filter, $uibModal, $
 			};
 			$.ajax({
 				type: "POST",
-				url: "master-source/update/diagnosis",
+				url: "master-source/update/diagnoses",
 				data: ready,
 				success: function () {},
 				error: function (err) {
-					ErrorHandler.onError(err, $filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_EDIT.ERROR_UPDATE'));
+					err.responseText = JSON.parse(err.responseText)[0];
+					ErrorHandler.onError(err, $filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_EDIT.ERROR_UPDATE'), arrValidationUpdate);
 				},
 				complete: function () {
 					$uibModalInstance.close();

@@ -2040,17 +2040,17 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  array - List of master diagnoses
      * */
     function getSourceDiagnoses() {
-        return $this->_fetchAll(OPAL_GET_MASTER_SOURCE_DIAGNOSIS, array());
+        return $this->_fetchAll(OPAL_GET_SOURCE_DIAGNOSES, array());
     }
 
-    function getMasterSourceDiagnosisDetailsByID($id) {
-        return $this->_fetchAll(OPAL_GET_MASTER_SOURCE_DIAGNOSIS_DETAILS, array(
-            array("parameter"=>":ID","variable"=>$id,"data_type"=>PDO::PARAM_INT),
-        ));
-    }
-
-    function getMasterSourceDiagnosisDetailsByExternalIdSource($externalId, $source) {
-        return $this->_fetchAll(OPAL_GET_MASTER_SOURCE_DIAGNOSIS_DETAILS_EXT_S, array(
+    /*
+     * get the details of a source diagnosis with the externalId and source
+     * @params  $externalId - int - ID of the external source
+     *          $source - int - primary key of the source itself
+     * @return  array - details of the source
+     * */
+    function getSourceDiagnosisDetails($externalId, $source) {
+        return $this->_fetchAll(OPAL_GET_SOURCE_DIAGNOSIS_DETAILS, array(
             array("parameter"=>":externalId","variable"=>$externalId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
         ));
@@ -2078,21 +2078,70 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_insertMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE, $toInsert);
     }
 
-    function updateSourceDiagnoses($toUpdate) {
-        $toUpdate["updatedBy"] = $this->getUsername();
-        return $this->_execute(OPAL_UPDATE_MASTER_SOURCE_DIAGNOSIS, array(
+    /*
+     * Replace an actual source diagnosis with a new one while keeping the primary key.
+     * @params  $toUpdate - array - contains the details of the record to replace with
+     * @return  int - number of record affected
+     * */
+    function replaceSourceDiagnosis($toUpdate) {
+        return $this->_execute(OPAL_REPLACE_SOURCE_DIAGNOSIS, array(
+            array("parameter"=>":externalId","variable"=>$toUpdate["externalId"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":source","variable"=>$toUpdate["source"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":code","variable"=>$toUpdate["code"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":description","variable"=>$toUpdate["description"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":creationDate","variable"=>$toUpdate["creationDate"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":createdBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Update a source diagnosis with a new source and description. creation date and name are not affected. It is not
+     * a replace.
+     * @params  $toUpdate - array - contains the details of the record to replace with
+     * @return  int - number of record affected
+     * */
+    function updateSourceDiagnosis($toUpdate) {
+        return $this->_execute(OPAL_UPDATE_SOURCE_DIAGNOSIS, array(
             array("parameter"=>":code","variable"=>$toUpdate["code"],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":externalId","variable"=>$toUpdate["externalId"],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":source","variable"=>$toUpdate["source"],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":description","variable"=>$toUpdate["description"],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
-            ));
+        ));
     }
 
+    /*
+     * mark a source diagnoses as deleted.
+     * @params  $toDelete - array - contains source and externalId
+     * @returns int - number of records affected
+     * */
+    function markAsDeletedSourceDiagnoses($todelete) {
+        return $this->_execute(OPAL_MARKED_AS_DELETED_SOURCE_DIAGNOSIS, array(
+            array("parameter"=>":externalId","variable"=>$todelete["externalId"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":source","variable"=>$todelete["source"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":deletedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * check if a specific record exists.
+     * @params  $source - ID of the source
+     *          $externalId - externalID of the record in the source
+     * @returns int - list of any record found (if exists)
+     * */
     function isMasterSourceDiagnosisExists($source, $externalId) {
-        return $this->_fetchAll(OPAL_IS_MASTER_SOURCE_DIAGNOSIS_EXISTS, array(
+        return $this->_fetchAll(OPAL_IS_SOURCE_DIAGNOSIS_EXISTS, array(
             array("parameter"=>":externalId","variable"=>$externalId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function countSourceDiagnosisUsed($source, $externalId) {
+        return $this->_fetch(OPAL_IS_DIAGNOSIS_SOURCE_USED, array(
+            array("parameter"=>":SourceUID","variable"=>$externalId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":Source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
         ));
     }
 }

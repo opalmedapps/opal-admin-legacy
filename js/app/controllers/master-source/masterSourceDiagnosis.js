@@ -12,12 +12,10 @@ angular.module('opalAdmin.controllers.masterSourceDiagnosis', ['ngAnimate', 'ngS
 		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.master_source]) & (1 << 1)) !== 0);
 		$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.master_source]) & (1 << 2)) !== 0);
 
-		// Routing to go to add question page
 		$scope.goToAddQuestion = function () {
 			$state.go('master-source/diagnosis-add');
 		};
 
-		// Function to filter questionnaires
 		$scope.filterQuestion = function (filterValue) {
 			$scope.filterValue = filterValue;
 			$scope.gridApi.grid.refresh();
@@ -41,13 +39,13 @@ angular.module('opalAdmin.controllers.masterSourceDiagnosis', ['ngAnimate', 'ngS
 			return renderableRows;
 		};
 
-		// Templates for main question table
+		// Templates for main diagnosis table
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">';
 
 		if($scope.writeAccess)
-			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.editQuestion(row.entity)"><i title="'+$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ';
+			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.editSourceDiagnosis(row.entity)"><i title="'+$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ';
 		else
-			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.editQuestion(row.entity)"><i title="'+$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_LIST.VIEW')+'" class="fa fa-eye" aria-hidden="true"></i></a></strong> ';
+			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.editSourceDiagnosis(row.entity)"><i title="'+$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_LIST.VIEW')+'" class="fa fa-eye" aria-hidden="true"></i></a></strong> ';
 
 		if($scope.deleteAccess)
 			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.deleteMasterSourceDiagnosis(row.entity)"><i title="'+$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong>';
@@ -55,7 +53,7 @@ angular.module('opalAdmin.controllers.masterSourceDiagnosis', ['ngAnimate', 'ngS
 		cellTemplateOperations += '</div>';
 
 		var cellTemplateCode = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
-			'ng-click="grid.appScope.editMasterSourceDiagnosis(row.entity)">' +
+			'ng-click="grid.appScope.editSourceDiagnosis(row.entity)">' +
 			'<strong><a href="">{{row.entity.description}}</a></strong></div>';
 		var cellTemplatePrivacy =
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.source == \'1\'"><p>'+$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_LIST.ARIA')+'</p></div>' +
@@ -63,7 +61,6 @@ angular.module('opalAdmin.controllers.masterSourceDiagnosis', ['ngAnimate', 'ngS
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.source == \'3\'"><p>'+$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_LIST.MOSAIQ')+'</p></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.source == \'4\'"><p>'+$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_LIST.OACIS')+'</p></div>';
 
-		// Data binding for question table
 		$scope.gridLib = {
 			data: 'sourceList',
 			columnDefs: [
@@ -122,11 +119,11 @@ angular.module('opalAdmin.controllers.masterSourceDiagnosis', ['ngAnimate', 'ngS
 			$(".bannerMessage").addClass('alert-' + classname);
 		};
 
-		// initialize variable for storing selected question
+		// initialize variable for storing selected diagnosis
 		$scope.currentDiagnosis = {};
 
-		// function to edit question
-		$scope.editMasterSourceDiagnosis = function (diagnosis) {
+		// function to edit diagnogi
+		$scope.editSourceDiagnosis = function (diagnosis) {
 			$scope.currentDiagnosis = diagnosis;
 			console.log($scope.currentDiagnosis);
 			var modalInstance = $uibModal.open({
@@ -145,24 +142,24 @@ angular.module('opalAdmin.controllers.masterSourceDiagnosis', ['ngAnimate', 'ngS
 		};
 
 		// initialize variable for storing deleting question
-		$scope.questionToDelete = {};
+		$scope.diagnosisToDelete = {};
 
 		// function to delete question
 		$scope.deleteMasterSourceDiagnosis = function (currentDiagnosis) {
-			$scope.questionToDelete = currentDiagnosis;
+			$scope.diagnosisToDelete = currentDiagnosis;
 			var modalInstance;
 			if (currentDiagnosis.DiagnosisTranslationSerNum != null) {
 				modalInstance = $uibModal.open({
-					templateUrl: 'templates/questionnaire/cannot.delete.question.html',
-					controller: 'question.delete',
+					templateUrl: 'templates/master-source/cannot.delete.masterSourceDiagnosis.html',
+					controller: 'masterSourceDiagnosis.delete',
 					windowClass: 'deleteModal',
 					scope: $scope,
 					backdrop: 'static',
 				});
 			} else {
 				modalInstance = $uibModal.open({
-					templateUrl: 'templates/questionnaire/delete.question.html',
-					controller: 'question.delete',
+					templateUrl: 'templates/master-source/delete.masterSourceDiagnosis.html',
+					controller: 'masterSourceDiagnosis.delete',
 					windowClass: 'deleteModal',
 					scope: $scope,
 					backdrop: 'static',
