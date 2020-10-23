@@ -703,7 +703,10 @@
       "DELETE": "Supprimer",
       "CANCEL": "Annuler",
       "DELETED": "La source de diagnostic a été supprimée avec succès.",
-      "ERROR": "Une erreur est survenue lors de la suppression de la source de diagnostic."
+      "ERROR": "Une erreur est survenue lors de la suppression de la source de diagnostic.",
+      "VALIDATION_SOURCE": "Source Invalide",
+      "VALIDATION_EXTERNAL_ID": "ID externe invalide.",
+      "IN_USE": "Diagnostic source est utilisé et ne peut être supprimé."
     },
     "DIAGNOSIS_LOCKED": {
       "TITLE": "Source diagnostic verrouillée",
@@ -721,9 +724,16 @@
       "DESCRIPTION": "Description",
       "EXTERNAL_ID": "ID externe",
       "SOURCE": "Source",
+      "USED": "Associé au diagnostic",
       "ERROR_DETAILS": "Une erreur est survenue lors de l'obtention des détails de la source de diagnostic.",
-      "NOT_FOUND": "La source de diagnostic demandée est introuvable.",
-      "NO_ID": "L'identifiant est manquant."
+      "NOT_FOUND": "La source de diagnostic est introuvable.",
+      "TITLE_VIEW": "Voir la source diagnostic",
+      "CLOSE": "Fermer",
+      "VALIDATE_ERROR": "Une erreur s'est produite pendant la validation avec le serveur.",
+      "VALIDATION_SOURCE": "Source Invalide",
+      "VALIDATION_EXTERNAL_ID": "ID externe invalide.",
+      "VALIDATION_CODE": "Code invalide.",
+      "VALIDATION_DESCRIPTION": "Description invalide."
     }
   },
   "PUBLICATION": {

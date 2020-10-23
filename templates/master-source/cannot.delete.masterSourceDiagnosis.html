@@ -1,0 +1,20 @@
+<div class="modal-header">
+    <h2 class="modal-title col-xs-12">
+        <span class="fa fa-lock"></span> {{'MASTER_SOURCE_MODULE.DIAGNOSIS_LOCKED.TITLE'|translate}}
+    </h2>
+</div>
+<div class="modal-body">
+    <div class="alert alert-danger" role="alert">
+        <strong>{{'MASTER_SOURCE_MODULE.DIAGNOSIS_LOCKED.WARNING'|translate}}</strong><br>
+        <p>{{'MASTER_SOURCE_MODULE.DIAGNOSIS_LOCKED.LOCKED'|translate}}</p>
+        <p>{{diagnosisToDelete.DiagnosisTranslationSerNum}} - {{diagnosisToDelete.Name_EN}} / {{diagnosisToDelete.name_FR}}</p>
+    </div>
+    <div class="alert" role="alert">
+        <p>{{diagnosisToDelete.DiagnosisTranslationSerNum}} - {{diagnosisToDelete.Name_EN}} / {{diagnosisToDelete.name_FR}}</p>
+    </div>
+    <div class="row">
+        <div class="modal-buttons col-xs-12">
+            <input ng-click="cancel()" class="btn btn-primary cancel" type="button" value="{{'MASTER_SOURCE_MODULE.DIAGNOSIS_LOCKED.CLOSE'|translate}}">
+        </div>
+    </div>
+</div>

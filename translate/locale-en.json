@@ -688,7 +688,7 @@
       "VALIDATION_DATE": "Invalid creation date.",
       "ALREADY_EXISTS": "The external ID and the source you have entered are already associated to the following code and description. Do you want to replace them?\r\n\r\nActual code: %%CODE%%\r\nActual description: %%DESCRIPTION%%\r\nStatus: %%STATUS%%",
       "ACTIVE": "Active",
-      "DELETED": "Delete"
+      "DELETED": "Deleted"
 
     },
     "DIAGNOSIS_DELETE": {
@@ -698,7 +698,11 @@
       "DELETE": "Delete",
       "CANCEL": "Cancel",
       "DELETED": "The source diagnosis has being successfully deleted.",
-      "ERROR": "An error occurred while deleting the source diagnosis."
+      "ERROR": "An error occurred while deleting the source diagnosis.",
+      "VALIDATE_ERROR": "An error occurred while validating with the server.",
+      "VALIDATION_SOURCE": "Invalid source.",
+      "VALIDATION_EXTERNAL_ID": "Invalid external ID.",
+      "IN_USE": "Source diagnosis in used and cannot being deleted."
     },
     "DIAGNOSIS_LOCKED": {
       "TITLE": "Source diagnosis locked",
@@ -718,8 +722,14 @@
       "EXTERNAL_ID": "External ID",
       "SOURCE": "Source",
       "ERROR_DETAILS": "An error occurred while getting the details of the source of diagnosis.",
-      "NO_ID": "The identifier is missing",
-      "NOT_FOUND": "The requested master source diagnosis cannot be found."
+      "NOT_FOUND": "Source diagnosis not found.",
+      "TITLE_VIEW": "View the source diagnosis",
+      "CLOSE": "Close",
+      "VALIDATE_ERROR": "An error occurred while validating with the server.",
+      "VALIDATION_SOURCE": "Invalid source.",
+      "VALIDATION_EXTERNAL_ID": "Invalid external ID.",
+      "VALIDATION_CODE": "Invalid code.",
+      "VALIDATION_DESCRIPTION": "Invalid description."
     }
   },
   "PUBLICATION": {
