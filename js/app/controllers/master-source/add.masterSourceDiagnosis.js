@@ -177,7 +177,7 @@ controller('masterSourceDiagnosis.add', function ($scope, $filter, $uibModal, ma
 	function submitDiagnosisAjax(ready) {
 		$.ajax({
 			type: 'POST',
-			url: 'master-source/insert/diagnosis',
+			url: 'master-source/insert/diagnoses',
 			data: ready,
 			success: function () {},
 			error: function (err) {
