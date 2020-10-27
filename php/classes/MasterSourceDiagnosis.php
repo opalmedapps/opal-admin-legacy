@@ -177,7 +177,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
                 if (!HelpSetup::verifyDate($item["creationDate"], false, 'Y-m-d H:i:s'))
                     $errCode = "1" . $errCode;
                 else {
-                    $item["creationDate"] = date("Y-m-d H:i:s", $item["creationDate"]);
+                    $item["creationDate"] = date("Y-m-d H:i:s", strtotime($item["creationDate"]));
                     $errCode = "0" . $errCode;
                 }
             } else {
@@ -224,12 +224,13 @@ class MasterSourceDiagnosis extends MasterSourceModule {
      *                          code : code of the diagnosis (mandatory)
      *                          description : description of the diagnosis (mandatory)
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit informations
+     *                      Error validation code is coded as an int of 5 bits (value from 0 to 31). Bit informations
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId invalid or missing
      *                      3: code invalid or missing
      *                      4: description invalid or missing
+     *                      5: record not found
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
@@ -238,15 +239,20 @@ class MasterSourceDiagnosis extends MasterSourceModule {
         $post = HelpSetup::arraySanitization($post);
 
         foreach ($post as $item) {
+            $valid = true;
             $errCode = "";
-            if(!array_key_exists("source", $item) || $item["source"] == "")
+            if(!array_key_exists("source", $item) || $item["source"] == "") {
                 $errCode = "1" . $errCode;
+                $valid = false;
+            }
             else {
                 $errCode = "0" . $errCode;
             }
 
-            if(!array_key_exists("externalId", $item) || $item["externalId"] == "" || !is_numeric($item["externalId"]))
+            if(!array_key_exists("externalId", $item) || $item["externalId"] == "" || !is_numeric($item["externalId"])) {
+                $valid = false;
                 $errCode = "1" . $errCode;
+            }
             else {
                 $errCode = "0" . $errCode;
             }
@@ -257,6 +263,18 @@ class MasterSourceDiagnosis extends MasterSourceModule {
                 $errCode = "0" . $errCode;
             if(!array_key_exists("description", $item) || $item["description"] == "")
                 $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            if($valid) {
+                $results = $this->opalDB->isMasterSourceDiagnosisExists($item["source"], $item["externalId"]);
+                if(count($results) < 1)
+                    $errCode = "1" . $errCode;
+                else if (count($results) == 1)
+                    $errCode = "0" . $errCode;
+                else
+                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
+            }
             else
                 $errCode = "0" . $errCode;
 
@@ -286,20 +304,21 @@ class MasterSourceDiagnosis extends MasterSourceModule {
      *                          code : code of the diagnosis (mandatory)
      *                          description : description of the diagnosis (mandatory)
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 3 bits (value from 0 to 7). Bit informations
+     *                      Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit informations
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId invalid or missing
      *                      3: diagnosis is in used by the system, deletion denied
+     *                      4: diagnosis not found
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
     protected function _validateAndSanitizeSourceDiagnosesDelete(&$post, &$toDelete) {
         $errMsgs = array();
         $post = HelpSetup::arraySanitization($post);
-        $valid = true;
-
         foreach ($post as $item) {
+            $valid = true;
+
             $errCode = "";
             if(!array_key_exists("source", $item) || $item["source"] == "") {
                 $errCode = "1" . $errCode;
@@ -325,15 +344,26 @@ class MasterSourceDiagnosis extends MasterSourceModule {
                     $errCode = "0" . $errCode;
                 else
                     HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
-            } else
-                $errCode = "0" . $errCode;
+
+                $count = $this->opalDB->isMasterSourceDiagnosisExists($item["source"], $item["externalId"]);
+                if(count($count) < 1)
+                    $errCode = "1" . $errCode;
+                else if (count($count) == 1)
+                    $errCode = "0" . $errCode;
+                else
+                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
+
+            } else {
+                $errCode = "00" . $errCode;
+            }
 
             $errCode = bindec($errCode);
-            if($errCode == 0)
+            if($errCode == 0) {
                 array_push($toDelete, array(
-                    "source"=>$item["source"],
-                    "externalId"=>$item["externalId"],
+                    "source" => $item["source"],
+                    "externalId" => $item["externalId"],
                 ));
+            }
             else {
                 $item["validation"] = $errCode;
                 array_push($errMsgs, $item);
