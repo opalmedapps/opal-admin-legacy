@@ -825,6 +825,8 @@ sub insertTestResultIntoOurDB
 	my $apprvflag               = $testresult->getTestResultApprovedFlag();
 	my $testvalue               = $testresult->getTestResultTestValue();
 	my $testvaluestring         = $testresult->getTestResultTestValueString();
+	$testvaluestring			=~ tr/'/`/;
+
 	my $unitdesc                = $testresult->getTestResultUnitDesc();
 	my $validentry              = $testresult->getTestResultValidEntry();
 	my $cronlogser              = $testresult->getTestResultCronLogSer();
@@ -916,6 +918,8 @@ sub updateDatabase
 	my $apprvflag               = $testresult->getTestResultApprovedFlag();
 	my $testvalue               = $testresult->getTestResultTestValue();
 	my $testvaluestring         = $testresult->getTestResultTestValueString();
+	$testvaluestring			=~ tr/'/`/;
+
 	my $unitdesc                = $testresult->getTestResultUnitDesc();
 	my $validentry              = $testresult->getTestResultValidEntry();
 	my $cronlogser              = $testresult->getTestResultCronLogSer();
