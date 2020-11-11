@@ -140,19 +140,19 @@ class MasterSourceTestResult extends MasterSourceModule {
      *                          description : description of the test result (mandatory)
      *                          creationDate - creation date of the record in the source database (optional)
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit informations
+     *                      Error validation code is coded as an int of 5 bits (value from 0 to 31). Bit informations
      *                      are coded from right to left:
      *                      1: source invalid or missing
-     *                      2: code invalid or missing
-     *                      3: description invalid or missing
-     *                      4: creation date (if present) is in invalid format
+     *                      2: externalId (if present) invalid
+     *                      3: code invalid or missing
+     *                      4: description invalid or missing
+     *                      5: creation date (if present) is in invalid format
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
     protected function _validateAndSanitizeTestResults(&$post, &$toInsert, &$toUpdate) {
         $errMsgs = array();
         $post = HelpSetup::arraySanitization($post);
-        $externalIdExists = false;
 
         foreach ($post as $item) {
 
@@ -170,12 +170,23 @@ class MasterSourceTestResult extends MasterSourceModule {
                 else
                     HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
             }
-            if (!array_key_exists("externalId", $item) || $item["externalId"] == "" || !is_numeric($item["externalId"]))
+
+            if(!array_key_exists("externalId", $item) || $item["externalId"] == "") {
                 $item["externalId"] = -1;
+                $errCode = "0" . $errCode;
+            }
+            else {
+                if(array_key_exists("externalId", $item) && !is_numeric($item["externalId"]))
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
+            }
+
             if (!array_key_exists("code", $item) || $item["code"] == "")
                 $errCode = "1" . $errCode;
             else
                 $errCode = "0" . $errCode;
+
             if (!array_key_exists("description", $item) || $item["description"] == "")
                 $errCode = "1" . $errCode;
             else
@@ -236,9 +247,10 @@ class MasterSourceTestResult extends MasterSourceModule {
      *                      Error validation code is coded as an int of 5 bits (value from 0 to 31). Bit informations
      *                      are coded from right to left:
      *                      1: source invalid or missing
-     *                      2: code invalid or missing
-     *                      3: description invalid or missing
-     *                      4: record not found
+     *                      2: externalId (if present) invalid
+     *                      3: code invalid or missing
+     *                      4: description invalid or missing
+     *                      5: record not found
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
@@ -257,8 +269,16 @@ class MasterSourceTestResult extends MasterSourceModule {
                 $errCode = "0" . $errCode;
             }
 
-            if(!array_key_exists("externalId", $item) || $item["externalId"] == "" || !is_numeric($item["externalId"]))
+            if(!array_key_exists("externalId", $item) || $item["externalId"] == "") {
                 $item["externalId"] = -1;
+                $errCode = "0" . $errCode;
+            }
+            else {
+                if(array_key_exists("externalId", $item) && !is_numeric($item["externalId"]))
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
+            }
 
             if(!array_key_exists("code", $item) || $item["code"] == "") {
                 $valid = false;

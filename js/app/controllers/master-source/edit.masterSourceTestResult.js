@@ -1,6 +1,6 @@
-angular.module('opalAdmin.controllers.masterSourceDiagnosis.edit', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
+angular.module('opalAdmin.controllers.masterSourceTestResult.edit', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('masterSourceDiagnosis.edit', function ($scope, $filter, $uibModal, $uibModalInstance, masterSourceCollectionService, Session, ErrorHandler) {
+controller('masterSourceTestResult.edit', function ($scope, $filter, $uibModal, $uibModalInstance, masterSourceCollectionService, Session, ErrorHandler) {
 	$scope.oldData = {};
 	$scope.changesDetected = false;
 	$scope.formReady = false;
@@ -8,12 +8,12 @@ controller('masterSourceDiagnosis.edit', function ($scope, $filter, $uibModal, $
 	$scope.readOnly = {
 		name_display: null,
 		externalId: null,
+		code: null,
 		SourceDatabaseName: null,
 	};
 
 	$scope.toSubmit = {
 		details: {
-			code: null,
 			description: null,
 		},
 	};
@@ -26,16 +26,17 @@ controller('masterSourceDiagnosis.edit', function ($scope, $filter, $uibModal, $
 	};
 
 	var arrValidationUpdate = [
-		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_EDIT.VALIDATION_SOURCE'),
-		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_EDIT.VALIDATION_EXTERNAL_ID'),
-		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_EDIT.VALIDATION_CODE'),
-		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_EDIT.VALIDATION_DESCRIPTION')
+		$filter('translate')('MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.VALIDATION_SOURCE'),
+		$filter('translate')('MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.VALIDATION_EXTERNAL_ID'),
+		$filter('translate')('MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.VALIDATION_CODE'),
+		$filter('translate')('MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.VALIDATION_DESCRIPTION'),
+		$filter('translate')('MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.NOT_FOUND')
 	];
 
 	var arrValidationGetDetails = [
-		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_ADD.VALIDATION_SOURCE'),
-		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_ADD.VALIDATION_EXTERNAL_ID'),
-		$filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_EDIT.NOT_FOUND')
+		$filter('translate')('MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.VALIDATION_SOURCE'),
+		$filter('translate')('MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.VALIDATION_CODE'),
+		$filter('translate')('MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.NOT_FOUND')
 	];
 	
 	$scope.language = Session.retrieveObject('user').language;
@@ -52,15 +53,14 @@ controller('masterSourceDiagnosis.edit', function ($scope, $filter, $uibModal, $
 	};
 	// Show processing dialog
 	$scope.showProcessingModal();
-
-	// Call our API service to get the current diagnosis translation details
-	masterSourceCollectionService.getDiagnosisDetails($scope.currentDiagnosis.externalId, $scope.currentDiagnosis.source).then(function (response) {
+	// Call our API service to get the current test result details
+	masterSourceCollectionService.getTestResultDetails($scope.currentTestResult.code, $scope.currentTestResult.source).then(function (response) {
 		$scope.toSubmit.details = {
-			code: response.data.code,
 			description: response.data.description,
 		};
 
 		$scope.readOnly.externalId = response.data.externalId;
+		$scope.readOnly.code = response.data.code;
 		$scope.readOnly.SourceDatabaseName = response.data.SourceDatabaseName;
 		if($scope.language.toUpperCase() === "FR")
 			$scope.readOnly.name_display = response.data.name_FR;
@@ -71,7 +71,7 @@ controller('masterSourceDiagnosis.edit', function ($scope, $filter, $uibModal, $
 		$scope.oldData = JSON.parse(JSON.stringify($scope.toSubmit));
 	}).catch(function(err) {
 		err.responseText = err.data;
-		ErrorHandler.onError(err, $filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_EDIT.ERROR_DETAILS'), arrValidationGetDetails);
+		ErrorHandler.onError(err, $filter('translate')('MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.ERROR_DETAILS'), arrValidationGetDetails);
 		$uibModalInstance.close();
 	}).finally(function() {
 		processingModal.close(); // hide modal
@@ -101,7 +101,7 @@ controller('masterSourceDiagnosis.edit', function ($scope, $filter, $uibModal, $
 	}, true);
 
 	$scope.detailsUpdate = function () {
-		$scope.validator.details.completed = ($scope.toSubmit.details.code != undefined && $scope.toSubmit.details.description != undefined);
+		$scope.validator.details.completed = ($scope.toSubmit.details.description != undefined);
 	};
 
 	// Submit changes
@@ -109,19 +109,18 @@ controller('masterSourceDiagnosis.edit', function ($scope, $filter, $uibModal, $
 		if($scope.formReady && $scope.changesDetected) {
 			var ready = {};
 			ready[0] = {
-				externalId: $scope.currentDiagnosis.externalId,
-				source: $scope.currentDiagnosis.source,
-				code: $scope.toSubmit.details.code,
+				source: $scope.currentTestResult.source,
+				code: $scope.readOnly.code,
 				description: $scope.toSubmit.details.description
 			};
 			$.ajax({
 				type: "POST",
-				url: "master-source/update/diagnoses",
+				url: "master-source/update/test-results",
 				data: ready,
 				success: function () {},
 				error: function (err) {
 					err.responseText = JSON.parse(err.responseText)[0];
-					ErrorHandler.onError(err, $filter('translate')('MASTER_SOURCE_MODULE.DIAGNOSIS_EDIT.ERROR_UPDATE'), arrValidationUpdate);
+					ErrorHandler.onError(err, $filter('translate')('MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.ERROR_UPDATE'), arrValidationUpdate);
 				},
 				complete: function () {
 					$uibModalInstance.close();
