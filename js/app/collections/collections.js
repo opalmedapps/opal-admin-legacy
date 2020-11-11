@@ -779,7 +779,6 @@ angular.module('opalAdmin.collections', [])
 
 		var masterSourceAPI = {};
 
-		// Function to get the list of email templates
 		masterSourceAPI.getMasterSourceDiagnoses = function () {
 			return $http.post(
 				"master-source/get/diagnoses",
@@ -789,7 +788,15 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		// Function to get the list of email templates
+		masterSourceAPI.getMasterSourceTestResults = function () {
+			return $http.post(
+				"master-source/get/test-results",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
 		masterSourceAPI.getExternalSourceDatabase = function () {
 			return $http.post(
 				"master-source/get/external-source-db",
@@ -799,7 +806,6 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		// Function to get the list of email templates
 		masterSourceAPI.isMasterSourceDiagnosisExists = function (source, externalId) {
 			return $http.post(
 				"master-source/get/diagnosis-exists",
@@ -813,12 +819,37 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		// Function to get the list of email templates
+		masterSourceAPI.isMasterSourceTestResultExists = function (source, code) {
+			return $http.post(
+				"master-source/get/test-result-exists",
+				$.param({
+					source: source,
+					code: code,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
 		masterSourceAPI.getDiagnosisDetails  = function (externalId, source) {
 			return $http.post(
 				"master-source/get/diagnosis-details",
 				$.param({
 					externalId: externalId,
+					source: source,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		masterSourceAPI.getTestResultDetails  = function (code, source) {
+			return $http.post(
+				"master-source/get/test-result-details",
+				$.param({
+					code: code,
 					source: source,
 				}),
 				{
