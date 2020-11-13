@@ -125,7 +125,6 @@ angular.module('opalAdmin.controllers.masterSourceTestResult', ['ngAnimate', 'ng
 		// function to edit test result
 		$scope.editSourceTestResult = function (testResult) {
 			$scope.currentTestResult = testResult;
-			console.log($scope.currentTestResult);
 			var modalInstance = $uibModal.open({
 				templateUrl: ($scope.writeAccess ? 'templates/master-source/edit.masterSourceTestResult.html' : 'templates/master-source/view.masterSourceTestResult.html'),
 				controller: 'masterSourceTestResult.edit',

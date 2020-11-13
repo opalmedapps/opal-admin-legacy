@@ -2139,30 +2139,6 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Count how many times a specified source diagnosis is being used
-     * @params  $source - ID of the source
-     *          $externalId - externalID of the record in the source
-     * @returns int - list of any record found (if exists)     * */
-    function countSourceDiagnosisUsed($source, $externalId) {
-        return $this->_fetch(OPAL_IS_DIAGNOSIS_SOURCE_USED, array(
-            array("parameter"=>":SourceUID","variable"=>$externalId,"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":Source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
-        ));
-    }
-
-    /*
-     * Count how many times a specified source diagnosis is being used
-     * @params  $source - ID of the source
-     *          $externalId - externalID of the record in the source
-     * @returns int - list of any record found (if exists)     * */
-    function countSourceTestResultUsed($source, $code) {
-        return $this->_fetch(OPAL_IS_DIAGNOSIS_SOURCE_USED, array(
-            array("parameter"=>":code","variable"=>$code,"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":Source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
-        ));
-    }
-
-    /*
      * Get the list of all undeleted master diagnoses
      * @params  void
      * @return  array - List of master diagnoses
@@ -2231,7 +2207,6 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-
     /*
      * get the details of a source test result with the externalId and source
      * @params  $externalId - int - ID of the external source
@@ -2257,9 +2232,110 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /*
+     * mark a source test result as deleted.
+     * @params  $toDelete - array - contains source and code
+     * @returns int - number of records affected
+     * */
     function markAsDeletedSourceTestResults($todelete) {
-        return $this->_execute(OPAL_MARKED_AS_DELETED_SOURCE_TEST_RESULT, array(
+        return $this->_execute(OPAL_MARK_AS_DELETED_SOURCE_TEST_RESULT, array(
             array("parameter"=>":code","variable"=>$todelete["code"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":source","variable"=>$todelete["source"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":deletedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Get the list of all non deleted source aliases available
+     * @params  void
+     * @return  array - list of all non deleted source aliases
+     * */
+    function getSourceAliases(){
+        return $this->_fetchAll(OPAL_GET_SOURCE_ALIASES, array());
+    }
+
+    /*
+     * get the details of a source alias with the externalId and source
+     * @params  $externalId - int - ID of the external source
+     *          $source - int - primary key of the source itself
+     * @return  array - details of the source alias
+     * */
+    function getSourceAliasDetails($externalId, $source) {
+        return $this->_fetchAll(OPAL_GET_SOURCE_ALIAS_DETAILS, array(
+            array("parameter"=>":externalId","variable"=>$externalId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Determined if a source alias exists already
+     * @params  $source - int - ID of the source database
+     *          $externalId - int - external ID of the source alias
+     * @return  array - list of existing source alias
+     * */
+    function isMasterSourceAliasExists($source, $externalId) {
+        return $this->_fetchAll(OPAL_IS_SOURCE_ALIAS_EXISTS, array(
+            array("parameter"=>":externalId","variable"=>$externalId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Insert list of aliases code/description into the masterSourceTable.
+     * @params  $toInsert : array - contains the list of all the aliases to insert.
+     * @return  int - last inserted ID
+     * */
+    function insertSourceAliases($toInsert) {
+        foreach ($toInsert as &$item) {
+            $item["createdBy"] = $this->getUsername();
+            $item["updatedBy"] = $this->getUsername();
+        }
+        return $this->_insertMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_ALIAS_TABLE, $toInsert);
+    }
+
+    /*
+     * Replace an actual source alias with a new one while keeping the primary key.
+     * @params  $toUpdate - array - contains the details of the record to replace with
+     * @return  int - number of record affected
+     * */
+    function replaceSourceAlias($toUpdate) {
+        return $this->_execute(OPAL_REPLACE_SOURCE_ALIAS, array(
+            array("parameter"=>":externalId","variable"=>$toUpdate["externalId"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":type","variable"=>$toUpdate["type"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":source","variable"=>$toUpdate["source"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":code","variable"=>$toUpdate["code"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":description","variable"=>$toUpdate["description"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":creationDate","variable"=>$toUpdate["creationDate"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":createdBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Update a source alias with a new source and description. creation date and name are not affected. It is not
+     * a replace.
+     * @params  $toUpdate - array - contains the details of the record to replace with
+     * @return  int - number of record affected
+     * */
+    function updateSourceAlias($toUpdate) {
+        return $this->_execute(OPAL_UPDATE_SOURCE_ALIAS, array(
+            array("parameter"=>":code","variable"=>$toUpdate["code"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":externalId","variable"=>$toUpdate["externalId"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":source","variable"=>$toUpdate["source"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":description","variable"=>$toUpdate["description"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * mark a source alias as deleted.
+     * @params  $toDelete - array - contains source and externalId
+     * @returns int - number of records affected
+     * */
+    function markAsDeletedSourceAliases($todelete) {
+        return $this->_execute(OPAL_MARKED_AS_DELETED_SOURCE_ALIAS, array(
+            array("parameter"=>":externalId","variable"=>$todelete["externalId"],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":source","variable"=>$todelete["source"],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":deletedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
