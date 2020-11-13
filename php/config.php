@@ -120,6 +120,7 @@ include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Publication.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "CustomCode.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "MasterSourceModule.php");
+include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "MasterSourceAlias.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "MasterSourceDiagnosis.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "MasterSourceTestResult.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Study.php");
@@ -179,6 +180,12 @@ define("ACCESS_GRANTED", "GRANTED");
 define("ACCESS_DENIED", "DENIED");
 define("ENCRYPTED_DATA", "ENCRYPTED DATA");
 define("UNKNOWN_USER", "UNKNOWN USER");
+
+define("ALIAS_TYPE_TASK",1);
+define("ALIAS_TYPE_APPOINTMENT",2);
+define("ALIAS_TYPE_DOCUMENT",3);
+
+define("ACCEPTED_ALIAS_TYPE", [ALIAS_TYPE_TASK, ALIAS_TYPE_APPOINTMENT, ALIAS_TYPE_DOCUMENT]);
 
 /*
  * List of HTTP status codes

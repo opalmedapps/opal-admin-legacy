@@ -125,7 +125,6 @@ angular.module('opalAdmin.controllers.masterSourceDiagnosis', ['ngAnimate', 'ngS
 		// function to edit diagnogi
 		$scope.editSourceDiagnosis = function (diagnosis) {
 			$scope.currentDiagnosis = diagnosis;
-			console.log($scope.currentDiagnosis);
 			var modalInstance = $uibModal.open({
 				templateUrl: ($scope.writeAccess ? 'templates/master-source/edit.masterSourceDiagnosis.html' : 'templates/master-source/view.masterSourceDiagnosis.html'),
 				controller: 'masterSourceDiagnosis.edit',
@@ -148,23 +147,13 @@ angular.module('opalAdmin.controllers.masterSourceDiagnosis', ['ngAnimate', 'ngS
 		$scope.deleteMasterSourceDiagnosis = function (currentDiagnosis) {
 			$scope.diagnosisToDelete = currentDiagnosis;
 			var modalInstance;
-			if (currentDiagnosis.DiagnosisTranslationSerNum != null) {
-				modalInstance = $uibModal.open({
-					templateUrl: 'templates/master-source/cannot.delete.masterSourceDiagnosis.html',
-					controller: 'masterSourceDiagnosis.delete',
-					windowClass: 'deleteModal',
-					scope: $scope,
-					backdrop: 'static',
-				});
-			} else {
-				modalInstance = $uibModal.open({
-					templateUrl: 'templates/master-source/delete.masterSourceDiagnosis.html',
-					controller: 'masterSourceDiagnosis.delete',
-					windowClass: 'deleteModal',
-					scope: $scope,
-					backdrop: 'static',
-				});
-			}
+			modalInstance = $uibModal.open({
+				templateUrl: 'templates/master-source/delete.masterSourceDiagnosis.html',
+				controller: 'masterSourceDiagnosis.delete',
+				windowClass: 'deleteModal',
+				scope: $scope,
+				backdrop: 'static',
+			});
 			// After delete, refresh the eduMat list
 			modalInstance.result.then(function () {
 				$scope.sourceList = [];
