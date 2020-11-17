@@ -1,9 +1,7 @@
 <?php
+include_once("../config.php");
 
-include_once('user.inc');
-
-$OAUserId = strip_tags($_POST["OAUserId"]);
-$user = new User($OAUserId);
+$user = new User();
 $roles = $user->getRoles();
 
 header('Content-Type: application/javascript');

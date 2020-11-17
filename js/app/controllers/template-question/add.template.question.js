@@ -1,5 +1,5 @@
 angular.module('opalAdmin.controllers.template.question.add', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.bootstrap.materialPicker']).
-controller('template.question.add', function ($scope, $state, $filter, $uibModal, Session, filterCollectionService, questionnaireCollectionService) {
+controller('template.question.add', function ($scope, $state, $filter, $uibModal, Session, questionnaireCollectionService, ErrorHandler) {
 	// navigation function
 	$scope.goBack = function () {
 		$state.go('questionnaire');
@@ -103,13 +103,12 @@ controller('template.question.add', function ($scope, $state, $filter, $uibModal
 				type: "POST",
 				url: "template-question/insert/template-question",
 				data: $scope.newTemplateQuestion,
-				success: function () {
-				},
+				success: function () {},
 				error: function (err) {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_ADD.ERROR_SET_TEMPLATE_QUESTION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_ADD.ERROR_SET_TEMPLATE_QUESTION'));
 				},
 				complete: function(err) {
-					$state.go('questionnaire-template-question');
+					$state.go('questionnaire/template-question');
 				}
 			});
 		}
@@ -141,8 +140,8 @@ controller('template.question.add', function ($scope, $state, $filter, $uibModal
 				entry.category_display = entry.category_EN;
 		});
 	}).catch(function(err) {
-		alert($filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_ADD.ERROR_SET_TEMPLATE_QUESTION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
-		$state.go('questionnaire-template-question');
+		ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_ADD.ERROR_SET_TEMPLATE_QUESTION'));
+		$state.go('questionnaire/template-question');
 	});
 
 	// add options

@@ -1,0 +1,110 @@
+<!-- Modal title -->
+<div class="modal-header">
+    <div class="col-xs-12 col-md-6">
+        <h2 class="modal-title">
+            <span class="fa fa-eye"></span>
+            {{'EDUCATION.EDIT.TITLE_VIEW'|translate}}
+        </h2>
+    </div>
+    <div class="modal-buttons col-xs-12 col-md-6">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'EDUCATION.EDIT.CLOSE'|translate}}">
+    </div>
+</div>
+<div class="modal-body">
+    <div class="bannerMessageModal alert-success">{{bannerMessageModal}}</div>
+    <uib-accordion close-others="false">
+        <!-- SECTION: Titles -->
+        <div uib-accordion-group is-open="titleSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'EDUCATION.EDIT.TITLES'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'EDUCATION.EDIT.ENGLISH_ABRV'|translate}}</strong>: {{eduMat.name_EN}}</p>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'EDUCATION.EDIT.FRENCH_ABRV'|translate}}</strong>: {{eduMat.name_FR}}</p>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Single URL -->
+        <div uib-accordion-group is-open="urlSection.open" ng-show="!eduMat.tocs.length">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'EDUCATION.EDIT.URLS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': urlSection.open, 'glyphicon-chevron-right': !urlSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'EDUCATION.EDIT.ENGLISH_ABRV'|translate}}</strong>: <a href="{{eduMat.url_EN}}" target="_blank">{{eduMat.url_EN}}</a></p>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'EDUCATION.EDIT.FRENCH_ABRV'|translate}}</strong>: <a href="{{eduMat.url_FR}}" target="_blank">{{eduMat.url_FR}}</a></p>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Table of contents -->
+        <div uib-accordion-group is-open="tocSection.open" ng-hide="eduMat.url_EN || eduMat.url_FR">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'EDUCATION.EDIT.TABLE_CONTENTS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tocSection.open, 'glyphicon-chevron-right': !tocSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row" ng-repeat="toc in eduMat.tocs" style="margin-bottom:7px; border-bottom:1px solid #ddd;">
+                <h2 style="margin:0 0 7px 0; padding:0 15px; font-size:30px;">{{'EDUCATION.EDIT.ORDER'|translate}} {{toc.order}}</h2>
+                <div class="col-xs-12 col-md-6">
+                    <div class="input-group" style="margin-bottom: 7px;">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.ENGLISH_TITLE_ABVR'|translate}}</span>
+                        <input disabled class="form-control" type="text" ng-model="toc.name_EN" />
+                    </div>
+                    <div class="input-group" style="margin-bottom: 7px;">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.ENGLISH_URL_ABVR'|translate}}</span>
+                        <input disabled class="form-control" type="text" ng-model="toc.url_EN" />
+                    </div>
+                    <div class="input-group" style="margin-bottom: 20px;">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.ENGLISH_TYPE_ABVR'|translate}}</span>
+                        <input disabled class="form-control" type="text" ng-model="toc.type_EN" />
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-6">
+                    <div class="input-group" style="margin-bottom: 7px;">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.FRENCH_TITLE_ABVR'|translate}}</span>
+                        <input disabled class="form-control" type="text" ng-model="toc.name_FR" />
+                    </div>
+                    <div class="input-group" style="margin-bottom: 7px;">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.FRENCH_URL_ABVR'|translate}}</span>
+                        <input disabled class="form-control" type="text" ng-model="toc.url_FR" />
+                    </div>
+                    <div class="input-group" style="margin-bottom: 20px;">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.FRENCH_TYPE_ABVR'|translate}}</span>
+                        <input disabled class="form-control" type="text" ng-model="toc.type_FR" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Supporting PDF -->
+        <div uib-accordion-group is-open="pdfSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'EDUCATION.EDIT.PDF_DOCUMENT'|translate}}</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': pdfSection.open, 'glyphicon-chevron-right': !pdfSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div>
+                <div><span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                    <span style="word-wrap: break-word">
+                        <strong>{{'EDUCATION.EDIT.ENGLISH_ABRV'|translate}} </strong> -- <a href="{{eduMat.share_url_EN}}" target="_blank">{{eduMat.share_url_EN}}</a>
+                    </span>
+                </div>
+                <div style="margin-top: 10px;">
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                    <span style="word-wrap: break-word">
+                        <strong>{{'EDUCATION.EDIT.FRENCH_ABRV'|translate}} </strong> -- <a href="{{eduMat.share_url_FR}}" target="_blank">{{eduMat.share_url_FR}}</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </uib-accordion>
+</div>

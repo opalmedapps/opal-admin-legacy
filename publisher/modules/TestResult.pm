@@ -470,19 +470,22 @@ sub getTestResultsFromSourceDB
 				use VARIAN;
 
                 IF OBJECT_ID('tempdb.dbo.#tempTR', 'U') IS NOT NULL
-                  DROP TABLE #tempTR;
+                	DROP TABLE #tempTR;
 
-				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
+				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
+					DROP TABLE #tempPatient;
+
+				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
 			my $numOfPatients = @patientList;
 			my $counter = 0;
 			foreach my $Patient (@patientList) {
 				my $patientSer 			= $Patient->getPatientSer();
-				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
+				my $id      		 	= $Patient->getPatientId(); # get patient ID
 				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
 
 				$patientInfo_sql .= "
-					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
+					SELECT '$id', '$patientLastTransfer', '$patientSer'
 				";
 
 				$counter++;
@@ -493,8 +496,13 @@ sub getTestResultsFromSourceDB
 			$patientInfo_sql .= ")
 			Select c.* into #tempTR
 			from PatientInfo c;
-			Create Index temporaryindexTR1 on #tempTR (SSN);
+			Create Index temporaryindexTR1 on #tempTR (ID);
 			Create Index temporaryindexTR2 on #tempTR (PatientSerNum);
+
+			Select p.PatientSer, p.PatientId into #tempPatient
+			from VARIAN.dbo.Patient p;
+			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
+			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
 			";
 
 			my $trInfo_sql = $patientInfo_sql . "
@@ -513,7 +521,7 @@ sub getTestResultsFromSourceDB
 					tr.result_appr_ind,
 					case
 						when RTRIM(tr.comp_name) = 'SARS-2 Coronavirus-2019, NAA' then
-							case 
+							case
 								when LEFT(LTRIM(tr.test_value_string), 11) = 'Non détecté' then 0
 								when LEFT(LTRIM(tr.test_value_string), 11) = 'Non-détecté' then 0
 								when LEFT(LTRIM(tr.test_value_string), 7) = 'Détecté' then 1
@@ -531,7 +539,8 @@ sub getTestResultsFromSourceDB
 					#tempTR as PatientInfo
 				WHERE
 					tr.pt_id                		= pt.pt_id
-				AND pt.patient_ser          		= (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+				AND pt.patient_ser          		= (select pt.PatientSer
+					from #tempPatient pt where pt.PatientId = PatientInfo.ID)
 				AND tr.valid_entry_ind 				= 'Y'
 				AND (
 			";
@@ -542,7 +551,7 @@ sub getTestResultsFromSourceDB
 			foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
 
 				# concatenate query
-				
+
 				# 2020-02-05 YM: removed the filter so that we get all of the lab results as per John's request
 				# $trInfo_sql .= "
 				# (tr.comp_name IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
@@ -551,7 +560,7 @@ sub getTestResultsFromSourceDB
 				$trInfo_sql .= "
 				( tr.trans_log_mtstamp > (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
 				";
-				
+
 				$counter++;
 				# concat "UNION" until we've reached the last query
 				if ($counter < $numOfExpressions) {
@@ -803,10 +812,10 @@ sub insertTestResultIntoOurDB
 {
 	my ($testresult) = @_; # our object
 
-	my $patientser							= $testresult->getTestResultPatientSer();
-	my $sourceuid								= $testresult->getTestResultSourceUID();
+	my $patientser				= $testresult->getTestResultPatientSer();
+	my $sourceuid				= $testresult->getTestResultSourceUID();
 	my $sourcedbser             = $testresult->getTestResultSourceDatabaseSer();
-	my $expressionser						= $testresult->getTestResultExpressionSer();
+	my $expressionser			= $testresult->getTestResultExpressionSer();
 	my $name                    = $testresult->getTestResultName();
 	my $facname                 = $testresult->getTestResultFacName();
 	my $abnormalflag            = $testresult->getTestResultAbnormalFlag();
@@ -816,6 +825,8 @@ sub insertTestResultIntoOurDB
 	my $apprvflag               = $testresult->getTestResultApprovedFlag();
 	my $testvalue               = $testresult->getTestResultTestValue();
 	my $testvaluestring         = $testresult->getTestResultTestValueString();
+	$testvaluestring			=~ tr/'/`/;
+
 	my $unitdesc                = $testresult->getTestResultUnitDesc();
 	my $validentry              = $testresult->getTestResultValidEntry();
 	my $cronlogser              = $testresult->getTestResultCronLogSer();
@@ -860,7 +871,7 @@ sub insertTestResultIntoOurDB
 		NOW()
 	)
 	";
-	
+
     # prepare query
 	my $query = $SQLDatabase->prepare($insert_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -897,7 +908,7 @@ sub updateDatabase
 
 	my $sourceuid               = $testresult->getTestResultSourceUID();
 	my $sourcedbser             = $testresult->getTestResultSourceDatabaseSer();
-	my $expressionser 					= $testresult->getTestResultExpressionSer();
+	my $expressionser 			= $testresult->getTestResultExpressionSer();
 	my $name                    = $testresult->getTestResultName();
 	my $facname                 = $testresult->getTestResultFacName();
 	my $abnormalflag            = $testresult->getTestResultAbnormalFlag();
@@ -907,6 +918,8 @@ sub updateDatabase
 	my $apprvflag               = $testresult->getTestResultApprovedFlag();
 	my $testvalue               = $testresult->getTestResultTestValue();
 	my $testvaluestring         = $testresult->getTestResultTestValueString();
+	$testvaluestring			=~ tr/'/`/;
+
 	my $unitdesc                = $testresult->getTestResultUnitDesc();
 	my $validentry              = $testresult->getTestResultValidEntry();
 	my $cronlogser              = $testresult->getTestResultCronLogSer();
@@ -916,7 +929,7 @@ sub updateDatabase
 			TestResult
 		SET
 			TestResultExpressionSerNum	= '$expressionser',
-			CronLogSerNum 						= '$cronlogser',
+			CronLogSerNum 				= '$cronlogser',
 			ComponentName           	= \"$name\",
 			FacComponentName        	= \"$facname\",
 			AbnormalFlag            	= '$abnormalflag',
@@ -928,7 +941,7 @@ sub updateDatabase
 			TestValueString         	= '$testvaluestring',
 			UnitDescription         	= '$unitdesc',
 			ValidEntry              	= '$validentry',
-			ReadStatus								= 0
+			ReadStatus					= 0
 		WHERE
 			TestResultAriaSer       	= '$sourceuid'
 			AND SourceDatabaseSerNum	= '$sourcedbser'

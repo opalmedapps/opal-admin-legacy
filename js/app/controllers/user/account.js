@@ -4,7 +4,8 @@ angular.module('opalAdmin.controllers.account', ['ui.bootstrap']).
 	/******************************************************************************
 	 * Controller for the account page
 	 *******************************************************************************/
-	controller('account', function ($scope, $rootScope, $translate, $route, $filter, $templateCache, Session, Encrypt) {
+	controller('account', function ($scope, $rootScope, $translate, $route, $filter, $templateCache, Session) {
+		$scope.navMenu = Session.retrieveObject('menu');
 
 		// Set current user
 		$scope.currentUser = Session.retrieveObject('user');
@@ -68,7 +69,6 @@ angular.module('opalAdmin.controllers.account', ['ui.bootstrap']).
 		// Function to validate password
 		$scope.validPassword = { status: null, message: null };
 		$scope.validatePassword = function (password) {
-
 			if (!password) {
 				$scope.validPassword.status = null;
 				return;
@@ -132,22 +132,13 @@ angular.module('opalAdmin.controllers.account', ['ui.bootstrap']).
 					return;
 				}
 
-				var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103;
-
-				var encrypted = {
+				var data = {
 					password: $scope.account.password,
 					oldPassword: $scope.account.oldPassword,
 					confirmPassword: $scope.account.confirmPassword,
-				};
-				encrypted = Encrypt.encode(JSON.stringify(encrypted), cypher);
-
-				var data = {
 					OAUserId: Session.retrieveObject('user').id,
-					encrypted: encrypted,
-					cypher: cypher,
 				};
 
-				// submit form
 				$.ajax({
 					type: "POST",
 					url: "user/update/password",
@@ -182,9 +173,9 @@ angular.module('opalAdmin.controllers.account', ['ui.bootstrap']).
 				type: "POST",
 				url: "user/update/language",
 				data: toSend,
-				success: function () {
+				success: function (menu) {
 					$templateCache.removeAll();
-					Session.update(user); // change language in cookies
+					Session.updateUser(user); // change language in cookies
 					$translate.use($scope.currentUser.language.toLowerCase());
 					location.reload();
 				},

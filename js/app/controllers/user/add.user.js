@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 	/******************************************************************************
 	 * Controller for user registration
 	 *******************************************************************************/
-	controller('user.add', function ($scope, userCollectionService, $state, $filter, Encrypt, Session) {
+	controller('user.add', function ($scope, userCollectionService, $state, $filter, Session, ErrorHandler) {
 		var OAUserId = Session.retrieveObject('user').id;
 
 		// Function to go to previous page
@@ -12,10 +12,24 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			window.history.back();
 		};
 
+		$scope.userType = [
+			{
+				ID: "1",
+				name_display: $filter('translate')('USERS.ADD.HUMAN')
+			},
+			{
+				ID: "2",
+				name_display: $filter('translate')('USERS.ADD.SYSTEM')
+			},
+		];
+
 		// default booleans
 		$scope.passwordSection = {open:false, show:false};
 		$scope.roleSection = {open:false, show:false};
 		$scope.languageSection = {open:false, show:false};
+		$scope.language = Session.retrieveObject('user').language;
+
+		$scope.type_name = $scope.userType[0].name_display;
 
 		// Initialize a list of languages available
 		$scope.languages = [{
@@ -63,6 +77,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 
 		// Initialize new user object
 		$scope.newUser = {
+			type: $scope.userType[0].ID,
 			username: null,
 			password: null,
 			confirmPassword: null,
@@ -76,35 +91,14 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 		$scope.roles = [];
 		userCollectionService.getRoles(OAUserId).then(function (response) {
 			response.data.forEach(function(row) {
-				switch (row.name) {
-				case "admin":
-					row.name_display = $filter('translate')('USERS.ADD.ADMIN');
-					break;
-				case "clinician":
-					row.name_display = $filter('translate')('USERS.ADD.CLINICIAN');
-					break;
-				case "editor":
-					row.name_display = $filter('translate')('USERS.ADD.EDITOR');
-					break;
-				case "education-creator":
-					row.name_display = $filter('translate')('USERS.ADD.EDUCATION_CREATOR');
-					break;
-				case "guest":
-					row.name_display = $filter('translate')('USERS.ADD.GUEST');
-					break;
-				case "manager":
-					row.name_display = $filter('translate')('USERS.ADD.MANAGER');
-					break;
-				case "registrant":
-					row.name_display = $filter('translate')('USERS.ADD.REGISTRANT');
-					break;
-				default:
-					row.name_display = $filter('translate')('USERS.ADD.NOT_TRANSLATED');
-				}
+				if($scope.language.toUpperCase() === "FR")
+					row.name_display = row.name_FR;
+				else
+					row.name_display = row.name_EN;
 			});
 			$scope.roles = response.data;
-		}).catch(function(response) {
-			alert($filter('translate')('USERS.ADD.ERROR_ROLES') + "\r\n\r\n" + response.status + " - " + response.data);
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR_ROLES'));
 		});
 
 		// Function to validate username
@@ -131,8 +125,8 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 					$scope.usernameUpdate();
 					return;
 				}
-			}).catch(function(response) {
-				alert($filter('translate')('USERS.ADD.ERROR_USERNAME_UNKNOWN') + "\r\n\r\n" + response.status + " - " + response.data);
+			}).catch(function(err) {
+				ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR_USERNAME_UNKNOWN'));
 			});
 
 		};
@@ -184,6 +178,15 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			}
 		};
 
+		$scope.$watch('newUser.type', function() {
+			if($scope.newUser.type !== "1") {
+				alert($filter('translate')('USERS.ADD.WARNING_USER'));
+				$scope.type_name = $scope.userType[1].name_display;
+			} else {
+				$scope.type_name = $scope.userType[0].name_display;
+			}
+		});
+
 		// Function to toggle steps when updating the username field
 		$scope.usernameUpdate = function () {
 			if ($scope.validUsername.status == 'valid') {
@@ -216,31 +219,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			if ($scope.newUser.role) {
 				steps.role.completed = true;
 				$scope.languageSection.show = true;
-				switch ($scope.newUser.role.name) {
-				case "admin":
-					$scope.newUser.role_display = $filter('translate')('USERS.ADD.ADMIN');
-					break;
-				case "clinician":
-					$scope.newUser.role_display = $filter('translate')('USERS.ADD.CLINICIAN');
-					break;
-				case "editor":
-					$scope.newUser.role_display = $filter('translate')('USERS.ADD.EDITOR');
-					break;
-				case "education-creator":
-					$scope.newUser.role_display = $filter('translate')('USERS.ADD.EDUCATION_CREATOR');
-					break;
-				case "guest":
-					$scope.newUser.role_display = $filter('translate')('USERS.ADD.GUEST');
-					break;
-				case "manager":
-					$scope.newUser.role_display = $filter('translate')('USERS.ADD.MANAGER');
-					break;
-				case "registrant":
-					$scope.newUser.role_display = $filter('translate')('USERS.ADD.REGISTRANT');
-					break;
-				default:
-					$scope.newUser.role_display = $filter('translate')('USERS.ADD.NOT_TRANSLATED');
-				}
+				$scope.newUser.role_display = $scope.newUser.role.name_display;
 			}
 			else
 				steps.role.completed = false;
@@ -278,40 +257,27 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 		$scope.registerUser = function () {
 
 			if ($scope.checkRegistrationForm()) {
-
-
-
-				var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103;
-
-				var encrypted = {
+				var data = {
+					OAUserId: Session.retrieveObject('user').id,
+					type: $scope.newUser.type,
 					username: $scope.newUser.username,
 					password: $scope.newUser.password,
 					confirmPassword: $scope.newUser.confirmPassword,
 					language: $scope.newUser.language,
-					roleId: $scope.newUser.role.serial
-				};
-
-				encrypted = Encrypt.encode(JSON.stringify(encrypted), cypher);
-				var data = {
-					OAUserId: Session.retrieveObject('user').id,
-					encrypted: encrypted,
-					cypher: cypher,
+					roleId: $scope.newUser.role.ID,
 				};
 
 				$.ajax({
 					type: "POST",
 					url: 'user/insert/user',
 					data: data,
-					success: function () {
-					},
+					success: function () {},
 					error: function(err) {
-						alert($filter('translate')('USERS.ADD.ERROR') + "\r\n\r\n" + err.status + " - " + err.responseText);
+						ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR'));
 					},
 					complete: function() {
 						$state.go('users');
 					}
-
-
 				});
 			}
 		};

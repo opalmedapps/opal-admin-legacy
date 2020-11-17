@@ -3,9 +3,8 @@
 include_once('questionnaire.inc');
 
 // Construct array from FORM params
-$answerTypeObj = new TemplateQuestion(strip_tags($_POST["OAUserId"])); // Object
+$answerTypeObj = new TemplateQuestion(); // Object
 $answerTypeObj->insertTemplateQuestion($_POST);
 
 header('Content-Type: application/javascript');
-$response['message'] = HTTP_STATUS_SUCCESS;
-echo json_encode($response);
+http_response_code(HTTP_STATUS_SUCCESS);

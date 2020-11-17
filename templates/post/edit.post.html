@@ -1,16 +1,10 @@
 <div class="modal-header">
-    <div class="row col-xs-12" ng-if="post.locked == 0">
+    <div class="row col-xs-12">
         <h2 class="modal-title">
-            <span class="glyphicon glyphicon-pencil"></span>
+            <span ng-class="post.locked > 0 ? 'text-danger fa fa-lock' : 'glyphicon glyphicon-pencil'"></span>
             {{'POSTS.EDIT.TITLE'|translate}} - {{name_display}}
         </h2>
-    </div>
-    <div class="row col-xs-12" ng-if="post.locked > 0">
-        <h2 class="modal-title">
-            <span class="text-danger fa fa-lock"></span>
-            {{'POSTS.EDIT.TITLE'|translate}} - {{name_display}}
-        </h2>
-        <p class="text-danger">{{'POSTS.EDIT.PUBLISHED'|translate}}</p>
+        <p ng-if="post.locked > 0" class="text-danger">{{'POSTS.EDIT.PUBLISHED'|translate}}</p>
     </div>
     <div class="modal-buttons col-xs-12 col-md-6">
         <span>
