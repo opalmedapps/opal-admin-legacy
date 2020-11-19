@@ -268,7 +268,7 @@ class Diagnosis extends Module {
             if(!HelpSetup::verifyDate($post["startDate"], false, 'Y-m-d'))
                 $errCode = "1" . $errCode;
             else {
-                $startDate = date("Y-m-d", $post["startDate"]);
+                $startDate = date("Y-m-d", strtotime($post["startDate"]));
                 $errCode = "0" . $errCode;
             }
         } else {
@@ -280,7 +280,7 @@ class Diagnosis extends Module {
             if(!HelpSetup::verifyDate($post["endDate"], false, 'Y-m-d'))
                 $errCode = "1" . $errCode;
             else {
-                $endDate = date("Y-m-d", $post["endDate"]);
+                $endDate = date("Y-m-d", strtotime($post["endDate"]));
                 $errCode = "0" . $errCode;
             }
         } else {
