@@ -2274,10 +2274,13 @@ class DatabaseOpal extends DatabaseAccess {
      *          $externalId - int - external ID of the source alias
      * @return  array - list of existing source alias
      * */
-    function isMasterSourceAliasExists($source, $externalId) {
+    function isMasterSourceAliasExists($source, $externalId, $type, $code, $description) {
         return $this->_fetchAll(OPAL_IS_SOURCE_ALIAS_EXISTS, array(
             array("parameter"=>":externalId","variable"=>$externalId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":type","variable"=>$type,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":code","variable"=>$code,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":description","variable"=>$description,"data_type"=>PDO::PARAM_STR),
         ));
     }
 
