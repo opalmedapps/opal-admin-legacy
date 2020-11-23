@@ -779,6 +779,15 @@ angular.module('opalAdmin.collections', [])
 
 		var masterSourceAPI = {};
 
+		masterSourceAPI.getMasterSourceAliases = function () {
+			return $http.post(
+				"master-source/get/aliases",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
 		masterSourceAPI.getMasterSourceDiagnoses = function () {
 			return $http.post(
 				"master-source/get/diagnoses",
@@ -800,6 +809,22 @@ angular.module('opalAdmin.collections', [])
 		masterSourceAPI.getExternalSourceDatabase = function () {
 			return $http.post(
 				"master-source/get/external-source-db",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		masterSourceAPI.isMasterSourceAliasExists = function (source, externalId, type, code, description) {
+			return $http.post(
+				"master-source/get/alias-exists",
+				$.param({
+					source: source,
+					externalId: externalId,
+					type: type,
+					code: code,
+					description: description,
+				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}

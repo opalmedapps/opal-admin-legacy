@@ -1049,7 +1049,8 @@ define("OPAL_GET_SOURCE_ALIAS_DETAILS","
 ");
 
 define("OPAL_IS_SOURCE_ALIAS_EXISTS","
-    SELECT code, description, deleted FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." WHERE externalId = :externalId AND source = :source;
+    SELECT code, description, deleted FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." WHERE externalId = :externalId AND source = :source
+    AND type = :type AND code = :code AND description = :description;
 ");
 
 define("OPAL_REPLACE_SOURCE_ALIAS", "
