@@ -23,8 +23,7 @@ class MasterSourceAlias extends MasterSourceModule {
      * @params  $post - array - should contains externalId and source
      * @return  array - details of the source alias
      * */
-    public function getSourceAliasDetails($post) {
-        $this->checkReadAccess($post);
+    protected function _getSourceAliasDetails($post, $typeAlias) {
         $post = HelpSetup::arraySanitization($post);
         $errCode = "";
 
@@ -40,7 +39,7 @@ class MasterSourceAlias extends MasterSourceModule {
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
 
-        $results = $this->opalDB->getSourceAliasDetails($post["externalId"], $post["source"]);
+        $results = $this->opalDB->getSourceAliasDetails($post["externalId"], $post["source"], $typeAlias);
         if(count($results) < 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>4));
         else if(count($results) > 1)
@@ -56,11 +55,10 @@ class MasterSourceAlias extends MasterSourceModule {
      * @params  $post - array that contains every source aliases to enter
      * @return  void or error 422 with lists of failed alias with validation code explanation
      * */
-    public function insertSourceAliases($post) {
-        $this->checkWriteAccess($post);
+    protected function _insertSourceAliases($post, $typeAlias) {
         $toInsert = array();
         $toUpdate = array();
-        $errMsgs = $this->_validateAndSanitizeSourceAliases($post, $toInsert, $toUpdate);
+        $errMsgs = $this->_validateAndSanitizeSourceAliases($post, $toInsert, $toUpdate, $typeAlias);
 
         if(count($toInsert) > 0)
             $this->opalDB->insertSourceAliases($toInsert);
@@ -80,10 +78,10 @@ class MasterSourceAlias extends MasterSourceModule {
      * @params  $post - array that contains every source aliases to update
      * @return  void or error 422 with lists of failed alias with validation code explanation
      * */
-    public function updateSourceAliases($post) {
-        $this->checkWriteAccess($post);
+    protected function _updateSourceAliases($post, $typeAlias) {
+
         $toUpdate = array();
-        $errMsgs = $this->_validateAndSanitizeSourceAliasesUpdate($post, $toUpdate);
+        $errMsgs = $this->_validateAndSanitizeSourceAliasesUpdate($post, $toUpdate, $typeAlias);
 
         foreach ($toUpdate as $item) {
             $this->opalDB->updateSourceAlias($item);
@@ -105,28 +103,14 @@ class MasterSourceAlias extends MasterSourceModule {
      * @params  $post - array. Contains source and externalId
      * @return  array - contains the record found if it exists. If not, return empty array
      * */
-    public function doesAliasExists($post) {
-        $this->checkReadAccess($post);
+    protected function _doesAliasExists($post, $typeAlias) {
         $post = HelpSetup::arraySanitization($post);
         $errCode = "";
-
-        if (!array_key_exists("source", $post) || $post["source"] == "")
+        if(!array_key_exists("source", $post) || $post["source"] == "")
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
-        if (!array_key_exists("externalId", $post) || $post["externalId"] == "" || !is_numeric($post["externalId"]))
-            $errCode = "1" . $errCode;
-        else
-            $errCode = "0" . $errCode;
-        if (!array_key_exists("type", $post) || $post["type"] == "" || !(in_array($post["type"], ACCEPTED_ALIAS_TYPE)))
-            $errCode = "1" . $errCode;
-        else
-            $errCode = "0" . $errCode;
-        if (!array_key_exists("code", $post) || $post["code"] == "")
-            $errCode = "1" . $errCode;
-        else
-            $errCode = "0" . $errCode;
-        if (!array_key_exists("description", $post) || $post["description"] == "")
+        if(!array_key_exists("externalId", $post) || $post["externalId"] == "" || !is_numeric($post["externalId"]))
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
@@ -135,11 +119,12 @@ class MasterSourceAlias extends MasterSourceModule {
         if($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
 
-        $results = $this->opalDB->isMasterSourceAliasExists($post["source"], $post["externalId"], $post["type"], $post["code"], $post["description"]);
+        $results = $this->opalDB->isMasterSourceAliasExists($post["source"], $post["externalId"],$typeAlias);
         if(count($results) <= 0) return $results;
         else if (count($results) == 1) return $results[0];
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
+        return false;
     }
 
     /*
@@ -152,19 +137,17 @@ class MasterSourceAlias extends MasterSourceModule {
      *                          description : description of the alias (mandatory)
      *                          creationDate - creation date of the record in the source database (optional)
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 7 bits (value from 0 to 127). Bit informations
+     *                      Error validation code is coded as an int of 5 bits (value from 0 to 31). Bit informations
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId invalid or missing
-     *                      3: type invalid or missing
-     *                      4: code invalid or missing
-     *                      5: description invalid or missing
-     *                      6: creation date (if present) is in invalid format
-     *                      7: record already exists
+     *                      3: code invalid or missing
+     *                      4: description invalid or missing
+     *                      5: creation date (if present) is in invalid format
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
-    protected function _validateAndSanitizeSourceAliases(&$post, &$toInsert, &$toUpdate) {
+    protected function _validateAndSanitizeSourceAliases(&$post, &$toInsert, &$toUpdate, &$typeAlias) {
         $errMsgs = array();
         $post = HelpSetup::arraySanitization($post);
 
@@ -177,10 +160,6 @@ class MasterSourceAlias extends MasterSourceModule {
             else
                 $errCode = "0" . $errCode;
             if (!array_key_exists("externalId", $item) || $item["externalId"] == "" || !is_numeric($item["externalId"]))
-                $errCode = "1" . $errCode;
-            else
-                $errCode = "0" . $errCode;
-            if (!array_key_exists("type", $item) || $item["type"] == "" || !(in_array($item["type"], ACCEPTED_ALIAS_TYPE)))
                 $errCode = "1" . $errCode;
             else
                 $errCode = "0" . $errCode;
@@ -207,28 +186,25 @@ class MasterSourceAlias extends MasterSourceModule {
 
             $errCode = bindec($errCode);
             if ($errCode == 0) {
-                $count = $this->opalDB->isMasterSourceAliasExists($item["source"], $item["externalId"], $item["type"], $item["code"], $item["description"]);
+                $count = $this->opalDB->isMasterSourceAliasExists($item["source"], $item["externalId"], $typeAlias);
                 if ($count["total"] < 1)
                     array_push($toInsert, array(
                         "source" => $item["source"],
                         "externalId" => $item["externalId"],
-                        "type" => $item["type"],
+                        "type" => $typeAlias,
                         "code" => $item["code"],
                         "description" => $item["description"],
                         "creationDate" => $item["creationDate"]
                     ));
-                else if ($count["total"] == 1) {
-                    $item["validation"] = 64;
-                    array_push($errMsgs, $item);
-                }
-//                    array_push($toUpdate, array(
-//                        "source" => $item["source"],
-//                        "externalId" => $item["externalId"],
-//                        "type" => $item["type"],
-//                        "code" => $item["code"],
-//                        "description" => $item["description"],
-//                        "creationDate" => $item["creationDate"]
-//                    ));
+                else if ($count["total"] == 1)
+                    array_push($toUpdate, array(
+                        "source" => $item["source"],
+                        "externalId" => $item["externalId"],
+                        "type" => $typeAlias,
+                        "code" => $item["code"],
+                        "description" => $item["description"],
+                        "creationDate" => $item["creationDate"]
+                    ));
                 else
                     HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
             }
@@ -259,7 +235,7 @@ class MasterSourceAlias extends MasterSourceModule {
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
-    protected function _validateAndSanitizeSourceAliasesUpdate(&$post, &$toUpdate) {
+    protected function _validateAndSanitizeSourceAliasesUpdate(&$post, &$toUpdate, &$typeAlias) {
         $errMsgs = array();
         $post = HelpSetup::arraySanitization($post);
 
@@ -292,7 +268,7 @@ class MasterSourceAlias extends MasterSourceModule {
                 $errCode = "0" . $errCode;
 
             if($valid) {
-                $results = $this->opalDB->isMasterSourceAliasExists($item["source"], $item["externalId"], $item["type"], $item["code"], $item["description"]);
+                $results = $this->opalDB->isMasterSourceAliasExists($item["source"], $item["externalId"], $typeAlias);
                 if(count($results) < 1)
                     $errCode = "1" . $errCode;
                 else if (count($results) == 1)
@@ -308,6 +284,7 @@ class MasterSourceAlias extends MasterSourceModule {
                 array_push($toUpdate, array(
                     "source"=>$item["source"],
                     "externalId"=>$item["externalId"],
+                    "type"=>$typeAlias,
                     "code"=>$item["code"],
                     "description"=>$item["description"],
                 ));
@@ -333,16 +310,17 @@ class MasterSourceAlias extends MasterSourceModule {
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId invalid or missing
-     *                      3: alias not found
+     *                      3: alias (task/document/appointment) not found
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
-    protected function _validateAndSanitizeSourceAliasesDelete(&$post, &$toDelete) {
+    protected function _validateAndSanitizeSourceAliasesDelete(&$post, &$toDelete, &$typeAlias) {
         $errMsgs = array();
         $post = HelpSetup::arraySanitization($post);
         foreach ($post as $item) {
 
             $valid = true;
+
             $errCode = "";
             if(!array_key_exists("source", $item) || $item["source"] == "") {
                 $errCode = "1" . $errCode;
@@ -353,39 +331,32 @@ class MasterSourceAlias extends MasterSourceModule {
             }
 
             if(!array_key_exists("externalId", $item) || $item["externalId"] == "" || !is_numeric($item["externalId"])) {
-                $valid = false;
                 $errCode = "1" . $errCode;
+                $valid = false;
             }
             else {
                 $errCode = "0" . $errCode;
             }
 
-            if(!array_key_exists("code", $item) || $item["code"] == "")
-                $errCode = "1" . $errCode;
-            else
-                $errCode = "0" . $errCode;
-            if(!array_key_exists("description", $item) || $item["description"] == "")
-                $errCode = "1" . $errCode;
-            else
-                $errCode = "0" . $errCode;
-
             if($valid) {
-                $results = $this->opalDB->isMasterSourceAliasExists($item["source"], $item["externalId"], $item["type"], $item["code"], $item["description"]);
-                if(count($results) < 1)
+                $count = $this->opalDB->isMasterSourceAliasExists($item["source"], $item["externalId"], $typeAlias);
+                if(count($count) < 1)
                     $errCode = "1" . $errCode;
-                else if (count($results) == 1)
+                else if (count($count) == 1)
                     $errCode = "0" . $errCode;
                 else
                     HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
-            }
-            else
+
+            } else {
                 $errCode = "0" . $errCode;
+            }
 
             $errCode = bindec($errCode);
             if($errCode == 0) {
                 array_push($toDelete, array(
                     "source" => $item["source"],
                     "externalId" => $item["externalId"],
+                    "type" => $typeAlias,
                 ));
             }
             else {
@@ -397,9 +368,7 @@ class MasterSourceAlias extends MasterSourceModule {
     }
 
     /**
-     * Mark a question as deleted. First, it get the last time it was updated, check if the user has the proper
-     * authorization, and check if the question was already published. Then it checked if the record was
-     * updated in the meantime, and if not, it marks the question as being deleted.
+     * Mark an alias as deleted. Call by one of the API calls from task, appointment or document
      *
      * WARNING!!! No record should be EVER be removed from this table! It should only being marked as
      * being deleted ONLY after it was verified the record is not in used, the user has the proper authorization.
@@ -410,11 +379,10 @@ class MasterSourceAlias extends MasterSourceModule {
      * @params $post (arrays that contains combo of externalId - source)
      * @return false
      */
-    function markAsDeletedSourceAliases($post) {
-        $this->checkDeleteAccess($post);
+    protected function _markAsDeletedSourceAliases($post, $typeAlias) {
         $post = HelpSetup::arraySanitization($post);
         $toDelete = array();
-        $errMsgs = $this->_validateAndSanitizeSourceAliasesDelete($post, $toDelete);
+        $errMsgs = $this->_validateAndSanitizeSourceAliasesDelete($post, $toDelete, $typeAlias);
 
         foreach ($toDelete as $item) {
             $this->opalDB->markAsDeletedSourceAliases($item);
