@@ -1045,27 +1045,25 @@ define("OPAL_GET_SOURCE_ALIAS_DETAILS","
     LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." sc ON sc.SourceDatabaseSerNum = msa.source
     LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
     WHERE msa.deleted = ".NON_DELETED_RECORD." AND msa.source != ".LOCAL_SOURCE_DB." AND msa.externalId = :externalId
-    AND msa.source = :source;
+    AND msa.source = :source AND msa.type = :type;
 ");
 
 define("OPAL_IS_SOURCE_ALIAS_EXISTS","
-    SELECT code, description, deleted FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." WHERE externalId = :externalId AND source = :source
-    AND type = :type AND code = :code AND description = :description;
+    SELECT code, description, deleted FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." WHERE externalId = :externalId AND source = :source AND type = :type;
 ");
 
 define("OPAL_REPLACE_SOURCE_ALIAS", "
-    UPDATE ".OPAL_MASTER_SOURCE_ALIAS_TABLE." SET code = :code, type = :type, description = :description,
+    UPDATE ".OPAL_MASTER_SOURCE_ALIAS_TABLE." SET code = :code, description = :description,
     deleted = ".NON_DELETED_RECORD.", deletedBy = '', creationDate = :creationDate, createdBy = :createdBy,
-    updatedBy = :updatedBy WHERE externalId = :externalId
-    AND source = :source;
+    updatedBy = :updatedBy WHERE externalId = :externalId AND source = :source AND type = :type;
 ");
 
 define("OPAL_UPDATE_SOURCE_ALIAS", "
     UPDATE ".OPAL_MASTER_SOURCE_ALIAS_TABLE." SET code = :code, description = :description, updatedBy = :updatedBy WHERE externalId = :externalId
-    AND source = :source;
+    AND source = :source AND type = :type;
 ");
 
 define("OPAL_MARKED_AS_DELETED_SOURCE_ALIAS", "
     UPDATE ".OPAL_MASTER_SOURCE_ALIAS_TABLE." SET deleted = ".DELETED_RECORD.", updatedBy = :updatedBy, deletedBy = :deletedBy WHERE externalId = :externalId
-    AND source = :source;
+    AND source = :source AND type = :type;
 ");
