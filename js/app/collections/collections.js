@@ -815,15 +815,17 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		masterSourceAPI.isMasterSourceAliasExists = function (source, externalId, type, code, description) {
+		masterSourceAPI.isMasterSourceAliasExists = function (source, externalId, type) {
+			var url = "";
+			if(type == 1) url = "master-source/get/task-exists";
+			else if(type == 2) url = "master-source/get/appointment-exists";
+			else url = "master-source/get/document-exists";
 			return $http.post(
-				"master-source/get/alias-exists",
+				url,
 				$.param({
 					source: source,
 					externalId: externalId,
 					type: type,
-					code: code,
-					description: description,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
