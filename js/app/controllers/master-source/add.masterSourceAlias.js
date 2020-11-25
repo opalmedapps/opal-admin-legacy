@@ -194,8 +194,10 @@ controller('masterSourceAlias.add', function ($scope, $filter, $uibModal, master
 			"description": $scope.toSubmit.details.description
 		};
 
-		masterSourceCollectionService.isMasterSourceAliasExists(ready[0].source, ready[0].externalId, ready[0].type, ready[0].code, ready[0].description).then(function (response) {
+		masterSourceCollectionService.isMasterSourceAliasExists(ready[0].source, ready[0].externalId, ready[0].type).then(function (response) {
 			var resultServer = response.data;
+			console.log(response.data.code );
+			console.log(response.data.deleted );
 			if(response.data.code !== undefined && response.data.deleted == 0) {
 				alert($filter('translate')('MASTER_SOURCE_MODULE.ALIAS_ADD.ALREADY_EXISTS'));
 			}
