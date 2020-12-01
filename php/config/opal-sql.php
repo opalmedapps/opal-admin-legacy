@@ -1053,13 +1053,13 @@ define("OPAL_IS_SOURCE_ALIAS_EXISTS","
 ");
 
 define("OPAL_REPLACE_SOURCE_ALIAS", "
-    UPDATE ".OPAL_MASTER_SOURCE_ALIAS_TABLE." SET code = :code, description = :description,
-    deleted = ".NON_DELETED_RECORD.", deletedBy = '', creationDate = :creationDate, createdBy = :createdBy,
+    UPDATE ".OPAL_MASTER_SOURCE_ALIAS_TABLE." SET description = :description,
+    deleted = ".NON_DELETED_RECORD.", deletedBy = '', createdBy = :createdBy,
     updatedBy = :updatedBy WHERE externalId = :externalId AND source = :source AND type = :type;
 ");
 
 define("OPAL_UPDATE_SOURCE_ALIAS", "
-    UPDATE ".OPAL_MASTER_SOURCE_ALIAS_TABLE." SET code = :code, description = :description, updatedBy = :updatedBy WHERE externalId = :externalId
+    UPDATE ".OPAL_MASTER_SOURCE_ALIAS_TABLE." SET description = :description, updatedBy = :updatedBy WHERE externalId = :externalId
     AND source = :source AND type = :type;
 ");
 
