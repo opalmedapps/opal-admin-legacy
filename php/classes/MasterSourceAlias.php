@@ -16,7 +16,7 @@ class MasterSourceAlias extends MasterSourceModule {
     /*
      * Get the details of a source alias.
      * Validation code :    in case of error returns code 422 with validation code. Error validation code is coded as
-     *                      an int of 2 bits (value from 0 to 8). Bit informations are from right to left:
+     *                      an int of 3 bits (value from 0 to 8). Bit informations are from right to left:
      *                      1: source invalid or missing
      *                      2: externalId invalid or missing
      *                      3: record not found
@@ -186,8 +186,8 @@ class MasterSourceAlias extends MasterSourceModule {
 
                 $errCode = bindec($errCode);
                 if ($errCode == 0) {
-                    $count = $this->opalDB->isMasterSourceAliasExists($item["source"], $item["externalId"], $typeAlias);
-                    if ($count["total"] < 1)
+                    $data = $this->opalDB->isMasterSourceAliasExists($item["source"], $item["externalId"], $typeAlias);
+                    if (count($data) < 1)
                         array_push($toInsert, array(
                             "source" => $item["source"],
                             "externalId" => $item["externalId"],
@@ -196,15 +196,21 @@ class MasterSourceAlias extends MasterSourceModule {
                             "description" => $item["description"],
                             "creationDate" => $item["creationDate"]
                         ));
-                    else if ($count["total"] == 1)
-                        array_push($toUpdate, array(
-                            "source" => $item["source"],
-                            "externalId" => $item["externalId"],
-                            "type" => $typeAlias,
-                            "code" => $item["code"],
-                            "description" => $item["description"],
-                            "creationDate" => $item["creationDate"]
-                        ));
+                    else if (count($data) == 1) {
+                        if($data["code"] == $item["code"])
+                            array_push($toUpdate, array(
+                                "source" => $item["source"],
+                                "externalId" => $item["externalId"],
+                                "type" => $typeAlias,
+                                "code" => $item["code"],
+                                "description" => $item["description"],
+                                "creationDate" => $item["creationDate"]
+                            ));
+                        else {
+                            $item["validation"] = bindec("100");
+                            array_push($errMsgs, $item);
+                        }
+                    }
                     else
                         HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
                 }
@@ -273,19 +279,19 @@ class MasterSourceAlias extends MasterSourceModule {
                 else
                     $errCode = "0" . $errCode;
 
-                if($valid) {
+                $errCode = bindec($errCode);
+                if ($errCode == 0) {
                     $results = $this->opalDB->isMasterSourceAliasExists($item["source"], $item["externalId"], $typeAlias);
                     if(count($results) < 1)
-                        $errCode = "1" . $errCode;
-                    else if (count($results) == 1)
-                        $errCode = "0" . $errCode;
+                        $errCode = bindec("10000");
+                    else if (count($results) == 1) {
+                        if($results["code"] != $item["code"])
+                            $errCode = bindec("100");
+                    }
                     else
                         HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
                 }
-                else
-                    $errCode = "0" . $errCode;
 
-                $errCode = bindec($errCode);
                 if($errCode == 0)
                     array_push($toUpdate, array(
                         "source"=>$item["source"],

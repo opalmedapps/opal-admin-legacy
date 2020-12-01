@@ -2306,9 +2306,7 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":externalId","variable"=>$toUpdate["externalId"],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":type","variable"=>$toUpdate["type"],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":source","variable"=>$toUpdate["source"],"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":code","variable"=>$toUpdate["code"],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":description","variable"=>$toUpdate["description"],"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":creationDate","variable"=>$toUpdate["creationDate"],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":createdBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
         ));
@@ -2322,7 +2320,6 @@ class DatabaseOpal extends DatabaseAccess {
      * */
     function updateSourceAlias($toUpdate) {
         return $this->_execute(OPAL_UPDATE_SOURCE_ALIAS, array(
-            array("parameter"=>":code","variable"=>$toUpdate["code"],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":type","variable"=>$toUpdate["type"],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":externalId","variable"=>$toUpdate["externalId"],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":source","variable"=>$toUpdate["source"],"data_type"=>PDO::PARAM_INT),
