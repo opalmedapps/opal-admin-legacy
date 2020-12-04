@@ -284,7 +284,7 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 			var formatData = copyQuestionnaireData($scope.newQuestionnaire);
 
 			$.ajax({
-				type: "POST",
+				method: "POST",
 				url: "questionnaire/insert/questionnaire",
 				data: formatData,
 				success: function () {},
