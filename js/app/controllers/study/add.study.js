@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 	/******************************************************************************
 	 * Add Diagnosis Translation Page controller
 	 *******************************************************************************/
-	controller('study.add', function ($scope, $filter, $uibModal, $state, $locale, Session) {
+	controller('study.add', function ($scope, $filter, $uibModal, $state, $locale, Session, ErrorHandler) {
 
 		// get current user id
 		var user = Session.retrieveObject('user');
@@ -17,39 +17,6 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 		$scope.showAssigned = false;
 		$scope.hideAssigned = false;
 		$scope.language = Session.retrieveObject('user').language;
-
-		// completed steps booleans - used for progress bar
-		var steps = {
-			diagnoses: { completed: false },
-			title_description: { completed: false }
-		};
-
-		// Default count of completed steps
-		$scope.numOfCompletedSteps = 0;
-
-		// Default total number of steps
-		$scope.stepTotal = 2;
-
-		// Progress for progress bar on default steps and total
-		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-
-		// Function to calculate / return step progress
-		function trackProgress(value, total) {
-			return Math.round(100 * value / total);
-		}
-
-		// Function to return number of steps completed
-		function stepsCompleted(steps) {
-
-			var numberOfTrues = 0;
-			for (var step in steps) {
-				if (steps[step].completed === true) {
-					numberOfTrues++;
-				}
-			}
-
-			return numberOfTrues;
-		}
 
 		$scope.toSubmit = {
 			OAUserId: OAUserId,
@@ -263,7 +230,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				data: $scope.toSubmit,
 				success: function () {},
 				error: function (err) {
-					alert($filter('translate')('STUDY.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('STUDY.ADD.ERROR_ADD'));
 				},
 				complete: function () {
 					$state.go('study');

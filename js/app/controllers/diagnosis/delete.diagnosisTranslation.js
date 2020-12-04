@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.diagnosisTranslation.delete', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('diagnosisTranslation.delete', function ($scope, $filter, $uibModal, $uibModalInstance, diagnosisCollectionService, educationalMaterialCollectionService, uiGridConstants, $state, Session) {
+controller('diagnosisTranslation.delete', function ($scope, $filter, $uibModalInstance, Session, ErrorHandler) {
 
 	// Submit delete
 	$scope.deleteDiagnosisTranslation = function () {
@@ -11,21 +11,15 @@ controller('diagnosisTranslation.delete', function ($scope, $filter, $uibModal, 
 			type: "POST",
 			url: "diagnosis-translation/delete/diagnosis-translation",
 			data: $scope.diagnosisTranslationToDelete,
-			success: function (response) {
-				response = JSON.parse(response);
-				// Show success or failure depending on response
-				if (response.value) {
-					$scope.setBannerClass('success');
-					$scope.$parent.bannerMessage = $filter('translate')('DIAGNOSIS.DELETE.SUCCESS');
-					$scope.showBanner();
-				}
-				else {
-					alert($filter('translate')('DIAGNOSIS.DELETE.ERROR') + "\r\n\r\n" + response.message);
-				}
-				$uibModalInstance.close();
+			success: function () {
+				$scope.setBannerClass('success');
+				$scope.$parent.bannerMessage = $filter('translate')('DIAGNOSIS.DELETE.SUCCESS');
+				$scope.showBanner();
 			},
 			error: function (err) {
-				alert($filter('translate')('DIAGNOSIS.DELETE.ERROR') + "\r\n\r\n" + err.status + " - " + err.statusText);
+				ErrorHandler.onError(err, $filter('translate')('DIAGNOSIS.DELETE.ERROR'));
+			},
+			complete: function () {
 				$uibModalInstance.close();
 			}
 		});

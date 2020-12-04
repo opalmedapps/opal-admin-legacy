@@ -4,7 +4,7 @@
 			<div class="row">
 				<!-- Load side menu -->
 				<div class="col-lg-2">
-					<div ng-include="'templates/questionnaire/questionnaire-side-menu.html'"></div>
+					<div ng-include="'templates/questionnaire/menu-side.html'"></div>
 				</div>
 				<!-- Right side detail view -->
 				<div class="col-lg-10 animated fadeIn">
@@ -23,7 +23,7 @@
 					<div class="row clearfix operations">
 						<div class="save-add col-xs-12 col-sm-6 col-md-8">
 							<!-- Add button -->
-							<a style="margin-right:20px;" href="" ng-click="goToAddQuestionnaire()" class="btn btn-md btn-outline item-button">
+							<a ng-if="writeAccess" style="margin-right:20px;" href="" ng-click="goToAddQuestionnaire()" class="btn btn-md btn-outline item-button">
 								<span style="font-size: 17px;" class="fa fa-plus"></span>
 								<span style="font-size: 20px;"><strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ADD'|translate}}</strong></span>
 							</a>

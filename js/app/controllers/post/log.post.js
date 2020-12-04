@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.post.log', ['ngAnimate', 'ngSanitize', 'ui
 /******************************************************************************
  * Controller for the post logs
  *******************************************************************************/
-controller('post.log', function ($scope, $uibModal, $filter, postCollectionService, Session, $uibModalInstance) {
+controller('post.log', function ($scope, $uibModal, $filter, postCollectionService, Session, $uibModalInstance, ErrorHandler) {
 	postCollectionService.getPostChartLogs($scope.currentPost.serial, $scope.currentPost.type, Session.retrieveObject('user').id).then(function (response) {
 		$scope.postChartLogs = $scope.chartConfig.series = response.data;
 		angular.forEach($scope.postChartLogs, function(serie) {
@@ -12,8 +12,8 @@ controller('post.log', function ($scope, $uibModal, $filter, postCollectionServi
 				log.x = new Date(log.x);
 			});
 		});
-	}).catch(function(response) {
-		alert($filter('translate')('POSTS.LOG.ERROR') + "\r\n\r\n" + response.status);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('POSTS.LOG.ERROR'));
 		$uibModalInstance.dismiss('cancel');
 	});
 
@@ -56,7 +56,6 @@ controller('post.log', function ($scope, $uibModal, $filter, postCollectionServi
 						// convert set to array
 						cronSerials = Array.from(cronSerials);
 						postCollectionService.getPostListLogs(cronSerials, $scope.currentPost.type, Session.retrieveObject('user').id).then(function(response){
-							console.log("4: " + cronSerials + " " + $scope.currentPost.type);
 							$scope.postListLogs = response.data;
 						});
 					}
@@ -93,7 +92,6 @@ controller('post.log', function ($scope, $uibModal, $filter, postCollectionServi
 						select: function(point) {
 							var cronLogSerNum = [point.target.cron_serial];
 							postCollectionService.getPostListLogs(cronLogSerNum, $scope.currentPost.type, Session.retrieveObject('user').id).then(function(response){
-								console.log("3: " + cronLogSerNum + " " + $scope.currentPost.type);
 								$scope.postListLogs = response.data;
 							});
 						},

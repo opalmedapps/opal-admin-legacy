@@ -4,8 +4,11 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 	/******************************************************************************
 	 * Educational Material Page controller
 	 *******************************************************************************/
-	controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $state, educationalMaterialCollectionService, filterCollectionService, uiGridConstants, Session) {
-
+	controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $state, educationalMaterialCollectionService, uiGridConstants, Session, ErrorHandler, MODULE) {
+		$scope.navMenu = Session.retrieveObject('menu');
+		$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.edu_mat]) & (1 << 0)) !== 0);
+		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.edu_mat]) & (1 << 1)) !== 0);
+		$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.edu_mat]) & (1 << 2)) !== 0);
 
 		// Function to go to add educational material page
 		$scope.goToAddEducationalMaterial = function () {
@@ -28,10 +31,19 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 			'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
 			'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
 			'ng-checked="grid.appScope.updatePublishFlag(row.entity.publish)" ng-model="row.entity.publish"></div>';
-		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.showEduMatLog(row.entity)"><i title="' + $filter('translate')('EDUCATION.LIST.LOGS') + '" class="fa fa-area-chart" aria-hidden="true"></i></a></strong> - ' +
-			'<strong><a href="" ng-click="grid.appScope.editEduMat(row.entity)"><i title="' + $filter('translate')('EDUCATION.LIST.EDIT') + '" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ' +
-			'- <strong><a href="" ng-click="grid.appScope.deleteEduMat(row.entity)"><i title="' + $filter('translate')('EDUCATION.LIST.DELETE') + '" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
+		
+		
+		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">';
+		if($scope.readAccess)
+			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.showEduMatLog(row.entity)"><i title="' + $filter('translate')('EDUCATION.LIST.LOGS') + '" class="fa fa-area-chart" ></i></a></strong> ';
+		if($scope.writeAccess)
+			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.editEduMat(row.entity)"><i title="' + $filter('translate')('EDUCATION.LIST.EDIT') + '" class="fa fa-pencil" ></i></a></strong> ';
+		else
+			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.editEduMat(row.entity)"><i title="' + $filter('translate')('EDUCATION.LIST.VIEW') + '" class="fa fa-eye" ></i></a></strong> ';
+		if($scope.deleteAccess)
+			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.deleteEduMat(row.entity)"><i title="' + $filter('translate')('EDUCATION.LIST.DELETE') + '" class="fa fa-trash" ></i></a></strong>';
+		cellTemplateOperations += '</div>';
+		
 		var expandableRowTemplate = '<div ui-grid="row.entity.subGridOptions"></div>';
 		var ratingCellTemplate = '<div class="ui-grid-cell-contents" ng-show="row.entity.rating == -1">' + $filter('translate')('EDUCATION.LIST.NO_RATING') + '</div>' +
 			'<div class="ui-grid-cell-contents" ng-hide="row.entity.rating == -1"><stars number="{{row.entity.rating}}"></stars> </div>';
@@ -160,7 +172,6 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 
 		$scope.changesMade = false;
 
-
 		// When this function is called, we set the "publish" field to checked
 		// or unchecked based on value in the argument
 		$scope.updatePublishFlag = function (value) {
@@ -184,182 +195,7 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 			edumat.changed = 1; // flag change to entity
 		};
 
-		// Function to submit changes when publish flags have been modified
-		$scope.submitPublishFlags = function () {
-			if ($scope.changesMade) {
-				angular.forEach($scope.eduMatList, function (edumat) {
-					if (edumat.changed) {
-						$scope.eduMatPublishes.publishList.push({
-							serial: edumat.serial,
-							publish: edumat.publish
-						});
-					}
-				});
-				// Log who updated publish flags
-				$scope.eduMatPublishes.user = Session.retrieveObject('user');
-				// Submit form
-				$.ajax({
-					type: "POST",
-					url: "educational-material/update/educational-material-publish-flags",
-					data: $scope.eduMatPublishes,
-					success: function (response) {
-						getEducationalMaterialsList();
-						response = JSON.parse(response);
-						// Show success or failure depending on response
-						if (response.value) {
-							$scope.setBannerClass('success');
-							$scope.bannerMessage = $filter('translate')('EDUCATION.LIST.SUCCESS_FLAGS');
-							$scope.showBanner();
-						} else {
-							alert($filter('translate')('EDUCATION.LIST.ERROR_FLAGS') + "\r\n\r\n" + response.message);
-						}
-						$scope.changesMade = false;
-						$scope.eduMatPublishes.publishList = [];
-					},
-					error: function (err) {
-						alert($filter('translate')('EDUCATION.LIST.ERROR_FLAGS') + "\r\n\r\n" + err.status + " - " + err.statusText);
-					}
-				});
-			}
-		};
-
-		$scope.switchDetailView = function (view) {
-			// only switch when there's no changes that have been made
-			if (!$scope.changesMade) {
-				$scope.detailView = view;
-			}
-		};
-
-		$scope.$watch('detailView', function (view) {
-			if (view === 'list') {
-				getEducationalMaterialsList();
-				if ($scope.educationalMaterialListLogs.length) {
-					$scope.educationalMaterialListLogs = [];
-					$scope.gridApiLog.grid.refresh();
-				}
-			} else if (view === 'chart') {
-				// Call our API to get educational material logs
-				educationalMaterialCollectionService.getEducationalMaterialChartLogs().then(function (response) {
-					$scope.educationalMaterialChartLogs = $scope.chartConfig.series = response.data;
-					angular.forEach($scope.educationalMaterialChartLogs, function (serie) {
-						angular.forEach(serie.data, function (log) {
-							log.x = new Date(log.x);
-						});
-					});
-				}).catch(function (response) {
-					alert($filter('translate')('EDUCATION.LIST.ERROR_FLAGS') + "\r\n\r\n" + response.status + " - " + response.data);
-				});
-			}
-		}, true);
-
-		var chartConfig = $scope.chartConfig = {
-			chart: {
-				type: 'spline',
-				zoomType: 'x',
-				className: 'logChart'
-			},
-			title: {
-				text: $filter('translate')('EDUCATION.LIST.ALL_LOGS')
-			},
-			subtitle: {
-				text: $filter('translate')('EDUCATION.LIST.HIGHLIGHT')
-			},
-			xAxis: {
-				type: 'datetime',
-				title: {
-					text: $filter('translate')('EDUCATION.LIST.DATETIME')
-				},
-				events: {
-					setExtremes: function (selection) {
-						if (selection.min !== undefined && selection.max !== undefined) {
-							var cronSerials = new Set();
-							var allSeries = selection.target.series; // get all series
-							angular.forEach(allSeries, function (series) {
-								// check if series is visible (i.e. not disabled via the legend)
-								if (series.visible) {
-									var points = series.points;
-									angular.forEach(points, function (point) {
-										timeInMilliSeconds = point.x.getTime();
-										if (timeInMilliSeconds >= selection.min && timeInMilliSeconds <= selection.max) {
-											if (!cronSerials.has(point.cron_serial)) {
-												cronSerials.add(point.cron_serial);
-											}
-										}
-									});
-								}
-							});
-							// convert set to array
-							cronSerials = Array.from(cronSerials);
-							educationalMaterialCollectionService.getEducationalMaterialListLogs(cronSerials).then(function (response) {
-								$scope.educationalMaterialListLogs = response.data;
-							});
-						} else {
-							$scope.educationalMaterialListLogs = [];
-							$scope.gridApiLog.grid.refresh();
-
-						}
-					}
-				}
-			},
-			yAxis: {
-				title: {
-					text: $filter('translate')('EDUCATION.LIST.NUMBER')
-				},
-				tickInterval: 1,
-				min: 0
-			},
-			tooltip: {
-				headerFormat: '<b>{series.name}</b><br>',
-				pointFormat: '{point.x:%e. %b}: {point.y:.2f} m'
-			},
-			plotOptions: {
-				spline: {
-					marker: {
-						enabled: true
-					}
-				},
-				series: {
-					allowPointSelect: true,
-					point: {
-						events: {
-							select: function (point) {
-								var cronLogSerNum = [point.target.cron_serial];
-								educationalMaterialCollectionService.getEducationalMaterialListLogs(cronLogSerNum).then(function (response) {
-									$scope.educationalMaterialListLogs = response.data;
-								});
-							},
-							unselect: function (point) {
-								$scope.educationalMaterialListLogs = [];
-								$scope.gridApiLog.grid.refresh();
-
-							}
-						}
-					}
-				}
-			},
-			series: []
-		};
-
-		$scope.educationalMaterialListLogs = [];
-		// Table options for educational material logs
-		$scope.gridLogOptions = {
-			data: 'educationalMaterialListLogs',
-			columnDefs: [
-				{field: 'material_name', displayName: $filter('translate')('EDUCATION.LIST.NAME'), enableColumnMenu: false},
-				{field: 'revision', displayName: $filter('translate')('EDUCATION.LIST.REVISION'), enableColumnMenu: false},
-				{field: 'cron_serial', displayName: $filter('translate')('EDUCATION.LIST.CRONLOGSER'), enableColumnMenu: false},
-				{field: 'patient_serial', displayName: $filter('translate')('EDUCATION.LIST.PATIENTSER'), enableColumnMenu: false},
-				{field: 'read_status', displayName: $filter('translate')('EDUCATION.LIST.READ_STATUS'), enableColumnMenu: false},
-				{field: 'date_added', displayName: $filter('translate')('EDUCATION.LIST.PATIENTSER'), enableColumnMenu: false},
-				{field: 'mod_action', displayName: $filter('translate')('EDUCATION.LIST.ACTION'), enableColumnMenu: false}
-			],
-			rowHeight: 30,
-			useExternalFiltering: true,
-			enableColumnResizing: true,
-			onRegisterApi: function (gridApi) {
-				$scope.gridApiLog = gridApi;
-			},
-		};
+		getEducationalMaterialsList()
 
 		// Initialize a scope variable for a selected educational material
 		$scope.currentEduMat = {};
@@ -389,7 +225,7 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 
 			$scope.currentEduMat = edumat;
 			var modalInstance = $uibModal.open({
-				templateUrl: 'templates/educational-material/edit.educational-material.html',
+				templateUrl: ($scope.writeAccess ? 'templates/educational-material/edit.educational-material.html' : 'templates/educational-material/view.educational-material.html'),
 				controller: 'educationalMaterial.edit',
 				scope: $scope,
 				windowClass: 'customModal',
@@ -452,8 +288,8 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 					}
 				}
 
-			}).catch(function (response) {
-				alert($filter('translate')('EDUCATION.LIST.ERROR_LIST') + "\r\n\r\n" + response.status + " - " + response.data);
+			}).catch(function (err) {
+				ErrorHandler.onError(err, $filter('translate')('EDUCATION.LIST.ERROR_LIST'));
 			});
 		}
 

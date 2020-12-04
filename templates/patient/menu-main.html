@@ -1,0 +1,79 @@
+<div id="main">
+	<div id="top" class="home-main patient-main">
+		<div class="clearfix">
+			<!-- Load side menu -->
+			<div class="row">
+				<!-- Load side menu -->
+				<div class="home-side-panel col-xs-12">
+					<div ng-include="'templates/questionnaire/menu-side.html'"></div>
+				</div>
+				<div id="side-panel-scrollbar" class="col-lg-2">
+					<div ng-include="'templates/side-panel-menu.html'"></div>
+				</div>
+				<!-- Right side view -->
+				<div class="col-lg-10 animated fadeIn home-menu">
+					<div class="row main-title">
+						<!-- Page title -->
+						<div class="col-xs-12 col-md-9 title-content">
+							<span class="fa fa-address-card"></span>
+							<h1><strong>{{'PATIENTS.MENU.TITLE'|translate}}</strong></h1>
+						</div>
+						<!-- Breadcrumbs -->
+						<div class="col-md-3 title-breadcrumbs">
+							<span><a ui-sref="home">{{'BREADCRUMBS.HOME'|translate}}</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>{{'PATIENTS.MENU.TITLE'|translate}}</strong></span>
+						</div>
+					</div>
+					<!-- Panel Menu -->
+					<div class="row" style="text-align:left;">
+						<div class="col-xs-12 side-menu-title">
+							<div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                				<span style="background-color:#e6edfa; padding: 0 10px;">
+									<span class="glyphicon glyphicon-menu-down"></span>
+                                    <h2>{{'PATIENTS.MENU.SUB_TITLE'|translate}}</h2>
+                                </span>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div ng-if="writeAccess" class="col-xs-12 col-sm-6 col-md-4">
+							<a href="{{configs.pathConfig.registration_url}}" target="_blank">
+								<div class="panel-container animated" ng-class="{pulse: hoverMenuRegistration}" ng-mouseenter="hoverMenuRegistration=true" ng-mouseleave="hoverMenuRegistration=false" style="cursor:pointer;">
+									<div class="panel-info">
+										<div class="panel-content">
+											<div class="icon-home clearfix">
+												<span class="fa fa-user-plus"></span>
+											</div>
+											<div class="panel-title">
+												<h1>{{'PATIENTS.MENU.REGISTRATION'|translate}}</h1>
+											</div>
+											<div class="panel-description">
+												<p>{{'PATIENTS.MENU.REGISTRATION_SUB'|translate}}</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</a>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4" ng-repeat="menu in navSubMenu">
+							<div class="panel-container animated" ng-class="{pulse: hoverMenu}" ng-mouseenter="hoverMenu=true" ng-mouseleave="hoverMenu=false" style="cursor:pointer;" ui-sref="{{menu.url}}">
+								<div class="panel-info">
+									<div class="panel-content">
+										<div class="icon-home clearfix">
+											<span class="{{menu.iconClass}}"></span>
+										</div>
+										<div class="panel-title">
+											<h1>{{menu.name_display}}</h1>
+										</div>
+										<div class="panel-description">
+											<p>{{menu.description_display}}</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

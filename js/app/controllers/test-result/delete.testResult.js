@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.testResult.delete', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('testResult.delete', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, testResultCollectionService, educationalMaterialCollectionService, Session) {
+controller('testResult.delete', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, Session, ErrorHandler) {
 	// Submit delete
 	$scope.deleteTestResult = function () {
 		// Log who deleted test result
@@ -10,21 +10,11 @@ controller('testResult.delete', function ($scope, $filter, $sce, $state, $uibMod
 			type: "POST",
 			url: "test-result/delete/test-result",
 			data: $scope.testResultToDelete,
-			success: function (response) {
-				response = JSON.parse(response);
-				// Show success or failure depending on response
-				if (response.value) {
-					$scope.setBannerClass('success');
-					$scope.$parent.bannerMessage = $filter('translate')('TEST.DELETE.SUCCESS');
-					$scope.showBanner();
-				}
-				else {
-					alert($filter('translate')('TEST.DELETE.ERROR') + "\r\n\r\n" + response.message);
-				}
-				$uibModalInstance.close();
-			},
+			success: function () {},
 			error: function (err) {
-				alert($filter('translate')('TEST.DELETE.ERROR') + "\r\n\r\n" + err.status + " - " + err.statusText);
+				ErrorHandler.onError(err, $filter('translate')('TEST.DELETE.ERROR'));
+			},
+			complete: function () {
 				$uibModalInstance.close();
 			}
 		});

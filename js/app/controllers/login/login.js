@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.login', ['ngAnimate', 'ui.bootstrap']).
 /******************************************************************************
  * Login controller
  *******************************************************************************/
-controller('login', function ($scope, $rootScope, $state, $filter, $translate, AUTH_EVENTS, AuthService, Idle, Encrypt, Session) {
+controller('login', function ($scope, $rootScope, $state, $filter, $translate, AUTH_EVENTS, HTTP_CODE, AuthService, Idle, Session) {
 
 	// Initialize login object
 	$scope.credentials = {
@@ -66,23 +66,50 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, A
 
 	$scope.submitLogin = function (credentials) {
 		if ($scope.loginFormComplete()) {
-
-			var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103;
-
-			var encrypted = JSON.stringify({username: credentials.username, password: credentials.password});
-			encrypted = (Encrypt.encode(encrypted, cypher));
-
-			AuthService.login(encrypted, cypher).then(function (response) {
-
+			AuthService.login(credentials.username, credentials.password).then(function (response) {
+				var accessLevel = [];
+				angular.forEach(response.data.access, function (row) {
+					accessLevel[row["ID"]] = row["access"];
+				});
+				response.data.access = accessLevel;
+				console.log(response.data);
 				Session.create(response.data);
+
 				$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
-				$rootScope.currentUser = response.data;
-				$rootScope.setSiteLanguage(response.data);
+				$rootScope.currentUser = response.data.user;
+				$rootScope.setSiteLanguage(response.data.user);
 				$state.go('home');
 				Idle.watch();
 			}).catch(function(err) {
 				$rootScope.$broadcast(AUTH_EVENTS.loginFailed);
-				$scope.bannerMessage = $filter('translate')('LOGIN.WRONG');
+
+				switch(err.status) {
+				case HTTP_CODE.badRequestError:
+					$errMsg = $filter('translate')('LOGIN.ERROR_400');
+					break;
+				case HTTP_CODE.notAuthenticatedError:
+					$errMsg = $filter('translate')('LOGIN.ERROR_401');
+					break;
+				case HTTP_CODE.forbiddenAccessError:
+					$errMsg = $filter('translate')('LOGIN.ERROR_403');
+					break;
+				case HTTP_CODE.notFoundError:
+					$errMsg = $filter('translate')('LOGIN.ERROR_404');
+					break;
+				case HTTP_CODE.sessionTimeoutError:
+					$errMsg = $filter('translate')('LOGIN.ERROR_419');
+					break;
+				case HTTP_CODE.loginTimeoutError:
+					$errMsg = $filter('translate')('LOGIN.ERROR_440');
+					break;
+				case HTTP_CODE.internalServerError:
+					$errMsg = $filter('translate')('LOGIN.ERROR_500');
+					break;
+				default:
+					$errMsg = $filter('translate')('LOGIN.UNKNOWN_ERROR');
+				}
+
+				$scope.bannerMessage = $errMsg;
 				$scope.setBannerClass('danger');
 				$scope.shakeForm();
 				$scope.showBanner();

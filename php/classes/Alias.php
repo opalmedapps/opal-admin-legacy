@@ -4,7 +4,11 @@
  *   Alias class
  *
  */
-class Alias {
+class Alias extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_ALIAS, $guestStatus);
+    }
 
     /**
      *
@@ -15,6 +19,8 @@ class Alias {
      * @return array $expressionList : the list of existing expressions
      */
     public function getExpressions ($sourceDBSer, $expressionType) {
+        $this->checkReadAccess(array($sourceDBSer, $expressionType));
+
         $results = array();
         $databaseObj = new Database();
 
@@ -79,6 +85,7 @@ class Alias {
      * @return array $diagnoses : the list of diagnoses
      */
     public function getAssignedExpressions ($sourceDBSer, $expressionType) {
+
         $expressions = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -112,8 +119,7 @@ class Alias {
 
             return $expressions;
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $expressions;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
 
     }
@@ -127,6 +133,7 @@ class Alias {
      * @return array $response : response
      */
     public function updateAliasPublishFlags( $aliasList, $user ) {
+        $this->checkWriteAccess(array($aliasList, $user));
 
         // Initialize a response array
         $response = array(
@@ -165,8 +172,7 @@ class Alias {
             return $response;
 
         } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response; // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -218,7 +224,7 @@ class Alias {
             }
             return;
         } catch( PDOException $e) {
-            return $e->getMessage(); // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -230,6 +236,8 @@ class Alias {
      * @return array $colorTags : the list of existing color tags
      */
     public function getColorTags($aliasType) {
+        $this->checkReadAccess($aliasType);
+
         $colorTags = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -269,8 +277,7 @@ class Alias {
             return $colorTags;
 
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $colorTags;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -281,6 +288,7 @@ class Alias {
      * @return array $aliasList : the list of existing aliases
      */
     public function getAliases() {
+        $this->checkReadAccess();
         $aliasList = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -363,8 +371,7 @@ class Alias {
                 }
 
                 if ($aliasEduMatSer != 0) {
-                    $eduMatObj = new EduMaterial();
-                    $aliasEduMat = $eduMatObj->getEducationalMaterialDetails($aliasEduMatSer);
+                    $aliasEduMat = $this->_getEducationalMaterialDetails($aliasEduMatSer);
                 }
 
                 $aliasArray = array(
@@ -390,8 +397,7 @@ class Alias {
             return $aliasList;
 
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $aliasList;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -402,8 +408,8 @@ class Alias {
      * @param integer $aliasSer : the alias serial number
      * @return array $aliasDetails : the alias details
      */
-    public function getAliasDetails ($aliasSer) {
-
+    public function getAliasDetails($aliasSer) {
+        $this->checkReadAccess($aliasSer);
         $aliasDetails = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -483,13 +489,11 @@ class Alias {
             }
 
             if ($aliasEduMatSer) {
-                $eduMatObj = new EduMaterial();
-                $aliasEduMat = $eduMatObj->getEducationalMaterialDetails($aliasEduMatSer);
+                $aliasEduMat = $this->_getEducationalMaterialDetails($aliasEduMatSer);
             }
 
             if ($hospitalMapSer) {
-                $hospitalMapObj = new HospitalMap();
-                $hospitalMap = $hospitalMapObj->getHospitalMapDetails($hospitalMapSer);
+                $hospitalMap = $hosMapDetails = $this->opalDB->getHospitalMapDetails(intval($hospitalMapSer));
             }
 
             $aliasDetails = array(
@@ -514,8 +518,7 @@ class Alias {
             return $aliasDetails;
 
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $aliasDetails;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -527,6 +530,7 @@ class Alias {
      * @return void
      */
     public function insertAlias( $aliasDetails ) {
+        $this->checkWriteAccess($aliasDetails);
 
         $aliasName_EN 	= $aliasDetails['name_EN'];
         $aliasName_FR 	= $aliasDetails['name_FR'];
@@ -658,7 +662,7 @@ class Alias {
 
 
         } catch( PDOException $e) {
-            return $e->getMessage();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -671,6 +675,7 @@ class Alias {
      * @return array $response : response
      */
     public function deleteAlias( $aliasSer, $user ) {
+        $this->checkDeleteAccess(array($aliasSer, $user));
 
         // Initialize a response array
         $response = array(
@@ -721,8 +726,7 @@ class Alias {
             return $response;
 
         } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response; // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -734,6 +738,7 @@ class Alias {
      * @return array $response : response
      */
     public function updateAlias( $aliasDetails ) {
+        $this->checkWriteAccess($aliasDetails);
 
         $aliasName_EN 	= $aliasDetails['name_EN'];
         $aliasName_FR 	= $aliasDetails['name_FR'];
@@ -940,8 +945,7 @@ class Alias {
             return $response;
 
         } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response; // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -952,6 +956,7 @@ class Alias {
      * @return array $sourceDBList : the list of source databases
      */
     public function getSourceDatabases () {
+        $this->checkReadAccess();
         $sourceDBList = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -986,8 +991,7 @@ class Alias {
             return $sourceDBList;
 
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $sourceDBList;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -1036,8 +1040,7 @@ class Alias {
 
             return $checkinDetails;
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $checkinDetails;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -1050,6 +1053,8 @@ class Alias {
      * @return array $aliasLogs : the alias logs for highcharts
      */
     public function getAliasChartLogs ($serial, $type) {
+        $this->checkReadAccess(array($serial, $type));
+
         $aliasLogs = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -1305,8 +1310,7 @@ class Alias {
             return $aliasLogs;
 
         } catch( PDOException $e) {
-            echo $e->getMessage();
-            return $aliasLogs;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -1314,339 +1318,23 @@ class Alias {
      *
      * Gets list logs of appointments/documents/tasks during one or many cron sessions
      *
-     * @param array $serials : a list of cron log serial numbers
-     * @param string $type : the alias type
-     * @return array $aliasLogs : the alias logs for table view
      */
-    public function getAliasListLogs ($serials, $type) {
+    public function getAliasListLogs($aliasIds, $type) {
         $aliasLogs = array();
-        $serials = implode(',', $serials);
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            if (!$type) {
-                $sql = "
-                    SELECT DISTINCT
-                        al.AliasType,
-                        ae.ExpressionName,
-                        ae.Description,
-                        apmh.AppointmentRevSerNum,
-                        apmh.CronLogSerNum,
-                        apmh.PatientSerNum,
-                        sd.SourceDatabaseName,
-                        apmh.AppointmentAriaSer,
-                        apmh.DateAdded,
-                        apmh.ReadStatus,
-                        apmh.ModificationAction
-                    FROM
-                        AppointmentMH apmh,
-                        AliasExpression ae,
-                        SourceDatabase sd,
-                        Alias al
-                    WHERE
-                        apmh.AliasExpressionSerNum  = ae.AliasExpressionSerNum
-                    AND ae.AliasSerNum              = al.AliasSerNum
-                    AND apmh.SourceDatabaseSerNum   = sd.SourceDatabaseSerNum
-                    AND apmh.CronLogSerNum          IN ($serials)
-                ";
-                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
-
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $logDetails = array (
-                        'type'                      => $data[0],
-                        'expression_name'           => $data[1],
-                        'expression_description'    => $data[2],
-                        'revision'                  => $data[3],
-                        'cron_serial'               => $data[4],
-                        'patient_serial'            => $data[5],
-                        'source_db'                 => $data[6],
-                        'source_uid'                => $data[7],
-                        'date_added'                => $data[8],
-                        'read_status'               => $data[9],
-                        'mod_action'                => $data[10]
-                    );
-                    array_push($aliasLogs, $logDetails);
-                }
-
-                $sql = "
-                    SELECT DISTINCT
-                        al.AliasType,
-                        ae.ExpressionName,
-                        ae.Description,
-                        docmh.DocumentRevSerNum,
-                        docmh.CronLogSerNum,
-                        docmh.PatientSerNum,
-                        sd.SourceDatabaseName,
-                        docmh.DocumentId,
-                        docmh.DateAdded,
-                        docmh.ReadStatus,
-                        docmh.ModificationAction
-                    FROM
-                        DocumentMH docmh,
-                        AliasExpression ae,
-                        SourceDatabase sd,
-                        Alias al
-                    WHERE
-                        docmh.AliasExpressionSerNum     = ae.AliasExpressionSerNum
-                    AND ae.AliasSerNum                  = al.AliasSerNum
-                    AND docmh.SourceDatabaseSerNum      = sd.SourceDatabaseSerNum
-                    AND docmh.CronLogSerNum             IN ($serials)
-                ";
-                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
-
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $logDetails = array (
-                        'type'                      => $data[0],
-                        'expression_name'           => $data[1],
-                        'expression_description'    => $data[2],
-                        'revision'                  => $data[3],
-                        'cron_serial'               => $data[4],
-                        'patient_serial'            => $data[5],
-                        'source_db'                 => $data[6],
-                        'source_uid'                => $data[7],
-                        'date_added'                => $data[8],
-                        'read_status'               => $data[9],
-                        'mod_action'                => $data[10]
-                    );
-                    array_push($aliasLogs, $logDetails);
-                }
-
-                $sql = "
-                    SELECT DISTINCT
-                        al.AliasType,
-                        ae.ExpressionName,
-                        ae.Description,
-                        tmh.TaskRevSerNum,
-                        tmh.CronLogSerNum,
-                        tmh.PatientSerNum,
-                        sd.SourceDatabaseName,
-                        tmh.TaskAriaSer,
-                        tmh.DateAdded,
-                        tmh.ModificationAction
-                    FROM
-                        TaskMH tmh,
-                        AliasExpression ae,
-                        SourceDatabase sd,
-                        Alias al
-                    WHERE
-                        tmh.AliasExpressionSerNum   = ae.AliasExpressionSerNum
-                    AND ae.AliasSerNum              = al.AliasSerNum
-                    AND tmh.SourceDatabaseSerNum    = sd.SourceDatabaseSerNum
-                    AND tmh.CronLogSerNum           IN ($serials)
-                ";
-                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
-
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $logDetails = array (
-                        'type'                      => $data[0],
-                        'expression_name'           => $data[1],
-                        'expression_description'    => $data[2],
-                        'revision'                  => $data[3],
-                        'cron_serial'               => $data[4],
-                        'patient_serial'            => $data[5],
-                        'source_db'                 => $data[6],
-                        'source_uid'                => $data[7],
-                        'date_added'                => $data[8],
-                        'read_status'               => 'N/A',
-                        'mod_action'                => $data[9]
-                    );
-                    array_push($aliasLogs, $logDetails);
-                }
-            }
-            else if ($type == 'Appointment') {
-                $sql = "
-                    SELECT DISTINCT
-                        ae.ExpressionName,
-                        ae.Description,
-                        apmh.AppointmentRevSerNum,
-                        apmh.CronLogSerNum,
-                        apmh.PatientSerNum,
-                        sd.SourceDatabaseName,
-                        apmh.AppointmentAriaSer,
-                        apmh.Status,
-                        apmh.State,
-                        apmh.ScheduledStartTime,
-                        apmh.ScheduledEndTime,
-                        apmh.ActualStartDate,
-                        apmh.ActualEndDate,
-                        apmh.RoomLocation_EN,
-                        apmh.RoomLocation_FR,
-                        apmh.Checkin,
-                        apmh.DateAdded,
-                        apmh.ReadStatus,
-                        apmh.ModificationAction
-                    FROM
-                        AppointmentMH apmh,
-                        AliasExpression ae,
-                        SourceDatabase sd
-                    WHERE
-                        apmh.AliasExpressionSerNum  = ae.AliasExpressionSerNum
-                    AND apmh.SourceDatabaseSerNum   = sd.SourceDatabaseSerNum
-                    AND apmh.CronLogSerNum          IN ($serials)
-                ";
-                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
-
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $logDetails = array (
-                        'expression_name'        => $data[0],
-                        'expression_description' => $data[1],
-                        'revision'               => $data[2],
-                        'cron_serial'            => $data[3],
-                        'patient_serial'         => $data[4],
-                        'source_db'              => $data[5],
-                        'source_uid'             => $data[6],
-                        'status'                 => $data[7],
-                        'state'                  => $data[8],
-                        'scheduled_start'        => $data[9],
-                        'scheduled_end'          => $data[10],
-                        'actual_start'           => $data[11],
-                        'actual_end'             => $data[12],
-                        'room_EN'                => $data[13],
-                        'room_FR'                => $data[14],
-                        'checkin'                => $data[15],
-                        'date_added'             => $data[16],
-                        'read_status'            => $data[17],
-                        'mod_action'             => $data[18]
-                    );
-                    array_push($aliasLogs, $logDetails);
-                }
-            }
-            else if ($type == 'Document') {
-                $sql = "
-                    SELECT DISTINCT
-                        ae.ExpressionName,
-                        ae.Description,
-                        docmh.DocumentRevSerNum,
-                        docmh.CronLogSerNum,
-                        docmh.PatientSerNum,
-                        sd.SourceDatabaseName,
-                        docmh.DocumentId,
-                        (SELECT LastName FROM Staff Staff1 WHERE Staff1.StaffSerNum = docmh.CreatedBySerNum) AS LastName,
-                        docmh.CreatedTimeStamp,
-                        (SELECT LastName FROM Staff Staff2 WHERE Staff2.StaffSerNum = docmh.ApprovedBySerNum) AS LastName,
-                        docmh.ApprovedTimeStamp,
-                        (SELECT LastName FROM Staff Staff3 WHERE Staff3.StaffSerNum = docmh.AuthoredBySerNum) AS LastName,
-                        docmh.DateOfService,
-                        docmh.Revised,
-                        docmh.ValidEntry,
-                        docmh.OriginalFileName,
-                        docmh.FinalFileName,
-                        docmh.TransferStatus,
-                        docmh.TransferLog,
-                        docmh.DateAdded,
-                        docmh.ReadStatus,
-                        docmh.ModificationAction
-                    FROM
-                        DocumentMH docmh,
-                        AliasExpression ae,
-                        SourceDatabase sd
-                    WHERE
-                        docmh.AliasExpressionSerNum  = ae.AliasExpressionSerNum
-                    AND docmh.SourceDatabaseSerNum   = sd.SourceDatabaseSerNum
-                    AND docmh.CronLogSerNum          IN ($serials)
-                ";
-
-                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
-
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $logDetails = array (
-                        'expression_name'        => $data[0],
-                        'expression_description' => $data[1],
-                        'revision'               => $data[2],
-                        'cron_serial'            => $data[3],
-                        'patient_serial'         => $data[4],
-                        'source_db'              => $data[5],
-                        'source_uid'             => $data[6],
-                        'created_by'             => $data[7],
-                        'created_time'           => $data[8],
-                        'approved_by'            => $data[9],
-                        'approved_time'          => $data[10],
-                        'authored_by'            => $data[11],
-                        'dateofservice'          => $data[12],
-                        'revised'                => $data[13],
-                        'valid'                  => $data[14],
-                        'original_file'          => $data[15],
-                        'final_file'             => $data[16],
-                        'transfer'               => $data[17],
-                        'transfer_log'           => $data[18],
-                        'date_added'             => $data[19],
-                        'read_status'            => $data[20],
-                        'mod_action'             => $data[21]
-                    );
-                    array_push($aliasLogs, $logDetails);
-                }
-            }
-            else if ($type == 'Task') {
-                $sql = "
-                    SELECT DISTINCT
-                        ae.ExpressionName,
-                        ae.Description,
-                        tmh.TaskRevSerNum,
-                        tmh.CronLogSerNum,
-                        tmh.PatientSerNum,
-                        sd.SourceDatabaseName,
-                        tmh.TaskAriaSer,
-                        tmh.Status,
-                        tmh.State,
-                        tmh.DueDateTime,
-                        tmh.CreationDate,
-                        tmh.CompletionDate,
-                        tmh.DateAdded,
-                        tmh.ModificationAction
-                    FROM
-                        TaskMH tmh,
-                        AliasExpression ae,
-                        SourceDatabase sd
-                    WHERE
-                        tmh.AliasExpressionSerNum  = ae.AliasExpressionSerNum
-                    AND tmh.SourceDatabaseSerNum   = sd.SourceDatabaseSerNum
-                    AND tmh.CronLogSerNum          IN ($serials)
-                ";
-                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
-
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $logDetails = array (
-                        'expression_name'        => $data[0],
-                        'expression_description' => $data[1],
-                        'revision'               => $data[2],
-                        'cron_serial'            => $data[3],
-                        'patient_serial'         => $data[4],
-                        'source_db'              => $data[5],
-                        'source_uid'             => $data[6],
-                        'status'                 => $data[7],
-                        'state'                  => $data[8],
-                        'due_date'               => $data[9],
-                        'creation'               => $data[10],
-                        'completed'              => $data[11],
-                        'date_added'             => $data[12],
-                        'read_status'            => 'N/A',
-                        'mod_action'             => $data[13]
-                    );
-
-                    array_push($aliasLogs, $logDetails);
-                }
-            }
-
-            return $aliasLogs;
-
-        } catch( PDOException $e) {
-            echo $e->getMessage();
-            return $aliasLogs;
+        foreach($aliasIds as &$id) {
+            $id = intval($id);
         }
-    }
+        if (!$type)
+            $aliasLogs = $this->opalDB->getAliasesLogs($aliasIds);
+        else if ($type == 'Appointment')
+            $aliasLogs = $this->opalDB->getAppointmentsLogs($aliasIds);
+        else if ($type == 'Document')
+            $aliasLogs = $this->opalDB->getDocumentsLogs($aliasIds);
+        else if ($type == 'Task')
+            $aliasLogs = $this->opalDB->getTasksLogs($aliasIds);
 
+        return $aliasLogs;
+    }
 
     /**
      *
@@ -1692,4 +1380,23 @@ class Alias {
         return $assignedAlias;
     }
 
+    /*
+     * Get the list of educational materials an alias can assign to.
+     * @params  void
+     * @returns array - list of available educational material an alias has access
+     * */
+    public function getEducationalMaterials() {
+        $this->checkReadAccess();
+        return $this->_getListEduMaterial();
+    }
+
+    /*
+     * Get the list of hospital maps an alias can assign to.
+     * @params  void
+     * @returns array - list of available hospital maps an alias has access
+     * */
+    public function getHospitalMaps() {
+        $this->checkReadAccess();
+        return $this->opalDB->getHospitalMaps();
+    }
 }

@@ -4,7 +4,8 @@ angular.module('opalAdmin.controllers.account.ad', ['ui.bootstrap']).
 	/******************************************************************************
 	 * Controller for the account page
 	 *******************************************************************************/
-	controller('account.ad', function ($scope, $rootScope, $translate, $route, $filter, $templateCache, Session, Encrypt) {
+	controller('account.ad', function ($scope, $rootScope, $translate, $route, $filter, $templateCache, Session) {
+		$scope.navMenu = Session.retrieveObject('menu');
 
 		// Set current user
 		$scope.currentUser = Session.retrieveObject('user');
@@ -67,9 +68,9 @@ angular.module('opalAdmin.controllers.account.ad', ['ui.bootstrap']).
 				type: "POST",
 				url: "user/update/language",
 				data: toSend,
-				success: function () {
+				success: function (menu) {
 					$templateCache.removeAll();
-					Session.update(user); // change language in cookies
+					Session.updateUser(user); // change language in cookies
 					$translate.use($scope.currentUser.language.toLowerCase());
 					location.reload();
 				},

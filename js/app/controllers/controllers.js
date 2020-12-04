@@ -1,11 +1,14 @@
 angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.application',
 	'opalAdmin.controllers.navigation',
+	'opalAdmin.controllers.home',
 	'opalAdmin.controllers.alias',
 	'opalAdmin.controllers.alias.add',
 	'opalAdmin.controllers.alias.edit',
 	'opalAdmin.controllers.alias.delete',
 	'opalAdmin.controllers.alias.log',
+	'opalAdmin.controllers.audit',
+	'opalAdmin.controllers.audit.view',
 	'opalAdmin.controllers.post',
 	'opalAdmin.controllers.post.add',
 	'opalAdmin.controllers.post.edit',
@@ -79,8 +82,17 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.customCode.add',
 	'opalAdmin.controllers.customCode.edit',
 	'opalAdmin.controllers.customCode.delete',
+	'opalAdmin.controllers.errorHandler.accessDenied',
 	'opalAdmin.controllers.study',
 	'opalAdmin.controllers.study.add',
 	'opalAdmin.controllers.study.edit',
-	'opalAdmin.controllers.study.delete'
+	'opalAdmin.controllers.study.delete',
+	'opalAdmin.controllers.role',
+	'opalAdmin.controllers.role.add',
+	'opalAdmin.controllers.role.edit',
+	'opalAdmin.controllers.role.delete',
+	'opalAdmin.controllers.alert',
+	'opalAdmin.controllers.alert.add',
+	'opalAdmin.controllers.alert.edit',
+	'opalAdmin.controllers.alert.delete'
 ]);
