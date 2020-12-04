@@ -1,13 +1,9 @@
 <?php
-
-include_once('user.inc');
-
+include_once("../config.php");
 $id = strip_tags($_POST["ID"]);
-$OAUserId = strip_tags($_POST["OAUserId"]);
 
-$user = new User($OAUserId);
+$user = new User();
 $user->deleteUser($id);
 
 header('Content-Type: application/javascript');
-$response['code'] = HTTP_STATUS_SUCCESS;
-echo json_encode($response);
+http_response_code(HTTP_STATUS_SUCCESS);

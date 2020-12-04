@@ -1,9 +1,7 @@
 <?php
+include_once("../config.php");
 
-include_once('user.inc');
-
-$OAUserId = strip_tags($_POST['OAUserId']);
-$userObject = new User($OAUserId);
+$userObject = new User();
 $userDetails = $userObject->getUserDetails($_POST);
 
 header('Content-Type: application/javascript');

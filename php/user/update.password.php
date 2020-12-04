@@ -1,12 +1,8 @@
 <?php
+include_once("../config.php");
 
-include_once('user.inc');
-
-$OAUserId = strip_tags($_POST["OAUserId"]);
-$userObject = new User($OAUserId);
-
-$response["message"] = $userObject->updatePassword($_POST);
-$response["code"] = HTTP_STATUS_SUCCESS;
+$userObject = new User();
+$response = $userObject->updatePassword($_POST);
 
 header('Content-Type: application/javascript');
-print json_encode($response);
+http_response_code(HTTP_STATUS_SUCCESS);

@@ -15,12 +15,6 @@ define( "QUESTIONNAIRE_DB_2019_USERNAME", $config['databaseConfig']['questionnai
 define( "QUESTIONNAIRE_DB_2019_PASSWORD", $config['databaseConfig']['questionnaire2019']['password'] );
 define("FRENCH_LANGUAGE","1");
 define("ENGLISH_LANGUAGE","2");
-define("DELETED_RECORD", 1);
-define("NON_DELETED_RECORD", 0);
-define("NON_FINAL_RECORD", 0);
-define("FINAL_RECORD", 1);
-define("PRIVATE_RECORD", 1);
-define("PUBLIC_RECORD", 0);
 
 //Definition of all questionnaires table from the questionnaire DB
 define("ANSWER_CHECKBOX_TABLE","answerCheckbox");
