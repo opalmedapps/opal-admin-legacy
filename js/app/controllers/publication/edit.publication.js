@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('publication.edit', function ($scope, $state, $filter, $uibModal, $uibModalInstance, $locale, publicationCollectionService, filterCollectionService, FrequencyFilterService, Session) {
+angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('publication.edit', function ($scope, $filter, $uibModal, $uibModalInstance, $locale, publicationCollectionService, FrequencyFilterService, Session, ErrorHandler) {
 
 	// initialize default variables & lists
 	$scope.toSubmit = {
@@ -227,7 +227,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 	$scope.showProcessingModal();
 
 	// Call our API service to get each trigger
-	filterCollectionService.getFilters(Session.retrieveObject('user').id).then(function (response) {
+	publicationCollectionService.getFilters(Session.retrieveObject('user').id).then(function (response) {
 		response.data = angular.copy(response.data);
 		response.data.appointments.forEach(function(entry) {
 			if($scope.language.toUpperCase() === "FR")
@@ -276,7 +276,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 		$scope.getThePublicationDetails();
 		// Assign demographic triggers
 	}).catch(function(err) {
-		alert($filter('translate')('PUBLICATION.EDIT.ERROR_FILTERS') + err.status + " " + err.data);
+		ErrorHandler.onError(err, $filter('translate')('PUBLICATION.EDIT.ERROR_FILTERS'));
 		$uibModalInstance.close();
 	}).finally(function () {
 		processingModal.close(); // hide modal
@@ -433,7 +433,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 			$scope.changesDetected = false;
 			$scope.oldData = JSON.parse(JSON.stringify($scope.toSubmit));
 		}).catch(function (response) {
-			alert($filter('translate')('PUBLICATION.EDIT.ERROR_DETAILS') + response.status + " " + response.data);
+			ErrorHandler.onError(err, $filter('translate')('PUBLICATION.EDIT.ERROR_DETAILS'));
 			$uibModalInstance.close();
 		});
 	}
@@ -1408,7 +1408,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 					success: function () {
 					},
 					error: function (err) {
-						alert($filter('translate')('PUBLICATION.EDIT.ERROR_PUBLICATION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+						ErrorHandler.onError(err, $filter('translate')('PUBLICATION.EDIT.ERROR_PUBLICATION'));
 					},
 					complete: function () {
 						$uibModalInstance.close();

@@ -2,9 +2,8 @@
 include_once('questionnaire.inc');
 
 $questionId = strip_tags($_POST['questionId']);
-$OAUserId = strip_tags($_POST['OAUserId']);
 
-$question = new Question($OAUserId);
+$question = new Question();
 $questionDetails = $question->getQuestionDetails($questionId);
 unset($questionDetails['question']);
 unset($questionDetails["tableName"]);

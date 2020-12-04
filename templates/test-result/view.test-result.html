@@ -1,0 +1,144 @@
+<!-- Modal title -->
+<div class="modal-header">
+    <div class="col-xs-12 col-md-6">
+        <h2 class="modal-title">
+            <span class="fa fa-eye"></span>
+            {{'TEST.EDIT.TITLE_VIEW'|translate}}
+        </h2>
+    </div>
+    <div class="modal-buttons col-xs-12 col-md-6">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'TEST.EDIT.CLOSE'|translate}}">
+    </div>
+</div>
+<div class="modal-body">
+    <uib-accordion close-others="false">
+        <!-- SECTION: Test names -->
+        <div uib-accordion-group is-open="testsSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'TEST.EDIT.ASSIGNED'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': testsSection.open, 'glyphicon-chevron-right': !testsSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div>
+                <strong>{{'TEST.EDIT.CURRENT'|translate}}</strong><br>
+                <ul class="list-items" style="border-style: none;">
+                    <li ng-repeat="selectedTest in testList | filter: {added: 1} : 1">
+                        {{selectedTest.name}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- SECTION: Titles -->
+        <div uib-accordion-group is-open="titleSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'TEST.EDIT.TITLES'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'TEST.EDIT.ENGLISH_ABRV'|translate}}</strong>: {{testResult.name_EN}}</p>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'TEST.EDIT.FRENCH_ABRV'|translate}}</strong>: {{testResult.name_FR}}</p>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Description -->
+        <div uib-accordion-group is-open="descriptionSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'TEST.EDIT.DESCRIPTIONS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': descriptionSection.open, 'glyphicon-chevron-right': !descriptionSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <span style="font-size:20px;">{{'TEST.EDIT.ENGLISH_HTML'|translate}}</span>
+                    </div>
+                    <div ng-bind-html="testResult.description_EN"></div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <span style="font-size:20px;">{{'TEST.EDIT.FRENCH_HTML'|translate}}</span>
+                    </div>
+                    <div ng-bind-html="testResult.description_FR"></div>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Test group -->
+        <div uib-accordion-group is-open="testGroupSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'TEST.EDIT.TEST_GROUP'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': testGroupSection.open, 'glyphicon-chevron-right': !testGroupSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'TEST.EDIT.ENGLISH_ABRV'|translate}}</strong>: {{testResult.group_EN}}</p>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'TEST.EDIT.FRENCH_ABRV'|translate}}</strong>: {{testResult.group_FR}}</p>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Educational material -->
+        <div uib-accordion-group is-open="educationalMaterialSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'TEST.EDIT.ATTACHED_EDUCATION'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': educationalMaterialSection.open, 'glyphicon-chevron-right': !educationalMaterialSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div>
+                <strong>{{'TEST.EDIT.CURRENT_EDUCATION'|translate}}</strong><br>
+                <div>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                    <span ng-if="testResult.eduMat">
+                            <span ng-if="testResult.eduMat.tocs.length">
+                                <span style="cursor:pointer" ng-click="toggleTOCDisplay()"><strong>{{testResult.eduMat.name_display}}</strong></span>
+                                <ul ng-if="showTOCs">
+                                    <li ng-repeat="toc in testResult.eduMat.tocs">
+                                        <strong><a target="_blank" href="{{toc.url_display}}">{{toc.name_display}}</a></strong>
+                                    </li>
+                                </ul>
+                            </span>
+                            <span ng-if="!testResult.eduMat.tocs.length">
+                                <strong><a target="_blank" href="{{testResult.eduMat.url_display}}">{{testResult.eduMat.name_display}}</a></strong>
+                            </span>
+                        </span>
+                    <span ng-if="!testResult.eduMat">{{'TEST.EDIT.NONE'|translate}}</span>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Additional links -->
+        <div uib-accordion-group is-open="additionalLinksSection.open" ng-if="testResult.additional_links.length > 0">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'TEST.EDIT.LINKS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': additionalLinksSection.open, 'glyphicon-chevron-right': !additionalLinksSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row" ng-repeat="link in testResult.additional_links">
+                <div class="col-xs-12 col-sm-6">
+                    <div class="input-group" style="margin-bottom: 7px;">
+                        <span class="input-group-addon">{{'TEST.EDIT.ENGLISH_TITLE_ABRV'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="link.name_EN" disabled>
+                    </div>
+                    <div class="input-group" style="margin-bottom: 7px;">
+                        <span class="input-group-addon">{{'TEST.EDIT.ENGLISH_URL_ABRV'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="link.url_EN" disabled>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <div class="input-group" style="margin-bottom: 7px;">
+                        <span class="input-group-addon">{{'TEST.EDIT.FRENCH_TITLE_ABRV'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="link.name_FR" disabled>
+                    </div>
+                    <div class="input-group" style="margin-bottom: 7px;">
+                        <span class="input-group-addon">{{'TEST.EDIT.FRENCH_URL_ABRV'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="link.url_FR" disabled>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </uib-accordion>
+</div>
