@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.user.log', ['ngAnimate', 'ngSanitize', 'ui
 /******************************************************************************
  * Controller for the user logs
  *******************************************************************************/
-controller('user.log', function ($scope, $uibModal, $filter, userCollectionService, Session, $uibModalInstance) {
+controller('user.log', function ($scope, $uibModal, $filter, userCollectionService, Session, $uibModalInstance, ErrorHandler) {
 
 	$scope.userListLogs = [];
 
@@ -260,8 +260,8 @@ controller('user.log', function ($scope, $uibModal, $filter, userCollectionServi
 		processingModal.close(); // hide modal
 		processingModal = null; // remove reference
 
-	}).catch(function(response) {
-		alert($filter('translate')('USERS.LOG.ERROR_LOGS') + "\r\n\r\n" + response.status);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('USERS.LOG.ERROR_LOGS'));
 		$uibModalInstance.dismiss('cancel');
 
 	});

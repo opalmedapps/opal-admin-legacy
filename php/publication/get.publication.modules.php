@@ -2,8 +2,7 @@
 
 include_once('publication.inc');
 
-$OAUserId = strip_tags($_POST['OAUserId']);
-$publication = new Publication($OAUserId);
+$publication = new Publication();
 $result = $publication->getPublicationModulesUser();
 
 header('Content-Type: application/javascript');

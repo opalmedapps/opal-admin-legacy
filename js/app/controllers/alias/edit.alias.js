@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.alias.edit', [])
 
-	.controller('alias.edit', function ($scope, $uibModal, $uibModalInstance, $filter, aliasCollectionService, educationalMaterialCollectionService, Session, hospitalMapCollectionService) {
+	.controller('alias.edit', function ($scope, $uibModal, $uibModalInstance, $filter, aliasCollectionService, Session, ErrorHandler) {
 
 		// Default Booleans
 		$scope.changesMade = false; // changes have been made? 
@@ -59,7 +59,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		};
 
 		// Call our API service to get the list of educational material
-		educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+		aliasCollectionService.getEducationalMaterials().then(function (response) {
 			response.data.forEach(function(entry) {
 				if($scope.language.toUpperCase() === "FR") {
 					entry.name_display = entry.name_FR;
@@ -81,13 +81,13 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 				});
 			});
 			$scope.eduMatList = response.data; // Assign value
-		}).catch(function(response) {
-			alert($filter('translate')('ALIAS.EDIT.ERROR_EDUCATION') + "\r\n\r\n" + response.status + " - " + response.data);
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_EDUCATION'));
 			$scope.cancel();
 		});
 
 		// Call our API to get the list of existing hospital maps
-		hospitalMapCollectionService.getHospitalMaps().then(function (response) {
+		aliasCollectionService.getHospitalMaps().then(function (response) {
 			response.data.forEach(function(entry) {
 				if($scope.language.toUpperCase() === "FR")
 					entry.name_display = entry.name_FR;
@@ -95,8 +95,8 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 					entry.name_display = entry.name_EN;
 			});
 			$scope.hospitalMapList = response.data;
-		}).catch(function(response) {
-			alert($filter('translate')('ALIAS.EDIT.ERROR_HOSPITAL') + "\r\n\r\n" + response.status + " - " + response.data);
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_HOSPITAL'));
 			$scope.cancel();
 		});
 
@@ -217,8 +217,8 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 					});
 
 				});
-			}).catch(function(response) {
-				alert($filter('translate')('ALIAS.EDIT.ERROR_ALIAS') + "\r\n\r\n" + response.status + " - " +  response.data);
+			}).catch(function(err) {
+				ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_ALIAS'));
 				$scope.cancel();
 			}).finally(function() {
 				processingModal.close(); // hide modal
@@ -229,14 +229,14 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			aliasCollectionService.getExistingColorTags($scope.alias.type).then(function (response) {
 				$scope.existingColorTags = response.data; // Assign response
 
-			}).catch(function(response) {
-				alert($filter('translate')('ALIAS.EDIT.ERROR_COLOR') + "\r\n\r\n" + response.status + " - " + response.data);
-				$scope.cancel
+			}).catch(function(err) {
+				ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_COLOR'));
+				$scope.cancel;
 			});
 
-		}).catch(function(response) {
-			alert($filter('translate')('ALIAS.EDIT.ERROR_DETAILS') + "\r\n\r\n" + response.status + " - " + response.data);
-			$scope.cancel
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_DETAILS'));
+			$scope.cancel;
 		});
 
 		// Function to add / remove a term to alias
@@ -425,20 +425,13 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 					url: "alias/update/alias",
 					data: $scope.alias,
 					success: function (response) {
-						response = JSON.parse(response);
-						// Show success or failure depending on response
-						if (response.value) {
-							$scope.setBannerClass('success');
-							$scope.$parent.bannerMessage = $filter('translate')('ALIAS.EDIT.SUCCESS_EDIT');
-							$scope.showBanner();
-						}
-						else {
-							alert($filter('translate')('ALIAS.EDIT.ERROR_EDIT'));
-						}
+						$scope.setBannerClass('success');
+						$scope.$parent.bannerMessage = $filter('translate')('ALIAS.EDIT.SUCCESS_EDIT');
+						$scope.showBanner();
 						$uibModalInstance.close();
 					},
 					error: function(err) {
-						alert($filter('translate')('ALIAS.EDIT.ERROR_EDIT') + "\r\n\r\n" + err.status + " - " + err.statusText);
+						ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_EDIT'));
 						$uibModalInstance.close();
 					}
 				});

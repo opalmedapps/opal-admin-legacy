@@ -1,0 +1,12 @@
+<div class="modal-header">
+    <h2 class="modal-title">
+        <span class="fa fa-ban" aria-hidden="true"></span>
+        {{'ERROR_HANDLER.403.TITLE'|translate}}
+    </h2>
+</div>
+<div class="modal-body">
+    <div ng-bind-html="'ERROR_HANDLER.403.MESSAGE'|translate"></div>
+    <div style="margin-top:20px;">
+    <input ng-click="cancel();" class="btn btn-danger" type="button" value="{{'ERROR_HANDLER.403.BUTTON'|translate}}">
+    </div>
+</div>

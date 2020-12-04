@@ -523,7 +523,7 @@ a {
     -o-transition: all .3s ease-out;
     transition: all .3s ease-out; }
 
-a:hover {
+a:hover, a:focus {
     /*color: #6f5499;*/
     text-decoration: none; }
 
@@ -1823,7 +1823,7 @@ footer {
         width: 160px;
     }
 
-    .questionnaire-main .side-logo {
+    .questionnaire-main .side-logo, .patient-main .side-logo {
         display: block;
     }
 }

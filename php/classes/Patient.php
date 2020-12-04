@@ -5,7 +5,11 @@
  *
  */
 
-class Patient {
+class Patient extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_PATIENT, $guestStatus);
+    }
 
     /**
      *
@@ -15,6 +19,7 @@ class Patient {
      * @return array $response : response
      */
     public function updatePatientTransferFlags( $patientList ) {
+        $this->checkWriteAccess($patientList);
         $response = array(
             'value'     => 0,
             'message'   => ''
@@ -34,8 +39,7 @@ class Patient {
             return $response;
 
         } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response; // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 
@@ -46,6 +50,7 @@ class Patient {
      * @return array $patientList : the list of existing patients
      */
     public function getPatients() {
+        $this->checkReadAccess();
         $patientList = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
@@ -90,8 +95,7 @@ class Patient {
 
             return $patientList;
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $patientList;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 
@@ -104,6 +108,7 @@ class Patient {
      * @return array $Response : response
      */
     public function emailAlreadyInUse($email) {
+        $this->checkReadAccess($email);
         $Response = null;
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -131,7 +136,7 @@ class Patient {
             return $Response;
 
         } catch (PDOException $e) {
-            return $Response;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 
@@ -143,6 +148,7 @@ class Patient {
      * @return array $patientResponse : patient information or response
      */
     public function findPatient($ssn, $id) {
+        $this->checkReadAccess(array($ssn, $id));
         $patientResponse = array(
             'message'   => '',
             'status'    => '',
@@ -286,8 +292,8 @@ class Patient {
             }
 
             return $patientResponse; // return found data
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patients list. " . $e->getMessage());
+        } catch (PDOException $e) {            
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 
@@ -299,6 +305,7 @@ class Patient {
      * @return array $securityQuestions
      */
     public function getSecurityQuestions($language) {
+        $this->checkReadAccess($language);
         $securityQuestions = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
@@ -324,8 +331,7 @@ class Patient {
             }
             return $securityQuestions;
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $securityQuestions;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 
@@ -337,6 +343,7 @@ class Patient {
      * @return void
      */
     public function registerPatient($patientDetails) {
+        $this->checkWriteAccess($patientDetails);
         $email              = $patientDetails['email'];
         $password           = $patientDetails['password'];
         $language           = $patientDetails['language'];
@@ -466,27 +473,8 @@ class Patient {
       ";
             $query = $host_db_link->prepare( $sql );
             $query->execute();
-
-      //       $questionnaires_db_link = new PDO( QUESTIONNAIRE_DB_DSN, QUESTIONNAIRE_DB_USERNAME, QUESTIONNAIRE_DB_PASSWORD );
-      //       $questionnaires_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-      //       $sql = "
-      //   INSERT INTO
-      //     Patient (
-      //       PatientName,
-      //       PatientId
-      //     )
-      //   VALUES (
-      //     \"$firstname $lastname\",
-      //     '$id'
-      //   )
-      // ";
-
-      //       $query = $questionnaires_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-      //       $query->execute();
-
         } catch( PDOException $e) {
-            return $e->getMessage();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 
@@ -497,6 +485,7 @@ class Patient {
      * @return array $patientActivityList : the list of patient activities
      */
     public function getPatientActivities() {
+        $this->checkReadAccess();
         $patientActivityList = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -584,8 +573,7 @@ class Patient {
 
             return $patientActivityList;
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $patientActivityList;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 
@@ -597,7 +585,7 @@ class Patient {
      * @return array $patientDetails : the patient details
      */
     public function getPatientDetails ($serial) {
-
+        $this->checkReadAccess($serial);
         $patientDetails = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -637,8 +625,7 @@ class Patient {
             return $patientDetails;
 
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $patientDetails;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 
@@ -650,6 +637,7 @@ class Patient {
      * @return array $response : response
      */
     public function updatePatient($patientDetails) {
+        $this->checkWriteAccess($patientDetails);
         $response = array (
             'value'		=> 0,
             'error'		=> array(
@@ -681,9 +669,7 @@ class Patient {
             return $response;
 
         } catch (PDOException $e) {
-            $response['error']['code'] = 'db-catch';
-            $response['error']['message'] = $e->getMessage();
-            return $response;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 
@@ -740,9 +726,7 @@ class Patient {
             return $response;
 
         } catch (PDOException $e) {
-            $response['error']['code'] = 'db-catch';
-            $response['error']['message'] = $e->getMessage();
-            return $response;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 }

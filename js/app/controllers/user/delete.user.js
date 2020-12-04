@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.user.delete', ['ui.bootstrap', 'ui.grid']).
 
-controller('user.delete', function ($scope, $uibModal, $uibModalInstance,  $filter, $sce, $state, userCollectionService, Encrypt, Session) {
+controller('user.delete', function ($scope, $uibModal, $uibModalInstance,  $filter, $sce, $state, userCollectionService, Session, ErrorHandler) {
 
 	// Submit delete
 	$scope.deleteUser = function () {
@@ -9,16 +9,15 @@ controller('user.delete', function ($scope, $uibModal, $uibModalInstance,  $filt
 				type: "POST",
 				url: "user/delete/user",
 				data: {"ID": $scope.userToDelete.serial, "OAUserId": Session.retrieveObject('user').id},
-				success: function (response) {
+				success: function () {
 					$scope.setBannerClass('success');
 					$scope.$parent.bannerMessage = $filter('translate')('USERS.DELETE.SUCCESS');
+					$scope.showBanner();
 				},
 				error: function (err) {
-					$scope.setBannerClass('danger');
-					$scope.$parent.bannerMessage = $filter('translate')('USERS.DELETE.ERROR') + err.status + " - " + err.responseText;
+					ErrorHandler.onError(err, $filter('translate')('USERS.DELETE.ERROR'));
 				},
 				complete: function () {
-					$scope.showBanner();
 					$uibModalInstance.close();
 				}
 			});
