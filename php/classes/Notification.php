@@ -4,7 +4,11 @@
  * Notification class
  *
  */
-class Notification {
+class Notification extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_NOTIFICATION, $guestStatus);
+    }
 
     /**
      *
@@ -13,6 +17,7 @@ class Notification {
      * @return array $notificationList : the list of existing notifications
      */
     public function getNotifications() {
+        $this->checkReadAccess();
         $notificationList = array();
         try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -57,8 +62,7 @@ class Notification {
 
             return $notificationList;
         } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $notificationList;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for notification. " . $e->getMessage());
 		}
 	}
 
@@ -70,6 +74,7 @@ class Notification {
      * @return array $notificationDetails : the notification details
      */
     public function getNotificationDetails ($serial) {
+        $this->checkReadAccess($serial);
         $notificationDetails = array();
         try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -111,8 +116,7 @@ class Notification {
 
             return $notificationDetails;
         } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $notificationDetails;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for notification. " . $e->getMessage());
 		}
 	}
 
@@ -123,6 +127,7 @@ class Notification {
      * @return array $types : the notification types
      */
     public function getNotificationTypes () {
+        $this->checkReadAccess();
         $types = array();
 	    try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -154,8 +159,7 @@ class Notification {
 
             return $types;
         } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $types;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for notification. " . $e->getMessage());
 		}
 	}
 
@@ -167,6 +171,7 @@ class Notification {
 	 * @return void
      */
     public function insertNotification($notification) {
+        $this->checkWriteAccess($notification);
 
         $name_EN            = $notification['name_EN'];
         $name_FR            = $notification['name_FR'];
@@ -205,9 +210,8 @@ class Notification {
             $query = $host_db_link->prepare( $sql );
 			$query->execute();
         } catch( PDOException $e) {
-			return $e->getMessage();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for notification. " . $e->getMessage());
 		}
-
     }
 
     /**
@@ -218,6 +222,7 @@ class Notification {
      * @return array : response
      */
     public function updateNotification($notification) {
+        $this->checkWriteAccess($notification);
 
         $name_EN            = $notification['name_EN'];
         $name_FR            = $notification['name_FR'];
@@ -256,8 +261,7 @@ class Notification {
             return $response;
 
 	    } catch( PDOException $e) {
-		    $response['message'] = $e->getMessage();
-			return $response;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for notification. " . $e->getMessage());
 		}
 	}
 
@@ -270,6 +274,7 @@ class Notification {
      * @return array : response
      */
     public function deleteNotification($serial, $user) {
+        $this->checkDeleteAccess(array($serial, $user));
 
         $response = array(
             'value'     => 0,
@@ -307,8 +312,7 @@ class Notification {
             return $response;
 
         } catch( PDOException $e) {
-		    $response['message'] = $e->getMessage();
-			return $response;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for notification. " . $e->getMessage());
 		}
 	}
 
@@ -320,6 +324,7 @@ class Notification {
      * @return array $notificationLogs : the notification logs for highcharts
      */
     public function getNotificationChartLogs ($serial) {
+        $this->checkReadAccess($serial);
         $notificationLogs = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -406,74 +411,20 @@ class Notification {
             return $notificationLogs;
 
         } catch( PDOException $e) {
-            echo $e->getMessage();
-            return $notificationLogs;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for notification. " . $e->getMessage());
         }
     }
 
     /**
-     *
      * Gets list logs of notifications during one or many cron sessions
-     *
-     * @param array $serials : a list of cron log serial numbers
-     * @return array $notificationLogs : the notification logs for table view
      */
-    public function getNotificationListLogs ($serials) {
-        $notificationLogs = array();
-        $serials = implode(',', $serials);
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    ntmh.NotificationControlSerNum,
-                    ntmh.NotificationRevSerNum,
-                    ntmh.CronLogSerNum,
-                    ntmh.PatientSerNum,
-                    ntt.NotificationTypeName,
-                    ntmh.RefTableRowSerNum,
-                    ntmh.ReadStatus,
-                    ntmh.DateAdded,
-                    ntmh.ModificationAction
-                FROM
-                    NotificationMH ntmh,
-                    NotificationControl ntc,
-                    NotificationTypes ntt
-                WHERE
-                    ntmh.NotificationControlSerNum  = ntc.NotificationControlSerNum
-                AND ntc.NotificationTypeSerNum      = ntt.NotificationTypeSerNum 
-                AND ntmh.CronLogSerNum              IN ($serials)
-            ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $logDetails = array (
-                    'control_serial'        => $data[0],
-                    'revision'              => $data[1],
-                    'cron_serial'           => $data[2],
-                    'patient_serial'        => $data[3],
-                    'type'                  => $data[4],
-                    'ref_table_serial'      => $data[5],
-                    'read_status'           => $data[6],
-                    'date_added'            => $data[7],
-                    'mod_action'            => $data[8]
-                );
-
-                array_push($notificationLogs, $logDetails);
-            }
-
-            return $notificationLogs;
-
-        } catch( PDOException $e) {
-            echo $e->getMessage();
-            return $notificationLogs;
+    public function getNotificationListLogs ($notificationIds) {
+        $this->checkReadAccess($notificationIds);
+        foreach ($notificationIds as &$id) {
+            $id = intval($id);
         }
+        return $this->opalDB->getNotificationsLogs($notificationIds);
     }
-
-
 }
 
 ?>

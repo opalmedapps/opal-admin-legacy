@@ -29,10 +29,11 @@
             <div class="form-horizontal">
                 <div class="form-group has-feedback" ng-class="{'has-success': validPassword.status == 'valid', 'has-error': validPassword.status == 'invalid', 'has-warning': validPassword.status == 'warning'}">
                     <label class="control-label col-xs-12 col-md-2">
-                        {{'USERS.EDIT.PASSWORD'|translate}} <br><em><small>{{'USERS.EDIT.MIN'|translate}}</small></em>
+                        {{'USERS.EDIT.PASSWORD'|translate}}
                     </label>
                     <div class="col-xs-12 col-md-7">
                         <input type="password" class="form-control" ng-change="validatePassword(user.password)" ng-model="user.password">
+                        <p style="margin-bottom: 0;"><em><small>{{'USERS.EDIT.PASSWORD_REQUIREMENTS'|translate}}</small></em></p>
                         <span ng-show="validPassword.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validPassword.status == 'valid', 'glyphicon-remove': validPassword.status == 'invalid', 'glyphicon-warning-sign': validPassword.status == 'warning'}" aria-hidden="true"></span>
                     </div>
                     <em class="control-label col-xs-12 col-md-3" ng-show="validPassword.status == 'invalid' || validPassword.status == 'warning'" ng-class="{'has-success': validPassword.status == 'valid', 'has-error': validPassword.status == 'invalid', 'has-warning': validPassword.status == 'warning'}" style="text-align:left">
@@ -65,7 +66,7 @@
                 <div class="col-xs-12 col-sm-10">
                     <div class="row">
                         <div class="col-sm-6">
-                            <select ng-model="user.role.serial" ng-change="roleUpdate()" ng-options="role.serial as role.name_display for role in roles" class="form-control">
+                            <select ng-disabled="roleDisabled"  ng-model="user.role.serial" ng-change="roleUpdate()" ng-options="role.ID as role.name_display for role in roles" class="form-control">
                                 <option ng-hide="user.role" value="">{{'USERS.EDIT.SELECT_ROLE'|translate}}</option>
                             </select>
                         </div>

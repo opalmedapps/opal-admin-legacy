@@ -139,6 +139,25 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
+		// Function to get alias log list details given an array of serial numbers
+		aliasAPI.getEducationalMaterials = function () {
+			return $http.post(
+				"alias/get/educational-materials",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		aliasAPI.getHospitalMaps = function () {
+			return $http.post(
+				"alias/get/hospital-maps",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
 		return aliasAPI;
 	})
 
@@ -487,24 +506,6 @@ angular.module('opalAdmin.collections', [])
 		return patientAPI;
 	})
 
-	// Filter API service
-	.factory('filterCollectionService', function ($http) {
-
-		var filterAPI = {};
-
-		// Function to get all filters
-		filterAPI.getFilters = function () {
-			return $http.post(
-				"filter/get/filters",
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		return filterAPI;
-	})
-
 	// Test Result API service
 	.factory('testResultCollectionService', function ($http) {
 
@@ -524,6 +525,15 @@ angular.module('opalAdmin.collections', [])
 		testResultAPI.getTestNames = function () {
 			return $http.post(
 				"test-result/get/test-names",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		testResultAPI.getEducationalMaterials = function () {
+			return $http.post(
+				"test-result/get/get/educational-materials",
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
@@ -630,11 +640,12 @@ angular.module('opalAdmin.collections', [])
 		var userAPI = {};
 
 		// Function to get user details given a serial
-		userAPI.getUserDetails = function (userser) {
+		userAPI.getUserDetails = function (userId, OAUserId) {
 			return $http.post(
 				"user/get/user-details",
 				$.param({
-					userser: userser,
+					userId: userId,
+					OAUserId: OAUserId,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -643,9 +654,12 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// Function to get the list of existing users in our DB
-		userAPI.getUsers = function () {
+		userAPI.getUsers = function (OAUserId) {
 			return $http.post(
 				"user/get/users",
+				$.param({
+					OAUserId: OAUserId,
+				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
@@ -653,11 +667,12 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// Function to check username existence
-		userAPI.usernameAlreadyInUse = function (username) {
+		userAPI.usernameAlreadyInUse = function (username, OAUserId) {
 			return $http.post(
 				"user/username-in-use",
 				$.param({
 					username: username,
+					OAUserId: OAUserId,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -676,11 +691,12 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// Function to get user logs given a serial
-		userAPI.getUserActivityLogs = function (userser) {
+		userAPI.getUserActivityLogs = function (userser, OAUserId) {
 			return $http.post(
 				"user/get/user-activity-logs",
 				$.param({
 					userser: userser,
+					OAUserId: OAUserId,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -759,6 +775,7 @@ angular.module('opalAdmin.collections', [])
 		return emailAPI;
 	})
 
+	// Questionnaire API service
 	.factory('questionnaireCollectionService', function ($http) {
 		var questionnaireAPI = {};
 
@@ -767,32 +784,6 @@ angular.module('opalAdmin.collections', [])
 				"questionnaire/get/questionnaires",
 				$.param({
 					OAUserId: OAUserId,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		questionnaireAPI.getPublishedQuestionnaires = function (OAUserId) {
-			return $http.post(
-				"publication-tool/get/published-questionnaires",
-				$.param({
-					OAUserId: OAUserId,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-
-		};
-
-		questionnaireAPI.getPublishedQuestionnaireDetails = function (publishedQuestionnaireId, OAUserId) {
-			return $http.post(
-				"publication-tool/get/published-questionnaire-details",
-				$.param({
-					OAUserId: OAUserId,
-					publishedQuestionnaireId: publishedQuestionnaireId,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -886,18 +877,6 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		questionnaireAPI.getFinalizedQuestionnaires = function (OAUserId) {
-			return $http.post(
-				"publication-tool/get/finalized-questionnaires",
-				$.param({
-					OAUserId: OAUserId,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
 		questionnaireAPI.getQuestionnaireDetails = function (questionnaireId, OAUserId) {
 			return $http.post(
 				"questionnaire/get/questionnaire-details",
@@ -914,6 +893,7 @@ angular.module('opalAdmin.collections', [])
 		return questionnaireAPI;
 	})
 
+	// Publication API service
 	.factory('publicationCollectionService', function ($http) {
 		var publicationAPI = {};
 
@@ -1001,7 +981,197 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
+		publicationAPI.getFilters = function () {
+			return $http.post(
+				"publication/get/filters",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
 		return publicationAPI;
+	})
+
+	// Custom Codes API service
+	.factory('customCodeCollectionService', function ($http) {
+		var customCodeAPI = {};
+
+		customCodeAPI.getAvailableModules = function (OAUserId) {
+			return $http.post(
+				"custom-code/get/available-modules",
+				$.param({
+					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
+		};
+
+		customCodeAPI.getCustomCodes = function (OAUserId) {
+			return $http.post(
+				"custom-code/get/custom-codes",
+				$.param({
+					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
+		};
+
+		customCodeAPI.getCustomCodeDetails = function (customCodeId, moduleId, OAUserId) {
+			return $http.post(
+				"custom-code/get/custom-code-details",
+				$.param({
+					OAUserId: OAUserId,
+					customCodeId: customCodeId,
+					moduleId: moduleId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		return customCodeAPI;
+	})
+
+	// Study API service
+	.factory('studyCollectionService', function ($http) {
+		var studyAPI = {};
+
+		studyAPI.getStudies = function (OAUserId) {
+			return $http.post(
+				"study/get/studies",
+				$.param({
+					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
+		};
+
+		studyAPI.getStudiesDetails = function (studyId, OAUserId) {
+			return $http.post(
+				"study/get/study-details",
+				$.param({
+					OAUserId: OAUserId,
+					studyId: studyId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		return studyAPI;
+	})
+
+	// Alert API service
+	.factory('alertCollectionService', function ($http) {
+		var alertAPI = {};
+
+		alertAPI.getAlerts = function () {
+			return $http.post(
+				"alert/get/alerts",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
+		};
+
+		alertAPI.getAlertDetails = function (alertId) {
+			return $http.post(
+				"alert/get/alert-details",
+				$.param({
+					alertId: alertId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		return alertAPI;
+	})
+
+	// Role API service
+	.factory('roleCollectionService', function ($http) {
+		var roleAPI = {};
+
+		roleAPI.getRoles = function (OAUserId) {
+			return $http.post(
+				"role/get/roles",
+				$.param({
+					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		roleAPI.getAvailableRoleModules = function (OAUserId) {
+			return $http.post(
+				"role/get/available-modules",
+				$.param({
+					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		roleAPI.getRoleDetails = function (roleId, OAUserId) {
+			return $http.post(
+				"role/get/role-details",
+				$.param({
+					OAUserId: OAUserId,
+					roleId: roleId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		return roleAPI;
+	})
+
+	// Audit API service
+	.factory('auditCollectionService', function ($http) {
+		var auditAPI = {};
+
+		auditAPI.getAudits = function () {
+			return $http.post(
+				"audit/get/audits",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		auditAPI.getAuditDetails = function (ID) {
+			return $http.post(
+				"audit/get/audit-details",
+				$.param({
+					ID: ID,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		return auditAPI;
 	})
 
 	// Diagnosis API service
@@ -1029,6 +1199,17 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
+		// Function to get existing diagnosis translations
+		diagnosisAPI.getEducationalMaterials = function () {
+			return $http.post(
+				"diagnosis-translation/get/educational-materials",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+
 		// Function to get diagnosis translation details
 		diagnosisAPI.getDiagnosisTranslationDetails = function (serial) {
 			return $http.post(
@@ -1053,7 +1234,7 @@ angular.module('opalAdmin.collections', [])
 		installAPI.verifyRequirements = function (urlpath) {
 			return $http({
 				method: 'JSONP',
-				url: urlpath + "api/install/verify_requirements.php?callback=JSON_CALLBACK"
+				url: "install/verify-requirements"
 			});
 		};
 

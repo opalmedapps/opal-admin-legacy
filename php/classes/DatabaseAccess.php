@@ -21,7 +21,7 @@ class DatabaseAccess extends HelpSetup
     protected $userRole;
 
     /* constructor that connects to the database */
-    function __construct($newServer = "localhost", $newDB = "", $newPort = "3306", $newUserDB = "root", $newPass = "", $dsn = false, $newUserId = false) {
+    function __construct($newServer = "localhost", $newDB = "", $newPort = "3306", $newUserDB = "root", $newPass = "", $dsn = false) {
         if(!$dsn)
             $this->dsn = "mysql:host=$newServer;port=$newPort;dbname=$newDB";
         else
@@ -123,7 +123,7 @@ class DatabaseAccess extends HelpSetup
 
     /*
      * this function is used to fetch all results from a SQL query by binding parameters.
-     * @param   SQL query that begins with "SELECT" (string)
+     * param   SQL query that begins with "SELECT" (string)
      *          array of parameters to bind (optional) following PDO rules
      *          ex: array(
      *                  array(
@@ -132,13 +132,13 @@ class DatabaseAccess extends HelpSetup
      *                      "data_type"=>PDO::PARAM_STR,
      *                  )
      *              )
-     * @return  array of result
+     * return  array of result
      * */
     protected function _fetchAll($sqlFetchAll, $paramList = array()) {
         try {
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $this->connection->prepare($sqlFetchAll);
-            if(count($paramList) > 0) {
+            if(is_array($paramList) && count($paramList) > 0) {
                 foreach($paramList as $value) {
                     if(isset($value["data_type"]) &&  $value["data_type"] != "")
                         $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
@@ -150,7 +150,8 @@ class DatabaseAccess extends HelpSetup
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
         catch(PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Fetch all failed:\r\n$sqlFetchAll\r\nError : ". $e->getMessage());
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Fetch all failed.\r\nError : ". $e->getMessage());
+            return false;
         }
     }
 
@@ -171,7 +172,7 @@ class DatabaseAccess extends HelpSetup
         try {
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $this->connection->prepare($sqlFetch);
-            if(count($paramList) > 0) {
+            if(is_array($paramList) && count($paramList) > 0) {
                 foreach($paramList as $value) {
                     if(isset($value["data_type"]) &&  $value["data_type"] != "")
                         $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
@@ -184,6 +185,7 @@ class DatabaseAccess extends HelpSetup
         }
         catch(PDOException $e) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Fetch failed.\r\nError : ". $e->getMessage());
+            return false;
         }
     }
 
@@ -204,7 +206,7 @@ class DatabaseAccess extends HelpSetup
         try {
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $this->connection->prepare($sqlQuery);
-            if(count($paramList) > 0) {
+            if(is_array($paramList) && count($paramList) > 0) {
                 foreach($paramList as $value) {
                     if(isset($value["data_type"]) &&  $value["data_type"] != "")
                         $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
@@ -217,6 +219,7 @@ class DatabaseAccess extends HelpSetup
         }
         catch(PDOException $e) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Execution failed.\r\n$sqlQuery\r\nError : ". $e->getMessage());
+            return false;
         }
     }
 
@@ -225,7 +228,9 @@ class DatabaseAccess extends HelpSetup
      * @returns constant based if it is an int, bool or a string (int)
      * */
     protected static function _getTypeOf($aVar) {
-        if(filter_var($aVar, FILTER_VALIDATE_INT) !== false)
+        if(strcasecmp($aVar, "true") == 0 || strcasecmp($aVar, "yes") == 0 || strcasecmp($aVar, "on") == 0)
+            return PDO::PARAM_STR;
+        else if(filter_var($aVar, FILTER_VALIDATE_INT) !== false)
             return PDO::PARAM_INT;
         else if (filter_var($aVar, FILTER_VALIDATE_BOOLEAN) !== false)
             return PDO::PARAM_BOOL;
@@ -242,7 +247,7 @@ class DatabaseAccess extends HelpSetup
         try {
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $this->connection->prepare($sqlInsert);
-            if(count($paramList) > 0) {
+            if(is_array($paramList) && count($paramList) > 0) {
                 foreach($paramList as $value) {
                     $cpt++;
                     if(isset($value["data_type"]) &&  $value["data_type"] != "")
@@ -256,6 +261,7 @@ class DatabaseAccess extends HelpSetup
         }
         catch(PDOException $e) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Insert query failed. $sqlInsert\r\nError : ". $e->getMessage());
+            return false;
         }
 
     }
