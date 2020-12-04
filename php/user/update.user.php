@@ -1,22 +1,9 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To update a user details */
-	include_once('user.inc');
 
-	$userObject = new Users; // Object
+include_once("../config.php");
 
-	// Construct array from FORM params
-	$userDetails = array (
-		'user'						=> array('id'=>$_POST['serial']),
-		'password'				=> $_POST['password'],
-		'confirmPassword'	=> $_POST['confirmPassword'],
-		'override'				=> true,
-		'role'						=> $_POST['role'],
-		'language'				=> $_POST['language'],
-		'cypher'					=> $_POST['cypher']
-	);
+$userObject = new User();
+$userObject->updateUser($_POST);
 
-	// Call function to update password
-	$response = $userObject->updateUser($userDetails);
-	print json_encode($response); // return response
-?>
+header('Content-Type: application/javascript');
+http_response_code(HTTP_STATUS_SUCCESS);

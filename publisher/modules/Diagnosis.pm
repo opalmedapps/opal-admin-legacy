@@ -246,19 +246,22 @@ sub getDiagnosesFromSourceDB
 				use VARIAN;
 
                 IF OBJECT_ID('tempdb.dbo.#tempDiag', 'U') IS NOT NULL
-                  DROP TABLE #tempDiag;
+                	DROP TABLE #tempDiag;
 
-				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
+				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
+					DROP TABLE #tempPatient;
+
+				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
 			my $numOfPatients = @patientList;
 			my $counter = 0;
 			foreach my $Patient (@patientList) {
 				my $patientSer 			= $Patient->getPatientSer();
-				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
+				my $id      		 	= $Patient->getPatientId(); # get patient ID
 				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
 
 				$patientInfo_sql .= "
-					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
+					SELECT '$id', '$patientLastTransfer', '$patientSer'
 				";
 
 				$counter++;
@@ -269,8 +272,13 @@ sub getDiagnosesFromSourceDB
 			$patientInfo_sql .= ")
 			Select c.* into #tempDiag
 			from PatientInfo c;
-			Create Index temporaryindexDiag1 on #tempDiag (SSN);
+			Create Index temporaryindexDiag1 on #tempDiag (ID);
 			Create Index temporaryindexDiag2 on #tempDiag (PatientSerNum);
+
+			Select p.PatientSer, p.PatientId into #tempPatient
+			from VARIAN.dbo.Patient p;
+			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
+			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
 			";
 
 			my $diagInfo_sql = $patientInfo_sql . "
@@ -292,7 +300,8 @@ sub getDiagnosesFromSourceDB
 			    AND	dx.Description 			NOT LIKE '%ERROR%'
     			AND	dx.HstryDateTime    	> PatientInfo.LastTransfer
 	    		AND dx.DateStamp			> '1970-01-01 00:00:00'
-				AND dx.PatientSer 			= (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+				AND dx.PatientSer 			= (select pt.PatientSer 
+					from #tempPatient pt where pt.PatientId = PatientInfo.ID)
 		    ";
 
     		# prepare query

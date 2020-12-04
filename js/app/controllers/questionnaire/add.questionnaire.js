@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('questionnaire.add', function ($scope, $state, $filter, $uibModal, questionnaireCollectionService, filterCollectionService, Session, uiGridConstants) {
+angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('questionnaire.add', function ($scope, $state, $filter, $uibModal, questionnaireCollectionService, Session, uiGridConstants, ErrorHandler) {
 
 	// navigation function
 	$scope.goBack = function () {
@@ -265,13 +265,13 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	questionnaireCollectionService.getFinalizedQuestions(OAUserId).then(function (response) {
 		$scope.groupList = decodeQuestions(response.data);
 	}).catch(function (err) {
-		alert('Error occurred getting group list:' + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+		ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.ERROR_QUESTION_lIST'));
 		$state.go('questionnaire');
 	});
 
 	// Function to return boolean for form completion
 	$scope.checkForm = function () {
-		if (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) == 100)
+		if (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) === 100)
 			return true;
 		else
 			return false;
@@ -280,15 +280,16 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	// submit
 	$scope.submitQuestionnaire = function () {
 		if ($scope.checkForm()) {
-			// Submit
+
+			var formatData = copyQuestionnaireData($scope.newQuestionnaire);
+
 			$.ajax({
-				type: "POST",
+				method: "POST",
 				url: "questionnaire/insert/questionnaire",
-				data: $scope.newQuestionnaire,
-				success: function () {
-				},
+				data: formatData,
+				success: function () {},
 				error: function (err) {
-					alert("Something went wrong." + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.ERROR_CREATION_QUESTIONNAIRE'));
 				},
 				complete: function() {
 					$state.go('questionnaire');
@@ -296,6 +297,29 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 			});
 		}
 	};
+
+	function copyQuestionnaireData(oldData) {
+		var newFormat = {
+			OAUserId : oldData.OAUserId,
+			title_EN : oldData.title_EN,
+			title_FR : oldData.title_FR,
+			description_EN : oldData.description_EN,
+			description_FR : oldData.description_FR,
+			private : oldData.private,
+			questions : []
+		};
+		var temp;
+		angular.forEach(oldData.questions, function(item) {
+			temp = {
+				ID : item.ID,
+				order : item.order,
+				optional : item.optional,
+				typeId : item.typeId,
+			};
+			newFormat.questions.push(temp);
+		});
+		return newFormat;
+	}
 
 	var fixmeTop = $('.summary-fix').offset().top;
 	$(window).scroll(function () {
