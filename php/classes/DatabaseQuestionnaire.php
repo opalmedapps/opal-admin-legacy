@@ -63,10 +63,14 @@ class DatabaseQuestionnaire extends DatabaseAccess
                 "updatedBy"=>$this->username,
             );
         }
+
+        $newEntries = HelpSetup::arraySanitization($newEntries);
         foreach($newEntries as $key=>$value) {
             $toInsert[$key]["content"] = $value;
         }
-        $this->_insertMultipleRecordsIntoTable(DICTIONARY_TABLE, $toInsert);
+        $result = $this->_insertMultipleRecordsIntoDictionary($toInsert, $contentId);
+        if(intval($result) == 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot insert entry in dictionary, content ID already exists.");
         return $contentId;
     }
 
@@ -78,7 +82,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * */
     function copyToDictionary($contentId, $tableName) {
         $toCopy = $this->_fetchAll(SQL_QUESTIONNAIRE_GET_DICTIONNARY_TEXT, array(array("parameter"=>":contentId", "variable"=>$contentId, "data_type"=>PDO::PARAM_INT)));
-        if (count($toCopy) <= 0) return false;
+        if (!is_array($toCopy) || count($toCopy) <= 0) return false;
         $tableId = $this->getTableId($tableName);
         $newContentId = $this->_getNextContentId();
 
@@ -95,7 +99,9 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
         }
 
-        $this->_insertMultipleRecordsIntoTable(DICTIONARY_TABLE, $toInsert);
+        $result = $this->_insertMultipleRecordsIntoDictionary($toInsert, $newContentId);
+        if(intval($result) == 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot insert entry in dictionary, content ID already exists.");
         return $newContentId;
     }
 
@@ -118,6 +124,8 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  total of lines modified (int)
      * */
     function updateDictionary($updatedEntries, $tableName) {
+        $updatedEntries = HelpSetup::arraySanitization($updatedEntries);
+
         $total = 0;
         $tableId = $this->getTableId($tableName);
         foreach($updatedEntries as $data) {
@@ -449,7 +457,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
                 array("parameter"=>":ID","variable"=>$templateQuestionID,"data_type"=>PDO::PARAM_INT),
             ));
 
-        if(count($result) != 1) return false;
+        if(!is_array($result) || count($result) != 1) return false;
         $result = $result[0];
         if($result["ttcID"] != "")
             $result["options"] = $this->getTypeTemplateCheckboxOption($result["ttcID"]);
@@ -1116,5 +1124,33 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * This function replace the regular insert by a special one for the dictionary. To avoid duplicates in the contentId
+     * that may cause a cardinality violation and break down the questionnaire and thus all the system, we have to
+     * add a condition to the insert.
+     * */
+    protected function _insertMultipleRecordsIntoDictionary($records, $controlContentId) {
+        $sqlInsert = str_replace("%%TABLENAME%%", DICTIONARY_TABLE, SQL_GENERAL_INSERT_INTERSECTION_TABLE);
+        $sqlConditional = array();
+        $multiples = array();
+        $cpt = 0;
+        $ready = array();
+        foreach ($records as $data) {
+            $cpt++;
+            $fields = array();
+            $params = array();
+            foreach($data as $key=>$value) {
+                array_push($fields, $key);
+                array_push($params, ":".$key.$cpt);
+                array_push($ready, array("parameter"=>":".$key.$cpt,"variable"=>$value));
+            }
+            array_push($sqlConditional, str_replace("%%VALUES%%", implode(", ", $params), SQL_QUESTIONNAIRE_CONDITIONAL_INSERT));
+            $sqlFieldNames = "`".implode("`, `", $fields)."`";
+            array_push($multiples, implode(", ", $params));
+        }
+        array_push($ready, array("parameter"=>":controlContentId","variable"=>$controlContentId));
 
+        $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . implode(" UNION ALL ", $sqlConditional);
+        return $this->_queryInsert($sqlInsert, $ready);
+    }
 }

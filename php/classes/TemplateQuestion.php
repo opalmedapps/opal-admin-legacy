@@ -63,7 +63,7 @@ class TemplateQuestion extends QuestionnaireModule {
                 return false;
         }
         else if ($validatedQT["typeId"] == CHECKBOXES || $validatedQT["typeId"] == RADIO_BUTTON) {
-            if (count($validatedQT["subOptions"]) <= 0) return false;
+            if (!is_array($validatedQT["subOptions"]) || count($validatedQT["subOptions"]) <= 0) return false;
             foreach($validatedQT["subOptions"] as $sub) {
                 if($sub["description_EN"] == "" || $sub["description_FR"] == "" || $sub["order"] == "")
                     return false;
@@ -321,6 +321,7 @@ class TemplateQuestion extends QuestionnaireModule {
      * return  void
      */
     function updateTemplateQuestion($updatedTemplateQuestion) {
+        $this->checkWriteAccess($updatedTemplateQuestion);
         $total = 0;
         $oldTemplateQuestion = $this->getTemplateQuestionDetails($updatedTemplateQuestion["ID"]);
         $updatedTemplateQuestion = $this->validateAndSanitize($updatedTemplateQuestion);
@@ -371,7 +372,8 @@ class TemplateQuestion extends QuestionnaireModule {
      * @return void
      */
     public function insertTemplateQuestion($newTemplateQuestion){
-
+        $this->checkWriteAccess($newTemplateQuestion);
+        $total = 0;
         $newTemplateQuestion = $this->validateAndSanitize($newTemplateQuestion);
 
         if(!$newTemplateQuestion)
@@ -462,8 +464,9 @@ class TemplateQuestion extends QuestionnaireModule {
      * @return  array of details of the question type
      * */
     public function getTemplateQuestionDetails($templateQuestionId) {
+        $this->checkReadAccess($templateQuestionId);
         $templateQuestion = $this->questionnaireDB->getTemplateQuestionDetails($templateQuestionId);
-        if(count($templateQuestion) != 1)
+        if(!is_array($templateQuestion) || count($templateQuestion) != 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Errors fetching the question type. Number of result is wrong.");
         $templateQuestion = $templateQuestion[0];
 
@@ -497,6 +500,7 @@ class TemplateQuestion extends QuestionnaireModule {
      * @return array $templateQuestions : the list of existing answer types
      */
     public function getTemplatesQuestions(){
+        $this->checkReadAccess();
         $templateQuestions = array();
         $result = $this->questionnaireDB->getTemplatesQuestions();
 
@@ -534,6 +538,7 @@ class TemplateQuestion extends QuestionnaireModule {
      * @return array $answerTypeCategories : the list of answer type categories
      */
     public function getTemplateQuestionList(){
+        $this->checkReadAccess();
         return $this->questionnaireDB->getTemplateQuestionList();
     }
 
@@ -553,6 +558,7 @@ class TemplateQuestion extends QuestionnaireModule {
      * @return array $response : response
      */
     function deleteTemplateQuestion($templateQuestionId) {
+        $this->checkDeleteAccess($templateQuestionId);
         $templateQuestionToDelete = $this->questionnaireDB->getTypeTemplate($templateQuestionId);
         if ($this->questionnaireDB->getOAUserId() <= 0 || $templateQuestionToDelete["deleted"] == 1 || ($templateQuestionToDelete["private"] == 1 && $this->questionnaireDB->getOAUserId() != $templateQuestionToDelete["OAUserId"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");

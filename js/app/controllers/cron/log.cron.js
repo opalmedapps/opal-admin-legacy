@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.cron.log', ['ngAnimate', 'ngSanitize', 'ui
 /******************************************************************************
  * Controller for the cron logs
  *******************************************************************************/
-controller('cron.log', function ($scope, $uibModal, $filter, cronCollectionService, Session, $uibModalInstance) {
+controller('cron.log', function ($scope, $filter, $uibModalInstance, cronCollectionService, Session, ErrorHandler) {
 
 	// Call our API to get cron logs based on highlighted section
 	cronCollectionService.getSelectedCronListLogs($scope.contentNames, Session.retrieveObject('user').id).then(function (response) {
@@ -32,7 +32,7 @@ controller('cron.log', function ($scope, $uibModal, $filter, cronCollectionServi
 			};
 		}
 
-		if ($scope.cronListLogs.appointment.length) {
+		if ($scope.cronListLogs.appointment && $scope.cronListLogs.appointment.length) {
 			$scope.gridAppointmentLogOptions = angular.copy(gridAliasLogOptions);
 			$scope.gridAppointmentLogOptions.data = $scope.cronListLogs.appointment;
 			// insert fields after source uid
@@ -50,7 +50,7 @@ controller('cron.log', function ($scope, $uibModal, $filter, cronCollectionServi
 				scheduledEndField, actualStartField, actualEndField, roomENField, roomFRField, checkinField);
 		}
 
-		if ($scope.cronListLogs.document.length) {
+		if ($scope.cronListLogs.document && $scope.cronListLogs.document.length) {
 			$scope.gridDocumentLogOptions = angular.copy(gridAliasLogOptions);
 			$scope.gridDocumentLogOptions.data = $scope.cronListLogs.document;
 			// insert fields after source uid
@@ -72,7 +72,7 @@ controller('cron.log', function ($scope, $uibModal, $filter, cronCollectionServi
 				origFileField, finalFileField, transferStatusField, transferLogField);
 		}
 
-		if ($scope.cronListLogs.task.length) {
+		if ($scope.cronListLogs.task && $scope.cronListLogs.task.length) {
 			$scope.gridTaskLogOptions = angular.copy(gridAliasLogOptions);
 			$scope.gridTaskLogOptions.data = $scope.cronListLogs.task;
 			// insert fields after source uid
@@ -86,7 +86,7 @@ controller('cron.log', function ($scope, $uibModal, $filter, cronCollectionServi
 				creationField, completedField);
 		}
 
-		if ($scope.cronListLogs.announcement.length) {
+		if ($scope.cronListLogs.announcement && $scope.cronListLogs.announcement.length) {
 			$scope.gridAnnouncementLogOptions = {
 				data: $scope.cronListLogs.announcement,
 				columnDefs: [
@@ -104,7 +104,7 @@ controller('cron.log', function ($scope, $uibModal, $filter, cronCollectionServi
 			};
 		}
 
-		if ($scope.cronListLogs.txTeamMessage.length) {
+		if ($scope.cronListLogs.txTeamMessage && $scope.cronListLogs.txTeamMessage.length) {
 			$scope.gridTxTeamMessageLogOptions = {
 				data: $scope.cronListLogs.txTeamMessage,
 				columnDefs: [
@@ -122,7 +122,7 @@ controller('cron.log', function ($scope, $uibModal, $filter, cronCollectionServi
 			};
 		}
 
-		if ($scope.cronListLogs.pfp.length) {
+		if ($scope.cronListLogs.pfp && $scope.cronListLogs.pfp.length) {
 			$scope.gridPFPLogOptions = {
 				data: $scope.cronListLogs.pfp,
 				columnDefs: [
@@ -140,7 +140,7 @@ controller('cron.log', function ($scope, $uibModal, $filter, cronCollectionServi
 			};
 		}
 
-		if ($scope.cronListLogs.educationalMaterial.length) {
+		if ($scope.cronListLogs.educationalMaterial && $scope.cronListLogs.educationalMaterial.length) {
 			$scope.gridEducationalMaterialLogOptions = {
 				data: $scope.cronListLogs.educationalMaterial,
 				columnDefs: [
@@ -158,7 +158,7 @@ controller('cron.log', function ($scope, $uibModal, $filter, cronCollectionServi
 			};
 		}
 
-		if ($scope.cronListLogs.email.length) {
+		if ($scope.cronListLogs.email && $scope.cronListLogs.email.length) {
 			$scope.gridEmailLogOptions = {
 				data: $scope.cronListLogs.email,
 				columnDefs: [
@@ -176,7 +176,7 @@ controller('cron.log', function ($scope, $uibModal, $filter, cronCollectionServi
 			};
 		}
 
-		if ($scope.cronListLogs.legacyQuestionnaire.length) {
+		if ($scope.cronListLogs.legacyQuestionnaire && $scope.cronListLogs.legacyQuestionnaire.length) {
 			$scope.gridLegacyQuestionnaireLogOptions = {
 				data: $scope.cronListLogs.legacyQuestionnaire,
 				columnDefs: [
@@ -196,7 +196,7 @@ controller('cron.log', function ($scope, $uibModal, $filter, cronCollectionServi
 			};
 		}
 
-		if ($scope.cronListLogs.notification.length) {
+		if ($scope.cronListLogs.notification && $scope.cronListLogs.notification.length) {
 			$scope.gridNotificationLogOptions = {
 				data: $scope.cronListLogs.notification,
 				columnDefs: [
@@ -216,7 +216,7 @@ controller('cron.log', function ($scope, $uibModal, $filter, cronCollectionServi
 			};
 		}
 
-		if ($scope.cronListLogs.testResult.length) {
+		if ($scope.cronListLogs.testResult && $scope.cronListLogs.testResult.length) {
 			$scope.gridTestResultLogOptions = {
 				data: $scope.cronListLogs.testResult,
 				columnDefs: [
@@ -242,8 +242,8 @@ controller('cron.log', function ($scope, $uibModal, $filter, cronCollectionServi
 				enableColumnResizing: true,
 			};
 		}
-	}).catch(function(response) {
-		alert($filter('translate')('CRON.DETAILS.ERROR_CRON_LOGS') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('RON.DETAILS.ERROR_CRON_LOGS'));
 		$uibModalInstance.dismiss('cancel');
 	});
 

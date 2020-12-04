@@ -4,10 +4,7 @@ angular.module('opalAdmin.controllers.publication.log', ['ngAnimate', 'ngSanitiz
 	/******************************************************************************
 	 * Controller for the post logs
 	 *******************************************************************************/
-	controller('publication.log', function ($scope, $uibModal, $filter, publicationCollectionService, Session, $uibModalInstance) {
-
-		console.log($scope.currentPublication);
-
+	controller('publication.log', function ($scope, $filter, publicationCollectionService, Session, $uibModalInstance, ErrorHandler) {
 		if(Session.retrieveObject('user').language === "FR")
 			$scope.currentPublication.module_display = $scope.currentPublication.module_FR;
 		else
@@ -20,8 +17,8 @@ angular.module('opalAdmin.controllers.publication.log', ['ngAnimate', 'ngSanitiz
 					log.x = new Date(log.x);
 				});
 			});
-		}).catch(function(response) {
-			alert($filter('translate')('POSTS.LOG.ERROR') + "\r\n\r\n" + response.status);
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('POSTS.LOG.ERROR'));
 			$uibModalInstance.dismiss('cancel');
 		});
 
@@ -65,7 +62,6 @@ angular.module('opalAdmin.controllers.publication.log', ['ngAnimate', 'ngSanitiz
 							cronSerials = Array.from(cronSerials);
 							/* publicationId, moduleId, OAUserId, cronIds */
 							publicationCollectionService.getPublicationListLogs($scope.currentPublication.ID, $scope.currentPublication.moduleId, Session.retrieveObject('user').id, cronSerials).then(function(response){
-								console.log("4: " + cronSerials + " " + $scope.currentPublication.type);
 								$scope.postListLogs = response.data;
 							});
 						}
@@ -102,7 +98,6 @@ angular.module('opalAdmin.controllers.publication.log', ['ngAnimate', 'ngSanitiz
 							select: function(point) {
 								var cronLogSerNum = [point.target.cron_serial];
 								publicationCollectionService.getPublicationListLogs($scope.currentPublication.ID, $scope.currentPublication.moduleId, Session.retrieveObject('user').id, cronSerials).then(function(response){
-									console.log("3: " + cronLogSerNum + " " + $scope.currentPublication.type);
 									$scope.postListLogs = response.data;
 								});
 							},
