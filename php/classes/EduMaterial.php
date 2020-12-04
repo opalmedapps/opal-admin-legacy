@@ -3,7 +3,11 @@
  *
  * EduMaterial class
  */
-class EduMaterial {
+class EduMaterial extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_EDU_MAT, $guestStatus);
+    }
 
     /**
      *
@@ -14,6 +18,7 @@ class EduMaterial {
      * @return array $response : response
      */    
     public function updatePublishFlags( $eduMatList, $user ) {
+        $this->checkWriteAccess(array($eduMatList, $user));
 
         // Initialize response array
         $response = array(
@@ -50,8 +55,7 @@ class EduMaterial {
             return $response;
 
 		} catch( PDOException $e) {
-		    $response['message'] = $e->getMessage();
-			return $response; // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for educational material. " . $e->getMessage());
 		}
 	}
 
@@ -62,6 +66,8 @@ class EduMaterial {
      * @return array $phases : the phases in treatment
      */
     public function getPhasesInTreatment() {
+        $this->checkReadAccess();
+
         $phases = array();
         try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -91,8 +97,7 @@ class EduMaterial {
             return $phases;
 
         } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $phases;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for educational material. " . $e->getMessage());
 		}
     }
 
@@ -103,6 +108,7 @@ class EduMaterial {
      * @return array $types : the educational material types
      */
     public function getEducationalMaterialTypes() {
+        $this->checkReadAccess();
 
         // Initialize list of types, separate languages
         $types = array();
@@ -130,8 +136,7 @@ class EduMaterial {
             return $types;
 
 	    } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $types;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for educational material. " . $e->getMessage());
 		}
     }
 
@@ -139,153 +144,10 @@ class EduMaterial {
      *
      * Gets educational material details
      *
-     * @param integer $eduMatSer : the educational material serial number
-     * @return array $eduMatDetails : the educational material details
      */
-    public function getEducationalMaterialDetails ($eduMatSer) {
-
-        $eduMatDetails = array();
-
- 		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    em.EducationalMaterialType_EN,
-                    em.EducationalMaterialType_FR,
-                    em.Name_EN,
-                    em.Name_FR,
-                    em.URL_EN,
-                    em.URL_FR,
-                    phase.PhaseInTreatmentSerNum,
-                    phase.Name_EN,
-                    phase.Name_FR,
-                    em.ShareURL_EN,
-                    em.ShareURL_FR
-                FROM
-                    EducationalMaterialControl em,
-                    PhaseInTreatment phase
-                WHERE
-                    em.EducationalMaterialControlSerNum = $eduMatSer
-                AND phase.PhaseInTreatmentSerNum        = em.PhaseInTreatmentSerNum
-            ";
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-
-			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
-
-            $type_EN                = $data[0];
-            $type_FR                = $data[1];
-            $name_EN                = $data[2];
-            $name_FR                = $data[3];
-            $url_EN                 = urldecode($data[4]);
-            $url_FR                 = urldecode($data[5]);
-            $phaseSer               = $data[6];
-            $phaseName_EN           = $data[7];
-            $phaseName_FR           = $data[8];
-            $shareURL_EN            = $data[9];
-            $shareURL_FR            = $data[10];
-            $triggers               = array();
-            $tocs                   = array(); // Table of contents
-
-            $sql = "
-                SELECT DISTINCT 
-                    Filters.FilterType,
-                    Filters.FilterId
-                FROM
-                    EducationalMaterialControl em,
-                    Filters
-                WHERE
-                    em.EducationalMaterialControlSerNum     = $eduMatSer
-                AND Filters.ControlTable                    = 'EducationalMaterialControl'
-                AND Filters.ControlTableSerNum              = em.EducationalMaterialControlSerNum
-                AND Filters.FilterType                      != ''
-                AND Filters.FilterId                        != ''
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-	    	$query->execute();
-
-	    	while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-		    	$triggerType = $data[0];
-				$triggerId   = $data[1];
-    			$triggerArray = array (
-	    			'type'  => $triggerType,
-	    			'id'    => $triggerId,
-		    		'added' => 1
-				);
-    
-	    		array_push($triggers, $triggerArray);
-            }
-
-            $sql = "
-                SELECT DISTINCT
-                    toc.OrderNum,
-                    em.EducationalMaterialControlSerNum,
-                    em.Name_EN,
-                    em.Name_FR,
-                    em.EducationalMaterialType_EN,
-                    em.EducationalMaterialType_FR,
-                    em.URL_EN,
-                    em.URL_FR
-                FROM
-                    EducationalMaterialTOC toc,
-                    EducationalMaterialControl em
-                WHERE
-                    toc.EducationalMaterialControlSerNum    = em.EducationalMaterialControlSerNum
-                AND toc.ParentSerNum                        = $eduMatSer
-                ORDER BY
-                    toc.OrderNum
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-		    $query->execute();
-
-		    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $tocOrder       = $data[0];
-                $tocSer         = $data[1];
-                $tocName_EN     = $data[2];
-                $tocName_FR     = $data[3];
-                $tocType_EN     = $data[4];
-                $tocType_FR     = $data[5];
-                $tocURL_EN      = urldecode($data[6]);
-                $tocURL_FR      = urldecode($data[7]);
-
-                $tocArray = array (
-                    'serial'        => $tocSer,
-                    'order'         => $tocOrder,
-                    'name_EN'       => $tocName_EN,
-                    'name_FR'       => $tocName_FR,
-                    'type_EN'       => $tocType_EN,
-                    'type_FR'       => $tocType_FR,
-                    'url_EN'        => $tocURL_EN,
-                    'url_FR'        => $tocURL_FR,
-                    'parent_serial' => $eduMatSer
-                );    
-                array_push($tocs, $tocArray);
-            }
-        
-            $eduMatDetails = array (
-                'name_EN'           => $name_EN,
-                'name_FR'           => $name_FR,
-                'serial'            => intval($eduMatSer),
-                'type_EN'           => $type_EN,
-                'type_FR'           => $type_FR,
-                'url_EN'            => $url_EN,
-                'url_FR'            => $url_FR,
-                'share_url_EN'      => $shareURL_EN,
-                'share_url_FR'      => $shareURL_FR,
-                'publish'           => $publish,
-                'phase_serial'      => $phaseSer,
-                'phase_EN'          => $phaseName_EN,
-                'phase_FR'          => $phaseName_FR,
-                'triggers'          => $triggers,
-                'tocs'              => $tocs
-            );
-            return $eduMatDetails;
-	    } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $eduMatDetails;
-		}
+    public function getEducationalMaterialDetails($eduId) {
+        $this->checkReadAccess($eduId);
+        return $this->_getEducationalMaterialDetails($eduId);
 	}
 
      /*
@@ -293,186 +155,8 @@ class EduMaterial {
       * @return array $eduMatList : the list of existing educational materials
       */
     public function getEducationalMaterials() {
-        $eduMatList = array();
- 		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    em.EducationalMaterialControlSerNum,
-                    em.EducationalMaterialType_EN,
-                    em.EducationalMaterialType_FR,
-                    em.Name_EN,
-                    em.Name_FR,
-                    em.URL_EN,
-                    em.URL_FR,
-                    phase.PhaseInTreatmentSerNum,
-                    phase.Name_EN,
-                    phase.Name_FR,
-                    em.PublishFlag,
-                    em.ParentFlag,
-                    em.ShareURL_EN,
-                    em.ShareURL_FR,
-                    em.LastUpdated,
-                    (SELECT COUNT(*) AS locked FROM Filters f WHERE f.ControlTableSerNum = em.EducationalMaterialControlSerNum and ControlTable = 'EducationalMaterialControl') AS locked
-                FROM
-                    EducationalMaterialControl em,
-                    PhaseInTreatment phase
-                WHERE
-                    phase.PhaseInTreatmentSerNum = em.PhaseInTreatmentSerNum
-                AND
-                    em.deleted = 0;
-            ";
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $eduMatSer              = intval($data[0]);
-                $type_EN                = $data[1];
-                $type_FR                = $data[2];
-                $name_EN                = $data[3];
-                $name_FR                = $data[4];
-                $url_EN                 = urldecode($data[5]);
-                $url_FR                 = urldecode($data[6]);
-                $phaseSer               = $data[7];
-                $phaseName_EN           = $data[8];
-                $phaseName_FR           = $data[9];
-                $publish                = $data[10];
-                $parentFlag             = $data[11];
-                $shareURL_EN            = $data[12];
-                $shareURL_FR            = $data[13];
-                $lastUpdated            = $data[14];
-                $locked                 = $data[15];
-                $rating                 = -1;
-                $triggers               = array();
-                $tocs                   = array();
-
-                if ($parentFlag == 1) {
-                    $sql = "
-                        SELECT
-                            AVG(emr.RatingValue) 
-                        FROM
-                            EducationalMaterialRating emr
-                        WHERE
-                            emr.EducationalMaterialControlSerNum = $eduMatSer
-                    ";
-                    $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                    $secondQuery->execute();
-        
-                    while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                        if ($secondData[0]) {
-                            $rating = $secondData[0];
-                        }
-                    }
-                }
-
-                $sql = "
-                    SELECT DISTINCT 
-                        Filters.FilterType,
-                        Filters.FilterId
-                    FROM
-                        EducationalMaterialControl em,
-                        Filters
-                    WHERE   
-                        em.EducationalMaterialControlSerNum     = $eduMatSer
-                    AND Filters.ControlTable                    = 'EducationalMaterialControl'
-                    AND Filters.ControlTableSerNum              = em.EducationalMaterialControlSerNum
-                    AND Filters.FilterType                      != ''
-                    AND Filters.FilterId                        != ''
-                ";
-                $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-				$secondQuery->execute();
-    
-				while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-    
-    				$triggerType = $secondData[0];
-                    $triggerId   = $secondData[1];
-			    	$triggerArray = array (
-						'type'  => $triggerType,
-				    	'id'    => $triggerId,
-					    'added' => 1
-    				);
-    
-    				array_push($triggers, $triggerArray);
-                }
-    
-                $sql = "
-                    SELECT DISTINCT
-                        em.EducationalMaterialControlSerNum,
-                        em.Name_EN,
-                        em.Name_FR,
-                        toc.OrderNum,
-                        em.EducationalMaterialType_EN,
-                        em.EducationalMaterialType_FR,
-                        em.URL_EN,
-                        em.URL_FR
-                    FROM
-                        EducationalMaterialTOC toc,
-                        EducationalMaterialControl em
-                    WHERE
-                        toc.EducationalMaterialControlSerNum    = em.EducationalMaterialControlSerNum
-                    AND toc.ParentSerNum                        = $eduMatSer
-                    ORDER BY
-                        toc.OrderNum
-                ";
-                $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			    $secondQuery->execute();
-    
-    			while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-    
-                    $tocSer         = $secondData[0];
-                    $tocName_EN     = $secondData[1];
-                    $tocName_FR     = $secondData[2];
-                    $tocOrder       = $secondData[3];
-                    $tocType_EN     = $secondData[4];
-                    $tocType_FR     = $secondData[5];
-                    $tocURL_EN      = urldecode($secondData[6]);
-                    $tocURL_FR      = urldecode($secondData[7]);
-                    $tocArray = array (
-                        'serial'        => $tocSer,
-                        'order'         => $tocOrder,
-                        'name_EN'       => $tocName_EN,
-                        'name_FR'       => $tocName_FR,
-                        'type_EN'       => $tocType_EN,
-                        'type_FR'       => $tocType_FR,
-                        'url_EN'        => $tocURL_EN,
-                        'url_FR'        => $tocURL_FR,
-                        'parent_serial' => $eduMatSer
-                    );
-                    array_push($tocs, $tocArray);
-                }
-
-                $eduMatArray = array (
-                    'name_EN'           => $name_EN,
-                    'name_FR'           => $name_FR,
-                    'serial'            => $eduMatSer,
-                    'type_EN'           => $type_EN,
-                    'type_FR'           => $type_FR,
-                    'url_EN'            => $url_EN,
-                    'url_FR'            => $url_FR,
-                    'share_url_EN'      => $shareURL_EN,
-                    'share_url_FR'      => $shareURL_FR,
-                    'phase_serial'      => $phaseSer,
-                    'phase_EN'          => $phaseName_EN,
-                    'phase_FR'          => $phaseName_FR,
-                    'parentFlag'        => $parentFlag,
-					'publish'           => $publish,
-					'changed'			=> 0,
-                    'lastupdated'       => $lastUpdated,
-                    'rating'            => $rating,
-                    'triggers'          => $triggers,
-                    'tocs'              => $tocs,
-                    'locked'            => $locked
-                );
-
-                array_push($eduMatList, $eduMatArray);
-            }
-            return $eduMatList;
-	    } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $eduMatList;
-		}
+        $this->checkReadAccess();
+        return $this->_getListEduMaterial();
 	}
 
     /**
@@ -483,6 +167,7 @@ class EduMaterial {
 	 * @return array $response : response
      */
     public function insertEducationalMaterial ( $eduMatDetails ) {
+        $this->checkWriteAccess($eduMatDetails);
 
         $name_EN        = $eduMatDetails['name_EN'];
         $name_FR        = $eduMatDetails['name_FR'];
@@ -734,8 +419,7 @@ class EduMaterial {
             return $response;
 
         } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response; // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for educational material. " . $e->getMessage());
         }
     }
 
@@ -747,6 +431,7 @@ class EduMaterial {
      * @return array $response : response
      */
     public function updateEducationalMaterial ($eduMatDetails) {
+        $this->checkWriteAccess($eduMatDetails);
 
         $name_EN            = $eduMatDetails['name_EN'];
         $name_FR            = $eduMatDetails['name_FR'];
@@ -1110,8 +795,7 @@ class EduMaterial {
             return $response;
 
 		} catch( PDOException $e) {
-		    $response['message'] = $e->getMessage();
-			return $response; // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for educational material. " . $e->getMessage());
 		}
 	}
 
@@ -1124,6 +808,7 @@ class EduMaterial {
      * @return array $response : response
      */
     public function deleteEducationalMaterial ( $eduMatSer, $user ){
+        $this->checkDeleteAccess(array($eduMatSer, $user));
 
         $response = array(
             'value'     => 0,
@@ -1203,8 +888,7 @@ class EduMaterial {
             return $response;
 
 	    } catch( PDOException $e) {
-		    $response['message'] = $e->getMessage();
-			return $response;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for educational material. " . $e->getMessage());
 		}
 	}
 
@@ -1216,6 +900,7 @@ class EduMaterial {
      * @return array $educationalMaterialLogs : the educational material logs for highcharts
      */
     public function getEducationalMaterialChartLogs ($serial) {
+        $this->checkReadAccess($serial);
         $educationalMaterialLogs = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -1321,8 +1006,7 @@ class EduMaterial {
             return $educationalMaterialLogs;
 
         } catch( PDOException $e) {
-            echo $e->getMessage();
-            return $educationalMaterialLogs;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for educational material. " . $e->getMessage());
         }
     }
 
@@ -1330,78 +1014,11 @@ class EduMaterial {
      *
      * Gets list logs of educational material during one or many cron sessions
      *
-     * @param array $serials : a list of cron log serial numbers
-     * @return array $educationalMaterialLogs : the educational material logs for table view
      */
-    public function getEducationalMaterialListLogs ($serials) {
-        $educationalMaterialLogs = array();
-        $serials = implode(',', $serials);
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    emc.Name_EN,
-                    emmh.EducationalMaterialRevSerNum,
-                    emmh.CronLogSerNum,
-                    emmh.PatientSerNum,
-                    emmh.DateAdded,
-                    emmh.ReadStatus,
-                    emmh.ModificationAction
-                FROM
-                    EducationalMaterialMH emmh,
-                    EducationalMaterialControl emc
-                WHERE
-                    emc.EducationalMaterialControlSerNum = emmh.EducationalMaterialControlSerNum
-                AND emmh.CronLogSerNum IN ($serials)
-            ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $logDetails = array (
-                    'material_name'         => $data[0],
-                    'revision'              => $data[1],
-                    'cron_serial'           => $data[2],
-                    'patient_serial'        => $data[3],
-                    'date_added'            => $data[4],
-                    'read_status'           => $data[5],
-                    'mod_action'            => $data[6]
-                );
-                array_push($educationalMaterialLogs, $logDetails);
-
-            }
-
-            return $educationalMaterialLogs;
-
-        } catch( PDOException $e) {
-            echo $e->getMessage();
-            return $educationalMaterialLogs;
-        }
+    public function getEducationalMaterialListLogs($eduIds) {
+        $this->checkReadAccess($eduIds);
+        return $this->opalDB->getEduMaterialLogs($eduIds);
     }  
-
-    /**
-     *
-     * Does a nested search for match
-     *
-     * @param string $id    : the needle id
-     * @param string $type  : the needle type
-     * @param array $array  : the key-value haystack
-     * @return boolean
-     */
-    public function nestedSearch($id, $type, $array) {
-        if(empty($array) || !$id || !$type){
-            return 0;
-        }
-        foreach ($array as $key => $val) {
-            if ($val['id'] === $id and $val['type'] === $type) {
-                return 1;
-            }
-        }
-        return 0;
-    }
 
     /**
      *

@@ -1,14 +1,12 @@
 angular.module('opalAdmin.controllers.post.delete', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'textAngular']).
 
-	controller('post.delete', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, postCollectionService, filterCollectionService, uiGridConstants, Session) {
-
+	controller('post.delete', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, uiGridConstants, Session, ErrorHandler) {
 		// Submit delete
 		$scope.deletePost = function () {
 			// Log who updated post 
 			var currentUser = Session.retrieveObject('user');
 			$scope.postToDelete.OAUser = currentUser;
 
-			console.log($scope.postToDelete);
 			$.ajax({
 				type: "POST",
 				url: "post/delete/post",
@@ -19,7 +17,7 @@ angular.module('opalAdmin.controllers.post.delete', ['ngAnimate', 'ngSanitize', 
 						$scope.showBanner();
 				},
 				error: function (err) {
-					alert($filter('translate')('POSTS.DELETE.ERROR') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('POSTS.DELETE.ERROR'));
 				},
 				complete: function() {
 					$uibModalInstance.close();

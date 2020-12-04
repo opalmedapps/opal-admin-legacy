@@ -1,21 +1,9 @@
 <?php
-	header('Content-Type: application/javascript');
-  /* Simple logout script */
-  include_once('user.inc');
 
-  // Retrieve post data
-  $postdata = file_get_contents("php://input");
-  $request = json_decode($postdata);
+include_once("../config.php");
 
-  $userDetails = array(
-    'userser'   => $request->id,
-    'sessionid' => $request->sessionid
-  );
+$userObject = new User();
+$response = $userObject->userLogout();
 
-  $userObject = new Users;
-
-  // Call function
-  $response = $userObject->userLogout($userDetails);
-  print json_encode($response); // Return response
-
-  ?>
+header('Content-Type: application/javascript');
+http_response_code(HTTP_STATUS_SUCCESS);

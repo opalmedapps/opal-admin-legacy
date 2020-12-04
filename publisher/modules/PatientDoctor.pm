@@ -152,9 +152,9 @@ sub getPatientDoctorsFromSourceDB
 
 	foreach my $Patient (@patientList) {
 
-		my $patientSer		    = $Patient->getPatientSer();
-		my $patientSSN			= $Patient->getPatientSSN(); 
-		my $lastTransfer	    = $Patient->getPatientLastTransfer();
+		my $patientSer		= $Patient->getPatientSer();
+		my $id 				= $Patient->getPatientId();
+		my $lastTransfer	= $Patient->getPatientLastTransfer();
 
         ######################################
 	    # ARIA
@@ -174,7 +174,7 @@ sub getPatientDoctorsFromSourceDB
 		    		VARIAN.dbo.Patient pt
 			    WHERE
 			    	pt.PatientSer 			= pd.PatientSer
-    			AND	LEFT(LTRIM(pt.SSN), 12)	= '$patientSSN'
+    			AND	pt.PatientId			= '$id'
 	    		AND	dr.ResourceSer	    	= pd.ResourceSer
 		    	AND	pd.HstryDateTime		> '$lastTransfer'
     		";  
@@ -375,7 +375,7 @@ sub insertPatientDoctorIntoOurDB
 	
 	my $patientSer 		= $patientdoctor->getPatientDoctorPatientSer();
 	my $doctorSer		= $patientdoctor->getPatientDoctorDoctorSer();
-	my $oncflag		= $patientdoctor->getPatientDoctorOncFlag();
+	my $oncflag			= $patientdoctor->getPatientDoctorOncFlag();
 	my $primaryflag		= $patientdoctor->getPatientDoctorPrimaryFlag();
 
 	my $insert_sql = "
@@ -417,7 +417,7 @@ sub updateDatabase
 
 	my $patientSer 		= $patientdoctor->getPatientDoctorPatientSer();
 	my $doctorSer		= $patientdoctor->getPatientDoctorDoctorSer();
-	my $oncflag		= $patientdoctor->getPatientDoctorOncFlag();
+	my $oncflag			= $patientdoctor->getPatientDoctorOncFlag();
 	my $primaryflag		= $patientdoctor->getPatientDoctorPrimaryFlag();
 
 	my $update_sql = "

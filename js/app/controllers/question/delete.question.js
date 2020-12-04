@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.question.delete', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns'])
 
-	.controller('question.delete', function ($scope, $state, $filter, $uibModal, $uibModalInstance, $filter, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
+	.controller('question.delete', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, uiGridConstants, Session, ErrorHandler) {
 
 		// Submit delete
 		$scope.deleteQuestion = function () {
@@ -15,29 +15,12 @@ angular.module('opalAdmin.controllers.question.delete', ['ngAnimate', 'ngSanitiz
 						$scope.setBannerClass('success');
 						$scope.$parent.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_DELETE.DELETED');
 					}
-					else {
-						$scope.setBannerClass('danger');
-						var errMsg = "";
-						switch(response.message) {
-							case 401:
-								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_DELETE.AUTHENTICATED');
-								break;
-							case 403:
-								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_DELETE.DELETED');
-								break;
-							case 409:
-								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_DELETE.MODIFIED');
-								break;
-							case 423:
-								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_DELETE.LOCKED');
-								break;
-							default:
-								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_DELETE.UNKNOWN') + " " + response.message;
-						}
-
-						$scope.$parent.bannerMessage = errMsg;
-					}
 					$scope.showBanner();
+				},
+				error: function (err) {
+					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_DELETE.ERROR'));
+				},
+				complete: function (err) {
 					$uibModalInstance.close();
 				}
 			});
