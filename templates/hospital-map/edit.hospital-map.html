@@ -113,32 +113,32 @@
         </div>
 
         <!-- SECTION: QR Code -->
-        <div uib-accordion-group is-open="qrCodeSection.open">
-            <uib-accordion-heading>
-                <div>
-                    <strong>{{'HOSPITAL_MAPS.EDIT.QR_IDENTIFIER'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': qrCodeSection.open, 'glyphicon-chevron-right': !qrCodeSection.open}"></i>
-                </div>
-            </uib-accordion-heading>
-            <div class="alert alert-info" role="alert">
-                <strong>{{'HOSPITAL_MAPS.EDIT.QR_IDENTIFIER'|translate}}</strong><br>
-                <p>
-                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                    <span>{{hosMap.qrid}}</span>
-                </p>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 col-md-6">
-                    <div class="input-group">
-                        <input class="form-control" type="text" ng-model="hosMap.qrid" ng-change="setChangesMade()" placeholder="{{'HOSPITAL_MAPS.EDIT.QR_IDENTIFIER'|translate}}" required="required">
-                        <span class="input-group-btn">
-              <button class="btn btn-default" type="button" ng-click="generateQRCode(hosMap.qrid)">{{'HOSPITAL_MAPS.EDIT.GENERATE_QR'|translate}}</button>
-            </span>
-                    </div>
-                    <div ng-show="hosMap.qrcode" style="text-align:center">
-                        <img ng-src="{{hosMap.qrcode}}" style="width:200px;height:200px;">
-                    </div>
-                </div>
-            </div>
-        </div>
+<!--        <div uib-accordion-group is-open="qrCodeSection.open">-->
+<!--            <uib-accordion-heading>-->
+<!--                <div>-->
+<!--                    <strong>{{'HOSPITAL_MAPS.EDIT.QR_IDENTIFIER'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': qrCodeSection.open, 'glyphicon-chevron-right': !qrCodeSection.open}"></i>-->
+<!--                </div>-->
+<!--            </uib-accordion-heading>-->
+<!--            <div class="alert alert-info" role="alert">-->
+<!--                <strong>{{'HOSPITAL_MAPS.EDIT.QR_IDENTIFIER'|translate}}</strong><br>-->
+<!--                <p>-->
+<!--                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>-->
+<!--                    <span>{{hosMap.qrid}}</span>-->
+<!--                </p>-->
+<!--            </div>-->
+<!--            <div class="row">-->
+<!--                <div class="col-xs-12 col-md-6">-->
+<!--                    <div class="input-group">-->
+<!--                        <input class="form-control" type="text" ng-model="hosMap.qrid" ng-change="setChangesMade()" placeholder="{{'HOSPITAL_MAPS.EDIT.QR_IDENTIFIER'|translate}}" required="required">-->
+<!--                        <span class="input-group-btn">-->
+<!--                            <button class="btn btn-default" type="button" ng-click="generateQRCode(hosMap.qrid)">{{'HOSPITAL_MAPS.EDIT.GENERATE_QR'|translate}}</button>-->
+<!--                        </span>-->
+<!--                    </div>-->
+<!--                    <div ng-show="hosMap.qrcode" style="text-align:center">-->
+<!--                        <img ng-src="{{hosMap.qrcode}}" style="width:200px;height:200px;">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
     </uib-accordion>
 </div>

@@ -93,6 +93,7 @@ class Question extends QuestionnaireModule {
      * return  ID of the new question
      */
     function insertQuestion($questionDetails){
+        $this->checkWriteAccess($questionDetails);
         //If the question type template is invalid rejects the request
         $validTemplateQuestion = $this->questionnaireDB->getTypeTemplate($questionDetails['typeId']);
         if(!$validTemplateQuestion)
@@ -214,6 +215,7 @@ class Question extends QuestionnaireModule {
      * @return array $questions : the list of existing questions
      */
     function getQuestions(){
+        $this->checkReadAccess();
         $questions = array();
         $questionsLists = $this->questionnaireDB->fetchAllQuestions();
         foreach ($questionsLists as $row){
@@ -258,6 +260,7 @@ class Question extends QuestionnaireModule {
      * @return  array of questions
      * */
     function getFinalizedQuestions(){
+        $this->checkReadAccess();
         $questionsLists = $this->questionnaireDB->getFinalizedQuestions();
         foreach ($questionsLists as &$row){
             $libraries = $this->questionnaireDB->fetchLibrariesQuestion($row["ID"]);
@@ -325,6 +328,7 @@ class Question extends QuestionnaireModule {
      * @return  array $questionDetails : the question details
      */
     function getQuestionDetails($questionId) {
+        $this->checkReadAccess($questionId);
         $question = $this->questionnaireDB->getQuestionDetails($questionId);
         if(count($question) != 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot get question details.");
@@ -647,6 +651,7 @@ class Question extends QuestionnaireModule {
      * return  void
      */
     function updateQuestion($updatedQuestion) {
+        $this->checkWriteAccess($updatedQuestion);
         $total = 0;
         $oldQuestion = $this->getQuestionDetails($updatedQuestion["ID"]);
         $isLocked = $this->isQuestionLocked($oldQuestion["ID"]);
@@ -728,6 +733,7 @@ class Question extends QuestionnaireModule {
      * @return array $response : response
      */
     function deleteQuestion($questionId) {
+        $this->checkDeleteAccess($questionId);
         $questionToDelete = $this->getQuestionDetails($questionId);
 
         if ($this->questionnaireDB->getOAUserId() <= 0 || ($questionToDelete["private"] == PRIVATE_RECORD && $this->questionnaireDB->getOAUserId() != $questionToDelete["OAUserId"]))
