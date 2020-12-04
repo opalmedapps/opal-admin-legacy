@@ -4,7 +4,11 @@
  * Study class objects and method
  * */
 
-class Study extends OpalProject {
+class Study extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_STUDY, $guestStatus);
+    }
 
     /*
      * This function returns the list of available studies for opalAdmin.
@@ -13,6 +17,7 @@ class Study extends OpalProject {
      * @return  array of studies
      * */
     public function getStudies() {
+        $this->checkReadAccess();
         return $this->opalDB->getStudiesList();
     }
 
@@ -22,7 +27,8 @@ class Study extends OpalProject {
      * @return  number of record inserted (should be one) or a code 500
      * */
     public function insertStudy($post) {
-        $study = $this->arraySanitization($post);
+        $this->checkWriteAccess($post);
+        $study = HelpSetup::arraySanitization($post);
         $result = $this->_validateStudy($study);
         if(is_array($result) && count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Study validation failed. " . implode(" ", $result));
@@ -77,6 +83,7 @@ class Study extends OpalProject {
      * @return  (array) details of the study
      * */
     public function getStudyDetails($studyId) {
+        $this->checkReadAccess($studyId);
         return $this->opalDB->getStudyDetails(intval($studyId));
     }
 
@@ -86,7 +93,8 @@ class Study extends OpalProject {
      * @return  (int) number of record updated (should be one!) or an error 500
      * */
     public function updateStudy($post) {
-        $study = $this->arraySanitization($post);
+        $this->checkWriteAccess($post);
+        $study = HelpSetup::arraySanitization($post);
         $result = $this->_validateStudy($study);
         if(is_array($result) && count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Study validation failed. " . implode(" ", $result));
@@ -94,7 +102,7 @@ class Study extends OpalProject {
         if(!array_key_exists("ID", $study) || $study["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot identify the study.");
 
-        $currentStudy = $this->getStudyDetails($study["ID"]);
+        $currentStudy = $this->opalDB->getStudyDetails(intval($study["ID"]));
         if(!$currentStudy["ID"] || $currentStudy["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot identify the study.");
 
@@ -119,7 +127,7 @@ class Study extends OpalProject {
     /**
      * Mark a study as being deleted.
      *
-     * WARNING!!! No record should be EVER be removed from the customCode table! It should only being marked as
+     * WARNING!!! No record should be EVER be removed from the study table! It should only being marked as
      * being deleted ONLY  after it was verified the record is not locked and the user has the proper authorization.
      * Not following the proper procedure will have some serious impact on the integrity of the database and its
      * records.
@@ -130,7 +138,8 @@ class Study extends OpalProject {
      * @return  (int) number of record marked or error 500 if an error occurred.
      */
     function deleteStudy($studyId) {
-        $currentStudy = $this->getStudyDetails($studyId);
+        $this->checkDeleteAccess($studyId);
+        $currentStudy = $this->opalDB->getStudyDetails(intval($studyId));
         if(!$currentStudy["ID"] || $currentStudy["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Study not found.");
 

@@ -400,6 +400,7 @@ sub getApptsFromSourceDB
     ######################################
     my $sourceDBSer = 1;
 	{
+		# print "BEGIN ARIA APPOINTMENT: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
         my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
 
         if ($sourceDatabase) {
@@ -440,19 +441,22 @@ sub getApptsFromSourceDB
 				use VARIAN;
 
                 IF OBJECT_ID('tempdb.dbo.#tempAppt', 'U') IS NOT NULL
-                  DROP TABLE #tempAppt;
+                	DROP TABLE #tempAppt;
 
-				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
+				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
+					DROP TABLE #tempPatient;
+
+				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
 			my $numOfPatients = @patientList;
 			my $counter = 0;
 			foreach my $Patient (@patientList) {
 				my $patientSer 			= $Patient->getPatientSer();
-				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
+				my $id      		 	= $Patient->getPatientId(); # get patient ID
 				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
 
 				$patientInfo_sql .= "
-					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
+					SELECT '$id', '$patientLastTransfer', '$patientSer'
 				";
 
 				$counter++;
@@ -463,8 +467,13 @@ sub getApptsFromSourceDB
 			$patientInfo_sql .= ")
 			Select c.* into #tempAppt
 			from PatientInfo c;
-			Create Index temporaryindexAppt1 on #tempAppt (SSN);
+			Create Index temporaryindexAppt1 on #tempAppt (ID);
 			Create Index temporaryindexAppt2 on #tempAppt (PatientSerNum);
+
+			Select p.PatientSer, p.PatientId into #tempPatient
+			from VARIAN.dbo.Patient p;
+			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
+			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
 			";
 
 			my $apptInfo_sql = $patientInfo_sql .
@@ -489,7 +498,8 @@ sub getApptsFromSourceDB
 						sa.ActivityInstanceSer 		= ai.ActivityInstanceSer
 					AND ai.ActivitySer 			    = act.ActivitySer
 					AND act.ActivityCode 		    = lt.LookupValue
-					AND sa.PatientSer 				= (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+					AND sa.PatientSer 				= (select pt.PatientSer 
+						from #tempPatient pt where pt.PatientId = PatientInfo.ID)
 					AND (
 
 				";
@@ -565,7 +575,7 @@ sub getApptsFromSourceDB
 
 			$sourceDatabase->disconnect();
 		}
-
+	# print "END ARIA APPOINTMENT: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 	}
 
 	######################################
@@ -573,6 +583,7 @@ sub getApptsFromSourceDB
     ######################################
     my $sourceDBSer = 2;
 	{
+		# print "BEGIN ORMS APPOINTMENT: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
         my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
 
         if ($sourceDatabase) {
@@ -614,20 +625,6 @@ sub getApptsFromSourceDB
 			my $numOfPatients = @patientList;
 			my $counter = 0;
 			my $databaseName = $Configs::OPAL_DB_NAME;
-			# foreach my $Patient (@patientList) {
-				# my $patientSer 			= $Patient->getPatientSer();
-				# my $patientSSN          = $Patient->getPatientSSN(); # get ssn
-				# my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
-
-				# $patientInfo_sql .= "
-					# (SELECT '$patientSSN' as SSN, '$patientLastTransfer' as LastTransfer, '$patientSer' as PatientSerNum)
-				# ";
-
-				# $counter++;
-				# if ( $counter < $numOfPatients ) {
-					# $patientInfo_sql .= "UNION";
-				# }
-			# }
 
 			my $apptInfo_sql = "
 				SELECT DISTINCT
@@ -640,13 +637,14 @@ sub getApptsFromSourceDB
 				FROM
 					MediVisitAppointmentList mval,
 					Patient pt,
-					(Select SSN, LastTransferred LastTransfer, P.PatientSerNum
+					(Select PatientId, LastTransferred LastTransfer, P.PatientSerNum
 					from 	$databaseName.Patient P, $databaseName.PatientControl PC
 					where P.PatientSerNum = PC.PatientSerNum
 					and PC.TransferFlag = 1) pi
 				WHERE
-					LEFT(LTRIM(pt.SSN), 12)  = pi.SSN
+					pt.PatientId  = pi.PatientId
 					and mval.PatientSerNum      = pt.PatientSerNum
+					and mval.AppointSys <> 'Aria'
 				AND (
 			";
 
@@ -711,7 +709,7 @@ sub getApptsFromSourceDB
 
 			$sourceDatabase->disconnect();
 		}
-
+	# print "END ORMS APPOINTMENT: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
     }
 
     ######################################
@@ -1098,6 +1096,7 @@ sub getApptInfoFromSourceDB
                 MediVisitAppointmentList mval
             WHERE
                 mval.AppointmentSerNum  = '$apptSourceUID'
+				and mval.AppointSys <> 'Aria'
         ";
 
         my $query = $sourceDatabase->prepare($apptInfo_sql)

@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 	/******************************************************************************
 	 * Add Publication Page controller
 	 *******************************************************************************/
-	controller('publication.add', function ($scope, $filter, $uibModal, $state, $locale, publicationCollectionService, Session, filterCollectionService, FrequencyFilterService ) {
+	controller('publication.add', function ($scope, $filter, $uibModal, $state, $locale, publicationCollectionService, Session, FrequencyFilterService, ErrorHandler ) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -167,7 +167,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		};
 
 		// Call our API service to get each trigger
-		filterCollectionService.getFilters(Session.retrieveObject('user').id).then(function (response) {
+		publicationCollectionService.getFilters().then(function (response) {
 			response.data = angular.copy(response.data);
 			response.data.appointments.forEach(function(entry) {
 				if($scope.language.toUpperCase() === "FR")
@@ -213,7 +213,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 					entry.name_display = entry.name;
 			});
 		}).catch(function(err) {
-			alert($filter('translate')('PUBLICATION.ADD.ERROR_FILTERS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+			ErrorHandler.onError(err, $filter('translate')('PUBLICATION.ADD.ERROR_FILTERS'));
 			$state.go('publication');
 		});
 
@@ -227,7 +227,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			});
 			$scope.moduleList = response.data; // Assign value
 		}).catch(function(err) {
-			alert($filter('translate')('PUBLICATION.ADD.ERROR_DATABASE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+			ErrorHandler.onError(err, $filter('translate')('PUBLICATION.ADD.ERROR_DATABASE'));
 			$state.go('publication');
 		});
 
@@ -441,7 +441,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 					$scope.publishDate.available = response.data["triggers"].indexOf("9") !== -1 ? true: false;
 					$scope.publicationList = response.data["publications"]; // Assign value
 				}).catch(function(err) {
-					alert($filter('translate')('PUBLICATION.ADD.ERROR_MODULE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+					ErrorHandler.onError(err, $filter('translate')('PUBLICATION.ADD.ERROR_MODULE'));
 					$state.go('publication');
 				}).finally(function() {
 					processingModal.close(); // hide modal
@@ -542,7 +542,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		$scope.nameUpdate = function () {
 			$scope.validator.name.completed = ($scope.toSubmit.name.name_EN != null && $scope.toSubmit.name.name_FR != null);
 			$scope.leftMenu.name.open = ($scope.toSubmit.name.name_EN != null || $scope.toSubmit.name.name_FR != null);
-			$scope.leftMenu.name.display = ($scope.toSubmit.name.name_EN != null || $scope.toSubmit.name.name_FR != null);
+			$scope.leftMenu.name.display = $scope.leftMenu.name.open;
 		};
 
 		$scope.publishDateUpdate = function () {
@@ -685,10 +685,9 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 					type: "POST",
 					url: "publication/insert/publication",
 					data: $scope.toSubmit,
-					success: function () {
-					},
+					success: function () {},
 					error: function (err) {
-						alert($filter('translate')('PUBLICATION.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+						ErrorHandler.onError(err, $filter('translate')('PUBLICATION.ADD.ERROR_ADD'));
 					},
 					complete: function () {
 						$state.go('publication');
