@@ -1,0 +1,158 @@
+<!-- Modal title -->
+<div class="modal-header">
+    <div class="col-xs-12 col-md-6">
+        <h2 class="modal-title">
+            <span class="fa fa-eye"></span>
+            {{'ALIAS.EDIT.TITLE_VIEW'|translate}} - {{alias.type_display}}
+        </h2>
+    </div>
+    <div class="modal-buttons col-xs-12 col-md-6">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'ALIAS.EDIT.CLOSE'|translate}}">
+    </div>
+</div>
+<div class="modal-body">
+    <div ng-hide="hiddenAlert" class="alert alertMessage alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" ng-click="hideAlert()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>{{'ALIAS.EDIT.ERRORS'|translate}}</strong><br>
+        <p>
+            {{alertMessage}}
+        </p>
+    </div>
+    <uib-accordion close-others="false">
+        <!-- SECTION: Assigned expressions -->
+        <div uib-accordion-group is-open="expressionSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'ALIAS.EDIT.ASSIGNED_CODE'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': expressionSection.open, 'glyphicon-chevron-right': !expressionSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div>
+                <ul class="list-items" style="border-style:none;">
+                    <li ng-repeat="selectedTerm in termList | filter: {added: 1}">{{selectedTerm.name}}</li>
+                </ul>
+            </div>
+        </div>
+        <!-- SECTION: Title -->
+        <div uib-accordion-group is-open="titleSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'ALIAS.EDIT.TITLES'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'ALIAS.EDIT.ENGLISH_ABRV'|translate}}</strong>: {{alias.name_EN}}</p>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'ALIAS.EDIT.FRENCH_ABRV'|translate}}</strong>: {{alias.name_FR}}</p>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Description -->
+        <div uib-accordion-group is-open="descriptionSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'ALIAS.EDIT.DESCRIPTION'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': descriptionSection.open, 'glyphicon-chevron-right': !descriptionSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <span style="font-size:20px;">{{'ALIAS.EDIT.ENGLISH_HTML'|translate}}</span>
+                    </div>
+                    <div ng-bind-html="alias.description_EN"></div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <span style="font-size:20px;">{{'ALIAS.EDIT.FRENCH_HTML'|translate}}</span>
+                    </div>
+                    <div ng-bind-html="alias.description_FR"></div>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Checkin Details -->
+        <div uib-accordion-group is-open="checkinSection.open" ng-if="alias.type == 'Appointment'">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'ALIAS.EDIT.CHECKIN_DETAILS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': checkinSection.open, 'glyphicon-chevron-right': !checkinSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row" style="margin-bottom: 20px;">
+                <p class="col-xs-12"><strong>{{'ALIAS.EDIT.POSSIBLE'|translate}}</strong> <span ng-if="alias.checkin_details.checkin_possible == 1">{{'ALIAS.EDIT.YES'|translate}}</span><span ng-if="alias.checkin_details.checkin_possible == 0">{{'ALIAS.EDIT.NO'|translate}}</span></p>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <div style="font-size:20px;margin-bottom: 10px;">{{'ALIAS.EDIT.ENGLISH_INSTRUCTIONS'|translate}}</div>
+                        <div ng-bind-html="alias.checkin_details.instruction_EN"></div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <div style="font-size:20px;margin-bottom: 10px;">{{'ALIAS.EDIT.FRENCH_INSTRUCTIONS'|translate}}</div>
+                        <div ng-bind-html="alias.checkin_details.instruction_FR"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Hospital Map -->
+        <div uib-accordion-group is-open="hospitalMapSection.open" ng-if="alias.type == 'Appointment'">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'ALIAS.EDIT.ATTACHED_MAP'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': hospitalMapSection.open, 'glyphicon-chevron-right': !hospitalMapSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                <span ng-if="alias.hospitalMap"><strong>{{alias.hospitalMap.name_display}}</strong></span>
+                <span ng-if="!alias.hospitalMap">{{'ALIAS.EDIT.NONE'|translate}}</span>
+            </div>
+        </div>
+        <!-- SECTION: Educational material -->
+        <div uib-accordion-group is-open="educationalMaterialSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'ALIAS.EDIT.ATTACHED_EDUCATION'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': educationalMaterialSection.open, 'glyphicon-chevron-right': !educationalMaterialSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                <span ng-if="alias.eduMat">
+                    <span ng-if="alias.eduMat.tocs.length">
+                        <span style="cursor:pointer" ng-click="toggleTOCDisplay()"><strong>{{alias.eduMat.name_display}}</strong></span>
+                        <ul ng-if="showTOCs">
+                            <li ng-repeat="toc in alias.eduMat.tocs">
+                                <strong><a target="_blank" href="{{toc.url_display}}">{{toc.name_display}}</a></strong>
+                            </li>
+                        </ul>
+                    </span>
+                    <span ng-if="!alias.eduMat.tocs.length"><strong><a target="_blank" href="{{alias.eduMat.url_display}}">{{alias.eduMat.name_display}}</a></strong></span>
+                </span>
+                <span ng-if="!alias.eduMat">{{'ALIAS.EDIT.NONE'|translate}}</span>
+            </div>
+        </div>
+        <!-- SECTION: Color tag -->
+        <div uib-accordion-group is-open="colorSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'ALIAS.EDIT.COLOR_TAG'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': colorSection.open, 'glyphicon-chevron-right': !colorSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="color-data" style="margin-top: 0; text-align: unset;">
+                        <div class="color-picked">
+                            <div class="color-palette" ng-style="{'background-color': alias.color}"></div>
+                        </div>
+                        <div class="color-label hex">
+                            <h4>{{'ALIAS.EDIT.HEX'|translate}}</h4>
+                        </div>
+                        <div class="color-code">
+                            <h4>{{alias.color}}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </uib-accordion>
+</div>

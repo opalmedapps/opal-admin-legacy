@@ -15,12 +15,6 @@ define( "QUESTIONNAIRE_DB_2019_USERNAME", $config['databaseConfig']['questionnai
 define( "QUESTIONNAIRE_DB_2019_PASSWORD", $config['databaseConfig']['questionnaire2019']['password'] );
 define("FRENCH_LANGUAGE","1");
 define("ENGLISH_LANGUAGE","2");
-define("DELETED_RECORD", 1);
-define("NON_DELETED_RECORD", 0);
-define("NON_FINAL_RECORD", 0);
-define("FINAL_RECORD", 1);
-define("PRIVATE_RECORD", 1);
-define("PUBLIC_RECORD", 0);
 
 //Definition of all questionnaires table from the questionnaire DB
 define("ANSWER_CHECKBOX_TABLE","answerCheckbox");
@@ -600,3 +594,10 @@ define("SQL_QUESTIONNAIRE_UPDATE_LAST_CHECKBOX_OPTION",
     "UPDATE dictionary d RIGHT JOIN %%TABLENAME%% tn ON d.contentId = tn.description SET d.content = :content WHERE tn.parentTableId = :parentTableId AND d.languageID = :languageID AND tn.order = (SELECT MAX(tn.order) FROM %%TABLENAME%% tn WHERE tn.parentTableId = :parentTableId) and d.content != :content;"
 );
 
+define("SQL_QUESTIONNAIRE_INSERT_DICTIONARY", SQL_GENERAL_INSERT_INTERSECTION_TABLE . "
+
+");
+
+define("SQL_QUESTIONNAIRE_CONDITIONAL_INSERT","
+    SELECT %%VALUES%% FROM DUAL WHERE NOT EXISTS (SELECT * FROM ".DICTIONARY_TABLE." WHERE contentId = :controlContentId)
+");

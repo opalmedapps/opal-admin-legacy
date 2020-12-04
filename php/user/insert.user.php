@@ -1,19 +1,8 @@
 <?php
-	/* To insert a newly created user */
-	include_once('user.inc');
+include_once("../config.php");
 
-	// Construct array from FORM params
-	$userArray = array(
-		'username'	=> $_POST['username'],
-		'password'	=> $_POST['password'],
-		'role'			=> $_POST['role'],
-		'language'	=> $_POST['language'],
-		'cypher'		=> $_POST['cypher']
-	);
+$userObj = new User();
+$userObj->insertUser($_POST);
 
-	$userObj = new Users; // Object
-
-	// Call function
-	$userObj->registerUser($userArray);
-
-?>
+header('Content-Type: application/javascript');
+http_response_code(HTTP_STATUS_SUCCESS);

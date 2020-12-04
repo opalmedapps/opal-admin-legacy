@@ -771,8 +771,15 @@ Alias::setAliasLastTransferIntoOurDB($start_datetime);
 PostControl::setPostControlLastPublishedIntoOurDB($start_datetime);
 # Educational material control
 EducationalMaterialControl::setEduMatControlLastPublishedIntoOurDB($start_datetime);
-# Test result control
-TestResultControl::setTestResultLastPublishedIntoOurDB($start_datetime);
+
+##########################################################################################
+#
+# Y.Mo 03-Apr-2020
+# Updating the TestResultControl is no longer require because the system is fetching from Oacis
+#
+##########################################################################################
+# # Test result control
+# TestResultControl::setTestResultLastPublishedIntoOurDB($start_datetime);
 
 # Get the current time
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));

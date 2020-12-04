@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 	/******************************************************************************
 	 * Add Publication Page controller
 	 *******************************************************************************/
-	controller('publication.add', function ($scope, $filter, $uibModal, $state, $locale, publicationCollectionService, Session, filterCollectionService, FrequencyFilterService ) {
+	controller('publication.add', function ($scope, $filter, $uibModal, $state, $locale, publicationCollectionService, Session, FrequencyFilterService, ErrorHandler ) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -167,7 +167,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		};
 
 		// Call our API service to get each trigger
-		filterCollectionService.getFilters().then(function (response) {
+		publicationCollectionService.getFilters().then(function (response) {
 			response.data = angular.copy(response.data);
 			response.data.appointments.forEach(function(entry) {
 				if($scope.language.toUpperCase() === "FR")
@@ -213,7 +213,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 					entry.name_display = entry.name;
 			});
 		}).catch(function(err) {
-			alert($filter('translate')('PUBLICATION.ADD.ERROR_FILTERS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+			ErrorHandler.onError(err, $filter('translate')('PUBLICATION.ADD.ERROR_FILTERS'));
 			$state.go('publication');
 		});
 
@@ -227,7 +227,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			});
 			$scope.moduleList = response.data; // Assign value
 		}).catch(function(err) {
-			alert($filter('translate')('PUBLICATION.ADD.ERROR_DATABASE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+			ErrorHandler.onError(err, $filter('translate')('PUBLICATION.ADD.ERROR_DATABASE'));
 			$state.go('publication');
 		});
 
@@ -441,7 +441,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 					$scope.publishDate.available = response.data["triggers"].indexOf("9") !== -1 ? true: false;
 					$scope.publicationList = response.data["publications"]; // Assign value
 				}).catch(function(err) {
-					alert($filter('translate')('PUBLICATION.ADD.ERROR_MODULE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+					ErrorHandler.onError(err, $filter('translate')('PUBLICATION.ADD.ERROR_MODULE'));
 					$state.go('publication');
 				}).finally(function() {
 					processingModal.close(); // hide modal
@@ -542,7 +542,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		$scope.nameUpdate = function () {
 			$scope.validator.name.completed = ($scope.toSubmit.name.name_EN != null && $scope.toSubmit.name.name_FR != null);
 			$scope.leftMenu.name.open = ($scope.toSubmit.name.name_EN != null || $scope.toSubmit.name.name_FR != null);
-			$scope.leftMenu.name.display = ($scope.toSubmit.name.name_EN != null || $scope.toSubmit.name.name_FR != null);
+			$scope.leftMenu.name.display = $scope.leftMenu.name.open;
 		};
 
 		$scope.publishDateUpdate = function () {
@@ -650,48 +650,50 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 
 		// Submit new publication
 		$scope.submitPublication = function () {
-			if ($scope.showFrequency) {
-				$scope.toSubmit.occurrence.set = 1;
-				$scope.toSubmit.occurrence.start_date = moment($scope.toSubmit.occurrence.start_date).format('X');
-				if ($scope.toSubmit.occurrence.end_date) {
-					$scope.toSubmit.occurrence.end_date = moment($scope.toSubmit.occurrence.end_date).format('X');
+			if($scope.formReady) {
+				if ($scope.showFrequency) {
+					$scope.toSubmit.occurrence.set = 1;
+					$scope.toSubmit.occurrence.start_date = moment($scope.toSubmit.occurrence.start_date).format('X');
+					if ($scope.toSubmit.occurrence.end_date) {
+						$scope.toSubmit.occurrence.end_date = moment($scope.toSubmit.occurrence.end_date).format('X');
+					}
+					$scope.toSubmit.occurrence.frequency.additionalMeta = [];
+					if ($scope.toSubmit.occurrence.frequency.custom) {
+						$scope.toSubmit.occurrence.frequency.meta_key = $scope.customFrequency.unit.meta_key;
+						$scope.toSubmit.occurrence.frequency.meta_value = $scope.customFrequency.meta_value;
+						angular.forEach(Object.keys($scope.additionalMeta), function (meta_key) {
+							if ($scope.additionalMeta[meta_key].length) {
+								var metaDetails = {
+									meta_key: meta_key,
+									meta_value: $scope.additionalMeta[meta_key]
+								};
+								$scope.toSubmit.occurrence.frequency.additionalMeta.push(metaDetails);
+							}
+						});
+					}
 				}
-				$scope.toSubmit.occurrence.frequency.additionalMeta = [];
-				if ($scope.toSubmit.occurrence.frequency.custom) {
-					$scope.toSubmit.occurrence.frequency.meta_key = $scope.customFrequency.unit.meta_key;
-					$scope.toSubmit.occurrence.frequency.meta_value = $scope.customFrequency.meta_value;
-					angular.forEach(Object.keys($scope.additionalMeta), function(meta_key){
-						if ($scope.additionalMeta[meta_key].length) {
-							var metaDetails = {
-								meta_key: meta_key,
-								meta_value: $scope.additionalMeta[meta_key]
-							};
-							$scope.toSubmit.occurrence.frequency.additionalMeta.push(metaDetails);
-						}
-					});
-				}
-			}
 
-			if ($scope.publishDate.available) {
-				if (typeof $scope.toSubmit.publishDateTime !== "undefined") {
-					var tempDate = String(moment($scope.toSubmit.publishDateTime.publish_date).format("YYYY-MM-DD")) + " " +
-						String(moment($scope.toSubmit.publishDateTime.publish_time).format("HH:mm"));
-					delete $scope.toSubmit.publishDateTime;
-					$scope.toSubmit.publishDateTime = tempDate;
+				if ($scope.publishDate.available) {
+					if (typeof $scope.toSubmit.publishDateTime !== "undefined") {
+						var tempDate = String(moment($scope.toSubmit.publishDateTime.publish_date).format("YYYY-MM-DD")) + " " +
+							String(moment($scope.toSubmit.publishDateTime.publish_time).format("HH:mm"));
+						delete $scope.toSubmit.publishDateTime;
+						$scope.toSubmit.publishDateTime = tempDate;
+					}
 				}
+				$.ajax({
+					type: "POST",
+					url: "publication/insert/publication",
+					data: $scope.toSubmit,
+					success: function () {},
+					error: function (err) {
+						ErrorHandler.onError(err, $filter('translate')('PUBLICATION.ADD.ERROR_ADD'));
+					},
+					complete: function () {
+						$state.go('publication');
+					}
+				});
 			}
-			$.ajax({
-				type: "POST",
-				url: "publication/insert/publication",
-				data: $scope.toSubmit,
-				success: function () {},
-				error: function (err) {
-					alert($filter('translate')('PUBLICATION.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
-				},
-				complete: function() {
-					$state.go('publication');
-				}
-			});
 		};
 
 		$scope.searchAt = function (field) {
@@ -901,16 +903,16 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 
 		// Watch to restrict the end calendar to not choose an earlier date than the start date
 		$scope.$watch('toSubmit.occurrence.start_date', function(startDate){
-			if (startDate !== undefined) {
+			if (startDate !== undefined && startDate !== "")
 				$scope.dateOptionsEnd.minDate = startDate;
-			}
+			else
+				$scope.dateOptionsEnd.minDate = Date.now();
 		});
 
 		// Watch to restrict the start calendar to not choose a start after the end date
 		$scope.$watch('toSubmit.occurrence.end_date', function(endDate){
-			if (endDate !== undefined) {
+			if (endDate !== undefined && endDate !== "")
 				$scope.dateOptionsStart.maxDate = endDate;
-			}
 			else
 				$scope.dateOptionsStart.maxDate = null;
 		});

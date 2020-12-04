@@ -415,9 +415,9 @@ sub getPatientInfoFromSourceDBs
 
     my @patientList = (); # initialize a list 
 
-    my $patientSSN      = $Patient->getPatientSSN(); # retrieve the ssn
-    my $lastTransfer    = $Patient->getPatientLastTransfer();
-    my $registrationDate 	= $Patient->getPatientRegistrationDate();
+    my $id      		 = $Patient->getPatientId(); # retrieve the patient ID
+    my $lastTransfer     = $Patient->getPatientLastTransfer();
+    my $registrationDate = $Patient->getPatientRegistrationDate();
 
     ######################################
     # ARIA
@@ -440,7 +440,7 @@ sub getPatientInfoFromSourceDBs
 	            pt.PatientSer,
 	            pt.FirstName,
 	            pt.LastName,
-	            pt.PatientId,
+	            LEFT(LTRIM(pt.SSN), 12) SSN,
 	            pt.PatientId2,
 	            CONVERT(VARCHAR, pt.DateOfBirth, 120),
 	            -- ph.Picture,
@@ -455,7 +455,7 @@ sub getPatientInfoFromSourceDBs
 	        LEFT JOIN VARIAN.dbo.PatientParticular ppt 
 	        ON ppt.PatientSer 		= pt.PatientSer
 	        WHERE
-	            LEFT(LTRIM(pt.SSN), 12)   = '$patientSSN'
+	            pt.PatientId   = '$id'
 	    ";
 
 		# prepare query
@@ -466,18 +466,51 @@ sub getPatientInfoFromSourceDBs
 	    $query->execute()
 	        or die "Could not execute query: " . $query->errstr;
 
-	    #print "$patientInfo_sql\n";
+	    # print "$patientInfo_sql\n";
 
 	    my $data = $query->fetchall_arrayref();
+
+		# Patient Does not exist in Aria so default to our database
+		unless ( @$data ) {
+			
+			print "Patient does not exit in Aria. Now retrieving from OpalDB\n\n";
+
+			# Query
+			my $patients_sql = "
+				SELECT DISTINCT 
+					0 as PatientSer,
+					pt.FirstName,
+					pt.LastName,
+					pt.SSN,
+					pt.PatientId2,
+					pt.DateOfBirth,
+					pt.ProfileImage,
+					RTRIM(pt.Sex),
+					pt.DeathDate
+				From Patient pt
+				where pt.PatientId = '$id'
+			";
+
+			# prepare query
+			my $query = $SQLDatabase->prepare($patients_sql)
+				or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+			# execute query
+			$query->execute()
+				or die "Could not execute query: " . $query->errstr;
+
+			$data = $query->fetchall_arrayref();
+
+		};
+
 		foreach my $row (@$data) {
 	   # while (my @data = $query->fetchrow_array()) {
-	    
 	        $sourcePatient  = new Patient();
 
 	        my $sourceuid       = $row->[0];
 	        my $firstname       = $row->[1];
 	        my $lastname        = $row->[2];
-	        my $id              = $row->[3];
+	        my $patientSSN      = $row->[3];
 	        my $id2             = $row->[4];
 	        my $dob             = $row->[5];
 	        my $age             = getAgeAtDate($dob, $today);
@@ -617,13 +650,13 @@ sub getPatientsMarkedForUpdate
     my ($cronLogSer) = @_; # cron log serial in args
 	
 	my @patientList = (); # initialize list of patient objects
-	my ($lasttransfer, $ssn, $registrationdate);
+	my ($lasttransfer, $id, $registrationdate);
 	
 	# Query
 	my $patients_sql = "
 		SELECT DISTINCT
 			PatientControl.LastTransferred,
-            Patient.SSN,
+            Patient.PatientId,
             Patient.RegistrationDate
 		FROM
 			PatientControl,
@@ -646,12 +679,12 @@ sub getPatientsMarkedForUpdate
 		my $Patient = new Patient(); # patient object
 
 		$lasttransfer		= $data[0];
-        $ssn            	= $data[1];
+        $id            		= $data[1];
         $registrationdate 	= $data[2];
 
 		# set patient information
 		$Patient->setPatientLastTransfer($lasttransfer);
-        $Patient->setPatientSSN($ssn);
+        $Patient->setPatientId($id);
         $Patient->setPatientRegistrationDate($registrationdate);
 		$Patient->setPatientCronLogSer($cronLogSer);
 
@@ -799,16 +832,16 @@ sub inOurDatabase
 {
     my ($patient) = @_; # our patient object
 
-    my $ssn             	= $patient->getPatientSSN();
-    my $lastTransfer    	= $patient->getPatientLastTransfer();
-    my $registrationDate 	= $patient->getPatientRegistrationDate();
+    my $id             	 = $patient->getPatientId();
+    my $lastTransfer     = $patient->getPatientLastTransfer();
+    my $registrationDate = $patient->getPatientRegistrationDate();
 
 
-    my $PatientSSNInDB = 0; # false by default. Will be true if patient exists
+    my $PatientIdInDB = 0; # false by default. Will be true if patient exists
 	my $ExistingPatient = (); # data to be entered if patient exists
 
 	# for query results
-    my ($ser, $sourceuid, $id, $id2, $firstname, $lastname, $sex, $dob, $age, $picture, $deathdate, $email, $firebaseuid);
+    my ($ser, $sourceuid, $ssn, $id2, $firstname, $lastname, $sex, $dob, $age, $picture, $deathdate, $email, $firebaseuid);
  
     my $inDB_sql = "
         SELECT DISTINCT
@@ -830,7 +863,7 @@ sub inOurDatabase
             Patient,
 			Users
         WHERE
-            Patient.SSN     		= '$ssn'
+            Patient.PatientId  		= '$id'
 		AND Patient.PatientSerNum 	= Users.UserTypeSerNum
 		AND Users.UserType 			= 'Patient'
     ";
@@ -844,29 +877,29 @@ sub inOurDatabase
 
 	while (my @data = $query->fetchrow_array()) {
 
-        $ser                    = $data[0];
-        $sourceuid              = $data[1];
-        $id                     = $data[2];
-        $id2                    = $data[3];
-        $firstname              = $data[4];
-        $lastname               = $data[5];
-        $sex                    = $data[6];
-        $dob                    = $data[7];
-        $age                    = $data[8];
-        $picture                = $data[9];
-        $PatientSSNInDB         = $data[10];
-        $deathdate 				= $data[11];
-		$email 					= $data[12];
-		$firebaseuid 			= $data[13];
+        $serial			= $data[0];
+        $sourceuid		= $data[1];
+        $PatientIdInDB	= $data[2];
+        $id2			= $data[3];
+        $firstname		= $data[4];
+        $lastname		= $data[5];
+        $sex			= $data[6];
+        $dob			= $data[7];
+        $age			= $data[8];
+        $picture		= $data[9];
+        $ssn			= $data[10];
+        $deathdate		= $data[11];
+		$email			= $data[12];
+		$firebaseuid	= $data[13];
     }
 
-    if ($PatientSSNInDB) {
+    if ($PatientIdInDB) {
 
         $ExistingPatient = new Patient(); # initialze patient object
 
-        $ExistingPatient->setPatientSer($ser);
+        $ExistingPatient->setPatientSer($serial);
         $ExistingPatient->setPatientSourceUID($sourceuid);
-        $ExistingPatient->setPatientId($id);
+        $ExistingPatient->setPatientId($PatientIdInDB);
         $ExistingPatient->setPatientId2($id2);
         $ExistingPatient->setPatientFirstName($firstname);
         $ExistingPatient->setPatientLastName($lastname);
@@ -876,7 +909,7 @@ sub inOurDatabase
         $ExistingPatient->setPatientPicture($picture);
         $ExistingPatient->setPatientLastTransfer($lastTransfer);
         $ExistingPatient->setPatientRegistrationDate($registrationDate);
-        $ExistingPatient->setPatientSSN($PatientSSNInDB);
+        $ExistingPatient->setPatientSSN($ssn);
         $ExistingPatient->setPatientDeathDate($deathdate);
 		$ExistingPatient->setPatientEmail($email);
 		$ExistingPatient->setPatientFirebaseUID($firebaseuid);
@@ -975,7 +1008,7 @@ sub updateDatabase
             Patient
         SET
             PatientAriaSer          = '$patientSourceUID',
-            PatientId               = '$patientId',
+			SSN                     = '$patientSSN',
             PatientId2              = '$patientId2',
             FirstName               = \"$patientFirstName\",
             LastName                = \"$patientLastName\",
@@ -985,7 +1018,7 @@ sub updateDatabase
             ProfileImage            = '$patientPicture',
             DeathDate 				= '$patientDeathDate'
         WHERE
-            SSN                     = '$patientSSN'
+            PatientId               = '$patientId'
     ";
 
     #print "$update_sql\n";
@@ -1022,6 +1055,7 @@ sub compareWith
     my $SPatientLastName    = $SuspectPatient->getPatientLastName();
     my $SPatientPicture     = $SuspectPatient->getPatientPicture();
     my $SPatientDeathDate 	= $SuspectPatient->getPatientDeathDate();
+	my $SPatientSSN 		= $SuspectPatient->getPatientSSN();
 	
 	# Original Patient...
     my $OPatientSourceUID   = $OriginalPatient->getPatientSourceUID();
@@ -1034,6 +1068,7 @@ sub compareWith
     my $OPatientLastName    = $OriginalPatient->getPatientLastName();
     my $OPatientPicture     = $OriginalPatient->getPatientPicture();
     my $OPatientDeathDate 	= $OriginalPatient->getPatientDeathDate();
+	my $OPatientSSN 		= $OriginalPatient->getPatientSSN();
 
 	# go through each parameter
     if ($SPatientSourceUID ne $OPatientSourceUID) {
@@ -1129,6 +1164,14 @@ sub compareWith
 		unsetPatientControl($UpdatedPatient);
 	}
 	
+	if ($SPatientSSN ne $OPatientSSN) {
+
+		$change = 1; # change occurred
+		print "Patient ID has changed from $OPatientSSN to $SPatientSSN!\n";
+		my $updatedssn = $UpdatedPatient->setPatientSSN($SPatientSSN); # update patient RAMQ
+		print "Will update database entry to '$updatedssn'.\n";
+	}
+
 	return ($UpdatedPatient, $change);
 }
 
