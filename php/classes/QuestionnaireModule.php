@@ -5,12 +5,12 @@
  * Time: 8:46 AM
  */
 
-class QuestionnaireModule extends OpalProject
+class QuestionnaireModule extends Module
 {
     protected $questionnaireDB;
 
     public function __construct($OAUserId = false, $sessionId = false) {
-        parent::__construct($OAUserId);
+        parent::__construct(MODULE_QUESTIONNAIRE, $OAUserId);
 
         $this->questionnaireDB = new DatabaseQuestionnaire(
             QUESTIONNAIRE_DB_2019_HOST,
@@ -18,8 +18,7 @@ class QuestionnaireModule extends OpalProject
             QUESTIONNAIRE_DB_2019_PORT,
             QUESTIONNAIRE_DB_2019_USERNAME,
             QUESTIONNAIRE_DB_2019_PASSWORD,
-            false,
-            $OAUserId
+            false
         );
 
         $this->questionnaireDB->setUsername($this->opalDB->getUsername());

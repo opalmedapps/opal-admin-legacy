@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.patientRegistration.confirm', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'pascalprecht.translate']).
 
-	controller('patientRegistration.confirm', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, patientCollectionService, $translate, $rootScope, AuthService, Encrypt) {
+	controller('patientRegistration.confirm', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, patientCollectionService, $translate, $rootScope, AuthService) {
 
 
 		// Initialize login object
@@ -47,16 +47,9 @@ angular.module('opalAdmin.controllers.patientRegistration.confirm', ['ngAnimate'
 
 		$scope.confirmRegistration = function (credentials) {
 			if ($scope.loginFormComplete()) {
-				// one-time pad using current time and rng
-				var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103; 
-				var loginCreds = jQuery.extend(true, {}, credentials);
-				// encode password before request
-				loginCreds.password = Encrypt.encode(credentials.password, cypher);
-				loginCreds.cypher = cypher;
-
-				AuthService.confirm(loginCreds).then(function () {
+				AuthService.login(credentials.username, credentials.password).then(function () {
 					$uibModalInstance.close();
-				}, function () {
+				}).catch(function(err) {
 					$scope.bannerMessage = $filter('translate')('STATUS_USERNAME_PASSWORD_INCORRECT');
 					$scope.setBannerClass('danger');
 					$scope.shakeForm();

@@ -1,15 +1,9 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To delete a user */
-	include_once('user.inc');
+include_once("../config.php");
+$id = strip_tags($_POST["ID"]);
 
-	$user = new Users; // Object
+$user = new User();
+$user->deleteUser($id);
 
-	// Retrieve FORM param
-	$serial = $_POST['serial'];
-
-	// Call function
-  $response = $user->deleteUser($serial);
-  print json_encode($response); // Return response
-
-?>
+header('Content-Type: application/javascript');
+http_response_code(HTTP_STATUS_SUCCESS);

@@ -1,13 +1,8 @@
 <?php
-include_once('user.inc');
+include_once("../config.php");
 
-$userObject = new Users;  // Object
-$userDetails = array(
-    'id'				=> $_POST['id'],
-    'language'	=> $_POST['language']
-);
+$userObject = new User();  // Object
+$response = $userObject->updateLanguage($_POST);
 
-// Call function
-$response = $userObject->updateLanguage($userDetails);
-header('Content-Type: application/json');
-echo json_encode($response); // Return response
+header('Content-Type: application/javascript');
+http_response_code(HTTP_STATUS_SUCCESS);

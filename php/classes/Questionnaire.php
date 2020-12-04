@@ -11,6 +11,7 @@ class Questionnaire extends QuestionnaireModule {
      * @return  list of questionnaires (array)
      * */
     public function getQuestionnaires(){
+        $this->checkReadAccess();
         $results = $this->questionnaireDB->fetchAllQuestionnaires();
         foreach($results as &$questionnaire) {
             $questionnaire["locked"] = $this->isQuestionnaireLocked($questionnaire["ID"]);
@@ -24,6 +25,7 @@ class Questionnaire extends QuestionnaireModule {
      * @return  list of questionnaires (array)
      * */
     public function getFinalizedQuestionnaires(){
+        $this->checkReadAccess();
         $results = $this->questionnaireDB->fetchAllFinalQuestionnaires();
         foreach($results as &$questionnaire) {
             $questionnaire["locked"] = $this->isQuestionnaireLocked($questionnaire["ID"]);
@@ -58,7 +60,7 @@ class Questionnaire extends QuestionnaireModule {
 
         //Sanitize the list of libraries associated to the questionnaire
         $libraries = array();
-        if (count($questionnaireToSanitize['libraries']) > 0)
+        if (is_array($questionnaireToSanitize['libraries']) && count($questionnaireToSanitize['libraries']) > 0)
             foreach($questionnaireToSanitize['libraries'] as $library)
                 array_push($libraries, strip_tags($library));
 
@@ -121,10 +123,6 @@ class Questionnaire extends QuestionnaireModule {
         return $questionLocked;
     }
 
-    function getQuestionnaireName($questionnaireId) {
-        return $this->questionnaireDB->getQuestionnaireName($questionnaireId);
-    }
-
     /*
      * Gets questionnaire details
      *
@@ -132,6 +130,7 @@ class Questionnaire extends QuestionnaireModule {
      * @return array $questionnaireDetails : the questionnaire details
      */
     public function getQuestionnaireDetails($questionnaireId){
+        $this->checkReadAccess($questionnaireId);
         $questionnaireDetails = $this->questionnaireDB->getQuestionnaireDetails($questionnaireId);
 
         if(count($questionnaireDetails) != 1)
@@ -191,6 +190,7 @@ class Questionnaire extends QuestionnaireModule {
      * @return void
      */
     public function insertQuestionnaire($newQuestionnaire){
+        $this->checkWriteAccess($newQuestionnaire);
         $toInsert = array(FRENCH_LANGUAGE=>$newQuestionnaire['title_FR'], ENGLISH_LANGUAGE=>$newQuestionnaire['title_EN']);
         $title = $this->questionnaireDB->addToDictionary($toInsert, QUESTIONNAIRE_TABLE);
 
@@ -200,9 +200,6 @@ class Questionnaire extends QuestionnaireModule {
         $toInsert = array(FRENCH_LANGUAGE=>"", ENGLISH_LANGUAGE=>"");
         $nickname = $this->questionnaireDB->addToDictionary($toInsert, QUESTIONNAIRE_TABLE);
         $instruction = $this->questionnaireDB->addToDictionary($toInsert, QUESTIONNAIRE_TABLE);
-
-        foreach($newQuestionnaire["questions"] as &$question)
-            $question["sectionId"] = $sectionId;
 
         $toInsert = array(
             "title"=>$title,
@@ -249,9 +246,10 @@ class Questionnaire extends QuestionnaireModule {
      * Gets list logs of legacy questionnaires during one or many cron sessions
      *
      * @param array $serials : a list of cron log serial numbers
-     * @return array $questionnaireLogs : the legacy questionnaire logs for table view
+     * @return array : the legacy questionnaire logs for table view
      */
     public function getQuestionnaireListLogs($ids) {
+        $this->checkReadAccess($ids);
         return $this->opalDB->getQuestionnaireListLogs($ids);
     }
 
@@ -271,6 +269,7 @@ class Questionnaire extends QuestionnaireModule {
      * @return array $response : response
      */
     public function deleteQuestionnaire($questionnaireId){
+        $this->checkDeleteAccess($questionnaireId);
         $questionnaireToDelete = $this->getQuestionnaireDetails($questionnaireId);
 
         if ($this->questionnaireDB->getOAUserId() <= 0 || $questionnaireToDelete["deleted"] == 1 || ($questionnaireToDelete["private"] == 1 && $this->questionnaireDB->getOAUserId() != $questionnaireToDelete["OAUserId"]))
@@ -313,6 +312,7 @@ class Questionnaire extends QuestionnaireModule {
      * @return  void
      * */
     public function updateQuestionnaire($updatedQuestionnaire){
+        $this->checkWriteAccess($updatedQuestionnaire);
         $total = 0;
         $questionnaireUpdated = 0;
         $oldQuestions = array();
@@ -320,7 +320,7 @@ class Questionnaire extends QuestionnaireModule {
         $updatedQuestions = array();
         $questionsToKeep = array();
         $questionCheckPrivacy = array();
-        $visualization = 0;
+        $visualization = 1;
 
         //Get current questionnaire infos
         $oldQuestionnaire = $this->getQuestionnaireDetails($updatedQuestionnaire["ID"]);
@@ -338,11 +338,11 @@ class Questionnaire extends QuestionnaireModule {
          * Because the ORMS system is unable to recognize what kind of format of visualization it must use for any new
          * questionnaire created (because an array was hardcoded manually with the questionnaire IDs on ORMS side which
          * is a VERY BAD IDEA), we have to change the visualization type here. This section of code should be changed
-         * ASAP once the code will be properly on ORMS side (which means probably never)
+         * ASAP once the code will be properly updated on ORMS side (which means probably never)
          * */
         foreach($updatedQuestionnaire["questions"] as $question) {
-            if ($question["typeId"] == SLIDERS)
-                $visualization = 1;
+            if ($question["typeId"] != SLIDERS)
+                $visualization = 0;
             unset($question["typeId"]);
             array_push($questionCheckPrivacy, $question["questionId"]);
             if (!in_array($question["questionId"], $questionsToKeep))
