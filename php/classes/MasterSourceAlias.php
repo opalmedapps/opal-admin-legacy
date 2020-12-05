@@ -197,6 +197,7 @@ class MasterSourceAlias extends MasterSourceModule {
                             "creationDate" => $item["creationDate"]
                         ));
                     else if (count($data) == 1) {
+                        $data = $data[0];
                         if($data["code"] == $item["code"])
                             array_push($toUpdate, array(
                                 "source" => $item["source"],
@@ -281,11 +282,12 @@ class MasterSourceAlias extends MasterSourceModule {
 
                 $errCode = bindec($errCode);
                 if ($errCode == 0) {
-                    $results = $this->opalDB->isMasterSourceAliasExists($item["source"], $item["externalId"], $typeAlias);
-                    if(count($results) < 1)
+                    $data = $this->opalDB->isMasterSourceAliasExists($item["source"], $item["externalId"], $typeAlias);
+                    if(count($data) < 1)
                         $errCode = bindec("10000");
-                    else if (count($results) == 1) {
-                        if($results["code"] != $item["code"])
+                    else if (count($data) == 1) {
+                        $data = $data[0];
+                        if($data["code"] != $item["code"])
                             $errCode = bindec("100");
                     }
                     else
