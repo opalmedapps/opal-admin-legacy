@@ -3,6 +3,7 @@
 	$pathname 	= __DIR__;
 	$abspath 	= str_replace('publisher' . DIRECTORY_SEPARATOR . 'php', '', $pathname);
 
+	$ignoreSecuredConnection = true;
 	include_once($abspath . 'php' . DIRECTORY_SEPARATOR . 'config.php');
 
     try{
