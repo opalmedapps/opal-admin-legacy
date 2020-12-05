@@ -240,23 +240,16 @@ class MasterSourceDiagnosis extends MasterSourceModule {
         $post = HelpSetup::arraySanitization($post);
 
         foreach ($post as $item) {
-            $valid = true;
             $errCode = "";
-            if(!array_key_exists("source", $item) || $item["source"] == "") {
+            if(!array_key_exists("source", $item) || $item["source"] == "")
                 $errCode = "1" . $errCode;
-                $valid = false;
-            }
-            else {
+            else
                 $errCode = "0" . $errCode;
-            }
 
-            if(!array_key_exists("externalId", $item) || $item["externalId"] == "" || !is_numeric($item["externalId"])) {
-                $valid = false;
+            if(!array_key_exists("externalId", $item) || $item["externalId"] == "" || !is_numeric($item["externalId"]))
                 $errCode = "1" . $errCode;
-            }
-            else {
+            else
                 $errCode = "0" . $errCode;
-            }
 
             if(!array_key_exists("code", $item) || $item["code"] == "")
                 $errCode = "1" . $errCode;
@@ -267,26 +260,30 @@ class MasterSourceDiagnosis extends MasterSourceModule {
             else
                 $errCode = "0" . $errCode;
 
-            if($valid) {
-                $results = $this->opalDB->isMasterSourceDiagnosisExists($item["source"], $item["externalId"]);
-                if(count($results) < 1)
-                    $errCode = "1" . $errCode;
-                else if (count($results) == 1)
-                    $errCode = "0" . $errCode;
+            $errCode = bindec($errCode);
+            if($errCode == 0) {
+                $data = $this->opalDB->isMasterSourceDiagnosisExists($item["source"], $item["externalId"]);
+                if(count($data) < 1) {
+                    $item["validation"] = bindec("10000");
+                    array_push($errMsgs, $item);
+                }
+                else if (count($data) == 1) {
+                    $data = $data[0];
+                    if($data["code"] == $item["code"])
+                        array_push($toUpdate, array(
+                            "source"=>$item["source"],
+                            "externalId"=>$item["externalId"],
+                            "code"=>$item["code"],
+                            "description"=>$item["description"],
+                        ));
+                    else {
+                        $item["validation"] = bindec("100");
+                        array_push($errMsgs, $item);
+                    }
+                }
                 else
                     HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
             }
-            else
-                $errCode = "0" . $errCode;
-
-            $errCode = bindec($errCode);
-            if($errCode == 0)
-                array_push($toUpdate, array(
-                    "source"=>$item["source"],
-                    "externalId"=>$item["externalId"],
-                    "code"=>$item["code"],
-                    "description"=>$item["description"],
-                ));
             else {
                 $item["validation"] = $errCode;
                 array_push($errMsgs, $item);
