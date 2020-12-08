@@ -206,6 +206,9 @@ RewriteRule ^patient/toggle/block php/patient/toggle_block.php [QSA,L]
 RewriteRule ^patient/update/patient-publish-flags php/patient/update.patient_publish_flags.php [QSA,L]
 RewriteRule ^patient/update/patient php/patient/update.patient.php [QSA,L]
 
+# Patient Reports Section
+RewriteRule ^patient-reports/find/patient-name php/patient-reports/find_name.php [QSA,L]
+
 # Post Section
 RewriteRule ^post/delete/post php/post/delete.post.php [QSA,L]
 RewriteRule ^post/get/post-chart-logs php/post/get.post_chart_logs.php [QSA,L]

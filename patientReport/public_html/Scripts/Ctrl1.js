@@ -74,18 +74,33 @@ app.controller('Ctrl1', function ($scope, $http) {
             $scope.foundPatient = false;
         }
         else if ($scope.searchName) {
-
+            //make ajax call with rewrite rule url
+            $.ajax({
+                type: "POST",
+                url: "patient-reports/find/patient-name",
+                data: $scope.searchName,
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function(err) {
+                    console.log(err);
+                    //ErrorHandler.onError(err, $filter('translate')('PATIENTS.LIST.ERROR_FLAGS'));
+                }
+            });
+            //template php file instantiates PatientReport.php object which has class methods (and extends module --> audit func)
+            //do a class method for each findPatientByX
+            //a rewrite rule + ajax call to a template file which calls each class method
 
             //find by name
             //http get function, returns whatever matches it finds
-            $http.get("cgi-bin/findPatientByName.pl", { params: { pname: $scope.searchName, db: $scope.db.prod } })
-                .then(function (response) {
+            // $http.get("cgi-bin/findPatientByName.pl", { params: { pname: $scope.searchName, db: $scope.db.prod } })
+            //     .then(function (response) {
 
-                    //console.log(response.data);
-                    displayName(response.data);
-                }, function (error) {
-                    console.log(error);
-                });
+            //         //console.log(response.data);
+            //         displayName(response.data);
+            //     }, function (error) {
+            //         console.log(error);
+            //     });
         }
         else if ($scope.searchSerial) {
 
