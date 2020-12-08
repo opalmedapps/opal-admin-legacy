@@ -43,6 +43,8 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.login',
 	'opalAdmin.controllers.loginModal',
 	'opalAdmin.controllers.patientActivity',
+	'opalAdmin.controllers.patientReports',
+	'opalAdmin.controllers.groupReports',
 	'opalAdmin.controllers.account.ad',
 	'opalAdmin.controllers.account',
 	'opalAdmin.controllers.user',
