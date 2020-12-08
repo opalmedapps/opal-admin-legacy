@@ -154,63 +154,74 @@ class MasterSourceDiagnosis extends MasterSourceModule {
         $post = HelpSetup::arraySanitization($post);
 
         foreach ($post as $item) {
+            if(is_array($item)) {
 
-            $errCode = "";
+                $errCode = "";
 
-            if (!array_key_exists("source", $item) || $item["source"] == "")
-                $errCode = "1" . $errCode;
-            else
-                $errCode = "0" . $errCode;
-            if (!array_key_exists("externalId", $item) || $item["externalId"] == "" || !is_numeric($item["externalId"]))
-                $errCode = "1" . $errCode;
-            else
-                $errCode = "0" . $errCode;
-            if (!array_key_exists("code", $item) || $item["code"] == "")
-                $errCode = "1" . $errCode;
-            else
-                $errCode = "0" . $errCode;
-            if (!array_key_exists("description", $item) || $item["description"] == "")
-                $errCode = "1" . $errCode;
-            else
-                $errCode = "0" . $errCode;
-
-            if (array_key_exists("creationDate", $item) && $item["creationDate"] != "") {
-                if (!HelpSetup::verifyDate($item["creationDate"], false, 'Y-m-d H:i:s'))
+                if (!array_key_exists("source", $item) || $item["source"] == "")
                     $errCode = "1" . $errCode;
-                else {
-                    $item["creationDate"] = date("Y-m-d H:i:s", strtotime($item["creationDate"]));
+                else
+                    $errCode = "0" . $errCode;
+                if (!array_key_exists("externalId", $item) || $item["externalId"] == "" || !is_numeric($item["externalId"]))
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
+                if (!array_key_exists("code", $item) || $item["code"] == "")
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
+                if (!array_key_exists("description", $item) || $item["description"] == "")
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
+
+                if (array_key_exists("creationDate", $item) && $item["creationDate"] != "") {
+                    if (!HelpSetup::verifyDate($item["creationDate"], false, 'Y-m-d H:i:s'))
+                        $errCode = "1" . $errCode;
+                    else {
+                        $item["creationDate"] = date("Y-m-d H:i:s", strtotime($item["creationDate"]));
+                        $errCode = "0" . $errCode;
+                    }
+                } else {
+                    $item["creationDate"] = date("Y-m-d H:i:s");
                     $errCode = "0" . $errCode;
                 }
-            } else {
-                $item["creationDate"] = date("Y-m-d H:i:s");
-                $errCode = "0" . $errCode;
-            }
 
-            $errCode = bindec($errCode);
-            if ($errCode == 0) {
-                $count = $this->opalDB->isMasterSourceDiagnosisExists($item["source"], $item["externalId"]);
-                if ($count["total"] < 1)
-                    array_push($toInsert, array(
-                        "source" => $item["source"],
-                        "externalId" => $item["externalId"],
-                        "code" => $item["code"],
-                        "description" => $item["description"],
-                        "creationDate" => $item["creationDate"]
-                    ));
-                else if ($count["total"] == 1)
-                    array_push($toUpdate, array(
-                        "source" => $item["source"],
-                        "externalId" => $item["externalId"],
-                        "code" => $item["code"],
-                        "description" => $item["description"],
-                        "creationDate" => $item["creationDate"]
-                    ));
-                else
-                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
-            }
-            else {
-                $item["validation"] = $errCode;
-                array_push($errMsgs, $item);
+                $errCode = bindec($errCode);
+                if ($errCode == 0) {
+                    $data = $this->opalDB->isMasterSourceDiagnosisExists($item["source"], $item["externalId"]);
+                    if (count($data) < 1 || (count($data) == 1 && $data[0]["deleted"] == DELETED_RECORD))
+                        array_push($toInsert, array(
+                            "source" => $item["source"],
+                            "externalId" => $item["externalId"],
+                            "code" => $item["code"],
+                            "description" => $item["description"],
+                            "creationDate" => $item["creationDate"]
+                        ));
+                    else if (count($data) == 1) {
+                        if($data[0]["code"] == $item["code"])
+                            array_push($toUpdate, array(
+                                "source" => $item["source"],
+                                "externalId" => $item["externalId"],
+                                "code" => $item["code"],
+                                "description" => $item["description"],
+                                "creationDate" => $item["creationDate"]
+                            ));
+                        else {
+                            $item["validation"] = bindec("100");
+                            array_push($errMsgs, $item);
+                        }
+                    }
+                    else
+                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
+                }
+                else {
+                    $item["validation"] = $errCode;
+                    array_push($errMsgs, $item);
+                }
+            } else {
+                HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => 31));
+                break;
             }
         }
         return $errMsgs;
@@ -240,36 +251,41 @@ class MasterSourceDiagnosis extends MasterSourceModule {
         $post = HelpSetup::arraySanitization($post);
 
         foreach ($post as $item) {
-            $errCode = "";
-            if(!array_key_exists("source", $item) || $item["source"] == "")
-                $errCode = "1" . $errCode;
-            else
-                $errCode = "0" . $errCode;
+            if(is_array($item)) {
+                $errCode = "";
+                if(!array_key_exists("source", $item) || $item["source"] == "")
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
 
-            if(!array_key_exists("externalId", $item) || $item["externalId"] == "" || !is_numeric($item["externalId"]))
-                $errCode = "1" . $errCode;
-            else
-                $errCode = "0" . $errCode;
+                if(!array_key_exists("externalId", $item) || $item["externalId"] == "" || !is_numeric($item["externalId"]))
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
 
-            if(!array_key_exists("code", $item) || $item["code"] == "")
-                $errCode = "1" . $errCode;
-            else
-                $errCode = "0" . $errCode;
-            if(!array_key_exists("description", $item) || $item["description"] == "")
-                $errCode = "1" . $errCode;
-            else
-                $errCode = "0" . $errCode;
+                if(!array_key_exists("code", $item) || $item["code"] == "")
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
+                if(!array_key_exists("description", $item) || $item["description"] == "")
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
 
-            $errCode = bindec($errCode);
-            if($errCode == 0) {
-                $data = $this->opalDB->isMasterSourceDiagnosisExists($item["source"], $item["externalId"]);
-                if(count($data) < 1) {
-                    $item["validation"] = bindec("10000");
-                    array_push($errMsgs, $item);
-                }
-                else if (count($data) == 1) {
-                    $data = $data[0];
-                    if($data["code"] == $item["code"])
+                if(bindec($errCode) == 0) {
+                    $data = $this->opalDB->isMasterSourceDiagnosisExists($item["source"], $item["externalId"]);
+                    if(count($data) < 1 || $data[0]["deleted"] == DELETED_RECORD) {
+                        $errCode = "10000";
+                    }
+                    else if (count($data) == 1) {
+                        if($data[0]["code"] != $item["code"])
+                            $errCode = "100";
+                    }
+                    else
+                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
+
+                    $errCode = bindec($errCode);
+                    if($errCode == 0)
                         array_push($toUpdate, array(
                             "source"=>$item["source"],
                             "externalId"=>$item["externalId"],
@@ -277,18 +293,19 @@ class MasterSourceDiagnosis extends MasterSourceModule {
                             "description"=>$item["description"],
                         ));
                     else {
-                        $item["validation"] = bindec("100");
+                        $item["validation"] = $errCode;
                         array_push($errMsgs, $item);
                     }
                 }
-                else
-                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
+                else {
+                    $item["validation"] = $errCode;
+                    array_push($errMsgs, $item);
+                }
             }
             else {
-                $item["validation"] = $errCode;
-                array_push($errMsgs, $item);
+                HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => 31));
+                break;
             }
-
         }
         return $errMsgs;
     }
@@ -314,47 +331,49 @@ class MasterSourceDiagnosis extends MasterSourceModule {
         $errMsgs = array();
         $post = HelpSetup::arraySanitization($post);
         foreach ($post as $item) {
-            $valid = true;
+            if(is_array($item)) {
 
-            $errCode = "";
-            if(!array_key_exists("source", $item) || $item["source"] == "") {
-                $errCode = "1" . $errCode;
-                $valid = false;
-            }
-            else {
-                $errCode = "0" . $errCode;
-            }
-
-            if(!array_key_exists("externalId", $item) || $item["externalId"] == "" || !is_numeric($item["externalId"])) {
-                $errCode = "1" . $errCode;
-                $valid = false;
-            }
-            else {
-                $errCode = "0" . $errCode;
-            }
-            if($valid) {
-                $count = $this->opalDB->isMasterSourceDiagnosisExists($item["source"], $item["externalId"]);
-                if(count($count) < 1)
+                $errCode = "";
+                if(!array_key_exists("source", $item) || $item["source"] == "") {
                     $errCode = "1" . $errCode;
-                else if (count($count) == 1)
+                }
+                else {
                     $errCode = "0" . $errCode;
+                }
+
+                if(!array_key_exists("externalId", $item) || $item["externalId"] == "" || !is_numeric($item["externalId"])) {
+                    $errCode = "1" . $errCode;
+                }
+                else {
+                    $errCode = "0" . $errCode;
+                }
+
+                if(bindec($errCode) == 0) {
+                    $data = $this->opalDB->isMasterSourceDiagnosisExists($item["source"], $item["externalId"]);
+                    if(count($data) < 1)
+                        if(count($data) < 1 || $data[0]["deleted"] == DELETED_RECORD)
+                            $errCode = "100";
+                        else if(count($data) > 1)
+                            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
+                }
                 else
-                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
+                    $errCode = "0" . $errCode;
 
-            } else {
-                $errCode = "0" . $errCode;
-            }
-
-            $errCode = bindec($errCode);
-            if($errCode == 0) {
-                array_push($toDelete, array(
-                    "source" => $item["source"],
-                    "externalId" => $item["externalId"],
-                ));
+                $errCode = bindec($errCode);
+                if($errCode == 0) {
+                    array_push($toDelete, array(
+                        "source" => $item["source"],
+                        "externalId" => $item["externalId"],
+                    ));
+                }
+                else {
+                    $item["validation"] = $errCode;
+                    array_push($errMsgs, $item);
+                }
             }
             else {
-                $item["validation"] = $errCode;
-                array_push($errMsgs, $item);
+                HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => 7));
+                break;
             }
         }
         return $errMsgs;
