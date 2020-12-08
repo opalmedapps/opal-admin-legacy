@@ -272,7 +272,9 @@ class MasterSourceDiagnosis extends MasterSourceModule {
                 else
                     $errCode = "0" . $errCode;
 
-                if(bindec($errCode) == 0) {
+                $errCode = bindec($errCode);
+                if($errCode == 0) {
+
                     $data = $this->opalDB->isMasterSourceDiagnosisExists($item["source"], $item["externalId"]);
                     if(count($data) < 1 || $data[0]["deleted"] == DELETED_RECORD) {
                         $errCode = "10000";
