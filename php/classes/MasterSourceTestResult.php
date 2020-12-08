@@ -155,81 +155,93 @@ class MasterSourceTestResult extends MasterSourceModule {
         $post = HelpSetup::arraySanitization($post);
 
         foreach ($post as $item) {
+            if(is_array($item)) {
 
-            $errCode = "";
+                $errCode = "";
 
-            if (!array_key_exists("source", $item) || $item["source"] == "" || !is_numeric($item["source"]))
-                $errCode = "1" . $errCode;
-            else {
-                $total = $this->opalDB->countSourceDatabaseEntries($item["source"]);
-                $total = intval($total["total"]);
-                if($total < 1)
-                    $errCode = "1" . $errCode;
-                else if($total == 1)
-                    $errCode = "0" . $errCode;
-                else
-                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
-            }
-
-            if(!array_key_exists("externalId", $item) || $item["externalId"] == "") {
-                $item["externalId"] = -1;
-                $errCode = "0" . $errCode;
-            }
-            else {
-                if(array_key_exists("externalId", $item) && !is_numeric($item["externalId"]))
-                    $errCode = "1" . $errCode;
-                else
-                    $errCode = "0" . $errCode;
-            }
-
-            if (!array_key_exists("code", $item) || $item["code"] == "")
-                $errCode = "1" . $errCode;
-            else
-                $errCode = "0" . $errCode;
-
-            if (!array_key_exists("description", $item) || $item["description"] == "")
-                $errCode = "1" . $errCode;
-            else
-                $errCode = "0" . $errCode;
-
-            if (array_key_exists("creationDate", $item) && $item["creationDate"] != "") {
-                if (!HelpSetup::verifyDate($item["creationDate"], false, 'Y-m-d H:i:s'))
+                if (!array_key_exists("source", $item) || $item["source"] == "" || !is_numeric($item["source"]))
                     $errCode = "1" . $errCode;
                 else {
-                    $item["creationDate"] = date("Y-m-d H:i:s", strtotime($item["creationDate"]));
+                    $total = $this->opalDB->countSourceDatabaseEntries($item["source"]);
+                    $total = intval($total["total"]);
+                    if($total < 1)
+                        $errCode = "1" . $errCode;
+                    else if($total == 1)
+                        $errCode = "0" . $errCode;
+                    else
+                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
+                }
+
+                if(!array_key_exists("externalId", $item) || $item["externalId"] == "") {
+                    $item["externalId"] = -1;
                     $errCode = "0" . $errCode;
                 }
-            } else {
-                $item["creationDate"] = date("Y-m-d H:i:s");
-                $errCode = "0" . $errCode;
-            }
+                else {
+                    if(array_key_exists("externalId", $item) && !is_numeric($item["externalId"]))
+                        $errCode = "1" . $errCode;
+                    else
+                        $errCode = "0" . $errCode;
+                }
 
-            $errCode = bindec($errCode);
-            if ($errCode == 0) {
-                $count = $this->opalDB->isTestResultsExists($item["source"], $item["code"]);
-                if (count($count) < 1)
-                    array_push($toInsert, array(
-                        "source" => $item["source"],
-                        "externalId" => $item["externalId"],
-                        "code" => $item["code"],
-                        "description" => $item["description"],
-                        "creationDate" => $item["creationDate"]
-                    ));
-                else if (count($count) == 1)
-                    array_push($toUpdate, array(
-                        "ID" => $count[0]["ID"],
-                        "source" => $item["source"],
-                        "externalId" => $item["externalId"],
-                        "code" => $item["code"],
-                        "description" => $item["description"],
-                        "creationDate" => $item["creationDate"]
-                    ));
+                if (!array_key_exists("code", $item) || $item["code"] == "")
+                    $errCode = "1" . $errCode;
                 else
-                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
+                    $errCode = "0" . $errCode;
+
+                if (!array_key_exists("description", $item) || $item["description"] == "")
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
+
+                if (array_key_exists("creationDate", $item) && $item["creationDate"] != "") {
+                    if (!HelpSetup::verifyDate($item["creationDate"], false, 'Y-m-d H:i:s'))
+                        $errCode = "1" . $errCode;
+                    else {
+                        $item["creationDate"] = date("Y-m-d H:i:s", strtotime($item["creationDate"]));
+                        $errCode = "0" . $errCode;
+                    }
+                } else {
+                    $item["creationDate"] = date("Y-m-d H:i:s");
+                    $errCode = "0" . $errCode;
+                }
+
+                $errCode = bindec($errCode);
+                if ($errCode == 0) {
+                    $data = $this->opalDB->isTestResultsExists($item["source"], $item["code"]);
+                    if (count($data) < 1 || (count($data) == 1 && $data[0]["deleted"] == DELETED_RECORD))
+                        array_push($toInsert, array(
+                            "source" => $item["source"],
+                            "externalId" => $item["externalId"],
+                            "code" => $item["code"],
+                            "description" => $item["description"],
+                            "creationDate" => $item["creationDate"]
+                        ));
+                    else if (count($data) == 1) {
+                        if($data[0]["code"] == $item["code"])
+                            array_push($toUpdate, array(
+                                "ID" => $data[0]["ID"],
+                                "source" => $item["source"],
+                                "externalId" => $item["externalId"],
+                                "code" => $item["code"],
+                                "description" => $item["description"],
+                                "creationDate" => $item["creationDate"]
+                            ));
+                        else {
+                            $item["validation"] = bindec("100");
+                            array_push($errMsgs, $item);
+                        }
+                    }
+                    else
+                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
+                }
+                else {
+                    $item["validation"] = $errCode;
+                    array_push($errMsgs, $item);
+                }
             }
             else {
-                $item["validation"] = $errCode;
-                array_push($errMsgs, $item);
+                HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => 31));
+                break;
             }
         }
         return $errMsgs;
@@ -259,63 +271,65 @@ class MasterSourceTestResult extends MasterSourceModule {
         $post = HelpSetup::arraySanitization($post);
 
         foreach ($post as $item) {
-            $valid = true;
-            $errCode = "";
-            if(!array_key_exists("source", $item) || $item["source"] == "") {
-                $errCode = "1" . $errCode;
-                $valid = false;
-            }
-            else {
-                $errCode = "0" . $errCode;
-            }
+            if(is_array($item)) {
+                $errCode = "";
+                if(!array_key_exists("source", $item) || $item["source"] == "") {
+                    $errCode = "1" . $errCode;
+                }
+                else {
+                    $errCode = "0" . $errCode;
+                }
 
-            if(!array_key_exists("externalId", $item) || $item["externalId"] == "") {
-                $item["externalId"] = -1;
-                $errCode = "0" . $errCode;
-            }
-            else {
-                if(array_key_exists("externalId", $item) && !is_numeric($item["externalId"]))
+                if(!array_key_exists("externalId", $item) || $item["externalId"] == "") {
+                    $item["externalId"] = -1;
+                    $errCode = "0" . $errCode;
+                }
+                else {
+                    if(array_key_exists("externalId", $item) && !is_numeric($item["externalId"]))
+                        $errCode = "1" . $errCode;
+                    else
+                        $errCode = "0" . $errCode;
+                }
+
+                if(!array_key_exists("code", $item) || $item["code"] == "") {
+                    $errCode = "1" . $errCode;
+                }
+                else
+                    $errCode = "0" . $errCode;
+                if(!array_key_exists("description", $item) || $item["description"] == "")
                     $errCode = "1" . $errCode;
                 else
                     $errCode = "0" . $errCode;
-            }
 
-            if(!array_key_exists("code", $item) || $item["code"] == "") {
-                $valid = false;
-                $errCode = "1" . $errCode;
-            }
-            else
-                $errCode = "0" . $errCode;
-            if(!array_key_exists("description", $item) || $item["description"] == "")
-                $errCode = "1" . $errCode;
-            else
-                $errCode = "0" . $errCode;
+                if (bindec($errCode) == 0) {
+                    $data = $this->opalDB->isTestResultsExists($item["source"], $item["code"]);
+                    if(count($data) < 1 || $data[0]["deleted"] == DELETED_RECORD)
+                        $errCode = "10000";
+                    else if (count($data) == 1) {
+                        if($data[0]["code"] != $item["code"])
+                            $errCode = "100";
+                    }
+                    else
+                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
+                }
 
-            if($valid) {
-                $results = $this->opalDB->isTestResultsExists($item["source"], $item["code"]);
-                if(count($results) < 1)
-                    $errCode = "1" . $errCode;
-                else if (count($results) == 1)
-                    $errCode = "0" . $errCode;
-                else
-                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
+                $errCode = bindec($errCode);
+                if($errCode == 0)
+                    array_push($toUpdate, array(
+                        "source"=>$item["source"],
+                        "externalId"=>$item["externalId"],
+                        "code"=>$item["code"],
+                        "description"=>$item["description"],
+                    ));
+                else {
+                    $item["validation"] = $errCode;
+                    array_push($errMsgs, $item);
+                }
             }
-            else
-                $errCode = "0" . $errCode;
-
-            $errCode = bindec($errCode);
-            if($errCode == 0)
-                array_push($toUpdate, array(
-                    "source"=>$item["source"],
-                    "externalId"=>$item["externalId"],
-                    "code"=>$item["code"],
-                    "description"=>$item["description"],
-                ));
             else {
-                $item["validation"] = $errCode;
-                array_push($errMsgs, $item);
+                HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => 31));
+                break;
             }
-
         }
         return $errMsgs;
     }
@@ -340,47 +354,54 @@ class MasterSourceTestResult extends MasterSourceModule {
         $errMsgs = array();
         $post = HelpSetup::arraySanitization($post);
         foreach ($post as $item) {
-            $valid = true;
+            if(is_array($item)) {
 
-            $errCode = "";
-            if(!array_key_exists("source", $item) || $item["source"] == "") {
-                $errCode = "1" . $errCode;
-                $valid = false;
-            }
-            else {
-                $errCode = "0" . $errCode;
-            }
+                $valid = true;
 
-            if(!array_key_exists("code", $item) || $item["code"] == "") {
-                $errCode = "1" . $errCode;
-                $valid = false;
-            }
-            else {
-                $errCode = "0" . $errCode;
-            }
-            if($valid) {
-                $count = $this->opalDB->isTestResultsExists($item["source"], $item["code"]);
-                if(count($count) < 1)
+                $errCode = "";
+                if(!array_key_exists("source", $item) || $item["source"] == "") {
                     $errCode = "1" . $errCode;
-                else if (count($count) == 1)
+                    $valid = false;
+                }
+                else {
                     $errCode = "0" . $errCode;
-                else
-                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
+                }
 
-            } else {
-                $errCode = "0" . $errCode;
-            }
+                if(!array_key_exists("code", $item) || $item["code"] == "") {
+                    $errCode = "1" . $errCode;
+                    $valid = false;
+                }
+                else {
+                    $errCode = "0" . $errCode;
+                }
+                if($valid) {
+                    $count = $this->opalDB->isTestResultsExists($item["source"], $item["code"]);
+                    if(count($count) < 1)
+                        $errCode = "1" . $errCode;
+                    else if (count($count) == 1)
+                        $errCode = "0" . $errCode;
+                    else
+                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
 
-            $errCode = bindec($errCode);
-            if($errCode == 0) {
-                array_push($toDelete, array(
-                    "source" => $item["source"],
-                    "code" => $item["code"],
-                ));
+                } else {
+                    $errCode = "0" . $errCode;
+                }
+
+                $errCode = bindec($errCode);
+                if($errCode == 0) {
+                    array_push($toDelete, array(
+                        "source" => $item["source"],
+                        "code" => $item["code"],
+                    ));
+                }
+                else {
+                    $item["validation"] = $errCode;
+                    array_push($errMsgs, $item);
+                }
             }
             else {
-                $item["validation"] = $errCode;
-                array_push($errMsgs, $item);
+                HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => 7));
+                break;
             }
         }
         return $errMsgs;

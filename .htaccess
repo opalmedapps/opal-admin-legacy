@@ -187,7 +187,7 @@ RewriteRule ^library/insert/library php/questionnaire/insert.library.php [QSA,L]
 #Master Source Section
 RewriteRule ^master-source/delete/appointments php/master-source/delete.appointments.php [QSA,L]
 RewriteRule ^master-source/delete/diagnoses php/master-source/delete.diagnoses.php [QSA,L]
-RewriteRule ^master-source/delete/documents php/master-source/delete.aliases.php [QSA,L]
+RewriteRule ^master-source/delete/documents php/master-source/delete.documents.php [QSA,L]
 RewriteRule ^master-source/delete/tasks php/master-source/delete.tasks.php [QSA,L]
 RewriteRule ^master-source/delete/test-results php/master-source/delete.test.results.php [QSA,L]
 RewriteRule ^master-source/get/aliases php/master-source/get.source.aliases.php [QSA,L]
