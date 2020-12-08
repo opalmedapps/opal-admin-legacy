@@ -129,7 +129,8 @@ class MasterSourceAlias extends MasterSourceModule {
 
     /*
      * Validate and sanitize a list of aliases before an insert. Returns one array with proper data sanitized
-     * and ready, and another array with list of invalid aliases.
+     * and ready, and another array with list of invalid aliases. Inserting a record when it exists already, will
+     * update some fields. Inserting a record that already exists bu it marked as deleted will update it completly.
      * @params  $post : array - $_POST content. Each entry must contains the following:
      *                          source : source database ID. See table SourceDatabase (mandatory)
      *                          externalID : external ID of the alias in the source database (mandatory)
@@ -187,7 +188,7 @@ class MasterSourceAlias extends MasterSourceModule {
                 $errCode = bindec($errCode);
                 if ($errCode == 0) {
                     $data = $this->opalDB->isMasterSourceAliasExists($item["source"], $item["externalId"], $typeAlias);
-                    if (count($data) < 1)
+                    if (count($data) < 1 || (count($data) == 1 && $data[0]["deleted"] == DELETED_RECORD))
                         array_push($toInsert, array(
                             "source" => $item["source"],
                             "externalId" => $item["externalId"],
@@ -197,8 +198,7 @@ class MasterSourceAlias extends MasterSourceModule {
                             "creationDate" => $item["creationDate"]
                         ));
                     else if (count($data) == 1) {
-                        $data = $data[0];
-                        if($data["code"] == $item["code"])
+                        if($data[0]["code"] == $item["code"])
                             array_push($toUpdate, array(
                                 "source" => $item["source"],
                                 "externalId" => $item["externalId"],
@@ -230,7 +230,8 @@ class MasterSourceAlias extends MasterSourceModule {
 
     /*
      * Validate and sanitize a list of aliases before an update. Returns one array with proper data sanitized
-     * and ready, and another array with list of invalid aliases.
+     * and ready, and another array with list of invalid aliases. Updating a record that does not exists or is deleted
+     * returns an error. If the received code is different than the current code, update is rejected.
      * @params  $post : array - $_POST content. Each entry must contains the following:
      *                          source : source database ID. See table SourceDatabase (mandatory)
      *                          externalID : external ID of the alias in the source database (mandatory)
@@ -280,15 +281,13 @@ class MasterSourceAlias extends MasterSourceModule {
                 else
                     $errCode = "0" . $errCode;
 
-                $errCode = bindec($errCode);
-                if ($errCode == 0) {
+                if (bindec($errCode) == 0) {
                     $data = $this->opalDB->isMasterSourceAliasExists($item["source"], $item["externalId"], $typeAlias);
-                    if(count($data) < 1)
-                        $errCode = bindec("10000");
+                    if(count($data) < 1 || $data[0]["deleted"] == DELETED_RECORD)
+                        $errCode = "10000";
                     else if (count($data) == 1) {
-                        $data = $data[0];
-                        if($data["code"] != $item["code"])
-                            $errCode = bindec("100");
+                        if($data[0]["code"] != $item["code"])
+                            $errCode = "100";
                     }
                     else
                         HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
@@ -357,17 +356,15 @@ class MasterSourceAlias extends MasterSourceModule {
                 }
 
                 if($valid) {
-                    $count = $this->opalDB->isMasterSourceAliasExists($item["source"], $item["externalId"], $typeAlias);
-                    if(count($count) < 1)
+                    $data = $this->opalDB->isMasterSourceAliasExists($item["source"], $item["externalId"], $typeAlias);
+                    if(count($data) < 1 || $data[0]["deleted"] == DELETED_RECORD)
                         $errCode = "1" . $errCode;
-                    else if (count($count) == 1)
+                    else if (count($data) == 1)
                         $errCode = "0" . $errCode;
                     else
                         HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
-
-                } else {
+                } else
                     $errCode = "0" . $errCode;
-                }
 
                 $errCode = bindec($errCode);
                 if($errCode == 0) {
