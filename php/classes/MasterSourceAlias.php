@@ -254,23 +254,16 @@ class MasterSourceAlias extends MasterSourceModule {
 
         foreach ($post as $item) {
             if(is_array($item)) {
-                $valid = true;
                 $errCode = "";
-                if(!array_key_exists("source", $item) || $item["source"] == "") {
+                if(!array_key_exists("source", $item) || $item["source"] == "")
                     $errCode = "1" . $errCode;
-                    $valid = false;
-                }
-                else {
+                else
                     $errCode = "0" . $errCode;
-                }
 
-                if(!array_key_exists("externalId", $item) || $item["externalId"] == "" || !is_numeric($item["externalId"])) {
-                    $valid = false;
+                if(!array_key_exists("externalId", $item) || $item["externalId"] == "" || !is_numeric($item["externalId"]))
                     $errCode = "1" . $errCode;
-                }
-                else {
+                else
                     $errCode = "0" . $errCode;
-                }
 
                 if(!array_key_exists("code", $item) || $item["code"] == "")
                     $errCode = "1" . $errCode;
@@ -293,6 +286,7 @@ class MasterSourceAlias extends MasterSourceModule {
                         HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
                 }
 
+                $errCode = bindec($errCode);
                 if($errCode == 0)
                     array_push($toUpdate, array(
                         "source"=>$item["source"],
@@ -336,35 +330,24 @@ class MasterSourceAlias extends MasterSourceModule {
         $post = HelpSetup::arraySanitization($post);
         foreach ($post as $item) {
             if(is_array($item)) {
-                $valid = true;
-
                 $errCode = "";
-                if(!array_key_exists("source", $item) || $item["source"] == "") {
+                if(!array_key_exists("source", $item) || $item["source"] == "")
                     $errCode = "1" . $errCode;
-                    $valid = false;
-                }
-                else {
+                else
                     $errCode = "0" . $errCode;
-                }
 
-                if(!array_key_exists("externalId", $item) || $item["externalId"] == "" || !is_numeric($item["externalId"])) {
+                if(!array_key_exists("externalId", $item) || $item["externalId"] == "" || !is_numeric($item["externalId"]))
                     $errCode = "1" . $errCode;
-                    $valid = false;
-                }
-                else {
+                else
                     $errCode = "0" . $errCode;
-                }
 
-                if($valid) {
+                if(bindec($errCode) == 0) {
                     $data = $this->opalDB->isMasterSourceAliasExists($item["source"], $item["externalId"], $typeAlias);
                     if(count($data) < 1 || $data[0]["deleted"] == DELETED_RECORD)
-                        $errCode = "1" . $errCode;
-                    else if (count($data) == 1)
-                        $errCode = "0" . $errCode;
-                    else
+                        $errCode = "100";
+                    else if (count($data) > 1)
                         HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
-                } else
-                    $errCode = "0" . $errCode;
+                }
 
                 $errCode = bindec($errCode);
                 if($errCode == 0) {
