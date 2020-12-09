@@ -188,9 +188,11 @@ define("HTTP_STATUS_SESSION_TIMEOUT_ERROR",419);
 define("HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR",422);
 define("HTTP_STATUS_LOGIN_TIMEOUT_ERROR",440);
 
-if($_SERVER["HTTPS"] != "on") {
-    HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, "Connection not secured.");
-    exit();
+if(!$ignoreSecuredConnection) {
+    if($_SERVER["HTTPS"] != "on") {
+        HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, "Connection not secured.");
+        exit();
+    }
 }
 
 /*
