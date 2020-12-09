@@ -611,7 +611,7 @@ sub getTestResultsFromSourceDB
 				$testresult->setTestResultPatientSer($patientSer);
 				$testresult->setTestResultSourceDatabaseSer($sourceDBSer);
 				$testresult->setTestResultSourceUID($sourceuid);
-				$testresult->setTestResultExpressionSer($expressionDict{$expressionname});
+				$testresult->setTestResultExpressionSer($expressionDict{$expressionname} // 0);
 				$testresult->setTestResultName($expressionname);
 				$testresult->setTestResultFacName($facname);
 				$testresult->setTestResultAbnormalFlag($abnormalflag);
@@ -996,72 +996,35 @@ sub compareWith
     my $Ovalidentry         = $OriginalTR->getTestResultValidEntry();
     my $Ocronlogser         = $OriginalTR->getTestResultCronLogSer();
 
-    # go through each param
-    if ($Sexpressionser ne $Oexpressionser) {
-        print "Test Result expression serial has changed from '$Oexpressionser' to '$Sexpressionser'\n";
-        my $updatedExpressionSer = $UpdatedTR->setTestResultExpressionSer($Sexpressionser); # update
-        print "Will updated database entry to '$updatedExpressionSer'.\n";
-    }
-    if ($Sname ne $Oname) {
-        print "Test Result name has changed from '$Oname' to '$Sname'\n";
-        my $updatedName = $UpdatedTR->setTestResultName($Sname); # update
-        print "Will updated database entry to '$updatedName'.\n";
-    }
-    if ($Sfacname ne $Ofacname) {
-        print "Test Result facility name has changed from '$Ofacname' to '$Sfacname'\n";
-        my $updatedFacName = $UpdatedTR->setTestResultFacName($Sfacname); # update
-        print "Will updated database entry to '$updatedFacName'.\n";
-    }
-    if ($Sabnormalflag ne $Oabnormalflag) {
-        print "Test Result abnormal flag has changed from '$Oabnormalflag' to '$Sabnormalflag'\n";
-        my $updatedFlag = $UpdatedTR->setTestResultAbnormalFlag($Sabnormalflag); # update
-        print "Will updated database entry to '$updatedFlag'.\n";
-    }
-    if ($Stestdate ne $Otestdate) {
-        print "Test Result test date has changed from '$Otestdate' to '$Stestdate'\n";
-        my $updatedDate = $UpdatedTR->setTestResultTestDate($Stestdate); # update
-        print "Will updated database entry to '$updatedDate'.\n";
-    }
-    if ($Smaxnorm ne $Omaxnorm) {
-        print "Test Result max norm has changed from '$Omaxnorm' to '$Smaxnorm'\n";
-        my $updatedMaxNorm = $UpdatedTR->setTestResultMaxNorm($Smaxnorm); # update
-        print "Will updated database entry to '$updatedMaxNorm'.\n";
-    }
-    if ($Sminnorm ne $Ominnorm) {
-        print "Test Result min norm has changed from '$Ominnorm' to '$Sminnorm'\n";
-        my $updatedMinNorm = $UpdatedTR->setTestResultMinNorm($Sminnorm); # update
-        print "Will updated database entry to '$updatedMinNorm'.\n";
-    }
-    if ($Sapprvflag ne $Oapprvflag) {
-        print "Test Result approved flag has changed from '$Oapprvflag' to '$Sapprvflag'\n";
-        my $updatedApprvFlag = $UpdatedTR->setTestResultApprovedFlag($Sapprvflag); # update
-        print "Will updated database entry to '$updatedApprvFlag'.\n";
-    }
-    if ($Stestvalue ne $Otestvalue) {
-        print "Test Result test value has changed from '$Otestvalue' to '$Stestvalue'\n";
-        my $updatedTestValue = $UpdatedTR->setTestResultTestValue($Stestvalue); # update
-        print "Will updated database entry to '$updatedTestValue'.\n";
-    }
-    if ($Stestvaluestring ne $Otestvaluestring) {
-        print "Test Result test value string has changed from '$Otestvaluestring' to '$Stestvaluestring'\n";
-        my $updatedTestValue = $UpdatedTR->setTestResultTestValueString($Stestvaluestring); # update
-        print "Will updated database entry to '$updatedTestValue'.\n";
-    }
-    if ($Sunitdesc ne $Ounitdesc) {
-        print "Test Result unit desc has changed from '$Ounitdesc' to '$Sunitdesc'\n";
-        my $updatedUnit = $UpdatedTR->setTestResultUnitDesc($Sunitdesc); # update
-        print "Will updated database entry to '$updatedUnit'.\n";
-    }
-    if ($Svalidentry ne $Ovalidentry) {
-        print "Test Result valid entry has changed from '$Ovalidentry' to '$Svalidentry'\n";
-        my $updatedValidEntry = $UpdatedTR->setTestResultValidEntry($Svalidentry); # update
-        print "Will updated database entry to '$updatedValidEntry'.\n";
-    }
-    if ($Scronlogser ne $Ocronlogser) {
-        print "Test Result cron log serial has changed from '$Ocronlogser' to '$Scronlogser'\n";
-        my $updatedCronLogSer = $UpdatedTR->setTestResultCronLogSer($Scronlogser); # update
-        print "Will updated database entry to '$updatedCronLogSer'.\n";
-    }
+	if(
+		$Sexpressionser ne $Oexpressionser
+		or $Sname ne $Oname
+		or $Sfacname ne $Ofacname
+		or $Sabnormalflag ne $Oabnormalflag
+		or $Stestdate ne $Otestdate
+		or $Smaxnorm != $Omaxnorm
+		or $Sminnorm != $Ominnorm
+		or $Sapprvflag ne $Oapprvflag
+		or $Stestvalue != $Otestvalue
+		or $Stestvaluestring ne $Otestvaluestring
+		or $Sunitdesc ne $Ounitdesc
+		or $Svalidentry ne $Ovalidentry
+	) {
+		$UpdatedTR->setTestResultExpressionSer($Sexpressionser);
+		$UpdatedTR->setTestResultName($Sname);
+		$UpdatedTR->setTestResultFacName($Sfacname);
+		$UpdatedTR->setTestResultAbnormalFlag($Sabnormalflag);
+		$UpdatedTR->setTestResultTestDate($Stestdate);
+		$UpdatedTR->setTestResultMaxNorm($Smaxnorm);
+		$UpdatedTR->setTestResultMinNorm($Sminnorm);
+		$UpdatedTR->setTestResultApprovedFlag($Sapprvflag);
+		$UpdatedTR->setTestResultTestValue($Stestvalue);
+		$UpdatedTR->setTestResultTestValueString($Stestvaluestring);
+		$UpdatedTR->setTestResultUnitDesc($Sunitdesc);
+		$UpdatedTR->setTestResultValidEntry($Svalidentry);
+		$UpdatedTR->setTestResultCronLogSer($Scronlogser);
+
+	}
 
     return $UpdatedTR;
 }
