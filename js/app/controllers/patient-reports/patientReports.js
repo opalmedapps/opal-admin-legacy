@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstrap']).
 
-controller('patientReports', function($scope, Sesssion, ErrorHandler, MODULE){
+controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
     $scope.navMenu = Session.retrieveObject('menu');
     $scope. navSubMenu = Session.retireve('subMenu')[MODULE.patient];
 
@@ -247,7 +247,6 @@ controller('patientReports', function($scope, Sesssion, ErrorHandler, MODULE){
                 clinicalnotes: $scope.featureList.clinicalnotes,
                 treatingteam: $scope.featureList.treatingteam,
                 general: $scope.featureList.general,
-                db: $scope.db.prod            
             },
             success: function(response){
                 console.log(response);
@@ -267,15 +266,46 @@ controller('patientReports', function($scope, Sesssion, ErrorHandler, MODULE){
     function populateTables(result){
         if(result && (result !== null)){
             $scope.nullPatient = ""; //TODO do i need this variable
-            if (typeof result.diagrecord !== 'undefined'){
+            if( typeof result.diagrecord !== 'undefined'){
                 $scope.diagReport = result.diagrecord;
                 strip($scope.diagReport);
             }
-            if (typeof result.qstrecord !== 'undefined'){
+            if( typeof result.qstrecord !== 'undefined'){
                 $scope.qstReport = result.qstrecord;
-                //TODO implement the rest of the reports as described in Ctrl1, after choosing JSON format for records returned by PHP
+                strip($scope.qstReport); //TODO replace null with not completed
             }
-        
+            if( typeof result.edcrecord !== 'undefined'){
+                $scope.educReport = result.edcrecord;
+                strip($scope.educReport); //TODO replace 1/0 with read/not read
+            }
+            if( typeof result.apptrecord !== 'undefined'){
+                $scope.apptReport = result.apptrecord;
+                strip($scope.apptReport);
+            }
+            if( typeof result.resrecord !== 'undefined'){
+                $scope.testReport = result.resrecord;
+                strip($scope.testReport);
+            }
+            if( typeof result.noterecord !== 'undefined'){
+                $scope.noteReport = result.noterecord;
+                strip($scope.noteReport); //TODO replace1/0 with read/not read
+            }
+            if( typeof result.clinnoterecord !== 'undefined'){
+                $scope.clinnoteReport = result.clinnoterecord;
+                strip($scope.clinnoteReport);
+            }
+            if( typeof result.txteamrecord !== 'undefined'){
+                $scope.txteamReport = result.txteamrecord;
+                strip($scope.txplanReport); // TODO replace 1/0 with read/not read
+            }
+            if( typeof result.generalrecord !== 'undefined'){
+                $scope.generalReport = result.generalrecord;
+                strip($scope.generalReport); // TODO replace 1/0 with read/ not read
+            }
+            if( typeof result.treatplanrecord !== 'undefined'){
+                $scope.txplanReport = result.treatplanrecord;
+                strip($scope.txplanReport);
+            }
         
         }else{ //something went wrong, no result recieved
             console.log("No result receieved from DB");
