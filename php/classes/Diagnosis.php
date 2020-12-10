@@ -383,6 +383,13 @@ class Diagnosis extends Module {
      *                          source : Source database of the diagnosis (mandatory)
      *                          rowId : External ID of the diagnosis (mandatory)
      *                          code : Diagnosis code (mandatory)
+     * Validation code :    in case of error returns code 422 with validation code.
+     *                      Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit informations
+     *                      are coded from right to left:
+     *                      1: MRN invalid or missing
+     *                      2: site invalid or missing
+     *                      3: MRN/site combo invalid
+     *                      4: source invalid or missing
      * @return  $errCode : int - error code.
      *          $patientSite : array (reference) - site info
      *          $source : array (reference) - source database
@@ -453,6 +460,18 @@ class Diagnosis extends Module {
      *                          descriptionEn : english description of the diagnosis (mandatory)
      *                          stage : no idea, but its for Aria (optional)
      *                          stageCriteria : no idea, but its for Aria (optional)
+     * Validation code :    in case of error returns code 422 with validation code.
+     *                      Error validation code is coded as an int of 9 bits (value from 0 to 511). Bit informations
+     *                      are coded from right to left:
+     *                      1: MRN invalid or missing
+     *                      2: site invalid or missing
+     *                      3: MRN/site combo invalid
+     *                      4: source invalid or missing
+     *                      5: externalId invalid or missing
+     *                      6: code invalid or missing
+     *                      7: creation date invalid or missing
+     *                      8: descriptionEn invalid or missing
+     *                      9: descriptionFr invalid or missing
      * @return  $errCode : int - error code.
      *          $patientSite : array (reference) - site info
      *          $source : array (reference) - source database

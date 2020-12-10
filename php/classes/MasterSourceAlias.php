@@ -138,19 +138,23 @@ class MasterSourceAlias extends MasterSourceModule {
      *                          description : description of the alias (mandatory)
      *                          creationDate - creation date of the record in the source database (optional)
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 5 bits (value from 0 to 31). Bit informations
+     *                      Error validation code is coded as an int of 6 bits (value from 0 to 63). Bit informations
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId invalid or missing
      *                      3: code invalid or missing
      *                      4: description invalid or missing
      *                      5: creation date (if present) is in invalid format
+     *                      6: too much records to process
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
     protected function _validateAndSanitizeSourceAliases(&$post, &$toInsert, &$toUpdate, &$typeAlias) {
         $errMsgs = array();
         $post = HelpSetup::arraySanitization($post);
+
+        if(count($post) > MAXIMUM_RECORDS_BATCH)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => bindec("100000")));
 
         foreach ($post as $item) {
             if(is_array($item)) {
@@ -238,19 +242,23 @@ class MasterSourceAlias extends MasterSourceModule {
      *                          code : code of the alias (mandatory)
      *                          description : description of the alias (mandatory)
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 5 bits (value from 0 to 31). Bit informations
+     *                      Error validation code is coded as an int of 6 bits (value from 0 to 63). Bit informations
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId invalid or missing
      *                      3: code invalid or missing
      *                      4: description invalid or missing
      *                      5: record not found
+     *                      6: too much records to process
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
     protected function _validateAndSanitizeSourceAliasesUpdate(&$post, &$toUpdate, &$typeAlias) {
         $errMsgs = array();
         $post = HelpSetup::arraySanitization($post);
+
+        if(count($post) > MAXIMUM_RECORDS_BATCH)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => bindec("100000")));
 
         foreach ($post as $item) {
             if(is_array($item)) {
@@ -317,17 +325,23 @@ class MasterSourceAlias extends MasterSourceModule {
      *                          code : code of the alias (mandatory)
      *                          description : description of the alias (mandatory)
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 3 bits (value from 0 to 7). Bit informations
+     *                      Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit informations
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId invalid or missing
      *                      3: alias (task/document/appointment) not found
+     *                      4: too much records to process
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
     protected function _validateAndSanitizeSourceAliasesDelete(&$post, &$toDelete, &$typeAlias) {
         $errMsgs = array();
         $post = HelpSetup::arraySanitization($post);
+
+        if(count($post) > MAXIMUM_RECORDS_BATCH)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => bindec("1000")));
+
+
         foreach ($post as $item) {
             if(is_array($item)) {
                 $errCode = "";
