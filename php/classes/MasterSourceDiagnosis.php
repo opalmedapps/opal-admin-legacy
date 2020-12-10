@@ -146,7 +146,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
      *                      3: code invalid or missing
      *                      4: description invalid or missing
      *                      5: creation date (if present) is in invalid format
-     *                      6: too much records to process
+     *                      6: too many records to process
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
@@ -247,7 +247,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
      *                      3: code invalid or missing
      *                      4: description invalid or missing
      *                      5: record not found
-     *                      6: too much records to process
+     *                      6: too many records to process
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
@@ -326,15 +326,13 @@ class MasterSourceDiagnosis extends MasterSourceModule {
      * @params  $post : array - $_POST content. Each entry must contains the following:
      *                          source : source database ID. See table SourceDatabase (mandatory)
      *                          externalID : external ID of the diagnosis in the source database (mandatory)
-     *                          code : code of the diagnosis (mandatory)
-     *                          description : description of the diagnosis (mandatory)
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
      *                      Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit informations
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId invalid or missing
      *                      3: diagnosis not found
-     *                      4: too much records to process
+     *                      4: too many records to process
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
