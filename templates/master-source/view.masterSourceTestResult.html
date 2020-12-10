@@ -1,0 +1,53 @@
+<!-- Modal title -->
+<div class="modal-header">
+    <div class="col-xs-12 col-md-6">
+        <h2 class="modal-title">
+            <span class="fa fa-eye"></span>
+            {{'MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.TITLE_VIEW'|translate}}
+        </h2>
+        <p ng-if="readOnly.name_display" class="text-danger">{{'MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.USED'|translate}} {{readOnly.name_display}}</p>
+    </div>
+    <div class="modal-buttons col-xs-12 col-md-6">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.CLOSE'|translate}}">
+    </div>
+</div>
+<div class="modal-body">
+    <uib-accordion close-others="false">
+        <!-- SECTION: General infos -->
+        <div uib-accordion-group is-open="generalSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.GENERAL'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': generalSection.open, 'glyphicon-chevron-right': !generalSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12">
+                    <label><strong>{{'MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.EXTERNAL_ID'|translate}}</strong></label> : {{readOnly.externalId}}
+                </div>
+                <div class="col-xs-12">
+                    <label><strong>{{'MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.SOURCE'|translate}}</strong></label> : {{readOnly.SourceDatabaseName}}
+                </div>
+                <div ng-if="generalInfo.type_display" class="col-xs-12">
+                    <label><strong>{{'MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.TYPE'|translate}}</strong></label> : {{readOnly.type_display}}
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Titles -->
+        <div uib-accordion-group is-open="titleSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.DETAILS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <label><strong>{{'MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.CODE'|translate}}</strong></label> : {{readOnly.code}}
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <label><strong>{{'MASTER_SOURCE_MODULE.TEST_RESULT_EDIT.DESCRIPTION'|translate}}</strong></label> : {{toSubmit.details.description}}
+                </div>
+            </div>
+        </div>
+    </uib-accordion>
+</div>
