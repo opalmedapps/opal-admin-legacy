@@ -1,37 +1,7 @@
 angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstrap']).
 
 controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
-    $scope.navMenu = Session.retrieveObject('menu');
-    $scope. navSubMenu = Session.retireve('subMenu')[MODULE.patient];
-
-    angular.forEach($scope.navSubMenu, function(menu) {
-		menu.name_display = (Session.retrieveObject('user').language === "FR" ? menu.name_FR : menu.name_EN);
-		menu.description_display = (Session.retrieveObject('user').language === "FR" ? menu.description_FR : menu.description_EN);
-    });
-    
-	$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 0)) !== 0);
-	$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 1)) !== 0);
-	$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 2)) !== 0);
-
-    // Show page banner
-    $scope.bannerMessage = "";
-    $scope.showBanner = function() {
-        $(".bannerMessage").slideDown(function() {
-            setTimeout(function() {
-                $(".bannerMessage").slideUp();
-            }, 3000);
-        });
-    };
-
-    // Set banner class
-    $scope.setBannerClass = function (classname) {
-		// Remove any classes starting with "alert-"
-		$(".bannerMessage").removeClass(function (index, css) {
-			return (css.match(/(^|\s)alert-\S+/g) || []).join(' ');
-		});
-		// Add class
-		$(".bannerMessage").addClass('alert-' + classname);
-	};
+    console.log("Control passed to patientReports.js");
 
     $scope.foundPatient = false; //only show the report once patient is found/selected
     $scope.selectPatient = false; //only show if multiple patients are found from search and user must choose one
@@ -86,6 +56,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
         if ($scope.searchName == "" && $scope.searchMRN == "" && $scope.searchRAMQ == "") {
             $scope.foundPatient = false;
         }else if ($scope.searchName){ //find by name
+            console.log("Searching by name");
             $.ajax({
                 type: "POST",
                 url: "patient-reports/find/patient-name",

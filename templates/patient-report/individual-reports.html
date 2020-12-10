@@ -1,0 +1,348 @@
+<div class="modal-header">
+    <div class="col-xs-12 col-md-6">
+      <h2 class="modal-title">
+        <span class="glyphicon glyphicon-pencil"></span> 
+        Individual Patient Reports 
+      </h2>
+    </div>
+</div>
+<div class="modal-body">
+    <div id="PatientReport" class="tabcontent">
+        <div style="margin:5px;">
+            <div>
+                <div style="float:right;">
+                    <p>
+                        Database: <br />
+                        <label style="color:darkgreen; font-weight:bold;"><input type="checkbox" ng-model="db.prod" ng-change="db.preprod = false; updateColours();"> Prod </label>
+                        <br>
+                        <label style="color:darkturquoise; font-weight:bold;"><input type="checkbox" ng-model="db.preprod" ng-change="db.prod = false; updateColours();"> Preprod </label>
+                    </p>
+                </div>
+                <p style="float:left;">Enter patient last name, MRN or RAMQ. </p>
+
+                <form ng-submit="findPat()">
+                    <table>
+                        <tr>
+                            <td>Patient Last Name: <input type="text" ng-model="searchName" ng-disabled="searchMRN || searchRAMQ" ng-change="searchName==''?resetFieldValues():''"></td>
+                        </tr>
+                        <tr>
+                            <td>Patient RAMQ: <input type="text" ng-model="searchRAMQ" ng-disabled="searchName || searchMRN" ng-change="searchRAMQ==''?resetFieldValues():''"></td>
+                        </tr>
+                        <tr>
+                            <td>Patient MRN: <input type="text" ng-model="searchMRN" ng-disabled="searchName || searchRAMQ" ng-change="searchMRN==''?resetFieldValues():''"></td>
+                        </tr>
+                        <tr>
+                            <td colspan=5>
+                                <input class="btn" value="Submit" type="submit">
+                                <input class="btn" value="Reset" type="reset" ng-click="resetFieldValues()">
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+            <div ng-show="selectPatient">
+                <select ng-model="selectedName" ng-options="x for x in patoptions"
+                        ng-change="displaySelection()"></select>
+            </div>
+
+            <div ng-show="foundPatient">
+                <form ng-submit="fetchData()">
+                    <table class="entryTable">
+                        <caption style="font-weight:bold; font-size:1.5em;">Selected Information</caption>
+                        <tr>
+                            <td><label>Diagnosis <input type="checkbox" ng-model="featureList.diagnosis"> </label></td>
+                            <td><label>Appointments <input type="checkbox" ng-model="featureList.appointments"> </label></td>
+                        </tr>
+                        <tr>
+                            <td><label>Questionnaires <input type="checkbox" ng-model="featureList.questionnaires"> </label></td>
+                            <td><label>Educational Materials <input type="checkbox" ng-model="featureList.education"> </label></td>
+                        </tr>
+                        <tr>
+                            <td><label>Lab Results <input type="checkbox" ng-model="featureList.testresults"> </label></td>
+                            <td><label>Notifications <input type="checkbox" ng-model="featureList.notifications"></label></td>
+                        </tr>
+                        <tr>
+                            <td><label>Treatment Planning <input type="checkbox" ng-model="featureList.treatplan"> </label></td>
+                            <td><label>Clinical Notes <input type="checkbox" ng-model="featureList.clinicalnotes"></label></td>
+                        </tr>
+                        <tr>
+                            <td><label>My Treating Team<input type="checkbox" ng-model="featureList.treatingteam"> </label></td>
+                            <td><label>General Announcements <input type="checkbox" ng-model="featureList.general"></label></td>
+                        </tr>
+                        <tr>
+                            <td colspan=5 align="center">
+                                <input class="btn" value="Generate Report" type="submit" style="padding: 4px 4px 4px 4px; color:blue; font-weight: bold;">
+                            </td>
+                        </tr>
+                    </table>
+                    <br />
+                </form>
+                <div>
+                    <table class="showPatient" style="margin-top:-17px;">
+                        <caption style="font-weight:bold; font-size:1.5em;">Selected Patient</caption>
+                        <tr>
+                            <td> <b>Last Name</b> </td>
+                            <td> {{pname}} </td>
+                        </tr>
+                        <tr>
+                            <td> <b>First Name</b> </td>
+                            <td> {{pfname}} </td>
+                        </tr>
+                        <tr>
+                            <td> <b>Sex</b> </td>
+                            <td> {{psex}} </td>
+                        </tr>
+                        <tr>
+                            <td> <b>Patient Serial</b> </td>
+                            <td> {{psnum}} </td>
+                        </tr>
+                        <tr>
+                            <td><b>Email</b></td>
+                            <td> {{pemail}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>RAMQ</b></td>
+                            <td> {{pramq}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>MRN</b></td>
+                            <td> {{pmrn}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Opal App Language</b></td>
+                            <td> {{planguage}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <br><br>
+            <div ng-show="foundPatient" style="clear:both;">
+                <p><b>Note:</b> A special sorting function was implemented for the especially large tables (Appointments, Test Results, Notifications). This sorting function sorts only in one direction, whereas the slower sorting function implemented on the other tables can sort in the both directions (just click the table header again to reverse the sort)</p>
+            </div>
+            <div ng-show="featureList.diagnosis" style="border:1px solid black; clear:both;">
+                <center>
+                    <h3>Diagnosis</h3>
+                </center>
+                <table id="diagTable">
+                    <tr style="font-weight:bold;">
+                        <th onclick="sortTable(0,'diagTable')">Date Created</th>
+                        <th onclick="sortTable(1,'diagTable')">Diagnosis Description</th>
+                        <th onclick="sortTable(2,'diagTable')">Diagnosis SerNum</th>
+                    </tr>
+                    <tr ng-repeat="x in diagReport | orderBy:'-created'">
+                        <td> {{ x.created }} </td>
+                        <td> {{ x.desc }} </td>
+                        <td> {{ x.dsnum }} </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div ng-show="featureList.appointments" style="border:1px solid black; clear:both;">
+                <center>
+                    <h3>Appointments</h3>
+                </center>
+                <table id="apptTable">
+                    <tr style="font-weight:bold;">
+                        <th onclick="quickSortTrampoline(0,'apptTable')">Date Created</th>
+                        <th onclick="quickSortTrampoline(1,'apptTable')">Scheduled Start Time</th>
+                        <th onclick="quickSortTrampoline(2,'apptTable')">Appointment Status</th>
+                        <th onclick="quickSortTrampoline(3,'apptTable')">Appoint. Type</th>
+                        <th onclick="quickSortTrampoline(4,'apptTable')">Appoint. Description</th>
+                        <th onclick="quickSortTrampoline(5,'apptTable')">Resource Name</th>
+                    </tr>
+                    <tr ng-repeat="x in apptReport[0] | orderBy:'-starttime'">
+                        <td> {{ x.created }} </td>
+                        <td> {{ x.starttime }} </td>
+                        <td> {{ x.status }} </td>
+                        <td> {{ x.aptType }} </td>
+                        <td> {{ x.aptDesc }} </td>
+                        <td> {{ x.resName }} </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div ng-show="featureList.questionnaires" style="border:1px solid black; clear:both;">
+                <center>
+                    <h3>Questionnaires</h3>
+                </center>
+                <table id="qstTable">
+                    <tr style="font-weight:bold;">
+                        <th onclick="sortTable(0,'qstTable')">Date Sent</th>
+                        <th onclick="sortTable(1,'qstTable')">Date Completed</th>
+                        <th onclick="sortTable(2,'qstTable')">Questionnaire Name</th>
+                    </tr>
+                    <tr ng-repeat="y in qstReport[0] | orderBy:'-dateAdd'">
+                        <td> {{ y.dateAdd }} </td>
+                        <td> {{ y.dateComplete }} </td>
+                        <td> {{ y.name }} </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div ng-show="featureList.education" style="border:1px solid black; clear:both;">
+                <center>
+                    <h3>Educational Materials</h3>
+                </center>
+                <table id="educTable">
+                    <tr style="font-weight:bold;">
+                        <th onclick="sortTable(0,'educTable')">Date Sent</th>
+                        <th onclick="sortTable(1,'educTable')">Material Type</th>
+                        <th onclick="sortTable(2,'educTable')">Material Name</th>
+                        <th onclick="sortTable(3,'educTable')">Read Status</th>
+                    </tr>
+                    <tr ng-repeat="x in educReport[0] | orderBy:'-dateAdd'">
+                        <td> {{ x.dateAdd }} </td>
+                        <td> {{ x.matType }} </td>
+                        <td> {{ x.matName }} </td>
+                        <td> {{ x.readStatus }} </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div ng-show="featureList.testresults" style="border: 1px solid black; clear:both;">
+                <center>
+                    <h3>Test Results</h3>
+                </center>
+                <table id="resTable">
+                    <tr style="font-weight:bold;">
+                        <th onclick="quickSortTrampoline(0,'resTable')">Date Sent</th>
+                        <th onclick="quickSortTrampoline(1,'resTable')">Date of Test</th>
+                        <th onclick="quickSortTrampoline(2,'resTable')">Component Name</th>
+                        <th onclick="quickSortTrampoline(3,'resTable')">Abnormal Flag</th>
+                        <th onclick="quickSortTrampoline(4,'resTable')">Test Result</th>
+                        <th onclick="quickSortTrampoline(5,'resTable')">Normal Range</th>
+                        <th onclick="quickSortTrampoline(6,'resTable')">Unit Description</th>
+                        <th onclick="quickSortTrampoline(7,'resTable')">Read Status</th>
+                    </tr>
+                    <tr ng-repeat="x in testReport[0] | orderBy:'-dateAdd'">
+                        <td>{{ x.dateAdd }}</td>
+                        <td>{{ x.dateTest }}</td>
+                        <td>{{ x.compName }}</td>
+                        <td>{{ x.flag }}</td>
+                        <td>{{ x.testValue}}</td>
+                        <td>{{ x.minNorm }} - {{ x.maxNorm }}</td>
+                        <td>{{ x.unitDescription}}</td>
+                        <td>{{ x.readStatus}}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div ng-show="featureList.notifications" style="border:1px solid black; clear:both;">
+                <center>
+                    <h3>Notifications</h3>
+                </center>
+                <table id="noteTable">
+                    <tr style="font-weight:bold;">
+                        <th onclick="quickSortTrampoline(0,'noteTable')">Date Note Sent</th>
+                        <th onclick="quickSortTrampoline(1,'noteTable')">Date Note Read</td>
+                        <th onclick="quickSortTrampoline(2,'noteTable')">Note Header</td>
+                        <th onclick="quickSortTrampoline(3,'noteTable')">Note Content</td>
+                    </tr>
+                    <tr ng-repeat="x in noteReport[0] | orderBy:'-dateadd'">
+                        <td>{{ x.dateadd }}</td>
+                        <td>{{ x.dateread }}</td>
+                        <td>{{ x.notetype }}</td>
+                        <td>{{ x.notedesc }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div ng-show="featureList.treatplan" style="border: 1px solid black; clear:both;">
+                <center>
+                    <h3>Treatment Planning</h3>
+                </center>
+                <table id="tplanTable">
+                    <tr style="font-weight: bold;">
+                        <th onclick="sortTable(0, 'tplanTable')">Diagnosis</th>
+                        <th onclick="sortTable(1, 'tplanTable')">Planning Stage</th>
+                        <th onclick="sortTable(2, 'tplanTable')">Planning Stage Description</th>
+                        <th onclick="sortTable(3, 'tplanTable')">Status</th>
+                        <th onclick="sortTable(4, 'tplanTable')">State</th>
+                        <th onclick="sortTable(5, 'tplanTable')">Due Date</th>
+                        <th onclick="sortTable(6, 'tplanTable')">Completion Date</th>
+
+                    </tr>
+                    <tr ng-repeat="x in txplanReport[0] | orderBy:'duedate'">
+                        <td> {{ x.diagdesc }} </td>
+                        <td> {{ x.aliasname }} </td>
+                        <td> {{ x.aliasdescription }} </td>
+                        <td> {{ x.status }} </td>
+                        <td> {{ x.state }} </td>
+                        <td> {{ x.duedate }} </td>
+                        <td> {{ x.completiondate }} </td>
+                    </tr>
+                </table>
+            </div>
+            <div ng-show="featureList.clinicalnotes" style="border: 1px solid black; clear:both;">
+                <center>
+                    <h3>Clinical Notes</h3>
+                </center>
+                <table id="clinTable">
+                    <tr style="font-weight: bold;">
+                        <th onclick="sortTable(0, 'clinTable')">Date Created</th>
+                        <th onclick="sortTable(1, 'clinTable')">Date Approved</th>
+                        <th onclick="sortTable(2, 'clinTable')">Original File Name</th>
+                        <th onclick="sortTable(3, 'clinTable')">Final File Name</th>
+                        <th onclick="sortTable(4, 'clinTable')">Note Description</th>
+                    </tr>
+                    <tr ng-repeat="x in clinnoteReport[0] | orderBy:'-ctimestamp'">
+                        <td> {{ x.ctimestamp }} </td>
+                        <td> {{ x.atimestamp }} </td>
+                        <td> {{ x.ofilename }} </td>
+                        <td> {{ x.ffilename }} </td>
+                        <td> {{ x.desc }} </td>
+                    </tr>
+                </table>
+            </div>
+            <div ng-show="featureList.treatingteam" style="border: 1px solid black; clear:both;">
+                <center>
+                    <h3>Treatment Team Messages</h3>
+                </center>
+                <table id="txmesTable">
+                    <tr style="font-weight: bold;">
+                        <th onclick="sortTable(0, 'txmesTable')">Date Added</th>
+                        <th onclick="sortTable(1, 'txmesTable')">Message Header</th>
+                        <th onclick="sortTable(2, 'txmesTable')">Message Body</th>
+                        <th onclick="sortTable(3, 'txmesTable')">Read Status</th>
+                    </tr>
+                    <tr ng-repeat="x in txteamReport[0] | orderBy:'-dateadded'">
+                        <td> {{ x.dateadded }} </td>
+                        <td> {{ x.postname }} </td>
+                        <td> {{ x.postbody }} </td>
+                        <td> {{ x.readstatus }} </td>
+                    </tr>
+                </table>
+            </div>
+            <div ng-show="featureList.general" style="border: 1px solid black; clear:both;">
+                <center>
+                    <h3>General Announcements</h3>
+                </center>
+                <table id="genannTable">
+                    <tr style="font-weight: bold;">
+                        <th onclick="sortTable(0, 'genannTable')">Date Added</th>
+                        <th onclick="sortTable(1, 'genannTable')">Message Header</th>
+                        <th onclick="sortTable(2, 'genannTable')">Message Body</th>
+                        <th onclick="sortTable(3, 'genannTable')">Read Status</th>
+                    </tr>
+                    <tr ng-repeat="x in generalReport[0] | orderBy:'-dateadded'">
+                        <td> {{ x.dateadded }} </td>
+                        <td> {{ x.postname }} </td>
+                        <td> {{ x.postbody }} </td>
+                        <td> {{ x.readstatus }} </td>
+                    </tr>
+                </table>
+            </div>
+            <!--	<table id="testingTable">
+                    <tr>
+                        <th onclick="quickSortTrampoline(0, 'testingTable')">Test Header 1</th>
+                        <th onclick="quickSortTrampoline(1, 'testingTable')">Test Header 2</th>
+                        <th onclick="quickSortTrampoline(2, 'testingTable')">Test Header 3</th>
+                    </tr>
+                    <tr ng-repeat="x in testArray">
+                        <td>{{ x.prop1 }}</td>
+                        <td>{{ x.prop2 }}</td>
+                        <td>{{ x.prop3 }}</td>
+                    </tr>
+                </table> -->
+        </div>
+    </div>
+</div>
