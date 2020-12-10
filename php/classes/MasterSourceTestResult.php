@@ -147,7 +147,7 @@ class MasterSourceTestResult extends MasterSourceModule {
      *                      3: code invalid or missing
      *                      4: description invalid or missing
      *                      5: creation date (if present) is in invalid format
-     *                      6: too much records to process
+     *                      6: too many records to process
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
