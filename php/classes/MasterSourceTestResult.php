@@ -140,13 +140,14 @@ class MasterSourceTestResult extends MasterSourceModule {
      *                          description : description of the test result (mandatory)
      *                          creationDate - creation date of the record in the source database (optional)
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 5 bits (value from 0 to 31). Bit informations
+     *                      Error validation code is coded as an int of 6 bits (value from 0 to 63). Bit informations
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId (if present) invalid
      *                      3: code invalid or missing
      *                      4: description invalid or missing
      *                      5: creation date (if present) is in invalid format
+     *                      6: too much records to process
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
@@ -219,7 +220,6 @@ class MasterSourceTestResult extends MasterSourceModule {
                     else if (count($data) == 1) {
                         if($data[0]["code"] == $item["code"])
                             array_push($toUpdate, array(
-                                "ID" => $data[0]["ID"],
                                 "source" => $item["source"],
                                 "externalId" => $item["externalId"],
                                 "code" => $item["code"],
@@ -256,13 +256,14 @@ class MasterSourceTestResult extends MasterSourceModule {
      *                          code : code of the test result (mandatory)
      *                          description : description of the test result (mandatory)
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 5 bits (value from 0 to 31). Bit informations
+     *                      Error validation code is coded as an int of 6 bits (value from 0 to 63). Bit informations
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId (if present) invalid
      *                      3: code invalid or missing
      *                      4: description invalid or missing
      *                      5: record not found
+     *                      6: to much records to process
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
@@ -270,15 +271,16 @@ class MasterSourceTestResult extends MasterSourceModule {
         $errMsgs = array();
         $post = HelpSetup::arraySanitization($post);
 
+        if(count($post) > MAXIMUM_RECORDS_BATCH)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => bindec("100000")));
+
         foreach ($post as $item) {
             if(is_array($item)) {
                 $errCode = "";
-                if(!array_key_exists("source", $item) || $item["source"] == "") {
+                if(!array_key_exists("source", $item) || $item["source"] == "")
                     $errCode = "1" . $errCode;
-                }
-                else {
+                else
                     $errCode = "0" . $errCode;
-                }
 
                 if(!array_key_exists("externalId", $item) || $item["externalId"] == "") {
                     $item["externalId"] = -1;
@@ -342,39 +344,36 @@ class MasterSourceTestResult extends MasterSourceModule {
      *                          code : code of the test result (mandatory)
      *                          description : description of the test result (mandatory)
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 3 bits (value from 0 to 7). Bit informations
+     *                      Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit informations
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: code invalid or missing
      *                      3: test result not found
+     *                      4: no much records to process
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
     protected function _validateAndSanitizeSourceTestResultsDelete(&$post, &$toDelete) {
         $errMsgs = array();
         $post = HelpSetup::arraySanitization($post);
+
+        if(count($post) > MAXIMUM_RECORDS_BATCH)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => bindec("1000")));
+
         foreach ($post as $item) {
             if(is_array($item)) {
-
-                $valid = true;
-
                 $errCode = "";
-                if(!array_key_exists("source", $item) || $item["source"] == "") {
+                if(!array_key_exists("source", $item) || $item["source"] == "")
                     $errCode = "1" . $errCode;
-                    $valid = false;
-                }
-                else {
+                else
                     $errCode = "0" . $errCode;
-                }
 
-                if(!array_key_exists("code", $item) || $item["code"] == "") {
+                if(!array_key_exists("code", $item) || $item["code"] == "")
                     $errCode = "1" . $errCode;
-                    $valid = false;
-                }
-                else {
+                else
                     $errCode = "0" . $errCode;
-                }
-                if($valid) {
+
+                if (bindec($errCode) == 0) {
                     $count = $this->opalDB->isTestResultsExists($item["source"], $item["code"]);
                     if(count($count) < 1)
                         $errCode = "1" . $errCode;
@@ -382,10 +381,8 @@ class MasterSourceTestResult extends MasterSourceModule {
                         $errCode = "0" . $errCode;
                     else
                         HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
-
-                } else {
+                } else
                     $errCode = "0" . $errCode;
-                }
 
                 $errCode = bindec($errCode);
                 if($errCode == 0) {
