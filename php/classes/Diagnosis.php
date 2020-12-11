@@ -228,7 +228,7 @@ class Diagnosis extends Module {
         $include = $startDate = $endDate = "";
         $errCode = $this->_validatePatientInfo($post, $include, $startDate, $endDate);
         if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation"=>$errCode)));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
 
         return $this->opalDB->getPatientDiagnoses($post["mrn"], $post["site"], $post["source"], $include, $startDate, $endDate);
     }
@@ -320,7 +320,7 @@ class Diagnosis extends Module {
 
         $errCode = $this->_validatePatientDiagnosis($post, $patientSite, $source);
         if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation"=>$errCode)));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
 
         $toInsert = array(
             "PatientSerNum"=>$patientSite["PatientSerNum"],
@@ -364,13 +364,13 @@ class Diagnosis extends Module {
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateBasicPatientInfo($post, $patientSite, $source);
         if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation"=>$errCode)));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
 
         $currentPatientDiagnosis = $this->opalDB->getPatientDiagnosisId($patientSite["PatientSerNum"], $source["SourceDatabaseSerNum"], $post["rowId"]);
         if(count($currentPatientDiagnosis) > 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates patient diagnosis found.");
         else if(count($currentPatientDiagnosis) < 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation"=>32)));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>32));
         $currentPatientDiagnosis = $currentPatientDiagnosis[0];
         return $this->opalDB->deletePatientDiagnosis($currentPatientDiagnosis["DiagnosisSerNum"]);
     }
@@ -383,6 +383,13 @@ class Diagnosis extends Module {
      *                          source : Source database of the diagnosis (mandatory)
      *                          rowId : External ID of the diagnosis (mandatory)
      *                          code : Diagnosis code (mandatory)
+     * Validation code :    in case of error returns code 422 with validation code.
+     *                      Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit informations
+     *                      are coded from right to left:
+     *                      1: MRN invalid or missing
+     *                      2: site invalid or missing
+     *                      3: MRN/site combo invalid
+     *                      4: source invalid or missing
      * @return  $errCode : int - error code.
      *          $patientSite : array (reference) - site info
      *          $source : array (reference) - source database
@@ -453,6 +460,18 @@ class Diagnosis extends Module {
      *                          descriptionEn : english description of the diagnosis (mandatory)
      *                          stage : no idea, but its for Aria (optional)
      *                          stageCriteria : no idea, but its for Aria (optional)
+     * Validation code :    in case of error returns code 422 with validation code.
+     *                      Error validation code is coded as an int of 9 bits (value from 0 to 511). Bit informations
+     *                      are coded from right to left:
+     *                      1: MRN invalid or missing
+     *                      2: site invalid or missing
+     *                      3: MRN/site combo invalid
+     *                      4: source invalid or missing
+     *                      5: externalId invalid or missing
+     *                      6: code invalid or missing
+     *                      7: creation date invalid or missing
+     *                      8: descriptionEn invalid or missing
+     *                      9: descriptionFr invalid or missing
      * @return  $errCode : int - error code.
      *          $patientSite : array (reference) - site info
      *          $source : array (reference) - source database
