@@ -10,36 +10,50 @@
     <div id="PatientReport" class="tabcontent">
         <div style="margin:5px;">
             <div>
-                <div style="float:right;">
-                    <p>
-                        Database: <br />
-                        <label style="color:darkgreen; font-weight:bold;"><input type="checkbox" ng-model="db.prod" ng-change="db.preprod = false; updateColours();"> Prod </label>
-                        <br>
-                        <label style="color:darkturquoise; font-weight:bold;"><input type="checkbox" ng-model="db.preprod" ng-change="db.prod = false; updateColours();"> Preprod </label>
-                    </p>
-                </div>
-                <p style="float:left;">Enter patient last name, MRN or RAMQ. </p>
+                <table style="width:60%; float:left; margin: 5px 5px 5px 5px;">
+                    <tr>
+                        <td>
+                            <h2>Search for patient:</h2>
+                        </td>
+                        <td>
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <form ng-submit="findPat()">
+                                <table>
+                                    <tr>
+                                        <td>Patient Last Name:</td><td><input type="text" ng-model="searchName" ng-disabled="searchMRN || searchRAMQ" ng-change="searchName==''?resetFieldValues():''"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Patient RAMQ:</td><td><input type="text" ng-model="searchRAMQ" ng-disabled="searchName || searchMRN" ng-change="searchRAMQ==''?resetFieldValues():''"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Patient MRN:</td><td><input type="text" ng-model="searchMRN" ng-disabled="searchName || searchRAMQ" ng-change="searchMRN==''?resetFieldValues():''"></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan=5>
+                                            <input class="btn" value="Submit" type="submit">
+                                            <input class="btn" value="Reset" type="reset" ng-click="resetFieldValues()">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </form>
+                        </td>
+                        <td>
+                            <p>
+                                Database: <br />
+                                <label style="color:darkgreen; font-weight:bold;"><input type="checkbox" ng-model="db.prod" ng-change="db.preprod = false; updateColours();"> Prod </label>
+                                <br>
+                                <label style="color:darkturquoise; font-weight:bold;"><input type="checkbox" ng-model="db.preprod" ng-change="db.prod = false; updateColours();"> Preprod </label>
+                            </p>
 
-                <form ng-submit="findPat()">
-                    <table>
-                        <tr>
-                            <td>Patient Last Name: <input type="text" ng-model="searchName" ng-disabled="searchMRN || searchRAMQ" ng-change="searchName==''?resetFieldValues():''"></td>
-                        </tr>
-                        <tr>
-                            <td>Patient RAMQ: <input type="text" ng-model="searchRAMQ" ng-disabled="searchName || searchMRN" ng-change="searchRAMQ==''?resetFieldValues():''"></td>
-                        </tr>
-                        <tr>
-                            <td>Patient MRN: <input type="text" ng-model="searchMRN" ng-disabled="searchName || searchRAMQ" ng-change="searchMRN==''?resetFieldValues():''"></td>
-                        </tr>
-                        <tr>
-                            <td colspan=5>
-                                <input class="btn" value="Submit" type="submit">
-                                <input class="btn" value="Reset" type="reset" ng-click="resetFieldValues()">
-                            </td>
-                        </tr>
-                    </table>
-                </form>
+                        </td>
+                    </tr>
+                </table>
             </div>
+
             <div ng-show="selectPatient">
                 <select ng-model="selectedName" ng-options="x for x in patoptions"
                         ng-change="displaySelection()"></select>

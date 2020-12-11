@@ -42,7 +42,7 @@ class PatientReports extends Module {
 
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
-
+            $patientList = array();
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                 $patientArray = array(
                     'psnum'      => $data[0],

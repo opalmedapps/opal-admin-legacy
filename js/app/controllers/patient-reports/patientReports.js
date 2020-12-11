@@ -1,7 +1,6 @@
 angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstrap']).
 
 controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
-    console.log("Control passed to patientReports.js");
 
     $scope.foundPatient = false; //only show the report once patient is found/selected
     $scope.selectPatient = false; //only show if multiple patients are found from search and user must choose one
@@ -60,10 +59,10 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
             $.ajax({
                 type: "POST",
                 url: "patient-reports/find/patient-name",
-                data: $scope.searchName,
+                data: {pname:$scope.searchName},
                 success: function(response){
-                    console.log(response);
-                    displayName(response.data);
+                    console.log(JSON.parse(response));
+                    displayName(JSON.parse(response));
                 },
                 error: function(err){
                     console.log(err)
@@ -77,7 +76,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
                 data: $scope.searchMRN,
                 success: function(response){
                     console.log(response);
-                    displayName(response.dta);
+                    displayName(response.data);
                 },
                 error: function(err){
                     console.log(err)
@@ -91,7 +90,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
                 data: $scope.searchRAMQ,
                 success: function(response){
                     console.log(response);
-                    displayName(response.data);
+                    displayName(response);
                 },
                 error: function(err){
                     console.log(err)
@@ -115,13 +114,13 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
             $scope.foundPatient = false;
             console.log("No patient found matching search");
             // ErrorHandler TODO
-        }else if (result.patrecord.length > 1){ //found multiple patients matching search
+        }else if (result.length > 1){ //found multiple patients matching search
             console.log("Multiple matches found");
             $scope.patOptions = [];
             var tmp = "";
             //load each result into patOptions array for selection
-            for (var i = 0; i < result.patrecord.length; i++){
-                tmp = tmp + i + " , " + result.patrecord[i].fname + " , " + result.patrecord[i].lname + " , " + result.patrecord[i].psnum + " , " + result.patrecord[i].sex + " , " + result.patrecord[i].email + " , " + result.patrecord[i].ssn + " , " + result.patrecord[i].pid + " , " + result.patrecord[i].language;
+            for (var i = 0; i < result.length; i++){
+                tmp = tmp + i + " , " + result[i].fname + " , " + result[i].lname + " , " + result[i].psnum + " , " + result[i].sex + " , " + result[i].email + " , " + result[i].ssn + " , " + result[i].pid + " , " + result[i].language;
                 $scope.patOptions.push(tmp);
                 tmp = "";
             }
@@ -131,14 +130,14 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
             $scope.resetReportValues(); //set all report options to true by default
 
             // set selected patient identifiers
-            $scope.pname = result.patrecord[0].lname.replace(/["']/g, "");
-            $scope.psnum = result.patrecord[0].psnum.replace(/["']/g, "");
-            $scope.pfname = result.patrecord[0].fname.replace(/["']/g, "");
-            $scope.psex = result.patrecord[0].sex.replace(/["']/g, "");
-            $scope.pemail = result.patrecord[0].email.replace(/["']/g, "");
-            $scope.pramq = result.patrecord[0].ssn.replace(/["']/g, "");
-            $scope.pmrn = result.patrecord[0].pid.replace(/["']/g, "");
-            $scope.planguage = result.patrecord[0].language.replace(/["']/g, "");   
+            $scope.pname = result[0].lname.replace(/["']/g, "");
+            $scope.psnum = result[0].psnum.replace(/["']/g, "");
+            $scope.pfname = result[0].fname.replace(/["']/g, "");
+            $scope.psex = result[0].sex.replace(/["']/g, "");
+            $scope.pemail = result[0].email.replace(/["']/g, "");
+            $scope.pramq = result[0].ssn.replace(/["']/g, "");
+            $scope.pmrn = result[0].pid.replace(/["']/g, "");
+            $scope.planguage = result[0].language.replace(/["']/g, "");   
         }
     }
 
