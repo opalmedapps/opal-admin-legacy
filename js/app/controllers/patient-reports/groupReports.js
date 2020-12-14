@@ -9,7 +9,6 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
 		questionnaire : false,
 		demographics : false,
     };
-    console.log("Control passed to groupReports.js");
 
     //Display variables for educational materials branch
 	$scope.displayMaterialList = false;

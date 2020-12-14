@@ -59,7 +59,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
             $.ajax({
                 type: "POST",
                 url: "patient-reports/find/patient-name",
-                data: {pname:$scope.searchName},
+                data: {pname: $scope.searchName},
                 success: function(response){
                     console.log(JSON.parse(response));
                     displayName(JSON.parse(response));
@@ -73,10 +73,10 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
             $.ajax({
                 type: "POST",
                 url: "patient-reports/find/patient-mrn",
-                data: $scope.searchMRN,
+                data: {pmrn: $scope.searchMRN},
                 success: function(response){
-                    console.log(response);
-                    displayName(response.data);
+                    console.log(JSON.parse(response));
+                    displayName(JSON.parse(response));
                 },
                 error: function(err){
                     console.log(err)
@@ -87,10 +87,10 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
             $.ajax({
                 type: "POST",
                 url: "patient-reports/find/patient-ramq",
-                data: $scope.searchRAMQ,
+                data: {pramq: $scope.searchRAMQ},
                 success: function(response){
-                    console.log(response);
-                    displayName(response);
+                    console.log(JSON.parse(response));
+                    displayName(JSON.parse(response));
                 },
                 error: function(err){
                     console.log(err)
@@ -201,10 +201,15 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
     /** TODO: choose url & assign rewrite rule
      *  Retrieve selected patient results from featureList
      */
+    /**
+     *  Generate the desired report based on user input
+     *  @param psnum: selected patient serial number
+     *  @param featureList: truthy/falsy variables for each report segment (user selected)
+     */
     $scope.fetchData = function(){
         $.ajax({
             type: "POST",
-            url: "",
+            url: "patient-reports/get/patient-data",
             data: {
                 psnum: $scope.psnum,
                 diagnosis: $scope.featureList.diagnosis,
@@ -220,7 +225,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
             },
             success: function(response){
                 console.log(response);
-                populateTables(response.data);
+                //populateTables(response.data);
             },
             error: function(err){
                 console.log(err)

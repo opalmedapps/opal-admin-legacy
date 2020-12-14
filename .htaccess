@@ -208,6 +208,9 @@ RewriteRule ^patient/update/patient php/patient/update.patient.php [QSA,L]
 
 # Patient Reports Section
 RewriteRule ^patient-reports/find/patient-name php/patient-reports/find_name.php [QSA,L]
+RewriteRule ^patient-reports/find/patient-mrn php/patient-reports/find_mrn.php [QSA,L]
+RewriteRule ^patient-reports/find/patient-ramq php/patient-reports/find_ramq.php [QSA,L]
+RewriteRule ^patient-reports/get/patient-data php/patient-reports/get.patient_data.php [QSA,L]
 
 # Post Section
 RewriteRule ^post/delete/post php/post/delete.post.php [QSA,L]
