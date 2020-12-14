@@ -49,8 +49,6 @@ angular.module('opalAdmin', [
 		role: 16,
 		alert: 17,
 		audit: 18,
-		trigger: 19,
-		master_source: 20,
 	})
 
 	.constant('HTTP_CODE', {
@@ -60,7 +58,6 @@ angular.module('opalAdmin', [
 		forbiddenAccessError: 403,
 		notFoundError: 404,
 		sessionTimeoutError: 419,
-		unprocessableEntityError: 422,
 		loginTimeoutError: 440,
 		internalServerError: 500,
 	})
@@ -144,12 +141,6 @@ angular.module('opalAdmin', [
 			.state('questionnaire-add', { url: '/questionnaire/add', templateUrl: "templates/questionnaire/add.questionnaire.html", controller: "questionnaire.add", data: { requireLogin: true, accessible: true } })
 			.state('publication', { url: '/publication', templateUrl: "templates/publication/publication.html", controller: "publication", data: { requireLogin: true, accessible: true } })
 			.state('publication-add', { url: '/publication/add', templateUrl: "templates/publication/add.publication.html", controller: "publication.add", data: { requireLogin: true, accessible: true } })
-			.state('master-source/alias', { url: '/master-source/alias', templateUrl: "templates/master-source/masterSourceAlias.html", controller: "masterSourceAlias", data: { requireLogin: true, accessible: true } })
-			.state('master-source/alias-add', { url: '/master-source/alias-add', templateUrl: "templates/master-source/add.masterSourceAlias.html", controller: "masterSourceAlias.add", data: { requireLogin: true, accessible: true } })
-			.state('master-source/diagnosis', { url: '/master-source/diagnosis', templateUrl: "templates/master-source/masterSourceDiagnosis.html", controller: "masterSourceDiagnosis", data: { requireLogin: true, accessible: true } })
-			.state('master-source/diagnosis-add', { url: '/master-source/diagnosis-add', templateUrl: "templates/master-source/add.masterSourceDiagnosis.html", controller: "masterSourceDiagnosis.add", data: { requireLogin: true, accessible: true } })
-			.state('master-source/test-result', { url: '/master-source/test-result', templateUrl: "templates/master-source/masterSourceTestResult.html", controller: "masterSourceTestResult", data: { requireLogin: true, accessible: true } })
-			.state('master-source/test-result-add', { url: '/master-source/test-result-add', templateUrl: "templates/master-source/add.masterSourceTestResult.html", controller: "masterSourceTestResult.add", data: { requireLogin: true, accessible: true } })
 			.state('questionnaire/question', { url: '/questionnaire/question', templateUrl: "templates/questionnaire/question.html", controller: "question", data: { requireLogin: true, accessible: true } })
 			.state('questionnaire/question-add', { url: '/questionnaire/question/add', templateUrl: "templates/questionnaire/add.question.html", controller: "question.add", data: { requireLogin: true, accessible: true } })
 			.state('questionnaire/template-question', { url: '/questionnaire/template-question', templateUrl: "templates/questionnaire/template.question.html", controller: "template.question", data: { requireLogin: true, accessible: true } })
