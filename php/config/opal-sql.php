@@ -72,7 +72,7 @@ define("OPAL_CRON_LOG_TABLE","CronLog");
 define("OPAL_SETTING_TABLE","setting");
 define("OPAL_MASTER_SOURCE_ALIAS_TABLE","masterSourceAlias");
 define("OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE","masterSourceDiagnosis");
-define("OPAL_MASTER_SOURCE_TEST_RESULT_TABLE","v_masterSourceTestResult");
+define("OPAL_MASTER_SOURCE_TEST_RESULT_TABLE","masterSourceTestResult");
 define("OPAL_ALIAS_EXPRESSION_TABLE","AliasExpression");
 define("OPAL_DOCTOR_TABLE","Doctor");
 define("OPAL_RESOURCE_NAME_TABLE","ResourceName");
@@ -94,8 +94,6 @@ define("OPAL_HOSPITAL_MAP_TABLE","HospitalMap");
 define("OPAL_ALERT_TABLE","alert");
 define("OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE","Patient_Hospital_Identifier");
 define("OPAL_DIAGNOSIS_TABLE","Diagnosis");
-define("OPAL_TEST_EXPRESSION_TABLE","TestExpression");
-define("OPAL_TEST_CONTROL_TABLE","TestControl");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -878,7 +876,7 @@ define("OPAL_GET_DIAGNOSES","
 
 define("OPAL_GET_DIAGNOSIS_TRANSLATIONS","
     SELECT dt.DiagnosisTranslationSerNum AS serial, dt.Name_EN AS name_EN, dt.Name_FR AS name_FR,
-    (SELECT COUNT(*) FROM ".OPAL_DIAGNOSIS_CODE_TABLE." dc WHERE dc.DiagnosisTranslationSerNum = dt.DiagnosisTranslationSerNum) AS `count`
+    (SELECT COUNT(*) FROM DiagnosisCode dc WHERE dc.DiagnosisTranslationSerNum = dt.DiagnosisTranslationSerNum) AS `count`
     FROM ".OPAL_DIAGNOSIS_TRANSLATION_TABLE." dt;
 ");
 
@@ -941,129 +939,4 @@ define("OPAL_GET_PATIENT_DIAGNOSIS_ID","
 
 define("OPAL_DELETE_PATIENT_DIAGNOSIS","
     DELETE FROM ".OPAL_DIAGNOSIS_TABLE." WHERE DiagnosisSerNum = :DiagnosisSerNum; 
-");
-
-define("OPAL_GET_SOURCE_DIAGNOSES","
-    SELECT msd.ID, msd.externalId, msd.code, msd.description, msd.source, msd.creationDate, msd.createdBy, msd.lastUpdated,
-    msd.updatedBy, dt.DiagnosisTranslationSerNum, dt.Name_EN, dt.name_FR FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." msd
-    LEFT JOIN ".OPAL_DIAGNOSIS_CODE_TABLE." dc ON dc.SourceUID = msd.externalId AND dc.Source = msd.source
-    LEFT JOIN ".OPAL_DIAGNOSIS_TRANSLATION_TABLE." dt ON dt.DiagnosisTranslationSerNum = dc.DiagnosisTranslationSerNum
-    WHERE msd.deleted = ".NON_DELETED_RECORD." and msd.source != ".LOCAL_SOURCE_DB.";
-");
-
-define("OPAL_IS_DIAGNOSIS_SOURCE_USED","
-    SELECT COUNT(*) AS total FROM ".OPAL_DIAGNOSIS_CODE_TABLE." WHERE SourceUID = :SourceUID AND Source = :Source;
-");
-
-define("OPAL_GET_EXTERNAL_SOURCE_DB","
-    SELECT SourceDatabaseSerNum AS ID, SourceDatabaseName AS name FROM ".OPAL_SOURCE_DATABASE_TABLE." WHERE Enabled = ".ACTIVE_RECORD."
-    AND SourceDatabaseSerNum != ".LOCAL_SOURCE_DB.";
-");
-
-define("OPAL_IS_SOURCE_DIAGNOSIS_EXISTS","
-    SELECT code, description, deleted FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE externalId = :externalId AND source = :source;
-");
-
-define("OPAL_GET_SOURCE_DIAGNOSIS_DETAILS","
-    SELECT msd.ID, msd.externalId, msd.code, msd.description, msd.source, msd.creationDate, msd.createdBy, msd.lastUpdated,
-    msd.updatedBy, dt.DiagnosisTranslationSerNum, dt.Name_EN, dt.name_FR, sc.SourceDatabaseName FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." msd
-    LEFT JOIN ".OPAL_DIAGNOSIS_CODE_TABLE." dc ON dc.SourceUID = msd.externalId AND dc.Source = msd.source
-    LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." sc ON sc.SourceDatabaseSerNum = msd.source
-    LEFT JOIN ".OPAL_DIAGNOSIS_TRANSLATION_TABLE." dt ON dt.DiagnosisTranslationSerNum = dc.DiagnosisTranslationSerNum
-    WHERE msd.deleted = ".NON_DELETED_RECORD." AND msd.source != ".LOCAL_SOURCE_DB." AND msd.externalId = :externalId
-    AND msd.source = :source;
-");
-
-define("OPAL_UPDATE_SOURCE_DIAGNOSIS", "
-    UPDATE ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." SET code = :code, description = :description, updatedBy = :updatedBy WHERE externalId = :externalId
-    AND source = :source;
-");
-
-define("OPAL_REPLACE_SOURCE_DIAGNOSIS", "
-    UPDATE ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." SET code = :code, description = :description, deleted = ".NON_DELETED_RECORD.", deletedBy = '', creationDate = :creationDate, createdBy = :createdBy, updatedBy = :updatedBy WHERE externalId = :externalId
-    AND source = :source;
-");
-
-define("OPAL_MARKED_AS_DELETED_SOURCE_DIAGNOSIS", "
-    UPDATE ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." SET deleted = ".DELETED_RECORD.", updatedBy = :updatedBy, deletedBy = :deletedBy WHERE externalId = :externalId
-    AND source = :source;
-");
-
-define("OPAL_GET_SOURCE_TEST_RESULTS","
-    SELECT mstr.ID, mstr.externalId, mstr.code, mstr.description, mstr.source, mstr.creationDate, mstr.createdBy, mstr.lastUpdated,
-    mstr.updatedBy, tc.TestControlSerNum, tc.Name_EN, tc.name_FR FROM ".OPAL_MASTER_SOURCE_TEST_RESULT_TABLE." mstr
-    LEFT JOIN ".OPAL_TEST_EXPRESSION_TABLE." te ON te.TestCode = mstr.code AND te.SourceDatabaseSerNum = mstr.source
-    LEFT JOIN ".OPAL_TEST_CONTROL_TABLE." tc ON tc.TestControlSerNum = te.TestControlSerNum
-    WHERE mstr.deleted = ".NON_DELETED_RECORD." and mstr.source != ".LOCAL_SOURCE_DB.";
-");
-
-define("OPAL_SOURCE_TEST_RESULTS_EXISTS","
-    SELECT ID, code, description, deleted FROM ".OPAL_MASTER_SOURCE_TEST_RESULT_TABLE." WHERE code = :code AND source = :source;
-");
-
-define("OPAL_REPLACE_TEST_RESULT", "
-    UPDATE ".OPAL_MASTER_SOURCE_TEST_RESULT_TABLE." SET code = :code, description = :description, deleted = ".NON_DELETED_RECORD.",
-    deletedBy = '', creationDate = :creationDate, createdBy = :createdBy, updatedBy = :updatedBy WHERE ID = :ID;
-");
-
-define("OPAL_UPDATE_TEST_RESULT", "
-    UPDATE ".OPAL_MASTER_SOURCE_TEST_RESULT_TABLE." SET externalId = :externalId, description = :description, updatedBy = :updatedBy WHERE code = :code
-    AND source = :source;
-");
-
-define("OPAL_GET_SOURCE_TEST_RESULT_DETAILS","
-    SELECT mstr.ID, mstr.externalId, mstr.code, mstr.description, mstr.source, mstr.creationDate, mstr.createdBy, mstr.lastUpdated,
-    mstr.updatedBy, tc.TestControlSerNum, tc.Name_EN, tc.name_FR, sc.SourceDatabaseName FROM ".OPAL_MASTER_SOURCE_TEST_RESULT_TABLE." mstr
-    LEFT JOIN ".OPAL_TEST_EXPRESSION_TABLE." te ON te.TestCode = mstr.code AND te.SourceDatabaseSerNum = mstr.source
-    LEFT JOIN ".OPAL_TEST_CONTROL_TABLE." tc ON tc.TestControlSerNum = te.TestControlSerNum
-    LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." sc ON sc.SourceDatabaseSerNum = mstr.source
-    WHERE mstr.deleted = ".NON_DELETED_RECORD." AND mstr.source != ".LOCAL_SOURCE_DB." AND mstr.code = :code
-    AND mstr.source = :source;
-");
-
-define("OPAL_COUNT_SOURCEDATABASE_ENTRIES","
-    SELECT COUNT(*) AS total FROM ".OPAL_SOURCE_DATABASE_TABLE." WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum
-");
-
-define("OPAL_MARK_AS_DELETED_SOURCE_TEST_RESULT","
-    UPDATE ".OPAL_MASTER_SOURCE_TEST_RESULT_TABLE." SET deleted = ".DELETED_RECORD.", updatedBy = :updatedBy, deletedBy = :deletedBy WHERE code = :code
-    AND source = :source;
-");
-
-define("OPAL_GET_SOURCE_ALIASES","
-    SELECT msa.ID, msa.externalId, msa.code, msa.description, msa.type, msa.source, msa.creationDate, msa.createdBy, msa.lastUpdated,
-    msa.updatedBy, a.AliasSerNum, a.AliasName_EN AS name_EN, a.AliasName_FR AS name_FR FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa
-    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.ExpressionName = msa.code AND ae.Description = msa.description
-    LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
-    WHERE msa.deleted = ".NON_DELETED_RECORD." and msa.source != ".LOCAL_SOURCE_DB.";
-");
-
-define("OPAL_GET_SOURCE_ALIAS_DETAILS","
-    SELECT msa.ID, msa.externalId, msa.code, msa.description, msa.type, msa.source, msa.creationDate, msa.createdBy, msa.lastUpdated,
-    msa.updatedBy, a.AliasSerNum, a.AliasName_EN AS name_EN, a.AliasName_FR AS name_FR, sc.SourceDatabaseName FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa
-    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.ExpressionName = msa.code AND ae.Description = msa.description
-    LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." sc ON sc.SourceDatabaseSerNum = msa.source
-    LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
-    WHERE msa.deleted = ".NON_DELETED_RECORD." AND msa.source != ".LOCAL_SOURCE_DB." AND msa.externalId = :externalId
-    AND msa.source = :source AND msa.type = :type;
-");
-
-define("OPAL_IS_SOURCE_ALIAS_EXISTS","
-    SELECT code, description, deleted FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." WHERE externalId = :externalId AND source = :source AND type = :type;
-");
-
-define("OPAL_REPLACE_SOURCE_ALIAS", "
-    UPDATE ".OPAL_MASTER_SOURCE_ALIAS_TABLE." SET description = :description,
-    deleted = ".NON_DELETED_RECORD.", deletedBy = '', createdBy = :createdBy,
-    updatedBy = :updatedBy WHERE externalId = :externalId AND source = :source AND type = :type;
-");
-
-define("OPAL_UPDATE_SOURCE_ALIAS", "
-    UPDATE ".OPAL_MASTER_SOURCE_ALIAS_TABLE." SET description = :description, updatedBy = :updatedBy WHERE externalId = :externalId
-    AND source = :source AND type = :type;
-");
-
-define("OPAL_MARKED_AS_DELETED_SOURCE_ALIAS", "
-    UPDATE ".OPAL_MASTER_SOURCE_ALIAS_TABLE." SET deleted = ".DELETED_RECORD.", updatedBy = :updatedBy, deletedBy = :deletedBy WHERE externalId = :externalId
-    AND source = :source AND type = :type;
 ");
