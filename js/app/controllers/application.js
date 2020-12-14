@@ -124,6 +124,8 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 		// Trigger on idle timeout
 		$scope.$on('IdleTimeout', function () {
+			console.log("login modal 1");
+
 			closeIdleModal(); // close idle modal
 
 			LogoutService.logLogout(); // send logout report to backend

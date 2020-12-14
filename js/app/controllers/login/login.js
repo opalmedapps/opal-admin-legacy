@@ -72,6 +72,7 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, A
 					accessLevel[row["ID"]] = row["access"];
 				});
 				response.data.access = accessLevel;
+				console.log(response.data);
 				Session.create(response.data);
 
 				$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
