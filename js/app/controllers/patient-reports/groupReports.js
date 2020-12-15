@@ -73,11 +73,10 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
     $scope.genEducationMaterialOptions = function(){
         $.ajax({
             type: "POST",
-            url: "", //TODO url
-            data: $scope.materialType,
+            url: "patient-reports/find/education-options",
+            data: {matType: $scope.materialType},
             success: function(response){
-                console.log(response);
-                prepareEducList(response.data);
+                prepareEducList(JSON.parse(response));
             },
             error: function(err){
                 console.log(err)
@@ -92,13 +91,13 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
     $scope.genEducReport = function(){
         $.ajax({
             type: "POST",
-            url: "", //TODO url
+            url: "patient-reports/get/educ-report",
             data: {
                 type: $scope.materialType, 
                 name: $scope.selectedMaterial},
             success: function(response){
-                console.log(response);
-                prepareEducReport(response.data);
+                console.log(JSON.parse(response));
+                prepareEducReport(JSON.parse(response));
             },
             error: function(err){
                 console.log(err)
@@ -111,8 +110,8 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
     function prepareEducList(inp){
         var tmp = "";
         if(inp && (inp !== null)){
-            for(var i=0; i < inp.typeList.length; i++){
-			tmp = tmp + inp.typeList[i].name.replace(/["']/g, "");
+            for(var i=0; i < inp.length; i++){
+			tmp = tmp + inp[i].name.replace(/["']/g, "");
 			$scope.educList.push(tmp);
 			tmp = "";
             }
@@ -185,11 +184,10 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
     $scope.genQuestionnaireOptions = function(){
         $.ajax({
             type:"POST",
-            url:"",
+            url:"patient-reports/find/questionnaire-options",
             data: null,
             success: function(response){
-                console.log(response);
-                prepareQstList(response.data);
+                prepareQstList(JSON.parse(response));
             },
             error: function(err){
                 console.log(err)
@@ -206,11 +204,11 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
     $scope.genQstReport = function(){
         $.ajax({
             type: "POST",
-            url: "",
-            data: $scope.selectedQuestionnaire,
+            url: "patient-reports/get/qst-report",
+            data: {qstName: $scope.selectedQuestionnaire},
             success: function(response){
-                console.log(response);
-                prepareQstReport(response.data);
+                console.log(JSON.parse(response));
+                prepareQstReport(JSON.parse(response));
             },
             error: function(err){
                 console.log(err);
@@ -223,8 +221,8 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
     function prepareQstList(inp){
         var tmp = "";
         if(inp && (inp !== null)){
-             for(var i=0; i < inp.report.length; i++){
-            tmp = tmp + inp.report[i].name.replace(/["']/g, "");
+             for(var i=0; i < inp.length; i++){
+            tmp = tmp + inp[i].name.replace(/["']/g, "");
             $scope.qstList.push(tmp);
             tmp ="";
             }
@@ -238,22 +236,24 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
     //Helper function to generate list of patient receiving the specified questionnaire
     function prepareQstReport(inp){
         if(inp && (inp !== null)){
-            $scope.qstReport = inp.report;
+            $scope.qstReport = inp;
             for(var i=0; i< $scope.qstReport.length; i++){
-                $scope.qstReport[i].fname = $scope.qstReport[i].fname.replace(/["']/g, "");
-				$scope.qstReport[i].lname = $scope.qstReport[i].lname.replace(/["']/g, "");
+                $scope.qstReport[i].pname = $scope.qstReport[i].pname.replace(/["']/g, "");
+				$scope.qstReport[i].plname = $scope.qstReport[i].plname.replace(/["']/g, "");
 				$scope.qstReport[i].pdob = $scope.qstReport[i].pdob.replace(/["']/g, "");
 				$scope.qstReport[i].psex = $scope.qstReport[i].psex.replace(/["' ]/g, "");
 				$scope.qstReport[i].pser = $scope.qstReport[i].pser.replace(/["']/g, "");
-				$scope.qstReport[i].datesent = $scope.qstReport[i].datesent.replace(/["']/g, "");
-				$scope.qstReport[i].datecomplete = $scope.qstReport[i].datecomplete.replace(/["']/g, "");
+				$scope.qstReport[i].qdate = $scope.qstReport[i].qdate.replace(/["']/g, "");
+				$scope.qstReport[i].qcomplete = $scope.qstReport[i].qcomplete.replace(/["']/g, "");
             }
             $scope.qstReportLength = $scope.qstReport.length;
         }else{
             // ErrorHandler TODO
         }
 
-        prepareQstStats();
+        console.log($scope.qstReport);
+
+        //prepareQstStats();
     }
 
     // Helper function to generate patient questionnaire statistics
@@ -332,14 +332,14 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
      * Generate full patient list for demographics information
      * 
      */
-    $scope.genpatientReport = function(){
+    $scope.genPatientReport = function(){
         $.ajax({
             type: "POST",
-            url: "",
+            url: "patient-reports/get/pat-report",
             data: null,
             success: function(response){
-                console.log(response);
-                preparePatientReport(response.data);
+                console.log(JSON.parse(response));
+                preparePatientReport(JSON.parse(response));
             },
             error: function(err){
                 console.log("Error occured retrieving patient list ");
@@ -352,23 +352,23 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
     // Helper function to clean patient list
     function preparePatientReport(inp){
         if(inp && (inp !== null)){
-            $scope.patientReport = inp.report;
+            $scope.patientReport = inp;
 			for(var i = 0; i < $scope.patientReport.length; i++){
-				$scope.patientReport[i].fname = $scope.patientReport[i].fname.replace(/["']/g, "");
-				$scope.patientReport[i].lname = $scope.patientReport[i].lname.replace(/["']/g, "");
+				$scope.patientReport[i].pname = $scope.patientReport[i].pname.replace(/["']/g, "");
+				$scope.patientReport[i].plname = $scope.patientReport[i].plname.replace(/["']/g, "");
 				$scope.patientReport[i].pdob = $scope.patientReport[i].pdob.replace(/["']/g, "");
 				$scope.patientReport[i].psex = $scope.patientReport[i].psex.replace(/["' ]/g, "");
 				$scope.patientReport[i].pser = $scope.patientReport[i].pser.replace(/["']/g, "");
-				$scope.patientReport[i].age = $scope.patientReport[i].age.replace(/["']/g, "");
-				$scope.patientReport[i].consentexp = $scope.patientReport[i].consentexp.replace(/["']/g, "");
-				$scope.patientReport[i].regdate = $scope.patientReport[i].regdate.replace(/["']/g, "");
-				$scope.patientReport[i].lang = $scope.patientReport[i].lang.replace(/["']/g, "");
+				$scope.patientReport[i].page = $scope.patientReport[i].page.replace(/["']/g, "");
+				$scope.patientReport[i].pcons = $scope.patientReport[i].pcons.replace(/["']/g, "");
+				$scope.patientReport[i].preg = $scope.patientReport[i].preg.replace(/["']/g, "");
+				$scope.patientReport[i].plang = $scope.patientReport[i].plang.replace(/["']/g, "");
 				$scope.patientReport[i].diagdate = $scope.patientReport[i].diagdate.replace(/["']/g, "");
 				$scope.patientReport[i].diagdesc = $scope.patientReport[i].diagdesc.replace(/["']/g, "");
             }
             $scope.patientReportLength = $scope.patientReport.length;
-
-            prepareDemoStats();
+            console.log($scope.patientReport);
+            //prepareDemoStats();
 
 
         }else{

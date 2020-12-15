@@ -6,6 +6,224 @@
       </h2>
     </div>
 </div>
+
 <div class="modal-body">
 
+  <div id="GroupReport" class="tabcontent">
+    <div style="float:right; clear:both;">
+        <p>
+            Database: <br />
+            <label style="color:darkgreen; font-weight:bold;"><input type="checkbox" ng-model="db.prod" ng-change="db.preprod = false; updateColours();"> Prod </label>
+            <br>
+            <label style="color:darkturquoise; font-weight:bold;"><input type="checkbox" ng-model="db.preprod" ng-change="db.prod = false; updateColours();"> Preprod </label>
+        </p>
+    </div>
+        <p> Select group reporting category </p>
+        <label><input type="checkbox" ng-model="category.education" ng-change="category.questionnaire = false; category.demographics = false;"> Educational Material </label>
+        <br>
+        <label><input type="checkbox" ng-model="category.questionnaire" ng-change="category.education = false; category.demographics = false; genQuestionnaireOptions();"> Questionnaires </label>
+        <br>
+        <label><input type="checkbox" ng-model="category.demographics" ng-change="category.education = false; category.questionnaire = false; genPatientReport();"> Demographics </label>
+        <br>
+
+        <div ng-show="category.education" style="border:1px solid black;">
+            <center>
+                <h2> Educational Material Group Reporting </h2>
+            </center>
+
+            <label>
+                Educational material type:
+                <select ng-model="materialType" ng-options="x for x in materialTypes"
+                        ng-change="genEducationMaterialOptions()"></select>
+            </label>
+
+            <br>
+            <label ng-show="displayMaterialList">
+                All {{materialType}} currently found in OpalDB: <select ng-model="selectedMaterial" ng-options="x for x in educList" ng-change="genEducReport(); showEducReport = true;"></select>
+            </label>
+            <div ng-show="showEducReport">
+                <div style="border: 1px solid blue; width: 70%;">
+                    <h3 style="color:blue;"> &nbsp &nbsp Statistics for this report </h3>
+                    <table style="padding: 5px 5px 5px 5px;">
+                        <tr>
+                            <td style="font-weight:bold;">% Female/Male</td>
+                            <td>{{educFemPcnt}}% female; {{educMalPcnt}}% male; {{educUnkPcnt}}% unknown</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;">Average patient age (in this report)</td>
+                            <td>{{educAvgAge}} years</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;">% Materials Read</td>
+                            <td>{{educReadPcnt}}% completed</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;">Average time until reading</td>
+                            <td>{{educAvgDaysToRead}} days</td>
+                        </tr>
+                    </table>
+                </div>
+                <h3> &nbsp &nbsp Full report on {{materialType}}: {{selectedMaterial}}, {{educReportLength}} records found</h3>
+                <table id="groupEducTable">
+                    <tr style="font-weight:bold;">
+                        <th onclick="sortTable(0,'groupEducTable')">First Name</th>
+                        <th onclick="sortTable(1,'groupEducTable')">Last Name</th>
+                        <th onclick="sortTable(2,'groupEducTable')">Patient Ser Num</td>
+                        <th onclick="sortTable(3,'groupEducTable')">Patient Sex</th>
+                        <th onclick="sortTable(4,'groupEducTable')">Patient Age</th>
+                        <th onclick="sortTable(5,'groupEducTable')">Patient Date of Birth</th>
+                        <th onclick="sortTable(6,'groupEducTable')">Date Material Sent</th>
+                        <th onclick="sortTable(7,'groupEducTable')">Read Status</th>
+                    </tr>
+                    <tr ng-repeat="x in educReport | orderBy:'lname'">
+                        <td>{{ x.fname }}</td>
+                        <td>{{ x.lname }}</td>
+                        <td>{{ x.pser }}</td>
+                        <td>{{ x.psex }}</td>
+                        <td>{{ x.page }}</td>
+                        <td>{{ x.pdob }}</td>
+                        <td>{{ x.datesent }}</td>
+                        <td>{{ x.readflag }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div ng-show="category.questionnaire" style="border:1px solid black;">
+            <center>
+                <h2> Questionnaire Group Reporting </h2>
+            </center>
+            <label>
+                Choose questionnaire:
+                <select ng-model="selectedQuestionnaire" ng-options="x for x in qstList"
+                        ng-change="genQstReport(); showQstReport = true;"></select>
+            </label>
+
+            <div ng-show="showQstReport">
+                <center>
+                    <h3> Report on {{selectedQuestionnaire}}, {{qstReportLength}} total records found</h3>
+                </center>
+                <div style="border: 1px solid blue; width: 70%;">
+                    <h3 style="color:blue;"> &nbsp &nbsp Statistics for this report </h3>
+                    <table style="padding: 5px 5px 5px 5px;">
+                        <tr>
+                            <td style="font-weight:bold;">% Female/Male</td>
+                            <td>{{pcntFemale}}% female; {{pcntMale}}% male; {{pcntUnk}}% unknown</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;">Total # unique patients in report</td>
+                            <td>{{numUniquePats}} unique patients</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;">Average patient age (in this report)</td>
+                            <td>{{avgPatAge}} years</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;">Total % completed questionnaires</td>
+                            <td>{{pcntCompleted}}% completed</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;">Average completion time (among completed questionnaires)</td>
+                            <td>{{avgCompletionTime}} days</td>
+                        </tr>
+                    </table>
+
+
+                </div>
+                <br><br>
+                <h3> &nbsp &nbsp Full Group Report:</h3>
+                <table id="groupQstTable">
+                    <tr style="font-weight:bold;">
+                        <th onclick="sortTable(0,'groupQstTable')">First Name</th>
+                        <th onclick="sortTable(1,'groupQstTable')">Last Name</th>
+                        <th onclick="sortTable(2,'groupQstTable')">Patient Ser Num</td>
+                        <th onclick="sortTable(3,'groupQstTable')">Patient Sex</th>
+                        <th onclick="sortTable(4,'groupQstTable')">Patient Date of Birth</th>
+                        <th onclick="sortTable(5,'groupQstTable')">Date Material Sent</th>
+                        <th onclick="sortTable(6,'groupQstTable')">Date Material Completed</th>
+                    </tr>
+                    <tr ng-repeat="x in qstReport | orderBy:'lname'">
+                        <td>{{ x.fname }}</td>
+                        <td>{{ x.lname }}</td>
+                        <td>{{ x.pser }}</td>
+                        <td>{{ x.psex }}</td>
+                        <td>{{ x.pdob }}</td>
+                        <td>{{ x.datesent }}</td>
+                        <td>{{ x.datecomplete }}</td>
+                    </tr>
+                </table>
+
+            </div>
+        </div>
+        <div ng-show="category.demographics" style="border:3px solid black;">
+            <center>
+                <h2> Demographics Group Reporting </h2>
+            </center>
+            <div style="border: 2px solid blue; width: 100%;">
+                <h3 style="color:blue;"> &nbsp &nbsp Statistics for this report </h3>
+                <table style="padding: 5px 5px 5px 5px;">
+                    <tr>
+                        <td style="font-weight:bold;">% Female/Male</td>
+                        <td>{{demopcntFemale}}% female; {{demopcntMale}}% male; {{demopcntUnk}}% unknown</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold;">Average Patient Age</td>
+                        <td>{{demoavgPatAge}} years</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold;">% French/English Preferred</td>
+                        <td>{{demopcntFrench}}% french preferred; {{demopcntEnglish}}% english preferred;</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold;">List of <span style="color:red;">consent form expirations</span>, and upcoming expirations (&lt 3 monthes)</td>
+                        <td>
+                            <table class="expTable" id="consentTable">
+                                <thead>
+                                    <tr>
+                                        <th>First name</th>
+                                        <th>Last name</th>
+                                        <th>Date of expiration</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                <!--Plotting divisions for some stats visualizations-->
+                <div id="plotDiv1" style="width: 80%; float:left;">
+                </div>
+                <div id="plotDiv2" style="width: 100%; clear:both;">
+                </div>
+            </div>
+            <h3 style="clear:both;">&nbsp &nbsp Full Patient Information List, {{patientListLength}} total patients</h3>
+            <table id="groupPatientTable">
+                <tr style="font-weight:bold;">
+                    <th onclick="sortTable(0,'groupPatientTable')">First Name</th>
+                    <th onclick="sortTable(1,'groupPatientTable')">Last Name</th>
+                    <th onclick="sortTable(2,'groupPatientTable')">Patient Ser Num</td>
+                    <th onclick="sortTable(3,'groupPatientTable')">Patient Sex</th>
+                    <th onclick="sortTable(4,'groupPatientTable')">Patient Date of Birth</th>
+                    <th onclick="sortTable(5,'groupPatientTable')">Patient Age</th>
+                    <th onclick="sortTable(6,'groupPatientTable')">Patient Registration Date</th>
+                    <th onclick="sortTable(7,'groupPatientTable')">Patient Preferred Language</th>
+                    <th onclick="sortTable(8,'groupPatientTable')">Patient Consent Form Expiration</th>
+                    <th onclick="sortTable(9, 'groupPatientTable')">Patient Diagnosis</th>
+                    <th onclick="sortTable(10, 'groupPatientTable')">Diagnosis Date</th>
+                </tr>
+                <tr ng-repeat="x in patientList | orderBy:'lname'">
+                    <td>{{ x.fname }}</td>
+                    <td>{{ x.lname }}</td>
+                    <td>{{ x.pser }}</td>
+                    <td>{{ x.psex }}</td>
+                    <td>{{ x.pdob }}</td>
+                    <td>{{ x.age }}</td>
+                    <td>{{ x.regdate }}</td>
+                    <td>{{ x.lang }}</td>
+                    <td>{{ x.consentexp }}</td>
+                    <td>{{ x.diagdesc }}</td>
+                    <td>{{ x.diagdate }}</td>
+                </tr>
+            </table>
+
+        </div>
 </div>
