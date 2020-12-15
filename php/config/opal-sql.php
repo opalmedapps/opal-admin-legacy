@@ -81,6 +81,7 @@ define("OPAL_ALIAS_TABLE","Alias");
 define("OPAL_DIAGNOSIS_TRANSLATION_TABLE","DiagnosisTranslation");
 define("OPAL_PATIENT_TABLE","Patient");
 define("OPAL_TEST_RESULT_EXPRESSION_TABLE","TestResultExpression");
+define("OPAL_TEST_RESULT_ADD_LINKS_TABLE","TestResultAdditionalLinks");
 define("OPAL_DIAGNOSIS_CODE_TABLE","DiagnosisCode");
 define("OPAL_LOGIN_VIEW","v_login");
 define("OPAL_USER_ACTIVITY_LOG_TABLE","OAActivityLog");
@@ -94,6 +95,7 @@ define("OPAL_HOSPITAL_MAP_TABLE","HospitalMap");
 define("OPAL_ALERT_TABLE","alert");
 define("OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE","Patient_Hospital_Identifier");
 define("OPAL_DIAGNOSIS_TABLE","Diagnosis");
+define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -939,4 +941,35 @@ define("OPAL_GET_PATIENT_DIAGNOSIS_ID","
 
 define("OPAL_DELETE_PATIENT_DIAGNOSIS","
     DELETE FROM ".OPAL_DIAGNOSIS_TABLE." WHERE DiagnosisSerNum = :DiagnosisSerNum; 
+");
+
+define("OPAL_GET_TEST_RESULTS","
+    SELECT DISTINCT TestResultControlSerNum AS serial, Name_EN AS name_EN, Name_FR AS name_FR, PublishFlag AS publish,
+    Group_EN AS group_EN, Group_FR AS group_FR, 0 AS changed FROM ".OPAL_TEST_RESULT_CONTROL_TABLE.";
+");
+
+define("OPAL_GET_ASSIGNED_TESTS","
+    SELECT tre.ExpressionName AS id, trc.Name_EN AS name_EN FROM ".OPAL_TEST_RESULT_CONTROL_TABLE." trc
+    LEFT JOIN ".OPAL_TEST_RESULT_EXPRESSION_TABLE." tre ON trc.TestResultControlSerNum = tre.TestResultControlSerNum;
+");
+
+define("OPAL_UPDATE_TEST_RESULTS_PUBLISH_FLAG","
+    UPDATE ".OPAL_TEST_RESULT_CONTROL_TABLE." SET PublishFlag = :PublishFlag, LastUpdatedBy = :LastUpdatedBy,
+    SessionId = :SessionId WHERE TestResultControlSerNum = :TestResultControlSerNum AND PublishFlag != :PublishFlag;
+");
+
+define("OPAL_GET_TEST_RESULT_DETAILS","
+    SELECT DISTINCT Name_EN AS name_EN, Name_FR AS name_FR, Description_EN AS description_EN, Description_FR AS description_FR,
+    Group_EN AS group_EN, Group_FR AS group_FR, EducationalMaterialControlSerNum AS eduMatSer FROM ".OPAL_TEST_RESULT_CONTROL_TABLE."
+    WHERE TestResultControlSerNum = :TestResultControlSerNum;
+");
+
+define("OPAL_GET_TEST_RESULT_EXPRESSION_NAMES","
+    SELECT DISTINCT ExpressionName AS name, ExpressionName AS id, 1 AS added FROM ".OPAL_TEST_RESULT_EXPRESSION_TABLE."
+    WHERE TestResultControlSerNum = :TestResultControlSerNum;
+");
+
+define("OPAL_GET_TEST_RESULT_ADD_LINK","
+    SELECT DISTINCT TestResultAdditionalLinksSerNum AS serial, Name_EN AS name_EN, Name_FR AS name_FR, URL_EN AS url_EN,
+    URL_FR AS url_FR FROM ".OPAL_TEST_RESULT_ADD_LINKS_TABLE." WHERE TestResultControlSerNum = :TestResultControlSerNum;
 ");

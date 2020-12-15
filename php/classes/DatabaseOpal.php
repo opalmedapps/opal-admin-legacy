@@ -2033,4 +2033,70 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":DiagnosisSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    /*
+     * Fetch all test results
+     * @params  void
+     * @return  array - list of test results
+     * */
+    function getTestResults() {
+        return $this->_fetchAll(OPAL_GET_TEST_RESULTS, array());
+    }
+
+    /*
+     * fetch all currently assigned test results
+     * @params  void
+     * @return  array - list of assigned tests
+     * */
+    function getAssignedTests() {
+        return $this->_fetchAll(OPAL_GET_ASSIGNED_TESTS, array());
+    }
+
+    /*
+     * Update the publish flag of a test result
+     * @params  $id : int - primary key in test result control table
+     *          $publishFlag : int - 0 (unpublished) or 1 (published)
+     * @return  void
+     * */
+    function updateTestResultPublishFlag($id, $publishFlag) {
+        $this->_execute(OPAL_UPDATE_TEST_RESULTS_PUBLISH_FLAG, array(
+            array("parameter"=>":PublishFlag","variable"=>$publishFlag,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":LastUpdatedBy","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SessionId","variable"=>$this->getSessionId(),"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get details of a specific test result.
+     * @params  $id : int - primary key in test result control table
+     * @return  array - details from the test result
+     * */
+    function getTestResultDetails($id) {
+        return $this->_fetchAll(OPAL_GET_TEST_RESULT_DETAILS, array(
+            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get list of expression names of a test result
+     * @params  $id : int - primary key in test result control table
+     * @return  array - list of expression names of the test result
+     * */
+    function getTestResultExpressionNames($id) {
+        return $this->_fetchAll(OPAL_GET_TEST_RESULT_EXPRESSION_NAMES, array(
+            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get additional links of a test result
+     * @params  $id : int - primary key in test result control table
+     * @return  array - list of IDs of additional links
+     * */
+    function getTestResultAdditionalLinks($id) {
+        return $this->_fetchAll(OPAL_GET_TEST_RESULT_ADD_LINK, array(
+            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }
