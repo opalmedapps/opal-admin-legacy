@@ -42,50 +42,51 @@
                 All {{materialType}} currently found in OpalDB: <select ng-model="selectedMaterial" ng-options="x for x in educList" ng-change="genEducReport(); showEducReport = true;"></select>
             </label>
             <div ng-show="showEducReport">
-                <div style="border: 1px solid blue; width: 70%;">
-                    <h3 style="color:blue;"> &nbsp &nbsp Statistics for this report </h3>
-                    <table style="padding: 5px 5px 5px 5px;">
-                        <tr>
-                            <td style="font-weight:bold;">% Female/Male</td>
-                            <td>{{educFemPcnt}}% female; {{educMalPcnt}}% male; {{educUnkPcnt}}% unknown</td>
-                        </tr>
-                        <tr>
-                            <td style="font-weight:bold;">Average patient age (in this report)</td>
-                            <td>{{educAvgAge}} years</td>
-                        </tr>
-                        <tr>
-                            <td style="font-weight:bold;">% Materials Read</td>
-                            <td>{{educReadPcnt}}% completed</td>
-                        </tr>
-                        <tr>
-                            <td style="font-weight:bold;">Average time until reading</td>
-                            <td>{{educAvgDaysToRead}} days</td>
-                        </tr>
-                    </table>
-                </div>
-                <h3> &nbsp &nbsp Full report on {{materialType}}: {{selectedMaterial}}, {{educReportLength}} records found</h3>
-                <table id="groupEducTable">
-                    <tr style="font-weight:bold;">
-                        <th onclick="sortTable(0,'groupEducTable')">First Name</th>
-                        <th onclick="sortTable(1,'groupEducTable')">Last Name</th>
-                        <th onclick="sortTable(2,'groupEducTable')">Patient Ser Num</td>
-                        <th onclick="sortTable(3,'groupEducTable')">Patient Sex</th>
-                        <th onclick="sortTable(4,'groupEducTable')">Patient Age</th>
-                        <th onclick="sortTable(5,'groupEducTable')">Patient Date of Birth</th>
-                        <th onclick="sortTable(6,'groupEducTable')">Date Material Sent</th>
-                        <th onclick="sortTable(7,'groupEducTable')">Read Status</th>
-                    </tr>
-                    <tr ng-repeat="x in educReport | orderBy:'lname'">
-                        <td>{{ x.fname }}</td>
-                        <td>{{ x.lname }}</td>
-                        <td>{{ x.pser }}</td>
-                        <td>{{ x.psex }}</td>
-                        <td>{{ x.page }}</td>
-                        <td>{{ x.pdob }}</td>
-                        <td>{{ x.datesent }}</td>
-                        <td>{{ x.readflag }}</td>
-                    </tr>
-                </table>
+                <div class="panel-container">
+                    <div class="panel-input"> 
+                        <h3 style="color:black;"> Statistics for this report </h3>
+                        <table style="padding: 5px 5px 5px 5px;">
+                            <tr>
+                                <td style="font-weight:bold;">% Female/Male</td>
+                                <td>{{educFemPcnt}}% female; {{educMalPcnt}}% male; {{educUnkPcnt}}% unknown</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:bold;">Average patient age (in this report)</td>
+                                <td>{{educAvgAge}} years</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:bold;">% Materials Read</td>
+                                <td>{{educReadPcnt}}% completed</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:bold;">Average time until reading</td>
+                                <td>{{educAvgDaysToRead}} days</td>
+                            </tr>
+                        </table>
+                        <h3> &nbsp &nbsp Full report on {{materialType}}: {{selectedMaterial}}, {{educReportLength}} records found</h3>
+                            <table id="groupEducTable">
+                                <tr style="font-weight:bold;">
+                                    <th onclick="sortTable(0,'groupEducTable')">First Name</th>
+                                    <th onclick="sortTable(1,'groupEducTable')">Last Name</th>
+                                    <th onclick="sortTable(2,'groupEducTable')">Patient Ser Num</td>
+                                    <th onclick="sortTable(3,'groupEducTable')">Patient Sex</th>
+                                    <th onclick="sortTable(4,'groupEducTable')">Patient Age</th>
+                                    <th onclick="sortTable(5,'groupEducTable')">Patient Date of Birth</th>
+                                    <th onclick="sortTable(6,'groupEducTable')">Date Material Sent</th>
+                                    <th onclick="sortTable(7,'groupEducTable')">Read Status</th>
+                                </tr>
+                                <tr ng-repeat="x in educReport | orderBy:'lname'">
+                                    <td>{{ x.pname }}</td>
+                                    <td>{{ x.plname }}</td>
+                                    <td>{{ x.pser }}</td>
+                                    <td>{{ x.psex }}</td>
+                                    <td>{{ x.page }}</td>
+                                    <td>{{ x.pdob }}</td>
+                                    <td>{{ x.edate }}</td>
+                                    <td>{{ x.eread }}</td>
+                                </tr>
+                            </table>
+                    </div> 
             </div>
         </div>
 
@@ -227,3 +228,47 @@
 
         </div>
 </div>
+
+<script>
+    //Bubble sort
+     function sortTable(n, tname) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById(tname); //table handle to get the data
+            switching = true; //switching variable identifies if we are done or not (begin with true)
+            dir = "asc"; // sorting direction
+            while (switching) { // outer loop, continue until we have no more switches possible
+                switching = false;
+                rows = table.rows; //get rows to be sorted
+                for (i = 1; i < (rows.length - 1); i++) { //inner loop, just identifies if we are doing a switch or not
+                    shouldSwitch = false; //doing a switch? false by default
+                    x = rows[i].getElementsByTagName("TD")[n]; //x and y elements to compare
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    if (dir == "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true; //mark a switch to be done and exit this branch
+                            break;
+                        }
+                    } else if (dir == "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true; //mark a switch to be done and exit this branch
+                            break;
+                        }
+                    }
+                } //end of the inner loop. Either we are at a pair of elements that need to be swapped, or we are at the end of the list and we are finished
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]); //perform the swap
+                    switching = true; //identify that, since we did a swap, we need to restart the inner loop, so dont exit the outer while loop
+                    switchcount++;      // keep track of where we are
+                } else {
+                    /*If no switching has been done AND the direction is "asc",
+                    set the direction to "desc" and run the while loop again.*/
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+
+
+</script>

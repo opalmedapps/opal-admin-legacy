@@ -96,7 +96,6 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
                 type: $scope.materialType, 
                 name: $scope.selectedMaterial},
             success: function(response){
-                console.log(JSON.parse(response));
                 prepareEducReport(JSON.parse(response));
             },
             error: function(err){
@@ -129,10 +128,45 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
         if(inp && (inp !== null)){
             $scope.educReport = inp;
             for(var i = 0; i< $scope.educReport.length; i++){
-                // TODO process educReport and strip whitespace and quotation marks
+                if($scope.educReport[i].pname){
+                    $scope.educReport[i].pname = $scope.educReport[i].pname.replace(/["']/g, "");
+                }else{
+                    $scope.educReport[i].pname = "N/A";
+                }
+                if($scope.educReport[i].plname){
+                    $scope.educReport[i].plname = $scope.educReport[i].plname.replace(/["']/g, "");
+                }else{
+                    $scope.educReport[i].plname = "N/A";
+                }
+                if($scope.educReport[i].pser){
+                    $scope.educReport[i].pser = $scope.educReport[i].pser.replace(/["']/g, "");
+                }else{
+                    $scope.educReport[i].pser = "N/A";
+                }
+                if($scope.educReport[i].page){
+                    $scope.educReport[i].page = $scope.educReport[i].page.replace(/["']/g, "");
+                }
+                if($scope.educReport[i].pdob){
+                    $scope.educReport[i].pdob = $scope.educReport[i].pdob.replace(/["']/g, "");
+                }
+                if($scope.educReport[i].psex){
+                    $scope.educReport[i].psex = $scope.educReport[i].psex.replace(/["' ]/g, "");
+                }else{
+                    $scope.educReport[i].psex = "N/A";
+                }
+                if($scope.educReport[i].edate){
+                    $scope.educReport[i].edate = $scope.educReport[i].edate.replace(/["']/g, "");
+                }
+                if($scope.educReport[i].eread){
+                    $scope.educReport[i].eread = $scope.educReport[i].eread.replace(/["']/g, "");
+                }
+                if($scope.educReport[i].eupdate){
+                    $scope.educReport[i].eupdate = $scope.educReport[i].eupdate.replace(/["']/g, "");
+                }
+                
             }
             $scope.educReportLength = $scope.educReport.length;
-
+            prepareEducStats();
 
 
 
@@ -145,18 +179,30 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
 
     // Helper function to prepare educational material statistics for display
     function prepareEducStats(){
-        var totAge, ageDenom, femCount, malCount, totRead, daysToRead;
+        var totAge = 0;
+        var ageDenom = 0;
+        var femCount = 0;
+        var malCount = 0;
+        var totRead = 0;
+        var daysToRead = 0;
         var date_diff_days = function(d1, d2){
             return Math.floor((Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate()) - Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate()) ) / (1000*60*60*24));
         }
         for(var i = 0; i < $scope.educReportLength; i++){
-            if($scope.educReport[i].page !== 'null'){ //TODO complete when educReport format established
+            if($scope.educReport[i].page != null){
                 totAge += parseInt($scope.educReport[i].page);
                 ageDenom++;
             }
+            if($scope.educReport[i].psex === "Female"){
+                femCount++;
+            }else if($scope.educReport[i].psex === "Male"){
+                malCount++;
+            }
 
-
-
+            if($scope.educReport[i].eread === "1"){
+                totRead++;
+                daysToRead += date_diff_days(new Date($scope.educReport[i].edate),new Date($scope.educReport[i].eupdate));
+            }
         }
 
         //average age
@@ -166,7 +212,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
         $scope.educFemPcnt = ((femCount/$scope.educReportLength)*100).toFixed(2);
         $scope.educUnkPcnt = (100-$scope.educMalPcnt-$scope.educFemPcnt).toFixed(2);
         // % materials read
-        $scope.educReadPcnt = ((totRad/$scope.educReportLength)*100).toFixed(2);
+        $scope.educReadPcnt = ((totRead/$scope.educReportLength)*100).toFixed(2);
         // average time to read among read materials
         $scope.educAvgDaysToRead = (daysToRead/totRead).toFixed(2);
 
@@ -354,17 +400,26 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
         if(inp && (inp !== null)){
             $scope.patientReport = inp;
 			for(var i = 0; i < $scope.patientReport.length; i++){
-				$scope.patientReport[i].pname = $scope.patientReport[i].pname.replace(/["']/g, "");
-				$scope.patientReport[i].plname = $scope.patientReport[i].plname.replace(/["']/g, "");
-				$scope.patientReport[i].pdob = $scope.patientReport[i].pdob.replace(/["']/g, "");
-				$scope.patientReport[i].psex = $scope.patientReport[i].psex.replace(/["' ]/g, "");
-				$scope.patientReport[i].pser = $scope.patientReport[i].pser.replace(/["']/g, "");
-				$scope.patientReport[i].page = $scope.patientReport[i].page.replace(/["']/g, "");
-				$scope.patientReport[i].pcons = $scope.patientReport[i].pcons.replace(/["']/g, "");
-				$scope.patientReport[i].preg = $scope.patientReport[i].preg.replace(/["']/g, "");
-				$scope.patientReport[i].plang = $scope.patientReport[i].plang.replace(/["']/g, "");
-				$scope.patientReport[i].diagdate = $scope.patientReport[i].diagdate.replace(/["']/g, "");
-				$scope.patientReport[i].diagdesc = $scope.patientReport[i].diagdesc.replace(/["']/g, "");
+                // angular.forEach($scope.patientReport[i], function(key, value){
+                //     console.log("Key:" + key);
+                //     console.log("Value:" + value);
+                //     if(key){
+                //         $scope.patientReport[i].value = $scope.patientReport[i].value.replace(/["']/g, "");
+                //     }else{
+                //         $scope.patientReport[i].value = "N/A";
+                //     }
+                // });
+				// $scope.patientReport[i].pname = $scope.patientReport[i].pname.replace(/["']/g, "");
+				// $scope.patientReport[i].plname = $scope.patientReport[i].plname.replace(/["']/g, "");
+				// $scope.patientReport[i].pdob = $scope.patientReport[i].pdob.replace(/["']/g, "");
+				// $scope.patientReport[i].psex = $scope.patientReport[i].psex.replace(/["' ]/g, "");
+				// $scope.patientReport[i].pser = $scope.patientReport[i].pser.replace(/["']/g, "");
+				// $scope.patientReport[i].page = $scope.patientReport[i].page.replace(/["']/g, "");
+				// $scope.patientReport[i].pcons = $scope.patientReport[i].pcons.replace(/["']/g, "");
+				// $scope.patientReport[i].preg = $scope.patientReport[i].preg.replace(/["']/g, "");
+				// $scope.patientReport[i].plang = $scope.patientReport[i].plang.replace(/["']/g, "");
+				// $scope.patientReport[i].diagdate = $scope.patientReport[i].diagdate.replace(/["']/g, "");
+				// $scope.patientReport[i].diagdesc = $scope.patientReport[i].diagdesc.replace(/["']/g, "");
             }
             $scope.patientReportLength = $scope.patientReport.length;
             console.log($scope.patientReport);
