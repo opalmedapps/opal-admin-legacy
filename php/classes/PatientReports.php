@@ -708,10 +708,9 @@ class PatientReports extends Module {
                     'plname'        => $data[1],
                     'pser'          => $data[2],
                     'psex'          => $data[3],
-                    'psex'          => $data[4],
-                    'pdob'          => $data[5],
-                    'qdate'         => $data[6],
-                    'qcomplete'     => $data[7]
+                    'pdob'          => $data[4],
+                    'qdate'          => $data[5],
+                    'qcomplete'         => $data[6]
                 );
                 array_push($qstReport, $qstArray);
             }

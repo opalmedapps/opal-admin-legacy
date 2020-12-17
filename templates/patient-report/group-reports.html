@@ -9,15 +9,15 @@
 
 <div class="modal-body">
 
-  <div id="GroupReport" class="tabcontent">
-    <div style="float:right; clear:both;">
-        <p>
-            Database: <br />
-            <label style="color:darkgreen; font-weight:bold;"><input type="checkbox" ng-model="db.prod" ng-change="db.preprod = false; updateColours();"> Prod </label>
-            <br>
-            <label style="color:darkturquoise; font-weight:bold;"><input type="checkbox" ng-model="db.preprod" ng-change="db.prod = false; updateColours();"> Preprod </label>
-        </p>
-    </div>
+   <div id="GroupReport">
+        <div style="float:right; clear:both;">
+            <p>
+                Database: <br/>
+                <label style="color:darkgreen; font-weight:bold;"><input type="checkbox" ng-model="db.prod" ng-change="db.preprod = false; updateColours();"> Prod </label>
+                <br>
+                <label style="color:darkturquoise; font-weight:bold;"><input type="checkbox" ng-model="db.preprod" ng-change="db.prod = false; updateColours();"> Preprod </label>
+            </p>
+        </div>
         <p> Select group reporting category </p>
         <label><input type="checkbox" ng-model="category.education" ng-change="category.questionnaire = false; category.demographics = false;"> Educational Material </label>
         <br>
@@ -86,11 +86,12 @@
                                     <td>{{ x.eread }}</td>
                                 </tr>
                             </table>
-                    </div> 
+                    </div>
+                </div> 
             </div>
         </div>
 
-        <div ng-show="category.questionnaire" style="border:1px solid black;">
+        <div ng-show="category.questionnaire">
             <center>
                 <h2> Questionnaire Group Reporting </h2>
             </center>
@@ -109,23 +110,23 @@
                     <table style="padding: 5px 5px 5px 5px;">
                         <tr>
                             <td style="font-weight:bold;">% Female/Male</td>
-                            <td>{{pcntFemale}}% female; {{pcntMale}}% male; {{pcntUnk}}% unknown</td>
+                            <td>{{qstPcntFemale}}% female; {{qstPcntMale}}% male; {{qstPcntUnk}}% unknown</td>
                         </tr>
                         <tr>
                             <td style="font-weight:bold;">Total # unique patients in report</td>
-                            <td>{{numUniquePats}} unique patients</td>
+                            <td>{{qstUniquePats}} unique patients</td>
                         </tr>
                         <tr>
                             <td style="font-weight:bold;">Average patient age (in this report)</td>
-                            <td>{{avgPatAge}} years</td>
+                            <td>{{qstAvgAge}} years</td>
                         </tr>
                         <tr>
                             <td style="font-weight:bold;">Total % completed questionnaires</td>
-                            <td>{{pcntCompleted}}% completed</td>
+                            <td>{{qstPcntCompleted}}% completed</td>
                         </tr>
                         <tr>
                             <td style="font-weight:bold;">Average completion time (among completed questionnaires)</td>
-                            <td>{{avgCompletionTime}} days</td>
+                            <td>{{qstAvgCompletTime}} days</td>
                         </tr>
                     </table>
 
@@ -143,20 +144,20 @@
                         <th onclick="sortTable(5,'groupQstTable')">Date Material Sent</th>
                         <th onclick="sortTable(6,'groupQstTable')">Date Material Completed</th>
                     </tr>
-                    <tr ng-repeat="x in qstReport | orderBy:'lname'">
-                        <td>{{ x.fname }}</td>
-                        <td>{{ x.lname }}</td>
+                    <tr ng-repeat="x in qstReport | orderBy:'plname'">
+                        <td>{{ x.pname }}</td>
+                        <td>{{ x.plname }}</td>
                         <td>{{ x.pser }}</td>
                         <td>{{ x.psex }}</td>
                         <td>{{ x.pdob }}</td>
-                        <td>{{ x.datesent }}</td>
-                        <td>{{ x.datecomplete }}</td>
+                        <td>{{ x.qdate }}</td>
+                        <td>{{ x.qcomplete }}</td>
                     </tr>
                 </table>
 
             </div>
         </div>
-        <div ng-show="category.demographics" style="border:3px solid black;">
+        <div ng-show="category.demographics">
             <center>
                 <h2> Demographics Group Reporting </h2>
             </center>
@@ -165,38 +166,24 @@
                 <table style="padding: 5px 5px 5px 5px;">
                     <tr>
                         <td style="font-weight:bold;">% Female/Male</td>
-                        <td>{{demopcntFemale}}% female; {{demopcntMale}}% male; {{demopcntUnk}}% unknown</td>
+                        <td>{{demoPcntFemale}}% female; {{demoPcntMale}}% male; {{demoPcntUnk}}% unknown</td>
                     </tr>
                     <tr>
                         <td style="font-weight:bold;">Average Patient Age</td>
-                        <td>{{demoavgPatAge}} years</td>
+                        <td>{{demoAvgAge}} years</td>
                     </tr>
                     <tr>
                         <td style="font-weight:bold;">% French/English Preferred</td>
-                        <td>{{demopcntFrench}}% french preferred; {{demopcntEnglish}}% english preferred;</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight:bold;">List of <span style="color:red;">consent form expirations</span>, and upcoming expirations (&lt 3 monthes)</td>
-                        <td>
-                            <table class="expTable" id="consentTable">
-                                <thead>
-                                    <tr>
-                                        <th>First name</th>
-                                        <th>Last name</th>
-                                        <th>Date of expiration</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </td>
+                        <td>{{demoPcntFrench}}% french preferred; {{demoPcntEnglish}}% english preferred;</td>
                     </tr>
                 </table>
                 <!--Plotting divisions for some stats visualizations-->
-                <div id="plotDiv1" style="width: 80%; float:left;">
+                <!-- <div id="plotDiv1" style="width: 80%; float:left;">
                 </div>
                 <div id="plotDiv2" style="width: 100%; clear:both;">
-                </div>
+                </div> -->
             </div>
-            <h3 style="clear:both;">&nbsp &nbsp Full Patient Information List, {{patientListLength}} total patients</h3>
+            <h3 style="clear:both;">&nbsp &nbsp Full Patient Information List, {{patientReportLength}} total patients</h3>
             <table id="groupPatientTable">
                 <tr style="font-weight:bold;">
                     <th onclick="sortTable(0,'groupPatientTable')">First Name</th>
@@ -207,26 +194,25 @@
                     <th onclick="sortTable(5,'groupPatientTable')">Patient Age</th>
                     <th onclick="sortTable(6,'groupPatientTable')">Patient Registration Date</th>
                     <th onclick="sortTable(7,'groupPatientTable')">Patient Preferred Language</th>
-                    <th onclick="sortTable(8,'groupPatientTable')">Patient Consent Form Expiration</th>
-                    <th onclick="sortTable(9, 'groupPatientTable')">Patient Diagnosis</th>
-                    <th onclick="sortTable(10, 'groupPatientTable')">Diagnosis Date</th>
+                    <th onclick="sortTable(8, 'groupPatientTable')">Patient Diagnosis</th>
+                    <th onclick="sortTable(9, 'groupPatientTable')">Diagnosis Date</th>
                 </tr>
-                <tr ng-repeat="x in patientList | orderBy:'lname'">
-                    <td>{{ x.fname }}</td>
-                    <td>{{ x.lname }}</td>
+                <tr ng-repeat="x in patientReport | orderBy:'plname'">
+                    <td>{{ x.pname }}</td>
+                    <td>{{ x.plname }}</td>
                     <td>{{ x.pser }}</td>
                     <td>{{ x.psex }}</td>
                     <td>{{ x.pdob }}</td>
-                    <td>{{ x.age }}</td>
-                    <td>{{ x.regdate }}</td>
-                    <td>{{ x.lang }}</td>
-                    <td>{{ x.consentexp }}</td>
+                    <td>{{ x.page }}</td>
+                    <td>{{ x.preg }}</td>
+                    <td>{{ x.plang }}</td>
                     <td>{{ x.diagdesc }}</td>
                     <td>{{ x.diagdate }}</td>
                 </tr>
             </table>
 
         </div>
+    </div>
 </div>
 
 <script>

@@ -10,6 +10,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
 		demographics : false,
     };
 
+
     //Display variables for educational materials branch
 	$scope.displayMaterialList = false;
 	$scope.materialTypes = ["Booklet","Factsheet","Package","Video","Treatment Guidelines"];
@@ -228,6 +229,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
      * Generate list of questionnaires found in DB
      */
     $scope.genQuestionnaireOptions = function(){
+        $scope.qstReport = "";
         $.ajax({
             type:"POST",
             url:"patient-reports/find/questionnaire-options",
@@ -253,7 +255,6 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
             url: "patient-reports/get/qst-report",
             data: {qstName: $scope.selectedQuestionnaire},
             success: function(response){
-                console.log(JSON.parse(response));
                 prepareQstReport(JSON.parse(response));
             },
             error: function(err){
@@ -267,7 +268,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
     function prepareQstList(inp){
         var tmp = "";
         if(inp && (inp !== null)){
-             for(var i=0; i < inp.length; i++){
+            for(var i=0; i < inp.length; i++){
             tmp = tmp + inp[i].name.replace(/["']/g, "");
             $scope.qstList.push(tmp);
             tmp ="";
@@ -284,14 +285,36 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
         if(inp && (inp !== null)){
             $scope.qstReport = inp;
             for(var i=0; i< $scope.qstReport.length; i++){
-                $scope.qstReport[i].pname = $scope.qstReport[i].pname.replace(/["']/g, "");
-				$scope.qstReport[i].plname = $scope.qstReport[i].plname.replace(/["']/g, "");
-				$scope.qstReport[i].pdob = $scope.qstReport[i].pdob.replace(/["']/g, "");
-				$scope.qstReport[i].psex = $scope.qstReport[i].psex.replace(/["' ]/g, "");
-				$scope.qstReport[i].pser = $scope.qstReport[i].pser.replace(/["']/g, "");
-				$scope.qstReport[i].qdate = $scope.qstReport[i].qdate.replace(/["']/g, "");
-				$scope.qstReport[i].qcomplete = $scope.qstReport[i].qcomplete.replace(/["']/g, "");
-            }
+                if($scope.qstReport[i].pname){
+                    $scope.qstReport[i].pname = $scope.qstReport[i].pname.replace(/["']/g, "");
+                }else{
+                    $scope.qstReport[i].pname = "N/A";
+                }
+                if($scope.qstReport[i].plname){
+                    $scope.qstReport[i].plname = $scope.qstReport[i].plname.replace(/["']/g, "");
+                }else{
+                    $scope.qstReport[i].plname = "N/A";
+                }
+                if($scope.qstReport[i].pdob){
+                    $scope.qstReport[i].pdob = $scope.qstReport[i].pdob.replace(/["']/g, "");
+                }else{
+                    $scope.qstReport[i].pdob = "N/A";
+                }
+                if($scope.qstReport[i].psex){
+                    $scope.qstReport[i].psex = $scope.qstReport[i].psex.replace(/["' ]/g, "");
+                }
+                if($scope.qstReport[i].pser){
+                    $scope.qstReport[i].pser = $scope.qstReport[i].pser.replace(/["']/g, "");
+                }
+                if($scope.qstReport[i].qdate){
+                    $scope.qstReport[i].qdate = $scope.qstReport[i].qdate.replace(/["']/g, "");
+                }
+                if($scope.qstReport[i].qcomplete){
+                    $scope.qstReport[i].qcomplete = $scope.qstReport[i].qcomplete.replace(/["']/g, "");
+                }else{
+                    $scope.qstReport[i].qcomplete = "N/A";
+                }
+			}
             $scope.qstReportLength = $scope.qstReport.length;
         }else{
             // ErrorHandler TODO
@@ -299,21 +322,27 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
 
         console.log($scope.qstReport);
 
-        //prepareQstStats();
+        prepareQstStats();
     }
 
     // Helper function to generate patient questionnaire statistics
     function prepareQstStats(){
-        var femCount, malCount, unkCount, totNulls;
+        var femCount = 0;
+        var malCount = 0;
+        var unkCount = 0;
+        var totNulls = 0;
         var tot = $scope.qstReportLength;
         var uniquePats = [];
+        //initialize unique pats with first patient name
+        uniquePats.push($scope.qstReport[0].pname + " , " + $scope.qstReport[0].plname);
+        var curPat = "";
         var uniquePatDobs = [];
         var completionTimes = [];
         var date_diff_days = function(d1, d2){
             return Math.floor((Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate()) - Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate()) ) / (1000*60*60*24));
         }
 
-        for(var i = 0; i< tot; i++){
+        for(var i = 0; i < tot; i++){
             // gender breakdown
             if($scope.qstReport[i].psex === "Female"){
                 femCount++;
@@ -324,34 +353,37 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
             }
 
             //unique patient count
-            if(!uniquePats.includes($scope.qstReport[i].lname)){
-                uniquePats.push($scope.qstReport[i].lname);
+            curPat = $scope.qstReport[i].pname + " , " + $scope.qstReport[i].plname;
+            if(!uniquePats.includes(curPat)){
+                uniquePats.push(curPat);
                 uniquePatDobs.push(new Date($scope.qstReport[i].pdob));
             }
 
             // %completion and completion time
-            if($scope.qstReport[i].datecomplete === "null"){
+            if($scope.qstReport[i].qcomplete === "N/A"){
                 totNulls ++;
             }else{
-                completionTimes.push(date_diff_days(new Date($scope.qstReport[i].datesent), new Date($scope.qstReport[i].datecomplete)));
+                completionTimes.push(date_diff_days(new Date($scope.qstReport[i].qdate), new Date($scope.qstReport[i].qcomplete)));
             }
 
             // gender statistics
             $scope.qstPcntFemale = ((femCount/tot)*100).toFixed(2);
 			$scope.qstPcntMale = ((malCount/tot)*100).toFixed(2);
-			$scope.qstPcntUnk = (100 - $scope.pcntMale - $scope.pcntFemale).toFixed(2);
+			$scope.qstPcntUnk = (100 - $scope.qstPcntMale - $scope.qstPcntFemale).toFixed(2);
 			$scope.qstUniquePats = uniquePats.length;
             //age stats
-            var sum, invalids, avg;
+            var sum = 0;
+            var invalids = 0;
+            var avg = 0;
             var patAges = [];
-            for(var i = 0; i < uniquePatDobs.length; i++){
-                patAges.push(date_diff_days(uniquePatDobs[i],new Date()));
+            for(var j = 0; j < uniquePatDobs.length; j++){
+                patAges.push(date_diff_days(uniquePatDobs[j],new Date()));
             }
-            for(var i = 0; i<patAges.length; i++){
-                if(isNaN(patAges[i])){
+            for(var k = 0; k<patAges.length; k++){
+                if(patAges[k] === "N/A"){
                     invalids++;
                 }else{
-                    sum += patAges[i];
+                    sum += patAges[k];
                 }
             }
             avg = sum/(patAges.length - invalids);
@@ -361,8 +393,8 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
 
             $scope.qstPcntCompleted = (((tot-totNulls)/tot)*100).toFixed(2);
             sum = 0;
-            for(var i = 0; i < completionTimes.length; i++){
-                sum += completionTimes[i];
+            for(var n = 0; n < completionTimes.length; n++){
+                sum += completionTimes[n];
             }
             $scope.qstAvgCompletTime = (sum/completionTimes.length).toFixed(2);
         }
@@ -384,7 +416,6 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
             url: "patient-reports/get/pat-report",
             data: null,
             success: function(response){
-                console.log(JSON.parse(response));
                 preparePatientReport(JSON.parse(response));
             },
             error: function(err){
@@ -400,30 +431,65 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
         if(inp && (inp !== null)){
             $scope.patientReport = inp;
 			for(var i = 0; i < $scope.patientReport.length; i++){
-                // angular.forEach($scope.patientReport[i], function(key, value){
-                //     console.log("Key:" + key);
-                //     console.log("Value:" + value);
-                //     if(key){
-                //         $scope.patientReport[i].value = $scope.patientReport[i].value.replace(/["']/g, "");
-                //     }else{
-                //         $scope.patientReport[i].value = "N/A";
-                //     }
-                // });
-				// $scope.patientReport[i].pname = $scope.patientReport[i].pname.replace(/["']/g, "");
-				// $scope.patientReport[i].plname = $scope.patientReport[i].plname.replace(/["']/g, "");
-				// $scope.patientReport[i].pdob = $scope.patientReport[i].pdob.replace(/["']/g, "");
-				// $scope.patientReport[i].psex = $scope.patientReport[i].psex.replace(/["' ]/g, "");
-				// $scope.patientReport[i].pser = $scope.patientReport[i].pser.replace(/["']/g, "");
-				// $scope.patientReport[i].page = $scope.patientReport[i].page.replace(/["']/g, "");
-				// $scope.patientReport[i].pcons = $scope.patientReport[i].pcons.replace(/["']/g, "");
-				// $scope.patientReport[i].preg = $scope.patientReport[i].preg.replace(/["']/g, "");
-				// $scope.patientReport[i].plang = $scope.patientReport[i].plang.replace(/["']/g, "");
-				// $scope.patientReport[i].diagdate = $scope.patientReport[i].diagdate.replace(/["']/g, "");
-				// $scope.patientReport[i].diagdesc = $scope.patientReport[i].diagdesc.replace(/["']/g, "");
-            }
+                if($scope.patientReport[i].pname){
+				    $scope.patientReport[i].pname = $scope.patientReport[i].pname.replace(/["']/g, "");
+                }else{
+                    $scope.patientReport[i].pname = "N/A";
+                }
+                if($scope.patientReport[i].plname){
+                    $scope.patientReport[i].plname = $scope.patientReport[i].plname.replace(/["']/g, "");
+                }else{
+                    $scope.patientReport[i].plname = "N/A";
+                }
+                if($scope.patientReport[i].psex){
+                    $scope.patientReport[i].psex = $scope.patientReport[i].psex.replace(/["' ]/g, "");
+                }else{
+                    $scope.patientReport[i].psex = "N/A";
+                }
+                if($scope.patientReport[i].pser){
+                    $scope.patientReport[i].pser = $scope.patientReport[i].pser.replace(/["']/g, "");
+                }else{
+                    $scope.patientReport[i].pser = "N/A";
+                }
+                if($scope.patientReport[i].pdob){
+                    $scope.patientReport[i].pdob = $scope.patientReport[i].pdob.replace(/["']/g, "");
+                }else{
+                    $scope.patientReport[i].pdob = "N/A";
+                }
+                if($scope.patientReport[i].page){
+                    $scope.patientReport[i].page = $scope.patientReport[i].page.replace(/["']/g, "");
+                }else{
+                    $scope.patientReport[i].page = "N/A";
+                }
+                if($scope.patientReport[i].pemail){
+                    $scope.patientReport[i].pemail = $scope.patientReport[i].pemail.replace(/["']/g, "");
+                }else{
+                    $scope.patientReport[i].pemail = "N/A";
+                }
+                if($scope.patientReport[i].plang){
+                    $scope.patientReport[i].plang = $scope.patientReport[i].plang.replace(/["']/g, "");
+                }else{
+                    $scope.patientReport[i].plang = "N/A";
+                }
+                if($scope.patientReport[i].preg){
+                    $scope.patientReport[i].preg = $scope.patientReport[i].preg.replace(/["']/g, "");
+                }else{
+                    $scope.patientReport[i].preg = "N/A";
+                }
+                if($scope.patientReport[i].diagdesc){
+                    $scope.patientReport[i].diagdesc = $scope.patientReport[i].diagdesc.replace(/["']/g, "");
+                }else{
+                    $scope.patientReport[i].diagdesc = "N/A";
+                }
+                if($scope.patientReport[i].diagdate){
+                    $scope.patientReport[i].diagdate = $scope.patientReport[i].diagdate.replace(/["']/g, "");
+                }else{
+                    $scope.patientReport[i].diagdate = "N/A";
+                }
+			 }
             $scope.patientReportLength = $scope.patientReport.length;
             console.log($scope.patientReport);
-            //prepareDemoStats();
+            prepareDemoStats();
 
 
         }else{
@@ -431,7 +497,12 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
         }
         // Heper function to generate demographics statistics
         function prepareDemoStats(){
-            var femCount, malCount, unkCount, totAge, nullCount, frCount;
+            var femCount = 0;
+            var malCount = 0;
+            var unkCount = 0;
+            var totAge = 0;
+            var nullCount = 0;
+            var frCount = 0;
             $scope.demoPcntFemale = 0;
             $scope.demoPcntMale = 0;
             var regDates = [];
@@ -439,7 +510,6 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
             var tmpC = 1;
 
             var diagDict = new Object(); //diagnosis tracking
-            //consent form expiration TODO: is this still relevant?
 
             for(var i = 0; i< $scope.patientReportLength; i++){
                 // male/female demgraphics
@@ -452,14 +522,14 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
                 }
 
                 //avg patient age
-                if($scope.patientReport[i].age){
-                    totAge += parseInt($scope.patientReport[i].age);
+                if($scope.patientReport[i].page && $scope.patientReport[i].page > 1){
+                    totAge += parseInt($scope.patientReport[i].page);
                 }else{
                     nullCount++;
                 }
 
                 // french/english
-                if($scope.patientReport[i].lang === "FR"){
+                if($scope.patientReport[i].plang === "FR"){
                     frCount++;
                 }
 
