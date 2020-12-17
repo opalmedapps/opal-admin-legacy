@@ -973,3 +973,7 @@ define("OPAL_GET_TEST_RESULT_ADD_LINK","
     SELECT DISTINCT TestResultAdditionalLinksSerNum AS serial, Name_EN AS name_EN, Name_FR AS name_FR, URL_EN AS url_EN,
     URL_FR AS url_FR FROM ".OPAL_TEST_RESULT_ADD_LINKS_TABLE." WHERE TestResultControlSerNum = :TestResultControlSerNum;
 ");
+
+define("OPAL_GET_TEST_RESULT_GROUPS","
+    SELECT DISTINCT Group_EN AS EN, Group_FR AS FR FROM ".OPAL_TEST_RESULT_CONTROL_TABLE.";
+");
