@@ -7,10 +7,10 @@
     </div>
 </div>
 <div class="modal-body">
-    <div id="PatientReport" class="tabcontent">
-        <div style="margin:5px;">
+    <div id="PatientReport">
+        <div style=>
             <div>
-                <table style="width:60%; float:left; margin: 5px 5px 5px 5px;">
+                <table style="display: inline-block; margin: 5px 5px 5px 5px;">
                     <tr>
                         <td>
                             <h2>Search for patient:</h2>
@@ -33,7 +33,7 @@
                                         <td>Patient MRN:</td><td><input type="text" ng-model="searchMRN" ng-disabled="searchName || searchRAMQ" ng-change="searchMRN==''?resetFieldValues():''"></td>
                                     </tr>
                                     <tr>
-                                        <td colspan=5>
+                                        <td>
                                             <input class="btn" value="Submit" type="submit">
                                             <input class="btn" value="Reset" type="reset" ng-click="resetFieldValues()">
                                         </td>
@@ -41,7 +41,7 @@
                                 </table>
                             </form>
                         </td>
-                        <td>
+                        <td style="float:right;">
                             <p>
                                 Database: <br />
                                 <label style="color:darkgreen; font-weight:bold;"><input type="checkbox" ng-model="db.prod" ng-change="db.preprod = false; updateColours();"> Prod </label>
@@ -53,9 +53,11 @@
                     </tr>
                 </table>
             </div>
+            <br/>
 
-            <div ng-show="selectPatient">
-                <select ng-model="selectedName" ng-options="x for x in patoptions"
+            <div ng-show="selectPatient" style="display:inline-block;">
+                <p>Multiple patients found matching search criteria, please select: </p>
+                <select ng-model="selectedName" ng-options="x for x in patOptions"
                         ng-change="displaySelection()"></select>
             </div>
 
@@ -84,7 +86,7 @@
                             <td><label>General Announcements <input type="checkbox" ng-model="featureList.general"></label></td>
                         </tr>
                         <tr>
-                            <td colspan=5 align="center">
+                            <td>
                                 <input class="btn" value="Generate Report" type="submit" style="padding: 4px 4px 4px 4px; color:blue; font-weight: bold;">
                             </td>
                         </tr>
@@ -92,15 +94,15 @@
                     <br />
                 </form>
                 <div>
-                    <table class="showPatient" style="margin-top:-17px;">
+                    <table class="showPatient">
                         <caption style="font-weight:bold; font-size:1.5em;">Selected Patient</caption>
                         <tr>
                             <td> <b>Last Name</b> </td>
-                            <td> {{pname}} </td>
+                            <td> {{plname}} </td>
                         </tr>
                         <tr>
                             <td> <b>First Name</b> </td>
-                            <td> {{pfname}} </td>
+                            <td> {{pname}} </td>
                         </tr>
                         <tr>
                             <td> <b>Sex</b> </td>
@@ -120,11 +122,11 @@
                         </tr>
                         <tr>
                             <td><b>MRN</b></td>
-                            <td> {{pmrn}}</td>
+                            <td> {{pid}}</td>
                         </tr>
                         <tr>
                             <td><b>Opal App Language</b></td>
-                            <td> {{planguage}}</td>
+                            <td> {{plang}}</td>
                         </tr>
                     </table>
                 </div>
@@ -143,10 +145,10 @@
                         <th onclick="sortTable(1,'diagTable')">Diagnosis Description</th>
                         <th onclick="sortTable(2,'diagTable')">Diagnosis SerNum</th>
                     </tr>
-                    <tr ng-repeat="x in diagReport | orderBy:'-created'">
-                        <td> {{ x.created }} </td>
-                        <td> {{ x.desc }} </td>
-                        <td> {{ x.dsnum }} </td>
+                    <tr ng-repeat="x in diagReport | orderBy:'-creationdate'">
+                        <td> {{ x.creationdate }} </td>
+                        <td> {{ x.description }} </td>
+                        <td> {{ x.sernum }} </td>
                     </tr>
                 </table>
             </div>
@@ -164,13 +166,13 @@
                         <th onclick="quickSortTrampoline(4,'apptTable')">Appoint. Description</th>
                         <th onclick="quickSortTrampoline(5,'apptTable')">Resource Name</th>
                     </tr>
-                    <tr ng-repeat="x in apptReport[0] | orderBy:'-starttime'">
-                        <td> {{ x.created }} </td>
+                    <tr ng-repeat="x in apptReport | orderBy:'-starttime'">
+                        <td> {{ x.dateadded }} </td>
                         <td> {{ x.starttime }} </td>
                         <td> {{ x.status }} </td>
-                        <td> {{ x.aptType }} </td>
-                        <td> {{ x.aptDesc }} </td>
-                        <td> {{ x.resName }} </td>
+                        <td> {{ x.aliastype }} </td>
+                        <td> {{ x.aliasname }} </td>
+                        <td> {{ x.resourcename }} </td>
                     </tr>
                 </table>
             </div>
@@ -185,9 +187,9 @@
                         <th onclick="sortTable(1,'qstTable')">Date Completed</th>
                         <th onclick="sortTable(2,'qstTable')">Questionnaire Name</th>
                     </tr>
-                    <tr ng-repeat="y in qstReport[0] | orderBy:'-dateAdd'">
-                        <td> {{ y.dateAdd }} </td>
-                        <td> {{ y.dateComplete }} </td>
+                    <tr ng-repeat="y in qstReport | orderBy:'-dateadded'">
+                        <td> {{ y.dateadded }} </td>
+                        <td> {{ y.datecompleted }} </td>
                         <td> {{ y.name }} </td>
                     </tr>
                 </table>
@@ -204,11 +206,11 @@
                         <th onclick="sortTable(2,'educTable')">Material Name</th>
                         <th onclick="sortTable(3,'educTable')">Read Status</th>
                     </tr>
-                    <tr ng-repeat="x in educReport[0] | orderBy:'-dateAdd'">
-                        <td> {{ x.dateAdd }} </td>
-                        <td> {{ x.matType }} </td>
-                        <td> {{ x.matName }} </td>
-                        <td> {{ x.readStatus }} </td>
+                    <tr ng-repeat="x in educReport | orderBy:'-dateadded'">
+                        <td> {{ x.dateadded }} </td>
+                        <td> {{ x.materialtype }} </td>
+                        <td> {{ x.name }} </td>
+                        <td> {{ x.readstatus }} </td>
                     </tr>
                 </table>
             </div>
@@ -228,15 +230,15 @@
                         <th onclick="quickSortTrampoline(6,'resTable')">Unit Description</th>
                         <th onclick="quickSortTrampoline(7,'resTable')">Read Status</th>
                     </tr>
-                    <tr ng-repeat="x in testReport[0] | orderBy:'-dateAdd'">
-                        <td>{{ x.dateAdd }}</td>
-                        <td>{{ x.dateTest }}</td>
-                        <td>{{ x.compName }}</td>
-                        <td>{{ x.flag }}</td>
-                        <td>{{ x.testValue}}</td>
-                        <td>{{ x.minNorm }} - {{ x.maxNorm }}</td>
-                        <td>{{ x.unitDescription}}</td>
-                        <td>{{ x.readStatus}}</td>
+                    <tr ng-repeat="x in testReport | orderBy:'-dateadded'">
+                        <td>{{ x.dateadded }}</td>
+                        <td>{{ x.testdate }}</td>
+                        <td>{{ x.componentname }}</td>
+                        <td>{{ x.abnormalflag }}</td>
+                        <td>{{ x.testvalue}}</td>
+                        <td>{{ x.minnorm }} - {{ x.maxnorm }}</td>
+                        <td>{{ x.unitdescription}}</td>
+                        <td>{{ x.readstatus}}</td>
                     </tr>
                 </table>
             </div>
@@ -252,11 +254,11 @@
                         <th onclick="quickSortTrampoline(2,'noteTable')">Note Header</td>
                         <th onclick="quickSortTrampoline(3,'noteTable')">Note Content</td>
                     </tr>
-                    <tr ng-repeat="x in noteReport[0] | orderBy:'-dateadd'">
-                        <td>{{ x.dateadd }}</td>
-                        <td>{{ x.dateread }}</td>
-                        <td>{{ x.notetype }}</td>
-                        <td>{{ x.notedesc }}</td>
+                    <tr ng-repeat="x in noteReport | orderBy:'-dateadded'">
+                        <td>{{ x.dateadded }}</td>
+                        <td>{{ x.lastupdated }}</td>
+                        <td>{{ x.tablerowtitle }}</td>
+                        <td>{{ x.name }}</td>
                     </tr>
                 </table>
             </div>
@@ -275,14 +277,14 @@
                         <th onclick="sortTable(6, 'tplanTable')">Completion Date</th>
 
                     </tr>
-                    <tr ng-repeat="x in txplanReport[0] | orderBy:'duedate'">
-                        <td> {{ x.diagdesc }} </td>
+                    <tr ng-repeat="x in txplanReport | orderBy:'taskdue'">
+                        <td> {{ x.diagnosisdescription }} </td>
                         <td> {{ x.aliasname }} </td>
                         <td> {{ x.aliasdescription }} </td>
-                        <td> {{ x.status }} </td>
-                        <td> {{ x.state }} </td>
-                        <td> {{ x.duedate }} </td>
-                        <td> {{ x.completiondate }} </td>
+                        <td> {{ x.taskstatus }} </td>
+                        <td> {{ x.taskstate }} </td>
+                        <td> {{ x.taskdue }} </td>
+                        <td> {{ x.taskcompletiondate }} </td>
                     </tr>
                 </table>
             </div>
@@ -298,12 +300,12 @@
                         <th onclick="sortTable(3, 'clinTable')">Final File Name</th>
                         <th onclick="sortTable(4, 'clinTable')">Note Description</th>
                     </tr>
-                    <tr ng-repeat="x in clinnoteReport[0] | orderBy:'-ctimestamp'">
-                        <td> {{ x.ctimestamp }} </td>
-                        <td> {{ x.atimestamp }} </td>
-                        <td> {{ x.ofilename }} </td>
-                        <td> {{ x.ffilename }} </td>
-                        <td> {{ x.desc }} </td>
+                    <tr ng-repeat="x in clinnoteReport | orderBy:'-created'">
+                        <td> {{ x.created }} </td>
+                        <td> {{ x.approved }} </td>
+                        <td> {{ x.originalname }} </td>
+                        <td> {{ x.finalname }} </td>
+                        <td> {{ x.aliasexpressionname }} </td>
                     </tr>
                 </table>
             </div>
@@ -320,8 +322,8 @@
                     </tr>
                     <tr ng-repeat="x in txteamReport[0] | orderBy:'-dateadded'">
                         <td> {{ x.dateadded }} </td>
-                        <td> {{ x.postname }} </td>
-                        <td> {{ x.postbody }} </td>
+                        <td> {{ x.name }} </td>
+                        <td> {{ x.body }} </td>
                         <td> {{ x.readstatus }} </td>
                     </tr>
                 </table>
@@ -339,8 +341,8 @@
                     </tr>
                     <tr ng-repeat="x in generalReport[0] | orderBy:'-dateadded'">
                         <td> {{ x.dateadded }} </td>
-                        <td> {{ x.postname }} </td>
-                        <td> {{ x.postbody }} </td>
+                        <td> {{ x.name }} </td>
+                        <td> {{ x.body }} </td>
                         <td> {{ x.readstatus }} </td>
                     </tr>
                 </table>
@@ -360,3 +362,116 @@
         </div>
     </div>
 </div>
+
+<script>
+
+    //This is necessary to define the beginning points of the recursive quickSort function (hi and lo)
+    function quickSortTrampoline(n, tname) {
+        var temptable = document.getElementById(tname);
+        var lo = 1;
+        var hi = temptable.rows.length - 1;
+        quickSort(n, tname, lo, hi);
+    }
+
+    /**
+    *	Quicksort - pick one element as a pivot, partition the array about this
+    *				pivot; apply this operation recursively until sorted.
+
+        tname - the id of the html table
+        n 	  - the index of the column to sort by
+        lo 	  - starting index
+        hi 	  - ending index
+    */
+    function quickSort(n, tname, lo, hi) {
+        var table = document.getElementById(tname);
+        if (lo < hi) {
+            //define the partioning index. table[pi] is now at the right place
+            var pi = partition(n, tname, lo, hi);
+            //recursive calls on quicksort to sort the two lists (before and after pi)
+            quickSort(n, tname, lo, pi - 1);
+            quickSort(n, tname, pi + 1, hi);
+        }
+    }
+    //Partioning function for quickSort
+    /**
+        Take the last element as the pivot. Place pivot element at its correct
+            position in the table. Then place all elements < pivot to the left of the pivot, and all greater elements to the right.
+    */
+    function partition(n, tname, lo, hi) {
+        var table = document.getElementById(tname);
+        var rows = table.rows;
+        var pivot = rows[hi].getElementsByTagName("TD")[n]; //last element is pivot
+        var i = (lo - 1); //index of the smaller element
+        for (var j = lo; j <= hi - 1; j++) {
+            //If current element is smaller than pivot, move index of the smaller element
+            if (rows[j].getElementsByTagName("TD")[n].innerText >= pivot.innerText) {
+                i++;
+                //swap rows[i] with rows[j]
+                swap(tname, i, j);
+            }
+        }
+        var temp = i + 1; //increment the partioning index
+        swap(tname, temp, hi);
+        return temp; //Return an incremented i index
+    }
+    //Swap two rows in a table given the indices
+    function swap(tname, i, j) {
+        var table = document.getElementById(tname);
+        var rows = table.rows;
+        if (i === j) { //Dont bother swapping the same row (Slightly improved performance)
+            return;
+        }
+        if (i > j) { //Always keep the lower index as the first swap
+            var temp = i;
+            i = j;
+            j = temp;
+        }
+        //swap i and j
+        rows[i].parentNode.insertBefore(rows[j], rows[i]);
+        rows[j].parentNode.insertBefore(rows[i + 1], rows[j].nextSibling);
+    }
+
+    /**
+    *	This is the slow sorting function, analagous to a bubble sort, so O(n^2)
+    *	We would like to improve the speed by switching to a quicksort/mergesort
+    */
+    function sortTable(n, tname) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById(tname); //table handle to get the data
+        switching = true; //switching variable identifies if we are done or not (begin with true)
+        dir = "asc"; // sorting direction
+        while (switching) { // outer loop, continue until we have no more switches possible
+            switching = false;
+            rows = table.rows; //get rows to be sorted
+            for (i = 1; i < (rows.length - 1); i++) { //inner loop, just identifies if we are doing a switch or not
+                shouldSwitch = false; //doing a switch? false by default
+                x = rows[i].getElementsByTagName("TD")[n]; //x and y elements to compare
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+                if (dir == "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true; //mark a switch to be done and exit this branch
+                        break;
+                    }
+                } else if (dir == "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true; //mark a switch to be done and exit this branch
+                        break;
+                    }
+                }
+            } //end of the inner loop. Either we are at a pair of elements that need to be swapped, or we are at the end of the list and we are finished
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]); //perform the swap
+                switching = true; //identify that, since we did a swap, we need to restart the inner loop, so dont exit the outer while loop
+                switchcount++;      // keep track of where we are
+            } else {
+                /*If no switching has been done AND the direction is "asc",
+                set the direction to "desc" and run the while loop again.*/
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
+</script>
+

@@ -22,6 +22,8 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
     $scope.searchMRN = "";
     $scope.searchRAMQ = "";
 
+    $scope.searchResult = "";
+
     $scope.psnum = ""; //the selected patient identifiers for our report
     $scope.pname = "";
     $scope.pfname = "";
@@ -61,7 +63,6 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
                 url: "patient-reports/find/patient-name",
                 data: {pname: $scope.searchName},
                 success: function(response){
-                    console.log(JSON.parse(response));
                     displayName(JSON.parse(response));
                 },
                 error: function(err){
@@ -75,7 +76,6 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
                 url: "patient-reports/find/patient-mrn",
                 data: {pmrn: $scope.searchMRN},
                 success: function(response){
-                    console.log(JSON.parse(response));
                     displayName(JSON.parse(response));
                 },
                 error: function(err){
@@ -89,7 +89,6 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
                 url: "patient-reports/find/patient-ramq",
                 data: {pramq: $scope.searchRAMQ},
                 success: function(response){
-                    console.log(JSON.parse(response));
                     displayName(JSON.parse(response));
                 },
                 error: function(err){
@@ -110,17 +109,18 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
      *  @return 
      */
     function displayName(result){
-        if(!result){ //no match found for input parameter
+        $scope.searchResult = result;
+        if(!$scope.searchResult){ //no match found for input parameter
             $scope.foundPatient = false;
             console.log("No patient found matching search");
             // ErrorHandler TODO
-        }else if (result.length > 1){ //found multiple patients matching search
+        }else if ($scope.searchResult.length > 1){ //found multiple patients matching search
             console.log("Multiple matches found");
             $scope.patOptions = [];
             var tmp = "";
             //load each result into patOptions array for selection
-            for (var i = 0; i < result.length; i++){
-                tmp = tmp + i + " , " + result[i].fname + " , " + result[i].lname + " , " + result[i].psnum + " , " + result[i].sex + " , " + result[i].email + " , " + result[i].ssn + " , " + result[i].pid + " , " + result[i].language;
+            for (var i = 0; i < $scope.searchResult.length; i++){
+                tmp = i + " , " + $scope.searchResult[i].pname + " , " + $scope.searchResult[i].plname;
                 $scope.patOptions.push(tmp);
                 tmp = "";
             }
@@ -130,14 +130,31 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
             $scope.resetReportValues(); //set all report options to true by default
 
             // set selected patient identifiers
-            $scope.pname = result[0].lname.replace(/["']/g, "");
-            $scope.psnum = result[0].psnum.replace(/["']/g, "");
-            $scope.pfname = result[0].fname.replace(/["']/g, "");
-            $scope.psex = result[0].sex.replace(/["']/g, "");
-            $scope.pemail = result[0].email.replace(/["']/g, "");
-            $scope.pramq = result[0].ssn.replace(/["']/g, "");
-            $scope.pmrn = result[0].pid.replace(/["']/g, "");
-            $scope.planguage = result[0].language.replace(/["']/g, "");   
+            if($scope.searchResult[0].pname){
+                $scope.pname = $scope.searchResult[0].pname.replace(/["']/g, "");
+            }
+            if($scope.searchResult[0].plname){
+                $scope.plname = $scope.searchResult[0].plname.replace(/["']/g, "");
+            }
+            if($scope.searchResult[0].psnum){
+                $scope.psnum = $scope.searchResult[0].psnum.replace(/["']/g, "");
+            }
+            if($scope.searchResult[0].pid){
+                $scope.pid = $scope.searchResult[0].pid.replace(/["']/g, "");
+            }
+            if($scope.searchResult[0].pramq){
+                $scope.pramq = $scope.searchResult[0].pramq.replace(/["']/g, "");
+            }
+            if($scope.searchResult[0].psex){
+                $scope.psex = $scope.searchResult[0].psex.replace(/["' ]/g, "");
+            }
+            if($scope.searchResult[0].plang){
+                $scope.plang = $scope.searchResult[0].plang.replace(/["']/g, "");
+            }
+            if($scope.searchResult[0].pemail){
+                $scope.pemail = $scope.searchResult[0].pemail.replace(/["']/g, "");
+            }
+            
         }
     }
 
@@ -145,16 +162,32 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
     $scope.displaySelection = function() {
         $scope.foundPatient = true; //display patient table
         $scope.resetReportValues(); //set report features all true
-
+        var idx = $scope.selectedName.split(" , ")[0]; // index of selected patient
         //Set the chosen patient identifier variables
-        $scope.pname = $scope.selectedName.split(" , ")[2].replace(/["']/g, "");
-        $scope.psnum = $scope.selectedName.split(" , ")[3].replace(/["']/g, "");
-        $scope.pfname = $scope.selectedName.split(" , ")[1].replace(/["']/g, "");
-        $scope.psex = $scope.selectedName.split(" , ")[4].replace(/["']/g, "");
-        $scope.pemail = $scope.selectedName.split(" , ")[5].replace(/["']/g, "");
-        $scope.pramq = $scope.selectedName.split(" , ")[6].replace(/["']/g, "");
-        $scope.pmrn = $scope.selectedName.split(" , ")[7].replace(/["']/g, "");
-        $scope.planguage = $scope.selectedName.split(" , ")[8].replace(/["']/g, "");
+        if($scope.searchResult[idx].pname){
+            $scope.pname = $scope.searchResult[idx].pname.replace(/["']/g, "");
+        }
+        if($scope.searchResult[idx].plname){
+            $scope.plname = $scope.searchResult[idx].plname.replace(/["']/g, "");
+        }
+        if($scope.searchResult[idx].psnum){
+            $scope.psnum = $scope.searchResult[idx].psnum.replace(/["']/g, "");
+        }
+        if($scope.searchResult[idx].pid){
+            $scope.pid = $scope.searchResult[idx].pid.replace(/["']/g, "");
+        }
+        if($scope.searchResult[idx].pramq){
+            $scope.pramq = $scope.searchResult[idx].pramq.replace(/["']/g, "");
+        }
+        if($scope.searchResult[idx].psex){
+            $scope.psex = $scope.searchResult[idx].psex.replace(/["' ]/g, "");
+        }
+        if($scope.searchResult[idx].pemail){
+            $scope.pemail = $scope.searchResult[idx].pemail.replace(/["']/g, "");
+        }
+        if($scope.searchResult[idx].plang){
+            $scope.plang = $scope.searchResult[idx].plang.replace(/["']/g, "");
+        }
     }
 
     //Reset field values and hide duplicate patient dropdown
@@ -175,16 +208,16 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
     //Reset report values and hide list
     $scope.resetReportValues = function() {
       
-        $scope.featureList.diagnosis = false;
-        $scope.featureList.appointments = false;
-        $scope.featureList.questionnaires = false;
-        $scope.featureList.education = false;
-        $scope.featureList.testresults = false;
-        $scope.featureList.notifications = false;
-        $scope.featureList.treatplan = false;
-        $scope.featureList.clinicalnotes = false;
-        $scope.featureList.treatingteam = false;
-        $scope.featureList.general = false;
+        $scope.featureList.diagnosis = true;
+        $scope.featureList.appointments = true;
+        $scope.featureList.questionnaires = true;
+        $scope.featureList.education = true;
+        $scope.featureList.testresults = true;
+        $scope.featureList.notifications = true;
+        $scope.featureList.treatplan = true;
+        $scope.featureList.clinicalnotes = true;
+        $scope.featureList.treatingteam = true;
+        $scope.featureList.general = true;
 
         // Reset the report values
         $scope.diagReport = "";
@@ -198,9 +231,6 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
         $scope.generalReport = "";
         $scope.txplanReport = "";  
     }
-    /** TODO: choose url & assign rewrite rule
-     *  Retrieve selected patient results from featureList
-     */
     /**
      *  Generate the desired report based on user input
      *  @param psnum: selected patient serial number
@@ -224,8 +254,8 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
                 general: $scope.featureList.general,
             },
             success: function(response){
-                console.log(response);
-                //populateTables(response.data);
+                //console.log(JSON.parse(response));
+                populateTables(JSON.parse(response));
             },
             error: function(err){
                 console.log(err)
@@ -241,44 +271,44 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
     function populateTables(result){
         if(result && (result !== null)){
             $scope.nullPatient = ""; //TODO do i need this variable
-            if( typeof result.diagrecord !== 'undefined'){
-                $scope.diagReport = result.diagrecord;
+            if(result.diagnosis){
+                $scope.diagReport = result.diagnosis;
                 strip($scope.diagReport);
             }
-            if( typeof result.qstrecord !== 'undefined'){
-                $scope.qstReport = result.qstrecord;
+            if(result.questionnaires){
+                $scope.qstReport = result.questionnaires;
                 strip($scope.qstReport); //TODO replace null with not completed
             }
-            if( typeof result.edcrecord !== 'undefined'){
-                $scope.educReport = result.edcrecord;
+            if(result.education){
+                $scope.educReport = result.education;
                 strip($scope.educReport); //TODO replace 1/0 with read/not read
             }
-            if( typeof result.apptrecord !== 'undefined'){
-                $scope.apptReport = result.apptrecord;
+            if(result.appointments){
+                $scope.apptReport = result.appointments;
                 strip($scope.apptReport);
             }
-            if( typeof result.resrecord !== 'undefined'){
-                $scope.testReport = result.resrecord;
+            if(result.testresults){
+                $scope.testReport = result.testresults;
                 strip($scope.testReport);
             }
-            if( typeof result.noterecord !== 'undefined'){
-                $scope.noteReport = result.noterecord;
+            if(result.notes){
+                $scope.noteReport = result.notes;
                 strip($scope.noteReport); //TODO replace1/0 with read/not read
             }
-            if( typeof result.clinnoterecord !== 'undefined'){
-                $scope.clinnoteReport = result.clinnoterecord;
+            if(result.clinicalnotes){
+                $scope.clinnoteReport = result.clinicalnotes;
                 strip($scope.clinnoteReport);
             }
-            if( typeof result.txteamrecord !== 'undefined'){
-                $scope.txteamReport = result.txteamrecord;
+            if(result.treatingteam){
+                $scope.txteamReport = result.treatingteam;
                 strip($scope.txplanReport); // TODO replace 1/0 with read/not read
             }
-            if( typeof result.generalrecord !== 'undefined'){
-                $scope.generalReport = result.generalrecord;
+            if(result.general){
+                $scope.generalReport = result.general;
                 strip($scope.generalReport); // TODO replace 1/0 with read/ not read
             }
-            if( typeof result.treatplanrecord !== 'undefined'){
-                $scope.txplanReport = result.treatplanrecord;
+            if(result.treatplan){
+                $scope.txplanReport = result.treatplan;
                 strip($scope.txplanReport);
             }
         

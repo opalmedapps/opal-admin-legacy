@@ -534,7 +534,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
                 }
 
                 //registration date tracking (to be plotted)
-                regDates.push(new Date($scope.patientReport[i].regdate));
+                regDates.push(new Date($scope.patientReport[i].preg));
                 totalRegistrations.push(tmpC);
                 tmpC++;
 
@@ -544,8 +544,6 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
                 }else{
                     diagDict[$scope.patientReport[i].diagdesc] = 1;
                 }
-
-                // TODO more consent form stuff appears here in Ctrl2
 
                 $scope.demoPcntFemale = ((femCount/$scope.patientReportLength)*100).toFixed(2);
                 $scope.demoPcntMale = ((malCount/$scope.patientReportLength)*100).toFixed(2);

@@ -50,12 +50,12 @@ class PatientReports extends Module {
                 $patientArray = array(
                     'psnum'      => $data[0],
                     'pid'        => $data[1],
-                    'fname'      => $data[2],
-                    'lname'      => $data[3],
-                    'ssn'        => $data[4],
-                    'sex' 	     => $data[5],
-                    'email'      => $data[6],
-                    'language'   => $data[7]
+                    'pname'      => $data[2],
+                    'plname'      => $data[3],
+                    'pramq'        => $data[4],
+                    'psex' 	     => $data[5],
+                    'pemail'      => $data[6],
+                    'plang'   => $data[7]
                 );
                 array_push($patientList, $patientArray);
             }
@@ -101,12 +101,12 @@ class PatientReports extends Module {
                 $patientArray = array(
                     'psnum'      => $data[0],
                     'pid'        => $data[1],
-                    'fname'      => $data[2],
-                    'lname'      => $data[3],
-                    'ssn'        => $data[4],
-                    'sex' 	     => $data[5],
-                    'email'      => $data[6],
-                    'language'   => $data[7]
+                    'pname'      => $data[2],
+                    'plname'      => $data[3],
+                    'pramq'        => $data[4],
+                    'psex' 	     => $data[5],
+                    'pemail'      => $data[6],
+                    'plang'   => $data[7]
                 );
                 array_push($patientList, $patientArray);
             }
@@ -153,12 +153,12 @@ class PatientReports extends Module {
                 $patientArray = array(
                     'psnum'      => $data[0],
                     'pid'        => $data[1],
-                    'fname'      => $data[2],
-                    'lname'      => $data[3],
-                    'ssn'        => $data[4],
-                    'sex' 	     => $data[5],
-                    'email'      => $data[6],
-                    'language'   => $data[7]
+                    'pname'      => $data[2],
+                    'plname'      => $data[3],
+                    'pramq'        => $data[4],
+                    'psex' 	     => $data[5],
+                    'pemail'      => $data[6],
+                    'plang'   => $data[7]
                 );
                 array_push($patientList, $patientArray);
             }
@@ -184,7 +184,7 @@ class PatientReports extends Module {
             
             $resultArray = array();
             $sql = "";
-            if($flist["diagnosis"] == true){
+            if($flist["diagnosis"] === "true"){
                 $sql="
                 SELECT
                     DiagnosisSerNum,
@@ -210,7 +210,7 @@ class PatientReports extends Module {
                 $sql = "";
             }
             
-            if($flist["appointments"] == true){
+            if($flist["appointments"] === "true"){
                 $sql ="  
                 SELECT
                     a.ScheduledStartTime,
@@ -250,7 +250,7 @@ class PatientReports extends Module {
                 $sql = "";  
             }
             
-            if($flist["questionnaires"] == true){
+            if($flist["questionnaires"] === "true"){
                 $sql ="  
                 SELECT
                     q.DateAdded,
@@ -278,7 +278,7 @@ class PatientReports extends Module {
                 $sql = ""; 
             }
 
-            if($flist["education"] == true){
+            if($flist["education"] === "true"){
                 $sql ="  
                 SELECT
                     em.DateAdded,
@@ -308,7 +308,7 @@ class PatientReports extends Module {
                 $sql = ""; 
             }
 
-            if($flist["testresults"] == true){
+            if($flist["testresults"] === "true"){
                 $sql ="  
                 SELECT
                     DateAdded,
@@ -346,7 +346,7 @@ class PatientReports extends Module {
                 $sql = ""; 
             }
 
-            if($flist["notes"] == true){
+            if($flist["notes"] === "true"){
                 $sql ="  
                 SELECT
                     n.DateAdded,
@@ -380,7 +380,7 @@ class PatientReports extends Module {
                 $sql = ""; 
             }
 
-            if($flist["treatplan"] == true){
+            if($flist["treatplan"] === "true"){
                 $sql ="  
                 SELECT
                     d.Description_EN,
@@ -431,7 +431,7 @@ class PatientReports extends Module {
                 $sql = ""; 
             }
 
-            if($flist["clinicalnotes"] == true){
+            if($flist["clinicalnotes"] === "true"){
                 $sql ="  
                 SELECT
                     d.OriginalFileName,
@@ -465,7 +465,7 @@ class PatientReports extends Module {
                 $sql = ""; 
             }
 
-            if($flist["treatingteam"] == true){
+            if($flist["treatingteam"] === "true"){
                 $sql =" 
                 SELECT
                     tx.DateAdded,
@@ -497,7 +497,7 @@ class PatientReports extends Module {
                 $sql = ""; 
             }
 
-            if($flist["general"] == true){
+            if($flist["general"] === "true"){
                 $sql =" 
                 SELECT
                     a.DateAdded,
@@ -529,7 +529,8 @@ class PatientReports extends Module {
                 $sql = ""; 
             }
 
-            print_r($resultArray); //TODO print_r or return?
+            return $resultArray;
+
         }
         catch (PDOException $e) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
