@@ -2099,4 +2099,52 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    /*
+     * Get list of test results groups in french and english
+     * @params  vois
+     * @return  array - list of test result groups
+     * */
+    function getTestResultGroups() {
+        return $this->_fetchAll(OPAL_GET_TEST_RESULT_GROUPS, array());
+    }
+
+    /*
+     * Insert a test result in the test result control table
+     * @params  $toInsert : array - Contains the test result info
+     * @return  int - last insert ID
+     * */
+    function insertTestResult($toInsert) {
+        $toInsert["DateAdded"] = date("Y-m-d H:i:s");
+        $toInsert["LastPublished"] = date("Y-m-d H:i:s");
+        $toInsert["LastUpdatedBy"] = $this->getOAUserId();
+        $toInsert["SessionId"] = $this->getSessionId();
+        return $this->_insertRecordIntoTable(OPAL_TEST_RESULT_CONTROL_TABLE, $toInsert);
+    }
+
+    /*
+     * Insert a list of test expression codes into the test expression table
+     * @params  $toInsert : array - list of test expression
+     * @return  int - last ID entered
+     * */
+    function insertMultipleTestExpressions($toInsert) {
+        foreach ($toInsert as &$item) {
+            $item["DateAdded"] = date("Y-m-d H:i:s");
+            $item["LastUpdatedBy"] = $this->getOAUserId();
+            $item["SessionId"] = $this->getSessionId();
+        }
+        return $this->_insertMultipleRecordsIntoTable(OPAL_TEST_RESULT_EXPRESSION_TABLE, $toInsert);
+    }
+
+    /*
+     * Insert a list of additional links for test results
+     * @params  $toInsert : array - list of test expression
+     * @return  int - last ID entered
+     * */
+    function insertTestResultAdditionalLinks($toInsert) {
+        foreach ($toInsert as &$item) {
+            $item["DateAdded"] = date("Y-m-d H:i:s");
+        }
+        return $this->_insertMultipleRecordsIntoTable(OPAL_TEST_RESULT_ADD_LINKS_TABLE, $toInsert);
+    }
 }

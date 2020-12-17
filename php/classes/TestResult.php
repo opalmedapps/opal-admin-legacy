@@ -53,40 +53,14 @@ class TestResult extends Module {
         return $result;
     }
 
-    /**
-     *
-     * Gets a list of test result groups
-     *
-     * @return array $groups : the list of existing test groups
-     */
+    /*
+     * Get the list of test result groups in french and english
+     * @params  void
+     * @return  array - list of the result group
+     * */
     public function getTestResultGroups () {
         $this->checkReadAccess();
-        $groups = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    trc.Group_EN,
-                    trc.Group_FR
-                FROM
-                    TestResultControl trc
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $groupDetails = array(
-                    'EN'    => $data[0],
-                    'FR'    => $data[1]
-                );
-                array_push($groups, $groupDetails);
-            }
-
-            return $groups;
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
-        }
+        return $this->opalDB->getTestResultGroups();
     }
 
     /**
@@ -99,11 +73,12 @@ class TestResult extends Module {
         $this->checkReadAccess();
         $testNames = array();
         $databaseObj = new Database();
+        $assignedTests = $this->opalDB->getAssignedTests();
 
         try {
 
             // get already assigned expressions from our database
-            $assignedTests = $this->opalDB->getAssignedTests();
+
 
             // ***********************************
             // ARIA
@@ -140,47 +115,15 @@ class TestResult extends Module {
 
             }
 
-            // ***********************************
-            // WaitRoomManagement
-            // ***********************************
-            $sourceDBSer = ORMS_SOURCE_DB;
-            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
-            if ($source_db_link) {
-
-                $sql = "SELECT 'QUERY_HERE'";
-                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                $query->execute();
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    // Set appropriate test result data here from query
-
-                    //array_push($testNames, $testArray); // Uncomment for use
-                }
-
-            }
-
-            // ***********************************
-            // Mosaiq
-            // ***********************************
-            $sourceDBSer = MOSAIQ_SOURCE_DB;
-            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
-            if ($source_db_link) {
-
-                $sql = "SELECT 'QUERY_HERE'";
-                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                $query->execute();
-
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                    // Set appropriate test result data here from query
-                    //array_push($testNames, $testArray); // Uncomment for use
-                }
-
-            }
 
             return $testNames;
         } catch (PDOException $e) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for lab results. " . $e->getMessage());
         }
+    }
+
+    protected function _validateTestResult() {
+
     }
 
     /**
@@ -190,21 +133,63 @@ class TestResult extends Module {
      * @param array $testResultDetails : the test result details
      * @return void
      */
-    public function insertTestResult ($testResultDetails) {
-        $this->checkWriteAccess($testResultDetails);
-        $name_EN            = $testResultDetails['name_EN'];
-        $name_FR            = $testResultDetails['name_FR'];
-        $description_EN     = $testResultDetails['description_EN'];
-        $description_FR     = $testResultDetails['description_FR'];
-        $group_EN           = $testResultDetails['group_EN'];
-        $group_FR           = $testResultDetails['group_FR'];
-        $tests              = $testResultDetails['tests'];
-        $additionalLinks    = $testResultDetails['additional_links'];
-        $userSer            = $testResultDetails['user']['id'];
-        $sessionId          = $testResultDetails['user']['sessionid'];
+    public function insertTestResult ($post) {
+        $this->checkWriteAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+
+        $toInsert = array(
+            "Name_FR"=>$post['name_EN'],
+            "Description_EN"=>$post['description_EN'],
+            "Description_FR"=>$post['description_FR'],
+            "Group_EN"=>$post['group_EN'],
+            "Group_FR"=>$post['group_FR'],
+            "PublishFlag"=>0,
+            "EducationalMaterialControlSerNum"=>( is_array($post['edumat']) && isset($post['edumat']['serial']) ) ? $eduMatSer = $post['edumat']['serial'] : 'NULL',
+        );
+
+        $newId = 12345;
+//        $newId = $this->opalDB->insertTestResult($toInsert);
+        $toInsertMultipleTests = array();
+
+        foreach ($post['tests'] as $test) {
+            array_push($toInsertMultipleTests, array(
+                "TestResultControlSerNum"=>$newId,
+                "ExpressionName"=>$test['name'],
+            ));
+        }
+//        $this->opalDB->insertMultipleTestExpressions($toInsertMultipleTests);
+
+        $toInsertMultipleLinks = array();
+        if($post['additional_links']) {
+            foreach($post['additional_links'] as $link){
+                array_push($toInsertMultipleLinks, array(
+                    "TestResultControlSerNum"=>$newId,
+                    "Name_EN"=>$link['name_EN'],
+                    "Name_FR"=>$link['name_FR'],
+                    "URL_EN"=>$link['url_EN'],
+                    "URL_FR"=>$link['url_FR'],
+                ));
+            }
+            if(count($toInsertMultipleLinks) > 0);
+//                $this->opalDB->insertTestResultAdditionalLinks($toInsertMultipleLinks);
+        }
+
+        print_r($toInsert);
+        print_r($toInsertMultipleTests);
+        print_r($toInsertMultipleLinks);
+
+        die();
+        $name_EN            = $post['name_EN'];
+        $name_FR            = $post['name_FR'];
+        $description_EN     = $post['description_EN'];
+        $description_FR     = $post['description_FR'];
+        $group_EN           = $post['group_EN'];
+        $group_FR           = $post['group_FR'];
+        $tests              = $post['tests'];
+        $additionalLinks    = $post['additional_links'];
         $eduMatSer          = 'NULL';
-        if ( is_array($testResultDetails['edumat']) && isset($testResultDetails['edumat']['serial']) ) {
-            $eduMatSer = $testResultDetails['edumat']['serial'];
+        if ( is_array($post['edumat']) && isset($post['edumat']['serial']) ) {
+            $eduMatSer = $post['edumat']['serial'];
         }
 
         try {
@@ -305,7 +290,7 @@ class TestResult extends Module {
                 }
             }
 
-            $this->sanitizeEmptyTestResults($testResultDetails['user']);
+            $this->sanitizeEmptyTestResults($post['user']);
 
         } catch( PDOException $e) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
@@ -563,6 +548,195 @@ class TestResult extends Module {
             $id = intval($id);
         }
         return $this->opalDB->getTestResultsLogs($testResultIds);
+    }
+
+    /**
+     *
+     * Updates test result details in the database
+     *
+     * @param array $testResultDetails : the test result details
+     * @return array : response
+     */
+    public function updateTestResult($testResultDetails) {
+        $this->checkWriteAccess($testResultDetails);
+        $name_EN            = $testResultDetails['name_EN'];
+        $name_FR            = $testResultDetails['name_FR'];
+        $description_EN     = $testResultDetails['description_EN'];
+        $description_FR     = $testResultDetails['description_FR'];
+        $group_EN           = $testResultDetails['group_EN'];
+        $group_FR           = $testResultDetails['group_FR'];
+        $serial             = $testResultDetails['serial'];
+        $tests              = $testResultDetails['tests'];
+        $eduMatSer          = $testResultDetails['edumatser'] ? $testResultDetails['edumatser'] : 'NULL';
+        $additionalLinks    = $testResultDetails['additional_links'];
+        $userSer            = $testResultDetails['user']['id'];
+        $sessionId          = $testResultDetails['user']['sessionid'];
+
+        $existingTests      = array();
+
+        $detailsUpdated     = $testResultDetails['details_updated'];
+        $testNamesUpdated   = $testResultDetails['test_names_updated'];
+        $additionalLinksUpdated     = $testResultDetails['additional_links_updated'];
+
+        $response = array(
+            'value'     => 0,
+            'message'   => ''
+        );
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            if ($detailsUpdated) {
+                $sql = "
+                    UPDATE
+                        TestResultControl
+                    SET
+                        TestResultControl.Name_EN           = \"$name_EN\",
+                        TestResultControl.Name_FR           = \"$name_FR\",
+                        TestResultControl.Description_EN    = \"$description_EN\",
+                        TestResultControl.Description_FR    = \"$description_FR\",
+                        TestResultControl.Group_EN          = \"$group_EN\",
+                        TestResultControl.Group_FR          = \"$group_FR\",
+                        TestResultControl.EducationalMaterialControlSerNum = $eduMatSer,
+                        TestResultControl.LastUpdatedBy     = $userSer,
+                        TestResultControl.SessionId         = '$sessionId'
+                    WHERE
+                        TestResultControl.TestResultControlSerNum = $serial
+                ";
+
+                $query = $host_db_link->prepare( $sql );
+                $query->execute();
+            }
+
+            if ($testNamesUpdated) {
+
+                $sql = "
+                    SELECT DISTINCT
+                        tre.ExpressionName
+                    FROM
+                        TestResultExpression tre
+                    WHERE
+                        tre.TestResultControlSerNum = $serial
+                ";
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    array_push($existingTests, $data[0]);
+                }
+
+                // If old test names not in new test names, delete from database
+                foreach ($existingTests as $existingTestName) {
+                    if (!in_array($existingTestName, $tests)) {
+                        $sql = "
+                            DELETE FROM
+                                TestResultExpression
+                            WHERE
+                                TestResultExpression.ExpressionName = \"$existingTestName\"
+                            AND TestResultExpression.TestResultControlSerNum = $serial
+                        ";
+
+                        $query = $host_db_link->prepare( $sql );
+                        $query->execute();
+
+                        $sql = "
+                            UPDATE TestResultExpressionMH
+                            SET 
+                                TestResultExpressionMH.LastUpdatedBy = '$userSer',
+                                TestResultExpressionMH.SessionId = '$sessionId'
+                            WHERE
+                                TestResultExpressionMH.ExpressionName = \"$existingTestName\"
+                            ORDER BY TestResultExpressionMH.RevSerNum DESC 
+                            LIMIT 1
+                        ";
+                        $query = $host_db_link->prepare( $sql );
+                        $query->execute();
+                    }
+                }
+
+                // If new test names, insert into database
+                foreach ($tests as $test) {
+                    if(!in_array($test, $existingTests)) {
+                        $sql = "
+                            INSERT INTO
+                                TestResultExpression (
+                                    TestResultControlSerNum,
+                                    ExpressionName,
+                                    LastUpdatedBy,
+                                    SessionId
+                                )
+                            VALUES (
+                                '$serial',
+                                \"$test\",
+                                '$userSer',
+                                '$sessionId'
+                            )
+                            ON DUPLICATE KEY UPDATE
+                                TestResultControlSerNum = '$serial',
+                                LastUpdatedBy = '$userSer',
+                                SessionId = '$sessionId'
+                        ";
+
+                        $query = $host_db_link->prepare( $sql );
+                        $query->execute();
+                    }
+                }
+            }
+
+            if ($additionalLinksUpdated) {
+
+                // clear existing links
+                $sql = "
+                    DELETE FROM 
+                        TestResultAdditionalLinks
+                    WHERE
+                        TestResultAdditionalLinks.TestResultControlSerNum = '$serial'
+                ";
+                $query = $host_db_link->prepare( $sql );
+                $query->execute();
+
+                if ($additionalLinks) {
+                    // add new links
+                    foreach ($additionalLinks as $link) {
+
+                        $linkName_EN        = $link['name_EN'];
+                        $linkName_FR        = $link['name_FR'];
+                        $linkURL_EN         = $link['url_EN'];
+                        $linkURL_FR         = $link['url_FR'];
+
+                        $sql = "
+                            INSERT INTO 
+                                TestResultAdditionalLinks (
+                                    TestResultControlSerNum,
+                                    Name_EN,
+                                    Name_FR,
+                                    URL_EN,
+                                    URL_FR,
+                                    DateAdded
+                                )
+                            VALUES (
+                                '$serial',
+                                \"$linkName_EN\",
+                                \"$linkName_FR\",
+                                \"$linkURL_EN\",
+                                \"$linkURL_FR\",
+                                NOW()
+                            )
+                        ";
+                        $query = $host_db_link->prepare( $sql );
+                        $query->execute();
+                    }
+                }
+            }
+
+            $this->sanitizeEmptyTestResults($testResultDetails['user']);
+
+            $response['value'] = 1; // Success
+            return $response;
+
+        } catch( PDOException $e) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
+        }
     }
 
     /**
