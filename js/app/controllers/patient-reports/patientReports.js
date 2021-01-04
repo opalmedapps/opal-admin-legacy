@@ -254,7 +254,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
                 general: $scope.featureList.general,
             },
             success: function(response){
-                //console.log(JSON.parse(response));
+                console.log(JSON.parse(response));
                 populateTables(JSON.parse(response));
             },
             error: function(err){
@@ -270,14 +270,13 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
      */
     function populateTables(result){
         if(result && (result !== null)){
-            $scope.nullPatient = ""; //TODO do i need this variable
             if(result.diagnosis){
                 $scope.diagReport = result.diagnosis;
-                strip($scope.diagReport);
+                //strip($scope.diagReport);
             }
             if(result.questionnaires){
                 $scope.qstReport = result.questionnaires;
-                strip($scope.qstReport); //TODO replace null with not completed
+                //strip($scope.qstReport); //TODO replace null with not completed
             }
             if(result.education){
                 $scope.educReport = result.education;
@@ -301,7 +300,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
             }
             if(result.treatingteam){
                 $scope.txteamReport = result.treatingteam;
-                strip($scope.txplanReport); // TODO replace 1/0 with read/not read
+                //strip($scope.txplanReport); // TODO replace 1/0 with read/not read
             }
             if(result.general){
                 $scope.generalReport = result.general;
@@ -322,11 +321,17 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
 
     //Remove whitespace from input
     function strip(inp){
+        console.log("Strip " + inp);
         for(var i=0; i<inp.length; i++){
+            console.log(inp[i]);
             for (var key in inp[i]){
-                inp[i][key] = inp[i][key].replace(/["']/g, "");
+                if(inp[i][key]){
+                    console.log("stripping" + inp[i][key]);
+                    inp[i][key] = inp[i][key].replace(/["']/g, "");
+                }
             }
         }
     }
+
 });
 

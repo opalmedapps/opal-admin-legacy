@@ -88,9 +88,19 @@
                             </table>
                     </div>
                 </div> 
+
             </div>
         </div>
-
+        <!-- Load main table -->
+        <div class="panel-container" style="text-align:left">
+            <div class="panel-info">
+                <div class="panel-input">
+                    <div id="educReportTable" style="display:none;">
+                        <div class="gridStyle" ui-grid="educGridOptions" ui-grid-resize-columns style="height:75vh"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div ng-show="category.questionnaire">
             <center>
                 <h2> Questionnaire Group Reporting </h2>

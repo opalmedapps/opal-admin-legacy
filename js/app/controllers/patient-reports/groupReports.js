@@ -1,6 +1,6 @@
-angular.module('opalAdmin.controllers.groupReports', ['ngAnimate', 'ui.bootstrap']).
+angular.module('opalAdmin.controllers.groupReports', ['ngAnimate', 'ui.bootstrap',  'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
+controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibModal, $filter){
    
     // Three main categories of group reporting
     //  Ctrl+F to 'EDUCATIONAL', 'QUESTIONNAIRES', 'DEMOGRAPHICS'  to see relevant code
@@ -62,6 +62,49 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
 			rep.style.border = "thick dotted paleturquoise";
 		}
     }
+
+    $scope.filterOptions = function (renderableRows) {
+        var matcher = new RegExp($scope.filterValue, 'i');
+        renderableRows.forEach(function (row) {
+            var match = false;
+            ['pname', 'plname', 'pser'].forEach(function (field) {
+                if (row.entity[field].match(matcher)) {
+                    match = true;
+                }
+            });
+            if (!match) {
+                row.visible = false;
+            }
+        });
+        return renderableRows;
+    };
+
+    $scope.filterPatient = function (filterValue) {
+        $scope.filterValue = filterValue;
+        $scope.gridApi.grid.refresh();
+
+    };
+
+    $scope.educGridOptions = {
+        data: 'educReport',
+        columnDefs: [
+            { field: 'pname', displayName: 'First Name', width: '15%', enableColumnMenu: false },
+            { field: 'plname', displayName: 'Last Name', width: '15%', enableColumnMenu: false },
+            { field: 'pser', displayName: 'Serial', width: '10%', enableColumnMenu: false },
+            { field: 'page', displayName: 'Age', width: '10%', enableColumnMenu: false },
+            { field: 'pdob', displayName: 'Date of Birth', width:'10%', enableColumnMenu: false },
+            { field: 'psex', displayName: 'Sex', width:'10%', enableColumnMenu: false },
+            { field: 'edate', displayName: 'Date Sent', width:'15%', enableColumnMenu: false },
+            { field: 'eread', displayName: 'Date Read', width:'15%', enableColumnMenu: false },
+        ],
+        enableFiltering: true,
+        //useExternalFiltering: true,
+        enableColumnResizing: true,
+        onRegisterApi: function (gridApi) {
+            $scope.gridApi = gridApi;
+            $scope.gridApi.grid.registerRowsProcessor($scope.filterOptions, 300);
+        },
+    };
 
     //
     // EDUCATIONAL MATERIAL SECTION
@@ -167,6 +210,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
                 
             }
             $scope.educReportLength = $scope.educReport.length;
+            document.getElementById("educReportTable").style.display = block;
             prepareEducStats();
 
 
@@ -177,6 +221,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
         }
 
     }
+
 
     // Helper function to prepare educational material statistics for display
     function prepareEducStats(){
@@ -320,7 +365,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE){
             // ErrorHandler TODO
         }
 
-        console.log($scope.qstReport);
+        //console.log($scope.qstReport);
 
         prepareQstStats();
     }
