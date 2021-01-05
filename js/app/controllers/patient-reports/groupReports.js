@@ -51,40 +51,6 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
 
     $scope.patientReportLength = "";
 
-	$scope.updateColours = function(){
-		var tab = document.getElementById("tab");
-		var rep = document.getElementById("GroupReport");
-		if($scope.db.prod){
-			tab.style.backgroundColor = "palegreen";
-			rep.style.border = "thick dotted palegreen";
-		}else{
-			tab.style.backgroundColor = "paleturquoise";
-			rep.style.border = "thick dotted paleturquoise";
-		}
-    }
-
-    $scope.filterOptions = function (renderableRows) {
-        var matcher = new RegExp($scope.filterValue, 'i');
-        renderableRows.forEach(function (row) {
-            var match = false;
-            ['pname', 'plname', 'pser'].forEach(function (field) {
-                if (row.entity[field].match(matcher)) {
-                    match = true;
-                }
-            });
-            if (!match) {
-                row.visible = false;
-            }
-        });
-        return renderableRows;
-    };
-
-    $scope.filterPatient = function (filterValue) {
-        $scope.filterValue = filterValue;
-        $scope.gridApi.grid.refresh();
-
-    };
-
     $scope.educGridOptions = {
         data: 'educReport',
         columnDefs: [
@@ -95,15 +61,47 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
             { field: 'pdob', displayName: 'Date of Birth', width:'10%', enableColumnMenu: false },
             { field: 'psex', displayName: 'Sex', width:'10%', enableColumnMenu: false },
             { field: 'edate', displayName: 'Date Sent', width:'15%', enableColumnMenu: false },
-            { field: 'eread', displayName: 'Date Read', width:'15%', enableColumnMenu: false },
+            { field: 'eupdate', displayName: 'Date Read', width:'15%', enableColumnMenu: false },
+        ],
+        enableFiltering: true,
+        enableColumnResizing: true,
+    };
+
+    $scope.qstGridOptions = {
+        data: 'qstReport',
+        columnDefs: [
+            { field: 'pname', displayName: 'First Name', width: '15%', enableColumnMenu: false },
+            { field: 'plname', displayName: 'Last Name', width: '15%', enableColumnMenu: false },
+            { field: 'pser', displayName: 'Opal Serial', width: '10%', enableColumnMenu: false },
+            { field: 'psex', displayName: 'Sex', width: '10%', enableColumnMenu: false },
+            { field: 'pdob', displayName: 'Date of Birth', width:'15%', enableColumnMenu: false },
+            { field: 'qdate', displayName: 'Date Sent', width:'15%', enableColumnMenu: false },
+            { field: 'qcomplete', displayName: 'Date Complete', width:'15%', enableColumnMenu: false },
         ],
         enableFiltering: true,
         //useExternalFiltering: true,
         enableColumnResizing: true,
-        onRegisterApi: function (gridApi) {
-            $scope.gridApi = gridApi;
-            $scope.gridApi.grid.registerRowsProcessor($scope.filterOptions, 300);
-        },
+
+    };
+
+    $scope.demoGridOptions = {
+        data: 'patientReport',
+        columnDefs: [
+            { field: 'pname', displayName: 'First Name', width: '10%', enableColumnMenu: false },
+            { field: 'plname', displayName: 'Last Name', width: '10%', enableColumnMenu: false },
+            { field: 'pser', displayName: 'Serial', width: '5%', enableColumnMenu: false },
+            { field: 'page', displayName: 'Age', width: '5%', enableColumnMenu: false },
+            { field: 'pdob', displayName: 'Date of Birth', width:'10%', enableColumnMenu: false },
+            { field: 'psex', displayName: 'Sex', width:'5%', enableColumnMenu: false },
+            { field: 'pemail', displayName: 'Email', width:'15%', enableColumnMenu: false },
+            { field: 'plang', displayName: 'Language', width:'10%', enableColumnMenu: false },
+            { field: 'preg', displayName: 'Opal Registration', width:'10%', enableColumnMenu: false },
+            { field: 'diagdesc', displayName: 'Diagnosis', width:'10%', enableColumnMenu: false },
+            { field: 'diagdate', displayName: 'Diagnosis Date', width:'10%', enableColumnMenu: false },
+        ],
+        enableFiltering: true,
+        //useExternalFiltering: true,
+        enableColumnResizing: true,
     };
 
     //
@@ -210,7 +208,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                 
             }
             $scope.educReportLength = $scope.educReport.length;
-            document.getElementById("educReportTable").style.display = block;
+            //document.getElementById("educReportTable").style.display = "block";
             prepareEducStats();
 
 
@@ -622,16 +620,5 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
 
         }
     }
-
-
-
-
-
-
-
-    
-
-
-
 
 });

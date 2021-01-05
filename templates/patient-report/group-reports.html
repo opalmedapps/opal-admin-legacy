@@ -10,14 +10,14 @@
 <div class="modal-body">
 
    <div id="GroupReport">
-        <div style="float:right; clear:both;">
+        <!-- <div style="float:right; clear:both;">
             <p>
                 Database: <br/>
                 <label style="color:darkgreen; font-weight:bold;"><input type="checkbox" ng-model="db.prod" ng-change="db.preprod = false; updateColours();"> Prod </label>
                 <br>
                 <label style="color:darkturquoise; font-weight:bold;"><input type="checkbox" ng-model="db.preprod" ng-change="db.prod = false; updateColours();"> Preprod </label>
             </p>
-        </div>
+        </div> -->
         <p> Select group reporting category </p>
         <label><input type="checkbox" ng-model="category.education" ng-change="category.questionnaire = false; category.demographics = false;"> Educational Material </label>
         <br>
@@ -26,7 +26,7 @@
         <label><input type="checkbox" ng-model="category.demographics" ng-change="category.education = false; category.questionnaire = false; genPatientReport();"> Demographics </label>
         <br>
 
-        <div ng-show="category.education" style="border:1px solid black;">
+        <div ng-show="category.education" class="panel-container">
             <center>
                 <h2> Educational Material Group Reporting </h2>
             </center>
@@ -42,16 +42,16 @@
                 All {{materialType}} currently found in OpalDB: <select ng-model="selectedMaterial" ng-options="x for x in educList" ng-change="genEducReport(); showEducReport = true;"></select>
             </label>
             <div ng-show="showEducReport">
-                <div class="panel-container">
+                <div class="panel-info">
                     <div class="panel-input"> 
-                        <h3 style="color:black;"> Statistics for this report </h3>
-                        <table style="padding: 5px 5px 5px 5px;">
+                        <h2 style="color:black; text-align:left;"> Statistics for this report </h2>
+                        <table style="text-align:left; border:1px dotted rgb(36, 21, 32); border-collapse: collapse;">
                             <tr>
                                 <td style="font-weight:bold;">% Female/Male</td>
                                 <td>{{educFemPcnt}}% female; {{educMalPcnt}}% male; {{educUnkPcnt}}% unknown</td>
                             </tr>
                             <tr>
-                                <td style="font-weight:bold;">Average patient age (in this report)</td>
+                                <td style="font-weight:bold;">Average patient age</td>
                                 <td>{{educAvgAge}} years</td>
                             </tr>
                             <tr>
@@ -63,45 +63,16 @@
                                 <td>{{educAvgDaysToRead}} days</td>
                             </tr>
                         </table>
-                        <h3> &nbsp &nbsp Full report on {{materialType}}: {{selectedMaterial}}, {{educReportLength}} records found</h3>
-                            <table id="groupEducTable">
-                                <tr style="font-weight:bold;">
-                                    <th onclick="sortTable(0,'groupEducTable')">First Name</th>
-                                    <th onclick="sortTable(1,'groupEducTable')">Last Name</th>
-                                    <th onclick="sortTable(2,'groupEducTable')">Patient Ser Num</td>
-                                    <th onclick="sortTable(3,'groupEducTable')">Patient Sex</th>
-                                    <th onclick="sortTable(4,'groupEducTable')">Patient Age</th>
-                                    <th onclick="sortTable(5,'groupEducTable')">Patient Date of Birth</th>
-                                    <th onclick="sortTable(6,'groupEducTable')">Date Material Sent</th>
-                                    <th onclick="sortTable(7,'groupEducTable')">Read Status</th>
-                                </tr>
-                                <tr ng-repeat="x in educReport | orderBy:'lname'">
-                                    <td>{{ x.pname }}</td>
-                                    <td>{{ x.plname }}</td>
-                                    <td>{{ x.pser }}</td>
-                                    <td>{{ x.psex }}</td>
-                                    <td>{{ x.page }}</td>
-                                    <td>{{ x.pdob }}</td>
-                                    <td>{{ x.edate }}</td>
-                                    <td>{{ x.eread }}</td>
-                                </tr>
-                            </table>
+                        <h3 style="text-align:left;"> Full report on {{materialType}}: {{selectedMaterial}}, {{educReportLength}} records found</h3>
+                        <!-- Load main table -->
+                        <div class="gridStyle" ui-grid="educGridOptions" ui-grid-resize-columns style="height:75vh; width:90vw;"></div>
                     </div>
                 </div> 
 
             </div>
         </div>
-        <!-- Load main table -->
-        <div class="panel-container" style="text-align:left">
-            <div class="panel-info">
-                <div class="panel-input">
-                    <div id="educReportTable" style="display:none;">
-                        <div class="gridStyle" ui-grid="educGridOptions" ui-grid-resize-columns style="height:75vh"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div ng-show="category.questionnaire">
+
+        <div ng-show="category.questionnaire" class="panel-container">
             <center>
                 <h2> Questionnaire Group Reporting </h2>
             </center>
@@ -111,13 +82,10 @@
                         ng-change="genQstReport(); showQstReport = true;"></select>
             </label>
 
-            <div ng-show="showQstReport">
-                <center>
-                    <h3> Report on {{selectedQuestionnaire}}, {{qstReportLength}} total records found</h3>
-                </center>
-                <div style="border: 1px solid blue; width: 70%;">
-                    <h3 style="color:blue;"> &nbsp &nbsp Statistics for this report </h3>
-                    <table style="padding: 5px 5px 5px 5px;">
+            <div ng-show="showQstReport" class="panel-info">
+                <div class="panel-input">
+                    <h2 style="color:black; text-align:left;"> Statistics for this report </h2>
+                    <table style="text-align:left; border:1px dotted rgb(36, 21, 32); border-collapse: collapse;">
                         <tr>
                             <td style="font-weight:bold;">% Female/Male</td>
                             <td>{{qstPcntFemale}}% female; {{qstPcntMale}}% male; {{qstPcntUnk}}% unknown</td>
@@ -139,132 +107,49 @@
                             <td>{{qstAvgCompletTime}} days</td>
                         </tr>
                     </table>
-
-
-                </div>
-                <br><br>
-                <h3> &nbsp &nbsp Full Group Report:</h3>
-                <table id="groupQstTable">
-                    <tr style="font-weight:bold;">
-                        <th onclick="sortTable(0,'groupQstTable')">First Name</th>
-                        <th onclick="sortTable(1,'groupQstTable')">Last Name</th>
-                        <th onclick="sortTable(2,'groupQstTable')">Patient Ser Num</td>
-                        <th onclick="sortTable(3,'groupQstTable')">Patient Sex</th>
-                        <th onclick="sortTable(4,'groupQstTable')">Patient Date of Birth</th>
-                        <th onclick="sortTable(5,'groupQstTable')">Date Material Sent</th>
-                        <th onclick="sortTable(6,'groupQstTable')">Date Material Completed</th>
-                    </tr>
-                    <tr ng-repeat="x in qstReport | orderBy:'plname'">
-                        <td>{{ x.pname }}</td>
-                        <td>{{ x.plname }}</td>
-                        <td>{{ x.pser }}</td>
-                        <td>{{ x.psex }}</td>
-                        <td>{{ x.pdob }}</td>
-                        <td>{{ x.qdate }}</td>
-                        <td>{{ x.qcomplete }}</td>
-                    </tr>
-                </table>
-
+                    <h3 style="text-align: left;"> Full report on {{selectedQuestionnaire}}, {{qstReportLength}} total records found</h3>
+                    <!-- Load main table -->
+                    <div class="gridStyle" ui-grid="qstGridOptions" ui-grid-resize-columns style="height:75vh; width:90vw;"></div>
+            
+                </div>                
             </div>
         </div>
-        <div ng-show="category.demographics">
-            <center>
-                <h2> Demographics Group Reporting </h2>
-            </center>
-            <div style="border: 2px solid blue; width: 100%;">
-                <h3 style="color:blue;"> &nbsp &nbsp Statistics for this report </h3>
-                <table style="padding: 5px 5px 5px 5px;">
-                    <tr>
-                        <td style="font-weight:bold;">% Female/Male</td>
-                        <td>{{demoPcntFemale}}% female; {{demoPcntMale}}% male; {{demoPcntUnk}}% unknown</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight:bold;">Average Patient Age</td>
-                        <td>{{demoAvgAge}} years</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight:bold;">% French/English Preferred</td>
-                        <td>{{demoPcntFrench}}% french preferred; {{demoPcntEnglish}}% english preferred;</td>
-                    </tr>
-                </table>
-                <!--Plotting divisions for some stats visualizations-->
-                <!-- <div id="plotDiv1" style="width: 80%; float:left;">
+
+
+        <div ng-show="category.demographics" class="panel-container">
+            <div class="panel-info">
+                <center>
+                    <h2> Demographics Group Reporting </h2>
+                </center>
+                <div class="panel-input">
+                    <h2 style="color:black; text-align:left;"> Statistics for this report </h2>
+                    <table style="text-align:left; border:1px dotted rgb(36, 21, 32); border-collapse: collapse;">
+                        <tr>
+                            <td style="font-weight:bold;">% Female/Male</td>
+                            <td>{{demoPcntFemale}}% female; {{demoPcntMale}}% male; {{demoPcntUnk}}% unknown</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;">Average Patient Age</td>
+                            <td>{{demoAvgAge}} years</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;">% French/English Preferred</td>
+                            <td>{{demoPcntFrench}}% french preferred; {{demoPcntEnglish}}% english preferred;</td>
+                        </tr>
+                    </table>
+                    <h3 style="text-align:left;">Full report on patient demographics, {{patientReportLength}} total patients</h3>
+                    <!-- Load main table -->
+                    <div class="gridStyle" ui-grid="demoGridOptions" ui-grid-resize-columns style="height:75vh; width:90vw;"></div>
+                  
+                    <!--Plotting divisions for some stats visualizations-->
+                    <!-- <div id="plotDiv1" style="width: 80%; float:left;">
+                    </div>
+                    <div id="plotDiv2" style="width: 100%; clear:both;">
+                    </div> -->
                 </div>
-                <div id="plotDiv2" style="width: 100%; clear:both;">
-                </div> -->
+              
             </div>
-            <h3 style="clear:both;">&nbsp &nbsp Full Patient Information List, {{patientReportLength}} total patients</h3>
-            <table id="groupPatientTable">
-                <tr style="font-weight:bold;">
-                    <th onclick="sortTable(0,'groupPatientTable')">First Name</th>
-                    <th onclick="sortTable(1,'groupPatientTable')">Last Name</th>
-                    <th onclick="sortTable(2,'groupPatientTable')">Patient Ser Num</td>
-                    <th onclick="sortTable(3,'groupPatientTable')">Patient Sex</th>
-                    <th onclick="sortTable(4,'groupPatientTable')">Patient Date of Birth</th>
-                    <th onclick="sortTable(5,'groupPatientTable')">Patient Age</th>
-                    <th onclick="sortTable(6,'groupPatientTable')">Patient Registration Date</th>
-                    <th onclick="sortTable(7,'groupPatientTable')">Patient Preferred Language</th>
-                    <th onclick="sortTable(8, 'groupPatientTable')">Patient Diagnosis</th>
-                    <th onclick="sortTable(9, 'groupPatientTable')">Diagnosis Date</th>
-                </tr>
-                <tr ng-repeat="x in patientReport | orderBy:'plname'">
-                    <td>{{ x.pname }}</td>
-                    <td>{{ x.plname }}</td>
-                    <td>{{ x.pser }}</td>
-                    <td>{{ x.psex }}</td>
-                    <td>{{ x.pdob }}</td>
-                    <td>{{ x.page }}</td>
-                    <td>{{ x.preg }}</td>
-                    <td>{{ x.plang }}</td>
-                    <td>{{ x.diagdesc }}</td>
-                    <td>{{ x.diagdate }}</td>
-                </tr>
-            </table>
 
         </div>
     </div>
 </div>
-
-<script>
-    //Bubble sort
-     function sortTable(n, tname) {
-            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-            table = document.getElementById(tname); //table handle to get the data
-            switching = true; //switching variable identifies if we are done or not (begin with true)
-            dir = "asc"; // sorting direction
-            while (switching) { // outer loop, continue until we have no more switches possible
-                switching = false;
-                rows = table.rows; //get rows to be sorted
-                for (i = 1; i < (rows.length - 1); i++) { //inner loop, just identifies if we are doing a switch or not
-                    shouldSwitch = false; //doing a switch? false by default
-                    x = rows[i].getElementsByTagName("TD")[n]; //x and y elements to compare
-                    y = rows[i + 1].getElementsByTagName("TD")[n];
-                    if (dir == "asc") {
-                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                            shouldSwitch = true; //mark a switch to be done and exit this branch
-                            break;
-                        }
-                    } else if (dir == "desc") {
-                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                            shouldSwitch = true; //mark a switch to be done and exit this branch
-                            break;
-                        }
-                    }
-                } //end of the inner loop. Either we are at a pair of elements that need to be swapped, or we are at the end of the list and we are finished
-                if (shouldSwitch) {
-                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]); //perform the swap
-                    switching = true; //identify that, since we did a swap, we need to restart the inner loop, so dont exit the outer while loop
-                    switchcount++;      // keep track of where we are
-                } else {
-                    /*If no switching has been done AND the direction is "asc",
-                    set the direction to "desc" and run the while loop again.*/
-                    if (switchcount == 0 && dir == "asc") {
-                        dir = "desc";
-                        switching = true;
-                    }
-                }
-            }
-        }
-
-
-</script>

@@ -1,6 +1,6 @@
-angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstrap']).
+angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
+controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $uibModal){
 
     $scope.foundPatient = false; //only show the report once patient is found/selected
     $scope.selectPatient = false; //only show if multiple patients are found from search and user must choose one
@@ -44,8 +44,145 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
     $scope.txteamReport = "";
     $scope.generalReport = "";
     $scope.txplanReport = "";
+    
+    // Initialize gridOptions objects for each report segment, set to track corresponding report segment data
+    $scope.diagGridOptions = {
+        data: 'diagReport',
+        columnDefs: [
+            { field: 'description', displayName: 'Diagnosis Description', width: '40%', enableColumnMenu: false },
+            { field: 'creationdate', displayName: 'Diagnosis Date', width: '40%', enableColumnMenu: false },
+            { field: 'sernum', displayName: 'Opal Diagnosis Serial', width: '20%', enableColumnMenu: false },
+        ],
+        enableFiltering: true,
+        enableColumnResizing: true,    
+    };
 
-    $scope.nullPatient = "";
+    $scope.qstGridOptions = {
+        data: 'qstReport',
+        columnDefs: [
+            { field: 'name', displayName: 'Questionnaire Name', width: '40%', enableColumnMenu: false },
+            { field: 'dateadded', displayName: 'Date Sent', width: '40%', enableColumnMenu: false },
+            { field: 'datecompleted', displayName: 'Date Completed', width: '20%', enableColumnMenu: false },
+        ],
+        enableFiltering: true,
+        enableColumnResizing: true,
+    };
+
+    $scope.apptGridOptions = {
+        data: 'apptReport',
+        columnDefs: [
+            { field: 'starttime', displayName: 'Scheduled Appointment Time', width: '20%', enableColumnMenu: false },
+            { field: 'dateadded', displayName: 'Added to Opal', width: '20%', enableColumnMenu: false },
+            { field: 'status', displayName: 'Status', width: '10%', enableColumnMenu: false },
+            { field: 'aliasname', displayName: 'Appointment Name', width: '20%', enableColumnMenu: false },
+            { field: 'aliastype', displayName: 'Appointment Type', width: '10%', enableColumnMenu: false },
+            { field: 'resourcename', displayName: 'Resource Name', width: '20%', enableColumnMenu: false },
+
+        ],
+        enableFiltering: true,
+        enableColumnResizing: true,    
+    };
+
+    $scope.educGridOptions = {
+        data: 'educReport',
+        columnDefs: [
+            { field: 'name', displayName: 'Material Name', width: '40%', enableColumnMenu: false },
+            { field: 'materialtype', displayName: 'Material Type', width: '20%', enableColumnMenu: false },
+            { field: 'dateadded', displayName: 'Date Sent', width: '30%', enableColumnMenu: false },
+            { field: 'readstatus', displayName: 'Read Status', width: '10%', enableColumnMenu: false },
+
+        ],
+        enableFiltering: true,
+        enableColumnResizing: true,
+    };
+
+    $scope.testGridOptions = {
+        data: 'testReport',
+        columnDefs: [
+            { field: 'componentname', displayName: 'Test Name', width: '15%', enableColumnMenu: false },
+            { field: 'unitdescription', displayName: 'Test Unit', width: '10%', enableColumnMenu: false },
+            { field: 'testdate', displayName: 'Test Date', width: '15%', enableColumnMenu: false },
+            { field: 'dateadded', displayName: 'Opal Date Added', width: '15%', enableColumnMenu: false },
+            { field: 'minnorm', displayName: 'Min Normal Value', width: '10%', enableColumnMenu: false },
+            { field: 'testvalue', displayName: 'Test Result', width: '10%', enableColumnMenu: false },
+            { field: 'maxnorm', displayName: 'Max Normal Value', width: '10%', enableColumnMenu: false },
+            { field: 'abnormalflag', displayName: 'Abnormal Flag', width: '10%', enableColumnMenu: false },
+            { field: 'readstatus', displayName: 'Read Status', width: '5%', enableColumnMenu: false },
+
+        ],
+        enableFiltering: true,
+        enableColumnResizing: true, 
+    };
+
+    $scope.noteGridOptions = {
+        data: 'noteReport',
+        columnDefs: [
+            { field: 'name', displayName: 'Note Type', width: '15%', enableColumnMenu: false },
+            { field: 'tablerowtitle', displayName: 'Note Name', width: '30%', enableColumnMenu: false },
+            { field: 'dateadded', displayName: 'Date Sent', width: '20%', enableColumnMenu: false },
+            { field: 'lastupdated', displayName: 'Date Read', width: '20%', enableColumnMenu: false },
+
+        ],
+        enableFiltering: true,
+        enableColumnResizing: true, 
+    };
+
+    $scope.clinnoteGridOptions = {
+        data: 'clinnoteReport',
+        columnDefs: [
+            { field: 'aliasexpressionname', displayName: 'Note Type', width: '20%', enableColumnMenu: false },
+            { field: 'originalname', displayName: 'Original Name', width: '20%', enableColumnMenu: false },
+            { field: 'finalname', displayName: 'Final Name', width: '20%', enableColumnMenu: false },
+            { field: 'created', displayName: 'Date Created', width: '20%', enableColumnMenu: false },
+            { field: 'approved', displayName: 'Date Approved', width: '20%', enableColumnMenu: false },
+        ],
+        enableFiltering: true,
+        enableColumnResizing: true, 
+    };
+
+    $scope.txteamGridOptions = {
+        data: 'txteamReport',
+        columnDefs: [
+            { field: 'name', displayName: 'Title', width: '30%', enableColumnMenu: false },
+            { field: 'body', displayName: 'Body', width: '45%', enableColumnMenu: false },
+            { field: 'dateadded', displayName: 'Date Sent', width: '15%', enableColumnMenu: false },
+            { field: 'readstatus', displayName: 'Read Status', width: '10%', enableColumnMenu: false },
+        ],
+        enableFiltering: true,
+        enableColumnResizing: true, 
+    };
+
+    $scope.generalGridOptions = {
+        data: 'generalReport',
+        columnDefs: [
+            { field: 'name', displayName: 'Title', width: '30%', enableColumnMenu: false },
+            { field: 'body', displayName: 'Body', width: '45%', enableColumnMenu: false },
+            { field: 'dateadded', displayName: 'Date Sent', width: '15%', enableColumnMenu: false },
+            { field: 'readstatus', displayName: 'Read Status', width: '10%', enableColumnMenu: false },
+        ],
+        enableFiltering: true,
+        enableColumnResizing: true, 
+    };
+
+    $scope.txplanGridOptions = {
+        data: 'txplanReport',
+        columnDefs: [
+            { field: 'diagnosisdescription', displayName: 'Diagnosis Description', width: '25%', enableColumnMenu: false },
+            { field: 'aliastype', displayName: 'Type', width: '10%', enableColumnMenu: false },
+            { field: 'prioritycode', displayName: 'Priority', width: '15%', enableColumnMenu: false },
+            { field: 'aliasexpressiondescription', displayName: 'Expression Desc.', width: '10%', enableColumnMenu: false },
+            { field: 'aliasname', displayName: 'Alias Name', width: '10%', enableColumnMenu: false },
+            { field: 'aliasdescription', displayName: 'Alias Desc.', width: '10%', enableColumnMenu: false },
+            { field: 'taskstatus', displayName: 'Task Status', width: '5%', enableColumnMenu: false },
+            { field: 'taskstate', displayName: 'Task State', width: '5%', enableColumnMenu: false },
+            { field: 'taskdue', displayName: 'Task Due', width: '10%', enableColumnMenu: false },
+            { field: 'taskcompletiondate', displayName: 'Task Complete', width: '10%', enableColumnMenu: false },
+
+        ],
+        enableFiltering: true,
+        enableColumnResizing: true, 
+    };
+
     $scope.selectedName = "";
 
     /**
@@ -57,7 +194,6 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
         if ($scope.searchName == "" && $scope.searchMRN == "" && $scope.searchRAMQ == "") {
             $scope.foundPatient = false;
         }else if ($scope.searchName){ //find by name
-            console.log("Searching by name");
             $.ajax({
                 type: "POST",
                 url: "patient-reports/find/patient-name",
@@ -115,7 +251,6 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
             console.log("No patient found matching search");
             // ErrorHandler TODO
         }else if ($scope.searchResult.length > 1){ //found multiple patients matching search
-            console.log("Multiple matches found");
             $scope.patOptions = [];
             var tmp = "";
             //load each result into patOptions array for selection
@@ -254,7 +389,6 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
                 general: $scope.featureList.general,
             },
             success: function(response){
-                console.log(JSON.parse(response));
                 populateTables(JSON.parse(response));
             },
             error: function(err){
@@ -272,11 +406,11 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
         if(result && (result !== null)){
             if(result.diagnosis){
                 $scope.diagReport = result.diagnosis;
-                //strip($scope.diagReport);
+                strip($scope.diagReport);
             }
             if(result.questionnaires){
                 $scope.qstReport = result.questionnaires;
-                //strip($scope.qstReport); //TODO replace null with not completed
+                strip($scope.qstReport); //TODO replace null with not completed
             }
             if(result.education){
                 $scope.educReport = result.education;
@@ -321,12 +455,9 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE){
 
     //Remove whitespace from input
     function strip(inp){
-        console.log("Strip " + inp);
         for(var i=0; i<inp.length; i++){
-            console.log(inp[i]);
             for (var key in inp[i]){
                 if(inp[i][key]){
-                    console.log("stripping" + inp[i][key]);
                     inp[i][key] = inp[i][key].replace(/["']/g, "");
                 }
             }
