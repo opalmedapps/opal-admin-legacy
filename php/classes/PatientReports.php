@@ -22,8 +22,11 @@ class PatientReports extends Module {
      * @return patientList: details for the given patient(s) matching search criteria
      * 
      */
-    public function findPatientByName( $name ) {
-        $this->checkReadAccess();
+    public function findPatientByName( $nameInp ) {
+        $name = HelpSetup::arraySanitization($nameInp);
+        //check read access before proceeding
+        $this->checkReadAccess(array("name"=>$name));
+        
         try{
             $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -73,8 +76,11 @@ class PatientReports extends Module {
      * @return patientList: details for the given patient(s) matching search criteria
      * 
      */
-    public function findPatientByMRN( $mrn ) {
-        $this->checkReadAccess();
+    public function findPatientByMRN( $mrnInp ) {
+        $mrn = HelpSetup::arraySanitization($mrnInp);
+        //check read access before proceeding
+        $this->checkReadAccess(array("mrn"=>$mrn));
+        
         try{
             $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -125,8 +131,11 @@ class PatientReports extends Module {
      * @return patientList: details for the given patient(s) matching search criteria
      * 
      */
-    public function findPatientByRAMQ( $ramq ) {
-        $this->checkReadAccess();
+    public function findPatientByRAMQ( $ramqInp ) {
+        $ramq = HelpSetup::arraySanitization($ramqInp);
+        //check read access before proceeding
+        $this->checkReadAccess(array("ramq"=>$ramq));
+                    
         try{
             $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -177,7 +186,7 @@ class PatientReports extends Module {
      *  @return resultArray: patient data report JSON object, keyed by report segment name
      */
     public function getPatientReport($pnum, $flist){
-        $this->checkReadAccess();
+        $this->checkReadAccess(array("serial"=>$pnum,"features"=>$fList));
         try{
             $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -546,7 +555,7 @@ class PatientReports extends Module {
      *  @return educList: array of educational materials
      */
     public function findEducationalMaterialOptions( $matType ){
-        $this->checkReadAccess();
+        $this->checkReadAccess(array("type"=>$matType));
         try{
             $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -585,7 +594,7 @@ class PatientReports extends Module {
      *  @return educReport: educational material report
      */
     public function getEducationalMaterialReport( $matType, $matName ){
-        $this->checkReadAccess();
+        $this->checkReadAccess(array("type"=>$matType,"name"=>$matName));
         try{
             $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -676,7 +685,7 @@ class PatientReports extends Module {
      *  @return qstReport: questionnaire report JSON object
      */
     public function getQuestionnaireReport( $qName ){
-        $this->checkReadAccess();
+        $this->checkReadAccess(array("qName"=>$qName));
         try{
             $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
