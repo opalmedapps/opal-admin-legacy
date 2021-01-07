@@ -10,6 +10,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
         questionnaires: false,
         education: false,
         testresults: false,
+        pattestresults: false,
         notifications: false,
         treatplan: false,
         clinicalnotes: false,
@@ -39,6 +40,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
     $scope.apptReport = "";
     $scope.educReport = "";
     $scope.testReport = "";
+    $scope.pattestReport = "";
     $scope.noteReport = "";
     $scope.clinnoteReport = "";
     $scope.txteamReport = "";
@@ -112,6 +114,23 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
         ],
         enableFiltering: true,
         enableColumnResizing: true, 
+    };
+    $scope.pattestGridOptions = {
+        data: 'pattestReport',
+        columnDefs: [
+            { field: 'groupname', displayName: 'Group Name', width: '10%', enableColumnMenu: false },
+            { field: 'readstatus', displayName: 'Read Status', width: '5%', enableColumnMenu: false },
+            { field: 'testname', displayName: 'Test Name', width: '10%', enableColumnMenu: false },
+            { field: 'description', displayName: 'Description', width: '12%', enableColumnMenu: false },
+            { field: 'abnormalflag', displayName: 'Flags', width: '5%', enableColumnMenu: false },
+            { field: 'normalrange', displayName: 'Normal Range', width: '10%', enableColumnMenu: false },
+            { field: 'testvalue', displayName: 'Test Result', width: '12%', enableColumnMenu: false },
+            { field: 'datecollected', displayName: 'Test Time', width: '12%', enableColumnMenu: false },
+            { field: 'resultdate', displayName: 'Result Time', width: '12%', enableColumnMenu: false },
+            { field: 'dateadded', displayName: 'Added to Opal', width: '12%', enableColumnMenu: false },
+        ],
+        enableFiltering: true,
+        enableColumnResizing: true,
     };
 
     $scope.noteGridOptions = {
@@ -348,6 +367,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
         $scope.featureList.questionnaires = true;
         $scope.featureList.education = true;
         $scope.featureList.testresults = true;
+        $scope.featureList.pattestresults = true;
         $scope.featureList.notifications = true;
         $scope.featureList.treatplan = true;
         $scope.featureList.clinicalnotes = true;
@@ -360,6 +380,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
         $scope.apptReport = "";
         $scope.educReport = "";
         $scope.testReport = "";
+        $scope.pattestReport = "";
         $scope.noteReport = "";
         $scope.clinnoteReport = "";
         $scope.txteamReport = "";
@@ -382,6 +403,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
                 questionnaires: $scope.featureList.questionnaires,
                 education: $scope.featureList.education,
                 testresults: $scope.featureList.testresults,
+                pattestresults: $scope.featureList.pattestresults,
                 notes: $scope.featureList.notifications,
                 treatplan: $scope.featureList.treatplan,
                 clinicalnotes: $scope.featureList.clinicalnotes,
@@ -423,6 +445,10 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
             if(result.testresults){
                 $scope.testReport = result.testresults;
                 strip($scope.testReport);
+            }
+            if(result.pattestresults){
+                $scope.pattestReport = result.pattestresults;
+                strip($scope.pattestReport);
             }
             if(result.notes){
                 $scope.noteReport = result.notes;

@@ -111,8 +111,8 @@
                             <td><label>Educational Materials <input type="checkbox" ng-model="featureList.education"> </label></td>
                         </tr>
                         <tr>
-                            <td><label>Lab Results <input type="checkbox" ng-model="featureList.testresults"> </label></td>
-                            <td><label>Notifications <input type="checkbox" ng-model="featureList.notifications"></label></td>
+                            <td><label>Legacy Lab Results <input type="checkbox" ng-model="featureList.testresults"> </label></td>
+                            <td><label>Lab Results <input type="checkbox" ng-model="featureList.pattestresults"></label></td>
                         </tr>
                         <tr>
                             <td><label>Treatment Planning <input type="checkbox" ng-model="featureList.treatplan"> </label></td>
@@ -121,6 +121,9 @@
                         <tr>
                             <td><label>My Treating Team<input type="checkbox" ng-model="featureList.treatingteam"> </label></td>
                             <td><label>General Announcements <input type="checkbox" ng-model="featureList.general"></label></td>
+                        </tr>
+                        <tr>
+                            <td><label>Notifications <input type="checkbox" ng-model="featureList.notifications"></label></td>
                         </tr>
                         <tr>
                             <td>
@@ -163,7 +166,7 @@
 
             <div ng-show="featureList.education" class="panel-input">
                 <center>
-                    <h3>Educational Materials</h3>
+                    <h2>Educational Materials</h2>
                 </center>
                 <div class="panel-input">
                     <div class="gridStyle" ui-grid="educGridOptions" ui-grid-resize-columns style="height:50vh; width:95vw;"></div>
@@ -172,16 +175,25 @@
 
             <div ng-show="featureList.testresults">
                 <center>
-                    <h3>Test Results</h3>
+                    <h2>Legacy Lab Results</h2>
                 </center>
                 <div class="panel-input">
                     <div class="gridStyle" ui-grid="testGridOptions" ui-grid-resize-columns style="height:50vh; width:95vw;"></div>
                 </div>
             </div>
 
+            <div ng-show="featureList.pattestresults">
+                <center>
+                    <h2>Lab Results</h2>
+                </center>
+                <div class="panel-input">
+                    <div class="gridStyle" ui-grid="pattestGridOptions" ui-grid-resize-columns style="height:50vh; width:95vw;"></div>
+                </div>
+            </div>
+
             <div ng-show="featureList.notifications">
                 <center>
-                    <h3>Notifications</h3>
+                    <h2>Notifications</h2>
                 </center>
                 <div class="panel-input">
                     <div class="gridStyle" ui-grid="noteGridOptions" ui-grid-resize-columns style="height:50vh; width:95vw;"></div>
@@ -189,7 +201,7 @@
             </div>
             <div ng-show="featureList.treatplan">
                 <center>
-                    <h3>Treatment Planning</h3>
+                    <h2>Treatment Planning</h2>
                 </center>
                 <div class="panel-input">
                     <div class="gridStyle" ui-grid="txplanGridOptions" ui-grid-resize-columns style="height:50vh; width:95vw;"></div>
@@ -197,7 +209,7 @@
             </div>
             <div ng-show="featureList.clinicalnotes">
                 <center>
-                    <h3>Clinical Notes</h3>
+                    <h2>Clinical Notes</h2>
                 </center>
                 <div class="panel-input">
                     <div class="gridStyle" ui-grid="clinnoteGridOptions" ui-grid-resize-columns style="height:50vh; width:95vw;"></div>
@@ -205,7 +217,7 @@
             </div>
             <div ng-show="featureList.treatingteam">
                 <center>
-                    <h3>Treatment Team Messages</h3>
+                    <h2>Treatment Team Messages</h2>
                 </center>
                 <div class="panel-input">
                     <div class="gridStyle" ui-grid="txteamGridOptions" ui-grid-resize-columns style="height:50vh; width:95vw;"></div>
@@ -213,7 +225,7 @@
             </div>
             <div ng-show="featureList.general">
                 <center>
-                    <h3>General Announcements</h3>
+                    <h2>General Announcements</h2>
                 </center>
                 <div class="panel-input">
                     <div class="gridStyle" ui-grid="generalGridOptions" ui-grid-resize-columns style="height:50vh; width:95vw;"></div>

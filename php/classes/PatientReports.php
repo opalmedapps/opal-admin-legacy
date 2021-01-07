@@ -355,6 +355,55 @@ class PatientReports extends Module {
                 $sql = ""; 
             }
 
+            if($flist["pattestresults"] === "true"){
+                $sql="
+                SELECT DISTINCT
+                    IF(ptr.TestGroupExpressionSerNum IS NULL , '', tge.ExpressionName) as groupName,
+                    ptr.ReadStatus as readStatus,
+                    tc.Name_EN as name_EN,
+                    ptr.AbnormalFlag as abnormalFlag,
+                    ptr.NormalRange as normalRange,
+                    ptr.TestValue as testValue,
+                    ptr.UnitDescription as unitDescription,
+                    ptr.DateAdded AS dateAdded,
+                    ptr.CollectedDateTime AS collectedDateTime,
+                    ptr.ResultDateTime AS resultDateTime
+                FROM
+                    PatientTestResult as ptr, TestExpression as te,
+                    TestGroupExpression as tge, TestControl as tc,
+                    EducationalMaterialControl as emc
+                WHERE
+                    ptr.PatientSerNum = '$pnum'
+                    AND (ptr.TestGroupExpressionSerNum = tge.TestGroupExpressionSerNum OR
+                    ptr.TestGroupExpressionSerNum IS NULL)
+                    AND ptr.TestExpressionSerNum = te.TestExpressionSerNum
+                    AND te.TestControlSerNum = tc.TestControlSerNum
+                    AND tc.EducationalMaterialControlSerNum = emc.EducationalMaterialControlSerNum
+                    AND ptr.TestValueNumeric is not null
+                    ORDER BY groupName, sequenceNum";
+        
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+                $pattestReport = array();
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    $reportArray = array(
+                        'groupname'      => $data[0],
+                        'readstatus'        => $data[1],
+                        'testname'      => $data[2],
+                        'abnormalflag'      => $data[3],
+                        'normalrange'         => $data[4],
+                        'testvalue'         => $data[5],
+                        'description'       => $data[6],
+                        'dateadded'        => $data[7],
+                        'datecollected'     => $data[8],
+                        'resultdate'        => $data[9],
+                    );
+                    array_push($pattestReport, $reportArray);
+                }
+                $resultArray["pattestresults"] = $pattestReport;
+                $sql = ""; 
+            }
+
             if($flist["notes"] === "true"){
                 $sql ="  
                 SELECT

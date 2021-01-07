@@ -10,6 +10,7 @@ $fList = array(
     "questionnaires" => $_POST['questionnaires'],
     "education" => $_POST['education'],
     "testresults" => $_POST['testresults'],
+    "pattestresults" => $_POST['pattestresults'],
     "notes" => $_POST['notes'],
     "treatplan" => $_POST['treatplan'],
     "clinicalnotes" => $_POST['clinicalnotes'],
