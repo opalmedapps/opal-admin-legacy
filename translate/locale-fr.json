@@ -2783,8 +2783,20 @@
     }
   },
   "PATIENTREPORT": {
-    "TITLE": "Rapport du patient",
-    "INTRODUCTION": "Rechercher et générer un rapport pour les patients qui utilisent Opal."
+    "TITLE":{
+      "MAIN": "Rapport du patient",
+      "INTRODUCTION": "Rechercher et générer un rapport pour les patients qui utilisent Opal.",
+      "INDIVIDUAL": "[FR]Individual Report",
+      "INDIVIDUAL_DESC": "[FR]Used for individual patient statistics",
+      "GROUP": "[FR]Group Report",
+      "GROUP_DESC": "[FR]Used for group reporting statistics"
+    
+    },
+    "SEARCH":{
+      "DB_ERROR": "[FR]An error occured while contacting the database: ",
+      "SEARCH_FAIL": "[FR]No results returned based on search parameters",
+      "UNKNOWN": "[FR]Something really wrong happened: "
+    }
   },
   "ERROR_HANDLER": {
     "403": {

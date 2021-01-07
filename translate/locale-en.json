@@ -2767,8 +2767,19 @@
     "SERVER_ERROR": "An error occurred. Answer from the server: "
   },
   "PATIENTREPORT": {
-    "TITLE": "Patient Report",
-    "INTRODUCTION": "Search and generate report for opal patients."
+    "TITLE":{
+      "MAIN": "Patient Report",
+      "INTRODUCTION": "Search and generate report for opal patients.",
+      "INDIVIDUAL": "Individual Report",
+      "INDIVIDUAL_DESC": "Used for individual patient statistics",
+      "GROUP": "Group Report",
+      "GROUP_DESC": "Used for group reporting statistics"
+    },
+    "SEARCH":{
+      "DB_ERROR": "An error occured while contacting the database: ",
+      "SEARCH_FAIL": "No results returned based on search parameters",
+      "UNKNOWN": "Something really wrong happened: "
+    }
   },
   "ERROR_HANDLER": {
     "403": {

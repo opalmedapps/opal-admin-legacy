@@ -125,8 +125,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                 prepareEducList(JSON.parse(response));
             },
             error: function(err){
-                console.log(err)
-                //ErrorHandler.onError() TODO
+                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.DB_ERROR'));
             }
         });
     }
@@ -145,8 +144,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                 prepareEducReport(JSON.parse(response));
             },
             error: function(err){
-                console.log(err)
-                //ErrorHandler.onError() TODO
+                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.DB_ERROR'));
             }       
          });
     }
@@ -162,8 +160,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
             }
             $scope.displayMaterialList = true;
         }else{
-            console.log("Something went wrong when preparing education material list");
-            // ErrorHandler TODO
+            ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
         }
 		
 
@@ -212,14 +209,12 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                 
             }
             $scope.educReportLength = $scope.educReport.length;
-            //document.getElementById("educReportTable").style.display = "block";
             prepareEducStats();
 
 
 
         }else{ //error, no result returned
-            console.log("No educational material found");
-            // ErrorHandler TODO   
+            ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
         }
 
     }
@@ -285,8 +280,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                 prepareQstList(JSON.parse(response));
             },
             error: function(err){
-                console.log(err)
-                //ErrorHandler.onError() TODO
+                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.DB_ERROR'));
             }
 
         });
@@ -305,8 +299,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                 prepareQstReport(JSON.parse(response));
             },
             error: function(err){
-                console.log(err);
-                // ErrorHandler TODO
+                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
             }
         });
     }
@@ -321,8 +314,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
             tmp ="";
             }
         }else{ // no questionnaires returned
-            console.log("No questionnaires found in DB");
-            // ErrorHandler TODO
+            ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
         }
        
     }
@@ -364,10 +356,8 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
 			}
             $scope.qstReportLength = $scope.qstReport.length;
         }else{
-            // ErrorHandler TODO
+            ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
         }
-
-        //console.log($scope.qstReport);
 
         prepareQstStats();
     }
@@ -466,8 +456,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                 preparePatientReport(JSON.parse(response));
             },
             error: function(err){
-                console.log("Error occured retrieving patient list ");
-                // Erorhandler TODO
+                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.DB_ERROR'));
             }
         });
     }
@@ -535,12 +524,11 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                 }
 			 }
             $scope.patientReportLength = $scope.patientReport.length;
-            //console.log($scope.patientReport);
             prepareDemoStats();
 
 
         }else{
-            //ErrorHandler TODO
+            ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
         }
         // Heper function to generate demographics statistics
         function prepareDemoStats(){
@@ -598,12 +586,6 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                 $scope.demoPcntFrench = ((frCount/$scope.patientReportLength)*100).toFixed(2);
                 $scope.demoPcntEnglish = (100-$scope.demoPcntFrench).toFixed(2);
                 
-                //callback function provided to sort()
-                // var date_sort_asc = function(date1, date2){
-                //     if(date1 > date2) return 1;
-                //     if(date1 < date2) return -1;
-                //     return 0;
-                // }
 
                 // store keys and values of diag dict for pie chart
                 var diagCounts = [];

@@ -221,8 +221,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
                     displayName(JSON.parse(response));
                 },
                 error: function(err){
-                    console.log(err)
-                    //ErrorHandler.onError() TODO
+                    ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.DB_ERROR'));
                 }
             });
         }else if ($scope.searchMRN){ //find by MRN
@@ -234,8 +233,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
                     displayName(JSON.parse(response));
                 },
                 error: function(err){
-                    console.log(err)
-                    //ErrorHandler.onError() TODO
+                    ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.DB_ERROR'));
                 }
             });
         }else if ($scope.searchRAMQ){ //find my RAMQ
@@ -247,13 +245,11 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
                     displayName(JSON.parse(response));
                 },
                 error: function(err){
-                    console.log(err)
-                    //ErrorHandler.onError()
+                    ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.DB_ERROR'));
                 }
             });
-        }else{ //some error occured
-            console.log("Something really wrong hapepend");
-            // ErrorHandler TODO
+        }else{ //some other error?
+            ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.UNKNOWN'));
         }
     }
 
@@ -267,8 +263,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
         $scope.searchResult = result;
         if(!$scope.searchResult){ //no match found for input parameter
             $scope.foundPatient = false;
-            console.log("No patient found matching search");
-            // ErrorHandler TODO
+            ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
         }else if ($scope.searchResult.length > 1){ //found multiple patients matching search
             $scope.patOptions = [];
             var tmp = "";
@@ -414,8 +409,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
                 populateTables(JSON.parse(response));
             },
             error: function(err){
-                console.log(err)
-                //ErrorHandler.onError() TODO
+                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.DB_ERROR'));
             }
         });
     }
@@ -460,7 +454,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
             }
             if(result.treatingteam){
                 $scope.txteamReport = result.treatingteam;
-                //strip($scope.txplanReport); // TODO replace 1/0 with read/not read
+                strip($scope.txplanReport); // TODO replace 1/0 with read/not read
             }
             if(result.general){
                 $scope.generalReport = result.general;
@@ -472,9 +466,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
             }
         
         }else{ //something went wrong, no result recieved
-            console.log("No result receieved from DB");
-            //Error handler TODO
-
+            ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
         }
     }
 
