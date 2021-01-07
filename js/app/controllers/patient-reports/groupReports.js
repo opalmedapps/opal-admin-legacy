@@ -50,6 +50,10 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
     $scope.qstAvgCompletTime = "";
 
     $scope.patientReportLength = "";
+    $scope.regPlotData = [];
+    $scope.malePlotData = [];
+    $scope.femalePlotData = [];
+
 
     $scope.educGridOptions = {
         data: 'educReport',
@@ -531,7 +535,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                 }
 			 }
             $scope.patientReportLength = $scope.patientReport.length;
-            console.log($scope.patientReport);
+            //console.log($scope.patientReport);
             prepareDemoStats();
 
 
@@ -548,9 +552,6 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
             var frCount = 0;
             $scope.demoPcntFemale = 0;
             $scope.demoPcntMale = 0;
-            var regDates = [];
-            var totalRegistrations = [];
-            var tmpC = 1;
 
             var diagDict = new Object(); //diagnosis tracking
 
@@ -558,8 +559,10 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                 // male/female demgraphics
                 if($scope.patientReport[i].psex === "Female"){
                     femCount++;
+                    $scope.femalePlotData.push([new Date($scope.patientReport[i].preg).getTime(), femCount]);
                 }else if($scope.patientReport[i].psex === "Male"){
                     malCount++;
+                    $scope.malePlotData.push([new Date($scope.patientReport[i].preg).getTime(), malCount]);
                 }else{
                     unkCount++;
                 }
@@ -577,10 +580,9 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                 }
 
                 //registration date tracking (to be plotted)
-                regDates.push(new Date($scope.patientReport[i].preg));
-                totalRegistrations.push(tmpC);
-                tmpC++;
-
+                $scope.regPlotData.push([new Date($scope.patientReport[i].preg).getTime(), i]);
+                
+                
                 // diagnosis breakdown
                 if($scope.patientReport[i].diagdesc in diagDict){
                     diagDict[$scope.patientReport[i].diagdesc]++;
@@ -597,13 +599,11 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                 $scope.demoPcntEnglish = (100-$scope.demoPcntFrench).toFixed(2);
                 
                 //callback function provided to sort()
-                var date_sort_asc = function(date1, date2){
-                    if(date1 > date2) return 1;
-                    if(date1 < date2) return -1;
-                    return 0;
-                }
-                //sort dates
-                regDates.sort(date_sort_asc);
+                // var date_sort_asc = function(date1, date2){
+                //     if(date1 > date2) return 1;
+                //     if(date1 < date2) return -1;
+                //     return 0;
+                // }
 
                 // store keys and values of diag dict for pie chart
                 var diagCounts = [];
@@ -613,10 +613,60 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                     diagDescs.push(key);
                 }
 
-                // TODO complete plotly functions for display using variables above;
-
 
             }
+
+            Highcharts.chart('plot1', {
+                chart: {
+                    type: 'spline'
+                },
+                title:{
+                    text: 'Opal Registrations Over Time'
+                },
+                yAxis: {
+                    title: {
+                        text: 'Total Registrations'
+                    }
+                },
+                xAxis: {
+                    type: 'datetime',
+                    title: {
+                        text: 'Time'
+                    },
+                },
+                legend: {
+                    layout: 'vertical',
+                    align:'left',
+                    verticalAlign: 'top',
+                    x: 100,
+                    y: 70,
+                    floating: true,
+                    borderWidth: 1
+                },
+                plotOptions: {
+                    scatter: {
+                        marker: {
+                            radius: 4,
+                            states: {
+                                hover: {
+                                    enabled: true,
+                                    lineColor: 'rgb(100,100,100)'
+                                }
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    name: 'All Patients',
+                    data: $scope.regPlotData
+                },{
+                    name: 'Female Patients',
+                    data: $scope.femalePlotData
+                },{
+                    name: 'Male Patients',
+                    data: $scope.malePlotData
+                }]
+            });
 
         }
     }
