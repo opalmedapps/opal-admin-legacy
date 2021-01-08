@@ -1,160 +1,169 @@
-<div class="modal-header">
-    <div class="col-xs-12 col-md-6">
-      <h2 class="modal-title">
-        <span class="glyphicon glyphicon-pencil"></span> 
-        Group Patient Reports 
-      </h2>
-    </div>
-</div>
-
-<div class="modal-body">
-
-   <div id="GroupReport">
-        <!-- <div style="float:right; clear:both;">
-            <p>
-                Database: <br/>
-                <label style="color:darkgreen; font-weight:bold;"><input type="checkbox" ng-model="db.prod" ng-change="db.preprod = false; updateColours();"> Prod </label>
-                <br>
-                <label style="color:darkturquoise; font-weight:bold;"><input type="checkbox" ng-model="db.preprod" ng-change="db.prod = false; updateColours();"> Preprod </label>
-            </p>
-        </div> -->
-        <p> Select group reporting category </p>
-        <label><input type="checkbox" ng-model="category.education" ng-change="category.questionnaire = false; category.demographics = false;"> Educational Material </label>
-        <br>
-        <label><input type="checkbox" ng-model="category.questionnaire" ng-change="category.education = false; category.demographics = false; genQuestionnaireOptions();"> Questionnaires </label>
-        <br>
-        <label><input type="checkbox" ng-model="category.demographics" ng-change="category.education = false; category.questionnaire = false; genPatientReport();"> Demographics </label>
-        <br>
-
-        <div ng-show="category.education" class="panel-container">
-            <center>
-                <h2> Educational Material Group Reporting </h2>
-            </center>
-
-            <label>
-                Educational material type:
-                <select ng-model="materialType" ng-options="x for x in materialTypes"
-                        ng-change="genEducationMaterialOptions()"></select>
-            </label>
-
-            <br>
-            <label ng-show="displayMaterialList">
-                All {{materialType}} currently found in OpalDB: <select ng-model="selectedMaterial" ng-options="x for x in educList" ng-change="genEducReport(); showEducReport = true;"></select>
-            </label>
-            <div ng-show="showEducReport">
-                <div class="panel-info">
-                    <div class="panel-input"> 
-                        <h2 style="color:black; text-align:left;"> Statistics for this report </h2>
-                        <table style="text-align:left; border:1px dotted rgb(36, 21, 32); border-collapse: collapse;">
-                            <tr>
-                                <td style="font-weight:bold;">% Female/Male</td>
-                                <td>{{educFemPcnt}}% female; {{educMalPcnt}}% male; {{educUnkPcnt}}% unknown</td>
-                            </tr>
-                            <tr>
-                                <td style="font-weight:bold;">Average patient age</td>
-                                <td>{{educAvgAge}} years</td>
-                            </tr>
-                            <tr>
-                                <td style="font-weight:bold;">% Materials Read</td>
-                                <td>{{educReadPcnt}}% completed</td>
-                            </tr>
-                            <tr>
-                                <td style="font-weight:bold;">Average time until reading</td>
-                                <td>{{educAvgDaysToRead}} days</td>
-                            </tr>
-                        </table>
-                        <h3 style="text-align:left;"> Full report on {{materialType}}: {{selectedMaterial}}, {{educReportLength}} records found</h3>
-                        <!-- Load main table -->
-                        <div class="gridStyle" ui-grid="educGridOptions" ui-grid-resize-columns style="height:75vh; width:90vw;"></div>
-                    </div>
-                </div> 
-
+<div id="main">
+    <div id="top">
+        <div class="row">           
+            <!-- Load side menu -->
+            <div id="side-panel-scrollbar" class="col-lg-2">
+                <div ng-include="'templates/side-panel-menu.html'"></div>
             </div>
-        </div>
 
-        <div ng-show="category.questionnaire" class="panel-container">
-            <center>
-                <h2> Questionnaire Group Reporting </h2>
-            </center>
-            <label>
-                Choose questionnaire:
-                <select ng-model="selectedQuestionnaire" ng-options="x for x in qstList"
-                        ng-change="genQstReport(); showQstReport = true;"></select>
-            </label>
-
-            <div ng-show="showQstReport" class="panel-info">
-                <div class="panel-input">
-                    <h2 style="color:black; text-align:left;"> Statistics for this report </h2>
-                    <table style="text-align:left; border:1px dotted rgb(36, 21, 32); border-collapse: collapse;">
-                        <tr>
-                            <td style="font-weight:bold;">% Female/Male</td>
-                            <td>{{qstPcntFemale}}% female; {{qstPcntMale}}% male; {{qstPcntUnk}}% unknown</td>
-                        </tr>
-                        <tr>
-                            <td style="font-weight:bold;">Total # unique patients in report</td>
-                            <td>{{qstUniquePats}} unique patients</td>
-                        </tr>
-                        <tr>
-                            <td style="font-weight:bold;">Average patient age (in this report)</td>
-                            <td>{{qstAvgAge}} years</td>
-                        </tr>
-                        <tr>
-                            <td style="font-weight:bold;">Total % completed questionnaires</td>
-                            <td>{{qstPcntCompleted}}% completed</td>
-                        </tr>
-                        <tr>
-                            <td style="font-weight:bold;">Average completion time (among completed questionnaires)</td>
-                            <td>{{qstAvgCompletTime}} days</td>
-                        </tr>
-                    </table>
-                    <h3 style="text-align: left;"> Full report on {{selectedQuestionnaire}}, {{qstReportLength}} total records found</h3>
-                    <!-- Load main table -->
-                    <div class="gridStyle" ui-grid="qstGridOptions" ui-grid-resize-columns style="height:75vh; width:90vw;"></div>
-            
-                </div>                
-            </div>
-        </div>
-
-
-        <div ng-show="category.demographics" class="panel-container">
-            <div class="panel-info">
-                <center>
-                    <h2> Demographics Group Reporting </h2>
-                </center>
-                <div class="panel-input">
-                    <h2 style="color:black; text-align:left;"> Statistics for this report </h2>
-                    <table style="text-align:left; border:1px dotted rgb(36, 21, 32); border-collapse: collapse;">
-                        <tr>
-                            <td style="font-weight:bold;">% Female/Male</td>
-                            <td>{{demoPcntFemale}}% female; {{demoPcntMale}}% male; {{demoPcntUnk}}% unknown</td>
-                        </tr>
-                        <tr>
-                            <td style="font-weight:bold;">Average Patient Age</td>
-                            <td>{{demoAvgAge}} years</td>
-                        </tr>
-                        <tr>
-                            <td style="font-weight:bold;">% French/English Preferred</td>
-                            <td>{{demoPcntFrench}}% french preferred; {{demoPcntEnglish}}% english preferred;</td>
-                        </tr>
-                    </table>
-
-                    <div id="plot1" style="width:65vw;"></div>
-                    <div id="plot2" style="width:30vw;"></div>
-
-
-                    <h3 style="text-align:left;">Full report on patient demographics, {{patientReportLength}} total patients</h3>
-                    <!-- Load main table -->
-                    <div class="gridStyle" ui-grid="demoGridOptions" ui-grid-resize-columns style="height:75vh; width:90vw;"></div>
-                  
-                    <!--Plotting divisions for some stats visualizations-->
-                    <!-- <div id="plotDiv1" style="width: 80%; float:left;">
-                    </div>
-                    <div id="plotDiv2" style="width: 100%; clear:both;">
-                    </div> -->
+                    
+            <div class="modal-header">
+                <div class="col-xs-12 col-md-6">
+                <h2 class="modal-title">
+                    <span class="glyphicon glyphicon-pencil"></span> 
+                    Group Patient Reports 
+                </h2>
                 </div>
-              
+            </div>
+
+            <div class="modal-body" style="width:80%; float:right;">
+
+                <div id="GroupReport">
+
+                        <p> Select group reporting category </p>
+                        <label><input type="checkbox" ng-model="category.education" ng-change="category.questionnaire = false; category.demographics = false;"> Educational Material </label>
+                        <br>
+                        <label><input type="checkbox" ng-model="category.questionnaire" ng-change="category.education = false; category.demographics = false; genQuestionnaireOptions();"> Questionnaires </label>
+                        <br>
+                        <label><input type="checkbox" ng-model="category.demographics" ng-change="category.education = false; category.questionnaire = false; genPatientReport();"> Demographics </label>
+                        <br>
+
+                        <div ng-show="category.education" class="panel-container">
+                            <center>
+                                <h2> Educational Material Group Reporting </h2>
+                            </center>
+
+                            <label>
+                                Educational material type:
+                                <select ng-model="materialType" ng-options="x for x in materialTypes"
+                                        ng-change="genEducationMaterialOptions()"></select>
+                            </label>
+
+                            <br>
+                            <label ng-show="displayMaterialList">
+                                All {{materialType}} currently found in OpalDB: <select ng-model="selectedMaterial" ng-options="x for x in educList" ng-change="genEducReport(); showEducReport = true;"></select>
+                            </label>
+                            <div ng-show="showEducReport">
+                                <div class="panel-info">
+                                    <div class="panel-input"> 
+                                        <h2 style="color:black; text-align:left;"> Statistics for this report </h2>
+                                        <table style="text-align:left; border:1px dotted rgb(36, 21, 32); border-collapse: collapse;">
+                                            <tr>
+                                                <td style="font-weight:bold;">% Female/Male</td>
+                                                <td>{{educFemPcnt}}% female; {{educMalPcnt}}% male; {{educUnkPcnt}}% unknown</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight:bold;">Average patient age</td>
+                                                <td>{{educAvgAge}} years</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight:bold;">% Materials Read</td>
+                                                <td>{{educReadPcnt}}% completed</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight:bold;">Average time until reading</td>
+                                                <td>{{educAvgDaysToRead}} days</td>
+                                            </tr>
+                                        </table>
+                                        <h3 style="text-align:left;"> Full report on {{materialType}}: {{selectedMaterial}}, {{educReportLength}} records found</h3>
+                                        <!-- Load main table -->
+                                        <div class="gridStyle" ui-grid="educGridOptions" ui-grid-resize-columns style="height:75vh; width:75vw;"></div>
+                                    </div>
+                                </div> 
+
+                            </div>
+                        </div>
+
+                        <div ng-show="category.questionnaire" class="panel-container">
+                            <center>
+                                <h2> Questionnaire Group Reporting </h2>
+                            </center>
+                            <label>
+                                Choose questionnaire:
+                                <select ng-model="selectedQuestionnaire" ng-options="x for x in qstList"
+                                        ng-change="genQstReport(); showQstReport = true;"></select>
+                            </label>
+
+                            <div ng-show="showQstReport" class="panel-info">
+                                <div class="panel-input">
+                                    <h2 style="color:black; text-align:left;"> Statistics for this report </h2>
+                                    <table style="text-align:left; border:1px dotted rgb(36, 21, 32); border-collapse: collapse;">
+                                        <tr>
+                                            <td style="font-weight:bold;">% Female/Male</td>
+                                            <td>{{qstPcntFemale}}% female; {{qstPcntMale}}% male; {{qstPcntUnk}}% unknown</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:bold;">Total # unique patients in report</td>
+                                            <td>{{qstUniquePats}} unique patients</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:bold;">Average patient age (in this report)</td>
+                                            <td>{{qstAvgAge}} years</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:bold;">Total % completed questionnaires</td>
+                                            <td>{{qstPcntCompleted}}% completed</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:bold;">Average completion time (among completed questionnaires)</td>
+                                            <td>{{qstAvgCompletTime}} days</td>
+                                        </tr>
+                                    </table>
+                                    <h3 style="text-align: left;"> Full report on {{selectedQuestionnaire}}, {{qstReportLength}} total records found</h3>
+                                    <!-- Load main table -->
+                                    <div class="gridStyle" ui-grid="qstGridOptions" ui-grid-resize-columns style="height:75vh; width:75vw;"></div>
+                            
+                                </div>                
+                            </div>
+                        </div>
+
+
+                        <div ng-show="category.demographics" class="panel-container">
+                            <div class="panel-info">
+                                <center>
+                                    <h2> Demographics Group Reporting </h2>
+                                </center>
+                                <div class="panel-input">
+                                    <h2 style="color:black; text-align:left;"> Statistics for this report </h2>
+                                    <table style="text-align:left; border:1px dotted rgb(36, 21, 32); border-collapse: collapse;">
+                                        <tr>
+                                            <td style="font-weight:bold;">% Female/Male</td>
+                                            <td>{{demoPcntFemale}}% female; {{demoPcntMale}}% male; {{demoPcntUnk}}% unknown</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:bold;">Average Patient Age</td>
+                                            <td>{{demoAvgAge}} years</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:bold;">% French/English Preferred</td>
+                                            <td>{{demoPcntFrench}}% french preferred; {{demoPcntEnglish}}% english preferred;</td>
+                                        </tr>
+                                    </table>
+
+                                    <div id="plot1" style="width:65vw;"></div>
+                                    <div id="plot2" style="width:30vw;"></div>
+
+
+                                    <h3 style="text-align:left;">Full report on patient demographics, {{patientReportLength}} total patients</h3>
+                                    <!-- Load main table -->
+                                    <div class="gridStyle" ui-grid="demoGridOptions" ui-grid-resize-columns style="height:75vh; width:75vw;"></div>
+                                
+                                    <!--Plotting divisions for some stats visualizations-->
+                                    <!-- <div id="plotDiv1" style="width: 80%; float:left;">
+                                    </div>
+                                    <div id="plotDiv2" style="width: 100%; clear:both;">
+                                    </div> -->
+                                </div>
+                            
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>
+
     </div>
+
 </div>

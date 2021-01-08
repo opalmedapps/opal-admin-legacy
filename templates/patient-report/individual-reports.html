@@ -1,237 +1,246 @@
-<div class="modal-header">
-    <div class="col-xs-12 col-md-6">
-      <h2 class="modal-title">
-        <span class="glyphicon glyphicon-pencil"></span> 
-        Individual Patient Reports 
-      </h2>
-    </div>
-</div>
-<div class="modal-body">
-    <div id="PatientReport">
-        <div class="panel-container">
-            <div class="panel-info">
-                <table style="display: inline-block; margin: 5px 5px 5px 5px; text-align:left;">
-                    <tr>
-                        <td>
-                            <h2>Search for patient:</h2>
-                        </td>
-                        <td>
-                            
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <form ng-submit="findPat()">
-                                <table>
+<div id="main">
+    <div id="top">
+        <div class="row">
+            <!-- Load side menu -->
+            <div id="side-panel-scrollbar" class="col-lg-2">
+                <div ng-include="'templates/side-panel-menu.html'"></div>
+            </div>    
+     
+            <div class="modal-header">
+                <div class="col-xs-12 col-md-6">
+                <h2 class="modal-title">
+                    <span class="glyphicon glyphicon-pencil"></span> 
+                    Individual Patient Reports 
+                </h2>
+                </div>
+            </div>
+            <div class="modal-body" style="width:80%; float:right;">
+                <div id="PatientReport">
+                    <div class="panel-container">
+                        <div class="panel-info">
+                            <table style="display: inline-block; margin: 5px 5px 5px 5px; text-align:left;">
+                                <tr>
+                                    <td>
+                                        <h2>Search for patient:</h2>
+                                    </td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <form ng-submit="findPat()">
+                                            <table>
+                                                <tr>
+                                                    <td>Patient Last Name:</td><td><input type="text" ng-model="searchName" ng-disabled="searchMRN || searchRAMQ" ng-change="searchName==''?resetFieldValues():''"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Patient RAMQ:</td><td><input type="text" ng-model="searchRAMQ" ng-disabled="searchName || searchMRN" ng-change="searchRAMQ==''?resetFieldValues():''"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Patient MRN:</td><td><input type="text" ng-model="searchMRN" ng-disabled="searchName || searchRAMQ" ng-change="searchMRN==''?resetFieldValues():''"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <input class="btn" value="Submit" type="submit">
+                                                        <input class="btn" value="Reset" type="reset" ng-click="resetFieldValues()">
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </form>
+                                    </td>
+                                
+                                </tr>
+                            </table>
+                        </div>
+                        <br/>
+
+                        <div ng-show="selectPatient" class="panel-info" style="display:inline-block; text-align:left;">
+                            <p>Multiple patients found matching search criteria, please select: </p>
+                            <select ng-model="selectedName" ng-options="x for x in patOptions"
+                                    ng-change="displaySelection()"></select>
+                        </div>
+
+                        <div ng-show="foundPatient" class="panel-info">
+                            <div>
+                                <table style="text-align:left; border: 1px dotted rgb(36,21,32); border-collapse:collapse;">
+                                    <caption style="font-weight:bold; font-size:1.5em;">Selected Patient</caption>
                                     <tr>
-                                        <td>Patient Last Name:</td><td><input type="text" ng-model="searchName" ng-disabled="searchMRN || searchRAMQ" ng-change="searchName==''?resetFieldValues():''"></td>
+                                        <td> <b>Last Name</b> </td>
+                                        <td> {{plname}} </td>
                                     </tr>
                                     <tr>
-                                        <td>Patient RAMQ:</td><td><input type="text" ng-model="searchRAMQ" ng-disabled="searchName || searchMRN" ng-change="searchRAMQ==''?resetFieldValues():''"></td>
+                                        <td> <b>First Name</b> </td>
+                                        <td> {{pname}} </td>
                                     </tr>
                                     <tr>
-                                        <td>Patient MRN:</td><td><input type="text" ng-model="searchMRN" ng-disabled="searchName || searchRAMQ" ng-change="searchMRN==''?resetFieldValues():''"></td>
+                                        <td> <b>Sex</b> </td>
+                                        <td> {{psex}} </td>
+                                    </tr>
+                                    <tr>
+                                        <td> <b>Patient Serial</b> </td>
+                                        <td> {{psnum}} </td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Email</b></td>
+                                        <td> {{pemail}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>RAMQ</b></td>
+                                        <td> {{pramq}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>MRN</b></td>
+                                        <td> {{pid}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Opal App Language</b></td>
+                                        <td> {{plang}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <form ng-submit="fetchData()">
+                                <table style="text-align:left;">
+                                    <caption style="font-weight:bold; font-size:1.5em;">Selected Information</caption>
+                                    <tr>
+                                        <td><label>Diagnosis <input type="checkbox" ng-model="featureList.diagnosis"> </label></td>
+                                        <td><label>Appointments <input type="checkbox" ng-model="featureList.appointments"> </label></td>
+                                    </tr>
+                                    <tr>
+                                        <td><label>Questionnaires <input type="checkbox" ng-model="featureList.questionnaires"> </label></td>
+                                        <td><label>Educational Materials <input type="checkbox" ng-model="featureList.education"> </label></td>
+                                    </tr>
+                                    <tr>
+                                        <td><label>Legacy Lab Results <input type="checkbox" ng-model="featureList.testresults"> </label></td>
+                                        <td><label>Lab Results <input type="checkbox" ng-model="featureList.pattestresults"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td><label>Treatment Planning <input type="checkbox" ng-model="featureList.treatplan"> </label></td>
+                                        <td><label>Clinical Notes <input type="checkbox" ng-model="featureList.clinicalnotes"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td><label>My Treating Team<input type="checkbox" ng-model="featureList.treatingteam"> </label></td>
+                                        <td><label>General Announcements <input type="checkbox" ng-model="featureList.general"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td><label>Notifications <input type="checkbox" ng-model="featureList.notifications"></label></td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <input class="btn" value="Submit" type="submit">
-                                            <input class="btn" value="Reset" type="reset" ng-click="resetFieldValues()">
+                                            <input class="btn" value="Generate Report" type="submit" style="padding: 4px 4px 4px 4px; color:blue; font-weight: bold; font-size: larger;">
                                         </td>
                                     </tr>
                                 </table>
+                                <br />
                             </form>
-                        </td>
-                        <!-- <td style="float:right;">
-                            <p>
-                                Database: <br />
-                                <label style="color:darkgreen; font-weight:bold;"><input type="checkbox" ng-model="db.prod" ng-change="db.preprod = false; updateColours();"> Prod </label>
-                                <br>
-                                <label style="color:darkturquoise; font-weight:bold;"><input type="checkbox" ng-model="db.preprod" ng-change="db.prod = false; updateColours();"> Preprod </label>
-                            </p>
+                        </div>
+                        <br>
+                        
+                        <div ng-show="featureList.diagnosis" class="panel-input">
+                            <center>
+                                <h2>Diagnosis</h2>
+                            </center>
+                        
+                            <div class="panel-input">
+                                <div class="gridStyle" ui-grid="diagGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
+                            </div>
+                        </div>
 
-                        </td> -->
-                    </tr>
-                </table>
-            </div>
-            <br/>
+                        <div ng-show="featureList.appointments" class="panel-input">
+                            <center>
+                                <h2>Appointments</h2>
+                            </center>
+                            <div class="panel-input">
+                                <div class="gridStyle" ui-grid="apptGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
+                            </div>
+                        </div>
 
-            <div ng-show="selectPatient" class="panel-info" style="display:inline-block; text-align:left;">
-                <p>Multiple patients found matching search criteria, please select: </p>
-                <select ng-model="selectedName" ng-options="x for x in patOptions"
-                        ng-change="displaySelection()"></select>
-            </div>
+                        <div ng-show="featureList.questionnaires" class="panel-input">
+                            <center>
+                                <h2>Questionnaires</h2>
+                            </center>
+                            <div class="panel-input">
+                                <div class="gridStyle" ui-grid="qstGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
+                            </div>
+                        </div>
 
-            <div ng-show="foundPatient" class="panel-info">
-                <div>
-                    <table style="text-align:left; border: 1px dotted rgb(36,21,32); border-collapse:collapse;">
-                        <caption style="font-weight:bold; font-size:1.5em;">Selected Patient</caption>
-                        <tr>
-                            <td> <b>Last Name</b> </td>
-                            <td> {{plname}} </td>
-                        </tr>
-                        <tr>
-                            <td> <b>First Name</b> </td>
-                            <td> {{pname}} </td>
-                        </tr>
-                        <tr>
-                            <td> <b>Sex</b> </td>
-                            <td> {{psex}} </td>
-                        </tr>
-                        <tr>
-                            <td> <b>Patient Serial</b> </td>
-                            <td> {{psnum}} </td>
-                        </tr>
-                        <tr>
-                            <td><b>Email</b></td>
-                            <td> {{pemail}}</td>
-                        </tr>
-                        <tr>
-                            <td><b>RAMQ</b></td>
-                            <td> {{pramq}}</td>
-                        </tr>
-                        <tr>
-                            <td><b>MRN</b></td>
-                            <td> {{pid}}</td>
-                        </tr>
-                        <tr>
-                            <td><b>Opal App Language</b></td>
-                            <td> {{plang}}</td>
-                        </tr>
-                    </table>
-                </div>
-                <form ng-submit="fetchData()">
-                    <table style="text-align:left;">
-                        <caption style="font-weight:bold; font-size:1.5em;">Selected Information</caption>
-                        <tr>
-                            <td><label>Diagnosis <input type="checkbox" ng-model="featureList.diagnosis"> </label></td>
-                            <td><label>Appointments <input type="checkbox" ng-model="featureList.appointments"> </label></td>
-                        </tr>
-                        <tr>
-                            <td><label>Questionnaires <input type="checkbox" ng-model="featureList.questionnaires"> </label></td>
-                            <td><label>Educational Materials <input type="checkbox" ng-model="featureList.education"> </label></td>
-                        </tr>
-                        <tr>
-                            <td><label>Legacy Lab Results <input type="checkbox" ng-model="featureList.testresults"> </label></td>
-                            <td><label>Lab Results <input type="checkbox" ng-model="featureList.pattestresults"></label></td>
-                        </tr>
-                        <tr>
-                            <td><label>Treatment Planning <input type="checkbox" ng-model="featureList.treatplan"> </label></td>
-                            <td><label>Clinical Notes <input type="checkbox" ng-model="featureList.clinicalnotes"></label></td>
-                        </tr>
-                        <tr>
-                            <td><label>My Treating Team<input type="checkbox" ng-model="featureList.treatingteam"> </label></td>
-                            <td><label>General Announcements <input type="checkbox" ng-model="featureList.general"></label></td>
-                        </tr>
-                        <tr>
-                            <td><label>Notifications <input type="checkbox" ng-model="featureList.notifications"></label></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input class="btn" value="Generate Report" type="submit" style="padding: 4px 4px 4px 4px; color:blue; font-weight: bold; font-size: larger;">
-                            </td>
-                        </tr>
-                    </table>
-                    <br />
-                </form>
-            </div>
-            <br>
-            
-            <div ng-show="featureList.diagnosis" class="panel-input">
-                <center>
-                    <h2>Diagnosis</h2>
-                </center>
-               
-                <div class="panel-input">
-                    <div class="gridStyle" ui-grid="diagGridOptions" ui-grid-resize-columns style="height:50vh; width:95vw;"></div>
+                        <div ng-show="featureList.education" class="panel-input">
+                            <center>
+                                <h2>Educational Materials</h2>
+                            </center>
+                            <div class="panel-input">
+                                <div class="gridStyle" ui-grid="educGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
+                            </div>
+                        </div>
+
+                        <div ng-show="featureList.testresults">
+                            <center>
+                                <h2>Legacy Lab Results</h2>
+                            </center>
+                            <div class="panel-input">
+                                <div class="gridStyle" ui-grid="testGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
+                            </div>
+                        </div>
+
+                        <div ng-show="featureList.pattestresults">
+                            <center>
+                                <h2>Lab Results</h2>
+                            </center>
+                            <div class="panel-input">
+                                <div class="gridStyle" ui-grid="pattestGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
+                            </div>
+                        </div>
+
+                        <div ng-show="featureList.notifications">
+                            <center>
+                                <h2>Notifications</h2>
+                            </center>
+                            <div class="panel-input">
+                                <div class="gridStyle" ui-grid="noteGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
+                            </div>
+                        </div>
+                        <div ng-show="featureList.treatplan">
+                            <center>
+                                <h2>Treatment Planning</h2>
+                            </center>
+                            <div class="panel-input">
+                                <div class="gridStyle" ui-grid="txplanGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
+                            </div>
+                        </div>
+                        <div ng-show="featureList.clinicalnotes">
+                            <center>
+                                <h2>Clinical Notes</h2>
+                            </center>
+                            <div class="panel-input">
+                                <div class="gridStyle" ui-grid="clinnoteGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
+                            </div>
+                        </div>
+                        <div ng-show="featureList.treatingteam">
+                            <center>
+                                <h2>Treatment Team Messages</h2>
+                            </center>
+                            <div class="panel-input">
+                                <div class="gridStyle" ui-grid="txteamGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
+                            </div>
+                        </div>
+                        <div ng-show="featureList.general">
+                            <center>
+                                <h2>General Announcements</h2>
+                            </center>
+                            <div class="panel-input">
+                                <div class="gridStyle" ui-grid="generalGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
+                            </div>
+                        </div>
+                        
+                    </div>
                 </div>
             </div>
 
-            <div ng-show="featureList.appointments" class="panel-input">
-                <center>
-                    <h2>Appointments</h2>
-                </center>
-                <div class="panel-input">
-                    <div class="gridStyle" ui-grid="apptGridOptions" ui-grid-resize-columns style="height:50vh; width:95vw;"></div>
-                </div>
-            </div>
-
-            <div ng-show="featureList.questionnaires" class="panel-input">
-                <center>
-                    <h2>Questionnaires</h2>
-                </center>
-                <div class="panel-input">
-                    <div class="gridStyle" ui-grid="qstGridOptions" ui-grid-resize-columns style="height:50vh; width:95vw;"></div>
-                </div>
-            </div>
-
-            <div ng-show="featureList.education" class="panel-input">
-                <center>
-                    <h2>Educational Materials</h2>
-                </center>
-                <div class="panel-input">
-                    <div class="gridStyle" ui-grid="educGridOptions" ui-grid-resize-columns style="height:50vh; width:95vw;"></div>
-                </div>
-            </div>
-
-            <div ng-show="featureList.testresults">
-                <center>
-                    <h2>Legacy Lab Results</h2>
-                </center>
-                <div class="panel-input">
-                    <div class="gridStyle" ui-grid="testGridOptions" ui-grid-resize-columns style="height:50vh; width:95vw;"></div>
-                </div>
-            </div>
-
-            <div ng-show="featureList.pattestresults">
-                <center>
-                    <h2>Lab Results</h2>
-                </center>
-                <div class="panel-input">
-                    <div class="gridStyle" ui-grid="pattestGridOptions" ui-grid-resize-columns style="height:50vh; width:95vw;"></div>
-                </div>
-            </div>
-
-            <div ng-show="featureList.notifications">
-                <center>
-                    <h2>Notifications</h2>
-                </center>
-                <div class="panel-input">
-                    <div class="gridStyle" ui-grid="noteGridOptions" ui-grid-resize-columns style="height:50vh; width:95vw;"></div>
-                </div>
-            </div>
-            <div ng-show="featureList.treatplan">
-                <center>
-                    <h2>Treatment Planning</h2>
-                </center>
-                <div class="panel-input">
-                    <div class="gridStyle" ui-grid="txplanGridOptions" ui-grid-resize-columns style="height:50vh; width:95vw;"></div>
-                </div>
-            </div>
-            <div ng-show="featureList.clinicalnotes">
-                <center>
-                    <h2>Clinical Notes</h2>
-                </center>
-                <div class="panel-input">
-                    <div class="gridStyle" ui-grid="clinnoteGridOptions" ui-grid-resize-columns style="height:50vh; width:95vw;"></div>
-                </div>
-            </div>
-            <div ng-show="featureList.treatingteam">
-                <center>
-                    <h2>Treatment Team Messages</h2>
-                </center>
-                <div class="panel-input">
-                    <div class="gridStyle" ui-grid="txteamGridOptions" ui-grid-resize-columns style="height:50vh; width:95vw;"></div>
-                </div>
-            </div>
-            <div ng-show="featureList.general">
-                <center>
-                    <h2>General Announcements</h2>
-                </center>
-                <div class="panel-input">
-                    <div class="gridStyle" ui-grid="generalGridOptions" ui-grid-resize-columns style="height:50vh; width:95vw;"></div>
-                </div>
-            </div>
-            
         </div>
     </div>
-</div>
+
+
+</div>           
+              
+              
+         
