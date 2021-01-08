@@ -32,13 +32,13 @@
                                         <form ng-submit="findPat()">
                                             <table>
                                                 <tr>
-                                                    <td>Patient Last Name:</td><td><input type="text" ng-model="searchName" ng-disabled="searchMRN || searchRAMQ" ng-change="searchName==''?resetFieldValues():''"></td>
+                                                    <td>Patient Last Name:</td><td><input type="text" ng-model="searchName" ng-disabled="searchMRN || searchRAMQ" ng-change=""></td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Patient RAMQ:</td><td><input type="text" ng-model="searchRAMQ" ng-disabled="searchName || searchMRN" ng-change="searchRAMQ==''?resetFieldValues():''"></td>
+                                                    <td>Patient RAMQ:</td><td><input type="text" ng-model="searchRAMQ" ng-disabled="searchName || searchMRN" ng-change=""></td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Patient MRN:</td><td><input type="text" ng-model="searchMRN" ng-disabled="searchName || searchRAMQ" ng-change="searchMRN==''?resetFieldValues():''"></td>
+                                                    <td>Patient MRN:</td><td><input type="text" ng-model="searchMRN" ng-disabled="searchName || searchRAMQ" ng-change=""></td>
                                                 </tr>
                                                 <tr>
                                                     <td>
@@ -136,7 +136,7 @@
                         </div>
                         <br>
                         
-                        <div ng-show="featureList.diagnosis" class="panel-input">
+                        <div ng-if="featureList.diagnosis" class="panel-input">
                             <center>
                                 <h2>Diagnosis</h2>
                             </center>

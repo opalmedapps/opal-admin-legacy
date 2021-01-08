@@ -32,7 +32,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
     $scope.pemail = "";
     $scope.pramq = "";
     $scope.pmrn = "";
-    $scope.planguage = "";
+    $scope.plang = "";
 
 
     $scope.diagReport = ""; //empty report segments 
@@ -276,7 +276,6 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
             $scope.selectPatient = true; //display dialog to select patient, result stored in scope.selectedName and displayPatient called 
         } else { //exactly one match
             $scope.foundPatient = true; //display patient table
-            $scope.resetReportValues(); //set all report options to true by default
 
             // set selected patient identifiers
             if($scope.searchResult[0].pname){
@@ -310,7 +309,6 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
     // display the selected patient (this function is called by the template after selecting a patient from the list of options)
     $scope.displaySelection = function() {
         $scope.foundPatient = true; //display patient table
-        $scope.resetReportValues(); //set report features all true
         var idx = $scope.selectedName.split(" , ")[0]; // index of selected patient
         //Set the chosen patient identifier variables
         if($scope.searchResult[idx].pname){
@@ -337,26 +335,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
         if($scope.searchResult[idx].plang){
             $scope.plang = $scope.searchResult[idx].plang.replace(/["']/g, "");
         }
-    }
-
-    //Reset field values and hide duplicate patient dropdown
-    $scope.resetFieldValues = function() {
-        $scope.searchName = "";
-        $scope.searchSerial = "";
-        $scope.patientMRN = "";
-        $scope.patientEmail = "";
-        $scope.patientRAMQ = "";
-        $scope.searchName = "";
-        $scope.selectPatient = false;
-        $scope.foundPatient = false;
-
-        // Call function to reset the report
-        $scope.resetReportValues();    
-    }
-
-    //Reset report values and hide list
-    $scope.resetReportValues = function() {
-      
+        //prepare to generate full report by default
         $scope.featureList.diagnosis = true;
         $scope.featureList.appointments = true;
         $scope.featureList.questionnaires = true;
@@ -369,6 +348,39 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
         $scope.featureList.treatingteam = true;
         $scope.featureList.general = true;
 
+    }
+
+    //Reset field values and hide duplicate patient dropdown
+    $scope.resetFieldValues = function() {
+        $scope.searchName = "";
+        $scope.searchMRN = "";
+        $scope.searchRAMQ = "";
+
+        $scope.pname = "";
+        $scope.plname = "";
+        $scope.psnum = "";
+        $scope.pid = "";
+        $scope.pramq = "";
+        $scope.psex = "";
+        $scope.pemail = "";
+        $scope.plang = "";
+
+        //reset featureList
+        $scope.featureList.diagnosis = false;
+        $scope.featureList.appointments = false;
+        $scope.featureList.questionnaires = false;
+        $scope.featureList.education = false;
+        $scope.featureList.testresults = false;
+        $scope.featureList.pattestresults = false;
+        $scope.featureList.notifications = false;
+        $scope.featureList.treatplan = false;
+        $scope.featureList.clinicalnotes = false;
+        $scope.featureList.treatingteam = false;
+        $scope.featureList.general = false;
+
+        $scope.selectPatient = false;
+        $scope.foundPatient = false;
+
         // Reset the report values
         $scope.diagReport = "";
         $scope.qstReport = "";
@@ -380,8 +392,10 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
         $scope.clinnoteReport = "";
         $scope.txteamReport = "";
         $scope.generalReport = "";
-        $scope.txplanReport = "";  
+        $scope.txplanReport = ""; 
+
     }
+
     /**
      *  Generate the desired report based on user input
      *  @param psnum: selected patient serial number
