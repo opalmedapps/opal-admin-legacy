@@ -39,9 +39,12 @@
                                         ng-change="genEducationMaterialOptions()"></select>
                             </label>
 
+                            <!-- <button ng-click="clearEduc();">Clear</button> -->
+
+
                             <br>
                             <label ng-show="displayMaterialList">
-                                All {{materialType}} currently found in OpalDB: <select ng-model="selectedMaterial" ng-options="x for x in educList" ng-change="genEducReport(); showEducReport = true;"></select>
+                                All {{materialType}} currently found in OpalDB: <select ng-model="selectedMaterial" ng-options="x for x in educList" ng-change="genEducReport(); showEducReport = true;" style="max-width:200px;"></select>
                             </label>
                             <div ng-show="showEducReport">
                                 <div class="panel-info">

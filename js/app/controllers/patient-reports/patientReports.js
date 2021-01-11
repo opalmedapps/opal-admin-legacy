@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $uibModal){
+controller('patientReports', function($scope, $rootScope, Session, ErrorHandler, MODULE, $uibModal){
 
     $scope.foundPatient = false; //only show the report once patient is found/selected
     $scope.selectPatient = false; //only show if multiple patients are found from search and user must choose one
@@ -204,6 +204,21 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
 
     $scope.selectedName = "";
 
+    // Safe apply function prevents potential '$apply already in progress' errors during execution
+    $scope.safeApply = function(fn){
+        var phase = this.$root.$$phase;
+        if(phase == '$apply' || phase == '$digest'){
+            if(fn && (typeof(fn) === 'function')){
+                fn();
+            }
+        }  
+        else{
+            this.$apply(fn);
+        }
+    }
+
+
+
     /**
      *  Main search function for finding desired patient
      *  -- Uses scope variables instead of explicit parameters
@@ -260,140 +275,166 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
      *  @return 
      */
     function displayName(result){
-        $scope.searchResult = result;
-        if(!$scope.searchResult){ //no match found for input parameter
-            $scope.foundPatient = false;
-            ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
-        }else if ($scope.searchResult.length > 1){ //found multiple patients matching search
-            $scope.patOptions = [];
-            var tmp = "";
-            //load each result into patOptions array for selection
-            for (var i = 0; i < $scope.searchResult.length; i++){
-                tmp = i + " , " + $scope.searchResult[i].pname + " , " + $scope.searchResult[i].plname;
-                $scope.patOptions.push(tmp);
-                tmp = "";
-            }
-            $scope.selectPatient = true; //display dialog to select patient, result stored in scope.selectedName and displayPatient called 
-        } else { //exactly one match
-            $scope.foundPatient = true; //display patient table
 
-            // set selected patient identifiers
-            if($scope.searchResult[0].pname){
-                $scope.pname = $scope.searchResult[0].pname.replace(/["']/g, "");
+        $scope.safeApply(function() {
+
+            $scope.searchResult = result;
+            if(!$scope.searchResult){ //no match found for input parameter
+                $scope.foundPatient = false;
+                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
+            }else if ($scope.searchResult.length > 1){ //found multiple patients matching search
+                $scope.patOptions = [];
+                var tmp = "";
+                //load each result into patOptions array for selection
+                for (var i = 0; i < $scope.searchResult.length; i++){
+                    tmp = i + " , " + $scope.searchResult[i].pname + " , " + $scope.searchResult[i].plname;
+                    $scope.patOptions.push(tmp);
+                    tmp = "";
+                }
+                $scope.selectPatient = true; //display dialog to select patient, result stored in scope.selectedName and displayPatient called 
+            } else { //exactly one match
+                $scope.foundPatient = true; //display patient table
+                // set selected patient identifiers
+                if($scope.searchResult[0].pname){
+                    $scope.pname = $scope.searchResult[0].pname.replace(/["']/g, "");
+                }
+                if($scope.searchResult[0].plname){
+                    $scope.plname = $scope.searchResult[0].plname.replace(/["']/g, "");
+                }
+                if($scope.searchResult[0].psnum){
+                    $scope.psnum = $scope.searchResult[0].psnum.replace(/["']/g, "");
+                }
+                if($scope.searchResult[0].pid){
+                    $scope.pid = $scope.searchResult[0].pid.replace(/["']/g, "");
+                }
+                if($scope.searchResult[0].pramq){
+                    $scope.pramq = $scope.searchResult[0].pramq.replace(/["']/g, "");
+                }
+                if($scope.searchResult[0].psex){
+                    $scope.psex = $scope.searchResult[0].psex.replace(/["' ]/g, "");
+                }
+                if($scope.searchResult[0].plang){
+                    $scope.plang = $scope.searchResult[0].plang.replace(/["']/g, "");
+                }
+                if($scope.searchResult[0].pemail){
+                    $scope.pemail = $scope.searchResult[0].pemail.replace(/["']/g, "");
+                }
+    
+                 //prepare to generate full report by default
+                $scope.featureList.diagnosis = true;
+                $scope.featureList.appointments = true;
+                $scope.featureList.questionnaires = true;
+                $scope.featureList.education = true;
+                $scope.featureList.testresults = true;
+                $scope.featureList.pattestresults = true;
+                $scope.featureList.notifications = true;
+                $scope.featureList.treatplan = true;
+                $scope.featureList.clinicalnotes = true;
+                $scope.featureList.treatingteam = true;
+                $scope.featureList.general = true;
+                    
             }
-            if($scope.searchResult[0].plname){
-                $scope.plname = $scope.searchResult[0].plname.replace(/["']/g, "");
-            }
-            if($scope.searchResult[0].psnum){
-                $scope.psnum = $scope.searchResult[0].psnum.replace(/["']/g, "");
-            }
-            if($scope.searchResult[0].pid){
-                $scope.pid = $scope.searchResult[0].pid.replace(/["']/g, "");
-            }
-            if($scope.searchResult[0].pramq){
-                $scope.pramq = $scope.searchResult[0].pramq.replace(/["']/g, "");
-            }
-            if($scope.searchResult[0].psex){
-                $scope.psex = $scope.searchResult[0].psex.replace(/["' ]/g, "");
-            }
-            if($scope.searchResult[0].plang){
-                $scope.plang = $scope.searchResult[0].plang.replace(/["']/g, "");
-            }
-            if($scope.searchResult[0].pemail){
-                $scope.pemail = $scope.searchResult[0].pemail.replace(/["']/g, "");
-            }
-            
-        }
+
+        });
+
     }
 
     // display the selected patient (this function is called by the template after selecting a patient from the list of options)
     $scope.displaySelection = function() {
-        $scope.foundPatient = true; //display patient table
-        var idx = $scope.selectedName.split(" , ")[0]; // index of selected patient
-        //Set the chosen patient identifier variables
-        if($scope.searchResult[idx].pname){
-            $scope.pname = $scope.searchResult[idx].pname.replace(/["']/g, "");
-        }
-        if($scope.searchResult[idx].plname){
-            $scope.plname = $scope.searchResult[idx].plname.replace(/["']/g, "");
-        }
-        if($scope.searchResult[idx].psnum){
-            $scope.psnum = $scope.searchResult[idx].psnum.replace(/["']/g, "");
-        }
-        if($scope.searchResult[idx].pid){
-            $scope.pid = $scope.searchResult[idx].pid.replace(/["']/g, "");
-        }
-        if($scope.searchResult[idx].pramq){
-            $scope.pramq = $scope.searchResult[idx].pramq.replace(/["']/g, "");
-        }
-        if($scope.searchResult[idx].psex){
-            $scope.psex = $scope.searchResult[idx].psex.replace(/["' ]/g, "");
-        }
-        if($scope.searchResult[idx].pemail){
-            $scope.pemail = $scope.searchResult[idx].pemail.replace(/["']/g, "");
-        }
-        if($scope.searchResult[idx].plang){
-            $scope.plang = $scope.searchResult[idx].plang.replace(/["']/g, "");
-        }
-        //prepare to generate full report by default
-        $scope.featureList.diagnosis = true;
-        $scope.featureList.appointments = true;
-        $scope.featureList.questionnaires = true;
-        $scope.featureList.education = true;
-        $scope.featureList.testresults = true;
-        $scope.featureList.pattestresults = true;
-        $scope.featureList.notifications = true;
-        $scope.featureList.treatplan = true;
-        $scope.featureList.clinicalnotes = true;
-        $scope.featureList.treatingteam = true;
-        $scope.featureList.general = true;
+
+        $scope.safeApply(function() {
+            $scope.foundPatient = true; //display patient table
+            var idx = $scope.selectedName.split(" , ")[0]; // index of selected patient
+            //Set the chosen patient identifier variables
+            if($scope.searchResult[idx].pname){
+                $scope.pname = $scope.searchResult[idx].pname.replace(/["']/g, "");
+            }
+            if($scope.searchResult[idx].plname){
+                $scope.plname = $scope.searchResult[idx].plname.replace(/["']/g, "");
+            }
+            if($scope.searchResult[idx].psnum){
+                $scope.psnum = $scope.searchResult[idx].psnum.replace(/["']/g, "");
+            }
+            if($scope.searchResult[idx].pid){
+                $scope.pid = $scope.searchResult[idx].pid.replace(/["']/g, "");
+            }
+            if($scope.searchResult[idx].pramq){
+                $scope.pramq = $scope.searchResult[idx].pramq.replace(/["']/g, "");
+            }
+            if($scope.searchResult[idx].psex){
+                $scope.psex = $scope.searchResult[idx].psex.replace(/["' ]/g, "");
+            }
+            if($scope.searchResult[idx].pemail){
+                $scope.pemail = $scope.searchResult[idx].pemail.replace(/["']/g, "");
+            }
+            if($scope.searchResult[idx].plang){
+                $scope.plang = $scope.searchResult[idx].plang.replace(/["']/g, "");
+            }
+            //prepare to generate full report by default
+            $scope.featureList.diagnosis = true;
+            $scope.featureList.appointments = true;
+            $scope.featureList.questionnaires = true;
+            $scope.featureList.education = true;
+            $scope.featureList.testresults = true;
+            $scope.featureList.pattestresults = true;
+            $scope.featureList.notifications = true;
+            $scope.featureList.treatplan = true;
+            $scope.featureList.clinicalnotes = true;
+            $scope.featureList.treatingteam = true;
+            $scope.featureList.general = true;
+    
+
+        });
 
     }
 
     //Reset field values and hide duplicate patient dropdown
     $scope.resetFieldValues = function() {
-        $scope.searchName = "";
-        $scope.searchMRN = "";
-        $scope.searchRAMQ = "";
 
-        $scope.pname = "";
-        $scope.plname = "";
-        $scope.psnum = "";
-        $scope.pid = "";
-        $scope.pramq = "";
-        $scope.psex = "";
-        $scope.pemail = "";
-        $scope.plang = "";
+        $scope.safeApply(function() {
+            $scope.searchName = "";
+            $scope.searchMRN = "";
+            $scope.searchRAMQ = "";
+    
+            $scope.pname = "";
+            $scope.plname = "";
+            $scope.psnum = "";
+            $scope.pid = "";
+            $scope.pramq = "";
+            $scope.psex = "";
+            $scope.pemail = "";
+            $scope.plang = "";
+    
+            //reset featureList
+            $scope.featureList.diagnosis = false;
+            $scope.featureList.appointments = false;
+            $scope.featureList.questionnaires = false;
+            $scope.featureList.education = false;
+            $scope.featureList.testresults = false;
+            $scope.featureList.pattestresults = false;
+            $scope.featureList.notifications = false;
+            $scope.featureList.treatplan = false;
+            $scope.featureList.clinicalnotes = false;
+            $scope.featureList.treatingteam = false;
+            $scope.featureList.general = false;
+    
+            $scope.selectPatient = false;
+            $scope.foundPatient = false;
+    
+            // Reset the report values
+            $scope.diagReport = "";
+            $scope.qstReport = "";
+            $scope.apptReport = "";
+            $scope.educReport = "";
+            $scope.testReport = "";
+            $scope.pattestReport = "";
+            $scope.noteReport = "";
+            $scope.clinnoteReport = "";
+            $scope.txteamReport = "";
+            $scope.generalReport = "";
+            $scope.txplanReport = ""; 
 
-        //reset featureList
-        $scope.featureList.diagnosis = false;
-        $scope.featureList.appointments = false;
-        $scope.featureList.questionnaires = false;
-        $scope.featureList.education = false;
-        $scope.featureList.testresults = false;
-        $scope.featureList.pattestresults = false;
-        $scope.featureList.notifications = false;
-        $scope.featureList.treatplan = false;
-        $scope.featureList.clinicalnotes = false;
-        $scope.featureList.treatingteam = false;
-        $scope.featureList.general = false;
-
-        $scope.selectPatient = false;
-        $scope.foundPatient = false;
-
-        // Reset the report values
-        $scope.diagReport = "";
-        $scope.qstReport = "";
-        $scope.apptReport = "";
-        $scope.educReport = "";
-        $scope.testReport = "";
-        $scope.pattestReport = "";
-        $scope.noteReport = "";
-        $scope.clinnoteReport = "";
-        $scope.txteamReport = "";
-        $scope.generalReport = "";
-        $scope.txplanReport = ""; 
-
+        });
     }
 
     /**
@@ -420,7 +461,7 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
                 general: $scope.featureList.general,
             },
             success: function(response){
-                populateTables(JSON.parse(response));
+               populateTables(JSON.parse(response));
             },
             error: function(err){
                 ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.DB_ERROR'));
@@ -433,55 +474,59 @@ controller('patientReports', function($scope, Session, ErrorHandler, MODULE, $ui
      * @return none
      */
     function populateTables(result){
-        if(result && (result !== null)){
-            if(result.diagnosis){
-                $scope.diagReport = result.diagnosis;
-                strip($scope.diagReport);
+
+        $scope.safeApply(function() {
+            if(result && (result !== null)){
+                if(result.diagnosis){
+                    $scope.diagReport = result.diagnosis;
+                    strip($scope.diagReport);
+                }
+                if(result.questionnaires){
+                    $scope.qstReport = result.questionnaires;
+                    strip($scope.qstReport); //TODO replace null with not completed
+                }
+                if(result.education){
+                    $scope.educReport = result.education;
+                    strip($scope.educReport); //TODO replace 1/0 with read/not read
+                }
+                if(result.appointments){
+                    $scope.apptReport = result.appointments;
+                    strip($scope.apptReport);
+                }
+                if(result.testresults){
+                    $scope.testReport = result.testresults;
+                    strip($scope.testReport);
+                }
+                if(result.pattestresults){
+                    $scope.pattestReport = result.pattestresults;
+                    strip($scope.pattestReport);
+                }
+                if(result.notes){
+                    $scope.noteReport = result.notes;
+                    strip($scope.noteReport); //TODO replace1/0 with read/not read
+                }
+                if(result.clinicalnotes){
+                    $scope.clinnoteReport = result.clinicalnotes;
+                    strip($scope.clinnoteReport);
+                }
+                if(result.treatingteam){
+                    $scope.txteamReport = result.treatingteam;
+                    strip($scope.txplanReport); // TODO replace 1/0 with read/not read
+                }
+                if(result.general){
+                    $scope.generalReport = result.general;
+                    strip($scope.generalReport); // TODO replace 1/0 with read/ not read
+                }
+                if(result.treatplan){
+                    $scope.txplanReport = result.treatplan;
+                    strip($scope.txplanReport);
+                }
+            
+            }else{ //something went wrong, no result recieved
+                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
             }
-            if(result.questionnaires){
-                $scope.qstReport = result.questionnaires;
-                strip($scope.qstReport); //TODO replace null with not completed
-            }
-            if(result.education){
-                $scope.educReport = result.education;
-                strip($scope.educReport); //TODO replace 1/0 with read/not read
-            }
-            if(result.appointments){
-                $scope.apptReport = result.appointments;
-                strip($scope.apptReport);
-            }
-            if(result.testresults){
-                $scope.testReport = result.testresults;
-                strip($scope.testReport);
-            }
-            if(result.pattestresults){
-                $scope.pattestReport = result.pattestresults;
-                strip($scope.pattestReport);
-            }
-            if(result.notes){
-                $scope.noteReport = result.notes;
-                strip($scope.noteReport); //TODO replace1/0 with read/not read
-            }
-            if(result.clinicalnotes){
-                $scope.clinnoteReport = result.clinicalnotes;
-                strip($scope.clinnoteReport);
-            }
-            if(result.treatingteam){
-                $scope.txteamReport = result.treatingteam;
-                strip($scope.txplanReport); // TODO replace 1/0 with read/not read
-            }
-            if(result.general){
-                $scope.generalReport = result.general;
-                strip($scope.generalReport); // TODO replace 1/0 with read/ not read
-            }
-            if(result.treatplan){
-                $scope.txplanReport = result.treatplan;
-                strip($scope.txplanReport);
-            }
-        
-        }else{ //something went wrong, no result recieved
-            ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
-        }
+
+        });
     }
 
 

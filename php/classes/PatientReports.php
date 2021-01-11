@@ -547,7 +547,7 @@ class PatientReports extends Module {
                         'dateadded'      => $data[0],
                         'name'        => $data[1],
                         'readstatus'      => $data[2],
-                        'body'      => $data[3],
+                        'body'      => strip_tags($data[3]),
                     );
                     array_push($treatteamReport, $reportArray);
                 }
@@ -579,7 +579,7 @@ class PatientReports extends Module {
                         'dateadded'      => $data[0],
                         'readstatus'        => $data[1],
                         'name'      => $data[2],
-                        'body'      => $data[3],
+                        'body'      => strip_tags($data[3]),
                     );
                     array_push($generalReport, $reportArray);
                 }

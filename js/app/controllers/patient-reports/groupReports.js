@@ -151,72 +151,83 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
 
     // Helper function to prepare educational material list for selection
     function prepareEducList(inp){
-        var tmp = "";
-        if(inp && (inp !== null)){
-            for(var i=0; i < inp.length; i++){
-			tmp = tmp + inp[i].name.replace(/["']/g, "");
-			$scope.educList.push(tmp);
-			tmp = "";
+
+        $scope.$apply(function() {
+            
+            $scope.educList = [];
+            var tmp = "";
+            if(inp && (inp !== null)){
+                for(var i=0; i < inp.length; i++){
+                tmp = tmp + inp[i].name.replace(/["']/g, "");
+                $scope.educList.push(tmp);
+                tmp = "";
+                }
+                $scope.displayMaterialList = true;
+            }else{
+                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
             }
-            $scope.displayMaterialList = true;
-        }else{
-            ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
-        }
+
+        });
 		
 
     }
     
     // Helper function prepare educational material report for display
     function prepareEducReport(inp){
-        if(inp && (inp !== null)){
-            $scope.educReport = inp;
-            for(var i = 0; i< $scope.educReport.length; i++){
-                if($scope.educReport[i].pname){
-                    $scope.educReport[i].pname = $scope.educReport[i].pname.replace(/["']/g, "");
-                }else{
-                    $scope.educReport[i].pname = "N/A";
+
+        $scope.$apply(function() {
+            if(inp && (inp !== null)){
+                $scope.educReport = inp;
+                for(var i = 0; i< $scope.educReport.length; i++){
+                    if($scope.educReport[i].pname){
+                        $scope.educReport[i].pname = $scope.educReport[i].pname.replace(/["']/g, "");
+                    }else{
+                        $scope.educReport[i].pname = "N/A";
+                    }
+                    if($scope.educReport[i].plname){
+                        $scope.educReport[i].plname = $scope.educReport[i].plname.replace(/["']/g, "");
+                    }else{
+                        $scope.educReport[i].plname = "N/A";
+                    }
+                    if($scope.educReport[i].pser){
+                        $scope.educReport[i].pser = $scope.educReport[i].pser.replace(/["']/g, "");
+                    }else{
+                        $scope.educReport[i].pser = "N/A";
+                    }
+                    if($scope.educReport[i].page){
+                        $scope.educReport[i].page = $scope.educReport[i].page.replace(/["']/g, "");
+                    }
+                    if($scope.educReport[i].pdob){
+                        $scope.educReport[i].pdob = $scope.educReport[i].pdob.replace(/["']/g, "");
+                    }
+                    if($scope.educReport[i].psex){
+                        $scope.educReport[i].psex = $scope.educReport[i].psex.replace(/["' ]/g, "");
+                    }else{
+                        $scope.educReport[i].psex = "N/A";
+                    }
+                    if($scope.educReport[i].edate){
+                        $scope.educReport[i].edate = $scope.educReport[i].edate.replace(/["']/g, "");
+                    }
+                    if($scope.educReport[i].eread){
+                        $scope.educReport[i].eread = $scope.educReport[i].eread.replace(/["']/g, "");
+                    }
+                    if($scope.educReport[i].eupdate){
+                        $scope.educReport[i].eupdate = $scope.educReport[i].eupdate.replace(/["']/g, "");
+                    }
+                    
                 }
-                if($scope.educReport[i].plname){
-                    $scope.educReport[i].plname = $scope.educReport[i].plname.replace(/["']/g, "");
-                }else{
-                    $scope.educReport[i].plname = "N/A";
-                }
-                if($scope.educReport[i].pser){
-                    $scope.educReport[i].pser = $scope.educReport[i].pser.replace(/["']/g, "");
-                }else{
-                    $scope.educReport[i].pser = "N/A";
-                }
-                if($scope.educReport[i].page){
-                    $scope.educReport[i].page = $scope.educReport[i].page.replace(/["']/g, "");
-                }
-                if($scope.educReport[i].pdob){
-                    $scope.educReport[i].pdob = $scope.educReport[i].pdob.replace(/["']/g, "");
-                }
-                if($scope.educReport[i].psex){
-                    $scope.educReport[i].psex = $scope.educReport[i].psex.replace(/["' ]/g, "");
-                }else{
-                    $scope.educReport[i].psex = "N/A";
-                }
-                if($scope.educReport[i].edate){
-                    $scope.educReport[i].edate = $scope.educReport[i].edate.replace(/["']/g, "");
-                }
-                if($scope.educReport[i].eread){
-                    $scope.educReport[i].eread = $scope.educReport[i].eread.replace(/["']/g, "");
-                }
-                if($scope.educReport[i].eupdate){
-                    $scope.educReport[i].eupdate = $scope.educReport[i].eupdate.replace(/["']/g, "");
-                }
-                
+                $scope.educReportLength = $scope.educReport.length;
+                prepareEducStats();
+    
+    
+    
+            }else{ //error, no result returned
+                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
             }
-            $scope.educReportLength = $scope.educReport.length;
-            prepareEducStats();
 
+        });
 
-
-        }else{ //error, no result returned
-            ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
-        }
-
+    
     }
 
 
@@ -260,7 +271,6 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
         $scope.educAvgDaysToRead = (daysToRead/totRead).toFixed(2);
 
     }
-
 
     //
     // QUESTIONNAIRES SECTION
@@ -306,60 +316,68 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
 
     // Helper function to generate list of retrieved questionnaires
     function prepareQstList(inp){
-        var tmp = "";
-        if(inp && (inp !== null)){
-            for(var i=0; i < inp.length; i++){
-            tmp = tmp + inp[i].name.replace(/["']/g, "");
-            $scope.qstList.push(tmp);
-            tmp ="";
+
+        $scope.$apply(function() {
+            var tmp = "";
+            if(inp && (inp !== null)){
+                for(var i=0; i < inp.length; i++){
+                tmp = tmp + inp[i].name.replace(/["']/g, "");
+                $scope.qstList.push(tmp);
+                tmp ="";
+                }
+            }else{ // no questionnaires returned
+                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
             }
-        }else{ // no questionnaires returned
-            ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
-        }
-       
+    
+        });
+
     }
 
     //Helper function to generate list of patient receiving the specified questionnaire
     function prepareQstReport(inp){
-        if(inp && (inp !== null)){
-            $scope.qstReport = inp;
-            for(var i=0; i< $scope.qstReport.length; i++){
-                if($scope.qstReport[i].pname){
-                    $scope.qstReport[i].pname = $scope.qstReport[i].pname.replace(/["']/g, "");
-                }else{
-                    $scope.qstReport[i].pname = "N/A";
-                }
-                if($scope.qstReport[i].plname){
-                    $scope.qstReport[i].plname = $scope.qstReport[i].plname.replace(/["']/g, "");
-                }else{
-                    $scope.qstReport[i].plname = "N/A";
-                }
-                if($scope.qstReport[i].pdob){
-                    $scope.qstReport[i].pdob = $scope.qstReport[i].pdob.replace(/["']/g, "");
-                }else{
-                    $scope.qstReport[i].pdob = "N/A";
-                }
-                if($scope.qstReport[i].psex){
-                    $scope.qstReport[i].psex = $scope.qstReport[i].psex.replace(/["' ]/g, "");
-                }
-                if($scope.qstReport[i].pser){
-                    $scope.qstReport[i].pser = $scope.qstReport[i].pser.replace(/["']/g, "");
-                }
-                if($scope.qstReport[i].qdate){
-                    $scope.qstReport[i].qdate = $scope.qstReport[i].qdate.replace(/["']/g, "");
-                }
-                if($scope.qstReport[i].qcomplete){
-                    $scope.qstReport[i].qcomplete = $scope.qstReport[i].qcomplete.replace(/["']/g, "");
-                }else{
-                    $scope.qstReport[i].qcomplete = "N/A";
-                }
-			}
-            $scope.qstReportLength = $scope.qstReport.length;
-        }else{
-            ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
-        }
 
-        prepareQstStats();
+        $scope.$apply(function() {
+            if(inp && (inp !== null)){
+                $scope.qstReport = inp;
+                for(var i=0; i< $scope.qstReport.length; i++){
+                    if($scope.qstReport[i].pname){
+                        $scope.qstReport[i].pname = $scope.qstReport[i].pname.replace(/["']/g, "");
+                    }else{
+                        $scope.qstReport[i].pname = "N/A";
+                    }
+                    if($scope.qstReport[i].plname){
+                        $scope.qstReport[i].plname = $scope.qstReport[i].plname.replace(/["']/g, "");
+                    }else{
+                        $scope.qstReport[i].plname = "N/A";
+                    }
+                    if($scope.qstReport[i].pdob){
+                        $scope.qstReport[i].pdob = $scope.qstReport[i].pdob.replace(/["']/g, "");
+                    }else{
+                        $scope.qstReport[i].pdob = "N/A";
+                    }
+                    if($scope.qstReport[i].psex){
+                        $scope.qstReport[i].psex = $scope.qstReport[i].psex.replace(/["' ]/g, "");
+                    }
+                    if($scope.qstReport[i].pser){
+                        $scope.qstReport[i].pser = $scope.qstReport[i].pser.replace(/["']/g, "");
+                    }
+                    if($scope.qstReport[i].qdate){
+                        $scope.qstReport[i].qdate = $scope.qstReport[i].qdate.replace(/["']/g, "");
+                    }
+                    if($scope.qstReport[i].qcomplete){
+                        $scope.qstReport[i].qcomplete = $scope.qstReport[i].qcomplete.replace(/["']/g, "");
+                    }else{
+                        $scope.qstReport[i].qcomplete = "N/A";
+                    }
+                }
+                $scope.qstReportLength = $scope.qstReport.length;
+            }else{
+                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
+            }
+    
+            prepareQstStats();
+        });
+        
     }
 
     // Helper function to generate patient questionnaire statistics
@@ -464,193 +482,200 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
 
     // Helper function to clean patient list
     function preparePatientReport(inp){
-        if(inp && (inp !== null)){
-            $scope.patientReport = inp;
-			for(var i = 0; i < $scope.patientReport.length; i++){
-                if($scope.patientReport[i].pname){
-				    $scope.patientReport[i].pname = $scope.patientReport[i].pname.replace(/["']/g, "");
-                }else{
-                    $scope.patientReport[i].pname = "N/A";
-                }
-                if($scope.patientReport[i].plname){
-                    $scope.patientReport[i].plname = $scope.patientReport[i].plname.replace(/["']/g, "");
-                }else{
-                    $scope.patientReport[i].plname = "N/A";
-                }
-                if($scope.patientReport[i].psex){
-                    $scope.patientReport[i].psex = $scope.patientReport[i].psex.replace(/["' ]/g, "");
-                }else{
-                    $scope.patientReport[i].psex = "N/A";
-                }
-                if($scope.patientReport[i].pser){
-                    $scope.patientReport[i].pser = $scope.patientReport[i].pser.replace(/["']/g, "");
-                }else{
-                    $scope.patientReport[i].pser = "N/A";
-                }
-                if($scope.patientReport[i].pdob){
-                    $scope.patientReport[i].pdob = $scope.patientReport[i].pdob.replace(/["']/g, "");
-                }else{
-                    $scope.patientReport[i].pdob = "N/A";
-                }
-                if($scope.patientReport[i].page){
-                    $scope.patientReport[i].page = $scope.patientReport[i].page.replace(/["']/g, "");
-                }else{
-                    $scope.patientReport[i].page = "N/A";
-                }
-                if($scope.patientReport[i].pemail){
-                    $scope.patientReport[i].pemail = $scope.patientReport[i].pemail.replace(/["']/g, "");
-                }else{
-                    $scope.patientReport[i].pemail = "N/A";
-                }
-                if($scope.patientReport[i].plang){
-                    $scope.patientReport[i].plang = $scope.patientReport[i].plang.replace(/["']/g, "");
-                }else{
-                    $scope.patientReport[i].plang = "N/A";
-                }
-                if($scope.patientReport[i].preg){
-                    $scope.patientReport[i].preg = $scope.patientReport[i].preg.replace(/["']/g, "");
-                }else{
-                    $scope.patientReport[i].preg = "N/A";
-                }
-                if($scope.patientReport[i].diagdesc){
-                    $scope.patientReport[i].diagdesc = $scope.patientReport[i].diagdesc.replace(/["']/g, "");
-                }else{
-                    $scope.patientReport[i].diagdesc = "N/A";
-                }
-                if($scope.patientReport[i].diagdate){
-                    $scope.patientReport[i].diagdate = $scope.patientReport[i].diagdate.replace(/["']/g, "");
-                }else{
-                    $scope.patientReport[i].diagdate = "N/A";
-                }
-			 }
-            $scope.patientReportLength = $scope.patientReport.length;
-            prepareDemoStats();
 
+        $scope.$apply( function() {
+            if(inp && (inp !== null)){
+                $scope.patientReport = inp;
+                for(var i = 0; i < $scope.patientReport.length; i++){
+                    if($scope.patientReport[i].pname){
+                        $scope.patientReport[i].pname = $scope.patientReport[i].pname.replace(/["']/g, "");
+                    }else{
+                        $scope.patientReport[i].pname = "N/A";
+                    }
+                    if($scope.patientReport[i].plname){
+                        $scope.patientReport[i].plname = $scope.patientReport[i].plname.replace(/["']/g, "");
+                    }else{
+                        $scope.patientReport[i].plname = "N/A";
+                    }
+                    if($scope.patientReport[i].psex){
+                        $scope.patientReport[i].psex = $scope.patientReport[i].psex.replace(/["' ]/g, "");
+                    }else{
+                        $scope.patientReport[i].psex = "N/A";
+                    }
+                    if($scope.patientReport[i].pser){
+                        $scope.patientReport[i].pser = $scope.patientReport[i].pser.replace(/["']/g, "");
+                    }else{
+                        $scope.patientReport[i].pser = "N/A";
+                    }
+                    if($scope.patientReport[i].pdob){
+                        $scope.patientReport[i].pdob = $scope.patientReport[i].pdob.replace(/["']/g, "");
+                    }else{
+                        $scope.patientReport[i].pdob = "N/A";
+                    }
+                    if($scope.patientReport[i].page){
+                        $scope.patientReport[i].page = $scope.patientReport[i].page.replace(/["']/g, "");
+                    }else{
+                        $scope.patientReport[i].page = "N/A";
+                    }
+                    if($scope.patientReport[i].pemail){
+                        $scope.patientReport[i].pemail = $scope.patientReport[i].pemail.replace(/["']/g, "");
+                    }else{
+                        $scope.patientReport[i].pemail = "N/A";
+                    }
+                    if($scope.patientReport[i].plang){
+                        $scope.patientReport[i].plang = $scope.patientReport[i].plang.replace(/["']/g, "");
+                    }else{
+                        $scope.patientReport[i].plang = "N/A";
+                    }
+                    if($scope.patientReport[i].preg){
+                        $scope.patientReport[i].preg = $scope.patientReport[i].preg.replace(/["']/g, "");
+                    }else{
+                        $scope.patientReport[i].preg = "N/A";
+                    }
+                    if($scope.patientReport[i].diagdesc){
+                        $scope.patientReport[i].diagdesc = $scope.patientReport[i].diagdesc.replace(/["']/g, "");
+                    }else{
+                        $scope.patientReport[i].diagdesc = "N/A";
+                    }
+                    if($scope.patientReport[i].diagdate){
+                        $scope.patientReport[i].diagdate = $scope.patientReport[i].diagdate.replace(/["']/g, "");
+                    }else{
+                        $scope.patientReport[i].diagdate = "N/A";
+                    }
+                 }
+                $scope.patientReportLength = $scope.patientReport.length;
+                prepareDemoStats();
+    
+    
+            }else{
+                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
+            }
+        });
 
-        }else{
-            ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
-        }
-        // Heper function to generate demographics statistics
-        function prepareDemoStats(){
-            var femCount = 0;
-            var malCount = 0;
-            var unkCount = 0;
-            var totAge = 0;
-            var nullCount = 0;
-            var frCount = 0;
-            $scope.demoPcntFemale = 0;
-            $scope.demoPcntMale = 0;
+        
+        
+    }
 
-            var diagDict = new Object(); //diagnosis tracking
+    // Helper function to generate demographics statistics
+    function prepareDemoStats(){
+        var femCount = 0;
+        var malCount = 0;
+        var unkCount = 0;
+        var totAge = 0;
+        var nullCount = 0;
+        var frCount = 0;
+        $scope.demoPcntFemale = 0;
+        $scope.demoPcntMale = 0;
 
-            for(var i = 0; i< $scope.patientReportLength; i++){
-                // male/female demgraphics
-                if($scope.patientReport[i].psex === "Female"){
-                    femCount++;
-                    $scope.femalePlotData.push([new Date($scope.patientReport[i].preg).getTime(), femCount]);
-                }else if($scope.patientReport[i].psex === "Male"){
-                    malCount++;
-                    $scope.malePlotData.push([new Date($scope.patientReport[i].preg).getTime(), malCount]);
-                }else{
-                    unkCount++;
-                }
+        var diagDict = new Object(); //diagnosis tracking
 
-                //avg patient age
-                if($scope.patientReport[i].page && $scope.patientReport[i].page > 1){
-                    totAge += parseInt($scope.patientReport[i].page);
-                }else{
-                    nullCount++;
-                }
-
-                // french/english
-                if($scope.patientReport[i].plang === "FR"){
-                    frCount++;
-                }
-
-                //registration date tracking (to be plotted)
-                $scope.regPlotData.push([new Date($scope.patientReport[i].preg).getTime(), i]);
-                
-                
-                // diagnosis breakdown
-                if($scope.patientReport[i].diagdesc in diagDict){
-                    diagDict[$scope.patientReport[i].diagdesc]++;
-                }else{
-                    diagDict[$scope.patientReport[i].diagdesc] = 1;
-                }
-
-                $scope.demoPcntFemale = ((femCount/$scope.patientReportLength)*100).toFixed(2);
-                $scope.demoPcntMale = ((malCount/$scope.patientReportLength)*100).toFixed(2);
-                $scope.demoPcntUnk = ((unkCount/$scope.patientReportLength)*100).toFixed(2);
-
-                $scope.demoAvgAge = (totAge/($scope.patientReportLength-nullCount)).toFixed(2);
-                $scope.demoPcntFrench = ((frCount/$scope.patientReportLength)*100).toFixed(2);
-                $scope.demoPcntEnglish = (100-$scope.demoPcntFrench).toFixed(2);
-                
-
-                // store keys and values of diag dict for pie chart
-                var diagCounts = [];
-                var diagDescs = [];
-                for(const [key, value] of Object.entries(diagDict)){
-                    diagCounts.push(value);
-                    diagDescs.push(key);
-                }
-
-
+        for(var i = 0; i< $scope.patientReportLength; i++){
+            // male/female demgraphics
+            if($scope.patientReport[i].psex === "Female"){
+                femCount++;
+                $scope.femalePlotData.push([new Date($scope.patientReport[i].preg).getTime(), femCount]);
+            }else if($scope.patientReport[i].psex === "Male"){
+                malCount++;
+                $scope.malePlotData.push([new Date($scope.patientReport[i].preg).getTime(), malCount]);
+            }else{
+                unkCount++;
             }
 
-            Highcharts.chart('plot1', {
-                chart: {
-                    type: 'spline'
+            //avg patient age
+            if($scope.patientReport[i].page && $scope.patientReport[i].page > 1){
+                totAge += parseInt($scope.patientReport[i].page);
+            }else{
+                nullCount++;
+            }
+
+            // french/english
+            if($scope.patientReport[i].plang === "FR"){
+                frCount++;
+            }
+
+            //registration date tracking (to be plotted)
+            $scope.regPlotData.push([new Date($scope.patientReport[i].preg).getTime(), i]);
+            
+            
+            // diagnosis breakdown
+            if($scope.patientReport[i].diagdesc in diagDict){
+                diagDict[$scope.patientReport[i].diagdesc]++;
+            }else{
+                diagDict[$scope.patientReport[i].diagdesc] = 1;
+            }
+
+            $scope.demoPcntFemale = ((femCount/$scope.patientReportLength)*100).toFixed(2);
+            $scope.demoPcntMale = ((malCount/$scope.patientReportLength)*100).toFixed(2);
+            $scope.demoPcntUnk = ((unkCount/$scope.patientReportLength)*100).toFixed(2);
+
+            $scope.demoAvgAge = (totAge/($scope.patientReportLength-nullCount)).toFixed(2);
+            $scope.demoPcntFrench = ((frCount/$scope.patientReportLength)*100).toFixed(2);
+            $scope.demoPcntEnglish = (100-$scope.demoPcntFrench).toFixed(2);
+            
+
+            // store keys and values of diag dict for pie chart
+            var diagCounts = [];
+            var diagDescs = [];
+            for(const [key, value] of Object.entries(diagDict)){
+                diagCounts.push(value);
+                diagDescs.push(key);
+            }
+
+
+        }
+
+        Highcharts.chart('plot1', {
+            chart: {
+                type: 'spline'
+            },
+            title:{
+                text: 'Opal Registrations Over Time'
+            },
+            yAxis: {
+                title: {
+                    text: 'Total Registrations'
+                }
+            },
+            xAxis: {
+                type: 'datetime',
+                title: {
+                    text: 'Time'
                 },
-                title:{
-                    text: 'Opal Registrations Over Time'
-                },
-                yAxis: {
-                    title: {
-                        text: 'Total Registrations'
-                    }
-                },
-                xAxis: {
-                    type: 'datetime',
-                    title: {
-                        text: 'Time'
-                    },
-                },
-                legend: {
-                    layout: 'vertical',
-                    align:'left',
-                    verticalAlign: 'top',
-                    x: 100,
-                    y: 70,
-                    floating: true,
-                    borderWidth: 1
-                },
-                plotOptions: {
-                    scatter: {
-                        marker: {
-                            radius: 4,
-                            states: {
-                                hover: {
-                                    enabled: true,
-                                    lineColor: 'rgb(100,100,100)'
-                                }
+            },
+            legend: {
+                layout: 'vertical',
+                align:'left',
+                verticalAlign: 'top',
+                x: 100,
+                y: 70,
+                floating: true,
+                borderWidth: 1
+            },
+            plotOptions: {
+                scatter: {
+                    marker: {
+                        radius: 4,
+                        states: {
+                            hover: {
+                                enabled: true,
+                                lineColor: 'rgb(100,100,100)'
                             }
                         }
                     }
-                },
-                series: [{
-                    name: 'All Patients',
-                    data: $scope.regPlotData
-                },{
-                    name: 'Female Patients',
-                    data: $scope.femalePlotData
-                },{
-                    name: 'Male Patients',
-                    data: $scope.malePlotData
-                }]
-            });
+                }
+            },
+            series: [{
+                name: 'All Patients',
+                data: $scope.regPlotData
+            },{
+                name: 'Female Patients',
+                data: $scope.femalePlotData
+            },{
+                name: 'Male Patients',
+                data: $scope.malePlotData
+            }]
+        });
 
-        }
     }
 
 });
