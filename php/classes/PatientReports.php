@@ -43,7 +43,7 @@ class PatientReports extends Module {
             FROM
                 Patient 
             WHERE
-                Patient.LastName = '$name'
+                Patient.LastName LIKE '%$name%'
              ";
 
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -97,7 +97,7 @@ class PatientReports extends Module {
             FROM
                 Patient 
             WHERE
-                Patient.PatientId = '$mrn'
+                Patient.PatientId LIKE '%$mrn%'
              ";
 
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -152,7 +152,7 @@ class PatientReports extends Module {
             FROM
                 Patient 
             WHERE
-                Patient.SSN = '$ramq'
+                Patient.SSN LIKE '%$ramq%'
              ";
 
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
