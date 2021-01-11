@@ -60,6 +60,10 @@
                             <select ng-model="selectedName" ng-options="x for x in patOptions"
                                     ng-change="displaySelection()"></select>
                         </div>
+                        <div ng-show="noPatientFound" class="panel-info" style="text-align:left;">
+                            <p>No patients found matching criteria, please try again.</p>
+                        </div>
+
 
                         <div ng-show="foundPatient" class="panel-info">
                             <div>

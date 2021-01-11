@@ -24,6 +24,7 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
     $scope.searchRAMQ = "";
 
     $scope.searchResult = "";
+    $scope.noPatientFound = false;
 
     $scope.psnum = ""; //the selected patient identifiers for our report
     $scope.pname = "";
@@ -277,12 +278,12 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
     function displayName(result){
 
         $scope.safeApply(function() {
-
             $scope.searchResult = result;
-            if(!$scope.searchResult){ //no match found for input parameter
+            if($scope.searchResult.length == 0){ //no match found for input parameter
                 $scope.foundPatient = false;
-                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
+                $scope.noPatientFound = true;
             }else if ($scope.searchResult.length > 1){ //found multiple patients matching search
+                $scope.noPatientFound = false;
                 $scope.patOptions = [];
                 var tmp = "";
                 //load each result into patOptions array for selection
@@ -293,6 +294,7 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
                 }
                 $scope.selectPatient = true; //display dialog to select patient, result stored in scope.selectedName and displayPatient called 
             } else { //exactly one match
+                $scope.noPatientFound = false;
                 $scope.foundPatient = true; //display patient table
                 // set selected patient identifiers
                 if($scope.searchResult[0].pname){
@@ -343,6 +345,7 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
     $scope.displaySelection = function() {
 
         $scope.safeApply(function() {
+            $scope.noPatientFound = false;
             $scope.foundPatient = true; //display patient table
             var idx = $scope.selectedName.split(" , ")[0]; // index of selected patient
             //Set the chosen patient identifier variables
@@ -395,6 +398,8 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
             $scope.searchName = "";
             $scope.searchMRN = "";
             $scope.searchRAMQ = "";
+
+            $scope.noPatientFound = false;
     
             $scope.pname = "";
             $scope.plname = "";
