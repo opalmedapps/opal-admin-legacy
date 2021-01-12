@@ -977,3 +977,14 @@ define("OPAL_GET_TEST_RESULT_ADD_LINK","
 define("OPAL_GET_TEST_RESULT_GROUPS","
     SELECT DISTINCT Group_EN AS EN, Group_FR AS FR FROM ".OPAL_TEST_RESULT_CONTROL_TABLE.";
 ");
+
+define("OPAL_DOES_EDU_MATERIAL_EXISTS","
+    SELECT EducationalMaterialControlSerNum FROM ".OPAL_EDUCATION_MATERIAL_TABLE."
+    WHERE EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum;
+");
+
+define("OPAL_SANITIZE_EMPTY_TEST_RESULTS","
+    UPDATE ".OPAL_TEST_RESULT_CONTROL_TABLE." tc LEFT JOIN ".OPAL_TEST_RESULT_EXPRESSION_TABLE." tre ON
+    tc.TestResultControlSerNum = tre.TestResultControlSerNum SET tc.PublishFlag = ".INACTIVE_RECORD.", tc.LastUpdatedBy = :LastUpdatedBy,
+    tc.SessionId = :SessionId WHERE tre.TestResultControlSerNum IS NULL; 
+");
