@@ -349,7 +349,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $newTemplateQuestion["creationDate"] = date("Y-m-d H:i:s");
         $newTemplateQuestion["createdBy"] = $this->username;
         $newTemplateQuestion["updatedBy"] = $this->username;
-        return $this->_insertRecordIntoTable(TEMPLATE_QUESTION_TABLE, $newTemplateQuestion);
+        return $this->_replaceRecordIntoTable(TEMPLATE_QUESTION_TABLE, $newTemplateQuestion);
     }
 
     /*
@@ -361,7 +361,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @returns ID of the record
      * */
     function addToTypeTemplateTableType($tableName, $optionToInsert) {
-        $result = $this->_insertRecordIntoTable($tableName, $optionToInsert);
+        $result = $this->_replaceRecordIntoTable($tableName, $optionToInsert);
         return $result;
     }
 
@@ -379,7 +379,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
         $toInsert["createdBy"] = $this->username;
         $toInsert["updatedBy"] = $this->username;
-        return $this->_insertRecordIntoTable(LIBRARY_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(LIBRARY_TABLE, $toInsert);
     }
 
     /*
@@ -391,7 +391,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @returns ID of the record
      * */
     function addToTypeTemplateTableTypeOptions($tableName, $optionToInsert) {
-        $result = $this->_insertMultipleRecordsIntoTable($tableName, $optionToInsert);
+        $result = $this->_replaceMultipleRecordsIntoTable($tableName, $optionToInsert);
         return $result;
     }
 
@@ -487,7 +487,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $toInsert["createdBy"] = $this->username;
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
         $toInsert["updatedBy"] = $this->username;
-        return $this->_insertRecordIntoTable(QUESTION_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(QUESTION_TABLE, $toInsert);
     }
 
     /*
@@ -500,7 +500,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
         $toInsert["createdBy"] = $this->username;
         $toInsert["updatedBy"] = $this->username;
-        return $this->_insertRecordIntoTable(QUESTIONNAIRE_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(QUESTIONNAIRE_TABLE, $toInsert);
     }
 
     /*
@@ -512,7 +512,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
         $toInsert["createdBy"] = $this->username;
         $toInsert["updatedBy"] = $this->username;
-        return $this->_insertRecordIntoTable(SECTION_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(SECTION_TABLE, $toInsert);
     }
 
     /*
@@ -522,7 +522,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @returns ID of the record.
      * */
     function insertQuestionOptions($tableName, $toInsert) {
-        return $this->_insertRecordIntoTable($tableName, $toInsert);
+        return $this->_replaceRecordIntoTable($tableName, $toInsert);
     }
 
     /*
@@ -531,7 +531,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @returns void
      * */
     function insertCheckboxOption($toInsert) {
-        $this->_insertMultipleRecordsIntoTable(CHECKBOX_OPTION_TABLE, $toInsert);
+        $this->_replaceMultipleRecordsIntoTable(CHECKBOX_OPTION_TABLE, $toInsert);
     }
 
     /*
@@ -540,7 +540,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @returns void
      * */
     function insertRadioButtonOption($toInsert) {
-        $this->_insertMultipleRecordsIntoTable(RADIO_BUTTON_OPTION_TABLE, $toInsert);
+        $this->_replaceMultipleRecordsIntoTable(RADIO_BUTTON_OPTION_TABLE, $toInsert);
     }
 
     /*
@@ -878,7 +878,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @returns void
      * */
     function insertLibrariesForQuestion($records) {
-        return $this->_insertMultipleRecordsIntoTableConditional(LIBRARY_QUESTION_TABLE, $records);
+        return $this->_replaceMultipleRecordsIntoTableConditional(LIBRARY_QUESTION_TABLE, $records);
     }
 
     /*
@@ -887,7 +887,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return number of records created
      * */
     function insertOptionsQuestion($tableName, $records) {
-        return $this->_insertMultipleRecordsIntoTableConditional($tableName, $records);
+        return $this->_replaceMultipleRecordsIntoTableConditional($tableName, $records);
     }
 
     /*
@@ -896,7 +896,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return number of records created
      * */
     function insertOptionsTemplateQuestion($tableName, $records) {
-        return $this->_insertMultipleRecordsIntoTableConditional($tableName, $records);
+        return $this->_replaceMultipleRecordsIntoTableConditional($tableName, $records);
     }
 
     /*
@@ -905,7 +905,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  number of records created
      * */
     function insertQuestionsIntoSection($records) {
-        return $this->_insertMultipleRecordsIntoTableConditional(QUESTION_SECTION_TABLE, $records);
+        return $this->_replaceMultipleRecordsIntoTableConditional(QUESTION_SECTION_TABLE, $records);
     }
 
     /*
@@ -1130,7 +1130,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * add a condition to the insert.
      * */
     protected function _insertMultipleRecordsIntoDictionary($records, $controlContentId) {
-        $sqlInsert = str_replace("%%TABLENAME%%", DICTIONARY_TABLE, SQL_GENERAL_INSERT_INTERSECTION_TABLE);
+        $sqlInsert = str_replace("%%TABLENAME%%", DICTIONARY_TABLE, SQL_GENERAL_REPLACE_INTERSECTION_TABLE);
         $sqlConditional = array();
         $multiples = array();
         $cpt = 0;
@@ -1151,6 +1151,6 @@ class DatabaseQuestionnaire extends DatabaseAccess
         array_push($ready, array("parameter"=>":controlContentId","variable"=>$controlContentId));
 
         $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . implode(" UNION ALL ", $sqlConditional);
-        return $this->_queryInsert($sqlInsert, $ready);
+        return $this->_queryInsertReplace($sqlInsert, $ready);
     }
 }

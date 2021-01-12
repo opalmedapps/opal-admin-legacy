@@ -405,7 +405,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  ID of the entry
      * */
     function insertPublishedQuestionnaire($toInsert) {
-        return $this->_insertRecordIntoTable(OPAL_QUESTIONNAIRE_CONTROL_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_QUESTIONNAIRE_CONTROL_TABLE, $toInsert);
     }
 
     /*
@@ -414,7 +414,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  ID of the entry
      * */
     function insertMultipleFilters($toInsert) {
-        $this->_insertMultipleRecordsIntoTable(OPAL_FILTERS_TABLE, $toInsert);
+        $this->_replaceMultipleRecordsIntoTable(OPAL_FILTERS_TABLE, $toInsert);
     }
 
     /*
@@ -423,7 +423,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  number of records affected
      * */
     function insertMultipleFrequencyEvents($toInsert) {
-        $this->_insertMultipleRecordsIntoTable(OPAL_FREQUENCY_EVENTS_TABLE, $toInsert);
+        $this->_replaceMultipleRecordsIntoTable(OPAL_FREQUENCY_EVENTS_TABLE, $toInsert);
     }
 
     /*
@@ -541,7 +541,7 @@ class DatabaseOpal extends DatabaseAccess {
             default:
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module.");
         }
-        $lastId = $this->_insertRecordIntoTable($tableToInsert, $toInsert);
+        $lastId = $this->_replaceRecordIntoTable($tableToInsert, $toInsert);
         $externalId = -1 * abs(intval($lastId));
 
         $sql = str_replace("%%MASTER_TABLE%%", $tableToInsert, OPAL_UPDATE_EXTERNAL_ID_MASTER_SOURCE);
@@ -650,7 +650,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  ID of the insertion
      * */
     function insertReplaceFrequencyEvent($record) {
-        return $this->_insertRecordIntoTable(OPAL_FREQUENCY_EVENTS_TABLE, $record);
+        return $this->_replaceRecordIntoTable(OPAL_FREQUENCY_EVENTS_TABLE, $record);
     }
 
     /*
@@ -698,7 +698,7 @@ class DatabaseOpal extends DatabaseAccess {
         $toInsert["LastUpdatedBy"] = $this->getOAUserId();
         $toInsert["SessionId"] = $this->getSessionId();
         $toInsert["DateAdded"] = date("Y-m-d H:i:s");
-        return $this->_insertRecordIntoTable(OPAL_POST_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_POST_TABLE, $toInsert);
     }
 
     /*
@@ -780,7 +780,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @returns total results inserted (int)
      * */
     function insertAliases($toInsert) {
-        return $this->_insertMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_ALIAS_TABLE, $toInsert);
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_ALIAS_TABLE, $toInsert);
     }
 
     /*
@@ -897,7 +897,7 @@ class DatabaseOpal extends DatabaseAccess {
      * */
     function insertUserActivity($toInsert) {
         $toInsert["DateAdded"] = date("Y-m-d H:i:s");
-        return $this->_insertRecordIntoTable(OPAL_USER_ACTIVITY_LOG_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_USER_ACTIVITY_LOG_TABLE, $toInsert);
     }
 
     /*
@@ -998,7 +998,7 @@ class DatabaseOpal extends DatabaseAccess {
             "Language"=>$language,
             "DateAdded"=>date("Y-m-d H:i:s"),
         );
-        return $this->_insertRecordIntoTable(OPAL_OAUSER_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_OAUSER_TABLE, $toInsert);
     }
 
     /*
@@ -1014,7 +1014,7 @@ class DatabaseOpal extends DatabaseAccess {
             "Language"=>$language,
             "DateAdded"=>date("Y-m-d H:i:s"),
         );
-        return $this->_insertRecordIntoTable(OPAL_OAUSER_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_OAUSER_TABLE, $toInsert);
     }
 
     /*
@@ -1024,7 +1024,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  array with the result of the insert
      * */
     function insertUserRole($userId, $roleId) {
-        return $this->_insertRecordIntoTable(OPAL_OAUSER_ROLE_TABLE, array("OAUserSerNum"=>$userId, "RoleSerNum"=>$roleId));
+        return $this->_replaceRecordIntoTable(OPAL_OAUSER_ROLE_TABLE, array("OAUserSerNum"=>$userId, "RoleSerNum"=>$roleId));
     }
 
     /*
@@ -1209,7 +1209,7 @@ class DatabaseOpal extends DatabaseAccess {
         $newStudy["createdBy"] = $this->getUsername();
         $newStudy["creationDate"] = date("Y-m-d H:i:s");
         $newStudy["updatedBy"] = $this->getUsername();
-        return $this->_insertRecordIntoTable(OPAL_STUDY_TABLE, $newStudy);
+        return $this->_replaceRecordIntoTable(OPAL_STUDY_TABLE, $newStudy);
     }
 
     /*
@@ -1294,7 +1294,7 @@ class DatabaseOpal extends DatabaseAccess {
         $toInsert["createdBy"] = $this->getUsername();
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
         $toInsert["updatedBy"] = $this->getUsername();
-        return $this->_insertRecordIntoTable(OPAL_OA_ROLE_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_OA_ROLE_TABLE, $toInsert);
     }
 
     /*
@@ -1303,7 +1303,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @returns int : ID of the entry
      * */
     function insertRoleModule($toInsert) {
-        return $this->_insertMultipleRecordsIntoTable(OPAL_OA_ROLE_MODULE_TABLE, $toInsert);
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_OA_ROLE_MODULE_TABLE, $toInsert);
     }
 
     /*
@@ -1358,7 +1358,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  int - number of records updated
      * */
     function insertOARoleModule($multipleUpdates) {
-        return $this->_insertMultipleRecordsIntoTable(OPAL_OA_ROLE_MODULE_TABLE, $multipleUpdates);
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_OA_ROLE_MODULE_TABLE, $multipleUpdates);
     }
 
     /*
@@ -1697,7 +1697,7 @@ class DatabaseOpal extends DatabaseAccess {
         $toSubmit["creationDate"] = date("Y-m-d H:i:s");
         $toSubmit["createdBy"] = $this->username;
         $toSubmit["updatedBy"] = $this->username;
-        return $this->_insertRecordIntoTable(OPAL_ALERT_TABLE, $toSubmit);
+        return $this->_replaceRecordIntoTable(OPAL_ALERT_TABLE, $toSubmit);
     }
 
     /*
@@ -1742,7 +1742,7 @@ class DatabaseOpal extends DatabaseAccess {
     function insertAudit($toInsert) {
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
         $toInsert["createdBy"] = ($this->username != null ? $this->username : UNKNOWN_USER);
-        return $this->_insertRecordIntoTable(OPAL_AUDIT_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_AUDIT_TABLE, $toInsert);
     }
 
     /*
@@ -1752,7 +1752,7 @@ class DatabaseOpal extends DatabaseAccess {
      * */
     function insertAuditForceUser($toInsert) {
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
-        return $this->_insertRecordIntoTable(OPAL_AUDIT_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_AUDIT_TABLE, $toInsert);
     }
 
     /*
@@ -1845,7 +1845,7 @@ class DatabaseOpal extends DatabaseAccess {
         $toInsert["LastUpdatedBy"] = $this->getOAUserId();
         $toInsert["SessionId"] = $this->getSessionId();
 
-        return $this->_insertRecordIntoTable(OPAL_DIAGNOSIS_TRANSLATION_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_DIAGNOSIS_TRANSLATION_TABLE, $toInsert);
     }
 
     /*
@@ -1859,7 +1859,7 @@ class DatabaseOpal extends DatabaseAccess {
             $item["LastUpdatedBy"] = $this->getOAUserId();
             $item["SessionId"] = $this->getSessionId();
         }
-        return $this->_insertMultipleRecordsIntoTable(OPAL_DIAGNOSIS_CODE_TABLE, $toInsert);
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_DIAGNOSIS_CODE_TABLE, $toInsert);
     }
 
     /*
@@ -2005,7 +2005,7 @@ class DatabaseOpal extends DatabaseAccess {
     function insertPatientDiagnosis($toInsert) {
         $toInsert["createdBy"] = $this->getUsername();
         $toInsert["updatedBy"] = $this->getUsername();
-        return $this->_insertRecordIntoTable(OPAL_DIAGNOSIS_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_DIAGNOSIS_TABLE, $toInsert);
     }
 
     /*
@@ -2119,7 +2119,7 @@ class DatabaseOpal extends DatabaseAccess {
         $toInsert["LastPublished"] = date("Y-m-d H:i:s");
         $toInsert["LastUpdatedBy"] = $this->getOAUserId();
         $toInsert["SessionId"] = $this->getSessionId();
-        return $this->_insertRecordIntoTable(OPAL_TEST_RESULT_CONTROL_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_TEST_RESULT_CONTROL_TABLE, $toInsert);
     }
 
     /*
@@ -2133,7 +2133,7 @@ class DatabaseOpal extends DatabaseAccess {
             $item["LastUpdatedBy"] = $this->getOAUserId();
             $item["SessionId"] = $this->getSessionId();
         }
-        return $this->_insertMultipleRecordsIntoTable(OPAL_TEST_RESULT_EXPRESSION_TABLE, $toInsert);
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_TEST_RESULT_EXPRESSION_TABLE, $toInsert);
     }
 
     /*
@@ -2145,6 +2145,24 @@ class DatabaseOpal extends DatabaseAccess {
         foreach ($toInsert as &$item) {
             $item["DateAdded"] = date("Y-m-d H:i:s");
         }
-        return $this->_insertMultipleRecordsIntoTable(OPAL_TEST_RESULT_ADD_LINKS_TABLE, $toInsert);
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_TEST_RESULT_ADD_LINKS_TABLE, $toInsert);
+    }
+
+    /*
+     * Get if the educational material exists
+     * @params  void
+     * @return  array - list of educational material details
+     * */
+    function doesEduMaterialExists($id) {
+        return $this->_fetchAll(OPAL_DOES_EDU_MATERIAL_EXISTS, array(
+            array("parameter"=>":EducationalMaterialControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function sanitizeEmptyTestResults() {
+        return $this->_updateRecordIntoTable(OPAL_SANITIZE_EMPTY_TEST_RESULTS, array(
+            "LastUpdatedBy"=>$this->getOAUserId(),
+            "SessionId"=>$this->getSessionId(),
+        ));
     }
 }

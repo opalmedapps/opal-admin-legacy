@@ -1939,7 +1939,16 @@
       "ERROR_GROUP": "Une erreur s'est produite lors de l'obtention de la liste des groupes de laboratoire.",
       "ERROR_TEST": "Une erreur s'est produite lors de l'obtention de la liste des noms des tests.",
       "ERROR_NO_TEST_FOUND": "La liste des résultats de laboratoire est vide. Veuillez vérifier la connexion avec les différentes bases de données et essayer de nouveau.",
-      "ERROR_ADD": "Une erreur s'est produite lors de la création du résultat de laboratoire."
+      "ERROR_ADD": "Une erreur s'est produite lors de la création du résultat de laboratoire.",
+      "VALIDATION_NAME_EN": "Nom anglais manquant ou invalide.",
+      "VALIDATION_NAME_FR": "Nom français manquant ou invalide.",
+      "VALIDATION_DESCRIPTION_EN": "Description anglaise manquant ou invalide.",
+      "VALIDATION_DESCRPIPTION_FR": "Description française manquant ou invalide.",
+      "VALIDATION_GROUP_EN": "Groupe anglais manquant ou invalide.",
+      "VALIDATION_GROUP_FR": "Groupe français manquant ou invalide.",
+      "VALIDATION_TESTS": "Tests manquants ou invalides.",
+      "VALIDATION_EDU": "Matériel éducatif invalide.",
+      "VALIDATION_LINK": "Liens additionnels invalides."
     },
     "EDIT": {
       "TITLE": "Modifier le résultat du laboratoire",
@@ -2794,6 +2803,9 @@
     },
     "404": {
       "MESSAGE": "Code 404. La ressource est introuvable."
+    },
+    "422": {
+      "MESSAGE": "Code 422. La validation des données par le serveur a échoué."
     },
     "500": {
       "MESSAGE": "Code 500. Erreur interne du serveur. Réponse du serveur:",

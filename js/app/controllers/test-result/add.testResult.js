@@ -18,6 +18,18 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 		['html', 'insertLink']
 	];
 
+	var arrValidationInsert = [
+		$filter('translate')('TEST.ADD.VALIDATION_NAME_EN'),
+		$filter('translate')('TEST.ADD.VALIDATION_NAME_FR'),
+		$filter('translate')('TEST.ADD.VALIDATION_DESCRIPTION_EN'),
+		$filter('translate')('TEST.ADD.VALIDATION_DESCRPIPTION_FR'),
+		$filter('translate')('TEST.ADD.VALIDATION_GROUP_EN'),
+		$filter('translate')('TEST.ADD.VALIDATION_GROUP_FR'),
+		$filter('translate')('TEST.ADD.VALIDATION_TESTS'),
+		$filter('translate')('TEST.ADD.VALIDATION_EDU'),
+		$filter('translate')('TEST.ADD.VALIDATION_LINK'),
+	];
+
 	// default boolean
 	$scope.testsSection = {open: false, show: true};
 	$scope.titleDescriptionSection = {open: false, show: false};
@@ -367,7 +379,8 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 					$state.go('test-result');
 				},
 				error: function(err) {
-					ErrorHandler.onError(err, $filter('translate')('TEST.ADD.ERROR_ADD'));
+					err.responseText = JSON.parse(err.responseText);
+					ErrorHandler.onError(err, $filter('translate')('TEST.ADD.ERROR_ADD'), arrValidationInsert);
 				},
 			});
 		}

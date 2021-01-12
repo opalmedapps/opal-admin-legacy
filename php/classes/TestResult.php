@@ -122,43 +122,159 @@ class TestResult extends Module {
         }
     }
 
-    protected function _validateTestResult() {
-
-    }
-
-    /**
-     *
-     * Inserts a test result into the database
-     *
-     * @param array $testResultDetails : the test result details
-     * @return void
-     */
-    public function insertTestResult ($post) {
-        $this->checkWriteAccess($post);
+    /*
+     * Validate and sanitize a test result.
+     * @params  $post : array - data for the test result to validate
+     * Validation code :    Error validation code is coded as an int of 9 bits (value from 0 to 511). Bit informations
+     *                      are coded from right to left:
+     *                      1: english name missing
+     *                      2: french name missing
+     *                      3: english description missing
+     *                      4: french description missing
+     *                      5: english group missing
+     *                      6: french group missing
+     *                      7: test names missing or invalid
+     *                      8: educational material (if present) invalid
+     *                      9: additional links (if present) invalid
+     * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
+     *          $errMsgs : array - contains the invalid entries with an error code.
+     * */
+    protected function _validateTestResult(&$post) {
+        $errCode = "";
         $post = HelpSetup::arraySanitization($post);
 
+        if(is_array($post)) {
+
+            //1st bit
+            if (!array_key_exists("name_EN", $post) || $post["name_EN"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            //2nd bit
+            if (!array_key_exists("name_FR", $post) || $post["name_FR"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            //3rd bit
+            if (!array_key_exists("description_EN", $post) || $post["description_EN"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            //4th bit
+            if (!array_key_exists("description_FR", $post) || $post["description_FR"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            //5th bit
+            if (!array_key_exists("group_EN", $post) || $post["group_EN"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            //6th bit
+            if (!array_key_exists("group_FR", $post) || $post["group_FR"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            //7th bit
+            if (!array_key_exists("tests", $post) || !is_array($post["tests"])) {
+                $errCode = "1" . $errCode;
+            }
+            else {
+                $allGood = true;
+                foreach($post["tests"] as $test) {
+                    if (!array_key_exists("name", $test) || $test["name"] == "") {
+                        $allGood = false;
+                        break;
+                    }
+                }
+                if(!$allGood)
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
+            }
+
+            //8th bit
+            if(array_key_exists("eduMat", $post) && $post["eduMat"] != "") {
+                if (!is_array($post["eduMat"]) || !array_key_exists("serial", $post["eduMat"]) || $post["eduMat"]["serial"] == "") {
+                    $errCode = "1" . $errCode;
+                } else {
+                    $count = $this->opalDB->doesEduMaterialExists($post["eduMat"]["serial"]);
+                    if (count($count) < 1)
+                        $errCode = "1" . $errCode;
+                    else if (count($count) == 1)
+                        $errCode = "0" . $errCode;
+                    else
+                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated entries detected in the records. Please contact your administrator.");
+                }
+            } else
+                $errCode = "0" . $errCode;
+
+            //9th bit
+            if (array_key_exists("additional_links", $post)) {
+                if(is_array($post["additional_links"])) {
+                    $allGood = true;
+                    foreach ($post["additional_links"] as $link) {
+
+                        if ((!array_key_exists("name_EN", $link) || $link["name_EN"] == "") || (!array_key_exists("name_FR", $link) || $link["name"] == "name_FR") || (!array_key_exists("url_EN", $link) || $link["url_EN"] == "") || (!array_key_exists("url_FR", $link) || $link["url_FR"] == "")) {
+                            $allGood = false;
+                            break;
+                        }
+                    }
+                    if(!$allGood)
+                        $errCode = "1" . $errCode;
+                    else
+                        $errCode = "0" . $errCode;
+                } else
+                    $errCode = "1" . $errCode;
+            } else
+                $errCode = "0" . $errCode;
+        } else
+            $errCode = "111111111";
+        return $errCode;
+    }
+
+    /*
+     * Insert a new test result after validation.
+     * @params  $post - array - contains the test results details
+     * @return  200 or error 422 with array (validation=>integer) for a validation error
+     * */
+    public function insertTestResult ($post) {
+        $this->checkWriteAccess($post);
+        $errCode = $this->_validateTestResult($post);
+        $errCode = bindec($errCode);
+        if($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
+
+        //Insert into test result control
         $toInsert = array(
-            "Name_FR"=>$post['name_EN'],
+            "Name_EN"=>$post['name_EN'],
+            "Name_FR"=>$post['name_FR'],
             "Description_EN"=>$post['description_EN'],
             "Description_FR"=>$post['description_FR'],
             "Group_EN"=>$post['group_EN'],
             "Group_FR"=>$post['group_FR'],
             "PublishFlag"=>0,
-            "EducationalMaterialControlSerNum"=>( is_array($post['edumat']) && isset($post['edumat']['serial']) ) ? $eduMatSer = $post['edumat']['serial'] : 'NULL',
+            "EducationalMaterialControlSerNum"=>( is_array($post['eduMat']) && isset($post['eduMat']['serial']) ) ? $eduMatSer = $post['eduMat']['serial'] : 'NULL',
         );
+        $newId = $this->opalDB->insertTestResult($toInsert);
 
-        $newId = 12345;
-//        $newId = $this->opalDB->insertTestResult($toInsert);
+        //Insert into test result expression
         $toInsertMultipleTests = array();
-
         foreach ($post['tests'] as $test) {
             array_push($toInsertMultipleTests, array(
                 "TestResultControlSerNum"=>$newId,
                 "ExpressionName"=>$test['name'],
             ));
         }
-//        $this->opalDB->insertMultipleTestExpressions($toInsertMultipleTests);
+        $this->opalDB->insertMultipleTestExpressions($toInsertMultipleTests);
 
+        //Insert into Test Result Additional links
         $toInsertMultipleLinks = array();
         if($post['additional_links']) {
             foreach($post['additional_links'] as $link){
@@ -170,132 +286,13 @@ class TestResult extends Module {
                     "URL_FR"=>$link['url_FR'],
                 ));
             }
-            if(count($toInsertMultipleLinks) > 0);
-//                $this->opalDB->insertTestResultAdditionalLinks($toInsertMultipleLinks);
+            if(count($toInsertMultipleLinks) > 0)
+                $this->opalDB->insertTestResultAdditionalLinks($toInsertMultipleLinks);
         }
 
-        print_r($toInsert);
-        print_r($toInsertMultipleTests);
-        print_r($toInsertMultipleLinks);
-
-        die();
-        $name_EN            = $post['name_EN'];
-        $name_FR            = $post['name_FR'];
-        $description_EN     = $post['description_EN'];
-        $description_FR     = $post['description_FR'];
-        $group_EN           = $post['group_EN'];
-        $group_FR           = $post['group_FR'];
-        $tests              = $post['tests'];
-        $additionalLinks    = $post['additional_links'];
-        $eduMatSer          = 'NULL';
-        if ( is_array($post['edumat']) && isset($post['edumat']['serial']) ) {
-            $eduMatSer = $post['edumat']['serial'];
-        }
-
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                INSERT INTO
-                    TestResultControl (
-                        Name_EN,
-                        Name_FR,
-                        Description_EN,
-                        Description_FR,
-                        Group_EN,
-                        Group_FR,
-                        EducationalMaterialControlSerNum,
-                        DateAdded,
-                        LastPublished,
-                        LastUpdatedBy,
-                        SessionId
-                    )
-                VALUES (
-                    \"$name_EN\",
-                    \"$name_FR\",
-                    \"$description_EN\",
-                    \"$description_FR\",
-                    \"$group_EN\",
-                    \"$group_FR\",
-                    $eduMatSer,
-                    NOW(),
-                    NOW(),
-                    $userSer,
-                    '$sessionId'
-                )
-            ";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-            $testResultSer = $host_db_link->lastInsertId();
-
-            foreach ($tests as $test) {
-
-                $name   = $test['name'];
-
-                $sql = "
-                    INSERT INTO
-                        TestResultExpression (
-                            TestResultControlSerNum,
-                            ExpressionName,
-                            DateAdded,
-                            LastUpdatedBy,
-                            SessionId
-                        )
-                    VALUES (
-                        '$testResultSer',
-                        \"$name\",
-                        NOW(),
-                        '$userSer',
-                        '$sessionId'
-                    )
-                    ON DUPLICATE KEY UPDATE 
-                        TestResultControlSerNum = '$testResultSer',
-                        LastUpdatedBy = '$userSer',
-                        SessionId = '$sessionId'
-                ";
-                $query = $host_db_link->prepare( $sql );
-                $query->execute();
-            }
-
-            if ($additionalLinks) {
-                foreach ($additionalLinks as $link) {
-
-                    $linkName_EN        = $link['name_EN'];
-                    $linkName_FR        = $link['name_FR'];
-                    $linkURL_EN         = $link['url_EN'];
-                    $linkURL_FR         = $link['url_FR'];
-
-                    $sql = "
-                        INSERT INTO 
-                            TestResultAdditionalLinks (
-                                TestResultControlSerNum,
-                                Name_EN,
-                                Name_FR,
-                                URL_EN,
-                                URL_FR,
-                                DateAdded
-                            )
-                        VALUES (
-                            '$testResultSer',
-                            \"$linkName_EN\",
-                            \"$linkName_FR\",
-                            \"$linkURL_EN\",
-                            \"$linkURL_FR\",
-                            NOW()
-                        )
-                    ";
-                    $query = $host_db_link->prepare( $sql );
-                    $query->execute();
-                }
-            }
-
-            $this->sanitizeEmptyTestResults($post['user']);
-
-        } catch( PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
-        }
-
+        // This function sanitize and deactivate the publish flags of test results without any test name, otherwise
+        // the cron job will crash (don't ask)
+        $this->opalDB->sanitizeEmptyTestResults();
     }
 
     /*
