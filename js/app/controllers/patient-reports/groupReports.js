@@ -13,7 +13,12 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
 
     //Display variables for educational materials branch
 	$scope.displayMaterialList = false;
-	$scope.materialTypes = ["Booklet","Factsheet","Package","Video","Treatment Guidelines"];
+    $scope.materialTypes = [
+    $filter('translate')('PATIENTREPORT.EDUC_MATERIALS.BOOKLET'),
+    $filter('translate')('PATIENTREPORT.EDUC_MATERIALS.FACTSHEET'),
+    $filter('translate')('PATIENTREPORT.EDUC_MATERIALS.PACKAGE'),
+    $filter('translate')('PATIENTREPORT.EDUC_MATERIALS.VIDEO'),
+    $filter('translate')('PATIENTREPORT.EDUC_MATERIALS.TREAT')];
 	$scope.materialType = "";
 	$scope.selectedMaterial = ""; //the selection of the user
     $scope.showEducReport = false;
@@ -58,14 +63,14 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
     $scope.educGridOptions = {
         data: 'educReport',
         columnDefs: [
-            { field: 'pname', displayName: 'First Name', width: '15%', enableColumnMenu: false },
-            { field: 'plname', displayName: 'Last Name', width: '15%', enableColumnMenu: false },
-            { field: 'pser', displayName: 'Serial', width: '10%', enableColumnMenu: false },
-            { field: 'page', displayName: 'Age', width: '10%', enableColumnMenu: false },
-            { field: 'pdob', displayName: 'Date of Birth', width:'10%', enableColumnMenu: false },
-            { field: 'psex', displayName: 'Sex', width:'10%', enableColumnMenu: false },
-            { field: 'edate', displayName: 'Date Sent', width:'15%', enableColumnMenu: false },
-            { field: 'eupdate', displayName: 'Date Read', width:'15%', enableColumnMenu: false },
+            { field: 'pname', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.NAME'), width: '15%', enableColumnMenu: false },
+            { field: 'plname', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.NAME_FAMILY'), width: '15%', enableColumnMenu: false },
+            { field: 'pser', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.SERIAL'), width: '10%', enableColumnMenu: false },
+            { field: 'page', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.AGE'), width: '10%', enableColumnMenu: false },
+            { field: 'pdob', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.BIRTH'), width:'10%', enableColumnMenu: false },
+            { field: 'psex', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.SEX'), width:'10%', enableColumnMenu: false },
+            { field: 'edate', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.DATE_SENT'), width:'15%', enableColumnMenu: false },
+            { field: 'eupdate', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.DATE_READ'), width:'15%', enableColumnMenu: false },
         ],
         enableFiltering: true,
         enableColumnResizing: true,
@@ -74,13 +79,13 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
     $scope.qstGridOptions = {
         data: 'qstReport',
         columnDefs: [
-            { field: 'pname', displayName: 'First Name', width: '15%', enableColumnMenu: false },
-            { field: 'plname', displayName: 'Last Name', width: '15%', enableColumnMenu: false },
-            { field: 'pser', displayName: 'Opal Serial', width: '10%', enableColumnMenu: false },
-            { field: 'psex', displayName: 'Sex', width: '10%', enableColumnMenu: false },
-            { field: 'pdob', displayName: 'Date of Birth', width:'15%', enableColumnMenu: false },
-            { field: 'qdate', displayName: 'Date Sent', width:'15%', enableColumnMenu: false },
-            { field: 'qcomplete', displayName: 'Date Complete', width:'15%', enableColumnMenu: false },
+            { field: 'pname', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.NAME'), width: '15%', enableColumnMenu: false },
+            { field: 'plname', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.NAME_FAMILY'), width: '15%', enableColumnMenu: false },
+            { field: 'pser', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.SERIAL'), width: '10%', enableColumnMenu: false },
+            { field: 'psex', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.SEX'), width: '10%', enableColumnMenu: false },
+            { field: 'pdob', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.BIRTH'), width:'15%', enableColumnMenu: false },
+            { field: 'qdate', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.DATE_SENT'), width:'15%', enableColumnMenu: false },
+            { field: 'qcomplete', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.DATE_COMPLETE'), width:'15%', enableColumnMenu: false },
         ],
         enableFiltering: true,
         //useExternalFiltering: true,
@@ -91,17 +96,17 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
     $scope.demoGridOptions = {
         data: 'patientReport',
         columnDefs: [
-            { field: 'pname', displayName: 'First Name', width: '10%', enableColumnMenu: false },
-            { field: 'plname', displayName: 'Last Name', width: '10%', enableColumnMenu: false },
-            { field: 'pser', displayName: 'Serial', width: '8%', enableColumnMenu: false },
-            { field: 'page', displayName: 'Age', width: '5%', enableColumnMenu: false },
-            { field: 'pdob', displayName: 'Date of Birth', width:'10%', enableColumnMenu: false },
-            { field: 'psex', displayName: 'Sex', width:'5%', enableColumnMenu: false },
-            { field: 'pemail', displayName: 'Email', width:'10%', enableColumnMenu: false },
-            { field: 'plang', displayName: 'Language', width:'10%', enableColumnMenu: false },
-            { field: 'preg', displayName: 'Opal Registration', width:'13%', enableColumnMenu: false },
-            { field: 'diagdesc', displayName: 'Diagnosis', width:'9%', enableColumnMenu: false },
-            { field: 'diagdate', displayName: 'Diagnosis Date', width:'10%', enableColumnMenu: false },
+            { field: 'pname', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.NAME'), width: '10%', enableColumnMenu: false },
+            { field: 'plname', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.NAME_FAMILY'), width: '10%', enableColumnMenu: false },
+            { field: 'pser', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.SERIAL'), width: '8%', enableColumnMenu: false },
+            { field: 'page', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.AGE'), width: '5%', enableColumnMenu: false },
+            { field: 'pdob', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.BIRTH'), width:'10%', enableColumnMenu: false },
+            { field: 'psex', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.SEX'), width:'5%', enableColumnMenu: false },
+            { field: 'pemail', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.EMAIL'), width:'10%', enableColumnMenu: false },
+            { field: 'plang', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.LANG'), width:'10%', enableColumnMenu: false },
+            { field: 'preg', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.REG'), width:'13%', enableColumnMenu: false },
+            { field: 'diagdesc', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.DIAGNOSIS'), width:'9%', enableColumnMenu: false },
+            { field: 'diagdate', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.DATE_DIAG'), width:'10%', enableColumnMenu: false },
         ],
         enableFiltering: true,
         //useExternalFiltering: true,
@@ -117,6 +122,18 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
      * Generate list of available educational materials from DB
      */
     $scope.genEducationMaterialOptions = function(){
+        //TODO TODO After translations for materials inputted, add checks to switch back to english
+        if($scope.materialType == "[FR]Booklet"){
+            $scope.materialType = "Booklet";
+        }else if($scope.materialType == "[FR]Factsheet"){
+            $scope.materialType = "Factsheet";
+        }else if($scope.materialType == "[FR]Package"){
+            $scope.materialType = "Package";
+        }else if($scope.materialType == "[FR]Video"){
+            $scope.materialType = "Video";
+        }else if($scope.materialType == "[FR]Treatment Guidelines"){
+            $scope.materialType = "Treatment Guidelines";
+        }
         $.ajax({
             type: "POST",
             url: "patient-reports/find/education-options",
@@ -629,17 +646,17 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                 type: 'spline'
             },
             title:{
-                text: 'Opal Registrations Over Time'
+                text: $filter('translate')('PATIENTREPORT.GROUP.REGS')
             },
             yAxis: {
                 title: {
-                    text: 'Total Registrations'
+                    text: $filter('translate')('PATIENTREPORT.GROUP.TOT_REG')
                 }
             },
             xAxis: {
                 type: 'datetime',
                 title: {
-                    text: 'Time'
+                    text:  $filter('translate')('PATIENTREPORT.GROUP.TIME')
                 },
             },
             legend: {
@@ -665,13 +682,13 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                 }
             },
             series: [{
-                name: 'All Patients',
+                name:  $filter('translate')('PATIENTREPORT.GROUP.PAT_ALL'),
                 data: $scope.regPlotData
             },{
-                name: 'Female Patients',
+                name:  $filter('translate')('PATIENTREPORT.GROUP.PAT_FEM'),
                 data: $scope.femalePlotData
             },{
-                name: 'Male Patients',
+                name:  $filter('translate')('PATIENTREPORT.GROUP.PAT_MAL'),
                 data: $scope.malePlotData
             }]
         });

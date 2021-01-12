@@ -2796,6 +2796,175 @@
       "DB_ERROR": "[FR]An error occured while contacting the database: ",
       "SEARCH_FAIL": "[FR]No results returned based on search parameters",
       "UNKNOWN": "[FR]Something really wrong happened: "
+    },
+    "COLUMNS":{
+      "DIAGNOSIS":{
+        "TITLE": "[FR]Diagnosis",
+        "DESC": "[FR]Diagnosis Description",
+        "DATE": "[FR]Diagnosis Date",
+        "SERIAL": "[FR]Opal Diagnosis Serial"
+      },
+      "QUESTIONNAIRE":{
+        "TITLE": "[FR]Questionnaires",
+        "NAME": "[FR]Questionnaire Name",
+        "DATE": "[FR]Date Sent",
+        "COMPLETE": "[FR]Date Completed"
+      },
+      "APPOINTMENT":{
+        "TITLE": "[FR]Appointments",
+        "SCHEDULED": "[FR]Scheduled Appointment Time",
+        "DATE": "[FR]Date Added to Opal",
+        "STATUS": "[FR]Status",
+        "NAME": "[FR]Appointment Name",
+        "TYPE": "[FR]Appointment Type",
+        "RESOURCE": "[FR]Resource"
+      },
+      "EDUCATIONAL_MATERIAL":{
+        "TITLE": "[FR]Educational Materials",
+        "NAME": "[FR]Material Name",
+        "TYPE": "[FR]Material Type",
+        "DATE": "[FR]Date Sent",
+        "STATUS": "[FR]Read Status"
+      },
+      "LEGACY_LAB_TESTS":{
+        "TITLE": "[FR]Legacy Lab Results",
+        "NAME": "[FR]Test Name",
+        "UNIT": "[FR]Test Unit",
+        "DATE": "[FR]Test Date",
+        "OPAL_DATE": "[FR]Opal Date Added",
+        "MIN": "[FR]Min Normal Value",
+        "RESULT": "[FR]Test Result",
+        "MAX": "[FR]Max Normal Result",
+        "ABNORMAL": "[FR]Abnormal Flag",
+        "STATUS": "[FR]Read Status"
+      },
+      "LAB_TESTS":{
+        "TITLE": "[FR]Lab Results",
+        "GROUP": "[FR]Group Name",
+        "STATUS": "[FR]Read Status",
+        "NAME": "[FR]Test Name",
+        "DESC": "[FR]Description",
+        "ABNORMAL": "[FR]Abnormal Flag",
+        "RANGE": "[FR]Normal Range",
+        "RESULT": "[FR]Test Result",
+        "DATE_TEST": "[FR]Testing Time",
+        "DATE_RESULT": "[FR]Result Time",
+        "DATE_OPAL": "[FR]Added to Opal"
+      },
+      "NOTES":{
+        "TITLE": "[FR]Notifications",
+        "TYPE": "[FR]Note Type",
+        "NAME": "[FR]Note Name",
+        "DATE": "[FR]Date Sent",
+        "DATE_READ": "[FR]Date Read"
+      },
+      "CLINICAL_NOTES":{
+        "TITLE": "[FR]Clinical Notes",
+        "TYPE": "[FR]Note Type",
+        "NAME_ORIG": "[FR]Original Name",
+        "NAME_FINAL": "[FR]Final Name",
+        "DATE_CREATED": "[FR]Date Created",
+        "DATE_APPROVED": "[FR]Date Approved"
+      },
+      "TREATMENT_TEAM":{
+        "TITLE": "[FR]Treating Team Messages",
+        "NAME": "[FR]Title",
+        "DESC": "[FR]Body",
+        "DATE": "[FR]Date Sent",
+        "STATUS": "[FR]Read Status"
+      },
+      "TREATMENT_PLAN":{
+        "TITLE": "[FR]Treatment Planning",
+        "DESC": "[FR]Diagnosis Description",
+        "TYPE": "[FR]Alias Type",
+        "PRIORITY": "[FR]Priority",
+        "DESC_EXP": "[FR]Expression Description",
+        "NAME": "[FR]Alias Name",
+        "DESC_ALI": "[FR]Alias Description",
+        "TASK_STATUS": "[FR]Task Status",
+        "TASK_STATE": "[FR]Task State",
+        "TASK_DUE": "[FR]Task Due",
+        "TASK_COMPLETE": "[FR]Task Complete"
+      },
+      "GENERAL":{
+        "TITLE": "[FR]General"
+      },
+      "GROUP_REPORTS":{
+        "TITLE_EDUC": "[FR]Educational Material",
+        "TITLE_QST": "[FR]Questionnaires",
+        "TITLE_DEMO": "[FR]Patient Demographics",
+        "NAME": "[FR]First Name",
+        "NAME_FAMILY": "[FR]Last Name",
+        "SERIAL": "[FR]Opal Serial",
+        "AGE": "[FR]Age",
+        "BIRTH": "[FR]Date of Birth",
+        "SEX": "[FR]Sex",
+        "EMAIL": "[FR]Email",
+        "LANG": "[FR]Language",
+        "REG": "[FR]Opal Registration",
+        "DIAGNOSIS": "[FR]Diagnosis",
+        "DATE_DIAG": "[FR]Date of Diagnosis",
+        "DATE_SENT": "[FR]Date Sent",
+        "DATE_READ": "[FR]Date Read",
+        "DATE_COMPLETE": "[FR]Date Complete"
+      }
+    },
+    "EDUC_MATERIALS":{
+      "BOOKLET": "[FR]Booklet",
+      "FACTSHEET": "[FR]Factsheet",
+      "PACKAGE": "[FR]Package",
+      "VIDEO": "[FR]Video",
+      "TREAT": "[FR]Treatment Guidelines"
+    },
+    "INDIVIDUAL":{
+      "TITLE": "[FR]Individual Patient Reports",
+      "PSEARCH": "[FR]Search for patient:",
+      "PNAME": "[FR]Patient last name:",
+      "PRAMQ": "[FR]Patient RAMQ",
+      "PMRN": "[FR]Patient MRN",
+      "SUBMIT": "[FR]Submit",
+      "RESET": "[FR]Reset",
+      "MULTIPLE": "[FR]Multiple patients found matching search criteria, please select:",
+      "NONE": "[FR]No Patients found matching criteria, please try again",
+      "PSELECT": "[FR]Selected Patient",
+      "LAST": "[FR]Last Name",
+      "FIRST": "[FR]First Name",
+      "SEX": "[FR]Sex",
+      "SERIAL": "[FR]Patient Serial",
+      "EMAIL": "[FR]Email",
+      "LANG": "[FR]Opal App Language",
+      "ISELECT": "[FR]Selected Information",
+      "GEN": "[FR]Generate Report"
+    },
+    "GROUP": {
+      "TITLE": "[FR]Group Patient Reports",
+      "PSELECT": "[FR]Select group reporting category",
+      "TITLE_EDUC": "[FR]Educational Material",
+      "TITLE_QST": "[FR]Questionnaires",
+      "TITLE_DEMO": "[FR]Patient Demographics",
+      "TAIL": " [FR]Group Reporting",
+      "EDUC_TYPE": "[FR]Educational material type:",
+      "ALL": "[FR]All",
+      "FOUND": "[FR]currently found in OpalDB",
+      "STATS": "[FR]Statistics for this report",
+      "MF": "[FR]% Female / Male / Unknown",
+      "FE": "[FR]% French / English preferred",
+      "AVAGE": "[FR]Average patient age",
+      "YR": " [FR]years",
+      "DY": " [FR]days",
+      "READ": "[FR]% Material read",
+      "AVTIME": "[FR]Average time until complete",
+      "REPORT": "[FR]Full report on ",
+      "RECORDS": " [FR]records found",
+      "QST_CHOOSE": "[FR]Choose questionnaire:",
+      "UNIQUE": "[FR]Total # unique patients in report",
+      "PCNT_COMPLETE": "[FR]Total % completed questionnaires",
+      "REGS": "[FR]Opal Registrations Over Time",
+      "PAT_ALL": "[FR]All Patients",
+      "PAT_FEM": "[FR]Female Patients",
+      "PAT_MAL": "[FR]Male Patients",
+      "TOT_REG": "[FR]Total Regsitrations",
+      "TIME": "[FR]Time"
     }
   },
   "ERROR_HANDLER": {

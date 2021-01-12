@@ -10,7 +10,7 @@
                 <div class="col-xs-12 col-md-6">
                 <h2 class="modal-title">
                     <span class="glyphicon glyphicon-pencil"></span> 
-                    Individual Patient Reports 
+                    {{'PATIENTREPORT.INDIVIDUAL.TITLE'|translate}}
                 </h2>
                 </div>
             </div>
@@ -21,7 +21,7 @@
                             <table style="display: inline-block; margin: 5px 5px 5px 5px; text-align:left;">
                                 <tr>
                                     <td>
-                                        <h2>Search for patient:</h2>
+                                        <h2>{{'PATIENTREPORT.INDIVIDUAL.PSEARCH'|translate}}</h2>
                                     </td>
                                     <td>
                                         
@@ -32,18 +32,18 @@
                                         <form ng-submit="findPat()">
                                             <table>
                                                 <tr>
-                                                    <td>Patient Last Name:</td><td><input type="text" ng-model="searchName" ng-disabled="searchMRN || searchRAMQ" ng-change=""></td>
+                                                    <td>{{'PATIENTREPORT.INDIVIDUAL.PNAME'|translate}}</td><td><input type="text" ng-model="searchName" ng-disabled="searchMRN || searchRAMQ" ng-change=""></td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Patient RAMQ:</td><td><input type="text" ng-model="searchRAMQ" ng-disabled="searchName || searchMRN" ng-change=""></td>
+                                                    <td>{{'PATIENTREPORT.INDIVIDUAL.PRAMQ'|translate}}</td><td><input type="text" ng-model="searchRAMQ" ng-disabled="searchName || searchMRN" ng-change=""></td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Patient MRN:</td><td><input type="text" ng-model="searchMRN" ng-disabled="searchName || searchRAMQ" ng-change=""></td>
+                                                    <td>{{'PATIENTREPORT.INDIVIDUAL.PMRN'|translate}}</td><td><input type="text" ng-model="searchMRN" ng-disabled="searchName || searchRAMQ" ng-change=""></td>
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <input class="btn" value="Submit" type="submit">
-                                                        <input class="btn" value="Reset" type="reset" ng-click="resetFieldValues()">
+                                                        <input class="btn" value={{'PATIENTREPORT.INDIVIDUAL.SUBMIT'|translate}} type="submit">
+                                                        <input class="btn" value={{'PATIENTREPORT.INDIVIDUAL.RESET'|translate}} type="reset" ng-click="resetFieldValues()">
                                                     </td>
                                                 </tr>
                                             </table>
@@ -56,37 +56,37 @@
                         <br/>
 
                         <div ng-show="selectPatient" class="panel-info" style="display:inline-block; text-align:left;">
-                            <p>Multiple patients found matching search criteria, please select: </p>
+                            <p>{{'PATIENTREPORT.INDIVIDUAL.MULTIPLE'|translate}}</p>
                             <select ng-model="selectedName" ng-options="x for x in patOptions"
                                     ng-change="displaySelection()"></select>
                         </div>
                         <div ng-show="noPatientFound" class="panel-info" style="text-align:left;">
-                            <p>No patients found matching criteria, please try again.</p>
+                            <p>{{'PATIENTREPORT.INDIVIDUAL.NONE'|translate}}</p>
                         </div>
 
 
                         <div ng-show="foundPatient" class="panel-info">
                             <div>
                                 <table style="text-align:left; border: 1px dotted rgb(36,21,32); border-collapse:collapse;">
-                                    <caption style="font-weight:bold; font-size:1.5em;">Selected Patient</caption>
+                                    <caption style="font-weight:bold; font-size:1.5em;">{{'PATIENTREPORT.INDIVIDUAL.PSELECT'|translate}}</caption>
                                     <tr>
-                                        <td> <b>Last Name</b> </td>
+                                        <td> <b>{{'PATIENTREPORT.INDIVIDUAL.LAST'|translate}}</b> </td>
                                         <td> {{plname}} </td>
                                     </tr>
                                     <tr>
-                                        <td> <b>First Name</b> </td>
+                                        <td> <b>{{'PATIENTREPORT.INDIVIDUAL.FIRST'|translate}}</b> </td>
                                         <td> {{pname}} </td>
                                     </tr>
                                     <tr>
-                                        <td> <b>Sex</b> </td>
+                                        <td> <b>{{'PATIENTREPORT.INDIVIDUAL.SEX'|translate}}</b> </td>
                                         <td> {{psex}} </td>
                                     </tr>
                                     <tr>
-                                        <td> <b>Patient Serial</b> </td>
+                                        <td> <b>{{'PATIENTREPORT.INDIVIDUAL.SERIAL'|translate}}</b> </td>
                                         <td> {{psnum}} </td>
                                     </tr>
                                     <tr>
-                                        <td><b>Email</b></td>
+                                        <td><b>{{'PATIENTREPORT.INDIVIDUAL.EMAIL'|translate}}</b></td>
                                         <td> {{pemail}}</td>
                                     </tr>
                                     <tr>
@@ -98,40 +98,40 @@
                                         <td> {{pid}}</td>
                                     </tr>
                                     <tr>
-                                        <td><b>Opal App Language</b></td>
+                                        <td><b>{{'PATIENTREPORT.INDIVIDUAL.LANG'|translate}}</b></td>
                                         <td> {{plang}}</td>
                                     </tr>
                                 </table>
                             </div>
                             <form ng-submit="fetchData()">
                                 <table style="text-align:left;">
-                                    <caption style="font-weight:bold; font-size:1.5em;">Selected Information</caption>
+                                    <caption style="font-weight:bold; font-size:1.5em;">{{'PATIENTREPORT.INDIVIDUAL.ISELECT'|translate}}</caption>
                                     <tr>
-                                        <td><label>Diagnosis <input type="checkbox" ng-model="featureList.diagnosis"> </label></td>
-                                        <td><label>Appointments <input type="checkbox" ng-model="featureList.appointments"> </label></td>
+                                        <td><label>{{'PATIENTREPORT.COLUMNS.DIAGNOSIS.TITLE'|translate}} <input type="checkbox" ng-model="featureList.diagnosis"> </label></td>
+                                        <td><label>{{'PATIENTREPORT.COLUMNS.APPOINTMENT.TITLE'|translate}} <input type="checkbox" ng-model="featureList.appointments"> </label></td>
                                     </tr>
                                     <tr>
-                                        <td><label>Questionnaires <input type="checkbox" ng-model="featureList.questionnaires"> </label></td>
-                                        <td><label>Educational Materials <input type="checkbox" ng-model="featureList.education"> </label></td>
+                                        <td><label>{{'PATIENTREPORT.COLUMNS.QUESTIONNAIRE.TITLE'|translate}} <input type="checkbox" ng-model="featureList.questionnaires"> </label></td>
+                                        <td><label>{{'PATIENTREPORT.COLUMNS.EDUCATIONAL_MATERIAL.TITLE'|translate}} <input type="checkbox" ng-model="featureList.education"> </label></td>
                                     </tr>
                                     <tr>
-                                        <td><label>Legacy Lab Results <input type="checkbox" ng-model="featureList.testresults"> </label></td>
-                                        <td><label>Lab Results <input type="checkbox" ng-model="featureList.pattestresults"></label></td>
+                                        <td><label>{{'PATIENTREPORT.COLUMNS.LEGACY_LAB_TESTS.TITLE'|translate}} <input type="checkbox" ng-model="featureList.testresults"> </label></td>
+                                        <td><label>{{'PATIENTREPORT.COLUMNS.LAB_TESTS.TITLE'|translate}}<input type="checkbox" ng-model="featureList.pattestresults"></label></td>
                                     </tr>
                                     <tr>
-                                        <td><label>Treatment Planning <input type="checkbox" ng-model="featureList.treatplan"> </label></td>
-                                        <td><label>Clinical Notes <input type="checkbox" ng-model="featureList.clinicalnotes"></label></td>
+                                        <td><label>{{'PATIENTREPORT.COLUMNS.TREATMENT_PLAN.TITLE'|translate}} <input type="checkbox" ng-model="featureList.treatplan"> </label></td>
+                                        <td><label>{{'PATIENTREPORT.COLUMNS.CLINICAL_NOTES.TITLE'|translate}} <input type="checkbox" ng-model="featureList.clinicalnotes"></label></td>
                                     </tr>
                                     <tr>
-                                        <td><label>My Treating Team<input type="checkbox" ng-model="featureList.treatingteam"> </label></td>
-                                        <td><label>General Announcements <input type="checkbox" ng-model="featureList.general"></label></td>
+                                        <td><label>{{'PATIENTREPORT.COLUMNS.TREATMENT_TEAM.TITLE'|translate}}<input type="checkbox" ng-model="featureList.treatingteam"> </label></td>
+                                        <td><label>{{'PATIENTREPORT.COLUMNS.GENERAL.TITLE'|translate}} <input type="checkbox" ng-model="featureList.general"></label></td>
                                     </tr>
                                     <tr>
-                                        <td><label>Notifications <input type="checkbox" ng-model="featureList.notifications"></label></td>
+                                        <td><label>{{'PATIENTREPORT.COLUMNS.NOTES.TITLE'|translate}} <input type="checkbox" ng-model="featureList.notifications"></label></td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <input class="btn" value="Generate Report" type="submit" style="padding: 4px 4px 4px 4px; color:blue; font-weight: bold; font-size: larger;">
+                                            <input class="btn" value={{'PATIENTREPORT.INDIVIDUAL.GEN'|translate}} type="submit" style="padding: 4px 4px 4px 4px; color:blue; font-weight: bold; font-size: larger;">
                                         </td>
                                     </tr>
                                 </table>
@@ -142,7 +142,7 @@
                         
                         <div ng-if="featureList.diagnosis" class="panel-input">
                             <center>
-                                <h2>Diagnosis</h2>
+                                <h2>{{'PATIENTREPORT.COLUMNS.DIAGNOSIS.TITLE'|translate}}</h2>
                             </center>
                         
                             <div class="panel-input">
@@ -152,7 +152,7 @@
 
                         <div ng-show="featureList.appointments" class="panel-input">
                             <center>
-                                <h2>Appointments</h2>
+                                <h2>{{'PATIENTREPORT.COLUMNS.APPOINTMENT.TITLE'|translate}}</h2>
                             </center>
                             <div class="panel-input">
                                 <div class="gridStyle" ui-grid="apptGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
@@ -161,7 +161,7 @@
 
                         <div ng-show="featureList.questionnaires" class="panel-input">
                             <center>
-                                <h2>Questionnaires</h2>
+                                <h2>{{'PATIENTREPORT.COLUMNS.QUESTIONNAIRE.TITLE'|translate}}</h2>
                             </center>
                             <div class="panel-input">
                                 <div class="gridStyle" ui-grid="qstGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
@@ -170,7 +170,7 @@
 
                         <div ng-show="featureList.education" class="panel-input">
                             <center>
-                                <h2>Educational Materials</h2>
+                                <h2>{{'PATIENTREPORT.COLUMNS.EDUCATIONAL_MATERIAL.TITLE'|translate}}</h2>
                             </center>
                             <div class="panel-input">
                                 <div class="gridStyle" ui-grid="educGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
@@ -179,7 +179,7 @@
 
                         <div ng-show="featureList.testresults">
                             <center>
-                                <h2>Legacy Lab Results</h2>
+                                <h2>{{'PATIENTREPORT.COLUMNS.LEGACY_LAB_TESTS.TITLE'|translate}}</h2>
                             </center>
                             <div class="panel-input">
                                 <div class="gridStyle" ui-grid="testGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
@@ -188,7 +188,7 @@
 
                         <div ng-show="featureList.pattestresults">
                             <center>
-                                <h2>Lab Results</h2>
+                                <h2>{{'PATIENTREPORT.COLUMNS.LAB_TESTS.TITLE'|translate}}</h2>
                             </center>
                             <div class="panel-input">
                                 <div class="gridStyle" ui-grid="pattestGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
@@ -197,7 +197,7 @@
 
                         <div ng-show="featureList.notifications">
                             <center>
-                                <h2>Notifications</h2>
+                                <h2>{{'PATIENTREPORT.COLUMNS.NOTES.TITLE'|translate}}</h2>
                             </center>
                             <div class="panel-input">
                                 <div class="gridStyle" ui-grid="noteGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
@@ -205,7 +205,7 @@
                         </div>
                         <div ng-show="featureList.treatplan">
                             <center>
-                                <h2>Treatment Planning</h2>
+                                <h2>{{'PATIENTREPORT.COLUMNS.TREATMENT_PLAN.TITLE'|translate}}</h2>
                             </center>
                             <div class="panel-input">
                                 <div class="gridStyle" ui-grid="txplanGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
@@ -213,7 +213,7 @@
                         </div>
                         <div ng-show="featureList.clinicalnotes">
                             <center>
-                                <h2>Clinical Notes</h2>
+                                <h2>{{'PATIENTREPORT.COLUMNS.CLINICAL_NOTES.TITLE'|translate}}</h2>
                             </center>
                             <div class="panel-input">
                                 <div class="gridStyle" ui-grid="clinnoteGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
@@ -221,7 +221,7 @@
                         </div>
                         <div ng-show="featureList.treatingteam">
                             <center>
-                                <h2>Treatment Team Messages</h2>
+                                <h2>{{'PATIENTREPORT.COLUMNS.TREATMENT_TEAM.TITLE'|translate}}</h2>
                             </center>
                             <div class="panel-input">
                                 <div class="gridStyle" ui-grid="txteamGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
@@ -229,7 +229,7 @@
                         </div>
                         <div ng-show="featureList.general">
                             <center>
-                                <h2>General Announcements</h2>
+                                <h2>{{'PATIENTREPORT.COLUMNS.GENERAL.TITLE'|translate}}</h2>
                             </center>
                             <div class="panel-input">
                                 <div class="gridStyle" ui-grid="generalGridOptions" ui-grid-resize-columns style="height:50vh; width:75vw;"></div>
