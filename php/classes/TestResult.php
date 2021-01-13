@@ -6,8 +6,18 @@
  */
 class TestResult extends Module {
 
+//    protected $ariaDB;
+
     public function __construct($guestStatus = false) {
         parent::__construct(MODULE_TEST_RESULTS, $guestStatus);
+
+//        $this->ariaDB = new DatabaseAria(
+//            ARIA_DB_HOST,
+//            ARIA_DB_NAME,
+//            ARIA_DB_PORT,
+//            ARIA_DB_USERNAME,
+//            ARIA_DB_PASSWORD
+//        );
     }
 
     /*
@@ -187,12 +197,23 @@ class TestResult extends Module {
             }
             else {
                 $allGood = true;
-                foreach($post["tests"] as $test) {
-                    if (!array_key_exists("name", $test) || $test["name"] == "") {
-                        $allGood = false;
-                        break;
+                $testIds = array();
+                if(is_array($post["tests"])) {
+                    foreach ($post["tests"] as $test) {
+                        if (!array_key_exists("name", $test) || $test["name"] == "") {
+                            $allGood = false;
+                            break;
+                        }
+                        else
+                            array_push($testIds, str_replace("'", "\'", $test["name"]));
+                        if($allGood) {
+                            $total = $this->opalDB->countTestResultNames($testIds);
+                            if (count($total) != count($testIds))
+                                $allGood = false;
+                        }
                     }
-                }
+                } else
+                    $allGood = false;
                 if(!$allGood)
                     $errCode = "1" . $errCode;
                 else
@@ -260,7 +281,7 @@ class TestResult extends Module {
             "Group_EN"=>$post['group_EN'],
             "Group_FR"=>$post['group_FR'],
             "PublishFlag"=>0,
-            "EducationalMaterialControlSerNum"=>( is_array($post['eduMat']) && isset($post['eduMat']['serial']) ) ? $eduMatSer = $post['eduMat']['serial'] : 'NULL',
+            "EducationalMaterialControlSerNum"=>( is_array($post['eduMat']) && isset($post['eduMat']['serial']) ) ? $post['eduMat']['serial'] : 'NULL',
         );
         $newId = $this->opalDB->insertTestResult($toInsert);
 
@@ -372,41 +393,6 @@ class TestResult extends Module {
             $response['value'] = 1;
             return $response;
 
-        } catch( PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
-        }
-    }
-
-    /**
-     *
-     * Removes publish flag for test results without assigned tests
-     *
-     * @param object $user : the session user
-     * @return void
-     */
-    public function sanitizeEmptyTestResults($user) {
-        $userSer = $user['id'];
-        $sessionId = $user['sessionid'];
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                UPDATE 
-                    TestResultControl 
-                LEFT JOIN 
-                    TestResultExpression 
-                ON  TestResultControl.TestResultControlSerNum = TestResultExpression.TestResultControlSerNum
-                SET 
-                    TestResultControl.PublishFlag       = 0, 
-                    TestResultControl.LastUpdatedBy     = $userSer,
-                    TestResultControl.SessionId         = '$sessionId'
-                WHERE  
-                    TestResultExpression.TestResultControlSerNum IS NULL 
-            ";
-
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-            return;
         } catch( PDOException $e) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
@@ -554,26 +540,32 @@ class TestResult extends Module {
      * @param array $testResultDetails : the test result details
      * @return array : response
      */
-    public function updateTestResult($testResultDetails) {
-        $this->checkWriteAccess($testResultDetails);
-        $name_EN            = $testResultDetails['name_EN'];
-        $name_FR            = $testResultDetails['name_FR'];
-        $description_EN     = $testResultDetails['description_EN'];
-        $description_FR     = $testResultDetails['description_FR'];
-        $group_EN           = $testResultDetails['group_EN'];
-        $group_FR           = $testResultDetails['group_FR'];
-        $serial             = $testResultDetails['serial'];
-        $tests              = $testResultDetails['tests'];
-        $eduMatSer          = $testResultDetails['edumatser'] ? $testResultDetails['edumatser'] : 'NULL';
-        $additionalLinks    = $testResultDetails['additional_links'];
-        $userSer            = $testResultDetails['user']['id'];
-        $sessionId          = $testResultDetails['user']['sessionid'];
+    public function updateTestResult($post) {
+        $this->checkWriteAccess($post);
+
+        $errCode = $this->_validateTestResult($post);
+        $errCode = bindec($errCode);
+
+        die($errCode);
+
+        $name_EN            = $post['name_EN'];
+        $name_FR            = $post['name_FR'];
+        $description_EN     = $post['description_EN'];
+        $description_FR     = $post['description_FR'];
+        $group_EN           = $post['group_EN'];
+        $group_FR           = $post['group_FR'];
+        $serial             = $post['serial'];
+        $tests              = $post['tests'];
+        $eduMatSer          = $post['edumatser'] ? $post['edumatser'] : 'NULL';
+        $additionalLinks    = $post['additional_links'];
+        $userSer            = $post['user']['id'];
+        $sessionId          = $post['user']['sessionid'];
 
         $existingTests      = array();
 
-        $detailsUpdated     = $testResultDetails['details_updated'];
-        $testNamesUpdated   = $testResultDetails['test_names_updated'];
-        $additionalLinksUpdated     = $testResultDetails['additional_links_updated'];
+        $detailsUpdated     = $post['details_updated'];
+        $testNamesUpdated   = $post['test_names_updated'];
+        $additionalLinksUpdated     = $post['additional_links_updated'];
 
         $response = array(
             'value'     => 0,
@@ -725,8 +717,7 @@ class TestResult extends Module {
                     }
                 }
             }
-
-            $this->sanitizeEmptyTestResults($testResultDetails['user']);
+            $this->opalDB->sanitizeEmptyTestResults();
 
             $response['value'] = 1; // Success
             return $response;

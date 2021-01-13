@@ -2159,10 +2159,20 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /*
+     * Deactivate all test results without test expression attached to.
+     * @params  void
+     * @return  int - number of records affected
+     * */
     function sanitizeEmptyTestResults() {
         return $this->_updateRecordIntoTable(OPAL_SANITIZE_EMPTY_TEST_RESULTS, array(
             "LastUpdatedBy"=>$this->getOAUserId(),
             "SessionId"=>$this->getSessionId(),
         ));
+    }
+
+    function countTestResultNames($list) {
+        $sqlFetch = str_replace("%%NAMELIST%%", "'" . implode("', '", $list) . "'", OPAL_COUNT_TEST_RESULT_NAMES);
+        return $this->_fetchAll($sqlFetch, array());
     }
 }
