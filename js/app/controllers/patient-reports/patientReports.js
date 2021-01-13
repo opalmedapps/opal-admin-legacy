@@ -487,11 +487,11 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
                 }
                 if(result.questionnaires){
                     $scope.qstReport = result.questionnaires;
-                    strip($scope.qstReport); //TODO replace null with not completed
+                    strip($scope.qstReport);
                 }
                 if(result.education){
                     $scope.educReport = result.education;
-                    strip($scope.educReport); //TODO replace 1/0 with read/not read
+                    strip($scope.educReport);
                 }
                 if(result.appointments){
                     $scope.apptReport = result.appointments;
@@ -507,7 +507,7 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
                 }
                 if(result.notes){
                     $scope.noteReport = result.notes;
-                    strip($scope.noteReport); //TODO replace1/0 with read/not read
+                    strip($scope.noteReport); 
                 }
                 if(result.clinicalnotes){
                     $scope.clinnoteReport = result.clinicalnotes;
@@ -515,11 +515,11 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
                 }
                 if(result.treatingteam){
                     $scope.txteamReport = result.treatingteam;
-                    strip($scope.txplanReport); // TODO replace 1/0 with read/not read
+                    strip($scope.txplanReport); 
                 }
                 if(result.general){
                     $scope.generalReport = result.general;
-                    strip($scope.generalReport); // TODO replace 1/0 with read/ not read
+                    strip($scope.generalReport); 
                 }
                 if(result.treatplan){
                     $scope.txplanReport = result.treatplan;

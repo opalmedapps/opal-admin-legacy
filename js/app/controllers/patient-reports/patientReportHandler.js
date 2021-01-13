@@ -9,7 +9,6 @@ controller('patientReportHandler', function ($scope, $state, Session, ErrorHandl
 	$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.user]) & (1 << 0)) !== 0);
 	$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.user]) & (1 << 1)) !== 0);
 	$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.user]) & (1 << 2)) !== 0);
-	console.log("Control passed to patient report handler...");
 	// Function to go to individual report
 	$scope.goToIndividual = function () {
         $state.go('patients/report/individual');

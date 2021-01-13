@@ -2793,7 +2793,7 @@
     
     },
     "SEARCH":{
-      "DB_ERROR": "[FR]An error occured while contacting the database: ",
+      "DB_ERROR": "[FR]An error occurred while contacting the database: ",
       "SEARCH_FAIL": "[FR]No results returned based on search parameters",
       "UNKNOWN": "[FR]Something really wrong happened: "
     },
@@ -2963,7 +2963,7 @@
       "PAT_ALL": "[FR]All Patients",
       "PAT_FEM": "[FR]Female Patients",
       "PAT_MAL": "[FR]Male Patients",
-      "TOT_REG": "[FR]Total Regsitrations",
+      "TOT_REG": "[FR]Total Registrations",
       "TIME": "[FR]Time"
     }
   },
