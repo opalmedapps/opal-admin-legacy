@@ -308,7 +308,7 @@ controller('testResult.edit', function ($scope, $filter, $sce, $state, $uibModal
 			// Fill in the tests from testList
 			angular.forEach($scope.testList, function (test) {
 				if (test.added)
-					$scope.testResult.tests.push(test.name);
+					$scope.testResult.tests.push(test);
 			});
 
 			// Log who updated test result

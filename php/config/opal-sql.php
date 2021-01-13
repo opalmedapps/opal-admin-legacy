@@ -988,3 +988,7 @@ define("OPAL_SANITIZE_EMPTY_TEST_RESULTS","
     tc.TestResultControlSerNum = tre.TestResultControlSerNum SET tc.PublishFlag = ".INACTIVE_RECORD.", tc.LastUpdatedBy = :LastUpdatedBy,
     tc.SessionId = :SessionId WHERE tre.TestResultControlSerNum IS NULL; 
 ");
+
+define("OPAL_COUNT_TEST_RESULT_NAMES","
+    SELECT * FROM ".OPAL_TEST_RESULT_EXPRESSION_TABLE." WHERE ExpressionName IN (%%NAMELIST%%);
+");
