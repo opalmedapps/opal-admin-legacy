@@ -125,7 +125,7 @@ class Trigger extends Module {
         $sourceContentId = "";
         $patientSerNum = "";
 
-        $dataToCheck = $this->_getData($id, $sourceModuleId, $postData["language"]);
+        $dataToCheck = $this->_getData($id, $sourceModuleId, $postData["language"]); //get relevant questionnaire id based on patientQuestionnaireSerNum
 
         if (!empty($dataToCheck)) {
             switch ($sourceModuleId) {
@@ -139,12 +139,15 @@ class Trigger extends Module {
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation"=>4)));
 
-        // Retrieve all triggers
-        $triggers = $this->opalDB->getTriggersList($sourceContentId, $sourceModuleId);
 
+        // Retrieve all triggers
+        $triggers = $this->opalDB->getTriggersList($sourceContentId, $sourceModuleId); //any relevant triggers for this questionnaire
+        //return "all good\n";
         foreach ($triggers as $index => $trigger) {
             if(JWadhams\JsonLogic::apply( json_decode($trigger["onCondition"], true), $dataToCheck )) { // if trigger should be fired
+                //return "all good\n\n";
                 $eventResponse = $this->_triggerEvent($trigger, $patientSerNum);
+                return $eventResponse;
                 if ($eventResponse)
                     array_push($eventTriggers, $trigger);
             }

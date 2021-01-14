@@ -4,7 +4,7 @@ include_once("../config.php");
 
 header('Content-Type: application/javascript');
 
-$url = 'https://lxkvmap97/opalAdmin/user/system-login';
+$url = 'https://localhost/opalAdmin/user/system-login';
 
 $postFields = array(
     "username"=>"TriggerSystem",
@@ -41,7 +41,7 @@ $info = curl_getinfo($ch);
 curl_close($ch);
 
 if($info["http_code"] == 200) {
-    $url = 'https://lxkvmap97/opalAdmin/trigger/execute/questionnaire-triggers';
+    $url = 'https://localhost/opalAdmin/trigger/execute/questionnaire-triggers';
     $postFields = array(
         "id" => 219
     );
@@ -63,7 +63,7 @@ if($info["http_code"] == 200) {
     $result = curl_exec($ch);
     $header_size = curl_getinfo($ch);
     var_dump($result);
-    var_dump($header_size);
+    //var_dump($header_size);
     curl_close($ch);
 }
 

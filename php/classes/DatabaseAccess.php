@@ -296,7 +296,7 @@ class DatabaseAccess extends HelpSetup
                         $stmt->bindParam($value["parameter"], $value["variable"], self::_getTypeOf($value["variable"]));
                 }
             }
-            $stmt->execute();
+            $stmt->execute(); //error here
             return $this->connection->lastInsertId();
         }
         catch(PDOException $e) {

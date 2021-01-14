@@ -436,7 +436,7 @@ class Questionnaire extends QuestionnaireModule {
     public function getQuestionnaireResults($patientQuestionnaireSer, $language) {
         $questionnaireResults = $this->questionnaireDB->getQuestionnaireResults($patientQuestionnaireSer, $language);
         $questionnaireId = $questionnaireResults[0][0]["questionnaire_id"];
-        $patientSerNum = $questionnaireResults[0][0]["externalId"];
+        $patientSerNum = $questionnaireResults[0][0]["externalId"]; // patient_id
 
         $currentAnswers = $questionnaireResults[3];
 

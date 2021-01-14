@@ -2,8 +2,10 @@
 
 include_once("../config.php");
    
-$trigger = new Trigger(true);
+$trigger = new Trigger(false);
 
+
+//$pqSer = strip_tags($_POST['patientQuestionnaireSerNum']);
 // Need patientQuestionnaireSerNum from caller
 $result = $trigger->executeTrigger($_POST, MODULE_QUESTIONNAIRE);
 
