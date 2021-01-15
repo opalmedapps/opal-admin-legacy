@@ -2171,8 +2171,44 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-    function countTestResultNames($list) {
-        $sqlFetch = str_replace("%%NAMELIST%%", "'" . implode("', '", $list) . "'", OPAL_COUNT_TEST_RESULT_NAMES);
-        return $this->_fetchAll($sqlFetch, array());
+    /*
+     * Update a test result control entry if the data changed.
+     * @params  $toUpdate : array - contains all the details to update if necessary
+     * @return  int - number of records affected.
+     * */
+    function updateTestResultControl($toUpdate) {
+        $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
+        $toUpdate["SessionId"] = $this->getSessionId();
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_TEST_RESULT_CONTROL, $toUpdate);
+    }
+
+    /*
+     * Delete test expressions from a test result that are not in use anymore
+     * */
+    function deleteUnusedTestExpression($id, $list) {
+        $temp = array();
+        foreach ($list as &$item)
+            array_push($temp, str_replace("'", "\'", $item["name"]));
+
+        $sqlDelete = str_replace("%%TESTNAME%%", "'" . implode("', '", $temp) . "'", OPAL_DELETE_UNUSED_TEST_EXPRESSIONS);
+        return $this->_execute($sqlDelete, array(
+            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function countTestResultsAdditionalLinks($ids) {
+        $sqlCount = str_replace("%%LISTIDS%%", implode(", ", $ids), OPAL_COUNT_TR_ADDITIONAL_LINKS);
+        return $this->_fetch($sqlCount, array());
+    }
+
+    function deleteUnusedAddLinks($id, $list) {
+        $sqlDelete = str_replace("%%LISTIDS%%", implode(", ", $list), OPAL_DELETE_UNUSED_ADD_LINKS);
+        return $this->_execute($sqlDelete, array(
+            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function updateTestResultAdditionalLink($toUpdate) {
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_ADDITIONAL_LINKS, $toUpdate);
     }
 }
