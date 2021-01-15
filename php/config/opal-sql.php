@@ -989,6 +989,29 @@ define("OPAL_SANITIZE_EMPTY_TEST_RESULTS","
     tc.SessionId = :SessionId WHERE tre.TestResultControlSerNum IS NULL; 
 ");
 
-define("OPAL_COUNT_TEST_RESULT_NAMES","
-    SELECT * FROM ".OPAL_TEST_RESULT_EXPRESSION_TABLE." WHERE ExpressionName IN (%%NAMELIST%%);
+define("OPAL_UPDATE_TEST_RESULT_CONTROL", "
+    UPDATE ".OPAL_TEST_RESULT_CONTROL_TABLE." SET name_EN = :name_EN, name_FR = :name_FR, description_EN = :description_EN,
+    description_FR = :description_FR, group_EN = :group_EN, group_FR = :group_FR,
+    EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum, LastUpdatedBy = :LastUpdatedBy,
+    SessionId = :SessionId WHERE TestResultControlSerNum = :TestResultControlSerNum;"
+);
+
+define("OPAL_DELETE_UNUSED_TEST_EXPRESSIONS","
+    DELETE FROM ".OPAL_TEST_RESULT_EXPRESSION_TABLE." WHERE TestResultControlSerNum = :TestResultControlSerNum
+    AND ExpressionName NOT IN (%%TESTNAME%%);
+");
+
+define("OPAL_COUNT_TR_ADDITIONAL_LINKS", "
+    SELECT COUNT(*) AS total FROM ".OPAL_TEST_RESULT_ADD_LINKS_TABLE." WHERE TestResultAdditionalLinksSerNum IN (%%LISTIDS%%);
+");
+
+define("OPAL_DELETE_UNUSED_ADD_LINKS","
+    DELETE FROM ".OPAL_TEST_RESULT_ADD_LINKS_TABLE." WHERE TestResultControlSerNum = :TestResultControlSerNum
+    AND TestResultAdditionalLinksSerNum NOT IN (%%LISTIDS%%);
+");
+
+define("OPAL_UPDATE_ADDITIONAL_LINKS","
+    UPDATE ".OPAL_TEST_RESULT_ADD_LINKS_TABLE." SET Name_EN = :Name_EN, Name_FR = :Name_FR, URL_EN = :URL_EN, URL_FR = :URL_FR
+    WHERE TestResultAdditionalLinksSerNum = :TestResultAdditionalLinksSerNum AND (Name_EN != :Name_EN OR Name_FR != :Name_FR
+    OR URL_EN != :URL_EN OR URL_FR != :URL_FR);
 ");
