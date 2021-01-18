@@ -6,9 +6,6 @@
  */
 class TestResult extends Module
 {
-
-//    protected $ariaDB;
-
     public function __construct($guestStatus = false)
     {
         parent::__construct(MODULE_TEST_RESULTS, $guestStatus);
@@ -356,201 +353,85 @@ class TestResult extends Module
         return $this->opalDB->getTestResults();
     }
 
-    /**
-     *
-     * Removes a test result from the database
-     *
-     * @param integer $testResultSer : the serial number of the test result
-     * @param object $user : the current user in session
-     * @return array $response : response
-     */
-    public function deleteTestResult($testResultSer, $user)
+    public function deleteTestResult($post)
     {
-        $this->checkDeleteAccess(array($testResultSer, $user));
-        $response = array(
-            'value' => 0,
-            'message' => ''
-        );
+        $this->checkDeleteAccess($post);
 
-        $userSer = $user['id'];
-        $sessionId = $user['sessionid'];
-
-        try {
-            $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD);
-            $host_db_link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            $sql = "
-                DELETE FROM
-                    TestResultExpression
-                WHERE
-                    TestResultExpression.TestResultControlSerNum = $testResultSer
-            ";
-            $query = $host_db_link->prepare($sql);
-            $query->execute();
-
-            $sql = "
-                DELETE FROM
-                    TestResultAdditionalLinks
-                WHERE
-                    TestResultAdditionalLinks.TestResultControlSerNum = $testResultSer
-            ";
-            $query = $host_db_link->prepare($sql);
-            $query->execute();
-
-            $sql = "
-                DELETE FROM
-                    TestResultControl
-                WHERE
-                    TestResultControl.TestResultControlSerNum = $testResultSer
-            ";
-
-            $query = $host_db_link->prepare($sql);
-            $query->execute();
-
-            $sql = "
-                UPDATE TestResultControlMH
-                SET 
-                    TestResultControlMH.LastUpdatedBy = '$userSer',
-                    TestResultControlMH.SessionId = '$sessionId'
-                WHERE
-                    TestResultControlMH.TestResultControlSerNum = $testResultSer
-                ORDER BY TestResultControlMH.RevSerNum DESC 
-                LIMIT 1
-            ";
-            $query = $host_db_link->prepare($sql);
-            $query->execute();
-
-
-            $response['value'] = 1;
-            return $response;
-
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
+        $errCode = "";
+        if (!array_key_exists("serial", $post) || $post["serial"] == "")
+            $errCode = "1";
+        else {
+            $result = $this->opalDB->getTestResultDetails($post["serial"]);
+            if (count($result) < 1)
+                $errCode = "1";
+            else if (count($result) == 1)
+                $errCode = "0";
+            else
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates test results found.");
         }
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
+
+        $this->opalDB->deleteTestResultExpressions($post["serial"]);
+        $this->opalDB->deleteTestResultAdditionalLinks($post["serial"]);
+        $this->opalDB->deleteTestResult($post["serial"]);
+        $this->opalDB->updateTestResultMHDeletion($post["serial"]);
     }
 
-    /**
-     *
-     * Gets chart logs of a test result or results
-     *
-     * @param integer $serial : the test result serial number
-     * @return array $testResultLogs : the test result logs for highcharts
-     */
-    public function getTestResultChartLogs($serial)
+    /*
+     * Return the global test result chart log or for a specific test result if an ID is specified
+     * @params  $post - array : may or may not contain ID of the test result
+     * @return  $testResultLogs - array : contains all the logs of test result(s)
+     * */
+    public function getTestResultChartLogs($post)
     {
-        $this->checkReadAccess($serial);
-        $testResultLogs = array();
-        try {
-            $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD);
-            $host_db_link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
 
-            $sql = null;
-            // get all logs for all test results
-            if (!$serial) {
-
-                $sql = "
-                    SELECT DISTINCT
-                        trmh.CronLogSerNum,
-                        COUNT(trmh.CronLogSerNum),
-                        cl.CronDateTime,
-                        trc.Name_EN
-                    FROM
-                        TestResultMH trmh,
-                        TestResultExpression tre,
-                        CronLog cl,
-                        TestResultControl trc
-                    WHERE
-                        cl.CronStatus = 'Started'
-                    AND cl.CronLogSerNum = trmh.CronLogSerNum
-                    AND trmh.CronLogSerNum IS NOT NULL
-                    AND trmh.TestResultExpressionSerNum = tre.TestResultExpressionSerNum
-                    AND tre.TestResultControlSerNum = trc.TestResultControlSerNum
-                    GROUP BY
-                        trmh.CronLogSerNum,
-                        cl.CronDateTime
-                    ORDER BY 
-                        cl.CronDateTime ASC 
-                ";
-
-                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
-
-                $testResultSeries = array();
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $seriesName = $data[3];
-                    $testResultDetail = array(
-                        'x' => $data[2],
-                        'y' => intval($data[1]),
-                        'cron_serial' => $data[0]
-                    );
-                    if (!isset($testResultSeries[$seriesName])) {
-                        $testResultSeries[$seriesName] = array(
-                            'name' => $seriesName,
-                            'data' => array()
-                        );
-                    }
-                    array_push($testResultSeries[$seriesName]['data'], $testResultDetail);
-                }
-
-                foreach ($testResultSeries as $seriesName => $series) {
-                    array_push($testResultLogs, $series);
-                }
-
-            } // get logs for specific test results
-            else {
-                $sql = "
-                    SELECT DISTINCT
-                        trmh.CronLogSerNum,
-                        COUNT(trmh.CronLogSerNum),
-                        cl.CronDateTime
-                    FROM
-                        TestResultMH trmh,
-                        TestResultExpression tre,
-                        CronLog cl
-                    WHERE
-                        cl.CronStatus = 'Started'
-                    AND cl.CronLogSerNum = trmh.CronLogSerNum
-                    AND trmh.CronLogSerNum IS NOT NULL
-                    AND trmh.TestResultExpressionSerNum = tre.TestResultExpressionSerNum
-                    AND tre.TestResultControlSerNum = $serial
-                    GROUP BY
-                        trmh.CronLogSerNum,
-                        cl.CronDateTime
-                    ORDER BY 
-                        cl.CronDateTime ASC 
-                ";
-
-                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
-
-                $testResultSeries = array();
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $seriesName = 'Test Result';
-                    $testResultDetail = array(
-                        'x' => $data[2],
-                        'y' => intval($data[1]),
-                        'cron_serial' => $data[0]
-                    );
-                    if (!isset($testResultSeries[$seriesName])) {
-                        $testResultSeries[$seriesName] = array(
-                            'name' => $seriesName,
-                            'data' => array()
-                        );
-                    }
-                    array_push($testResultSeries[$seriesName]['data'], $testResultDetail);
-                }
-
-                foreach ($testResultSeries as $seriesName => $series) {
-                    array_push($testResultLogs, $series);
-                }
-            }
-            return $testResultLogs;
-
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
+        if (!array_key_exists("serial", $post) || $post["serial"] == "")
+            $id = false;
+        else {
+            $result = $this->opalDB->getTestResultDetails($post["serial"]);
+            if (count($result) < 1)
+                $errCode = "1";
+            else if (count($result) == 1)
+                $errCode = "0";
+            else
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates test results found.");
+            $errCode = bindec($errCode);
+            if ($errCode != 0)
+                HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
+            $id = $post["serial"];
         }
+
+        if(!$id)
+            $results = $this->opalDB->getTestResultChartLog();
+        else
+            $results = $this->opalDB->getTestResultChartLogById($id);
+
+        $testResultLogs = array();
+        $testResultSeries = array();
+        foreach ($results as $data) {
+            $testResultDetail = array(
+                'x' => $data["x"],
+                'y' => intval($data["y"]),
+                'cron_serial' => $data["cron_serial"]
+            );
+            if (!isset($testResultSeries[$data["name"]])) {
+                $testResultSeries[$data["name"]] = array(
+                    'name' => $data["name"],
+                    'data' => array()
+                );
+            }
+            array_push($testResultSeries[$data["name"]]['data'], $testResultDetail);
+        }
+
+        foreach ($testResultSeries as $seriesName => $series) {
+            array_push($testResultLogs, $series);
+        }
+
+        return $testResultLogs;
     }
 
     /**

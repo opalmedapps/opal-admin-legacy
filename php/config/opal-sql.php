@@ -1015,3 +1015,40 @@ define("OPAL_UPDATE_ADDITIONAL_LINKS","
     WHERE TestResultAdditionalLinksSerNum = :TestResultAdditionalLinksSerNum AND (Name_EN != :Name_EN OR Name_FR != :Name_FR
     OR URL_EN != :URL_EN OR URL_FR != :URL_FR);
 ");
+
+define("OPAL_GET_TEST_RESULT_CHART_LOG","
+    SELECT DISTINCT trmh.CronLogSerNum AS cron_serial, COUNT(trmh.CronLogSerNum) AS y, cl.CronDateTime AS x,
+    trc.Name_EN AS name FROM ".OPAL_TEST_RESULT_MH_TABLE." trmh, ".OPAL_TEST_RESULT_EXPRESSION_TABLE." tre,
+    ".OPAL_CRON_LOG_TABLE." cl, ".OPAL_TEST_RESULT_CONTROL_TABLE." trc WHERE cl.CronStatus = 'Started'
+    AND cl.CronLogSerNum = trmh.CronLogSerNum AND trmh.CronLogSerNum IS NOT NULL 
+    AND trmh.TestResultExpressionSerNum = tre.TestResultExpressionSerNum
+    AND tre.TestResultControlSerNum = trc.TestResultControlSerNum GROUP BY trmh.CronLogSerNum, cl.CronDateTime
+    ORDER BY cl.CronDateTime ASC;
+");
+
+define("OPAL_GET_TEST_RESULT_CHART_LOG_BY_ID","
+    SELECT DISTINCT trmh.CronLogSerNum AS cron_serial, COUNT(trmh.CronLogSerNum) AS y, cl.CronDateTime AS x,
+    trc.Name_EN AS name FROM ".OPAL_TEST_RESULT_MH_TABLE." trmh, ".OPAL_TEST_RESULT_EXPRESSION_TABLE." tre,
+    ".OPAL_CRON_LOG_TABLE." cl, ".OPAL_TEST_RESULT_CONTROL_TABLE." trc WHERE cl.CronStatus = 'Started'
+    AND cl.CronLogSerNum = trmh.CronLogSerNum AND trmh.CronLogSerNum IS NOT NULL 
+    AND trmh.TestResultExpressionSerNum = tre.TestResultExpressionSerNum AND tre.TestResultControlSerNum = :TestResultControlSerNum
+    AND tre.TestResultControlSerNum = trc.TestResultControlSerNum GROUP BY trmh.CronLogSerNum, cl.CronDateTime
+    ORDER BY cl.CronDateTime ASC;
+");
+
+define("OPAL_DELETE_TEST_RESULT_EXPRESSIONS","
+    DELETE FROM ".OPAL_TEST_RESULT_EXPRESSION_TABLE." WHERE TestResultControlSerNum = :TestResultControlSerNum;
+");
+
+define("OPAL_DELETE_TEST_RESULT_ADDITIONAL_LINKS","
+    DELETE FROM ".OPAL_TEST_RESULT_ADD_LINKS_TABLE." WHERE TestResultControlSerNum = :TestResultControlSerNum;
+");
+
+define("OPAL_DELETE_TEST_RESULT","
+    DELETE FROM ".OPAL_TEST_RESULT_CONTROL_TABLE." WHERE TestResultControlSerNum = :TestResultControlSerNum;
+");
+
+define("OPAL_UPDATE_TEST_RESULT_MH_DELETION","
+    UPDATE ".OPAL_TEST_RESULT_CONTROL_MH_TABLE." SET LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId
+    WHERE TestResultControlSerNum = :TestResultControlSerNum ORDER BY RevSerNum DESC LIMIT 1
+");
