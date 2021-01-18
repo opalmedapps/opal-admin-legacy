@@ -2183,7 +2183,10 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Delete test expressions from a test result that are not in use anymore
+     * Delete test expressions from a test result that are not in use anymore.
+     * @params  $id - int : ID of the test result
+     * @return  $list - array : list of test expression name
+     * @return  int - number of records deleted
      * */
     function deleteUnusedTestExpression($id, $list) {
         $temp = array();
@@ -2196,11 +2199,22 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /*
+     * Count the number of the test additional links by a list of IDs.
+     * @params  $ids - array : list of ids
+     * @return  array: total count found
+     * */
     function countTestResultsAdditionalLinks($ids) {
         $sqlCount = str_replace("%%LISTIDS%%", implode(", ", $ids), OPAL_COUNT_TR_ADDITIONAL_LINKS);
         return $this->_fetch($sqlCount, array());
     }
 
+    /*
+     * Delete unused additionalk links that are not a list of IDS for a specific test result
+     * @params  $id - int : ID of the test result
+     *          $list - array : list of IDs not to delete
+     * @return  int - number of records affected
+     */
     function deleteUnusedAddLinks($id, $list) {
         $sqlDelete = str_replace("%%LISTIDS%%", implode(", ", $list), OPAL_DELETE_UNUSED_ADD_LINKS);
         return $this->_execute($sqlDelete, array(
@@ -2208,7 +2222,79 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /*
+     * Update a specific test restul additionnal link
+     * @params  $toUpdate - array : contains all the additional links details
+     * @return  int - number of records affected
+     * */
     function updateTestResultAdditionalLink($toUpdate) {
         return $this->_updateRecordIntoTable(OPAL_UPDATE_ADDITIONAL_LINKS, $toUpdate);
+    }
+
+    /*
+     * Get the test result chart log
+     * @params  void
+     * @return  array : list of chart logs
+     * */
+    function getTestResultChartLog() {
+        return $this->_fetchAll(OPAL_GET_TEST_RESULT_CHART_LOG, array());
+    }
+
+    /*
+     * Get the test result chart log for a specific ID
+     * @params  void
+     * @return  array : list of chart logs
+     * */
+    function getTestResultChartLogById($id) {
+        return $this->_fetchAll(OPAL_GET_TEST_RESULT_CHART_LOG_BY_ID, array(
+            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Delete all expressions of a test result
+     * @params  $id - int : ID of the test result
+     * @return  int : number of records deleted.
+     * */
+    function deleteTestResultExpressions($id) {
+        return $this->_execute(OPAL_DELETE_TEST_RESULT_EXPRESSIONS, array(
+            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Delete all links of a test result
+     * @params  $id - int : ID of the test result
+     * @return  int : number of records deleted.
+     * */
+    function deleteTestResultAdditionalLinks($id) {
+        return $this->_execute(OPAL_DELETE_TEST_RESULT_ADDITIONAL_LINKS, array(
+            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Delete a test result
+     * @params  $id - int : ID of the test result
+     * @return  int : number of records deleted.
+     * */
+    function deleteTestResult($id) {
+        return $this->_execute(OPAL_DELETE_TEST_RESULT, array(
+            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * DUpdate the latest test result MH after deletion to update the userId and SessionId to the user who deleted it
+     * @params  $id - int : user ID
+     * @return  int : number of records updated.
+     * */
+    function updateTestResultMHDeletion($id) {
+        $toUpdate = array(
+            "LastUpdatedBy"=>$this->getOAUserId(),
+            "SessionId"=>$this->getSessionId(),
+            "TestResultControlSerNum"=>$id,
+        );
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_TEST_RESULT_MH_DELETION, $toUpdate);
     }
 }
