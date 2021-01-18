@@ -1,10 +1,8 @@
 <?php
 include_once("../config.php");
+
 $testResult = new TestResult;
+$testResult->deleteTestResult($_POST);
 
-$serial = $_POST['serial'];
-$user = $_POST['user'];
-
-$response = $testResult->deleteTestResult($serial, $user);
 header('Content-Type: application/javascript');
-echo json_encode($response);
+http_response_code(HTTP_STATUS_SUCCESS);
