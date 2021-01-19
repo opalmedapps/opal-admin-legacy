@@ -178,7 +178,7 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 	$scope.checkForm = function () {
 		if ($scope.testResult.name_EN && $scope.testResult.name_FR && $scope.testResult.description_EN
 			&& $scope.testResult.description_FR && $scope.testResult.group_EN && $scope.testResult.group_FR
-			&& $scope.checkTestsAdded($scope.testList) && $scope.additionalLinksComplete && $scope.changesMade) {
+			&& $scope.checkTestsAdded($scope.testList) /*&& $scope.additionalLinksComplete && $scope.changesMade*/) {
 			return true;
 		} else return false;
 	};
@@ -188,10 +188,10 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 		$scope.setChangesMade();
 	};
 
-	$scope.additionalLinksUpdated = function () {
+/*	$scope.additionalLinksUpdated = function () {
 		$scope.testResult.additional_links_updated = 1;
 		$scope.setChangesMade();
-	};
+	};*/
 
 	$scope.eduMatUpdate = function (event, eduMat) {
 
@@ -215,7 +215,7 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 		$scope.showTOCs = !$scope.showTOCs;
 	};
 
-	// Function to add an additional link to the test result
+/*	// Function to add an additional link to the test result
 	$scope.addAdditionalLink = function () {
 		$scope.testResult.additional_links.push({
 			name_EN: "",
@@ -237,7 +237,7 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 		}
 		$scope.setChangesMade();
 		$scope.testResult.additional_links_updated = 1;
-	};
+	};*/
 
 	// Function to add / remove a test
 	$scope.toggleTestSelection = function (test) {
@@ -274,7 +274,7 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 
 	$scope.setChangesMade = function () {
 		$scope.changesMade = true;
-		$scope.additionalLinksComplete = true;
+/*		$scope.additionalLinksComplete = true;
 		if ($scope.testResult.additional_links) {
 			angular.forEach($scope.testResult.additional_links, function (link) {
 				if (!link.name_EN || !link.name_FR || !link.url_EN
@@ -282,7 +282,7 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 					$scope.additionalLinksComplete = false;
 				}
 			});
-		}
+		}*/
 	};
 
 	// Submit changes

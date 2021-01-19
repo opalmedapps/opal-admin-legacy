@@ -81,7 +81,7 @@ define("OPAL_ALIAS_TABLE","Alias");
 define("OPAL_DIAGNOSIS_TRANSLATION_TABLE","DiagnosisTranslation");
 define("OPAL_PATIENT_TABLE","Patient");
 define("OPAL_TEST_RESULT_EXPRESSION_TABLE","TestResultExpression");
-define("OPAL_TEST_RESULT_ADD_LINKS_TABLE","TestResultAdditionalLinks");
+//define("OPAL_TEST_RESULT_ADD_LINKS_TABLE","TestResultAdditionalLinks");
 define("OPAL_DIAGNOSIS_CODE_TABLE","DiagnosisCode");
 define("OPAL_LOGIN_VIEW","v_login");
 define("OPAL_USER_ACTIVITY_LOG_TABLE","OAActivityLog");
@@ -99,7 +99,6 @@ define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
-
 
 /*
  * Listing of all SQL queries for the Opal database
@@ -969,10 +968,10 @@ define("OPAL_GET_TEST_RESULT_EXPRESSION_NAMES","
     WHERE TestResultControlSerNum = :TestResultControlSerNum;
 ");
 
-define("OPAL_GET_TEST_RESULT_ADD_LINK","
+/*define("OPAL_GET_TEST_RESULT_ADD_LINK","
     SELECT DISTINCT TestResultAdditionalLinksSerNum AS serial, Name_EN AS name_EN, Name_FR AS name_FR, URL_EN AS url_EN,
     URL_FR AS url_FR FROM ".OPAL_TEST_RESULT_ADD_LINKS_TABLE." WHERE TestResultControlSerNum = :TestResultControlSerNum;
-");
+");*/
 
 define("OPAL_GET_TEST_RESULT_GROUPS","
     SELECT DISTINCT Group_EN AS EN, Group_FR AS FR FROM ".OPAL_TEST_RESULT_CONTROL_TABLE.";
@@ -1001,7 +1000,7 @@ define("OPAL_DELETE_UNUSED_TEST_EXPRESSIONS","
     AND ExpressionName NOT IN (%%TESTNAME%%);
 ");
 
-define("OPAL_COUNT_TR_ADDITIONAL_LINKS", "
+/*define("OPAL_COUNT_TR_ADDITIONAL_LINKS", "
     SELECT COUNT(*) AS total FROM ".OPAL_TEST_RESULT_ADD_LINKS_TABLE." WHERE TestResultAdditionalLinksSerNum IN (%%LISTIDS%%);
 ");
 
@@ -1014,7 +1013,7 @@ define("OPAL_UPDATE_ADDITIONAL_LINKS","
     UPDATE ".OPAL_TEST_RESULT_ADD_LINKS_TABLE." SET Name_EN = :Name_EN, Name_FR = :Name_FR, URL_EN = :URL_EN, URL_FR = :URL_FR
     WHERE TestResultAdditionalLinksSerNum = :TestResultAdditionalLinksSerNum AND (Name_EN != :Name_EN OR Name_FR != :Name_FR
     OR URL_EN != :URL_EN OR URL_FR != :URL_FR);
-");
+");*/
 
 define("OPAL_GET_TEST_RESULT_CHART_LOG","
     SELECT DISTINCT trmh.CronLogSerNum AS cron_serial, COUNT(trmh.CronLogSerNum) AS y, cl.CronDateTime AS x,
@@ -1040,9 +1039,9 @@ define("OPAL_DELETE_TEST_RESULT_EXPRESSIONS","
     DELETE FROM ".OPAL_TEST_RESULT_EXPRESSION_TABLE." WHERE TestResultControlSerNum = :TestResultControlSerNum;
 ");
 
-define("OPAL_DELETE_TEST_RESULT_ADDITIONAL_LINKS","
+/*define("OPAL_DELETE_TEST_RESULT_ADDITIONAL_LINKS","
     DELETE FROM ".OPAL_TEST_RESULT_ADD_LINKS_TABLE." WHERE TestResultControlSerNum = :TestResultControlSerNum;
-");
+");*/
 
 define("OPAL_DELETE_TEST_RESULT","
     DELETE FROM ".OPAL_TEST_RESULT_CONTROL_TABLE." WHERE TestResultControlSerNum = :TestResultControlSerNum;
