@@ -35,7 +35,7 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 	$scope.titleDescriptionSection = {open: false, show: false};
 	$scope.testGroupSection = {open: false, show: false};
 	$scope.educationalMaterialSection = {open: false, show: false};
-	$scope.additionalLinksSection = {open: false, show: false};
+	// $scope.additionalLinksSection = {open: false, show: false};
 
 	// completed steps boolean object; used for progress bar
 	var steps = {
@@ -90,7 +90,7 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 		group_FR: "",
 		eduMat: null,
 		tests: [],
-		additional_links: []
+		// additional_links: []
 	};
 
 	// Initialize lists to hold distinct test groups
@@ -213,7 +213,7 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 		if ($scope.newTestResult.group_EN && $scope.newTestResult.group_FR) {
 
 			$scope.educationalMaterialSection.show = true;
-			$scope.additionalLinksSection.show = true;
+			// $scope.additionalLinksSection.show = true;
 
 			// Toggle step completion
 			steps.group.completed = true;
@@ -252,7 +252,7 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 		}
 	};
 
-	$scope.additionalLinksComplete = false;
+/*	$scope.additionalLinksComplete = false;
 	// Function to toggle necessary changes when updating the additional links
 	$scope.additionalLinkUpdate = function () {
 
@@ -278,7 +278,7 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 		$scope.numOfCompletedSteps = stepsCompleted(steps);
 		// Change progress bar
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-	};
+	};*/
 
 	// Function to return boolean for # of added tests
 	$scope.checkTestsAdded = function (testList) {
@@ -337,7 +337,7 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 	};
 
 	// Function to add additioanl links to newTestResult object
-	$scope.addAdditionalLink = function () {
+/*	$scope.addAdditionalLink = function () {
 		$scope.newTestResult.additional_links.push({
 			name_EN: "",
 			name_FR: "",
@@ -345,13 +345,13 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 			url_FR: ""
 		});
 		$scope.additionalLinkUpdate();
-	};
+	};*/
 
 	// Function to remove additional link from newTestResult object
-	$scope.removeAdditionalLink = function (index) {
+/*	$scope.removeAdditionalLink = function (index) {
 		$scope.newTestResult.additional_links.splice(index, 1);
 		$scope.additionalLinkUpdate();
-	};
+	};*/
 
 	// Function to submit the new test result
 	$scope.submitTestResult = function () {
@@ -426,10 +426,10 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 	// Function to return boolean for form completion
 	$scope.checkForm = function () {
 		if (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) === 100) {
-			if ($scope.newTestResult.additional_links.length && !$scope.additionalLinksComplete) {
-				return false;
-			}
-			else
+			// if ($scope.newTestResult.additional_links.length && !$scope.additionalLinksComplete) {
+			// 	return false;
+			// }
+			// else
 				return true;
 		}
 		else
