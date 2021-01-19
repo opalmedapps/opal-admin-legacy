@@ -6,17 +6,8 @@
  */
 class TestResult extends Module
 {
-    public function __construct($guestStatus = false)
-    {
+    public function __construct($guestStatus = false) {
         parent::__construct(MODULE_TEST_RESULTS, $guestStatus);
-
-//        $this->ariaDB = new DatabaseAria(
-//            ARIA_DB_HOST,
-//            ARIA_DB_NAME,
-//            ARIA_DB_PORT,
-//            ARIA_DB_USERNAME,
-//            ARIA_DB_PASSWORD
-//        );
     }
 
     /*
@@ -35,8 +26,7 @@ class TestResult extends Module
     }
 
     /*
-     * Get the details of a test results. It includes the expression names, educational materials and additional links
-     * if present.
+     * Get the details of a test results. It includes the expression names, and educational material if present.
      * @params  $post - array - contains only the serial or ID
      * @return  $result - contains all the details of the test result
      * */
@@ -55,7 +45,7 @@ class TestResult extends Module
 
         $result["tests"] = $this->opalDB->getTestResultExpressionNames($id);
         $result["count"] = count($result["tests"]);
-        $result["additional_links"] = $this->opalDB->getTestResultAdditionalLinks($id);
+//        $result["additional_links"] = $this->opalDB->getTestResultAdditionalLinks($id);
 
         $result["eduMat"] = array();
         if (intval($result["eduMatSer"]) != 0)
@@ -138,7 +128,7 @@ class TestResult extends Module
     /*
      * Validate and sanitize a test result.
      * @params  $post : array - data for the test result to validate
-     * Validation code :    Error validation code is coded as an int of 10 bits (value from 0 to 1023). Bit informations
+     * Validation code :    Error validation code is coded as an int of 9 bits (value from 0 to 511). Bit informations
      *                      are coded from right to left:
      *                      1: english name missing
      *                      2: french name missing
@@ -148,8 +138,7 @@ class TestResult extends Module
      *                      6: french group missing
      *                      7: test names missing or invalid
      *                      8: educational material (if present) invalid
-     *                      9: additional links (if present) invalid
-     *                      10: serial is missing or invalid (when updating only)
+     *                      9: serial is missing or invalid (when updating only)
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
@@ -232,8 +221,8 @@ class TestResult extends Module
             } else
                 $errCode = "0" . $errCode;
 
-            //9th bit
-            if (array_key_exists("additional_links", $post)) {
+            //9th bit - deprecated
+/*            if (array_key_exists("additional_links", $post)) {
                 if (is_array($post["additional_links"])) {
                     $allGood = true;
                     $addId = array();
@@ -261,9 +250,9 @@ class TestResult extends Module
                 } else
                     $errCode = "1" . $errCode;
             } else
-                $errCode = "0" . $errCode;
+                $errCode = "0" . $errCode;*/
 
-            //10th bit
+            //9th bit
             if ($isAnUpdate) {
                 if (!array_key_exists("serial", $post) || $post["serial"] == "")
                     $errCode = "1" . $errCode;
@@ -281,7 +270,7 @@ class TestResult extends Module
 
 
         } else
-            $errCode = "1111111111";
+            $errCode = "111111111";
         return $errCode;
     }
 
@@ -322,7 +311,7 @@ class TestResult extends Module
         $this->opalDB->insertMultipleTestExpressions($toInsertMultipleTests);
 
         //Insert into Test Result Additional links
-        $toInsertMultipleLinks = array();
+/*        $toInsertMultipleLinks = array();
         if ($post['additional_links']) {
             foreach ($post['additional_links'] as $link) {
                 array_push($toInsertMultipleLinks, array(
@@ -335,7 +324,7 @@ class TestResult extends Module
             }
             if (count($toInsertMultipleLinks) > 0)
                 $this->opalDB->insertTestResultAdditionalLinks($toInsertMultipleLinks);
-        }
+        }*/
 
         // This function sanitize and deactivate the publish flags of test results without any test name, otherwise
         // the cron job will crash (don't ask)
@@ -374,7 +363,7 @@ class TestResult extends Module
             HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
 
         $this->opalDB->deleteTestResultExpressions($post["serial"]);
-        $this->opalDB->deleteTestResultAdditionalLinks($post["serial"]);
+//        $this->opalDB->deleteTestResultAdditionalLinks($post["serial"]);
         $this->opalDB->deleteTestResult($post["serial"]);
         $this->opalDB->updateTestResultMHDeletion($post["serial"]);
     }
@@ -448,10 +437,8 @@ class TestResult extends Module
 
     /*
      * Update a test result. First it validates its data and structure. If everything is fine, update TestResultControl.
-     * Next, it deletes unused test result expressions, then it adds the new one. Next step is the additional links.
-     * If there is none, purge any current links for this specific test result. But if there is links, first build the
-     * list of links to purge, update and add and execute the command. Finally, unpublish any test result without test
-     * expression to avoid the cron crashing.
+     * Next, it deletes unused test result expressions, then it adds the new one. Finally, unpublish any test result
+     * without test expression to avoid the cron crashing.
      * @params  $post - array : contains all the test result data
      * @return  void
      * */
@@ -490,7 +477,7 @@ class TestResult extends Module
         }
         $result += $this->opalDB->insertMultipleTestExpressions($toInsertMultipleTests);
 
-        if ((array_key_exists("additional_links", $post)) && (is_array($post["additional_links"]))) {
+/*        if ((array_key_exists("additional_links", $post)) && (is_array($post["additional_links"]))) {
             foreach($post["additional_links"] as $link) {
                 if ($link["serial"] != "") {
                     array_push($linksToNotDelete, $link["serial"]);
@@ -522,7 +509,7 @@ class TestResult extends Module
         }
         if (count($linksToAdd) > 0) {
             $result += $this->opalDB->insertTestResultAdditionalLinks($linksToAdd);
-        }
+        }*/
 
         // This function sanitize and deactivate the publish flags of test results without any test name, otherwise
         // the cron job will crash (don't ask)
