@@ -2063,7 +2063,7 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":PublishFlag","variable"=>$publishFlag,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":LastUpdatedBy","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":SessionId","variable"=>$this->getSessionId(),"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":TestControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
@@ -2074,7 +2074,7 @@ class DatabaseOpal extends DatabaseAccess {
      * */
     function getTestResultDetails($id) {
         return $this->_fetchAll(OPAL_GET_TEST_RESULT_DETAILS, array(
-            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":TestControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
@@ -2083,9 +2083,9 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  $id : int - primary key in test result control table
      * @return  array - list of expression names of the test result
      * */
-    function getTestResultExpressionNames($id) {
-        return $this->_fetchAll(OPAL_GET_TEST_RESULT_EXPRESSION_NAMES, array(
-            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+    function getTestExpressionNames($id) {
+        return $this->_fetchAll(OPAL_GET_TEST_EXPRESSION_NAMES, array(
+            array("parameter"=>":TestControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
@@ -2119,7 +2119,7 @@ class DatabaseOpal extends DatabaseAccess {
         $toInsert["LastPublished"] = date("Y-m-d H:i:s");
         $toInsert["LastUpdatedBy"] = $this->getOAUserId();
         $toInsert["SessionId"] = $this->getSessionId();
-        return $this->_replaceRecordIntoTable(OPAL_TEST_RESULT_CONTROL_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_TEST_CONTROL_TABLE, $toInsert);
     }
 
     /*
@@ -2176,10 +2176,10 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  $toUpdate : array - contains all the details to update if necessary
      * @return  int - number of records affected.
      * */
-    function updateTestResultControl($toUpdate) {
+    function updateTestControl($toUpdate) {
         $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
         $toUpdate["SessionId"] = $this->getSessionId();
-        return $this->_updateRecordIntoTable(OPAL_UPDATE_TEST_RESULT_CONTROL, $toUpdate);
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_TEST_CONTROL, $toUpdate);
     }
 
     /*
@@ -2188,14 +2188,10 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  $list - array : list of test expression name
      * @return  int - number of records deleted
      * */
-    function deleteUnusedTestExpression($id, $list) {
-        $temp = array();
-        foreach ($list as &$item)
-            array_push($temp, str_replace("'", "\'", $item["name"]));
-
-        $sqlDelete = str_replace("%%TESTNAME%%", "'" . implode("', '", $temp) . "'", OPAL_DELETE_UNUSED_TEST_EXPRESSIONS);
-        return $this->_execute($sqlDelete, array(
-            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+    function removeUnusedTestExpression($id, $list) {
+        $sqlUpdate = str_replace("%%LISTIDS%%", "'" . implode("', '", $list) . "'", OPAL_REMOVE_UNUSED_TEST_EXPRESSIONS);
+        return $this->_execute($sqlUpdate, array(
+            array("parameter"=>":TestControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
@@ -2256,9 +2252,9 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  $id - int : ID of the test result
      * @return  int : number of records deleted.
      * */
-    function deleteTestResultExpressions($id) {
-        return $this->_execute(OPAL_DELETE_TEST_RESULT_EXPRESSIONS, array(
-            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+    function unsetTestResultExpressions($id) {
+        return $this->_execute(OPAL_UNSET_TEST_EXPRESSIONS, array(
+            array("parameter"=>":TestControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
@@ -2280,12 +2276,12 @@ class DatabaseOpal extends DatabaseAccess {
      * */
     function deleteTestResult($id) {
         return $this->_execute(OPAL_DELETE_TEST_RESULT, array(
-            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":TestControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
     /*
-     * DUpdate the latest test result MH after deletion to update the userId and SessionId to the user who deleted it
+     * Update the latest test result MH after deletion to update the userId and SessionId to the user who deleted it
      * @params  $id - int : user ID
      * @return  int : number of records updated.
      * */
@@ -2296,5 +2292,34 @@ class DatabaseOpal extends DatabaseAccess {
             "TestResultControlSerNum"=>$id,
         );
         return $this->_updateRecordIntoTable(OPAL_UPDATE_TEST_RESULT_MH_DELETION, $toUpdate);
+    }
+
+    /*
+     * Get all test names for test results
+     * @params  void
+     * @return  array : test names details
+     * */
+    function getTestNames() {
+        return $this->_fetchAll(OPAL_GET_TEST_NAMES, array());
+    }
+
+    /*
+     * count the total of test expressions that exists based on a list of IDs
+     * @params  $list : array - list of IDs of test expressions
+     * @return  array - total of IDs
+     * */
+    function countTestExpressionsIDs($list) {
+        $sql = str_replace("%%LISTIDS%%", implode(", ", $list), OPAL_COUNT_TEST_IDS);
+        return $this->_fetch($sql, array());
+    }
+
+    function updateTextExpression($testId, $testExpressionId) {
+        $toUpdate = array(
+            "LastUpdatedBy"=>$this->getOAUserId(),
+            "SessionId"=>$this->getSessionId(),
+            "TestControlSerNum"=>$testId,
+            "TestExpressionSerNum"=>$testExpressionId,
+        );
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_TEST_EXPRESSION, $toUpdate);
     }
 }
