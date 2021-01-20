@@ -19,6 +19,21 @@ class TestResult extends Module
     {
         $this->checkWriteAccess($post);
         $post = HelpSetup::arraySanitization($post["data"]);
+        $errCode = "";
+
+        foreach ($post as $testResult) {
+            $result = $this->opalDB->getTestResultDetails($testResult["serial"]);
+            if (count($result) < 1 || ($testResult['publish'] != 0 && $testResult['publish'] != 1))
+                $errCode = "1";
+            else if (count($result) == 1 && ($testResult['publish'] == 0 || $testResult['publish'] == 1))
+                $errCode = "0";
+            else
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates test results found.");
+        }
+
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => $errCode));
 
         foreach ($post as $testResult) {
             $this->opalDB->updateTestResultPublishFlag($testResult['serial'], $testResult['publish']);
