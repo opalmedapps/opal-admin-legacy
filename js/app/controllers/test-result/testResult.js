@@ -42,10 +42,10 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">';
 
-		if($scope.readAccess)
-			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.showTestResultLog(row.entity)"><i title="'+$filter('translate')('TEST.LIST.LOGS')+'" class="fa fa-area-chart" ></i></a></strong> ';
+		// if($scope.readAccess)
+		// 	cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.showTestResultLog(row.entity)"><i title="'+$filter('translate')('TEST.LIST.LOGS')+'" class="fa fa-area-chart" ></i></a></strong> ';
 		if($scope.writeAccess)
-			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.editTestResult(row.entity)"><i title="'+$filter('translate')('TEST.LIST.EDIT')+'" class="fa fa-pencil" ></i></a></strong> ';
+			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.editTestResult(row.entity)"><i title="'+$filter('translate')('TEST.LIST.EDIT')+'" class="fa fa-pencil" ></i></a></strong> ';
 		else
 			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.editTestResult(row.entity)"><i title="'+$filter('translate')('TEST.LIST.VIEW')+'" class="fa fa-eye" ></i></a></strong> ';
 		if($scope.deleteAccess)
@@ -206,6 +206,7 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 			}
 		}, true);
 
+/*
 		var chartConfig = $scope.chartConfig = {
 			chart: {
 				type: 'spline',
@@ -296,6 +297,7 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 
 			series: []
 		};
+*/
 
 		$scope.testResultListLogs = [];
 		// Table options for test result logs
@@ -332,17 +334,17 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 		$scope.currentTestResult = {};
 
 		// Function for when the test result has been clicked for viewing logs
-		$scope.showTestResultLog = function (testResult) {
-
-			$scope.currentTestResult = testResult;
-			var modalInstance = $uibModal.open({
-				templateUrl: 'templates/test-result/log.test-result.html',
-				controller: 'testResult.log',
-				scope: $scope,
-				windowClass: 'logModal',
-				backdrop: 'static',
-			});
-		};
+		// $scope.showTestResultLog = function (testResult) {
+		//
+		// 	$scope.currentTestResult = testResult;
+		// 	var modalInstance = $uibModal.open({
+		// 		templateUrl: 'templates/test-result/log.test-result.html',
+		// 		controller: 'testResult.log',
+		// 		scope: $scope,
+		// 		windowClass: 'logModal',
+		// 		backdrop: 'static',
+		// 	});
+		// };
 
 		// Function for when the test result has been clicked for editing
 		// We open a modal
