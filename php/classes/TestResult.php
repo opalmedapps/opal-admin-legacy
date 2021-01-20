@@ -23,6 +23,10 @@ class TestResult extends Module
         foreach ($post as $testResult) {
             $this->opalDB->updateTestResultPublishFlag($testResult['serial'], $testResult['publish']);
         }
+
+        // This function sanitize and deactivate the publish flags of test results without any test name, otherwise
+        // the cron job will crash (don't ask)
+        $this->opalDB->sanitizeEmptyTestResults();
     }
 
     /*
@@ -43,7 +47,7 @@ class TestResult extends Module
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates test results found.");
 
-        $result["tests"] = $this->opalDB->getTestResultExpressionNames($id);
+        $result["tests"] = $this->opalDB->getTestExpressionNames($id);
         $result["count"] = count($result["tests"]);
 //        $result["additional_links"] = $this->opalDB->getTestResultAdditionalLinks($id);
 
@@ -65,64 +69,26 @@ class TestResult extends Module
         return $this->opalDB->getTestResultGroups();
     }
 
-    /**
-     *
-     * Gets a list of test result names from a source database
-     *
-     * @return array $testNames : the list of test names
-     */
+    /*
+     * Get the list of all test names available, and assigned test results if it exists.
+     * @params  void
+     * @returns $final : array - contains test names and assigned test results if it exists.
+     * */
     public function getTestNames()
     {
         $this->checkReadAccess();
-        $testNames = array();
-        $databaseObj = new Database();
-        $assignedTests = $this->opalDB->getAssignedTests();
+        $results = $this->opalDB->getTestNames();
+        $final = array();
 
-        try {
-
-            // get already assigned expressions from our database
-
-
-            // ***********************************
-            // ARIA
-            // ***********************************
-            $sourceDBSer = ARIA_SOURCE_DB;
-            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
-            if ($source_db_link) {
-
-                $sql = "
-                    SELECT DISTINCT
-                        tr.comp_name
-                    FROM
-                        VARIAN.dbo.test_result tr
-                ";
-                $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
-
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $testName = $data[0];
-                    $testArray = array(
-                        'name' => $testName,
-                        'id' => $testName,
-                        'added' => 0,
-                        'assigned' => null
-                    );
-                    $assignedTest = $this->assignedSearch($testName, $assignedTests);
-                    if ($assignedTest) {
-                        $testArray['added'] = 0;
-                        $testArray['assigned'] = $assignedTest;
-                    }
-                    array_push($testNames, $testArray);
-                }
-
-            }
-
-
-            return $testNames;
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for lab results. " . $e->getMessage());
+        foreach ($results as $result) {
+            array_push($final, array(
+                "added"=>0,
+                "id"=>$result["id"],
+                "name"=>$result["name"],
+                "assigned"=>(!is_null($result["TestControlSerNum"]) ? array("id"=>$result["TestControlSerNum"], "name_EN"=>$result["name_EN"]) : null)
+            ));
         }
+        return $final;
     }
 
     /*
@@ -191,11 +157,18 @@ class TestResult extends Module
             } else {
                 $allGood = true;
                 if (is_array($post["tests"])) {
+                    $tempTest = array();
                     foreach ($post["tests"] as $test) {
-                        if (!array_key_exists("name", $test) || $test["name"] == "") {
+                        if (!array_key_exists("id", $test) || $test["id"] == "") {
                             $allGood = false;
                             break;
-                        }
+                        } else
+                            array_push($tempTest, $test["id"]);
+                    }
+                    if($allGood) {
+                        $found = $this->opalDB->countTestExpressionsIDs($tempTest);
+                        if($found["total"] != count($tempTest))
+                            $allGood = false;
                     }
                 } else
                     $allGood = false;
@@ -298,17 +271,13 @@ class TestResult extends Module
             "PublishFlag" => 0,
             "EducationalMaterialControlSerNum" => (is_array($post['eduMat']) && isset($post['eduMat']['serial'])) ? $post['eduMat']['serial'] : null,
         );
+
         $newId = $this->opalDB->insertTestResult($toInsert);
 
         //Insert into test result expression
-        $toInsertMultipleTests = array();
         foreach ($post['tests'] as $test) {
-            array_push($toInsertMultipleTests, array(
-                "TestResultControlSerNum" => $newId,
-                "ExpressionName" => $test['name'],
-            ));
+            $this->opalDB->updateTextExpression($newId, $test["id"]);
         }
-        $this->opalDB->insertMultipleTestExpressions($toInsertMultipleTests);
 
         //Insert into Test Result Additional links
 /*        $toInsertMultipleLinks = array();
@@ -342,6 +311,11 @@ class TestResult extends Module
         return $this->opalDB->getTestResults();
     }
 
+    /*
+     * Delete a specific test result if it exists. If it does not, return an error 422 with validation code 1.
+     * @params  $post - int : ID of the test result to delete
+     * @return  void
+     * */
     public function deleteTestResult($post)
     {
         $this->checkDeleteAccess($post);
@@ -362,10 +336,9 @@ class TestResult extends Module
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
 
-        $this->opalDB->deleteTestResultExpressions($post["serial"]);
+        $this->opalDB->unsetTestResultExpressions($post["serial"]);
 //        $this->opalDB->deleteTestResultAdditionalLinks($post["serial"]);
         $this->opalDB->deleteTestResult($post["serial"]);
-        $this->opalDB->updateTestResultMHDeletion($post["serial"]);
     }
 
     /*
@@ -446,9 +419,9 @@ class TestResult extends Module
     {
         $this->checkWriteAccess($post);
         $errCode = $this->_validateTestResult($post, true);
-        $linksToKeepAndUpdate = array();
+/*        $linksToKeepAndUpdate = array();
         $linksToNotDelete = array();
-        $linksToAdd = array();
+        $linksToAdd = array();*/
 
         $errCode = bindec($errCode);
         if ($errCode != 0)
@@ -462,20 +435,16 @@ class TestResult extends Module
             "group_EN" => $post['group_EN'],
             "group_FR" => $post['group_FR'],
             "EducationalMaterialControlSerNum" => (is_array($post['eduMat']) && isset($post['eduMat']['serial'])) ? $post['eduMat']['serial'] : null,
-            "TestResultControlSerNum" => $post['serial'],
+            "TestControlSerNum" => $post['serial'],
         );
 
-        $result = $this->opalDB->updateTestResultControl($toUpdate);
-        $result += $this->opalDB->deleteUnusedTestExpression($post['serial'], $post["tests"]);
+        $result = $this->opalDB->updateTestControl($toUpdate);
+        $result += $this->opalDB->removeUnusedTestExpression($post['serial'], $post["tests"]);
 
-        $toInsertMultipleTests = array();
+        //Insert into test result expression
         foreach ($post['tests'] as $test) {
-            array_push($toInsertMultipleTests, array(
-                "TestResultControlSerNum" => $post['serial'],
-                "ExpressionName" => $test['name'],
-            ));
+            $this->opalDB->updateTextExpression($post['serial'], $test["id"]);
         }
-        $result += $this->opalDB->insertMultipleTestExpressions($toInsertMultipleTests);
 
 /*        if ((array_key_exists("additional_links", $post)) && (is_array($post["additional_links"]))) {
             foreach($post["additional_links"] as $link) {
@@ -516,29 +485,11 @@ class TestResult extends Module
         $this->opalDB->sanitizeEmptyTestResults();
     }
 
-    /**
-     *
-     * Checks if an expression has been assigned to an test
-     *
-     * @param string $id : the needle id
-     * @param array $array : the key-value haystack
-     * @return $assignedTest
-     */
-    public function assignedSearch($id, $array)
-    {
-        $assignedTest = null;
-        if (empty($array) || !$id) {
-            return $assignedTest;
-        }
-        foreach ($array as $key => $val) {
-            if ($val['id'] === $id) {
-                $assignedTest = $val;
-                return $assignedTest;
-            }
-        }
-        return $assignedTest;
-    }
-
+    /*
+     * Get the list of educational materials available.
+     * @params  void
+     * @return  array : list of educational materials
+     * */
     public function getEducationalMaterials()
     {
         $this->checkReadAccess();
