@@ -126,6 +126,12 @@ RewriteRule ^custom-code/get/custom-codes php/custom-code/get.custom.code.php [Q
 RewriteRule ^custom-code/insert/custom-code php/custom-code/insert.custom.code.php [QSA,L]
 RewriteRule ^custom-code/update/custom-code php/custom-code/update.custom.code.php [QSA,L]
 
+# Diagnosis Section (system 2 system API)
+RewriteRule ^diagnosis/delete/patient-diagnosis php/diagnosis/delete.patient.diagnosis.php [QSA,L]
+RewriteRule ^diagnosis/get/patient-diagnoses php/diagnosis/get.patient.diagnoses.php [QSA,L]
+RewriteRule ^diagnosis/insert/patient-diagnosis php/diagnosis/insert.patient.diagnosis.php [QSA,L]
+RewriteRule ^diagnosis/update/patient-diagnosis php/diagnosis/update.patient.diagnosis.php [QSA,L]
+
 # Diagnosis Translation Section
 RewriteRule ^diagnosis-translation/delete/diagnosis-translation php/diagnosis-translation/delete.diagnosis_translation.php [QSA,L]
 RewriteRule ^diagnosis-translation/get/diagnosis-translation-details php/diagnosis-translation/get.diagnosis_translation_details.php [QSA,L]
@@ -263,10 +269,10 @@ RewriteRule ^template-question/update/template-question php/questionnaire/update
 RewriteRule ^test-result/delete/test-result php/test-result/delete.test_result.php [QSA,L]
 RewriteRule ^test-result/get/get/educational-materials php/test-result/get.educational.materials.php [QSA,L]
 RewriteRule ^test-result/get/test-names php/test-result/get.test_names.php [QSA,L]
-RewriteRule ^test-result/get/test-result-chart-logs php/test-result/get.test_result_chart_logs.php [QSA,L]
+# RewriteRule ^test-result/get/test-result-chart-logs php/test-result/get.test_result_chart_logs.php [QSA,L]
 RewriteRule ^test-result/get/test-result-details php/test-result/get.test_result_details.php [QSA,L]
 RewriteRule ^test-result/get/test-result-groups php/test-result/get.test_result_groups.php [QSA,L]
-RewriteRule ^test-result/get/test-result-list-logs php/test-result/get.test_result_list_logs.php [QSA,L]
+# RewriteRule ^test-result/get/test-result-list-logs php/test-result/get.test_result_list_logs.php [QSA,L]
 RewriteRule ^test-result/get/test-results php/test-result/get.test_results.php [QSA,L]
 RewriteRule ^test-result/insert/test-result php/test-result/insert.test_result.php [QSA,L]
 RewriteRule ^test-result/update/test-result-publish-flags php/test-result/update.test_result_publish_flags.php [QSA,L]

@@ -6,53 +6,65 @@ angular.module('opalAdmin.services', [])
 	.service('Session', function ($cookies) {
 		this.create = function (data) {
 			angular.forEach(data.menu, function(category) {
+				category.name = (data.user.language == "EN" ? category.name_EN : category.name_FR);
 				angular.forEach(category.menu, function(menu) {
-					menu.sub = 'NAVIGATION_MENU.MODULE_ID_' + menu.ID + '_SUB';
+					menu.name = (data.user.language == "EN" ? menu.name_EN : menu.name_FR);
+					menu.sub = (data.user.language == "EN" ? menu.description_EN : menu.description_FR);
 				});
 			});
-
-			$cookies.putObject('user', data.user);
-			$cookies.putObject('access', data.access);
-			$cookies.putObject('menu', data.menu);
-			$cookies.putObject('subMenu', data.subMenu);
-		};
-		this.retrieve = function (data) {
-			return $cookies.get(data);
+			sessionStorage.setItem("user", JSON.stringify(data.user));
+			sessionStorage.setItem("access", JSON.stringify(data.access));
+			sessionStorage.setItem("menu", JSON.stringify(data.menu));
+			sessionStorage.setItem("subMenu", JSON.stringify(data.subMenu));
 		};
 		this.retrieveObject = function (data) {
-			return $cookies.getObject(data);
+			return JSON.parse(sessionStorage.getItem(data));
 		};
-		this.updateUser = function (user, menu) {
-			angular.forEach(menu, function(category) {
+		this.updateUser = function (user) {
+			navMenu = JSON.parse(sessionStorage.getItem("menu"));
+			angular.forEach(navMenu, function(category) {
+				category.name = (user.language == "EN" ? category.name_EN : category.name_FR);
 				angular.forEach(category.menu, function(menu) {
-					menu.sub = 'NAVIGATION_MENU.MODULE_ID_' + menu.ID + '_SUB';
+					menu.name = (user.language == "EN" ? menu.name_EN : menu.name_FR);
+					menu.sub = (user.language == "EN" ? menu.description_EN : menu.description_FR);
 				});
 			});
-
-			$cookies.remove('user');
-			$cookies.putObject('user', user);
-			$cookies.remove('menu');
-			$cookies.putObject('menu', menu);
+			sessionStorage.removeItem("user");
+			sessionStorage.setItem("user", JSON.stringify(user));
+			sessionStorage.removeItem("menu");
+			sessionStorage.setItem("menu", JSON.stringify(navMenu));
 		};
 		this.destroy = function () {
-			$cookies.remove('user');
-			$cookies.remove('access');
-			$cookies.remove('menu');
-			$cookies.remove('subMenu');
+			sessionStorage.removeItem("user");
+			sessionStorage.removeItem("access");
+			sessionStorage.removeItem("menu");
+			sessionStorage.removeItem("subMenu");
+
 		};
 	})
 
 	.service('ErrorHandler', function($filter, $rootScope, HTTP_CODE, AUTH_EVENTS) {
-		this.onError = function(response, clientErrMsg) {
+		this.onError = function(response, clientErrMsg, arrValidation) {
+			var tempText;
 			if(response.status === HTTP_CODE.notFoundError)
 				alert(clientErrMsg + " " + $filter('translate')('ERROR_HANDLER.404.MESSAGE'));
 			else if(response.status === HTTP_CODE.internalServerError) {
-				var tempText;
 				if (response.responseText)
 					tempText = JSON.parse(response.responseText);
 				else
 					tempText = $filter('translate')('ERROR_HANDLER.500.UNKNOWN');
 				alert(clientErrMsg + " " + $filter('translate')('ERROR_HANDLER.500.MESSAGE') + "\r\n" + tempText);
+			}
+			else if(response.status === HTTP_CODE.unprocessableEntityError) {
+				var errMsg = $filter('translate')('ERROR_HANDLER.422.MESSAGE');
+				if (typeof (arrValidation) != "undefined") {
+					for (var i = 0; i < arrValidation.length; i++) {
+						if ((parseInt(response.responseText.validation) & (1 << i)) !== 0) {
+							errMsg += " " + arrValidation[i];
+						}
+					}
+				}
+				alert(errMsg);
 			}
 			else if(response.status === HTTP_CODE.forbiddenAccessError)
 				$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);

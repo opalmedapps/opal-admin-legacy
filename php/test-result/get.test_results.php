@@ -1,9 +1,7 @@
 <?php
+include_once("../config.php");
 
-header('Content-Type: application/javascript');
-include_once('test-result.inc');
-
-$testResult = new TestResult; // Object
-$existingTestResultList = $testResult->getExistingTestResults();
+$testResult = new TestResult(); // Object
+$existingTestResultList = $testResult->getTestResults();
 
 echo json_encode($existingTestResultList);

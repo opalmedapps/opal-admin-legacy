@@ -320,7 +320,7 @@ class Questionnaire extends QuestionnaireModule {
         $updatedQuestions = array();
         $questionsToKeep = array();
         $questionCheckPrivacy = array();
-        $visualization = 0;
+        $visualization = 1;
 
         //Get current questionnaire infos
         $oldQuestionnaire = $this->getQuestionnaireDetails($updatedQuestionnaire["ID"]);
@@ -341,8 +341,8 @@ class Questionnaire extends QuestionnaireModule {
          * ASAP once the code will be properly updated on ORMS side (which means probably never)
          * */
         foreach($updatedQuestionnaire["questions"] as $question) {
-            if ($question["typeId"] == SLIDERS)
-                $visualization = 1;
+            if ($question["typeId"] != SLIDERS)
+                $visualization = 0;
             unset($question["typeId"]);
             array_push($questionCheckPrivacy, $question["questionId"]);
             if (!in_array($question["questionId"], $questionsToKeep))

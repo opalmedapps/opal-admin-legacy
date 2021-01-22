@@ -48,26 +48,7 @@
     "ACCOUNT": "Compte",
     "ACCOUNT_SUB": "Modifier les paramètres du profil.",
     "LOGOUT": "Déconnexion",
-    "ROLES": "Rôles",
-    "MODULE_ID_1_SUB": "Gestion des tâches, rendez-vous et documents.",
-    "MODULE_ID_2_SUB": "Publication d'annonces générales et de messages de l'équipe de soin.",
-    "MODULE_ID_3_SUB": "Gestion des matériels éducatifs hébergés sur le Web.",
-    "MODULE_ID_4_SUB": "Gestion des cartes de l'hôpital.",
-    "MODULE_ID_5_SUB": "Gestion des messages aux patients et des status des rendez-vous.",
-    "MODULE_ID_6_SUB": "Publication des résultats de laboratoire classés par groupe de tests.",
-    "MODULE_ID_7_SUB": "Gestion des questionnaires et des réponses des patients.",
-    "MODULE_ID_8_SUB": "Gestion des publications et de leurs déclencheurs.",
-    "MODULE_ID_9_SUB": "Gestion les codes de diagnostic.",
-    "MODULE_ID_10_SUB": "Contrôle des temps et fréquence des événements de publication et des journaux de publication.",
-    "MODULE_ID_11_SUB": "Gérer la liste, l'inscription et les activités des patients.",
-    "MODULE_ID_12_SUB": "Surveiller l'activité des utilisateurs. Changer les mots de passe.",
-    "MODULE_ID_13_SUB": "Gérer les études cliniques auxquelles sont associées certains patients.",
-    "MODULE_ID_14_SUB": "Outil pour créer des modèles de courriel.",
-    "MODULE_ID_15_SUB": "Gestion des codes personnalisés pour les diagnostics et alias.",
-    "MODULE_ID_16_SUB": "Gestion de la liste des rôles des utilisateurs.",
-    "MODULE_ID_17_SUB": "Gestion de la liste des alertes et déclencheurs pour conditions.",
-    "MODULE_ID_18_SUB": "Auditer les opérations des utilisateurs dans OpalAdmin."
-
+    "ROLES": "Rôles"
   },
   "BREADCRUMBS": {
     "HOME": "Accueil"
@@ -1958,7 +1939,16 @@
       "ERROR_GROUP": "Une erreur s'est produite lors de l'obtention de la liste des groupes de laboratoire.",
       "ERROR_TEST": "Une erreur s'est produite lors de l'obtention de la liste des noms des tests.",
       "ERROR_NO_TEST_FOUND": "La liste des résultats de laboratoire est vide. Veuillez vérifier la connexion avec les différentes bases de données et essayer de nouveau.",
-      "ERROR_ADD": "Une erreur s'est produite lors de la création du résultat de laboratoire."
+      "ERROR_ADD": "Une erreur s'est produite lors de la création du résultat de laboratoire.",
+      "VALIDATION_NAME_EN": "Nom anglais manquant ou invalide.",
+      "VALIDATION_NAME_FR": "Nom français manquant ou invalide.",
+      "VALIDATION_DESCRIPTION_EN": "Description anglaise manquant ou invalide.",
+      "VALIDATION_DESCRPIPTION_FR": "Description française manquant ou invalide.",
+      "VALIDATION_GROUP_EN": "Groupe anglais manquant ou invalide.",
+      "VALIDATION_GROUP_FR": "Groupe français manquant ou invalide.",
+      "VALIDATION_TESTS": "Tests manquants ou invalides.",
+      "VALIDATION_EDU": "Matériel éducatif invalide.",
+      "VALIDATION_LINK": "Liens additionnels invalides."
     },
     "EDIT": {
       "TITLE": "Modifier le résultat du laboratoire",
@@ -2813,6 +2803,9 @@
     },
     "404": {
       "MESSAGE": "Code 404. La ressource est introuvable."
+    },
+    "422": {
+      "MESSAGE": "Code 422. La validation des données par le serveur a échoué."
     },
     "500": {
       "MESSAGE": "Code 500. Erreur interne du serveur. Réponse du serveur:",

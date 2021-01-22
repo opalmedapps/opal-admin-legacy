@@ -10,6 +10,7 @@ date_default_timezone_set("America/Toronto");
 
 // Turn on all errors except for notices
 error_reporting(E_ALL & ~E_NOTICE);
+ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 
 // Get directory path of this file
@@ -193,9 +194,11 @@ define("HTTP_STATUS_SESSION_TIMEOUT_ERROR",419);
 define("HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR",422);
 define("HTTP_STATUS_LOGIN_TIMEOUT_ERROR",440);
 
-if($_SERVER["HTTPS"] != "on") {
-    HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, "Connection not secured.");
-    exit();
+if(!$ignoreSecuredConnection) {
+    if($_SERVER["HTTPS"] != "on") {
+        HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, "Connection not secured.");
+        exit();
+    }
 }
 
 define("ABVR_FRENCH_LANGUAGE", "FR");
