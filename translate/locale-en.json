@@ -1921,7 +1921,16 @@
       "ERROR_GROUP": "An error occurred while getting the test result groups.",
       "ERROR_TEST": "An error occurred while getting the test names.",
       "ERROR_NO_TEST_FOUND": "The list of lab results is empty. Please check the connection with the different databases and try again.",
-      "ERROR_ADD": "An error occurred while creating the lab result."
+      "ERROR_ADD": "An error occurred while creating the lab result.",
+      "VALIDATION_NAME_EN": "English name missing or invalid.",
+      "VALIDATION_NAME_FR": "French name missing or invalid.",
+      "VALIDATION_DESCRIPTION_EN": "English description missing or invalid.",
+      "VALIDATION_DESCRPIPTION_FR": "French description missing or invalid.",
+      "VALIDATION_GROUP_EN": "English group missing or invalid.",
+      "VALIDATION_GROUP_FR": "French group missing or invalid.",
+      "VALIDATION_TESTS": "Missing or invalid tests.",
+      "VALIDATION_EDU": "Invalid educational material.",
+      "VALIDATION_LINK": "Invalid addtional links."
     },
     "EDIT": {
       "TITLE": "Edit Lab Result",
@@ -2778,6 +2787,9 @@
     },
     "404": {
       "MESSAGE": "Code 404. The resource cannot be found."
+    },
+    "422": {
+      "MESSAGE": "Code 422. Validation of the data by the server failed."
     },
     "500": {
       "MESSAGE": "Code 500. Internal Server Error. Answer of the server:",
