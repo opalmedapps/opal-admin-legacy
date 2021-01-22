@@ -2,10 +2,8 @@
 
 include_once("../config.php");
    
-$trigger = new Trigger(false);
+$trigger = new Trigger(false); //guest access set false, must use system login
 
-
-//$pqSer = strip_tags($_POST['patientQuestionnaireSerNum']);
 // Need patientQuestionnaireSerNum from caller
 $result = $trigger->executeTrigger($_POST, MODULE_QUESTIONNAIRE);
 

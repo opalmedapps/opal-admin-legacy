@@ -4,6 +4,9 @@ include_once("../config.php");
 
 header('Content-Type: application/javascript');
 
+die("This test script has been disabled");
+
+
 $url = 'https://localhost/opalAdmin/user/system-login';
 
 $postFields = array(
@@ -36,7 +39,6 @@ if(preg_match("/PHPSESSID=(.*?)(?:;|\r\n)/", $result, $matches)){
 }
 
 
-//var_dump($header_size);
 $info = curl_getinfo($ch);
 curl_close($ch);
 
@@ -55,7 +57,7 @@ if($info["http_code"] == 200) {
     curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
     curl_setopt($ch, CURLOPT_COOKIE, $strCookie );
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); // On dev server only!
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); 
     curl_setopt($ch, CURLOPT_HEADER, 1);
 
     session_write_close();
@@ -63,8 +65,7 @@ if($info["http_code"] == 200) {
     $result = curl_exec($ch);
     $header_size = curl_getinfo($ch);
     var_dump($result);
-    //var_dump($header_size);
     curl_close($ch);
 }
 
-?>
+?> 
