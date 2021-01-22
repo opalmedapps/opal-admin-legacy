@@ -13,8 +13,7 @@ class PatientReports extends Module {
     }
 
     //Theres probably a better place for this. Used to disclude these patients from group reports
-    //private $nameList = "('TEST','QA_OPAL','Demo','TRANSITION','TelNum')";
-    private $nameList = "('Demo')"; //limiting the list to one for testing purposes REMOVE AND REPLACE WITH PROPER NAMELIST  TODO
+    private $nameList = "('TEST','QA_OPAL','Demo','TRANSITION','TelNum')";
     /**
      * Search database for patient
      * 
