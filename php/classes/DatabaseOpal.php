@@ -2033,4 +2033,163 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":DiagnosisSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    /*
+     * Get the patient by their last name
+     * @params  $name : string - target patient last name
+     * @return  array - list of patient(s) matching search
+     * */
+    function getPatientName($plname) {
+        return $this->_fetchAll(OPAL_GET_PATIENT_NAME, array(
+            array("parameter"=>":name","variable"=>'%'.$plname.'%',"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Get the patient by their mrn
+     * @params  $mrn : string - target patient mrn
+     * @return  array - list of patient(s) matching search
+     * */
+    function getPatientMRN($pmrn) {
+        return $this->_fetchAll(OPAL_GET_PATIENT_MRN, array(
+            array("parameter"=>":mrn","variable"=>'%'.$pmrn.'%',"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Get the patient by their ramq
+     * @params  $mrn : string - target patient ramq
+     * @return  array - list of patient(s) matching search
+     * */
+    function getPatientRAMQ($pramq) {
+        return $this->_fetchAll(OPAL_GET_PATIENT_RAMQ, array(
+            array("parameter"=>":ramq","variable"=>'%'.$pramq.'%',"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient diagnosis report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient diagnosis details
+     */
+    function getPatientDiagnosisReport($pnum){
+        return $this->_fetchAll(OPAL_GET_DIAGNOSIS_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));    
+    }
+
+    /**
+     * Get patient appointment report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient appointment details
+     */
+    function getPatientAppointmentReport($pnum){
+        return $this->_fetchAll(OPAL_GET_APPOINTMENT_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient questionnaire report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient questionnaire details
+     */
+    function getPatientQuestionnaireReport($pnum){
+        return $this->_fetchAll(OPAL_GET_QUESTIONNAIRE_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient educational material report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient educ material details
+     */
+    function getPatientEducMaterialReport($pnum){
+        return $this->_fetchAll(OPAL_GET_EDUCATIONAL_MATERIAL_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient legacy test results report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient test result details
+     */
+    function getPatientLegacyTestReport($pnum){
+        return $this->_fetchAll(OPAL_GET_LEGACY_TEST_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient test results report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient test result details
+     */
+    function getPatientTestReport($pnum){
+        return $this->_fetchAll(OPAL_GET_TEST_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient notifications report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient notifiations details
+     */
+    function getPatientNotificationsReport($pnum){
+        return $this->_fetchAll(OPAL_GET_NOTIFICATIONS_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient treatment plan report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient tx plan details
+     */
+    function getPatientTreatmentPlanReport($pnum){
+        return $this->_fetchAll(OPAL_GET_TREATMENT_PLAN_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient clinnotes  report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient clinnote details
+     */
+    function getPatientClinNoteReport($pnum){
+        return $this->_fetchAll(OPAL_GET_CLINICAL_NOTES_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient treating team report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient tx team details
+     */
+    function getPatientTxTeamReport($pnum){
+        return $this->_fetchAll(OPAL_GET_TREATING_TEAM_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient general report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient gen details
+     */
+    function getPatientGeneralReport($pnum){
+        return $this->_fetchAll(OPAL_GET_GENERAL_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+
+
+
+
 }
