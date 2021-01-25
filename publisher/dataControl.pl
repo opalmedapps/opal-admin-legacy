@@ -498,7 +498,7 @@ print "\n--- Start getApptsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localt
 print "--- End getApptsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got appointment list\n" if $verbose;
 #=========================================================================================
-# Loop over each patient. Various functions are done.
+# Loop over each appointment. Various functions are done.
 #=========================================================================================
 print "-- Start Loop over each Appointment: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 foreach my $Appointment (@ApptList) {
