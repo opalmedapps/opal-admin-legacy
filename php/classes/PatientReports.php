@@ -13,19 +13,40 @@ class PatientReports extends Module {
     }
 
     /**
+     * Validate the name search parameter for individual reports
+     * @param post string - patient last name
+     * @return errCode binary - 1st bit for pname
+     */
+    protected function _validateName(&$post){
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = "";
+        if(is_array($post)){
+            if(!array_key_exists("pname", $post) || $post["pname"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+        }
+        return $errCode;
+    }
+
+    /**
      * Search database for patient
      * 
      * @param name: patient last name case insensitive
      * @return patientList: details for the given patient(s) matching search criteria
-     * 
+     * @error 422 with array (validation=>integer)
      */
     public function findPatientByName( $post ) {
         //check read access before proceeding
         $this->checkReadAccess($post);
-        //sanitize
-        $plname = HelpSetup::arraySanitization($post['pname']);
-        // SQL call from ORM in place
-        return $this->opalDB->getPatientName($plname);
+        //data validation
+        $errCode = $this->_validateName($post);
+        $errCode = bindec($errCode);
+        if($errCode != 0){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
+        }
+        return $this->opalDB->getPatientName($post['pname']);
     }
 
     /**
