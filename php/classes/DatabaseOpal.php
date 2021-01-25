@@ -2188,8 +2188,58 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /**
+     * Get educational material options
+     * @params $matType : string - material category
+     * @return array - educ options
+     */
+    function getEducMatOptions($matType){
+        return $this->_fetchAll(OPAL_GET_EDUCATIONAL_MATERIAL_OPTIONS, array(
+            array("parameter"=>":matType","variable"=>$matType,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
 
+    /**
+     * Get educational material group report
+     * @param $matType : string - material category
+     * @param $matName : string - material name
+     * @return array - educ material report
+     */
+    function getEducMatReport($matType, $matName){
+        return $this->_fetchAll(OPAL_GET_EDUCATIONAL_MATERIAL_GROUP, array(
+            array("parameter"=>":matType","variable"=>$matType,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":matName","variable"=>$matName,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
 
+    /**
+     * Get questionnaire options
+     * @param none
+     * @return array - questionnaire names (EN)
+     */
+    function getQstOptions(){
+        return $this->_fetchAll(OPAL_GET_QUESTIONNAIRE_OPTIONS, array());
+    }
+
+    /**
+     * Get questionnaires group report
+     * @param $qName : string - questionnaire name
+     * @return array - questionnaires group report
+     */
+    function getQstReport($qName){
+        return $this->_fetchAll(OPAL_GET_QUESTIONNAIRE_REPORT_GROUP, array(
+            array("parameter"=>":qName","variable"=>$qName,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get demographics group report
+     * @param none
+     * @return array - demographics report
+     */
+    function getDemoReport(){
+        return $this->_fetchAll(OPAL_GET_DEMOGRAPHICS_REPORT_GROUP, array());
+    }
 
 
 }

@@ -1065,3 +1065,37 @@ define("OPAL_GET_GENERAL_REPORT", "
     WHERE p.PatientSerNum = a.PatientSerNum AND a.PostControlSerNum = pc.PostControlSerNum
     AND p.PatientSerNum = :pnum;
 ");
+
+define("OPAL_GET_EDUCATIONAL_MATERIAL_OPTIONS", "
+    SELECT Name_EN AS name, PublishFlag AS pflag
+    FROM ".OPAL_EDUCATION_MATERIAL_TABLE."
+    WHERE EducationalMaterialType_EN = :matType;
+");
+
+define("OPAL_GET_EDUCATIONAL_MATERIAL_GROUP", "
+    SELECT p.FirstName AS pname, p.LastName AS plname, p.PatientSerNum AS pser, p.Sex AS psex,
+    p.Age AS page, p.DateOfBirth AS pdob, em.DateAdded AS edate, em.ReadStatus AS eread, em.LastUpdated AS eupdate
+    FROM ".OPAL_PATIENT_TABLE." p, ".OPAL_EDUCATIONAL_MATERIAL_TABLE." em, ".OPAL_EDUCATION_MATERIAL_TABLE." emc
+    WHERE em.PatientSerNum = p.PatientSerNum AND em.EducationalMaterialControlSerNum = emc.EducationalMaterialControlSerNum
+    AND emc.EducationalMaterialType_EN = :matType
+    AND emc.Name_EN = :matName
+");
+
+define("OPAL_GET_QUESTIONNAIRE_OPTIONS", "
+    SELECT QuestionnaireName_EN AS name FROM ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.";");
+
+define("OPAL_GET_QUESTIONNAIRE_REPORT_GROUP", "
+    SELECT p.FirstName AS pname, p.LastName AS plname, p.PatientSerNum AS pser, p.Sex AS psex,
+    p.DateOfBirth AS pdob, q.DateAdded AS qdate, q.CompletionDate AS qcomplete
+    FROM ".OPAL_PATIENT_TABLE." p, ".OPAL_QUESTIONNAIRE_TABLE." q, ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." qc
+    WHERE p.PatientSerNum = q.PatientSerNum AND q.QuestionnaireControlSerNum = qc.QuestionnaireControlSerNum
+    AND qc.QuestionnaireName_EN = :qName
+");
+
+define("OPAL_GET_DEMOGRAPHICS_REPORT_GROUP", "
+    SELECT p.PatientSerNum AS pser, p.FirstName AS pname, p.LastName AS plname, p.Sex AS psex,
+    p.DateOfBirth AS pdob, p.Age AS page, p.Email AS pemail, p.Language AS plang, p.RegistrationDate AS preg,
+    p.ConsentFormExpirationDate AS pcons, ifnull((select d1.Description_EN from ".OPAL_DIAGNOSIS_TABLE." d1 where p.PatientSerNum = d1.PatientSerNum order by CreationDate desc limit 1), 'NA') as diagdesc,
+    ifnull((select d2.CreationDate from ".OPAL_DIAGNOSIS_TABLE." d2 where p.PatientSerNum = d2.PatientSerNum order by CreationDate desc limit 1), now()) as diagdate
+    FROM ".OPAL_PATIENT_TABLE." p ORDER BY p.RegistrationDate
+");

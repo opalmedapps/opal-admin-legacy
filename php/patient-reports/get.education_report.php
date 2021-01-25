@@ -3,10 +3,7 @@
 include_once('patient-reports.inc');
 
 $patReport = new PatientReports; // Object
-$matType	= $_POST['type'];
-$matName = $_POST['name'];
-
-$response = $patReport->getEducationalMaterialReport($matType, $matName);
+$response = $patReport->getEducationalMaterialReport($_POST);
 header('Content-Type: application/javascript');
 print json_encode($response); // Return response
 
