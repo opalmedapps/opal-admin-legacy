@@ -195,4 +195,34 @@ class Module
         }
         return $assignedDB;
     }
+
+    /*
+     * Gets questionnaire answers
+     *
+     * @param integer $patientQuestionnaireSer : the patient-questionnaire relation serial number
+     * @return array questionnaire results along with explicit questionnaire ID and patientSerNum 
+     */
+    protected function _getQuestionnaireResults($patientQuestionnaireSer, $language){
+        $questionnaireResults = $this->questionnaireDB->getQuestionnaireResults($patientQuestionnaireSer, $language);
+        $questionnaireId = $questionnaireResults[0][0]["questionnaire_id"];
+        $patientSerNum = $questionnaireResults[0][0]["externalId"]; // patient_id
+
+        $currentAnswers = $questionnaireResults[3];
+
+        // also need to get answers from the questionnaire just before the current (if exists)
+        $prevQuestionnaire = $this->questionnaireDB->getLastAnsweredQuestionnaire($questionnaireId, $patientSerNum);
+        $prevAnswers = array();
+        if (!empty($prevQuestionnaire)) {
+            $prevPatientQuestionnaireSer = $prevQuestionnaire[0]["PatientQuestionnaireSerNum"];
+            $prevQuestionnaireResults = $this->questionnaireDB->getQuestionnaireResults($prevPatientQuestionnaireSer, $language);
+            $prevAnswers = $prevQuestionnaireResults[3];
+        }
+
+        return array(
+            "questionnaire_id"=>$questionnaireId,
+            "patient_ser"=>$patientSerNum,
+            "answers"=>array("current"=>$currentAnswers, "previous"=>$prevAnswers)
+        );
+
+    }
 }

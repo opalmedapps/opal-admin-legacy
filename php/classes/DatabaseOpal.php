@@ -2112,7 +2112,8 @@ class DatabaseOpal extends DatabaseAccess {
         $toSubmit = array(
             "QuestionnaireControlSerNum"=>$questionnaireControlSerNum,
             "PatientSerNum"=>$patientSerNum,
-            "DateAdded"=>date("Y-m-d H:i:s")
+            "DateAdded"=>date("Y-m-d H:i:s"),
+            "SessionId"=>$this->getSessionId()
         );
         return $this->_insertRecordIntoTable(OPAL_QUESTIONNAIRE_TABLE, $toSubmit);
     }

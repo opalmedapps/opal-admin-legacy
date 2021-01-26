@@ -26,27 +26,6 @@ class Encrypt {
        return $result;
     }
 
-    /**
-	 * Encodes string according to key
-	 *
-	 * @access public
-	 * @param mixed $str
-	 * @param mixed $encodeKey
-	 * @return string
-	 */
-	 
-	public static function encodeStringSystem($str,$encodeKey) {
-            
-        $enc = "";
-        $str = strval($str);
-        for($i = 0;$i < strlen($str);$i++) {
-             $a = self::_getCharcode($str,$i);
-             $b = $a ^ $encodeKey;
-             $enc .= self::_fromCharCode($b);
-        }
- 
-        return base64_encode($enc);
-    }
 
     /**
      * PHP replacement for JavaScript charCodeAt.

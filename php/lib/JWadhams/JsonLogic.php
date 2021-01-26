@@ -1,5 +1,9 @@
 <?php
-
+/**
+ *  Third party package JsonLogic provides processing functions for our jsonTrigger logic in OpalDB
+ *  Read more: https://jsonlogic.com/
+ *  @author Jeremy Wadhams
+ */
 namespace JWadhams;
 
 class JsonLogic

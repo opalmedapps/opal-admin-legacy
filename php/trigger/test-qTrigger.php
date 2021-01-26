@@ -4,8 +4,6 @@ include_once("../config.php");
 
 header('Content-Type: application/javascript');
 
-//die("This test script has been disabled");
-
 
 $url = 'https://localhost/opalAdmin/user/system-login';
 
