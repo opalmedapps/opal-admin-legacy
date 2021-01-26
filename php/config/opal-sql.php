@@ -81,6 +81,7 @@ define("OPAL_ALIAS_TABLE","Alias");
 define("OPAL_DIAGNOSIS_TRANSLATION_TABLE","DiagnosisTranslation");
 define("OPAL_PATIENT_TABLE","Patient");
 define("OPAL_TEST_RESULT_EXPRESSION_TABLE","TestResultExpression");
+//define("OPAL_TEST_RESULT_ADD_LINKS_TABLE","TestResultAdditionalLinks");
 define("OPAL_DIAGNOSIS_CODE_TABLE","DiagnosisCode");
 define("OPAL_LOGIN_VIEW","v_login");
 define("OPAL_USER_ACTIVITY_LOG_TABLE","OAActivityLog");
@@ -108,9 +109,13 @@ define("OPAL_NOTIFICATION_TABLE", "Notification");
 define("OPAL_TASK_TABLE", "Task");
 define("OPAL_PRIORITY_TABLE", "Priority");
 define("OPAL_DOCUMENT_TABLE", "Document");
+=======
+define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
+define("OPAL_TEST_CONTROL_TABLE","TestControl");
+define("OPAL_TEST_EXPRESSION_TABLE","TestExpression");
+
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
-
 
 /*
  * Listing of all SQL queries for the Opal database
@@ -1098,4 +1103,128 @@ define("OPAL_GET_DEMOGRAPHICS_REPORT_GROUP", "
     p.ConsentFormExpirationDate AS pcons, ifnull((select d1.Description_EN from ".OPAL_DIAGNOSIS_TABLE." d1 where p.PatientSerNum = d1.PatientSerNum order by CreationDate desc limit 1), 'NA') as diagdesc,
     ifnull((select d2.CreationDate from ".OPAL_DIAGNOSIS_TABLE." d2 where p.PatientSerNum = d2.PatientSerNum order by CreationDate desc limit 1), now()) as diagdate
     FROM ".OPAL_PATIENT_TABLE." p ORDER BY p.RegistrationDate
+=======
+define("OPAL_GET_TEST_RESULTS","
+    SELECT DISTINCT TestControlSerNum AS serial, Name_EN AS name_EN, Name_FR AS name_FR, PublishFlag AS publish,
+    Group_EN AS group_EN, Group_FR AS group_FR, 0 AS changed FROM ".OPAL_TEST_CONTROL_TABLE.";
+");
+
+define("OPAL_GET_ASSIGNED_TESTS","
+    SELECT tre.ExpressionName AS id, trc.Name_EN AS name_EN FROM ".OPAL_TEST_RESULT_CONTROL_TABLE." trc
+    LEFT JOIN ".OPAL_TEST_RESULT_EXPRESSION_TABLE." tre ON trc.TestResultControlSerNum = tre.TestResultControlSerNum;
+");
+
+define("OPAL_UPDATE_TEST_RESULTS_PUBLISH_FLAG","
+    UPDATE ".OPAL_TEST_CONTROL_TABLE." SET PublishFlag = :PublishFlag, LastUpdatedBy = :LastUpdatedBy,
+    SessionId = :SessionId WHERE TestControlSerNum = :TestControlSerNum AND PublishFlag != :PublishFlag;
+");
+
+define("OPAL_GET_TEST_RESULT_DETAILS","
+    SELECT DISTINCT Name_EN AS name_EN, Name_FR AS name_FR, Description_EN AS description_EN, Description_FR AS description_FR,
+    Group_EN AS group_EN, Group_FR AS group_FR, EducationalMaterialControlSerNum AS eduMatSer FROM ".OPAL_TEST_CONTROL_TABLE."
+    WHERE TestControlSerNum = :TestControlSerNum;
+");
+
+define("OPAL_GET_TEST_EXPRESSION_NAMES","
+    SELECT DISTINCT ExpressionName AS name, TestExpressionSerNum AS id, 1 AS added FROM ".OPAL_TEST_EXPRESSION_TABLE."
+    WHERE TestControlSerNum = :TestControlSerNum;
+");
+
+/*define("OPAL_GET_TEST_RESULT_ADD_LINK","
+    SELECT DISTINCT TestResultAdditionalLinksSerNum AS serial, Name_EN AS name_EN, Name_FR AS name_FR, URL_EN AS url_EN,
+    URL_FR AS url_FR FROM ".OPAL_TEST_RESULT_ADD_LINKS_TABLE." WHERE TestResultControlSerNum = :TestResultControlSerNum;
+");*/
+
+define("OPAL_GET_TEST_RESULT_GROUPS","
+    SELECT DISTINCT Group_EN AS EN, Group_FR AS FR FROM ".OPAL_TEST_CONTROL_TABLE.";
+");
+
+define("OPAL_DOES_EDU_MATERIAL_EXISTS","
+    SELECT EducationalMaterialControlSerNum FROM ".OPAL_EDUCATION_MATERIAL_TABLE."
+    WHERE EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum;
+");
+
+define("OPAL_SANITIZE_EMPTY_TEST_RESULTS","
+    UPDATE ".OPAL_TEST_CONTROL_TABLE." tc LEFT JOIN ".OPAL_TEST_EXPRESSION_TABLE." tre ON
+    tc.TestControlSerNum = tre.TestControlSerNum SET tc.PublishFlag = ".INACTIVE_RECORD.", tc.LastUpdatedBy = :LastUpdatedBy,
+    tc.SessionId = :SessionId WHERE tre.TestExpressionSerNum IS NULL; 
+");
+
+define("OPAL_UPDATE_TEST_CONTROL", "
+    UPDATE ".OPAL_TEST_CONTROL_TABLE." SET name_EN = :name_EN, name_FR = :name_FR, description_EN = :description_EN,
+    description_FR = :description_FR, group_EN = :group_EN, group_FR = :group_FR,
+    EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum, LastUpdatedBy = :LastUpdatedBy,
+    SessionId = :SessionId WHERE TestControlSerNum = :TestControlSerNum;"
+);
+
+define("OPAL_REMOVE_UNUSED_TEST_EXPRESSIONS","
+    UPDATE ".OPAL_TEST_EXPRESSION_TABLE." SET TestControlSerNum = NULL WHERE TestControlSerNum = :TestControlSerNum
+    AND TestExpressionSerNum NOT IN (%%LISTIDS%%);
+");
+
+/*define("OPAL_COUNT_TR_ADDITIONAL_LINKS", "
+    SELECT COUNT(*) AS total FROM ".OPAL_TEST_RESULT_ADD_LINKS_TABLE." WHERE TestResultAdditionalLinksSerNum IN (%%LISTIDS%%);
+");
+
+define("OPAL_DELETE_UNUSED_ADD_LINKS","
+    DELETE FROM ".OPAL_TEST_RESULT_ADD_LINKS_TABLE." WHERE TestResultControlSerNum = :TestResultControlSerNum
+    AND TestResultAdditionalLinksSerNum NOT IN (%%LISTIDS%%);
+");
+
+define("OPAL_UPDATE_ADDITIONAL_LINKS","
+    UPDATE ".OPAL_TEST_RESULT_ADD_LINKS_TABLE." SET Name_EN = :Name_EN, Name_FR = :Name_FR, URL_EN = :URL_EN, URL_FR = :URL_FR
+    WHERE TestResultAdditionalLinksSerNum = :TestResultAdditionalLinksSerNum AND (Name_EN != :Name_EN OR Name_FR != :Name_FR
+    OR URL_EN != :URL_EN OR URL_FR != :URL_FR);
+");*/
+
+define("OPAL_GET_TEST_RESULT_CHART_LOG","
+    SELECT DISTINCT trmh.CronLogSerNum AS cron_serial, COUNT(trmh.CronLogSerNum) AS y, cl.CronDateTime AS x,
+    trc.Name_EN AS name FROM ".OPAL_TEST_RESULT_MH_TABLE." trmh, ".OPAL_TEST_RESULT_EXPRESSION_TABLE." tre,
+    ".OPAL_CRON_LOG_TABLE." cl, ".OPAL_TEST_RESULT_CONTROL_TABLE." trc WHERE cl.CronStatus = 'Started'
+    AND cl.CronLogSerNum = trmh.CronLogSerNum AND trmh.CronLogSerNum IS NOT NULL 
+    AND trmh.TestResultExpressionSerNum = tre.TestResultExpressionSerNum
+    AND tre.TestResultControlSerNum = trc.TestResultControlSerNum GROUP BY trmh.CronLogSerNum, cl.CronDateTime
+    ORDER BY cl.CronDateTime ASC;
+");
+
+define("OPAL_GET_TEST_RESULT_CHART_LOG_BY_ID","
+    SELECT DISTINCT trmh.CronLogSerNum AS cron_serial, COUNT(trmh.CronLogSerNum) AS y, cl.CronDateTime AS x,
+    trc.Name_EN AS name FROM ".OPAL_TEST_RESULT_MH_TABLE." trmh, ".OPAL_TEST_RESULT_EXPRESSION_TABLE." tre,
+    ".OPAL_CRON_LOG_TABLE." cl, ".OPAL_TEST_RESULT_CONTROL_TABLE." trc WHERE cl.CronStatus = 'Started'
+    AND cl.CronLogSerNum = trmh.CronLogSerNum AND trmh.CronLogSerNum IS NOT NULL 
+    AND trmh.TestResultExpressionSerNum = tre.TestResultExpressionSerNum AND tre.TestResultControlSerNum = :TestResultControlSerNum
+    AND tre.TestResultControlSerNum = trc.TestResultControlSerNum GROUP BY trmh.CronLogSerNum, cl.CronDateTime
+    ORDER BY cl.CronDateTime ASC;
+");
+
+define("OPAL_UNSET_TEST_EXPRESSIONS","
+    UPDATE ".OPAL_TEST_EXPRESSION_TABLE." SET TestControlSerNum = NULL WHERE TestControlSerNum = :TestControlSerNum;
+");
+
+/*define("OPAL_DELETE_TEST_RESULT_ADDITIONAL_LINKS","
+    DELETE FROM ".OPAL_TEST_RESULT_ADD_LINKS_TABLE." WHERE TestResultControlSerNum = :TestResultControlSerNum;
+");*/
+
+define("OPAL_DELETE_TEST_RESULT","
+    DELETE FROM ".OPAL_TEST_CONTROL_TABLE." WHERE TestControlSerNum = :TestControlSerNum;
+");
+
+define("OPAL_UPDATE_TEST_RESULT_MH_DELETION","
+    UPDATE ".OPAL_TEST_RESULT_CONTROL_MH_TABLE." SET LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId
+    WHERE TestResultControlSerNum = :TestResultControlSerNum ORDER BY RevSerNum DESC LIMIT 1
+");
+
+define("OPAL_GET_TEST_NAMES","
+    SELECT te.TestExpressionSerNum AS id, te.TestControlSerNum, tc.Name_EN AS name_EN, te.ExpressionName AS name
+    FROM ".OPAL_TEST_EXPRESSION_TABLE." te LEFT JOIN ".OPAL_TEST_CONTROL_TABLE." tc 
+    ON te.TestControlSerNum = tc.TestControlSerNum ORDER BY te.ExpressionName;
+");
+
+define("OPAL_COUNT_TEST_IDS","
+    SELECT COUNT(*) AS total FROM ".OPAL_TEST_EXPRESSION_TABLE." WHERE TestExpressionSerNum IN (%%LISTIDS%%);
+");
+
+define("OPAL_UPDATE_TEST_EXPRESSION","
+    UPDATE ".OPAL_TEST_EXPRESSION_TABLE." SET TestControlSerNum = :TestControlSerNum, SessionId = :SessionId, 
+    LastUpdatedBy = :LastUpdatedBy WHERE TestExpressionSerNum = :TestExpressionSerNum;
 ");
