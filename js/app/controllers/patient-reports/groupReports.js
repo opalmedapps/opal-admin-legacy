@@ -134,6 +134,9 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
         }else if($scope.materialType == "[FR]Treatment Guidelines"){
             $scope.materialType = "Treatment Guidelines";
         }
+
+        //need to clear selected material here to prevent 422 error from data validation
+        $scope.selectedMaterial = "";
         $.ajax({
             type: "POST",
             url: "patient-reports/find/education-options",
