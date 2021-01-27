@@ -17,7 +17,6 @@ controller('patientReportHandler', function ($scope, $state, Session, ErrorHandl
     $scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 1)) !== 0);
     $scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 2)) !== 0);
 
-    console.log("in handler");
 	// Function to go to individual report
 	$scope.goToIndividual = function () {
         $state.go('patients/report/individual');
