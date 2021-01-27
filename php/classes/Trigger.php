@@ -51,14 +51,12 @@ class Trigger extends Module {
                 $postData["language"] = ABVR_FRENCH_LANGUAGE;
             }
             //bit 3
-            if(!in_array(strip_tags($moduleId), MODULE_PUBLICATION_TRIGGER)) {
-                $errCode = "1" . $errCode;
-            }else{
-                $errCode = "0" . $errCode;
+            if(!in_array(strip_tags($moduleId), MODULE_PUBLICATION_TRIGGER)) { //in this case it is an internal issue and we just return 500 error immediately
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Unknown module. Please contact your admin with date and type of your request.");
             }
 
         }else{
-            $errCode = "111";
+            $errCode = "11";
         }
 
         return bindec($errCode);
@@ -104,12 +102,10 @@ class Trigger extends Module {
         $result = array();
         switch ($sourceModuleId) {
             case MODULE_QUESTIONNAIRE:
-                // $questionnaire = new Questionnaire(true);
-                // $result = $questionnaire->getQuestionnaireResults($id, $language); /// ultimately there's a stored procedure for this
-                $result = $this->_getQuestionnaireResults($id, $language); // this wont work as is because Module provides OpalDB access, not QuestionnaireDB access
+               $result = $this->_getQuestionnaireResults($id, $language); // this wont work as is because Module provides OpalDB access, not QuestionnaireDB access
                 break;
-            default: //return a malformed client request syntax error if moduleId has no case matches
-                HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("sourceModuleId"=>$sourceModuleId));
+            default: //return a 500 error if moduleId has no case matches
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Unknown module or no case matches. Please contact your admin with date and type of your request.");
 
         }
         return $result;
@@ -129,7 +125,7 @@ class Trigger extends Module {
                 $result = $this->_publish($trigger, $patientSerNum);
                 break;
             default: //in this case return error 500 because something went wrong on backend with retrieving triggers
-                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, array("eventType"=>$trigger['eventType']));
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Unknown trigger. Please contact your admin with date and type of your request.");
         }
         return $result;
     }
@@ -157,7 +153,7 @@ class Trigger extends Module {
                 // Need to separate post
                 break;
             default:
-                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, array("targetModuleId"=>$trigger["targetModuleId"]));
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Unknown trigger. Please contact your admin with date and type of your request.");
         }
         return $result;
     }
@@ -187,7 +183,7 @@ class Trigger extends Module {
                     $patientSerNum = $dataToCheck["patient_ser"]; // which patient to trigger event on
                     break;
                 default:
-                    HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("sourceModuleId"=>$sourceModuleId));     
+                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Unknown module. Please contact your admin with date and type of your request.");
             }
         }
         else
