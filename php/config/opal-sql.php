@@ -109,7 +109,6 @@ define("OPAL_NOTIFICATION_TABLE", "Notification");
 define("OPAL_TASK_TABLE", "Task");
 define("OPAL_PRIORITY_TABLE", "Priority");
 define("OPAL_DOCUMENT_TABLE", "Document");
-=======
 define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
 define("OPAL_TEST_CONTROL_TABLE","TestControl");
 define("OPAL_TEST_EXPRESSION_TABLE","TestExpression");
@@ -1103,7 +1102,8 @@ define("OPAL_GET_DEMOGRAPHICS_REPORT_GROUP", "
     p.ConsentFormExpirationDate AS pcons, ifnull((select d1.Description_EN from ".OPAL_DIAGNOSIS_TABLE." d1 where p.PatientSerNum = d1.PatientSerNum order by CreationDate desc limit 1), 'NA') as diagdesc,
     ifnull((select d2.CreationDate from ".OPAL_DIAGNOSIS_TABLE." d2 where p.PatientSerNum = d2.PatientSerNum order by CreationDate desc limit 1), now()) as diagdate
     FROM ".OPAL_PATIENT_TABLE." p ORDER BY p.RegistrationDate
-=======
+");
+
 define("OPAL_GET_TEST_RESULTS","
     SELECT DISTINCT TestControlSerNum AS serial, Name_EN AS name_EN, Name_FR AS name_FR, PublishFlag AS publish,
     Group_EN AS group_EN, Group_FR AS group_FR, 0 AS changed FROM ".OPAL_TEST_CONTROL_TABLE.";

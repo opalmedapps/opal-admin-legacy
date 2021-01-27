@@ -2241,8 +2241,7 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(OPAL_GET_DEMOGRAPHICS_REPORT_GROUP, array());
     }
 
-
-=======
+    /*
      * Fetch all test results
      * @params  void
      * @return  array - list of test results
