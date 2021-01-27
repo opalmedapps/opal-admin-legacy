@@ -7,8 +7,19 @@ require('../lib/JWadhams/JsonLogic.php');
 
 class Trigger extends Module {
 
+    protected $questionnaireDB;
+
     public function __construct($guestStatus = false) {
         parent::__construct(MODULE_TRIGGER, $guestStatus);
+        // we instantiate this object for access to questionnaireDB in _getQuestionnaireResults function
+        $this->questionnaireDB = new DatabaseQuestionnaire(
+            QUESTIONNAIRE_DB_2019_HOST,
+            QUESTIONNAIRE_DB_2019_NAME,
+            QUESTIONNAIRE_DB_2019_PORT,
+            QUESTIONNAIRE_DB_2019_USERNAME,
+            QUESTIONNAIRE_DB_2019_PASSWORD,
+            false
+        );
     }
 
     /*
@@ -31,9 +42,9 @@ class Trigger extends Module {
             //bit 2
             // language field is optional so we must account for this
             if(array_key_exists("language", $postData)){
-                if($postData["language"] == "FR" || $postData["language"] == "EN"){ //language field exists and is valid (french or english)
+                if(in_array(strip_tags($postData["language"]), OPAL_ADMIN_LANGUAGES)){
                     $errCode = "0" . $errCode;
-                }else{ // invalid if language is given as anything else
+                }else{ //given language not currently supported
                     $errCode = "1" . $errCode;
                 }
             }else{ //default to french if no language given
@@ -54,6 +65,36 @@ class Trigger extends Module {
     }
 
     /*
+     * Gets questionnaire answers
+     *
+     * @param integer $patientQuestionnaireSer : the patient-questionnaire relation serial number
+     * @return array questionnaire results along with explicit questionnaire ID and patientSerNum 
+     */
+    protected function _getQuestionnaireResults($patientQuestionnaireSer, $language){
+        $questionnaireResults = $this->questionnaireDB->getQuestionnaireResults($patientQuestionnaireSer, $language);
+        $questionnaireId = $questionnaireResults[0][0]["questionnaire_id"];
+        $patientSerNum = $questionnaireResults[0][0]["externalId"]; // patient_id
+
+        $currentAnswers = $questionnaireResults[3];
+
+        // also need to get answers from the questionnaire just before the current (if exists)
+        $prevQuestionnaire = $this->questionnaireDB->getLastAnsweredQuestionnaire($questionnaireId, $patientSerNum);
+        $prevAnswers = array();
+        if (!empty($prevQuestionnaire)) {
+            $prevPatientQuestionnaireSer = $prevQuestionnaire[0]["PatientQuestionnaireSerNum"];
+            $prevQuestionnaireResults = $this->questionnaireDB->getQuestionnaireResults($prevPatientQuestionnaireSer, $language);
+            $prevAnswers = $prevQuestionnaireResults[3];
+        }
+
+        return array(
+            "questionnaire_id"=>$questionnaireId,
+            "patient_ser"=>$patientSerNum,
+            "answers"=>array("current"=>$currentAnswers, "previous"=>$prevAnswers)
+        );
+
+    }
+
+    /*
      * Function that gets the necessary data that will be used to check the logic against
      * @params  integer  $id : starting-point identifier to search for source data
      * @params  integer  $sourceModuleId : the module id of the source content
@@ -63,9 +104,9 @@ class Trigger extends Module {
         $result = array();
         switch ($sourceModuleId) {
             case MODULE_QUESTIONNAIRE:
-                $questionnaire = new Questionnaire(true);
-                $result = $questionnaire->getQuestionnaireResults($id, $language); /// ultimately there's a stored procedure for this
-                //$result = $this->_getQuestionnaireResults($id, $language); // this wont work as is because Module provides OpalDB access, not QuestionnaireDB access
+                // $questionnaire = new Questionnaire(true);
+                // $result = $questionnaire->getQuestionnaireResults($id, $language); /// ultimately there's a stored procedure for this
+                $result = $this->_getQuestionnaireResults($id, $language); // this wont work as is because Module provides OpalDB access, not QuestionnaireDB access
                 break;
             default: //return a malformed client request syntax error if moduleId has no case matches
                 HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("sourceModuleId"=>$sourceModuleId));

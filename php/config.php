@@ -203,6 +203,9 @@ if(!$ignoreSecuredConnection) {
 
 define("ABVR_FRENCH_LANGUAGE", "FR");
 define("ABVR_ENGLISH_LANGUAGE", "EN");
+// all language abbreviations in opal admin
+define("OPAL_ADMIN_LANGUAGES",array(ABVR_FRENCH_LANGUAGE, ABVR_ENGLISH_LANGUAGE));
+
 
 /*
  * PHP Sessions config
