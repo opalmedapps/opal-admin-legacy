@@ -1,7 +1,6 @@
 <?php
 
-include_once('patient-reports.inc');
-
+include_once("../config.php");
 $patReport = new PatientReports; // Object
 $response = $patReport->findPatientByRAMQ($_POST);
 header('Content-Type: application/javascript');

@@ -2,6 +2,18 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 
 controller('patientReports', function($scope, $rootScope, Session, ErrorHandler, MODULE, $uibModal, $filter){
 
+    $scope.navMenu = Session.retrieveObject('menu');
+    $scope.navSubMenu = Session.retrieveObject('subMenu')[MODULE.patient];
+    angular.forEach($scope.navSubMenu, function(menu) {
+        menu.name_display = (Session.retrieveObject('user').language === "FR" ? menu.name_FR : menu.name_EN);
+        menu.description_display = (Session.retrieveObject('user').language === "FR" ? menu.description_FR : menu.description_EN);
+    });
+
+    $scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 0)) !== 0);
+    $scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 1)) !== 0);
+    $scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 2)) !== 0);
+
+
     $scope.foundPatient = false; //only show the report once patient is found/selected
     $scope.selectPatient = false; //only show if multiple patients are found from search and user must choose one
     $scope.featureList = { // Which features will be added into the report
