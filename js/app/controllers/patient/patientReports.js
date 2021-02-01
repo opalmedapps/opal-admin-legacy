@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
+angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).
 
 controller('patientReports', function($scope, $rootScope, Session, ErrorHandler, MODULE, $uibModal, $filter){
 
@@ -37,6 +37,7 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
 
     $scope.searchResult = "";
     $scope.noPatientFound = false;
+    $scope.generateFinished = false; //hide rpeort segments
 
     $scope.psnum = ""; //the selected patient identifiers for our report
     $scope.pname = "";
@@ -411,6 +412,7 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
             $scope.searchRAMQ = "";
 
             $scope.noPatientFound = false;
+            $scope.generateFinished = false;
     
             $scope.pname = "";
             $scope.plname = "";
@@ -537,6 +539,7 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
                     $scope.txplanReport = result.treatplan;
                     strip($scope.txplanReport);
                 }
+                $scope.generateFinished = true; //finally we can show report segments
             
             }else{ //something went wrong, no result recieved
                 ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));

@@ -30,12 +30,12 @@
 						</div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-12 col-sm-6 col-md-4">
-                            <div class="panel-container animated" ng-click="goToIndividual();" style="cursor:pointer;">
+                        <div class="col-xs-12 col-sm-6 col-md-4 home-menu">
+                            <div class="panel-container animated" ng-class="{pulse: hoverMenuRegistration}" ng-mouseenter="hoverMenuRegistration=true" ng-mouseleave="hoverMenuRegistration=false" ng-click="goToIndividual();" style="cursor:pointer;">
                                 <div class="panel-info">
                                     <div class="panel-content">
                                         <div class="icon-home clearfix">
-                                            <span class="fa fa-user-plus"></span>
+                                            <span class="fa fa fa-file-text"></span>
                                         </div>
                                         <div class="panel-title">
                                             <h1>{{'PATIENTREPORT.TITLE.INDIVIDUAL'|translate}}</h1>
@@ -47,12 +47,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-6 col-md-4">
-                            <div class="panel-container animated" ng-click="goToGroup();" style="cursor:pointer;">
+                        <div class="col-xs-12 col-sm-6 col-md-4 home-menu">
+                            <div class="panel-container animated" ng-class="{pulse: hoverMenuRegistration}" ng-mouseenter="hoverMenuRegistration=true" ng-mouseleave="hoverMenuRegistration=false" ng-click="goToGroup();" style="cursor:pointer;">
                                 <div class="panel-info">
                                     <div class="panel-content">
                                         <div class="icon-home clearfix">
-                                            <span class="fa fa-user-plus"></span>
+                                            <span class="fa fa fa-file-text"></span>
                                         </div>
                                         <div class="panel-title">
                                             <h1>{{'PATIENTREPORT.TITLE.GROUP'|translate}}</h1>

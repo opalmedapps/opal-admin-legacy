@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.groupReports', ['ngAnimate', 'ui.bootstrap',  'ui.grid', 'ui.grid.resizeColumns']).
+angular.module('opalAdmin.controllers.groupReports', ['ngAnimate', 'ui.bootstrap',  'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).
 
 controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibModal, $filter){
     // navigation
@@ -18,9 +18,29 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
     // Three main categories of group reporting
     //  Ctrl+F to 'EDUCATIONAL', 'QUESTIONNAIRES', 'DEMOGRAPHICS'  to see relevant code
     $scope.category = {
-		education : true,
+		education : false,
 		questionnaire : false,
 		demographics : false,
+    };
+
+    $scope.switchView = function(target){
+        if(target === 'education'){
+            $scope.category.questionnaire = false;
+            $scope.category.demographics = false;
+            $scope.category.education = true;
+            //$scope.showQstReport = false;
+        }else if (target === 'questionnaire'){
+            $scope.category.demographics = false;
+            $scope.category.education = false;
+            $scope.category.questionnaire = true;
+            //$scope.showEducReport = false;
+        }else if (target === 'demographics'){
+            $scope.category.education = false;
+            $scope.category.questionnaire = false;
+            $scope.category.demographics = true;
+            //$scope.showEducReport = false;
+            //$scope.showQstReport = false;
+        }
     };
 
 

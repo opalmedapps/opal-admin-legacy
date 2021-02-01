@@ -2907,7 +2907,7 @@
     },
     "INDIVIDUAL":{
       "TITLE": "Individual Patient Reports",
-      "PSEARCH": "Search for patient:",
+      "PSEARCH": "Search for patient",
       "PNAME": "Patient last name:",
       "PRAMQ": "Patient RAMQ",
       "PMRN": "Patient MRN",

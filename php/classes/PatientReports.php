@@ -82,7 +82,7 @@ class PatientReports extends Module {
         if($errCode != 0){
             HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
         }
-        return $this->opalDB->getPatientMRN($post['pname']);
+        return $this->opalDB->getPatientMRN($post['pmrn']);
     }
 
     /**
