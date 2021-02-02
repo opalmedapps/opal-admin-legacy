@@ -437,8 +437,8 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
     function prepareQstStats(){
         var femCount = 0;
         var malCount = 0;
-        var unkCount = 0;
         var totNulls = 0;
+        var unkCount = 0;
         var tot = $scope.qstReportLength;
         var uniquePats = [];
         //initialize unique pats with first patient name
@@ -468,7 +468,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
             }
 
             // %completion and completion time
-            if($scope.qstReport[i].qcomplete === "N/A"){
+            if(($scope.qstReport[i].qcomplete === "N/A") || ($scope.qstReport[i].qcomplete === "0000-00-00 00:00:00")){
                 totNulls ++;
             }else{
                 completionTimes.push(date_diff_days(new Date($scope.qstReport[i].qdate), new Date($scope.qstReport[i].qcomplete)));
@@ -487,8 +487,8 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
             for(var j = 0; j < uniquePatDobs.length; j++){
                 patAges.push(date_diff_days(uniquePatDobs[j],new Date()));
             }
-            for(var k = 0; k<patAges.length; k++){
-                if(patAges[k] === "N/A"){
+            for(var k = 0; k<patAges.length; k++){                
+                if(isNaN(patAges[k])){
                     invalids++;
                 }else{
                     sum += patAges[k];
