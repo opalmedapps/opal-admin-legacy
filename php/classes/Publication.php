@@ -251,10 +251,10 @@ class Publication extends Module
      * because it was decided to add it manually to the status list by hard-coding it while using incorrect values.
      * Once it will be fixed (if it is), this function will be totally useless. See ticket OPAL-74 for more details
      * */
-    protected function _reassignData($data, $id)  {
+    protected function _reassignData($data, $id, $key)  {
         $results = array();
         foreach($data as $item) {
-            if($item[$id] == "1")
+            if($item[$id] == "1" && $key == "AppointmentStatus")
                 $results["Checked In"] = $item;
             else
                 $results[strval($item[$id])] = $item;
@@ -357,7 +357,7 @@ class Publication extends Module
                 //Standard process of the checkup by getting data from OpalDB
                 else {
                     if ($trigger["opalDB"] != "") {
-                        $opalData = $this->_reassignData($this->opalDB->fetchTriggersData($trigger["opalDB"]), $trigger["opalPK"]);
+                        $opalData = $this->_reassignData($this->opalDB->fetchTriggersData($trigger["opalDB"]), $trigger["opalPK"], $key);
                     }
 
                     $uniqueIdList = array();
@@ -1051,6 +1051,7 @@ class Publication extends Module
         $results["appointmentStatuses"] = $this->opalDB->getAppointmentsStatusTriggers();
         $results["doctors"] = $this->opalDB->getDoctorsTriggers();
         $results["machines"] = $this->opalDB->getTreatmentMachinesTriggers();
+        $results["studies"] = $this->opalDB->getStudiesTriggers();
 
         foreach($results["doctors"] as &$doctor) {
             $doctor["name"] = ucwords(strtolower($doctor["LastName"] . ", " . preg_replace("/^[Dd][Rr]([.]?[ ]?){1}/", "", $doctor["FirstName"]) . " " . " (" . $doctor["id"] . ")"));
