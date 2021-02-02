@@ -75,7 +75,6 @@ define("OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE","masterSourceDiagnosis");
 define("OPAL_MASTER_SOURCE_TEST_RESULT_TABLE","masterSourceTestResult");
 define("OPAL_ALIAS_EXPRESSION_TABLE","AliasExpression");
 define("OPAL_DOCTOR_TABLE","Doctor");
-define("OPAL_RESOURCE_NAME_TABLE","ResourceName");
 define("OPAL_STATUS_ALIAS_TABLE","StatusAlias");
 define("OPAL_ALIAS_TABLE","Alias");
 define("OPAL_DIAGNOSIS_TRANSLATION_TABLE","DiagnosisTranslation");
@@ -98,6 +97,7 @@ define("OPAL_DIAGNOSIS_TABLE","Diagnosis");
 define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
 define("OPAL_TEST_CONTROL_TABLE","TestControl");
 define("OPAL_TEST_EXPRESSION_TABLE","TestExpression");
+define("OPAL_RESOURCE_TABLE","Resource");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -473,8 +473,12 @@ define("OPAL_GET_DOCTORS_TRIGGERS","
 ");
 
 define("OPAL_GET_TREATMENT_MACHINES_TRIGGERS","
-    SELECT DISTINCT ResourceAriaSer AS id, ResourceName AS name, 'Machine' AS 'type', 0 AS 'added' FROM Resource
-    WHERE ".OPAL_RESOURCE_NAME_TABLE." LIKE 'STX%' OR  ResourceName LIKE 'TB%' ORDER BY ResourceName;
+    SELECT DISTINCT ResourceAriaSer AS id, ResourceName AS name, 'Machine' AS 'type', 0 AS 'added' FROM ".OPAL_RESOURCE_TABLE."
+    WHERE ResourceName LIKE 'STX%' OR  ResourceName LIKE 'TB%' ORDER BY ResourceName;
+");
+
+define("OPAL_GET_STUDIES_TRIGGERS","
+    SELECT DISTINCT ID AS id, CONCAT (code, ' ', title) AS name, 'Study' AS 'type', 0 AS 'added' FROM ".OPAL_STUDY_TABLE." WHERE deleted = ".NON_DELETED_RECORD." ORDER BY code, title;
 ");
 
 define("OPAL_COUNT_CODE_MASTER_SOURCE","
