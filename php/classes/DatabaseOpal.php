@@ -838,6 +838,15 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
+     * Get all the treatment machine triggers
+     * @params  void
+     * @return  treatment machine triggers found (array)
+     * */
+    function getStudiesTriggers() {
+        return $this->_fetchAll(OPAL_GET_STUDIES_TRIGGERS, array());
+    }
+
+    /*
      * Count the total iteration of a custom code.
      * @params  $tableName (string) name of the table where to count
      *          $code (string) name of the custom code to count
