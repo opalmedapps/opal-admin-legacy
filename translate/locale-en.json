@@ -2334,6 +2334,10 @@
       "TITLE_2": "Title",
       "INVESTIGATOR": "Principal Investigator",
       "INVESTIGATOR_EXPLANATION": "Please enter the complete name of the principal investigator.",
+      "PATIENTS": "List of Patients",
+      "PATIENTS_EXPLANATION": "If any patients should be already assigned to this study, please add them.",
+      "SEARCH": "Search",
+      "SELECT_ALL": "Select All",
       "NAME": "Name",
       "DATES": "Dates",
       "DATES_EXPLANATION": "You can enter a starting date and/or an ending date for the study if necessary. Otherwise, please leave them blank.",
@@ -2342,7 +2346,8 @@
       "INVALID_DATE": "Invalid date format",
       "SUBMIT": "Submit",
       "NA": "Not available",
-      "ERROR_ADD": "An error occured while creating the study."
+      "ERROR_ADD": "An error occured while creating the study.",
+      "ERROR_PATIENTS_LIST": "An error occured while dowloading the list of patients."
     },
     "EDIT": {
       "TITLE": "Edit Study",

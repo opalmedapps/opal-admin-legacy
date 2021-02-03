@@ -67,8 +67,6 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.editStudy(row.entity)"<i title="'+$filter('translate')('STUDY.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong>';
 		else
 			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.editStudy(row.entity)"<i title="'+$filter('translate')('STUDY.LIST.VIEW')+'" class="fa fa-eye" aria-hidden="true"></i></a></strong>';
-		if($scope.deleteAccess)
-			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.deleteStudy(row.entity)"><i title="'+$filter('translate')('STUDY.LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong>';
 		cellTemplateOperations += '</div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editStudy(row.entity)">' +
@@ -122,27 +120,6 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 
 			// After update, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				getstudiesList();
-			});
-		};
-
-		// Function for when the custom code has been clicked for deletion
-		// Open a modal
-		$scope.deleteStudy = function (currentStudy) {
-			// Assign selected custom code as the custom code to delete
-			$scope.studyToDelete = currentStudy;
-
-			var modalInstance = $uibModal.open({
-				templateUrl: 'templates/study/delete.study.html',
-				controller: 'study.delete',
-				windowClass: 'deleteModal',
-				scope: $scope,
-				backdrop: 'static',
-			});
-
-			// After delete, refresh the custom code list
-			modalInstance.result.then(function () {
-				// Call our API to get the list of existing posts
 				getstudiesList();
 			});
 		};
