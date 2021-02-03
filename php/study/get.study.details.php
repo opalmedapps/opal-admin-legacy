@@ -1,5 +1,5 @@
 <?php
-include_once('study.inc');
+include_once("../config.php");
 
 $studyId = strip_tags($_POST['studyId']);
 

@@ -2331,4 +2331,8 @@ class DatabaseOpal extends DatabaseAccess {
         );
         return $this->_updateRecordIntoTable(OPAL_UPDATE_TEST_EXPRESSION, $toUpdate);
     }
+
+    function getPatientsList() {
+        return $this->_fetchAll(OPAL_GET_PATIENTS_LIST, array());
+    }
 }
