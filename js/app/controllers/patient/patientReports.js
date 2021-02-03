@@ -149,8 +149,8 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
     $scope.noteGridOptions = {
         data: 'noteReport',
         columnDefs: [
-            { field: 'name', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.NOTES.TYPE'), width: '15%', enableColumnMenu: false },
-            { field: 'tablerowtitle', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.NOTES.NAME'), width: '30%', enableColumnMenu: false },
+            { field: 'name', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.NOTES.TYPE'), width: '20%', enableColumnMenu: false },
+            { field: 'tablerowtitle', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.NOTES.NAME'), width: '40%', enableColumnMenu: false },
             { field: 'dateadded', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.NOTES.DATE'), width: '20%', enableColumnMenu: false },
             { field: 'lastupdated', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.NOTES.DATE_READ'), width: '20%', enableColumnMenu: false },
 
@@ -199,7 +199,7 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
     $scope.txplanGridOptions = {
         data: 'txplanReport',
         columnDefs: [
-            { field: 'diagnosisdescription', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_PLAN.DESC'), width: '25%', enableColumnMenu: false },
+            { field: 'diagnosisdescription', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_PLAN.DESC'), width: '15%', enableColumnMenu: false },
             { field: 'aliastype', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_PLAN.TYPE'), width: '10%', enableColumnMenu: false },
             { field: 'prioritycode', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_PLAN.PRIORITY'), width: '15%', enableColumnMenu: false },
             { field: 'aliasexpressiondescription', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_PLAN.DESC_EXP'), width: '10%', enableColumnMenu: false },

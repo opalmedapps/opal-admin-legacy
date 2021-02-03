@@ -29,17 +29,6 @@
                                 </span>
                             </div>
                         </div>
-                        <!-- <div class="panel-body form-horizontal">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    {{'PATIENTREPORT.INDIVIDUAL.PNAME'|translate}}
-                                </label>
-                                <div class="">
-                                    <input class="form-control" type="text" ng-model="searchName" ng-disabled="searchMRN || searchRAMQ" placeholder="">
-                                </div>
-                            </div>
-                        </div> -->
-                        
                     </div>
                     <div class="row">
                         <div class="col-md-auto col-md-6">
@@ -95,36 +84,38 @@
                             <div class="panel" ng-show="foundPatient">
                                 <div class="panel-body form-horizontal">
                                     <div class="form-group">
-                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENTREPORT.INDIVIDUAL.LAST'|translate}}</label>
-                                        <label class="control-label col-xs-4 col-lg-2">{{plname}}</label>
+                                        <div class="col-xs-6 col-lg-4">
+                                            <label class="control-label">{{'PATIENTREPORT.INDIVIDUAL.LAST'|translate}}</label>
+                                        </div>
+                                        <div class="col-xs-6 col-lg-4">{{plname}}</div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-xs-6 col-lg-4">{{'PATIENTREPORT.INDIVIDUAL.FIRST'|translate}}</label>
-                                        <label class="control-label col-xs-4 col-lg-2">{{pname}}</label>
+                                        <div class="col-xs-6 col-lg-4">{{pname}}</div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-xs-6 col-lg-4">{{'PATIENTREPORT.INDIVIDUAL.SEX'|translate}}</label>
-                                        <label class="control-label col-xs-4 col-lg-2">{{psex}}</label>
+                                        <div class="col-xs-4 col-lg-2">{{psex}}</div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-xs-6 col-lg-4">{{'PATIENTREPORT.INDIVIDUAL.SERIAL'|translate}}</label>
-                                        <label class="control-label col-xs-4 col-lg-2">{{psnum}}</label>
+                                        <div class="col-xs-4 col-lg-2">{{psnum}}</div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-xs-6 col-lg-4">{{'PATIENTREPORT.INDIVIDUAL.EMAIL'|translate}}</label>
-                                        <label class="control-label col-xs-4 col-lg-2">{{pemail}}</label>
+                                        <div class="col-xs-4 col-lg-2">{{pemail}}</div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-xs-6 col-lg-4">RAMQ</label>
-                                        <label class="control-label col-xs-4 col-lg-2">{{pramq}}</label>
+                                        <div class="col-xs-4 col-lg-2">{{pramq}}</div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-xs-6 col-lg-4">MRN</label>
-                                        <label class="control-label col-xs-4 col-lg-2">{{pid}}</label>
+                                        <div class="col-xs-4 col-lg-2">{{pid}}</div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-xs-6 col-lg-4">{{'PATIENTREPORT.INDIVIDUAL.LANG'|translate}}</label>
-                                        <label class="control-label col-xs-4 col-lg-2">{{plang}}</label>
+                                        <div class="col-xs-4 col-lg-2">{{plang}}</div>
                                     </div>
                                 </div>
                             </div>
@@ -146,22 +137,21 @@
                             <div class="panel">
                                 <form class="panel-body form-horizontal" ng-submit="fetchData()">
                                     <div class="form-group">
-                                        <!-- <label class="control-label col-xs-6" style="font-weight:bold; font-size:1.7em;">{{'PATIENTREPORT.INDIVIDUAL.ISELECT'|translate}}</label> -->
-                                        <label class="control-label col-xs-3">{{'PATIENTREPORT.COLUMNS.DIAGNOSIS.TITLE'|translate}} <input type="checkbox" ng-model="featureList.diagnosis"> </label>
-                                        <label class="control-label col-xs-3">{{'PATIENTREPORT.COLUMNS.APPOINTMENT.TITLE'|translate}} <input type="checkbox" ng-model="featureList.appointments"> </label>
-                                        <label class="control-label col-xs-3">{{'PATIENTREPORT.COLUMNS.QUESTIONNAIRE.TITLE'|translate}} <input type="checkbox" ng-model="featureList.questionnaires"> </label>
-                                        <label class="control-label col-xs-3">{{'PATIENTREPORT.COLUMNS.EDUCATIONAL_MATERIAL.TITLE'|translate}} <input type="checkbox" ng-model="featureList.education"> </label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.diagnosis"> {{'PATIENTREPORT.COLUMNS.DIAGNOSIS.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.appointments"> {{'PATIENTREPORT.COLUMNS.APPOINTMENT.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.questionnaires"> {{'PATIENTREPORT.COLUMNS.QUESTIONNAIRE.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.education"> {{'PATIENTREPORT.COLUMNS.EDUCATIONAL_MATERIAL.TITLE'|translate}}</label>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-xs-3">{{'PATIENTREPORT.COLUMNS.LEGACY_LAB_TESTS.TITLE'|translate}} <input type="checkbox" ng-model="featureList.testresults"> </label>
-                                        <label class="control-label col-xs-3">{{'PATIENTREPORT.COLUMNS.LAB_TESTS.TITLE'|translate}} <input type="checkbox" ng-model="featureList.pattestresults"> </label>
-                                        <label class="control-label col-xs-3">{{'PATIENTREPORT.COLUMNS.NOTES.TITLE'|translate}} <input type="checkbox" ng-model="featureList.notifications"> </label>
-                                        <label class="control-label col-xs-3">{{'PATIENTREPORT.COLUMNS.TREATMENT_PLAN.TITLE'|translate}} <input type="checkbox" ng-model="featureList.treatplan"> </label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.testresults"> {{'PATIENTREPORT.COLUMNS.LEGACY_LAB_TESTS.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.pattestresults"> {{'PATIENTREPORT.COLUMNS.LAB_TESTS.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.notifications"> {{'PATIENTREPORT.COLUMNS.NOTES.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.treatplan"> {{'PATIENTREPORT.COLUMNS.TREATMENT_PLAN.TITLE'|translate}}</label>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-xs-3">{{'PATIENTREPORT.COLUMNS.CLINICAL_NOTES.TITLE'|translate}} <input type="checkbox" ng-model="featureList.clinicalnotes"> </label>
-                                        <label class="control-label col-xs-3">{{'PATIENTREPORT.COLUMNS.TREATMENT_TEAM.TITLE'|translate}} <input type="checkbox" ng-model="featureList.treatingteam"> </label>
-                                        <label class="control-label col-xs-3">{{'PATIENTREPORT.COLUMNS.GENERAL.TITLE'|translate}} <input type="checkbox" ng-model="featureList.general"> </label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.clinicalnotes"> {{'PATIENTREPORT.COLUMNS.CLINICAL_NOTES.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.treatingteam"> {{'PATIENTREPORT.COLUMNS.TREATMENT_TEAM.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.general"> {{'PATIENTREPORT.COLUMNS.GENERAL.TITLE'|translate}}</label>
                                     </div>
                                     <div class="form-group">
                                         <div class="save-add col-xs-12 col-sm-6 col-md-8">
@@ -174,134 +164,134 @@
 
                     </div>
                     <div class="row" ng-if="featureList.diagnosis && generateFinished">
-                        <div class="panel">
+                        <div class="">
                             <div class="col-md-auto">
                                 <center>
                                     <label class="control-label"><h2>{{'PATIENTREPORT.COLUMNS.DIAGNOSIS.TITLE'|translate}}</h2></label>
                                 </center>
                         
-                                <div class="panel">
-                                    <div class="gridStyle" ui-grid="diagGridOptions" ui-grid-resize-columns></div>
+                                <div class="">
+                                    <div class="gridStyle" style="border:none;" ui-grid="diagGridOptions" ui-grid-resize-columns></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.appointments && generateFinished">
-                        <div class="panel">
+                        <div class="">
                             <div class="col-md-auto">
                                 <center>
                                     <label class="control-label"><h2>{{'PATIENTREPORT.COLUMNS.APPOINTMENT.TITLE'|translate}}</h2></label>
                                 </center>
-                                <div class="panel">
-                                    <div class="gridStyle" ui-grid="apptGridOptions" ui-grid-resize-columns></div>
+                                <div class="">
+                                    <div class="gridStyle" style="border:none;" ui-grid="apptGridOptions" ui-grid-resize-columns></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.questionnaires && generateFinished">
-                        <div class="panel">
+                        <div class="">
                             <div class="col-md-auto">
                                 <center>
                                     <label class="control-label"><h2>{{'PATIENTREPORT.COLUMNS.QUESTIONNAIRE.TITLE'|translate}}</h2></label>
                                 </center>
-                                <div class="panel">
-                                    <div class="gridStyle" ui-grid="qstGridOptions" ui-grid-resize-columns></div>
+                                <div class="">
+                                    <div class="gridStyle" style="border:none;" ui-grid="qstGridOptions" ui-grid-resize-columns></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.education && generateFinished">
-                        <div class="panel">
+                        <div class="">
                             <div class="col-md-auto">
                                 <center>
                                     <label class="control-label"><h2>{{'PATIENTREPORT.COLUMNS.EDUCATIONAL_MATERIAL.TITLE'|translate}}</h2></label>
                                 </center>
-                                <div class="panel">
-                                    <div class="gridStyle" ui-grid="educGridOptions" ui-grid-resize-columns></div>
+                                <div class="">
+                                    <div class="gridStyle" style="border:none;" ui-grid="educGridOptions" ui-grid-resize-columns></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.testresults && generateFinished">
-                        <div class="panel">
+                        <div class="">
                             <div class="col-md-auto">
                                 <center>
-                                    <label class="control-label"></label><h2>{{'PATIENTREPORT.COLUMNS.LEGACY_LAB_TESTS.TITLE'|translate}}</h2>
+                                    <label class="control-label"><h2>{{'PATIENTREPORT.COLUMNS.LEGACY_LAB_TESTS.TITLE'|translate}}</h2></label>
                                 </center>
-                                <div class="panel">
-                                    <div class="gridStyle" ui-grid="testGridOptions" ui-grid-resize-columns></div>
+                                <div class="">
+                                    <div class="gridStyle" style="border:none;" ui-grid="testGridOptions" ui-grid-resize-columns></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.pattestresults && generateFinished">
-                        <div class="panel">
+                        <div class="">
                             <div class="col-md-auto">
                                 <center>
                                     <label class="control-label"><h2>{{'PATIENTREPORT.COLUMNS.LAB_TESTS.TITLE'|translate}}</h2></label>
                                 </center>
-                                <div class="panel">
-                                    <div class="gridStyle" ui-grid="pattestGridOptions" style="height: auto !important;" ui-grid-resize-columns></div>
+                                <div class="">
+                                    <div class="gridStyle" style="border:none;" ui-grid="pattestGridOptions" style="height: auto !important;" ui-grid-resize-columns></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.notifications && generateFinished">
-                        <div class="panel">
+                        <div class="">
                             <div class="col-md-auto">
                                 <center>
                                     <label class="control-label"><h2>{{'PATIENTREPORT.COLUMNS.NOTES.TITLE'|translate}}</h2></label>
                                 </center>
-                                <div class="panel">
-                                    <div class="gridStyle" ui-grid="noteGridOptions" ui-grid-resize-columns></div>
+                                <div class="">
+                                    <div class="gridStyle" style="border:none;" ui-grid="noteGridOptions" ui-grid-resize-columns></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.treatplan && generateFinished">
-                        <div class="panel">
+                        <div class="">
                             <div class="col-md-auto">
                                 <center>
                                     <label class="control-label"><h2>{{'PATIENTREPORT.COLUMNS.TREATMENT_PLAN.TITLE'|translate}}</h2></label>
                                 </center>
-                                <div class="panel">
-                                    <div class="gridStyle" ui-grid="txplanGridOptions" ui-grid-resize-columns></div>
+                                <div class="">
+                                    <div class="gridStyle" style="border:none;" ui-grid="txplanGridOptions" ui-grid-resize-columns></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.clinicalnotes && generateFinished">
-                        <div class="panel">
+                        <div class="">
                             <div class="col-md-auto">
                                 <center>
                                     <label class="control-label"><h2>{{'PATIENTREPORT.COLUMNS.CLINICAL_NOTES.TITLE'|translate}}</h2></label>
                                 </center>
-                                <div class="panel">
-                                    <div class="gridStyle" ui-grid="clinnoteGridOptions" ui-grid-resize-columns></div>
+                                <div class="">
+                                    <div class="gridStyle" style="border:none;" ui-grid="clinnoteGridOptions" ui-grid-resize-columns></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.treatingteam && generateFinished">
-                        <div class="panel">
+                        <div class="">
                             <div class="col-md-auto">
                                 <center>
                                     <label class="control-label"><h2>{{'PATIENTREPORT.COLUMNS.TREATMENT_TEAM.TITLE'|translate}}</h2></label>
                                 </center>
-                                <div class="panel">
-                                    <div class="gridStyle" ui-grid="txteamGridOptions" ui-grid-resize-columns></div>
+                                <div class="">
+                                    <div class="gridStyle" style="border:none;" ui-grid="txteamGridOptions" ui-grid-resize-columns></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.general && generateFinished">
-                        <div class="panel">
+                        <div class="">
                             <div class="col-md-auto">
                                 <center>
                                     <label class="control-label"><h2>{{'PATIENTREPORT.COLUMNS.GENERAL.TITLE'|translate}}</h2></label>
                                 </center>
-                                <div class="panel">
-                                    <div class="gridStyle" ui-grid="generalGridOptions" ui-grid-resize-columns></div>
+                                <div class="">
+                                    <div class="gridStyle" style="border:none;" ui-grid="generalGridOptions" ui-grid-resize-columns></div>
                                 </div>
                             </div>
                         </div>

@@ -114,7 +114,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
         columnDefs: [
             { field: 'pname', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.NAME'), width: '15%', enableColumnMenu: false },
             { field: 'plname', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.NAME_FAMILY'), width: '15%', enableColumnMenu: false },
-            { field: 'pser', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.SERIAL'), width: '10%', enableColumnMenu: false },
+            { field: 'pser', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.SERIAL'), width: '15%', enableColumnMenu: false },
             { field: 'psex', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.SEX'), width: '10%', enableColumnMenu: false },
             { field: 'pdob', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.BIRTH'), width:'15%', enableColumnMenu: false },
             { field: 'qdate', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.DATE_SENT'), width:'15%', enableColumnMenu: false },
@@ -621,6 +621,9 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
         $scope.demoPcntMale = 0;
 
         var diagDict = new Object(); //diagnosis tracking
+        $scope.femalePlotData = [];
+        $scope.malePlotData = [];
+        $scope.regPlotData = [];
 
         for(var i = 0; i< $scope.patientReportLength; i++){
             // male/female demgraphics
@@ -676,7 +679,6 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
 
 
         }
-
         Highcharts.chart('plot1', {
             chart: {
                 type: 'spline'

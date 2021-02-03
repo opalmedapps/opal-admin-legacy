@@ -123,7 +123,7 @@
                             </div>
                         </div>
                         <div class="row" ng-show="showEducReport">
-                            <div class="col-xs-12 side-menu-title">
+                            <div class="col-md-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                    <span style="background-color:#e6edfa; padding: 0 10px;">
                                        <h2>{{'PATIENTREPORT.GROUP.REPORT'|translate}} {{materialType}}: {{selectedMaterial}}, {{educReportLength}} {{'PATIENTREPORT.GROUP.RECORDS'|translate}}</h2>
@@ -132,8 +132,8 @@
                            </div>
                         </div>
                         <div class="row" ng-show="showEducReport">
-                            <div class="panel animated fadeInRight">
-                                <div class="gridStyle" ui-grid="educGridOptions" ui-grid-resize-columns ui-grid-auto-resize></div>
+                            <div class="col-md-12 animated fadeInRight">
+                                <div class="gridStyle" style="border:none;" ui-grid="educGridOptions" ui-grid-resize-columns ui-grid-auto-resize></div>
                             </div>
                         </div>
                     </div>
@@ -218,8 +218,8 @@
                            </div>
                         </div>
                         <div class="row" ng-show="showQstReport">
-                            <div class="panel animated fadeInRight">
-                                <div class="gridStyle" ui-grid="qstGridOptions" ui-grid-resize-columns ui-grid-auto-resize></div>
+                            <div class="col-xs-12 animated fadeInRight">
+                                <div class="gridStyle" style="border:none;" ui-grid="qstGridOptions" ui-grid-resize-columns ui-grid-auto-resize></div>
                             </div>
                         </div>
                     </div>
@@ -278,39 +278,13 @@
                            </div>
                         </div>
                         <div class="row animated fadeInRight">
-                            <div class="panel">
-                                <div class="gridStyle" ui-grid="demoGridOptions" ui-grid-resize-columns ui-grid-auto-resize></div>
+                            <div class="col-xs-12">
+                                <div class="gridStyle" style="border:none;" ui-grid="demoGridOptions" ui-grid-resize-columns ui-grid-auto-resize></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-
-            <!-- <div class="modal-body" style="width:80%; float:right;">
-
-                <div id="GroupReport">
-
-
-                        <div ng-show="category.demographics" class="panel-container">
-                            <div class="panel-info">
-                                <center>
-                                    <h2> {{'PATIENTREPORT.GROUP.TITLE_DEMO'|translate}} {{'PATIENTREPORT.GROUP.TAIL'|translate}}</h2>
-                                </center>
-                                <div class="panel-input">
-                                    
-
-
-                                    <h3 style="text-align:left;">{{'PATIENTREPORT.GROUP.REPORT'|translate}} {{'PATIENTREPORT.GROUP.TITLE_DEMO'|translate}}, {{patientReportLength}} {{'PATIENTREPORT.GROUP.RECORDS'|translate}}</h3>
-                                
-                                </div>
-                            
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div> -->
 
         </div>
 
