@@ -322,6 +322,50 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- SECTION: Patient list -->
+                        <div class="row fadeIn" ng-if="validator.investigator.completed">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                      <span class="fas fa-dot-circle"></span>
+                                      <h2>{{'STUDY.ADD.PATIENTS'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span><strong>{{'STUDY.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
+                                    {{'STUDY.ADD.PATIENTS_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                            <div class="col-xs-12 col-lg-8">
+                                <div class="panel-container">
+                                    <div class="panel-info">
+                                        <div class="panel-content">
+                                            <div class="panel-input">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                    <input class="form-control" maxlength="100" type="text" ng-model="patientSearchField" ng-change="selectAll.patient.checked = false;" placeholder="{{'STUDY.ADD.SEARCH'|translate}}" ng-disabled="selectAll.patient.checked && selectAll.patient.all" />
+                                                </div>
+                                                <div style="padding: 10px;">
+                                                    <label>
+                                                        <input type="checkbox" ng-click="toogleAll()" ng-checked="selectAll.patient.checked"> {{'STUDY.ADD.SELECT_ALL'|translate}}
+                                                    </label>
+                                                </div>
+                                                <ul class="list-items">
+                                                    <li ng-repeat="patient in patientsList | filter: patientSearchField">
+                                                        <label>
+                                                            <input ng-disabled="selectAll.patient.checked && selectAll.patient.all" type="checkbox" ng-model="patient.added" ng-click="selectTrigger(patient, selectAll.patient, triggerSection.patient)"> {{patient.name}}
+                                                        </label>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- END SECTION -->
                     </div>
                 </div>

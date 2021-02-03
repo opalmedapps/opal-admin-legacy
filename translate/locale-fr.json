@@ -2352,6 +2352,10 @@
       "TITLE_2": "Titre",
       "INVESTIGATOR": "Coordinateur(trice) principal(e)",
       "INVESTIGATOR_EXPLANATION": "Veuillez entrer le nom complet de la personne responsable.",
+      "PATIENTS": "List des patients",
+      "PATIENTS_EXPLANATION": "Si certains patients sont déjà affectés à cette étude, veuillez les ajouter.",
+      "SEARCH": "Rechercher",
+      "SELECT_ALL": "Tout sélectionner",
       "NAME": "Nom",
       "DATES": "Dates",
       "DATES_EXPLANATION": "Vous pouvez entrer une date et/ou de fin à l'étude si cela est nécessaire. Dans le cas contraire, veuillez les laisser vides.",
@@ -2359,7 +2363,8 @@
       "END_DATE": "Date de fin",
       "SUBMIT": "Soumettre",
       "NA": "Non disponible",
-      "ERROR_ADD": "Une erreur s'est produite lors de la création de l'étude."
+      "ERROR_ADD": "Une erreur s'est produite lors de la création de l'étude.",
+      "ERROR_PATIENTS_LIST": "Une erreur s'est produite lors de l'obtention de la liste des patients."
     },
     "EDIT": {
       "TITLE": "Modifier l'étude",
