@@ -4,11 +4,6 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 	 * Add Diagnosis Translation Page controller
 	 *******************************************************************************/
 	controller('study.add', function ($scope, $filter, $uibModal, $state, $locale, studyCollectionService, Session, ErrorHandler) {
-
-		// get current user id
-		var user = Session.retrieveObject('user');
-		var OAUserId = user.id;
-
 		// Function to go to previous page
 		$scope.goBack = function () {
 			window.history.back();
@@ -20,11 +15,27 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 		$scope.patientsList = [];
 		$scope.filter = $filter('filter');
 
+		$scope.readyToSend = {
+			code: "",
+			title_EN: "",
+			title_FR: "",
+			description_EN: "",
+			description_FR: "",
+			investigator: "",
+			start_date: "",
+			end_date: "",
+			patients: []
+		};
+
 		$scope.toSubmit = {
-			OAUserId: OAUserId,
 			details: {
 				code: "",
-				title: "",
+			},
+			title_desc: {
+				title_EN: "",
+				title_FR: "",
+				description_EN: "",
+				description_FR: "",
 			},
 			investigator: {
 				name: ""
@@ -42,12 +53,22 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				mandatory: true,
 				valid: true,
 			},
+			title_desc: {
+				completed: false,
+				mandatory: true,
+				valid: true,
+			},
 			investigator: {
 				completed: false,
 				mandatory: true,
 				valid: true,
 			},
 			dates: {
+				completed: false,
+				mandatory: false,
+				valid: true,
+			},
+			patients: {
 				completed: false,
 				mandatory: false,
 				valid: true,
@@ -60,6 +81,11 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				open: false,
 				preview: false,
 			},
+			title_desc: {
+				display: false,
+				open: false,
+				preview: false,
+			},
 			investigator: {
 				display: false,
 				open: false,
@@ -70,7 +96,19 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				open: false,
 				preview: false,
 			},
+			patients: {
+				display: false,
+				open: false,
+				preview: false,
+			},
 		};
+
+		$scope.toolbar = [
+			['h1', 'h2', 'h3', 'p'],
+			['bold', 'italics', 'underline', 'ul', 'ol'],
+			['justifyLeft', 'justifyCenter', 'indent', 'outdent'],
+			['html', 'insertLink']
+		];
 
 		// Date format for start and end frequency dates
 		$scope.format = 'yyyy-MM-dd';
@@ -85,10 +123,6 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			startingDay: 0,
 			minDate: new Date(),
 			maxDate: null
-		};
-
-		$scope.selectAll = {
-			patient: {all:false, checked:false}
 		};
 
 		$locale["DATETIME_FORMATS"]["SHORTDAY"] = [
@@ -165,9 +199,9 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 		};
 
 		$scope.detailsUpdate = function () {
-			$scope.validator.details.completed = ($scope.toSubmit.details.code !== "" && $scope.toSubmit.details.title !== "");
-			$scope.leftMenu.details.open = ($scope.toSubmit.details.code !== "" || $scope.toSubmit.details.title !== "");
-			$scope.leftMenu.details.display = $scope.leftMenu.details.open;
+			$scope.validator.details.completed = ($scope.toSubmit.details.code !== "");
+			$scope.leftMenu.details.open = $scope.validator.details.completed;
+			$scope.leftMenu.details.display = $scope.validator.details.completed;
 		};
 
 		$scope.nameUpdate = function () {
@@ -235,16 +269,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.formReady = ($scope.completedSteps >= $scope.totalSteps) && (nonMandatoryCompleted >= nonMandatoryTotal);
 		}, true);
 
-		$scope.$watch('patientsList',		function (nv) {$scope.changePatients(nv);}, true);
-
-		$scope.changePatients = function(triggerList) {
-
-			console.log("triggerList");
-			console.log(triggerList);
-
-
-			$scope.selectAll.patient.checked = false; // toggle off
-
+		$scope.$watch('patientsList', function (triggerList) {
 			triggerList = angular.copy(triggerList);
 			var pos = -1;
 			angular.forEach(triggerList, function (item) {
@@ -260,56 +285,77 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 					}
 				}
 			});
-		}
+			$scope.leftMenu.patients.open = ($scope.toSubmit.patients.length > 0);
+			$scope.leftMenu.patients.display = $scope.leftMenu.patients.open;
+			$scope.leftMenu.patients.preview = $scope.leftMenu.patients.open;
+			$scope.validator.patients.completed = $scope.leftMenu.patients.open;
+		}, true);
 
-		$scope.toogleAll = function() {
-			var filtered = $scope.filter($scope.patientsList,$scope.patientSearchField);
-			console.log("Before: " + $scope.selectAll.patient.checked);
+		$scope.$watch('toSubmit.title_desc', function () {
+			$scope.validator.title_desc.completed = ($scope.toSubmit.title_desc.title_EN && $scope.toSubmit.title_desc.title_FR && $scope.toSubmit.title_desc.description_EN && $scope.toSubmit.title_desc.description_FR);
+			$scope.leftMenu.title_desc.open = ($scope.toSubmit.title_desc.title_EN || $scope.toSubmit.title_desc.title_FR || $scope.toSubmit.title_desc.description_EN || $scope.toSubmit.title_desc.description_FR);
+			$scope.leftMenu.title_desc.display = $scope.leftMenu.title_desc.open;
+			$scope.leftMenu.title_desc.preview = $scope.leftMenu.title_desc.open;
+		}, true);
 
-
-			if ($scope.selectAll.patient.checked) {
-				console.log("uncheck");
-				angular.forEach(filtered, function (trigger) {
-					if ($scope.toSubmit.patients.findIndex(x => x === trigger.id) === -1)
-						$scope.toSubmit.patients.splice($scope.toSubmit.patients.findIndex(x => x === trigger.id), 1);
-					trigger.added = false;
-				});
-			}
-			else {
-				console.log("check");
-				angular.forEach(filtered, function (trigger) {
-					if ($scope.toSubmit.patients.findIndex(x => x === trigger.id) === -1) {
-						$scope.toSubmit.patients.push(trigger.id);
-					}
-					trigger.added = true;
-				});
-			}
-			$scope.selectAll.patient.checked = !$scope.selectAll.patient.checked;
-			console.log("After: " + $scope.selectAll.patient.checked);
+		/*
+		$scope.readyToSend = {
+			code: "",
+			title_EN: "",
+			title_FR: "",
+			description_EN: "",
+			description_FR: "",
+			investigator: "",
+			start_date: "",
+			end_date: "",
+			patients: []
 		};
 
+		$scope.toSubmit = {
+			details: {
+				code: "",
+			},
+			title_desc: {
+				title_EN: "",
+				title_FR: "",
+				description_EN: "",
+				description_FR: "",
+			},
+			investigator: {
+				name: ""
+			},
+			dates: {
+				start_date: "",
+				end_date: "",
+			},
+			patients: []
+		};
+		* */
 
 		// Function to submit the new diagnosis translation
 		$scope.submitStudy = function () {
-			if ($scope.toSubmit.dates.start_date)
-				$scope.toSubmit.dates.start_date = moment($scope.toSubmit.dates.start_date).format('X');
-			if ($scope.toSubmit.dates.end_date)
-				$scope.toSubmit.dates.end_date = moment($scope.toSubmit.dates.end_date).format('X');
+			$scope.readyToSend.code = $scope.toSubmit.details.code;
+			$scope.readyToSend.title_EN = $scope.toSubmit.title_desc.title_EN;
+			$scope.readyToSend.title_FR = $scope.toSubmit.title_desc.title_FR;
+			$scope.readyToSend.description_EN = $scope.toSubmit.title_desc.description_EN;
+			$scope.readyToSend.description_FR = $scope.toSubmit.title_desc.description_FR;
+			$scope.readyToSend.investigator = $scope.toSubmit.investigator.name;
+			$scope.readyToSend.start_date = (($scope.toSubmit.dates.start_date) ? moment($scope.toSubmit.dates.start_date).format('X') : "");
+			$scope.readyToSend.end_date = (($scope.toSubmit.dates.end_date) ? moment($scope.toSubmit.dates.end_date).format('X') : "");
+			$scope.readyToSend.patients = $scope.toSubmit.patients;
 
-			console.log($scope.toSubmit);
-
-			// $.ajax({
-			// 	type: 'POST',
-			// 	url: 'study/insert/study',
-			// 	data: $scope.toSubmit,
-			// 	success: function () {},
-			// 	error: function (err) {
-			// 		ErrorHandler.onError(err, $filter('translate')('STUDY.ADD.ERROR_ADD'));
-			// 	},
-			// 	complete: function () {
-			// 		$state.go('study');
-			// 	}
-			// });
+			$.ajax({
+				type: 'POST',
+				url: 'study/insert/study',
+				data: $scope.readyToSend,
+				success: function () {},
+				error: function (err) {
+					ErrorHandler.onError(err, $filter('translate')('STUDY.ADD.ERROR_ADD'));
+				},
+				complete: function () {
+					$state.go('study');
+				}
+			});
 		};
 
 		var fixmeTop = $('.summary-fix').offset().top;
