@@ -49,7 +49,7 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 			var matcher = new RegExp($scope.filterValue, 'i');
 			renderableRows.forEach(function (row) {
 				var match = false;
-				['code', 'title'].forEach(function (field) {
+				['code', 'title_'+Session.retrieveObject('user').language].forEach(function (field) {
 					if (row.entity[field].match(matcher)) {
 						match = true;
 					}
@@ -70,7 +70,7 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 		cellTemplateOperations += '</div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editStudy(row.entity)">' +
-			'<strong><a href="">{{row.entity.title}}</a></strong></div>';
+			'<strong><a href="">{{row.entity.title_'+Session.retrieveObject('user').language+'}}</a></strong></div>';
 		var cellTemplatePublication = '<div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==1">'+$filter('translate')('STUDY.LIST.ALIAS')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==6">'+$filter('translate')('STUDY.LIST.DIAGNOSTIC')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==9">'+$filter('translate')('STUDY.LIST.TEST')+'</div>';
 		var cellTemplateLocked = '<div class="ui-grid-cell-contents" ng-show="row.entity.locked > 0"><div class="fa fa-lock text-danger"></div></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 0"><div class="fa fa-unlock text-success"></div></div>';
@@ -79,7 +79,7 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 		$scope.gridOptions = {
 			data: 'studiesList',
 			columnDefs: [
-				{ field: 'title', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.TITLE_2'), cellTemplate: cellTemplateName, sort: {direction: uiGridConstants.ASC, priority: 0}},
+				{ field: 'title_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.TITLE_2'), cellTemplate: cellTemplateName, sort: {direction: uiGridConstants.ASC, priority: 0}},
 				{ field: 'code', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.STUDY_ID'), width: '10%'},
 				{ field: 'investigator', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.INVESTIGATOR'), width: '15%'},
 				{ field: 'startDate', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.START_DATE'), width: '10%'},

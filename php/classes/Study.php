@@ -54,6 +54,8 @@ class Study extends Module {
     protected function _validateStudy(&$study) {
         $errMsgs = array();
 
+
+
         if(!$study["details"] || !$study["details"]["code"] || !$study["details"]["title"] || !$study["investigator"] || !$study["investigator"]["name"])
             array_push($errMsgs, "Missing study info.");
 
