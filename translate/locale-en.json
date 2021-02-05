@@ -2316,6 +2316,19 @@
       "DELETED": "The study has being successfully deleted.",
       "ERROR": "An error occurred while deleting the study."
     },
+    "VALIDATION": {
+      "CODE": "Code missing.",
+      "TITLE_EN": "English title missing.",
+      "TITLE_FR": "French title missing.",
+      "DESCRIPTION_EN": "English description missing.",
+      "DESCRPIPTION_FR": "French description missing.",
+      "INVESTIGATOR": "Investigator missing.",
+      "START_DATE": "Invalid start date.",
+      "END_DATE": "Invalid end date.",
+      "DATE_RANGE": "Invalid date range.",
+      "PATIENTS": "Invalid patients list.",
+      "ID": "Study ID missing or invalid."
+    },
     "ADD": {
       "BACK": "Back",
       "SUMMARY": "Summary",
@@ -2339,6 +2352,7 @@
       "ENGLISH_DESCRIPTION": "English Description",
       "TITLE_DESCRIPTION": "Title and description",
       "TITLE_DESCRIPTION_EXPLANATION": "Please assign an English and French title and description.",
+      "SEE_DESCRIPTION": "See rendered output for description",
       "TITLE_2": "Title",
       "DESCRIPTION": "Description",
       "INVESTIGATOR": "Principal Investigator",

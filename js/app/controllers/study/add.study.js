@@ -103,6 +103,20 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			},
 		};
 
+		var arrValidationInsert = [
+			$filter('translate')('STUDY.VALIDATION.CODE'),
+			$filter('translate')('STUDY.VALIDATION.TITLE_EN'),
+			$filter('translate')('STUDY.VALIDATION.TITLE_FR'),
+			$filter('translate')('STUDY.VALIDATION.DESCRIPTION_EN'),
+			$filter('translate')('STUDY.VALIDATION.DESCRPIPTION_FR'),
+			$filter('translate')('STUDY.VALIDATION.INVESTIGATOR'),
+			$filter('translate')('STUDY.VALIDATION.START_DATE'),
+			$filter('translate')('STUDY.VALIDATION.END_DATE'),
+			$filter('translate')('STUDY.VALIDATION.DATE_RANGE'),
+			$filter('translate')('STUDY.VALIDATION.PATIENTS'),
+			$filter('translate')('STUDY.VALIDATION.ID'),
+		];
+
 		$scope.toolbar = [
 			['h1', 'h2', 'h3', 'p'],
 			['bold', 'italics', 'underline', 'ul', 'ol'],
@@ -298,40 +312,6 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.leftMenu.title_desc.preview = $scope.leftMenu.title_desc.open;
 		}, true);
 
-		/*
-		$scope.readyToSend = {
-			code: "",
-			title_EN: "",
-			title_FR: "",
-			description_EN: "",
-			description_FR: "",
-			investigator: "",
-			start_date: "",
-			end_date: "",
-			patients: []
-		};
-
-		$scope.toSubmit = {
-			details: {
-				code: "",
-			},
-			title_desc: {
-				title_EN: "",
-				title_FR: "",
-				description_EN: "",
-				description_FR: "",
-			},
-			investigator: {
-				name: ""
-			},
-			dates: {
-				start_date: "",
-				end_date: "",
-			},
-			patients: []
-		};
-		* */
-
 		// Function to submit the new diagnosis translation
 		$scope.submitStudy = function () {
 			$scope.readyToSend.code = $scope.toSubmit.details.code;
@@ -350,7 +330,8 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				data: $scope.readyToSend,
 				success: function () {},
 				error: function (err) {
-					ErrorHandler.onError(err, $filter('translate')('STUDY.ADD.ERROR_ADD'));
+					err.responseText = JSON.parse(err.responseText);
+					ErrorHandler.onError(err, $filter('translate')('STUDY.ADD.ERROR_ADD'), arrValidationInsert);
 				},
 				complete: function () {
 					$state.go('study');

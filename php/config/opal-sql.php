@@ -79,6 +79,7 @@ define("OPAL_STATUS_ALIAS_TABLE","StatusAlias");
 define("OPAL_ALIAS_TABLE","Alias");
 define("OPAL_DIAGNOSIS_TRANSLATION_TABLE","DiagnosisTranslation");
 define("OPAL_PATIENT_TABLE","Patient");
+define("OPAL_PATIENT_STUDY_TABLE","patientStudy");
 define("OPAL_TEST_RESULT_EXPRESSION_TABLE","TestResultExpression");
 //define("OPAL_TEST_RESULT_ADD_LINKS_TABLE","TestResultAdditionalLinks");
 define("OPAL_DIAGNOSIS_CODE_TABLE","DiagnosisCode");
@@ -478,7 +479,7 @@ define("OPAL_GET_TREATMENT_MACHINES_TRIGGERS","
 ");
 
 define("OPAL_GET_STUDIES_TRIGGERS","
-    SELECT DISTINCT ID AS id, CONCAT (code, ' ', title) AS name, 'Study' AS 'type', 0 AS 'added' FROM ".OPAL_STUDY_TABLE." WHERE deleted = ".NON_DELETED_RECORD." ORDER BY code, title;
+    SELECT DISTINCT ID AS id, CONCAT (code, ' ', title_EN) AS name, 'Study' AS 'type', 0 AS 'added' FROM ".OPAL_STUDY_TABLE." WHERE deleted = ".NON_DELETED_RECORD." ORDER BY code, title_EN;
 ");
 
 define("OPAL_COUNT_CODE_MASTER_SOURCE","
@@ -644,7 +645,7 @@ define("OPAL_GET_STUDIES_LIST","
 ");
 
 define("OPAL_GET_STUDY_DETAILS","
-    SELECT ID, code, title, investigator, startDate, endDate FROM ".OPAL_STUDY_TABLE." WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD.";
+    SELECT ID, code, title_EN, title_FR, description_EN, description_FR, investigator, startDate, endDate FROM ".OPAL_STUDY_TABLE." WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD.";
 ");
 
 define("OPAL_UPDATE_STUDY","
@@ -1076,4 +1077,8 @@ define("OPAL_UPDATE_TEST_EXPRESSION","
 define("OPAL_GET_PATIENTS_LIST","
     SELECT DISTINCT PatientSerNum AS id, 0 AS added, CONCAT(CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))), ' (', PatientId, ')') AS name
     FROM ".OPAL_PATIENT_TABLE." ORDER BY PatientSerNum;
+");
+
+define("OPAL_GET_PATIENTS_LIST_BY_ID","
+    SELECT * FROM ".PATIENT_TABLE." WHERE PatientSerNum IN (%%LISTIDS%%);
 ");
