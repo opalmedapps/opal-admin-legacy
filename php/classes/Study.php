@@ -28,55 +28,166 @@ class Study extends Module {
      * */
     public function insertStudy($post) {
         $this->checkWriteAccess($post);
-        $study = HelpSetup::arraySanitization($post);
-        $result = $this->_validateStudy($study);
-        if(is_array($result) && count($result) > 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Study validation failed. " . implode(" ", $result));
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validateStudy($post);
+        $errCode = bindec($errCode);
+
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => $errCode));
 
         $toInsert = array(
-            "code"=>$study["details"]["code"],
-            "title"=>$study["details"]["title"],
-            "investigator"=>$study["investigator"]["name"]
+            "code"=>$post["code"],
+            "title_EN"=>$post["title_EN"],
+            "title_FR"=>$post["title_FR"],
+            "description_EN"=>$post["description_EN"],
+            "description_FR"=>$post["description_FR"],
+            "investigator"=>$post["investigator"]
         );
-        if($study["dates"]["start_date"])
-            $toInsert["startDate"] = gmdate("Y-m-d", $study["dates"]["start_date"]);
-        if($study["dates"]["end_date"])
-            $toInsert["endDate"] = gmdate("Y-m-d", $study["dates"]["end_date"]);
 
-        return $this->opalDB->insertStudy($toInsert);
+        if(array_key_exists("start_date", $post) && $post["start_date"] != "")
+            $toInsert["startDate"] = gmdate("Y-m-d", $post["start_date"]);
+        if(array_key_exists("end_date", $post) && $post["end_date"] != "")
+            $toInsert["endDate"] = gmdate("Y-m-d", $post["end_date"]);
+
+        $newStudyId = $this->opalDB->insertStudy($toInsert);
+        $toInsertMultiple = array();
+
+        if(array_key_exists("patients", $post) && is_array($post["patients"]) && count($post["patients"]) > 0) {
+            foreach ($post["patients"] as $patient)
+                array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$newStudyId));
+            $result = $this->opalDB->insertMultiplePatientsStudy($toInsertMultiple);
+        }
     }
 
     /*
-     * Validate a study structure. Returns an array of errors if data are missing or not correctly formatted.
-     * @params  $study (array in ref) study to validate
-     * @return  $errMsgs (array) the list of errors found in the validation.
+     * Validate and sanitize a study.
+     * @params  $post : array - data for the study to validate
+     *          $isAnUpdate : array - if the validation must include the ID of the study or not
+     * Validation code :    Error validation code is coded as an int of 11 bits (value from 0 to 2047). Bit informations
+     *                      are coded from right to left:
+     *                      1: study code missing
+     *                      2: english title missing
+     *                      3: french title missing
+     *                      4: english description missing
+     *                      5: french description missing
+     *                      6: investigator name missing
+     *                      7: start date (if present) invalid
+     *                      8: end date (if present) invalid
+     *                      9: date range (if start date and end date exist) invalid
+     *                      10: patient list (if exists) invalid
+     *                      11: study ID is missing or invalid if it is an update
+     * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
+     *          $errCode : array - contains the invalid entries with an error code.
      * */
-    protected function _validateStudy(&$study) {
-        $errMsgs = array();
+    protected function _validateStudy(&$post, $isAnUpdate = false) {
+        $errCode = "";
+        $startDate = false;
+        $endDate = false;
 
+        if (is_array($post)) {
+            // 1st bit
+            if (!array_key_exists("code", $post) || $post["code"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
 
+            // 2nd bit
+            if (!array_key_exists("title_EN", $post) || $post["title_EN"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
 
-        if(!$study["details"] || !$study["details"]["code"] || !$study["details"]["title"] || !$study["investigator"] || !$study["investigator"]["name"])
-            array_push($errMsgs, "Missing study info.");
+            // 3rd bit
+            if (!array_key_exists("title_FR", $post) || $post["title_FR"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
 
-        if($study["dates"]) {
-            if($study["dates"]["start_date"] && $study["dates"]["end_date"]) {
-                if(!HelpSetup::isValidTimeStamp($study["dates"]["start_date"]) || (!HelpSetup::isValidTimeStamp($study["dates"]["end_date"])))
-                    array_push($errMsgs, "Invalid date format.");
-                if((int) $study["dates"]["end_date"] < (int) $study["dates"]["start_date"])
-                    array_push($errMsgs, "Invalid date range.");
-            }
-            else if($study["dates"]["start_date"]) {
-                if(!HelpSetup::isValidTimeStamp($study["dates"]["start_date"]))
-                    array_push($errMsgs, "Invalid date format.");
-            }
-            else if($study["dates"]["end_date"]) {
-                if(!HelpSetup::isValidTimeStamp($study["dates"]["end_date"]))
-                    array_push($errMsgs, "Invalid date format.");
-            }
-        }
+            // 4th bit
+            if (!array_key_exists("description_EN", $post) || $post["description_EN"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
 
-        return $errMsgs;
+            // 5th bit
+            if (!array_key_exists("description_FR", $post) || $post["description_FR"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            // 6th bit
+            if (!array_key_exists("investigator", $post) || $post["investigator"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            // 7th bit
+            if (array_key_exists("start_date", $post) && $post["start_date"] != "") {
+                if (!HelpSetup::isValidTimeStamp($post["start_date"]))
+                    $errCode = "1" . $errCode;
+                else {
+                    $startDate = true;
+                    $errCode = "0" . $errCode;
+                }
+            } else
+                $errCode = "0" . $errCode;
+
+            // 8th bit
+            if (array_key_exists("end_date", $post) && $post["end_date"] != "") {
+                if (!HelpSetup::isValidTimeStamp($post["end_date"]))
+                    $errCode = "1" . $errCode;
+                else {
+                    $endDate = true;
+                    $errCode = "0" . $errCode;
+                }
+            } else
+                $errCode = "0" . $errCode;
+
+            // 9th bit
+            if ($startDate && $endDate) {
+                if ((int)$post["end_date"] < (int)$post["start_date"])
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
+            } else
+                $errCode = "0" . $errCode;
+
+            //10th bit
+            if (array_key_exists("patients", $post)) {
+                if(!is_array($post["patients"]))
+                    $errCode = "1" . $errCode;
+                else {
+                    foreach ($post["patients"] as &$id)
+                        $id = intval($id);
+
+                    $total = $this->opalDB->getPatientsListByIds($post["patients"]);
+                    if (count($total) != count($post["patients"]))
+                        $errCode = "1" . $errCode;
+                    else
+                        $errCode = "0" . $errCode;
+                }
+            } else
+                $errCode = "0" . $errCode;
+
+            //11th bit
+            if($isAnUpdate) {
+                if (!array_key_exists("id", $post) || $post["id"] == "")
+                    $errCode = "1" . $errCode;
+                else {
+                    $result = $this->opalDB->getStudyDetails($post["id"]);
+                    if (count($result) < 1)
+                        $errCode = "1" . $errCode;
+                    else if (count($result) == 1)
+                        $errCode = "0" . $errCode;
+                    else
+                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates studies found.");
+                }
+            } else
+                $errCode = "0" . $errCode;
+        } else
+            $errCode .= "11111111111";
+
+        return $errCode;
     }
 
     /*
@@ -86,7 +197,14 @@ class Study extends Module {
      * */
     public function getStudyDetails($studyId) {
         $this->checkReadAccess($studyId);
-        return $this->opalDB->getStudyDetails(intval($studyId));
+
+        $result = $this->opalDB->getStudyDetails(intval($studyId));
+        if (count($result) < 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>1));
+        else if (count($result) == 1)
+            return $result[0];
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates studies found.");
     }
 
     /*
@@ -107,16 +225,9 @@ class Study extends Module {
     public function updateStudy($post) {
         $this->checkWriteAccess($post);
         $study = HelpSetup::arraySanitization($post);
-        $result = $this->_validateStudy($study);
+        $result = $this->_validateStudy($study, true);
         if(is_array($result) && count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Study validation failed. " . implode(" ", $result));
-
-        if(!array_key_exists("ID", $study) || $study["ID"] == "")
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot identify the study.");
-
-        $currentStudy = $this->opalDB->getStudyDetails(intval($study["ID"]));
-        if(!$currentStudy["ID"] || $currentStudy["ID"] == "")
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot identify the study.");
 
         $toUpdate = array(
             "ID"=>$study["ID"],

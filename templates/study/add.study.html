@@ -80,7 +80,7 @@
                             </div>
 
                             <!-- SECTION: Title & description -->
-                            <div uib-accordion-group is-open="leftMenu.title_desc.open" class="panel-container summary-box animated" ng-if="leftMenu.title_desc.open" is-disabled="leftMenu.title_desc.open && !validator.title_desc.completed">
+                            <div uib-accordion-group is-open="leftMenu.title_desc.open" class="panel-container summary-box animated" ng-if="toSubmit.title_desc.title_EN || toSubmit.title_desc.title_FR || toSubmit.title_desc.description_EN || toSubmit.title_desc.description_FR" is-disabled="leftMenu.title_desc.open && !validator.title_desc.completed">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">

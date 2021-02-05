@@ -1227,7 +1227,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @returns (array) details of the study
      * */
     function getStudyDetails($studyId) {
-        return $this->_fetch(OPAL_GET_STUDY_DETAILS,
+        return $this->_fetchAll(OPAL_GET_STUDY_DETAILS,
             array(array("parameter"=>":ID","variable"=>$studyId,"data_type"=>PDO::PARAM_INT))
         );
     }
@@ -2334,5 +2334,14 @@ class DatabaseOpal extends DatabaseAccess {
 
     function getPatientsList() {
         return $this->_fetchAll(OPAL_GET_PATIENTS_LIST, array());
+    }
+
+    function getPatientsListByIds($list) {
+        $sql = str_replace("%%LISTIDS%%", implode(", ", $list), OPAL_GET_PATIENTS_LIST_BY_ID);
+        return $this->_fetchAll($sql, array());
+    }
+
+    function insertMultiplePatientsStudy($toInsert) {
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_PATIENT_STUDY_TABLE, $toInsert);
     }
 }
