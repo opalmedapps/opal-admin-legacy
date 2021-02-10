@@ -228,7 +228,7 @@ class Diagnosis extends Module {
         $include = $startDate = $endDate = "";
         $errCode = $this->_validatePatientInfo($post, $include, $startDate, $endDate);
         if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation"=>$errCode)));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>$errCode)));
 
         return $this->opalDB->getPatientDiagnoses($post["mrn"], $post["site"], $post["source"], $include, $startDate, $endDate);
     }
@@ -320,7 +320,7 @@ class Diagnosis extends Module {
 
         $errCode = $this->_validatePatientDiagnosis($post, $patientSite, $source);
         if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation"=>$errCode)));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>$errCode)));
 
         $toInsert = array(
             "PatientSerNum"=>$patientSite["PatientSerNum"],
@@ -364,13 +364,13 @@ class Diagnosis extends Module {
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateBasicPatientInfo($post, $patientSite, $source);
         if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation"=>$errCode)));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>$errCode)));
 
         $currentPatientDiagnosis = $this->opalDB->getPatientDiagnosisId($patientSite["PatientSerNum"], $source["SourceDatabaseSerNum"], $post["rowId"]);
         if(count($currentPatientDiagnosis) > 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates patient diagnosis found.");
         else if(count($currentPatientDiagnosis) < 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation"=>32)));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>32)));
         $currentPatientDiagnosis = $currentPatientDiagnosis[0];
         return $this->opalDB->deletePatientDiagnosis($currentPatientDiagnosis["DiagnosisSerNum"]);
     }

@@ -1082,3 +1082,7 @@ define("OPAL_GET_PATIENTS_LIST","
 define("OPAL_GET_PATIENTS_LIST_BY_ID","
     SELECT * FROM ".PATIENT_TABLE." WHERE PatientSerNum IN (%%LISTIDS%%);
 ");
+
+define("OPAL_GET_PATIENTS_STUDY","
+    SELECT patientId FROM ".OPAL_PATIENT_STUDY_TABLE." WHERE studyId = :studyId ORDER BY patientId;
+");

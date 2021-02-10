@@ -9,6 +9,7 @@
     "ERROR_404": "404 - Page not found!",
     "ERROR_419": "419 - Session timeout error!",
     "ERROR_440": "440 - Login timeout error!",
+    "ERROR_497": "497 - Use of an https query is required!",
     "ERROR_500": "500 - Internal server error!",
     "UNKNOWN_ERROR": "Unknown error!",
     "LOGIN": "Login",
@@ -2359,7 +2360,7 @@
       "INVESTIGATOR_EXPLANATION": "Please enter the complete name of the principal investigator.",
       "PATIENTS": "List of Patients",
       "PATIENTS_EXPLANATION": "If any patients should be already assigned to this study, please add them.",
-      "SEARCH": "Search",
+      "SEARCH": "Search...",
       "SELECT_ALL": "Select All",
       "NAME": "Name",
       "DATES": "Dates",
@@ -2381,12 +2382,24 @@
       "CLOSE": "Close",
       "DETAILS": "Details",
       "STUDY_ID": "Study ID",
-      "TITLE_2": "Title",
+      "TITLES": "Titles",
+      "ENGLISH_ABVR": "EN",
+      "FRENCH_ABVR": "FR",
       "INVESTIGATOR": "Principal Investigator",
+      "PLACEHOLDER_ENGLISH_TITLE": "English Title",
+      "PLACEHOLDER_FRENCH_TITLE": "French Title",
+      "PLACEHOLDER_ENGLISH_DESCRIPTION": "English Description",
+      "PLACEHOLDER_FRENCH_DESCRIPTION": "French Description",
+      "HTML_ENGLISH": "HTML (English)",
+      "HTML_FRENCH": "HTML (French)",
       "NAME": "Name",
       "DATES": "Dates",
       "START_DATE": "Start Date",
       "END_DATE": "End Date",
+      "PATIENTS": "List of patients",
+      "NO_PATIENT": "No patient",
+      "CURRENT_PATIENTS": "Current Patients",
+      "SEARCH": "Search...",
       "ERROR_DETAILS": "An error occurred while getting the study details.",
       "ERROR_UPDATE": "An error occurred while updating the study."
     }
@@ -2816,6 +2829,9 @@
     "INTRODUCTION": "Search and generate report for opal patients."
   },
   "ERROR_HANDLER": {
+    "400": {
+      "MESSAGE": "Code 400. Invalid request. Validation of the data by the server failed."
+    },
     "403": {
       "TITLE": "403 - Access Denied",
       "MESSAGE": "<p>You are not authorized to access this section and you will be redirected to the homepage.</p><p>Please contact your administrator for more details.</p>",
@@ -2823,9 +2839,6 @@
     },
     "404": {
       "MESSAGE": "Code 404. The resource cannot be found."
-    },
-    "422": {
-      "MESSAGE": "Code 422. Validation of the data by the server failed."
     },
     "500": {
       "MESSAGE": "Code 500. Internal Server Error. Answer of the server:",

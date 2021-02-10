@@ -2344,4 +2344,10 @@ class DatabaseOpal extends DatabaseAccess {
     function insertMultiplePatientsStudy($toInsert) {
         return $this->_replaceMultipleRecordsIntoTable(OPAL_PATIENT_STUDY_TABLE, $toInsert);
     }
+
+    function getPatientsStudy($studyId) {
+        return $this->_fetchAll(OPAL_GET_PATIENTS_STUDY, array(
+            array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }

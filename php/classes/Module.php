@@ -5,11 +5,10 @@
  * Time: 8:44 AM
  */
 
-class Module
+abstract class Module
 {
     protected $opalDB;
     protected $moduleId;
-    protected $moduleName;
     protected $access;
 
     /*
@@ -84,16 +83,6 @@ class Module
             (!$userId ? $_SESSION["ID"] : $userId),
             false
         );
-    }
-
-    /*
-     * Get the ID of the module
-     * @params  void
-     * @return  moduleId - int - ID of the module
-     * */
-    public function getModuleId()
-    {
-        return $this->moduleId;
     }
 
     /*
