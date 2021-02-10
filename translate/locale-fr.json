@@ -9,6 +9,7 @@
     "ERROR_404": "404 - Page introuvable!",
     "ERROR_419": "419 - Erreur session expirée!",
     "ERROR_440": "440 - Erreur de délai de connexion!",
+    "ERROR_497": "497 - Utilisation d'une requête https est requise!",
     "ERROR_500": "500 - Erreur serveur interne!",
     "UNKNOWN_ERROR": "Erreur iconnue!",
     "LOGIN": "Me connecter",
@@ -2398,12 +2399,24 @@
       "CLOSE": "Fermer",
       "DETAILS": "Détails",
       "STUDY_ID": "ID étude",
-      "TITLE_2": "Titre",
+      "TITLES": "Titles",
+      "ENGLISH_ABVR": "AN",
+      "FRENCH_ABVR": "FR",
       "INVESTIGATOR": "Coordinateur(trice) principal(e)",
+      "PLACEHOLDER_ENGLISH_TITLE": "Titre anglais",
+      "PLACEHOLDER_FRENCH_TITLE": "Titre français",
+      "PLACEHOLDER_ENGLISH_DESCRIPTION": "Description anglaises",
+      "PLACEHOLDER_FRENCH_DESCRIPTION": "Description française",
+      "HTML_ENGLISH": "HTML (Anglais)",
+      "HTML_FRENCH": "HTML (Français)",
       "NAME": "Nom",
       "DATES": "Dates",
       "START_DATE": "Date de début",
       "END_DATE": "Date de fin",
+      "PATIENTS": "Liste des patients",
+      "NO_PATIENT": "Aucun patient",
+      "CURRENT_PATIENTS": "Patients actuels",
+      "SEARCH": "Rechercher",
       "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails l'étude.",
       "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour de l'étude."
     }
@@ -2832,6 +2845,9 @@
     "INTRODUCTION": "Rechercher et générer un rapport pour les patients qui utilisent Opal."
   },
   "ERROR_HANDLER": {
+    "400": {
+      "MESSAGE": "Code 400. Mauvaise requête. La validation des données par le serveur a échoué."
+    },
     "403": {
       "TITLE": "403 - Accès interdit",
       "MESSAGE": "<p>Vous n'avez pas l'autorisation d'accéder à cette section.</p><p>Veuillez contacter votre administration pour plus de détails.</p>",
@@ -2839,9 +2855,6 @@
     },
     "404": {
       "MESSAGE": "Code 404. La ressource est introuvable."
-    },
-    "422": {
-      "MESSAGE": "Code 422. La validation des données par le serveur a échoué."
     },
     "500": {
       "MESSAGE": "Code 500. Erreur interne du serveur. Réponse du serveur:",

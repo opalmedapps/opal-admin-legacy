@@ -55,8 +55,8 @@ angular.module('opalAdmin.services', [])
 					tempText = $filter('translate')('ERROR_HANDLER.500.UNKNOWN');
 				alert(clientErrMsg + " " + $filter('translate')('ERROR_HANDLER.500.MESSAGE') + "\r\n" + tempText);
 			}
-			else if(response.status === HTTP_CODE.unprocessableEntityError) {
-				var errMsg = $filter('translate')('ERROR_HANDLER.422.MESSAGE');
+			else if(response.status === HTTP_CODE.badRequestError) {
+				var errMsg = $filter('translate')('ERROR_HANDLER.400.MESSAGE');
 				if (typeof (arrValidation) != "undefined") {
 					for (var i = 0; i < arrValidation.length; i++) {
 						if ((parseInt(response.responseText.validation) & (1 << i)) !== 0) {

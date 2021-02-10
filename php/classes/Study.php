@@ -33,7 +33,7 @@ class Study extends Module {
         $errCode = bindec($errCode);
 
         if ($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => $errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         $toInsert = array(
             "code"=>$post["code"],
@@ -200,9 +200,15 @@ class Study extends Module {
 
         $result = $this->opalDB->getStudyDetails(intval($studyId));
         if (count($result) < 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>1));
-        else if (count($result) == 1)
-            return $result[0];
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>1));
+        else if (count($result) == 1) {
+            $result = $result[0];
+            $result["patients"] = array();
+            $temp = $this->opalDB->getPatientsStudy(intval($studyId));
+            foreach($temp as $item)
+                array_push($result["patients"], $item["patientId"]);
+            return $result;
+        }
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates studies found.");
     }
@@ -214,7 +220,13 @@ class Study extends Module {
      * */
     public function getPatientsList() {
         $this->checkReadAccess();
-        return $this->opalDB->getPatientsList();
+        $result = $this->opalDB->getPatientsList();
+        usort($result, "self::_sort_name");
+        return $result;
+    }
+
+    protected static function _sort_name($a, $b){
+        return strcmp($a["name"], $b["name"]);
     }
 
     /*
@@ -231,19 +243,24 @@ class Study extends Module {
 
         $toUpdate = array(
             "ID"=>$study["ID"],
-            "code"=>$study["details"]["code"],
-            "title"=>$study["details"]["title"],
-            "investigator"=>$study["investigator"]["name"]
+            "code"=>$study["code"],
+            "title_EN"=>$study["title_EN"],
+            "title_FR"=>$study["title_FR"],
+            "description_EN"=>$study["description_EN"],
+            "description_FR"=>$study["description_FR"],
+            "investigator"=>$study["investigator"]
         );
-        if($study["dates"]["start_date"])
+        if($study["start_date"])
             $toUpdate["startDate"] = gmdate("Y-m-d", $study["dates"]["start_date"]);
         else
             $toUpdate["startDate"] = null;
-        if($study["dates"]["end_date"])
+        if($study["end_date"])
             $toUpdate["endDate"] = gmdate("Y-m-d", $study["dates"]["end_date"]);
         else
             $toUpdate["endDate"] = null;
 
-        return $this->opalDB->updateStudy($toUpdate);
+        $total = $this->opalDB->updateStudy($toUpdate);
+
+
     }
 }

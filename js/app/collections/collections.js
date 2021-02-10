@@ -1057,11 +1057,10 @@ angular.module('opalAdmin.collections', [])
 
 		};
 
-		studyAPI.getStudiesDetails = function (studyId, OAUserId) {
+		studyAPI.getStudiesDetails = function (studyId) {
 			return $http.post(
 				"study/get/study-details",
 				$.param({
-					OAUserId: OAUserId,
 					studyId: studyId,
 				}),
 				{

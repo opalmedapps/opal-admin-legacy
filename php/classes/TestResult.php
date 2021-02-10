@@ -189,7 +189,7 @@ class TestResult extends Module
         }
         $errCode = bindec($errCode);
         if ($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
 
         $this->opalDB->unsetTestResultExpressions($post["serial"]);
 //        $this->opalDB->deleteTestResultAdditionalLinks($post["serial"]);
@@ -241,7 +241,7 @@ class TestResult extends Module
 
         $result = $this->opalDB->getTestResultDetails($id);
         if (count($result) < 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation" => 1)));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation" => 1)));
         else if (count($result) == 1)
             $result = $result[0];
         else
@@ -291,7 +291,7 @@ class TestResult extends Module
         $errCode = $this->_validateTestResult($post);
         $errCode = bindec($errCode);
         if ($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => $errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         //Insert into test result control
         $toInsert = array(
@@ -355,7 +355,7 @@ class TestResult extends Module
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates test results found.");
             $errCode = bindec($errCode);
             if ($errCode != 0)
-                HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
+                HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
             $id = $post["serial"];
         }
 
@@ -423,7 +423,7 @@ class TestResult extends Module
 
         $errCode = bindec($errCode);
         if ($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => $errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         foreach ($post as $testResult) {
             $this->opalDB->updateTestResultPublishFlag($testResult['serial'], $testResult['publish']);
@@ -451,7 +451,7 @@ class TestResult extends Module
 
         $errCode = bindec($errCode);
         if ($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => $errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         $toUpdate = array(
             "name_EN" => $post['name_EN'],
