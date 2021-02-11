@@ -649,7 +649,7 @@ define("OPAL_GET_STUDY_DETAILS","
 ");
 
 define("OPAL_UPDATE_STUDY","
-    UPDATE ".OPAL_STUDY_TABLE." SET code = :code, title = :title, investigator = :investigator, startDate = :startDate,
+    UPDATE ".OPAL_STUDY_TABLE." SET code = :code, title_EN = :title_EN, title_FR = :title_FR, description_EN = :description_EN, description_FR = :description_FR, investigator = :investigator, startDate = :startDate,
     endDate = :endDate, updatedBy = :updatedBy WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD."; 
 ");
 
@@ -1085,4 +1085,8 @@ define("OPAL_GET_PATIENTS_LIST_BY_ID","
 
 define("OPAL_GET_PATIENTS_STUDY","
     SELECT patientId FROM ".OPAL_PATIENT_STUDY_TABLE." WHERE studyId = :studyId ORDER BY patientId;
+");
+
+define("OPAL_DELETE_PATIENTS_STUDY", "
+    DELETE FROM ".OPAL_PATIENT_STUDY_TABLE." WHERE studyId = :studyId AND PatientId NOT IN (%%LISTIDS%%);
 ");
