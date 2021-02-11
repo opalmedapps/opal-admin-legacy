@@ -146,6 +146,19 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
         enableColumnResizing: true,
     };
 
+    // Safe apply function prevents potential errors with calling $apply twice at once
+    $scope.safeApply = function(fn){
+        var phase = this.$root.$$phase;
+        if(phase == '$apply' || phase == '$digest'){ //currently using an apply or digest already
+            if(fn && (typeof(fn) === 'function')){
+                fn(); //just call the function, no apply can be used right now
+            }
+        }
+        else{ //no active applys or digests, we can now call function with apply
+            this.$apply(fn);
+        }
+    }
+
     //
     // EDUCATIONAL MATERIAL SECTION
     // All db call functions & helper functions pertaining to educational material here
@@ -155,18 +168,21 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
      * Generate list of available educational materials from DB
      */
     $scope.genEducationMaterialOptions = function(){
-        //TODO TODO After translations for materials inputted, add checks to switch back to english
-        if($scope.materialType == "[FR]Booklet"){
-            $scope.materialType = "Booklet";
-        }else if($scope.materialType == "[FR]Factsheet"){
-            $scope.materialType = "Factsheet";
-        }else if($scope.materialType == "[FR]Package"){
-            $scope.materialType = "Package";
-        }else if($scope.materialType == "[FR]Video"){
-            $scope.materialType = "Video";
-        }else if($scope.materialType == "[FR]Treatment Guidelines"){
-            $scope.materialType = "Treatment Guidelines";
-        }
+        
+        $scope.safeApply(function(){
+            //TODO TODO After translations for materials inputted, add checks to switch back to english
+            if($scope.materialType == "[FR]Booklet"){
+                $scope.materialType = "Booklet";
+            }else if($scope.materialType == "[FR]Factsheet"){
+                $scope.materialType = "Factsheet";
+            }else if($scope.materialType == "[FR]Package"){
+                $scope.materialType = "Package";
+            }else if($scope.materialType == "[FR]Video"){
+                $scope.materialType = "Video";
+            }else if($scope.materialType == "[FR]Treatment Guidelines"){
+                $scope.materialType = "Treatment Guidelines";
+            }
+        });
 
         //need to clear selected material here to prevent 422 error from data validation
         $scope.selectedMaterial = "";
@@ -205,7 +221,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
     // Helper function to prepare educational material list for selection
     function prepareEducList(inp){
 
-        $scope.$apply(function() {
+        $scope.safeApply(function() {
             
             $scope.educList = [];
             var tmp = "";
@@ -228,7 +244,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
     // Helper function prepare educational material report for display
     function prepareEducReport(inp){
 
-        $scope.$apply(function() {
+        $scope.safeApply(function() {
             if(inp && (inp !== null)){
                 $scope.educReport = inp;
                 for(var i = 0; i< $scope.educReport.length; i++){
@@ -370,7 +386,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
     // Helper function to generate list of retrieved questionnaires
     function prepareQstList(inp){
 
-        $scope.$apply(function() {
+        $scope.safeApply(function() {
             var tmp = "";
             if(inp && (inp !== null)){
                 for(var i=0; i < inp.length; i++){
@@ -389,7 +405,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
     //Helper function to generate list of patient receiving the specified questionnaire
     function prepareQstReport(inp){
 
-        $scope.$apply(function() {
+        $scope.safeApply(function() {
             if(inp && (inp !== null)){
                 $scope.qstReport = inp;
                 for(var i=0; i< $scope.qstReport.length; i++){
@@ -536,7 +552,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
     // Helper function to clean patient list
     function preparePatientReport(inp){
 
-        $scope.$apply( function() {
+        $scope.safeApply( function() {
             if(inp && (inp !== null)){
                 $scope.patientReport = inp;
                 for(var i = 0; i < $scope.patientReport.length; i++){
