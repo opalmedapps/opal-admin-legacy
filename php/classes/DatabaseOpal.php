@@ -2350,4 +2350,11 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    function deletePatientsStudy($studyId, $toKeep) {
+        $sql = str_replace("%%LISTIDS%%", implode(", ", $toKeep),OPAL_DELETE_PATIENTS_STUDY);
+        return $this->_execute($sql, array(
+            array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }
