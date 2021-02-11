@@ -50,9 +50,9 @@ class Study extends Module {
             $toInsert["endDate"] = gmdate("Y-m-d", $post["end_date"]);
 
         $newStudyId = $this->opalDB->insertStudy($toInsert);
-        $toInsertMultiple = array();
 
         if(array_key_exists("patients", $post) && is_array($post["patients"]) && count($post["patients"]) > 0) {
+            $toInsertMultiple = array();
             foreach ($post["patients"] as $patient)
                 array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$newStudyId));
             $result = $this->opalDB->insertMultiplePatientsStudy($toInsertMultiple);
@@ -230,7 +230,7 @@ class Study extends Module {
     }
 
     /*
-     * Update a study after it is sanitized and validated.
+     * Update a study after it is sanitized and validated. It also
      * @params  $post (array) details of the study.
      * @return  (int) number of record updated (should be one!) or an error 500
      * */
@@ -251,16 +251,41 @@ class Study extends Module {
             "investigator"=>$study["investigator"]
         );
         if($study["start_date"])
-            $toUpdate["startDate"] = gmdate("Y-m-d", $study["dates"]["start_date"]);
+            $toUpdate["startDate"] = gmdate("Y-m-d", $study["start_date"]);
         else
             $toUpdate["startDate"] = null;
         if($study["end_date"])
-            $toUpdate["endDate"] = gmdate("Y-m-d", $study["dates"]["end_date"]);
+            $toUpdate["endDate"] = gmdate("Y-m-d", $study["end_date"]);
         else
             $toUpdate["endDate"] = null;
 
         $total = $this->opalDB->updateStudy($toUpdate);
 
+        $currentPatients = array();
+        $toKeep = $toKeep = array(-1);
+        $toAdd = array();
+        if(array_key_exists("patients", $post) && is_array($post["patients"]) && count($post["patients"]) > 0) {
+            $temp = $this->opalDB->getPatientsStudy($study["ID"]);
+            foreach($temp as $item)
+                array_push($currentPatients, $item["patientId"]);
 
+            foreach ($study["patients"] as $item) {
+                if(in_array($item, $currentPatients))
+                    array_push($toKeep, intval($item));
+                else
+                    array_push($toAdd, intval($item));
+            }
+        }
+        $total += $this->opalDB->deletePatientsStudy($study["ID"], $toKeep);
+
+        if(count($toAdd) > 0) {
+            $toInsertMultiple = array();
+            foreach ($toAdd as $patient)
+                array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$study["ID"]));
+            print_r($toInsertMultiple);
+
+            $total += $this->opalDB->insertMultiplePatientsStudy($toInsertMultiple);
+        }
+        return $total;
     }
 }

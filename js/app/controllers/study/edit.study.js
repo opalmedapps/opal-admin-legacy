@@ -303,7 +303,6 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			$scope.readyToSend.end_date = (($scope.toSubmit.dates.end_date) ? moment($scope.toSubmit.dates.end_date).format('X') : "");
 			$scope.readyToSend.patients = $scope.toSubmit.patients;
 
-			console.log($scope.readyToSend);
 			$.ajax({
 				type: "POST",
 				url: "study/update/study",
