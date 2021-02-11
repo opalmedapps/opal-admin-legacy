@@ -9,6 +9,7 @@
     "ERROR_404": "404 - Page not found!",
     "ERROR_419": "419 - Session timeout error!",
     "ERROR_440": "440 - Login timeout error!",
+    "ERROR_497": "497 - Use of an https query is required!",
     "ERROR_500": "500 - Internal server error!",
     "UNKNOWN_ERROR": "Unknown error!",
     "LOGIN": "Login",

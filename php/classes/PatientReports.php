@@ -44,7 +44,7 @@ class PatientReports extends Module {
         $errCode = $this->_validateName($post);
         $errCode = bindec($errCode);
         if($errCode != 0){
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
         }
         return $this->opalDB->getPatientName($post['pname']);
     }
@@ -80,7 +80,7 @@ class PatientReports extends Module {
         $errCode = $this->_validateMRN($post);
         $errCode = bindec($errCode);
         if($errCode != 0){
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
         }
         return $this->opalDB->getPatientMRN($post['pmrn']);
     }
@@ -116,7 +116,7 @@ class PatientReports extends Module {
         $errCode = $this->_validateRAMQ($post);
         $errCode = bindec($errCode);
         if($errCode != 0){
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
         }
         return $this->opalDB->getPatientRAMQ($post['pramq']);        
         
@@ -235,7 +235,7 @@ class PatientReports extends Module {
         $errCode = $this->_validatePatientReport($post);
         $errCode = bindec($errCode);
         if($errCode != 0){
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
         }
         
         $resultArray = array();
@@ -304,7 +304,7 @@ class PatientReports extends Module {
         $errCode = $this->_validateEducType($post);
         $errCode = bindec($errCode);
         if($errCode != 0){
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
         }
         return $this->opalDB->getEducMatOptions($post['matType']);
     }
@@ -349,7 +349,7 @@ class PatientReports extends Module {
         $errCode = $this->_validateEducReport($post);
         $errCode = bindec($errCode);
         if($errCode != 0){
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
         }
         return $this->opalDB->getEducMatReport($post['type'], $post['name']);
     }
@@ -391,7 +391,7 @@ class PatientReports extends Module {
         $errCode = $this->_validateQstReport($post);
         $errCode = bindec($errCode);
         if($errCode != 0){
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
         }
         return $this->opalDB->getQstReport($post['qstName']);
     }
