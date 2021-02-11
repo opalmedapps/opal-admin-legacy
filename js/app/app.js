@@ -58,8 +58,8 @@ angular.module('opalAdmin', [
 		forbiddenAccessError: 403,
 		notFoundError: 404,
 		sessionTimeoutError: 419,
-		unprocessableEntityError: 422,
 		loginTimeoutError: 440,
+		httpToHttpsError: 497,
 		internalServerError: 500,
 	})
 
