@@ -9,7 +9,7 @@ session_start();
 date_default_timezone_set("America/Toronto");
 
 // Turn on all errors except for notices
-error_reporting(E_ALL & ~E_NOTICE);
+error_reporting(E_ALL & ~E_NOTICE ^ E_WARNING);
 ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 
@@ -25,15 +25,6 @@ $json = file_get_contents($abspath . 'config.json');
 $config = json_decode($json, true);
 
 $localHostAddr = array('127.0.0.1','localhost','::1');
-
-// DEFINE LEGACY QUESTIONNAIRE SERVER/DATABASE CREDENTIALS HERE
-// NOTE: This works for a MySQL setup.
-define( "QUESTIONNAIRE_DB_HOST", $config['databaseConfig']['questionnaire']['host'] );
-define( "QUESTIONNAIRE_DB_PORT", $config['databaseConfig']['questionnaire']['port'] );
-define( "QUESTIONNAIRE_DB_NAME", $config['databaseConfig']['questionnaire']['name'] );
-define( "QUESTIONNAIRE_DB_DSN", "mysql:host=" . QUESTIONNAIRE_DB_HOST . ";port=" . QUESTIONNAIRE_DB_PORT . ";dbname=" . QUESTIONNAIRE_DB_NAME . ";charset=utf8" );
-define( "QUESTIONNAIRE_DB_USERNAME", $config['databaseConfig']['questionnaire']['username'] );
-define( "QUESTIONNAIRE_DB_PASSWORD", $config['databaseConfig']['questionnaire']['password'] );
 
 // DEFINE MOSAIQ SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MicrosoftSQL (MSSQL) setup.
@@ -74,7 +65,6 @@ define("MODULE_CUSTOM_CODE", 15);
 define("MODULE_ROLE", 16);
 define("MODULE_ALERT", 17);
 define("MODULE_AUDIT", 18);
-define("MODULE_PATIENT_REPORTS", 19);
 define("LOCAL_SOURCE_ONLY", -1);
 
 define("DELETED_RECORD", 1);
