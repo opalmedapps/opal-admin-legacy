@@ -144,6 +144,7 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
         ],
         enableFiltering: true,
         enableColumnResizing: true,
+        rowHeight: 30,
     };
 
     $scope.noteGridOptions = {
