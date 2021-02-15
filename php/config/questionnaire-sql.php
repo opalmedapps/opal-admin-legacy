@@ -36,7 +36,7 @@ define("LEGACY_TYPE_TABLE","legacyType");
 define("LEGACY_STATUS_TABLE","legacyStatus");
 define("LIBRARY_TABLE","library");
 define("LIBRARY_QUESTION_TABLE","libraryQuestion");
-define("PATIENT_TABLE","patient");
+define("PATIENT_TABLE","Patient");
 define("QUESTIONNAIRE_TABLE","questionnaire");
 define("QUESTION_TABLE","question");
 define("QUESTION_SECTION_TABLE","questionSection");
