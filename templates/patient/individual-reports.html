@@ -4,14 +4,14 @@
             <!-- Load side menu -->
             <div id="side-panel-scrollbar" class="col-lg-2">
                 <div ng-include="'templates/patient/menu-side.html'"></div>
-            </div>    
-     
+            </div>
+
             <div class="col-lg-10 animated fadeIn">
                 <div class="row main-title">
                     <div class="col-xs-12 col-md-8 title-content">
-                        <span class="fa fa-address-card"></span> 
+                        <span class="fa fa-address-card"></span>
                         <h1><strong>{{'PATIENTREPORT.INDIVIDUAL.TITLE'|translate}}</strong></h1>
-                    </div>  
+                    </div>
                     <!-- breadcrumbs -->
                     <div class="col-md-4 title-breadcrumbs">
                         <span><a ui-sref="home">{{'BREADCRUMBS.HOME'|translate}}</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>{{'PATIENTS.LIST.TITLE'|translate}}</strong></span>
@@ -22,7 +22,7 @@
                 <div class="section-content">
                     <div class="row">
                         <div class="col-xs-12 side-menu-title">
-                             <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                            <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                 <span style="background-color:#e6edfa; padding: 0 10px;">
                                     <!-- <span class="fas fa-dot-circle"></span> -->
                                     <h2>{{'PATIENTREPORT.INDIVIDUAL.PSEARCH'|translate}}</h2>
@@ -31,7 +31,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-auto col-md-6">
+                        <div class="col-md-6">
                             <div class="panel">
                                 <!-- patient search  section-->
                                 <form class="panel-body form-horizontal" ng-submit="findPat()">
@@ -64,18 +64,18 @@
                                             <strong><input class="btn btn-md btn-outline item-button" value={{'PATIENTREPORT.INDIVIDUAL.SUBMIT'|translate}} type="submit" ng-disabled="!searchMRN && !searchRAMQ && !searchName"></strong>
                                             <strong><input class="btn btn-md btn-outline item-button" value={{'PATIENTREPORT.INDIVIDUAL.RESET'|translate}} type="reset" ng-click="resetFieldValues()"></strong>
                                         </div>
-                                    <!-- multiple or no patients found -->
+                                        <!-- multiple or no patients found -->
                                     </div>
                                     <div class="form-group">
-                                            <div ng-show="selectPatient">
-                                                <label class="control-label col-xs-12 col-lg-8">{{'PATIENTREPORT.INDIVIDUAL.MULTIPLE'|translate}}</label>
-                                                <select class="control-label col-xs-12 col-lg-3" ng-model="selectedName" ng-options="x for x in patOptions"
-                                                        ng-change="displaySelection()"></select>
-                                            </div>
-                                            <div ng-show="noPatientFound">
-                                                <label class="control-label col-xs-12 col-lg-10">{{'PATIENTREPORT.INDIVIDUAL.NONE'|translate}}</label>
-                                            </div>
-                                    </div>  
+                                        <div ng-show="selectPatient">
+                                            <label class="control-label col-xs-12 col-lg-8">{{'PATIENTREPORT.INDIVIDUAL.MULTIPLE'|translate}}</label>
+                                            <select class="control-label col-xs-12 col-lg-3" ng-model="selectedName" ng-options="x for x in patOptions"
+                                                    ng-change="displaySelection()"></select>
+                                        </div>
+                                        <div ng-show="noPatientFound">
+                                            <label class="control-label col-xs-12 col-lg-10">{{'PATIENTREPORT.INDIVIDUAL.NONE'|translate}}</label>
+                                        </div>
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -120,7 +120,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
                     <div class="row" ng-show="foundPatient">
                         <div class="col-xs-12 side-menu-title" >
@@ -133,7 +133,7 @@
                     </div>
                     <div class="row animated fadeInRight" ng-show="foundPatient">
                         <!-- customize report section -->
-                        <div class="col-md-auto">
+                        <div class="col-xs-12">
                             <div class="panel">
                                 <form class="panel-body form-horizontal" ng-submit="fetchData()">
                                     <div class="form-group">
@@ -164,64 +164,33 @@
 
                     </div>
                     <div class="row" ng-if="featureList.diagnosis && generateFinished">
-                        <div class="">
-                            <div class="col-md-auto">
-                                <center>
-                                    <label class="control-label"><h2>{{'PATIENTREPORT.COLUMNS.DIAGNOSIS.TITLE'|translate}}</h2></label>
-                                </center>
-                        
-                                <div class="">
-                                    <div class="gridStyle" style="border:none;" ui-grid="diagGridOptions" ui-grid-resize-columns></div>
-                                </div>
-                            </div>
+                        <div class="col-xs-12">
+                            <h2 style="text-align: center;">{{'PATIENTREPORT.COLUMNS.DIAGNOSIS.TITLE'|translate}}</h2>
+                            <div class="gridStyle" style="border:none;" ui-grid="diagGridOptions" ui-grid-resize-columns></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.appointments && generateFinished">
-                        <div class="">
-                            <div class="col-md-auto">
-                                <center>
-                                    <label class="control-label"><h2>{{'PATIENTREPORT.COLUMNS.APPOINTMENT.TITLE'|translate}}</h2></label>
-                                </center>
-                                <div class="">
-                                    <div class="gridStyle" style="border:none;" ui-grid="apptGridOptions" ui-grid-resize-columns></div>
-                                </div>
-                            </div>
+                        <div class="col-xs-12">
+                            <h2 style="text-align: center;">{{'PATIENTREPORT.COLUMNS.APPOINTMENT.TITLE'|translate}}</h2>
+                            <div class="gridStyle" style="border:none;" ui-grid="apptGridOptions" ui-grid-resize-columns></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.questionnaires && generateFinished">
-                        <div class="">
-                            <div class="col-md-auto">
-                                <center>
-                                    <label class="control-label"><h2>{{'PATIENTREPORT.COLUMNS.QUESTIONNAIRE.TITLE'|translate}}</h2></label>
-                                </center>
-                                <div class="">
-                                    <div class="gridStyle" style="border:none;" ui-grid="qstGridOptions" ui-grid-resize-columns></div>
-                                </div>
-                            </div>
+                        <div class="col-xs-12">
+                            <h2 style="text-align: center;">{{'PATIENTREPORT.COLUMNS.QUESTIONNAIRE.TITLE'|translate}}</h2>
+                            <div class="gridStyle" style="border:none;" ui-grid="qstGridOptions" ui-grid-resize-columns></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.education && generateFinished">
-                        <div class="">
-                            <div class="col-md-auto">
-                                <center>
-                                    <label class="control-label"><h2>{{'PATIENTREPORT.COLUMNS.EDUCATIONAL_MATERIAL.TITLE'|translate}}</h2></label>
-                                </center>
-                                <div class="">
-                                    <div class="gridStyle" style="border:none;" ui-grid="educGridOptions" ui-grid-resize-columns></div>
-                                </div>
-                            </div>
+                        <div class="col-xs-12">
+                            <h2 style="text-align: center;">{{'PATIENTREPORT.COLUMNS.EDUCATIONAL_MATERIAL.TITLE'|translate}}</h2>
+                            <div class="gridStyle" style="border:none;" ui-grid="educGridOptions" ui-grid-resize-columns></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.testresults && generateFinished">
-                        <div class="">
-                            <div class="col-md-auto">
-                                <center>
-                                    <label class="control-label"><h2>{{'PATIENTREPORT.COLUMNS.LEGACY_LAB_TESTS.TITLE'|translate}}</h2></label>
-                                </center>
-                                <div class="">
-                                    <div class="gridStyle" style="border:none;" ui-grid="testGridOptions" ui-grid-resize-columns></div>
-                                </div>
-                            </div>
+                        <div class="col-xs-12">
+                            <h2 style="text-align: center;">{{'PATIENTREPORT.COLUMNS.LEGACY_LAB_TESTS.TITLE'|translate}}</h2>
+                            <div class="gridStyle" style="border:none;" ui-grid="testGridOptions" ui-grid-resize-columns></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.pattestresults && generateFinished">
