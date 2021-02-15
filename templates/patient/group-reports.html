@@ -122,21 +122,23 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row" ng-show="showEducReport">
-                            <div class="col-md-12 side-menu-title">
-                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                                       <h2>{{'PATIENTREPORT.GROUP.REPORT'|translate}} {{materialType}}: {{selectedMaterial}}, {{educReportLength}} {{'PATIENTREPORT.GROUP.RECORDS'|translate}}</h2>
-                                   </span>
-                               </div>
-                           </div>
-                        </div>
-                        <div class="row" ng-show="showEducReport">
-                            <div class="col-md-12 animated fadeInRight">
-                                <div class="gridStyle" style="border:none;" ui-grid="educGridOptions" ui-grid-resize-columns ui-grid-auto-resize></div>
+                    </div>
+                    <div class="row" ng-show="showEducReport && category.education">
+                        <div class="col-xs-12 side-menu-title">
+                            <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                <span style="background-color:#e6edfa; padding: 0 10px;">
+                                    <h2>{{'PATIENTREPORT.GROUP.REPORT'|translate}} {{materialType}}: {{selectedMaterial}}, {{educReportLength}} {{'PATIENTREPORT.GROUP.RECORDS'|translate}}</h2>
+                                </span>
                             </div>
                         </div>
                     </div>
+                    <div class="row" ng-show="showEducReport && category.education">
+                        <div class="col-xs-12 animated fadeInRight">
+                            <div class="gridStyle" style="border:none;" ui-grid="educGridOptions" ui-grid-resize-columns ui-grid-auto-resize></div>
+                        </div>
+                    </div>
+                
+
                     <div class="row" ng-show="category.questionnaire">
                         <div class="col-md-6 animated fadeInRight">
                             <div class="panel">
@@ -208,21 +210,22 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row" ng-show="showQstReport">
-                            <div class="col-xs-12 side-menu-title">
-                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                                       <h2>{{'PATIENTREPORT.GROUP.REPORT'|translate}}  {{selectedQuestionnaire}}, {{qstReportLength}} {{'PATIENTREPORT.GROUP.RECORDS'|translate}}</h2>
-                                   </span>
-                               </div>
-                           </div>
-                        </div>
-                        <div class="row" ng-show="showQstReport">
-                            <div class="col-xs-12 animated fadeInRight">
-                                <div class="gridStyle" style="border:none;" ui-grid="qstGridOptions" ui-grid-resize-columns ui-grid-auto-resize></div>
+                    </div>    
+                    <div class="row" ng-show="showQstReport && category.questionnaire">
+                        <div class="col-xs-12 side-menu-title">
+                            <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                <span style="background-color:#e6edfa; padding: 0 10px;">
+                                    <h2>{{'PATIENTREPORT.GROUP.REPORT'|translate}}  {{selectedQuestionnaire}}, {{qstReportLength}} {{'PATIENTREPORT.GROUP.RECORDS'|translate}}</h2>
+                                </span>
                             </div>
                         </div>
                     </div>
+                    <div class="row" ng-show="showQstReport && category.questionnaire">
+                        <div class="col-xs-12 animated fadeInRight">
+                            <div class="gridStyle" style="border:none;" ui-grid="qstGridOptions" ui-grid-resize-columns ui-grid-auto-resize></div>
+                        </div>
+                    </div>
+                    
                     <div class="row" ng-show="category.demographics">
                         <div class="col-md-8 animated fadeInRight">
                             <div class="panel">
@@ -265,24 +268,24 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            
+                            </div> 
                         </div>
-                        <div class="row animated fadeInRight">
-                            <div class="col-xs-12 side-menu-title">
-                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                                       <h2>{{'PATIENTREPORT.GROUP.REPORT'|translate}} {{'PATIENTREPORT.GROUP.TITLE_DEMO'|translate}}, {{patientReportLength}} {{'PATIENTREPORT.GROUP.RECORDS'|translate}}</h2>
-                                   </span>
-                               </div>
-                           </div>
-                        </div>
-                        <div class="row animated fadeInRight">
-                            <div class="col-xs-12">
-                                <div class="gridStyle" style="border:none;" ui-grid="demoGridOptions" ui-grid-resize-columns ui-grid-auto-resize></div>
+                    </div>    
+                    <div class="row animated fadeInRight" ng-show="category.demographics">
+                        <div class="col-xs-12 side-menu-title">
+                            <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                <span style="background-color:#e6edfa; padding: 0 10px;">
+                                    <h2>{{'PATIENTREPORT.GROUP.REPORT'|translate}} {{'PATIENTREPORT.GROUP.TITLE_DEMO'|translate}}, {{patientReportLength}} {{'PATIENTREPORT.GROUP.RECORDS'|translate}}</h2>
+                                </span>
                             </div>
                         </div>
                     </div>
+                    <div class="row animated fadeInRight" ng-show="category.demographics">
+                        <div class="col-xs-12">
+                            <div class="gridStyle" style="border:none;" ui-grid="demoGridOptions" ui-grid-resize-columns ui-grid-auto-resize></div>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
 
