@@ -84,13 +84,13 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	$scope.dateOptionsStart = {
 		formatYear: "'yy'",
 		startingDay: 0,
-		minDate: new Date(),
+		minDate: null,
 		maxDate: null
 	};
 	$scope.dateOptionsEnd = {
 		formatYear: "'yy'",
 		startingDay: 0,
-		minDate: new Date(),
+		minDate: null,
 		maxDate: null
 	};
 
