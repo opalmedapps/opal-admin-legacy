@@ -311,34 +311,35 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
         var date_diff_days = function(d1, d2){
             return Math.floor((Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate()) - Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate()) ) / (1000*60*60*24));
         }
-        for(var i = 0; i < $scope.educReportLength; i++){
-            if($scope.educReport[i].page != null){
-                totAge += parseInt($scope.educReport[i].page);
-                ageDenom++;
-            }
-            if($scope.educReport[i].psex === "Female"){
-                femCount++;
-            }else if($scope.educReport[i].psex === "Male"){
-                malCount++;
+        $scope.safeApply(function(){
+            for(var i = 0; i < $scope.educReportLength; i++){
+                if($scope.educReport[i].page != null){
+                    totAge += parseInt($scope.educReport[i].page);
+                    ageDenom++;
+                }
+                if($scope.educReport[i].psex === "Female"){
+                    femCount++;
+                }else if($scope.educReport[i].psex === "Male"){
+                    malCount++;
+                }
+
+                if($scope.educReport[i].eread === "1"){
+                    totRead++;
+                    daysToRead += date_diff_days(new Date($scope.educReport[i].edate),new Date($scope.educReport[i].eupdate));
+                }
             }
 
-            if($scope.educReport[i].eread === "1"){
-                totRead++;
-                daysToRead += date_diff_days(new Date($scope.educReport[i].edate),new Date($scope.educReport[i].eupdate));
-            }
-        }
-
-        //average age
-        $scope.educAvgAge = (totAge/ageDenom).toFixed(2);
-        //gender breakdown
-        $scope.educMalPcnt = ((malCount/$scope.educReportLength)*100).toFixed(2);
-        $scope.educFemPcnt = ((femCount/$scope.educReportLength)*100).toFixed(2);
-        $scope.educUnkPcnt = (100-$scope.educMalPcnt-$scope.educFemPcnt).toFixed(2);
-        // % materials read
-        $scope.educReadPcnt = ((totRead/$scope.educReportLength)*100).toFixed(2);
-        // average time to read among read materials
-        $scope.educAvgDaysToRead = (daysToRead/totRead).toFixed(2);
-
+            //average age
+            $scope.educAvgAge = (totAge/ageDenom).toFixed(2);
+            //gender breakdown
+            $scope.educMalPcnt = ((malCount/$scope.educReportLength)*100).toFixed(2);
+            $scope.educFemPcnt = ((femCount/$scope.educReportLength)*100).toFixed(2);
+            $scope.educUnkPcnt = (100-$scope.educMalPcnt-$scope.educFemPcnt).toFixed(2);
+            // % materials read
+            $scope.educReadPcnt = ((totRead/$scope.educReportLength)*100).toFixed(2);
+            // average time to read among read materials
+            $scope.educAvgDaysToRead = (daysToRead/totRead).toFixed(2);
+        });
     }
 
     //
@@ -451,50 +452,51 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
 
     // Helper function to generate patient questionnaire statistics
     function prepareQstStats(){
-        var femCount = 0;
-        var malCount = 0;
-        var totNulls = 0;
-        var unkCount = 0;
-        var tot = $scope.qstReportLength;
-        var uniquePats = [];
-        //initialize unique pats with first patient name
-        uniquePats.push($scope.qstReport[0].pname + " , " + $scope.qstReport[0].plname);
-        var curPat = "";
-        var uniquePatDobs = [];
-        var completionTimes = [];
-        var date_diff_days = function(d1, d2){
-            return Math.floor((Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate()) - Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate()) ) / (1000*60*60*24));
-        }
-
-        for(var i = 0; i < tot; i++){
-            // gender breakdown
-            if($scope.qstReport[i].psex === "Female"){
-                femCount++;
-            }else if($scope.qstReport[i].psex === "Male"){
-                malCount++;
-            }else{
-                unkCount++;
+        $scope.safeApply(function(){
+            var femCount = 0;
+            var malCount = 0;
+            var totNulls = 0;
+            var unkCount = 0;
+            var tot = $scope.qstReportLength;
+            var uniquePats = [];
+            //initialize unique pats with first patient name
+            uniquePats.push($scope.qstReport[0].pname + " , " + $scope.qstReport[0].plname);
+            var curPat = "";
+            var uniquePatDobs = [];
+            var completionTimes = [];
+            var date_diff_days = function(d1, d2){
+                return Math.floor((Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate()) - Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate()) ) / (1000*60*60*24));
             }
 
-            //unique patient count
-            curPat = $scope.qstReport[i].pname + " , " + $scope.qstReport[i].plname;
-            if(!uniquePats.includes(curPat)){
-                uniquePats.push(curPat);
-                uniquePatDobs.push(new Date($scope.qstReport[i].pdob));
-            }
+            for(var i = 0; i < tot; i++){
+                // gender breakdown
+                if($scope.qstReport[i].psex === "Female"){
+                    femCount++;
+                }else if($scope.qstReport[i].psex === "Male"){
+                    malCount++;
+                }else{
+                    unkCount++;
+                }
 
-            // %completion and completion time
-            if(($scope.qstReport[i].qcomplete === "N/A") || ($scope.qstReport[i].qcomplete === "0000-00-00 00:00:00")){
-                totNulls ++;
-            }else{
-                completionTimes.push(date_diff_days(new Date($scope.qstReport[i].qdate), new Date($scope.qstReport[i].qcomplete)));
-            }
+                //unique patient count
+                curPat = $scope.qstReport[i].pname + " , " + $scope.qstReport[i].plname;
+                if(!uniquePats.includes(curPat)){
+                    uniquePats.push(curPat);
+                    uniquePatDobs.push(new Date($scope.qstReport[i].pdob));
+                }
 
+                // %completion and completion time
+                if(($scope.qstReport[i].qcomplete === "N/A") || ($scope.qstReport[i].qcomplete === "0000-00-00 00:00:00")){
+                    totNulls ++;
+                }else{
+                    completionTimes.push(date_diff_days(new Date($scope.qstReport[i].qdate), new Date($scope.qstReport[i].qcomplete)));
+                }
+            }
             // gender statistics
             $scope.qstPcntFemale = ((femCount/tot)*100).toFixed(2);
-			$scope.qstPcntMale = ((malCount/tot)*100).toFixed(2);
-			$scope.qstPcntUnk = (100 - $scope.qstPcntMale - $scope.qstPcntFemale).toFixed(2);
-			$scope.qstUniquePats = uniquePats.length;
+            $scope.qstPcntMale = ((malCount/tot)*100).toFixed(2);
+            $scope.qstPcntUnk = (100 - $scope.qstPcntMale - $scope.qstPcntFemale).toFixed(2);
+            $scope.qstUniquePats = uniquePats.length;
             //age stats
             var sum = 0;
             var invalids = 0;
@@ -521,7 +523,8 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                 sum += completionTimes[n];
             }
             $scope.qstAvgCompletTime = (sum/completionTimes.length).toFixed(2);
-        }
+        
+        });
 
     }
 
@@ -627,74 +630,69 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
 
     // Helper function to generate demographics statistics
     function prepareDemoStats(){
-        var femCount = 0;
-        var malCount = 0;
-        var unkCount = 0;
-        var totAge = 0;
-        var nullCount = 0;
-        var frCount = 0;
-        $scope.demoPcntFemale = 0;
-        $scope.demoPcntMale = 0;
+        $scope.safeApply(function(){
 
-        var diagDict = new Object(); //diagnosis tracking
-        $scope.femalePlotData = [];
-        $scope.malePlotData = [];
-        $scope.regPlotData = [];
+        
+            var femCount = 0;
+            var malCount = 0;
+            var unkCount = 0;
+            var totAge = 0;
+            var nullCount = 0;
+            var frCount = 0;
+            $scope.demoPcntFemale = 0;
+            $scope.demoPcntMale = 0;
 
-        for(var i = 0; i< $scope.patientReportLength; i++){
-            // male/female demgraphics
-            if($scope.patientReport[i].psex === "Female"){
-                femCount++;
-                $scope.femalePlotData.push([new Date($scope.patientReport[i].preg).getTime(), femCount]);
-            }else if($scope.patientReport[i].psex === "Male"){
-                malCount++;
-                $scope.malePlotData.push([new Date($scope.patientReport[i].preg).getTime(), malCount]);
-            }else{
-                unkCount++;
+            var diagDict = new Object(); //diagnosis tracking
+            $scope.femalePlotData = [];
+            $scope.malePlotData = [];
+            $scope.regPlotData = [];
+
+            for(var i = 0; i< $scope.patientReportLength; i++){
+                // male/female demgraphics
+                if($scope.patientReport[i].psex === "Female"){
+                    femCount++;
+                    $scope.femalePlotData.push([new Date($scope.patientReport[i].preg).getTime(), femCount]);
+                }else if($scope.patientReport[i].psex === "Male"){
+                    malCount++;
+                    $scope.malePlotData.push([new Date($scope.patientReport[i].preg).getTime(), malCount]);
+                }else{
+                    unkCount++;
+                }
+
+                //avg patient age
+                if($scope.patientReport[i].page && $scope.patientReport[i].page > 1){
+                    totAge += parseInt($scope.patientReport[i].page);
+                }else{
+                    nullCount++;
+                }
+
+                // french/english
+                if($scope.patientReport[i].plang === "FR"){
+                    frCount++;
+                }
+
+                //registration date tracking (to be plotted)
+                $scope.regPlotData.push([new Date($scope.patientReport[i].preg).getTime(), i]);
+                
+                
+                // diagnosis breakdown
+                if($scope.patientReport[i].diagdesc in diagDict){
+                    diagDict[$scope.patientReport[i].diagdesc]++;
+                }else{
+                    diagDict[$scope.patientReport[i].diagdesc] = 1;
+                }
+
+                $scope.demoPcntFemale = ((femCount/$scope.patientReportLength)*100).toFixed(2);
+                $scope.demoPcntMale = ((malCount/$scope.patientReportLength)*100).toFixed(2);
+                $scope.demoPcntUnk = ((unkCount/$scope.patientReportLength)*100).toFixed(2);
+
+                $scope.demoAvgAge = (totAge/($scope.patientReportLength-nullCount)).toFixed(2);
+                $scope.demoPcntFrench = ((frCount/$scope.patientReportLength)*100).toFixed(2);
+                $scope.demoPcntEnglish = (100-$scope.demoPcntFrench).toFixed(2);
+
+
             }
-
-            //avg patient age
-            if($scope.patientReport[i].page && $scope.patientReport[i].page > 1){
-                totAge += parseInt($scope.patientReport[i].page);
-            }else{
-                nullCount++;
-            }
-
-            // french/english
-            if($scope.patientReport[i].plang === "FR"){
-                frCount++;
-            }
-
-            //registration date tracking (to be plotted)
-            $scope.regPlotData.push([new Date($scope.patientReport[i].preg).getTime(), i]);
-            
-            
-            // diagnosis breakdown
-            if($scope.patientReport[i].diagdesc in diagDict){
-                diagDict[$scope.patientReport[i].diagdesc]++;
-            }else{
-                diagDict[$scope.patientReport[i].diagdesc] = 1;
-            }
-
-            $scope.demoPcntFemale = ((femCount/$scope.patientReportLength)*100).toFixed(2);
-            $scope.demoPcntMale = ((malCount/$scope.patientReportLength)*100).toFixed(2);
-            $scope.demoPcntUnk = ((unkCount/$scope.patientReportLength)*100).toFixed(2);
-
-            $scope.demoAvgAge = (totAge/($scope.patientReportLength-nullCount)).toFixed(2);
-            $scope.demoPcntFrench = ((frCount/$scope.patientReportLength)*100).toFixed(2);
-            $scope.demoPcntEnglish = (100-$scope.demoPcntFrench).toFixed(2);
-            
-
-            // store keys and values of diag dict for pie chart
-            var diagCounts = [];
-            var diagDescs = [];
-            for(const [key, value] of Object.entries(diagDict)){
-                diagCounts.push(value);
-                diagDescs.push(key);
-            }
-
-
-        }
+        });    
         Highcharts.chart('plot1', {
             chart: {
                 type: 'spline'
