@@ -129,13 +129,13 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 		$scope.dateOptionsStart = {
 			formatYear: "'yy'",
 			startingDay: 0,
-			minDate: new Date(),
+			minDate: null,
 			maxDate: null
 		};
 		$scope.dateOptionsEnd = {
 			formatYear: "'yy'",
 			startingDay: 0,
-			minDate: new Date(),
+			minDate: null,
 			maxDate: null
 		};
 
