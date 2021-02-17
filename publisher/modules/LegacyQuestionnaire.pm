@@ -155,8 +155,8 @@ sub publishLegacyQuestionnaires
     my $today_date = strftime("%Y-%m-%d", localtime(time));
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
 
-    # Date object of today at 7:30AM
-    my $today_at_eightAM = Time::Piece->strptime($today_date . " 07:30:00", "%Y-%m-%d %H:%M:%S");
+    # Date object of today at 6:00AM
+    my $today_at_eightAM = Time::Piece->strptime($today_date . " 06:00:00", "%Y-%m-%d %H:%M:%S");
     # Date object of today at 9PM
     my $today_at_eightPM = Time::Piece->strptime($today_date . " 21:00:00", "%Y-%m-%d %H:%M:%S");
 
