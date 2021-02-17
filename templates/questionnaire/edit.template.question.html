@@ -88,20 +88,20 @@
                     </div>
                     <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
                         <span class="input-group-addon">&nbsp;{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.MIN_SETTINGS'|translate}}</span>
-                        <input class="form-control" style="width:12%;" ng-change="setChangesMade();updateSlider();" min="1" type="number" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_MIN_VALUE'|translate}}" ng-model="templateQuestion.options.minValue" />
+                        <input class="form-control" style="width:12%;" ng-change="setChangesMade();updateSlider();" min="0" type="number" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_MIN_VALUE'|translate}}" ng-model="templateQuestion.options.minValue" />
                         <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="templateQuestion.options.minCaption_EN" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_MIN_CAPTION_EN'|translate}}" />
                         <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="templateQuestion.options.minCaption_FR" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_MIN_CAPTION_FR'|translate}}" />
                     </div>
                     <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
                         <span class="input-group-addon">{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.MAX_SETTINGS'|translate}}</span>
-                        <input class="form-control" style="width:12%" ng-change="setChangesMade();updateSlider();" min="1" type="number" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_MAX_VALUE'|translate}}" ng-model="templateQuestion.options.maxValue" />
+                        <input class="form-control" style="width:12%" ng-change="setChangesMade();updateSlider();" min="0" type="number" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_MAX_VALUE'|translate}}" ng-model="templateQuestion.options.maxValue" />
                         <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="templateQuestion.options.maxCaption_EN" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_MAX_CAPTION_EN'|translate}}" />
                         <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="templateQuestion.options.maxCaption_FR" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_MAX_CAPTION_FR'|translate}}" />
                     </div>
-                    <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
-                        <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.INCREMENT'|translate}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                        <input class="form-control" style="width:12%" ng-change="setChangesMade();updateSlider();" type="number" min="1" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_INCREMENT_STEP'|translate}}" ng-model="templateQuestion.options.increment"  />
-                    </div>
+<!--                    <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">-->
+<!--                        <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.INCREMENT'|translate}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>-->
+<!--                        <input class="form-control" style="width:12%" ng-change="setChangesMade();updateSlider();" type="number" min="1" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_INCREMENT_STEP'|translate}}" ng-model="templateQuestion.options.increment"  />-->
+<!--                    </div>-->
                 </div>
             </div>
 
