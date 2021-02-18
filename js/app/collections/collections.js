@@ -779,48 +779,47 @@ angular.module('opalAdmin.collections', [])
 	.factory('questionnaireCollectionService', function ($http) {
 		var questionnaireAPI = {};
 
-		questionnaireAPI.getQuestionnaires = function (OAUserId) {
+		questionnaireAPI.getQuestionnaires = function () {
 			return $http.post(
 				"questionnaire/get/questionnaires",
-				$.param({
-					OAUserId: OAUserId,
-				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
 		};
 
-		questionnaireAPI.getLibraries = function (OAUserId) {
+		questionnaireAPI.getPurposesRespondents = function () {
+			return $http.post(
+				"questionnaire/get/purposes-respondents",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		questionnaireAPI.getLibraries = function () {
 			return $http.post(
 				"library/get/libraries",
-				$.param({
-					OAUserId: OAUserId,
-				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
 		};
 
-		questionnaireAPI.getTemplatesQuestions = function (OAUserId) {
+		questionnaireAPI.getTemplatesQuestions = function () {
 			return $http.post(
 				"template-question/get/templates-questions",
-				$.param({
-					OAUserId: OAUserId,
-				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
 		};
 
-		questionnaireAPI.getTemplateQuestionDetails = function (templateQuestionId, OAUserId) {
+		questionnaireAPI.getTemplateQuestionDetails = function (templateQuestionId) {
 			return $http.post(
 				"template-question/get/template-question-details",
 				$.param({
-					OAUserId: OAUserId,
-					templateQuestionId: templateQuestionId,
+					templateQuestionId: templateQuestionId
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -828,36 +827,29 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		questionnaireAPI.getTemplateQuestionCategory = function (OAUserId) {
+		questionnaireAPI.getTemplateQuestionCategory = function () {
 			return $http.post(
 				"template-question/get/template-question-list",
-				$.param({
-					OAUserId: OAUserId,
-				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
 		};
 
-		questionnaireAPI.getQuestions = function (OAUserId) {
+		questionnaireAPI.getQuestions = function () {
 			return $http.post(
 				"question/get/questions",
-				$.param({
-					OAUserId: OAUserId,
-				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
 		};
 
-		questionnaireAPI.getQuestionDetails = function (questionId, OAUserId) {
+		questionnaireAPI.getQuestionDetails = function (questionId) {
 			return $http.post(
 				"question/get/question-details",
 				$.param({
-					questionId: questionId,
-					OAUserId: OAUserId,
+					questionId: questionId
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -865,24 +857,20 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		questionnaireAPI.getFinalizedQuestions = function (OAUserId) {
+		questionnaireAPI.getFinalizedQuestions = function () {
 			return $http.post(
 				"questionnaire/get/finalized-questions",
-				$.param({
-					OAUserId: OAUserId,
-				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
 		};
 
-		questionnaireAPI.getQuestionnaireDetails = function (questionnaireId, OAUserId) {
+		questionnaireAPI.getQuestionnaireDetails = function (questionnaireId) {
 			return $http.post(
 				"questionnaire/get/questionnaire-details",
 				$.param({
-					questionnaireId: questionnaireId,
-					OAUserId: OAUserId,
+					questionnaireId: questionnaireId
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},

@@ -95,7 +95,7 @@ angular.module('opalAdmin.controllers.template.question.edit', ['ngAnimate', 'ng
 		$scope.showProcessingModal();
 
 		// Call our API service to get the questionnaire details
-		questionnaireCollectionService.getTemplateQuestionDetails($scope.currentTemplateQuestion.ID, OAUserId).then(function (response) {
+		questionnaireCollectionService.getTemplateQuestionDetails($scope.currentTemplateQuestion.ID).then(function (response) {
 			// Assign value
 			$scope.templateQuestion = response.data;
 

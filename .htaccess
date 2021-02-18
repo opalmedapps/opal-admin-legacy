@@ -237,6 +237,7 @@ RewriteRule ^question/update/question php/questionnaire/update.question.php [QSA
 # Questionnaire Section
 RewriteRule ^questionnaire/delete/questionnaire php/questionnaire/delete.questionnaire.php [QSA,L]
 RewriteRule ^questionnaire/get/finalized-questions php/questionnaire/get.finalizedQuestions.php [QSA,L]
+RewriteRule ^questionnaire/get/purposes-respondents php/questionnaire/get.purposes.respondents.php [QSA,L]
 RewriteRule ^questionnaire/get/questionnaires php/questionnaire/get.questionnaires.php [QSA,L]
 RewriteRule ^questionnaire/get/questionnaire-details php/questionnaire/get.questionnaire_details.php [QSA,L]
 RewriteRule ^questionnaire/insert/questionnaire php/questionnaire/insert.questionnaire.php [QSA,L]

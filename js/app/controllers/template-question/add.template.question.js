@@ -131,7 +131,7 @@ controller('template.question.add', function ($scope, $state, $filter, $uibModal
 	};
 
 	// questionnaire API: retrieve data
-	questionnaireCollectionService.getTemplateQuestionCategory(OAUserId).then(function (response) {
+	questionnaireCollectionService.getTemplateQuestionCategory().then(function (response) {
 		$scope.atCatList = response.data;
 		$scope.atCatList.forEach(function(entry) {
 			if($scope.language.toUpperCase() === "FR")
