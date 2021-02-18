@@ -1,6 +1,5 @@
 <?php
-/* To insert a newly-created question */
-include_once('questionnaire.inc');
+include_once("../config.php");
 
 $questionArray = Question::validateAndSanitize($_POST);
 if(!$questionArray)

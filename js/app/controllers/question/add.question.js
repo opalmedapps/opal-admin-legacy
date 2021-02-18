@@ -230,7 +230,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	getLibrariesList();
 
-	questionnaireCollectionService.getTemplateQuestionCategory(OAUserId).then(function (response) {
+	questionnaireCollectionService.getTemplateQuestionCategory().then(function (response) {
 		$scope.atCatList = response.data;
 	}).catch(function(err) {
 		ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_CATEGORY'));
@@ -275,7 +275,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	};
 
 	function getTemplatesQuestionsList() {
-		questionnaireCollectionService.getTemplatesQuestions(OAUserId).then(function (response) {
+		questionnaireCollectionService.getTemplatesQuestions().then(function (response) {
 			$scope.atFilterList = response.data;
 			$scope.atFilterList.forEach(function(entry) {
 				if($scope.language.toUpperCase() === "FR") {
@@ -339,7 +339,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	};
 
 	function getLibrariesList() {
-		questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
+		questionnaireCollectionService.getLibraries().then(function (response) {
 			$scope.libraries = [];
 			$scope.groupFilterList = response.data;
 			$scope.groupFilterList.forEach(function(entry) {

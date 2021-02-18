@@ -1153,4 +1153,22 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . implode(" UNION ALL ", $sqlConditional);
         return $this->_queryInsertReplace($sqlInsert, $ready);
     }
+
+    /*
+     * List all available purposes.
+     * @params  void
+     * @return array - list of purposes
+     * */
+    function getPurposes() {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_PURPOSES, array());
+    }
+
+    /*
+     * List all available respondents.
+     * @params  void
+     * @return array - list of respondents
+     * */
+    function getRespondents() {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_RESPONDENTS, array());
+    }
 }
