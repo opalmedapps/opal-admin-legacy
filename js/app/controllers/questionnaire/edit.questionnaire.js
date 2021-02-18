@@ -65,10 +65,10 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 			return questions;
 		}
 
-		questionnaireCollectionService.getFinalizedQuestions(OAUserId).then(function (response) {
+		questionnaireCollectionService.getFinalizedQuestions().then(function (response) {
 			$scope.groupList = decodeQuestions(response.data);
 		}).catch(function (err) {
-			ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ERROR_QUESTION_lIST'));
+			ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ERROR_QUESTION_LIST'));
 			$uibModalInstance.close();
 		});
 
@@ -199,7 +199,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 		// $scope.showProcessingModal();
 
 		// Call our API service to get questionnaire details
-		questionnaireCollectionService.getQuestionnaireDetails($scope.currentQuestionnaire.ID, OAUserId).then(function (response) {
+		questionnaireCollectionService.getQuestionnaireDetails($scope.currentQuestionnaire.ID).then(function (response) {
 
 			// Assign value
 			$scope.questionnaire = response.data;

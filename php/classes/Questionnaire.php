@@ -123,6 +123,14 @@ class Questionnaire extends QuestionnaireModule {
         return $questionLocked;
     }
 
+
+    public function GetPurposesRespondents() {
+        $this->checkReadAccess();
+        $result["purposes"] = $this->questionnaireDB->getPurposes();
+        $result["respondents"] = $this->questionnaireDB->getRespondents();
+        return $result;
+    }
+
     /*
      * Gets questionnaire details
      *

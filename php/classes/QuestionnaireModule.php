@@ -5,7 +5,7 @@
  * Time: 8:46 AM
  */
 
-class QuestionnaireModule extends Module
+abstract class QuestionnaireModule extends Module
 {
     protected $questionnaireDB;
 

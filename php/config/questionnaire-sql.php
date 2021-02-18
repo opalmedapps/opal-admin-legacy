@@ -31,6 +31,8 @@ define("DEFINITION_TABLE","definitionTable");
 define("DICTIONARY_TABLE","dictionary");
 define("LABEL_TABLE","label");
 define("LABEL_OPTION_TABLE","labelOption");
+define("PURPOSE_TABLE","purpose");
+define("RESPONDENT_TABLE","respondent");
 define("LANGUAGE_TABLE","language");
 define("LEGACY_TYPE_TABLE","legacyType");
 define("LEGACY_STATUS_TABLE","legacyStatus");
@@ -577,6 +579,17 @@ define("SQL_QUESTIONNAIRE_FETCH_ALL_QUESTIONNAIRES",
     FROM ".QUESTIONNAIRE_TABLE." q
     WHERE q.deleted = ".NON_DELETED_RECORD." AND (OAUserId = :OAUserId OR private = 0);"
 );
+define("SQL_QUESTIONNAIRE_FETCH_ALL_QUESTIONNAIRES",
+    "SELECT
+    q.ID AS ID,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR,
+    q.private,
+    q.final AS publish,
+    q.createdBy AS created_by
+    FROM ".QUESTIONNAIRE_TABLE." q
+    WHERE q.deleted = ".NON_DELETED_RECORD." AND (OAUserId = :OAUserId OR private = 0);"
+);
 
 define("SQL_QUESTIONNAIRE_FETCH_ALL_FINAL_QUESTIONNAIRES",
     "SELECT
@@ -597,3 +610,23 @@ define("SQL_QUESTIONNAIRE_UPDATE_LAST_CHECKBOX_OPTION",
 define("SQL_QUESTIONNAIRE_CONDITIONAL_INSERT","
     SELECT %%VALUES%% FROM DUAL WHERE NOT EXISTS (SELECT * FROM ".DICTIONARY_TABLE." WHERE contentId = :controlContentId)
 ");
+
+define("SQL_QUESTIONNAIRE_GET_PURPOSES",
+    "SELECT
+    p.ID AS ID,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = p.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS title_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = p.title AND d.languageId = ".FRENCH_LANGUAGE.") AS title_FR,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = p.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS description_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = p.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR
+    FROM ".PURPOSE_TABLE." p ORDER BY p.ID;"
+);
+
+define("SQL_QUESTIONNAIRE_GET_RESPONDENTS",
+    "SELECT
+    r.ID AS ID,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS title_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.title AND d.languageId = ".FRENCH_LANGUAGE.") AS title_FR,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS description_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR
+    FROM ".RESPONDENT_TABLE." r ORDER BY r.ID;"
+);
