@@ -1,6 +1,6 @@
-angular.module('opalAdmin.controllers.groupReports', ['ngAnimate', 'ui.bootstrap',  'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).
+angular.module('opalAdmin.controllers.groupReports', ['ngAnimate', 'ui.bootstrap',  'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibModal, $filter){
+controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $filter, $timeout){
     // navigation
     $scope.navMenu = Session.retrieveObject('menu');
     $scope.navSubMenu = Session.retrieveObject('subMenu')[MODULE.patient];
@@ -28,18 +28,14 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
             $scope.category.questionnaire = false;
             $scope.category.demographics = false;
             $scope.category.education = true;
-            //$scope.showQstReport = false;
         }else if (target === 'questionnaire'){
             $scope.category.demographics = false;
             $scope.category.education = false;
             $scope.category.questionnaire = true;
-            //$scope.showEducReport = false;
         }else if (target === 'demographics'){
             $scope.category.education = false;
             $scope.category.questionnaire = false;
             $scope.category.demographics = true;
-            //$scope.showEducReport = false;
-            //$scope.showQstReport = false;
         }
     };
 
@@ -54,15 +50,14 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
     $filter('translate')('PATIENTREPORT.EDUC_MATERIALS.TREAT')];
 	$scope.materialType = "";
 	$scope.selectedMaterial = ""; //the selection of the user
-    $scope.showEducReport = false;
+
     
-	//Display variables for questionnares branch
+    
+	//Display variables 
 	$scope.selectedQuestionnaire = ""; //user selected questionnaire from qstList
 	$scope.showQstReport = false;
+    $scope.showEducReport = false;
 
-	//Display variables for demographics branch
-    $scope.genConsentTable = true;
-    
     // Storage variables for results of DB calls
     $scope.educList = [];
     $scope.educReport = [];
@@ -92,7 +87,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
     $scope.malePlotData = [];
     $scope.femalePlotData = [];
 
-
+    // UI grid objects for returned information
     $scope.educGridOptions = {
         data: 'educReport',
         columnDefs: [
@@ -108,7 +103,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
         enableFiltering: true,
         enableColumnResizing: true,
     };
-
+    
     $scope.qstGridOptions = {
         data: 'qstReport',
         columnDefs: [
@@ -121,7 +116,6 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
             { field: 'qcomplete', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.DATE_COMPLETE'), width:'15%', enableColumnMenu: false },
         ],
         enableFiltering: true,
-        //useExternalFiltering: true,
         enableColumnResizing: true,
 
     };
@@ -142,8 +136,15 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
             { field: 'diagdate', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.DATE_DIAG'), width:'10%', enableColumnMenu: false },
         ],
         enableFiltering: true,
-        //useExternalFiltering: true,
         enableColumnResizing: true,
+    };
+    // Manually refresh the view of the ui-grids after reloading data
+    $scope.refresh = false;
+    var refresh = function(){
+        $scope.refresh = true;
+        $timeout(function(){
+            $scope.refresh = false;        
+        }, 20);
     };
 
     // Safe apply function prevents potential errors with calling $apply twice at once
@@ -154,7 +155,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                 fn(); //just call the function, no apply can be used right now
             }
         }
-        else{ //no active applys or digests, we can now call function with apply
+        else{ //wrap function with $apply variable to manually trigger a digest cycle
             this.$apply(fn);
         }
     }
@@ -286,6 +287,8 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                     
                 }
                 $scope.educReportLength = $scope.educReport.length;
+                $scope.showEducReport = true;
+                refresh();
                 prepareEducStats();
     
     
@@ -351,7 +354,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
      * Generate list of questionnaires found in DB
      */
     $scope.genQuestionnaireOptions = function(){
-        $scope.qstReport = "";
+        //$scope.qstReport = "";
         $.ajax({
             type:"POST",
             url:"patient-reports/find/questionnaire-options",
@@ -440,7 +443,9 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                         $scope.qstReport[i].qcomplete = "N/A";
                     }
                 }
+                $scope.showQstReport = true;
                 $scope.qstReportLength = $scope.qstReport.length;
+                refresh();
             }else{
                 ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
             }
@@ -616,6 +621,7 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $uibM
                     }
                  }
                 $scope.patientReportLength = $scope.patientReport.length;
+                refresh(); 
                 prepareDemoStats();
     
     

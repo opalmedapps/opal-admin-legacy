@@ -69,7 +69,7 @@
                                         <label class="control-label">
                                             {{'PATIENTREPORT.GROUP.ALL'|translate}} {{materialType}} {{'PATIENTREPORT.GROUP.FOUND'|translate}}
                                         </label>
-                                            <select ng-model="selectedMaterial" ng-options="x for x in educList" ng-change="genEducReport(); showEducReport = true;" style="max-width:200px;"></select>
+                                            <select ng-model="selectedMaterial" ng-options="x for x in educList" ng-change="genEducReport();" style="max-width:200px;"></select>
                                         </div>
                                     </div>
 
@@ -134,7 +134,7 @@
                     </div>
                     <div class="row" ng-show="showEducReport && category.education">
                         <div class="col-xs-12 animated fadeInRight">
-                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="educGridOptions" ui-grid-resize-columns ui-grid-auto-resize></div>
+                            <div ng-if="!refresh" class="gridStyle" style="border:none;" ui-grid="educGridOptions"></div>
                         </div>
                     </div>
                 
@@ -149,7 +149,7 @@
                                                 {{'PATIENTREPORT.GROUP.QST_CHOOSE'|translate}}
                                             </label>
                                             <select ng-model="selectedQuestionnaire" ng-options="x for x in qstList"
-                                                ng-change="genQstReport(); showQstReport = true;"></select>
+                                                ng-change="genQstReport();"></select>
                                         </div>
                                     </div>
                                 </div>
@@ -222,7 +222,7 @@
                     </div>
                     <div class="row" ng-show="showQstReport && category.questionnaire">
                         <div class="col-xs-12 animated fadeInRight">
-                            <div class="gridStyle" style="border:none; max-height: 370px;" ui-grid="qstGridOptions" ui-grid-resize-columns ui-grid-auto-resize></div>
+                            <div ng-if="!refresh" class="gridStyle" style="border:none;" ui-grid="qstGridOptions"></div>
                         </div>
                     </div>
                     
@@ -271,7 +271,7 @@
                             </div> 
                         </div>
                     </div>    
-                    <div class="row animated fadeInRight" ng-show="category.demographics">
+                    <div class="row" ng-show="category.demographics">
                         <div class="col-xs-12 side-menu-title">
                             <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                 <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -280,9 +280,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row animated fadeInRight" ng-show="category.demographics">
-                        <div class="col-xs-12">
-                            <div class="gridStyle" style="border:none; max-height: 370px;" ui-grid="demoGridOptions" ui-grid-resize-columns ui-grid-auto-resize></div>
+                    <div class="row" ng-show="category.demographics">
+                        <div class="col-xs-12 animated fadeInRight">
+                            <div ng-if="!refresh" class="gridStyle" style="border:none;" ui-grid="demoGridOptions"></div>
                         </div>
                     </div>
                     
