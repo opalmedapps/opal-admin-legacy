@@ -1171,4 +1171,26 @@ class DatabaseQuestionnaire extends DatabaseAccess
     function getRespondents() {
         return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_RESPONDENTS, array());
     }
+
+    /*
+     * Get a purpose details
+     * @params  $id - int : purpose ID
+     * @return  array - details of the purpose
+     * */
+    function getPurposeDetails($id) {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_PURPOSE_DETAILS, array(
+            array("parameter"=>":ID","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get a respondent details
+     * @params  $id - int : respondent ID
+     * @return  array - details of the respondent
+     * */
+    function getRespondentDetails($id) {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_RESPONDENT_DETAILS, array(
+            array("parameter"=>":ID","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }

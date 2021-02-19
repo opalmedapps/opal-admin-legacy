@@ -285,6 +285,8 @@
       "RESPONDENT_PURPOSE_EXPLANATION": "Veuillez sélectionner un objectif et le type de répondant pour ce questionnaire.",
       "SELECT_PURPOSE": "Sélectionnez un objectif",
       "SELECT_RESPONDENT": "Sélectionnez un type de répondant",
+      "PURPOSE": "Objectif",
+      "RESPONDENT": "Répondant",
       "PRIVACY": "Confidentialité",
       "PRIVATE": "Privé",
       "PUBLIC": "Public",

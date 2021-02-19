@@ -630,3 +630,23 @@ define("SQL_QUESTIONNAIRE_GET_RESPONDENTS",
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR
     FROM ".RESPONDENT_TABLE." r ORDER BY r.ID;"
 );
+
+define("SQL_QUESTIONNAIRE_GET_PURPOSE_DETAILS",
+    "SELECT
+    p.ID AS ID,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = p.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS title_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = p.title AND d.languageId = ".FRENCH_LANGUAGE.") AS title_FR,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = p.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS description_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = p.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR
+    FROM ".PURPOSE_TABLE." p WHERE p.ID = :ID;"
+);
+
+define("SQL_QUESTIONNAIRE_GET_RESPONDENT_DETAILS",
+    "SELECT
+    r.ID AS ID,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS title_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.title AND d.languageId = ".FRENCH_LANGUAGE.") AS title_FR,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS description_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR
+    FROM ".RESPONDENT_TABLE." r WHERE r.ID = :ID;"
+);
