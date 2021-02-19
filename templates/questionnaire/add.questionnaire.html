@@ -87,11 +87,11 @@
                             <div uib-accordion-group is-open="purposeRespondentSection.open"
                                  class="panel-container summary-box animated" ng-class="{fadeInUp: purposeRespondentSection.show}"
                                  ng-if="purposeRespondentSection.show"
-                                 is-disabled="newQuestionnaire.private != 0 && newQuestionnaire.private != 1">
+                                 is-disabled="!newQuestionnaire.purpose && !newQuestionnaire.respondent">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
-                                            <span ng-if="newQuestionnaire.private == 0 || newQuestionnaire.private == 1"
+                                            <span ng-if="newQuestionnaire.purpose && newQuestionnaire.respondent"
                                                   style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
@@ -106,11 +106,15 @@
                                 </uib-accordion-heading>
                                 <div ng-if="newQuestionnaire.purpose || newQuestionnaire.respondent"
                                      class="description">
-                                    <p style="margin-bottom:5px;">
+                                    <p ng-if="newQuestionnaire.purpose" style="margin-bottom:5px;">
+                                        <strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.PURPOSE'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        <span ng-if="newQuestionnaire.purpose">
-                                        {{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.PUBLIC'|translate}}</span>
-                                        <span ng-if="newQuestionnaire.respondent">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.PRIVATE'|translate}}</span>
+                                        {{newQuestionnaire.purpose.title_display}}
+                                    </p>
+                                    <p ng-if="newQuestionnaire.respondent" style="margin-bottom:5px;">
+                                        <strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.RESPONDENT'|translate}}</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{newQuestionnaire.respondent.title_display}}
                                     </p>
                                 </div>
                             </div>
