@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.groupReports', ['ngAnimate', 'ui.bootstrap',  'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $filter, $timeout){
+controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, MODULE, $filter, $timeout){
     // navigation
     $scope.navMenu = Session.retrieveObject('menu');
     $scope.navSubMenu = Session.retrieveObject('subMenu')[MODULE.patient];
@@ -42,12 +42,11 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $filt
 
     //Display variables for educational materials branch
 	$scope.displayMaterialList = false;
-    $scope.materialTypes = [
-    $filter('translate')('PATIENTREPORT.EDUC_MATERIALS.BOOKLET'),
-    $filter('translate')('PATIENTREPORT.EDUC_MATERIALS.FACTSHEET'),
-    $filter('translate')('PATIENTREPORT.EDUC_MATERIALS.PACKAGE'),
-    $filter('translate')('PATIENTREPORT.EDUC_MATERIALS.VIDEO'),
-    $filter('translate')('PATIENTREPORT.EDUC_MATERIALS.TREAT')];
+    if($rootScope.siteLanguage === 'FR'){
+        $scope.materialTypes = ["Brochure", "Fiche d'information", "Paquet", "Vidéo", "Directives de traitement"];
+    }else{
+        $scope.materialTypes = ["Brochure", "Factsheet", "Package", "Video", "Treatment Guidelines"];
+    }
 	$scope.materialType = "";
 	$scope.selectedMaterial = ""; //the selection of the user
 
@@ -172,15 +171,15 @@ controller('groupReports', function($scope, Session, ErrorHandler, MODULE, $filt
         
         $scope.safeApply(function(){
             //TODO TODO After translations for materials inputted, add checks to switch back to english
-            if($scope.materialType == "[FR]Booklet"){
+            if($scope.materialType === "Brochure"){
                 $scope.materialType = "Booklet";
-            }else if($scope.materialType == "[FR]Factsheet"){
+            }else if($scope.materialType === "Fiche d'information"){
                 $scope.materialType = "Factsheet";
-            }else if($scope.materialType == "[FR]Package"){
+            }else if($scope.materialType === "Paquet"){
                 $scope.materialType = "Package";
-            }else if($scope.materialType == "[FR]Video"){
+            }else if($scope.materialType === "Vidéo"){
                 $scope.materialType = "Video";
-            }else if($scope.materialType == "[FR]Treatment Guidelines"){
+            }else if($scope.materialType === "Directives de traitement"){
                 $scope.materialType = "Treatment Guidelines";
             }
         });
