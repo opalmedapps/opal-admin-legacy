@@ -14,7 +14,7 @@ class Questionnaire extends QuestionnaireModule {
         $this->checkReadAccess();
         $results = $this->questionnaireDB->fetchAllQuestionnaires();
         foreach($results as &$questionnaire) {
-            $questionnaire["locked"] = $this->isQuestionnaireLocked($questionnaire["ID"]);
+            $questionnaire["locked"] = $this->_isQuestionnaireLocked($questionnaire["ID"]);
         }
         return $results;
     }
@@ -28,23 +28,25 @@ class Questionnaire extends QuestionnaireModule {
         $this->checkReadAccess();
         $results = $this->questionnaireDB->fetchAllFinalQuestionnaires();
         foreach($results as &$questionnaire) {
-            $questionnaire["locked"] = $this->isQuestionnaireLocked($questionnaire["ID"]);
+            $questionnaire["locked"] = $this->_isQuestionnaireLocked($questionnaire["ID"]);
         }
         return $results;
     }
 
     /*
      * This function validate and sanitize a questionnaire
-     * @param   $questionnaireToSanitize (array)
+     * @param   $post (array)
      * @return  sanitized questionnaire or false if invalid
      * */
-    function validateAndSanitize($questionnaireToSanitize) {
+    function validateAndSanitize($post) {
+        $post = HelpSetup::arraySanitization($post);
+        //arraySanitization
         //Sanitize the name of the questionnaire. If it is empty, rejects it.
         $validatedQuestionnaire = array(
-            "title_EN"=>htmlspecialchars($questionnaireToSanitize['title_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
-            "title_FR"=>htmlspecialchars($questionnaireToSanitize['title_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
-            "description_EN"=>htmlspecialchars($questionnaireToSanitize['description_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
-            "description_FR"=>htmlspecialchars($questionnaireToSanitize['description_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "title_EN"=>htmlspecialchars($post['title_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "title_FR"=>htmlspecialchars($post['title_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "description_EN"=>htmlspecialchars($post['description_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "description_FR"=>htmlspecialchars($post['description_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
         );
 
         if ($validatedQuestionnaire["title_EN"] == "" || $validatedQuestionnaire["title_FR"] == "" || $validatedQuestionnaire["description_EN"] == "" || $validatedQuestionnaire["description_FR"] == "")
@@ -52,27 +54,27 @@ class Questionnaire extends QuestionnaireModule {
 
         //Sanitize the questionnaire ID (if any). IF there was supposed to be an ID and it's empty, reject the
         //questionnaire
-        if($questionnaireToSanitize["ID"] != "") {
-            $validatedQuestionnaire["ID"] = strip_tags($questionnaireToSanitize["ID"]);
+        if($post["ID"] != "") {
+            $validatedQuestionnaire["ID"] = strip_tags($post["ID"]);
             if($validatedQuestionnaire["ID"] == "")
                 return false;
         }
 
         //Sanitize the list of libraries associated to the questionnaire
         $libraries = array();
-        if (is_array($questionnaireToSanitize['libraries']) && count($questionnaireToSanitize['libraries']) > 0)
-            foreach($questionnaireToSanitize['libraries'] as $library)
+        if (is_array($post['libraries']) && count($post['libraries']) > 0)
+            foreach($post['libraries'] as $library)
                 array_push($libraries, strip_tags($library));
 
         $validatedQuestionnaire["libraries"] = $libraries;
-        $validatedQuestionnaire["private"] = (strip_tags($questionnaireToSanitize['private'])=="true"||strip_tags($questionnaireToSanitize['private'])=="1"?"1":"0");
-        $validatedQuestionnaire["final"] = (strip_tags($questionnaireToSanitize['final'])=="true"||strip_tags($questionnaireToSanitize['final'])=="1"?"1":"0");
+        $validatedQuestionnaire["private"] = (strip_tags($post['private'])=="true"||strip_tags($post['private'])=="1"?"1":"0");
+        $validatedQuestionnaire["final"] = (strip_tags($post['final'])=="true"||strip_tags($post['final'])=="1"?"1":"0");
 
         //Validate the list of questions
         $options = array();
         $arrIds = array();
-        if(!empty($questionnaireToSanitize["questions"]))
-            foreach($questionnaireToSanitize["questions"] as $question) {
+        if(!empty($post["questions"]))
+            foreach($post["questions"] as $question) {
                 $order = intval(strip_tags($question["order"]));
                 $questionId = intval(strip_tags($question["ID"]));
                 if ($questionId != 0)
@@ -96,6 +98,26 @@ class Questionnaire extends QuestionnaireModule {
         if(count($questionsInfo) != count($options))
             return false;
 
+        // If the purpose does not exists, reject it
+        if (array_key_exists("purpose", $post) && $post["purpose"] != "") {
+            $purpose = $this->questionnaireDB->getPurposeDetails($post["purpose"]);
+            if(count($purpose) != 1)
+                return false;
+            else
+                $validatedQuestionnaire["purpose"] = $post["purpose"];
+        } else
+            return false;
+
+        // If the respondent does not exists, reject it
+        if (array_key_exists("respondent", $post) && $post["respondent"] != "") {
+            $respondent = $this->questionnaireDB->getRespondentDetails($post["respondent"]);
+            if(count($respondent) != 1)
+                return false;
+            else
+                $validatedQuestionnaire["respondent"] = $post["respondent"];
+        } else
+            return false;
+
         //If any question is private, mark down the questionnaire should be private
         $anyPrivateQuestion = false;
         foreach($questionsInfo as $question) {
@@ -117,12 +139,11 @@ class Questionnaire extends QuestionnaireModule {
      * @param   $questionnaireId (integer)
      * @return  true or false (boolean)
      * */
-    function isQuestionnaireLocked($questionnaireId) {
+    protected function _isQuestionnaireLocked($questionnaireId) {
         $questionLocked = $this->opalDB->countLockedQuestionnaires($questionnaireId);
         $questionLocked = (intval($questionLocked["total"]) > 0?true:false);
         return $questionLocked;
     }
-
 
     public function GetPurposesRespondents() {
         $this->checkReadAccess();
@@ -132,13 +153,24 @@ class Questionnaire extends QuestionnaireModule {
     }
 
     /*
-     * Gets questionnaire details
+     * API call to get questionnaire details
      *
      * @param integer $questionnaireId : the questionnaire ID
      * @return array $questionnaireDetails : the questionnaire details
      */
     public function getQuestionnaireDetails($questionnaireId){
         $this->checkReadAccess($questionnaireId);
+        return $this->_getQuestionnaireDetails($questionnaireId);
+
+    }
+
+    /*
+     * Protected method used only internally to get questionnaire details
+     *
+     * @param integer $questionnaireId : the questionnaire ID
+     * @return array $questionnaireDetails : the questionnaire details
+     * */
+    protected function _getQuestionnaireDetails($questionnaireId) {
         $questionnaireDetails = $this->questionnaireDB->getQuestionnaireDetails($questionnaireId);
 
         if(count($questionnaireDetails) != 1)
@@ -150,7 +182,7 @@ class Questionnaire extends QuestionnaireModule {
         $questionnaireDetails["title_FR"] = htmlspecialchars_decode($questionnaireDetails["title_FR"]);
         $questionnaireDetails["description_EN"] = htmlspecialchars_decode($questionnaireDetails["description_EN"]);
         $questionnaireDetails["description_FR"] = htmlspecialchars_decode($questionnaireDetails["description_FR"]);
-        $questionnaireDetails["locked"] = intval($this->isQuestionnaireLocked($questionnaireId));
+        $questionnaireDetails["locked"] = intval($this->_isQuestionnaireLocked($questionnaireId));
 
         $readOnly = false;
         $isOwner = false;
@@ -215,6 +247,8 @@ class Questionnaire extends QuestionnaireModule {
             "description"=>$description,
             "instruction"=>$instruction,
             "private"=>$newQuestionnaire["private"],
+            "purposeId"=>$newQuestionnaire["purpose"],
+            "respondentId"=>$newQuestionnaire["respondent"],
         );
 
         /*
@@ -250,18 +284,6 @@ class Questionnaire extends QuestionnaireModule {
     }
 
     /**
-     *
-     * Gets list logs of legacy questionnaires during one or many cron sessions
-     *
-     * @param array $serials : a list of cron log serial numbers
-     * @return array : the legacy questionnaire logs for table view
-     */
-    public function getQuestionnaireListLogs($ids) {
-        $this->checkReadAccess($ids);
-        return $this->opalDB->getQuestionnaireListLogs($ids);
-    }
-
-    /**
      * Mark a questionnaire as deleted. First, it get the last time it was updated, check if the user has the proper
      * authorization, and check if the questionnaire was already sent to a patient. Then it checked if the record was
      * updated in the meantime, and if not, it marks the questionnaire as being deleted.
@@ -278,7 +300,7 @@ class Questionnaire extends QuestionnaireModule {
      */
     public function deleteQuestionnaire($questionnaireId){
         $this->checkDeleteAccess($questionnaireId);
-        $questionnaireToDelete = $this->getQuestionnaireDetails($questionnaireId);
+        $questionnaireToDelete = $this->_getQuestionnaireDetails($questionnaireId);
 
         if ($this->questionnaireDB->getOAUserId() <= 0 || $questionnaireToDelete["deleted"] == 1 || ($questionnaireToDelete["private"] == 1 && $this->questionnaireDB->getOAUserId() != $questionnaireToDelete["OAUserId"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
@@ -286,7 +308,7 @@ class Questionnaire extends QuestionnaireModule {
         $lastUpdated = $this->questionnaireDB->getLastTimeTableUpdated(QUESTIONNAIRE_TABLE, $questionnaireId);
 
         $nobodyUpdated = $this->questionnaireDB->canRecordBeUpdated(QUESTIONNAIRE_TABLE, $questionnaireId, $lastUpdated["lastUpdated"], $lastUpdated["updatedBy"]);
-        $wasQuestionSent = $this->isQuestionnaireLocked($questionnaireId);
+        $wasQuestionSent = $this->_isQuestionnaireLocked($questionnaireId);
 
         if ($nobodyUpdated && !$wasQuestionSent) {
             $this->questionnaireDB->markAsDeletedInDictionary($questionnaireToDelete["title"]);
@@ -331,10 +353,10 @@ class Questionnaire extends QuestionnaireModule {
         $visualization = 1;
 
         //Get current questionnaire infos
-        $oldQuestionnaire = $this->getQuestionnaireDetails($updatedQuestionnaire["ID"]);
+        $oldQuestionnaire = $this->_getQuestionnaireDetails($updatedQuestionnaire["ID"]);
 
         //If the questionnaire is locked, ignore all the changes
-        if($this->isQuestionnaireLocked($oldQuestionnaire["ID"])) return false;
+        if($this->_isQuestionnaireLocked($oldQuestionnaire["ID"])) return false;
 
         //Look for the current questions IDs associated to the questionnaire
         foreach($oldQuestionnaire["questions"] as $question)

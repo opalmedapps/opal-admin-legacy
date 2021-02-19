@@ -42,7 +42,7 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	};
 
 	$scope.numOfCompletedSteps = 0;
-	$scope.stepTotal = 3;
+	$scope.stepTotal = 4;
 	$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
 	// Function to calculate / return step progress
@@ -129,13 +129,7 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	};
 
 	$scope.purposeRespondentUpdate = function () {
-
-		console.log("purpose");
-		console.log($scope.newQuestionnaire.purpose);
-		console.log("respondent");
-		console.log($scope.newQuestionnaire.respondent);
 		$scope.purposeRespondentSection.open = true;
-
 		if ($scope.newQuestionnaire.purpose && $scope.newQuestionnaire.respondent ) {
 			steps.purposeRespondentSection.completed = true;
 			$scope.privacySection.show = true;
@@ -329,7 +323,6 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		if ($scope.checkForm()) {
 
 			var formatData = copyQuestionnaireData($scope.newQuestionnaire);
-
 			$.ajax({
 				method: "POST",
 				url: "questionnaire/insert/questionnaire",
@@ -351,8 +344,8 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 			title_FR : oldData.title_FR,
 			description_EN : oldData.description_EN,
 			description_FR : oldData.description_FR,
-			purpose : oldData.purpose,
-			respondent : oldData.respondent,
+			purpose : oldData.purpose.ID,
+			respondent : oldData.respondent.ID,
 			private : oldData.private,
 			questions : []
 		};
