@@ -564,7 +564,7 @@ print "Finished appointment list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start getResourceAppointmentsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@RAList = ResourceAppointment::getResourceAppointmentsFromSourceDB(@patientList);
+@RAList = ResourceAppointment::getResourceAppointmentsFromSourceDB(@patientList, $global_patientInfo_sql);
 print "--- End getResourceAppointmentsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 
 print "Got resource appointment list\n" if $verbose;
