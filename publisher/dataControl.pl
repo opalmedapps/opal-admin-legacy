@@ -682,7 +682,7 @@ print "Finished patient location MH list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start getDocsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@DocList = Document::getDocsFromSourceDB($cronLogSer, @patientList);
+@DocList = Document::getDocsFromSourceDB($cronLogSer, @patientList, $global_patientInfo_sql);
 print "--- End getDocsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got document list\n" if $verbose;
 
