@@ -276,6 +276,7 @@ my @RAList = ();
 my @PLList = ();
 my @PLMHList = ();
 
+my $global_patientInfo_sql = "";
 my $verbose = 1;
 
 #=========================================================================================
@@ -331,6 +332,34 @@ foreach my $Patient (@registeredPatients) {
 
 print "-- End Loop over each patient: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished patient list\n" if $verbose;
+
+##########################################################################################
+# @Kelly Agnew 2021-02-22 Cron Refactor
+# Data pre-loading: improve cron speed by preloading the patientInfo_sql list and passing to various modules
+#
+##########################################################################################
+print "-- Start global_patientInfo_sql pre-load: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+my $numPats = @patientList;
+my $c = 0;
+foreach my $Patient (@patientList) {
+	my $patientSer 			= $Patient->getPatientSer();
+	my $id		   			= $Patient->getPatientId(); #patient ID
+	my $patientLastTransfer = $Patient->getPatientLastTransfer(); # last updated
+
+	$global_patientInfo_sql .= "
+		SELECT '$id', '$patientLastTransfer', '$patientSer'
+	";
+
+	$c++;
+	if($c < $numPats ){
+		$global_patientInfo_sql .= "UNION";
+	}
+
+}
+print "-- End global_patientInfo_sql pre-load: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+print "Got global patientInfo list\n" if $verbose;
+
+
 ##########################################################################################
 #
 # Data Retrieval PATIENTDOCTORS - get list of patient-doctor info updated since last update
