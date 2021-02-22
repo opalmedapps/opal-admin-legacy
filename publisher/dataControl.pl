@@ -445,7 +445,7 @@ print "Finished diagnosis list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start getPrioritiesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@PriorityList = Priority::getPrioritiesFromSourceDB(@patientList);
+@PriorityList = Priority::getPrioritiesFromSourceDB(@patientList, $global_patientInfo_sql);
 print "--- End getPrioritiesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got priority list\n" if $verbose;
 

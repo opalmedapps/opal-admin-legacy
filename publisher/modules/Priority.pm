@@ -167,7 +167,7 @@ sub getPriorityCode
 #======================================================================================
 sub getPrioritiesFromSourceDB
 {
-	my (@patientList) = @_; # args
+	my (@patientList, $global_patientInfo_sql) = @_; # args
 	my @priorityList = (); # initialize a list of priority objects
 
 	my ($patientser, $sourceuid, $datestamp, $code); # when we retrieve query results
@@ -192,22 +192,7 @@ sub getPrioritiesFromSourceDB
 
 				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
-			my $numOfPatients = @patientList;
-			my $counter = 0;
-			foreach my $Patient (@patientList) {
-				my $patientSer 			= $Patient->getPatientSer();
-				my $id      		 	= $Patient->getPatientId(); # get patient ID
-				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
-
-				$patientInfo_sql .= "
-					SELECT '$id', '$patientLastTransfer', '$patientSer'
-				";
-
-				$counter++;
-				if ( $counter < $numOfPatients ) {
-					$patientInfo_sql .= "UNION";
-				}
-			}
+			$patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
 			$patientInfo_sql .= ")
 			Select c.* into #tempPriority
 			from PatientInfo c;
