@@ -379,7 +379,7 @@ sub getApptCronLogSer
 #======================================================================================
 sub getApptsFromSourceDB
 {
-	my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
+	my ($cronLogSer, @patientList, $global_patientInfo_sql) = @_; # patient list and cron log serial from args
 
 	my @apptList = (); # initialize a list for appointment objects
 
@@ -448,22 +448,9 @@ sub getApptsFromSourceDB
 
 				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
-			my $numOfPatients = @patientList;
-			my $counter = 0;
-			foreach my $Patient (@patientList) {
-				my $patientSer 			= $Patient->getPatientSer();
-				my $id      		 	= $Patient->getPatientId(); # get patient ID
-				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
 
-				$patientInfo_sql .= "
-					SELECT '$id', '$patientLastTransfer', '$patientSer'
-				";
-
-				$counter++;
-				if ( $counter < $numOfPatients ) {
-					$patientInfo_sql .= "UNION";
-				}
-			}
+			$patientInfo_sql .= $global_patientInfo_sql; #global SQL pre-loaded in dataControl.pl to save time
+			
 			$patientInfo_sql .= ")
 			Select c.* into #tempAppt
 			from PatientInfo c;

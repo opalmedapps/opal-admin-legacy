@@ -523,7 +523,7 @@ print "Finished task list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start getApptsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@ApptList = Appointment::getApptsFromSourceDB($cronLogSer, @patientList);
+@ApptList = Appointment::getApptsFromSourceDB($cronLogSer, @patientList, $global_patientInfo_sql);
 print "--- End getApptsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got appointment list\n" if $verbose;
 #=========================================================================================
