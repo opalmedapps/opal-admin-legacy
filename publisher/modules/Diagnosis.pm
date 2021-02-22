@@ -227,7 +227,7 @@ sub getDiagnosisStageCriteria
 #======================================================================================
 sub getDiagnosesFromSourceDB
 {
-	my (@patientList) = @_; # patient list from args
+	my (@patientList, $global_patientInfo_sql) = @_; # patient list from args
 	my @diagnosisList = (); # initialize a list for diagnosis objects
 
 	# for query results
@@ -253,22 +253,7 @@ sub getDiagnosesFromSourceDB
 
 				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
-			my $numOfPatients = @patientList;
-			my $counter = 0;
-			foreach my $Patient (@patientList) {
-				my $patientSer 			= $Patient->getPatientSer();
-				my $id      		 	= $Patient->getPatientId(); # get patient ID
-				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
-
-				$patientInfo_sql .= "
-					SELECT '$id', '$patientLastTransfer', '$patientSer'
-				";
-
-				$counter++;
-				if ( $counter < $numOfPatients ) {
-					$patientInfo_sql .= "UNION";
-				}
-			}
+			$patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
 			$patientInfo_sql .= ")
 			Select c.* into #tempDiag
 			from PatientInfo c;

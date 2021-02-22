@@ -405,7 +405,7 @@ print "Finished patient doctor list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start getDiagnosesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@DiagnosisList = Diagnosis::getDiagnosesFromSourceDB(@patientList);
+@DiagnosisList = Diagnosis::getDiagnosesFromSourceDB(@patientList, $global_patientInfo_sql);
 print "--- End getDiagnosesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got diagnosis list\n" if $verbose;
 
