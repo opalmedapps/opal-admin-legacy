@@ -699,7 +699,7 @@ print "Finished document list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start getTestResultsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@TRList = TestResult::getTestResultsFromSourceDB($cronLogSer, @patientList);
+@TRList = TestResult::getTestResultsFromSourceDB($cronLogSer, @patientList, $global_patientInfo_sql);
 print "--- End getTestResultsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got test result list\n" if $verbose;
 
