@@ -604,7 +604,7 @@ print "Finished resource appointment list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start getPatientLocationsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@PLList = PatientLocation::getPatientLocationsFromSourceDB(@patientList);
+@PLList = PatientLocation::getPatientLocationsFromSourceDB(@patientList, $global_patientInfo_sql);
 print "--- End getPatientLocationsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got patient location list\n" if $verbose;
 

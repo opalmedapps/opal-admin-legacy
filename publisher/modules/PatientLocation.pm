@@ -227,7 +227,7 @@ sub getPatientLocationHstryDateTime
 #====================================================================================
 sub getPatientLocationsFromSourceDB
 {
-	my (@patientList) = @_; # a list of patients
+	my (@patientList, $global_patientInfo_sql) = @_; # a list of patients
 
 	my @patientLocationList = (); # initialize a list for PL objects
 
@@ -293,22 +293,8 @@ sub getPatientLocationsFromSourceDB
 
 				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
-			my $numOfPatients = @patientList;
-			my $counter = 0;
-			foreach my $Patient (@patientList) {
-				my $patientSer 			= $Patient->getPatientSer();
-				my $id      		 	= $Patient->getPatientId(); # get patient ID
-				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
-
-				$patientInfo_sql .= "
-					SELECT '$id', '$patientLastTransfer', '$patientSer'
-				";
-
-				$counter++;
-				if ( $counter < $numOfPatients ) {
-					$patientInfo_sql .= "UNION";
-				}
-			}
+			$patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
+			
 			$patientInfo_sql .= ")
 			Select c.* into #tempPL
 			from PatientInfo c;
