@@ -484,7 +484,7 @@ print "Finished priority list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start getTasksFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@TaskList = Task::getTasksFromSourceDB($cronLogSer, @patientList);
+@TaskList = Task::getTasksFromSourceDB($cronLogSer, @patientList, $global_patientInfo_sql);
 print "--- End getTasksFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got task list\n" if $verbose;
 
