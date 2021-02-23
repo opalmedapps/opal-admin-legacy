@@ -183,6 +183,10 @@ class Questionnaire extends QuestionnaireModule {
         $questionnaireDetails["description_EN"] = htmlspecialchars_decode($questionnaireDetails["description_EN"]);
         $questionnaireDetails["description_FR"] = htmlspecialchars_decode($questionnaireDetails["description_FR"]);
         $questionnaireDetails["locked"] = intval($this->_isQuestionnaireLocked($questionnaireId));
+        $questionnaireDetails["purpose"] = $this->questionnaireDB->getPurposeDetails($questionnaireDetails["purpose"]);
+        $questionnaireDetails["purpose"] = $questionnaireDetails["purpose"][0];
+        $questionnaireDetails["respondent"] = $this->questionnaireDB->getRespondentDetails($questionnaireDetails["respondent"]);
+        $questionnaireDetails["respondent"] = $questionnaireDetails["respondent"][0];
 
         $readOnly = false;
         $isOwner = false;
@@ -344,7 +348,6 @@ class Questionnaire extends QuestionnaireModule {
     public function updateQuestionnaire($updatedQuestionnaire){
         $this->checkWriteAccess($updatedQuestionnaire);
         $total = 0;
-        $questionnaireUpdated = 0;
         $oldQuestions = array();
         $newQuestions = array();
         $updatedQuestions = array();
@@ -446,6 +449,8 @@ class Questionnaire extends QuestionnaireModule {
             "private"=>$updatedQuestionnaire["private"],
             "final"=>$updatedQuestionnaire["final"],
             "visualization"=>$visualization,
+            "purposeId"=>$updatedQuestionnaire["purpose"],
+            "respondentId"=>$updatedQuestionnaire["respondent"],
         );
         $questionnaireUpdated = $this->questionnaireDB->updateQuestionnaire($toUpdate);
 

@@ -408,7 +408,8 @@ define("SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_DETAILS",
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS title_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS title_FR,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS description_EN,
-    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR 
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR,
+    q.purposeId AS purpose, q.respondentId AS respondent 
     FROM ".QUESTIONNAIRE_TABLE." q
     WHERE q.ID = :ID AND (q.private = 0 OR q.OAUserId = :OAUserId) AND q.deleted = ".NON_DELETED_RECORD.";"
 );
@@ -475,8 +476,7 @@ define("SQL_QUESTIONNAIRE_UPDATE_QUESTION",
     "UPDATE ".QUESTION_TABLE."
     SET updatedBy = :updatedBy, private = :private, final = :final
     WHERE ID = :ID
-    AND (private = 0 OR OAUserId = :OAUserId)
-    AND (private != :private OR final != :final) 
+    AND (private = ".PUBLIC_RECORD." OR OAUserId = :OAUserId)
     AND deleted = ".NON_DELETED_RECORD.";"
 );
 
@@ -499,10 +499,10 @@ define("SQL_QUESTIONNAIRE_FORCE_UPDATE_UPDATEDBY",
 
 define("SQL_QUESTIONNAIRE_UPDATE_QUESTIONNAIRE",
     "UPDATE ".QUESTIONNAIRE_TABLE."
-    SET updatedBy = :updatedBy, private = :private, final = :final, visualization = :visualization
+    SET updatedBy = :updatedBy, private = :private, final = :final, visualization = :visualization,
+    purposeId = :purposeId, respondentId = :respondentId
     WHERE ID = :ID
-    AND (private = 0 OR OAUserId = :OAUserId)
-    AND (private != :private OR final != :final OR visualization != :visualization) 
+    AND (private = ".PUBLIC_RECORD." OR OAUserId = :OAUserId)
     AND deleted = ".NON_DELETED_RECORD.";"
 );
 
