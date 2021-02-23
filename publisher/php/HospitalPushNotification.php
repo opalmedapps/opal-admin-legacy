@@ -31,14 +31,24 @@
                 );
                 if($deviceType==0)
                 {
-                    $response = PushNotifications::iOS($message,$registrationId);
+                    //$response = PushNotifications::iOS($message,$registrationId); TODO TODO REMOVE THIS TEST-LOGGING STUFF
+                    $response = array("success"=>1,"failure"=>0);
+                    $dataToLog = array('iOS push notification', $registrationId, $message);
+                    $data = implode(" - ", $dataToLog);
+                    $data .= PHP_EOL;
+                    file_put_contents("test_log_notifications.log", $data, FILE_APPEND);
                 }else if($deviceType==1)
                 {
-                    $response = PushNotifications::android( $message,$registrationId);
+                    //$response = PushNotifications::android( $message,$registrationId);
+                    $response = array("success"=>1,"failure"=>0);
+                    $dataToLog = array('android push notification', $registrationId, $message);
+                    $data = implode(" - ", $dataToLog);
+                    $data .= PHP_EOL;
+                    file_put_contents("test_log_notifications.log", $data, FILE_APPEND);
                 }
                 return $response;
             }else{ // Not within window, return empty response
-				return array("success"=>0,"failure"=>1,"error"=>"Unable to send PushNotification: Outside working hours.");
+				return array("success"=>0,"failure"=>1,"error"=>"Unable to send PushNotification: Quiet hours.");
             }
 
             
