@@ -227,7 +227,10 @@ sub getDiagnosisStageCriteria
 #======================================================================================
 sub getDiagnosesFromSourceDB
 {
-	my (@patientList, $global_patientInfo_sql) = @_; # patient list from args
+	# my (@patientList, $global_patientInfo_sql) = @_; # patient list from args
+	my @patientList = @_[0];
+    my $global_patientInfo_sql = @_[1];
+
 	my @diagnosisList = (); # initialize a list for diagnosis objects
 
 	# for query results
@@ -265,7 +268,7 @@ sub getDiagnosesFromSourceDB
 			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
 			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
 			";
-
+			
 			my $diagInfo_sql = $patientInfo_sql . "
 		    	SELECT DISTINCT
 			    	dx.DiagnosisSer,

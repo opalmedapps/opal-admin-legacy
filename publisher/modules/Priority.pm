@@ -167,7 +167,11 @@ sub getPriorityCode
 #======================================================================================
 sub getPrioritiesFromSourceDB
 {
-	my (@patientList, $global_patientInfo_sql) = @_; # args
+
+	# my (@patientList, $global_patientInfo_sql) = @_; # args
+	my @patientList = @_[0];
+    my $global_patientInfo_sql = @_[1];
+	
 	my @priorityList = (); # initialize a list of priority objects
 
 	my ($patientser, $sourceuid, $datestamp, $code); # when we retrieve query results

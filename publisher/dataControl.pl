@@ -359,7 +359,6 @@ foreach my $Patient (@patientList) {
 print "-- End global_patientInfo_sql pre-load: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got global patientInfo list\n" if $verbose;
 
-
 ##########################################################################################
 #
 # Data Retrieval PATIENTDOCTORS - get list of patient-doctor info updated since last update
@@ -405,7 +404,7 @@ print "Finished patient doctor list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start getDiagnosesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@DiagnosisList = Diagnosis::getDiagnosesFromSourceDB(@patientList, $global_patientInfo_sql);
+@DiagnosisList = Diagnosis::getDiagnosesFromSourceDB(\@patientList, $global_patientInfo_sql);
 print "--- End getDiagnosesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got diagnosis list\n" if $verbose;
 
@@ -445,7 +444,7 @@ print "Finished diagnosis list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start getPrioritiesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@PriorityList = Priority::getPrioritiesFromSourceDB(@patientList, $global_patientInfo_sql);
+@PriorityList = Priority::getPrioritiesFromSourceDB(\@patientList, $global_patientInfo_sql);
 print "--- End getPrioritiesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got priority list\n" if $verbose;
 
@@ -484,7 +483,7 @@ print "Finished priority list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start getTasksFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@TaskList = Task::getTasksFromSourceDB($cronLogSer, @patientList, $global_patientInfo_sql);
+@TaskList = Task::getTasksFromSourceDB($cronLogSer, \@patientList, $global_patientInfo_sql);
 print "--- End getTasksFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got task list\n" if $verbose;
 
@@ -523,7 +522,7 @@ print "Finished task list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start getApptsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@ApptList = Appointment::getApptsFromSourceDB($cronLogSer, @patientList, $global_patientInfo_sql);
+@ApptList = Appointment::getApptsFromSourceDB($cronLogSer, \@patientList, $global_patientInfo_sql);
 print "--- End getApptsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got appointment list\n" if $verbose;
 #=========================================================================================
@@ -564,7 +563,7 @@ print "Finished appointment list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start getResourceAppointmentsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@RAList = ResourceAppointment::getResourceAppointmentsFromSourceDB(@patientList, $global_patientInfo_sql);
+@RAList = ResourceAppointment::getResourceAppointmentsFromSourceDB(\@patientList, $global_patientInfo_sql);
 print "--- End getResourceAppointmentsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 
 print "Got resource appointment list\n" if $verbose;
@@ -604,7 +603,7 @@ print "Finished resource appointment list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start getPatientLocationsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@PLList = PatientLocation::getPatientLocationsFromSourceDB(@patientList, $global_patientInfo_sql);
+@PLList = PatientLocation::getPatientLocationsFromSourceDB(\@patientList, $global_patientInfo_sql);
 print "--- End getPatientLocationsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got patient location list\n" if $verbose;
 
@@ -682,7 +681,7 @@ print "Finished patient location MH list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start getDocsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@DocList = Document::getDocsFromSourceDB($cronLogSer, @patientList, $global_patientInfo_sql);
+@DocList = Document::getDocsFromSourceDB($cronLogSer, \@patientList, $global_patientInfo_sql);
 print "--- End getDocsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got document list\n" if $verbose;
 
@@ -699,7 +698,7 @@ print "Finished document list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start getTestResultsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@TRList = TestResult::getTestResultsFromSourceDB($cronLogSer, @patientList, $global_patientInfo_sql);
+@TRList = TestResult::getTestResultsFromSourceDB($cronLogSer, \@patientList, $global_patientInfo_sql);
 print "--- End getTestResultsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got test result list\n" if $verbose;
 
