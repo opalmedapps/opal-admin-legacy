@@ -227,8 +227,8 @@ sub getPatientLocationHstryDateTime
 #====================================================================================
 sub getPatientLocationsFromSourceDB
 {
-	my (@patientList, $global_patientInfo_sql) = @_; # a list of patients
-
+	my @patientList = @_[0];
+    my $global_patientInfo_sql = @_[1];
 	my @patientLocationList = (); # initialize a list for PL objects
 
 	if (scalar @patientList == 0) {

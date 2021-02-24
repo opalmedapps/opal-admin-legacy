@@ -149,7 +149,6 @@ sub getResourceAppointmentPrimaryFlag
 #====================================================================================
 sub getResourceAppointmentsFromSourceDB
 {
-	# my (@patientList, $global_patientInfo_sql) = @_; # a list of appointments
 	my @patientList = @_[0];
     my $global_patientInfo_sql = @_[1];
 

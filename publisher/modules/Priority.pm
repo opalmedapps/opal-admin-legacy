@@ -167,8 +167,6 @@ sub getPriorityCode
 #======================================================================================
 sub getPrioritiesFromSourceDB
 {
-
-	# my (@patientList, $global_patientInfo_sql) = @_; # args
 	my @patientList = @_[0];
     my $global_patientInfo_sql = @_[1];
 	

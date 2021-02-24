@@ -413,8 +413,9 @@ sub getTestResultCronLogSer
 #======================================================================================
 sub getTestResultsFromSourceDB
 {
-	my ($cronLogSer, @patientList, $global_patientInfo_sql) = @_; # a list of patients and cron log serial from args
-
+	my $cronLogSer = @_[0];
+	my @patientList = @_[1];
+    my $global_patientInfo_sql = @_[2];
     my @TRList = (); # a list for test result objects
 
     # when we retrieve query results

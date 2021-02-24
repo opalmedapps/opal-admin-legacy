@@ -227,7 +227,6 @@ sub getDiagnosisStageCriteria
 #======================================================================================
 sub getDiagnosesFromSourceDB
 {
-	# my (@patientList, $global_patientInfo_sql) = @_; # patient list from args
 	my @patientList = @_[0];
     my $global_patientInfo_sql = @_[1];
 
