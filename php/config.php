@@ -78,6 +78,9 @@ define("INACTIVE_RECORD", 0);
 define("HUMAN_USER", 1);
 define("SYSTEM_USER", 2);
 
+define("PURPOSE_RESEARCH", 2);
+define("RESPONDENT_PATIENT", 1);
+
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql.php");

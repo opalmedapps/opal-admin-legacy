@@ -185,7 +185,27 @@
                                     </p>
                                 </div>
                             </div>
-
+                            <!-- SECTION: Questionnaire -->
+                            <div uib-accordion-group is-open="leftMenu.questionnaire.open" class="panel-container summary-box " ng-class="{fadeIn: validator.questionnaire.completed}" ng-if="validator.questionnaire.completed;" is-disabled="!validator.questionnaire.completed">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="validator.questionnaire.completed" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'STUDY.ADD.QUESTIONNAIRE'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.questionnaire.open, 'glyphicon-chevron-right':!leftMenu.questionnaire.open}" ng-if="validator.questionnaire.completed"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div class="description">
+                                    <p style="margin-bottom:5px;">
+                                        {{toSubmit.questionnaire.length}} {{'STUDY.ADD.QUESTIONNAIRE_SELECTED'|translate}}
+                                    </p>
+                                </div>
+                            </div>
                         </uib-accordion>
                         <!-- Submit button -->
                         <div class="panel-container" ng-if="formReady">
@@ -248,7 +268,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="section-content">
                         <!-- SECTION: Study ID -->
                         <div class="row">
@@ -288,9 +307,6 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- END SECTION -->
-
-
                         <!-- SECTION: Title & description -->
                         <div class="row fadeIn" ng-if="validator.details.completed">
                             <div class="col-xs-12 side-menu-title">
@@ -360,9 +376,6 @@
                                 </div>
                             </div>
                         </div>
-
-
-
                         <!-- SECTION: Principal Investigator -->
                         <div class="row fadeIn" ng-if="validator.title_desc.completed">
                             <div class="col-xs-12 side-menu-title">
@@ -397,10 +410,8 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- END SECTION -->
                         <!-- SECTION: Start and end date -->
                         <div class="row fadeIn" ng-if="validator.investigator.completed">
-
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -485,8 +496,44 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- END SECTION -->
+                        <!-- SECTION: Questionnaire list -->
+                        <div class="row fadeIn" ng-if="validator.investigator.completed">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                      <span class="fas fa-dot-circle"></span>
+                                      <h2>{{'STUDY.ADD.QUESTIONNAIRE'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span><strong>{{'STUDY.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
+                                    {{'STUDY.ADD.QUESTIONNAIRE_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                            <div class="col-xs-12 col-lg-8">
+                                <div class="panel-container">
+                                    <div class="panel-info">
+                                        <div class="panel-content">
+                                            <div class="panel-input">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                    <input class="form-control" maxlength="100" type="text" ng-model="questionnaireSearchField" placeholder="{{'STUDY.ADD.SEARCH'|translate}}" />
+                                                </div>
+                                                <ul class="list-items">
+                                                    <li ng-repeat="questionnaire in questionnaireList | filter: questionnaireSearchField">
+                                                        <label>
+                                                            <input type="checkbox" ng-model="questionnaire.added"> {{questionnaire.name_display}}
+                                                        </label>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

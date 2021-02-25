@@ -6,8 +6,36 @@
 
 class Study extends Module {
 
+    protected $questionnaireDB;
+
     public function __construct($guestStatus = false) {
         parent::__construct(MODULE_STUDY, $guestStatus);
+    }
+
+    /*
+     * This function connects to the questionnaire database if needed
+     * @params  $OAUserId (ID of the user)
+     * @returns None
+     * */
+    protected function _connectQuestionnaireDB() {
+        $this->questionnaireDB = new DatabaseQuestionnaire(
+            QUESTIONNAIRE_DB_2019_HOST,
+            QUESTIONNAIRE_DB_2019_NAME,
+            QUESTIONNAIRE_DB_2019_PORT,
+            QUESTIONNAIRE_DB_2019_USERNAME,
+            QUESTIONNAIRE_DB_2019_PASSWORD,
+            false
+        );
+
+        $this->questionnaireDB->setUsername($this->opalDB->getUsername());
+        $this->questionnaireDB->setOAUserId($this->opalDB->getOAUserId());
+        $this->questionnaireDB->setUserRole($this->opalDB->getUserRole());
+    }
+
+    public function getResearchPatient() {
+        $this->checkReadAccess();
+        $this->_connectQuestionnaireDB();
+        return $this->questionnaireDB->getResearchPatient();
     }
 
     /*
@@ -28,6 +56,7 @@ class Study extends Module {
      * */
     public function insertStudy($post) {
         $this->checkWriteAccess($post);
+        $this->_connectQuestionnaireDB();
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateStudy($post);
         $errCode = bindec($errCode);
@@ -57,13 +86,20 @@ class Study extends Module {
                 array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$newStudyId));
             $result = $this->opalDB->insertMultiplePatientsStudy($toInsertMultiple);
         }
+
+        if(array_key_exists("questionnaire", $post) && is_array($post["questionnaire"]) && count($post["questionnaire"]) > 0) {
+            $toInsertMultiple = array();
+            foreach ($post["questionnaire"] as $questionnaire)
+                array_push($toInsertMultiple, array("questionnaireId"=>$questionnaire, "studyId"=>$newStudyId));
+            $result = $this->opalDB->insertMultipleQuestionnairesStudy($toInsertMultiple);
+        }
     }
 
     /*
      * Validate and sanitize a study.
      * @params  $post : array - data for the study to validate
      *          $isAnUpdate : array - if the validation must include the ID of the study or not
-     * Validation code :    Error validation code is coded as an int of 11 bits (value from 0 to 2047). Bit informations
+     * Validation code :    Error validation code is coded as an int of 12 bits (value from 0 to 4095). Bit informations
      *                      are coded from right to left:
      *                      1: study code missing
      *                      2: english title missing
@@ -75,7 +111,8 @@ class Study extends Module {
      *                      8: end date (if present) invalid
      *                      9: date range (if start date and end date exist) invalid
      *                      10: patient list (if exists) invalid
-     *                      11: study ID is missing or invalid if it is an update
+     *                      11: questionnaire list (if exists) invalid
+     *                      12: study ID is missing or invalid if it is an update
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errCode : array - contains the invalid entries with an error code.
      * */
@@ -170,6 +207,23 @@ class Study extends Module {
                 $errCode = "0" . $errCode;
 
             //11th bit
+            if (array_key_exists("questionnaire", $post)) {
+                if(!is_array($post["questionnaire"]))
+                    $errCode = "1" . $errCode;
+                else {
+                    foreach ($post["questionnaire"] as &$id)
+                        $id = intval($id);
+
+                    $total = $this->questionnaireDB->getQuestionnairesListByIds($post["questionnaire"]);
+                    if (count($total) != count($post["questionnaire"]))
+                        $errCode = "1" . $errCode;
+                    else
+                        $errCode = "0" . $errCode;
+                }
+            } else
+                $errCode = "0" . $errCode;
+
+            //12th bit
             if($isAnUpdate) {
                 if (!array_key_exists("id", $post) || $post["id"] == "")
                     $errCode = "1" . $errCode;
