@@ -155,16 +155,18 @@ sub publishAnnouncements
 {
     my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
 
-    my $today_date = strftime("%Y-%m-%d", localtime(time));
+    #my $today_date = strftime("%Y-%m-%d", localtime(time));
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
 
+	#Cron refactor 2021-02 removing the time check and replacing with a time check in HosptialPushNotification.php
+
     # Date object of today at 8AM
-    my $today_at_eightAM = Time::Piece->strptime($today_date . " 08:00:00", "%Y-%m-%d %H:%M:%S");
+    #my $today_at_eightAM = Time::Piece->strptime($today_date . " 08:00:00", "%Y-%m-%d %H:%M:%S");
     # Date object of today at 8PM
-    my $today_at_eightPM = Time::Piece->strptime($today_date . " 20:00:00", "%Y-%m-%d %H:%M:%S");
+    #my $today_at_eightPM = Time::Piece->strptime($today_date . " 20:00:00", "%Y-%m-%d %H:%M:%S");
 
     # If we are not within the window to publish announcements then return
-    if ( (($now - $today_at_eightAM) < 0) or (($now - $today_at_eightPM) > 0) ) {return;}
+    #if ( (($now - $today_at_eightAM) < 0) or (($now - $today_at_eightPM) > 0) ) {return;}
 
     my @announcementControls = PostControl::getPostControlsMarkedForPublish('Announcement');
 

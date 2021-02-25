@@ -20,18 +20,28 @@
         **/
        public static function sendNotification($deviceType, $registrationId, $title, $description)
        {
-           $message = array(
-               "mtitle"=>$title,
-               "mdesc"=>$description
-           );
-           if($deviceType==0)
-           {
-               $response = PushNotifications::iOS($message,$registrationId);
-           }else if($deviceType==1)
-           {
-               $response = PushNotifications::android( $message,$registrationId);
-           }
-           return $response;
+            // Cron refactor 2021-02 check if we are within accepted timeframe for push notifications
+            $now = date('Y-m-d H:i:s');
+            $eight_AM = date('Y-m-d 08:00:00');
+            $eight_PM = date('Y-m-d 20:00:00');
+            if($now > $eight_AM && $now < $eight_PM){ // Within acceptable time window, send notification
+                $message = array(
+                    "mtitle"=>$title,
+                    "mdesc"=>$description
+                );
+                if($deviceType==0)
+                {
+                    $response = PushNotifications::iOS($message,$registrationId);
+                }else if($deviceType==1)
+                {
+                    $response = PushNotifications::android( $message,$registrationId);
+                }
+                return $response;
+            }else{ // Not within window, return empty response
+				return array("success"=>0,"failure"=>1,"error"=>"Unable to send PushNotification: Quiet hours.");
+            }
+
+            
        }
 
         /**
