@@ -80,6 +80,7 @@ define("OPAL_ALIAS_TABLE","Alias");
 define("OPAL_DIAGNOSIS_TRANSLATION_TABLE","DiagnosisTranslation");
 define("OPAL_PATIENT_TABLE","Patient");
 define("OPAL_PATIENT_STUDY_TABLE","patientStudy");
+define("OPAL_QUESTIONNAIRE_STUDY_TABLE","questionnaireStudy");
 define("OPAL_TEST_RESULT_EXPRESSION_TABLE","TestResultExpression");
 //define("OPAL_TEST_RESULT_ADD_LINKS_TABLE","TestResultAdditionalLinks");
 define("OPAL_DIAGNOSIS_CODE_TABLE","DiagnosisCode");

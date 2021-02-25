@@ -1066,6 +1066,15 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
+		studyAPI.getResearchPatient = function () {
+			return $http.post(
+				"study/get/research-patient",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
 		return studyAPI;
 	})
 

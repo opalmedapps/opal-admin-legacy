@@ -2390,6 +2390,8 @@
       "INVESTIGATOR_EXPLANATION": "Veuillez entrer le nom complet de la personne responsable.",
       "PATIENTS": "List des patients",
       "PATIENTS_EXPLANATION": "Si certains patients sont déjà affectés à cette étude, veuillez les ajouter.",
+      "QUESTIONNAIRE": "Liste des questionnaires de rechercher",
+      "QUESTIONNAIRE_EXPLANATION": "Si un questionnaire de recherche pour les patients doit être affecté à cette étude, veuillez l'ajouter maintenant.",
       "SEARCH": "Rechercher",
       "SELECT_ALL": "Tout sélectionner",
       "NAME": "Nom",
@@ -2399,7 +2401,8 @@
       "END_DATE": "Date de fin",
       "SUBMIT": "Soumettre",
       "NA": "Non disponible",
-      "PATIENTS_SELECTED": "patient(s) sélectionnés",
+      "PATIENTS_SELECTED": "patient(s) sélectionné(s)",
+      "QUESTIONNAIRE_SELECTED": "questionnaire(s) sélectionné(s)",
       "ERROR_ADD": "Une erreur s'est produite lors de la création de l'étude.",
       "ERROR_PATIENTS_LIST": "Une erreur s'est produite lors de l'obtention de la liste des patients."
     },

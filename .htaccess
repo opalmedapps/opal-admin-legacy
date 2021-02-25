@@ -253,6 +253,7 @@ RewriteRule ^role/update/role php/role/update.role.php [QSA,L]
 
 # Studies Section
 RewriteRule ^study/get/patients-list php/study/get.patients.list.php [QSA,L]
+RewriteRule ^study/get/research-patient php/study/get.research.patient.php [QSA,L]
 RewriteRule ^study/get/study-details php/study/get.study.details.php [QSA,L]
 RewriteRule ^study/get/studies php/study/get.studies.php [QSA,L]
 RewriteRule ^study/insert/study php/study/insert.study.php [QSA,L]
