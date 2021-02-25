@@ -1193,4 +1193,17 @@ class DatabaseQuestionnaire extends DatabaseAccess
             array("parameter"=>":ID","variable"=>$id,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    /*
+     * Get the list of questionnaires associated to research and patient
+     * */
+    function getResearchPatient() {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_RESEARCH_PATIENT, array(
+        ));
+    }
+
+    function getQuestionnairesListByIds($list) {
+        $sql = str_replace("%%LISTIDS%%", implode(", ", $list), SQL_QUESTIONNAIRE_GET_QUESTIONNAIRES_BY_ID);
+        return $this->_fetchAll($sql, array());
+    }
 }

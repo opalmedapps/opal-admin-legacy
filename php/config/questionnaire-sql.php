@@ -579,17 +579,6 @@ define("SQL_QUESTIONNAIRE_FETCH_ALL_QUESTIONNAIRES",
     FROM ".QUESTIONNAIRE_TABLE." q
     WHERE q.deleted = ".NON_DELETED_RECORD." AND (OAUserId = :OAUserId OR private = 0);"
 );
-define("SQL_QUESTIONNAIRE_FETCH_ALL_QUESTIONNAIRES",
-    "SELECT
-    q.ID AS ID,
-    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
-    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR,
-    q.private,
-    q.final AS publish,
-    q.createdBy AS created_by
-    FROM ".QUESTIONNAIRE_TABLE." q
-    WHERE q.deleted = ".NON_DELETED_RECORD." AND (OAUserId = :OAUserId OR private = 0);"
-);
 
 define("SQL_QUESTIONNAIRE_FETCH_ALL_FINAL_QUESTIONNAIRES",
     "SELECT
@@ -650,3 +639,18 @@ define("SQL_QUESTIONNAIRE_GET_RESPONDENT_DETAILS",
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR
     FROM ".RESPONDENT_TABLE." r WHERE r.ID = :ID;"
 );
+
+
+define("SQL_QUESTIONNAIRE_GET_RESEARCH_PATIENT",
+    "SELECT
+    q.ID AS ID,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR
+    FROM ".QUESTIONNAIRE_TABLE." q
+    WHERE q.deleted = ".NON_DELETED_RECORD." AND q.final = ".FINAL_RECORD."  AND q.purposeId = ".PURPOSE_RESEARCH." AND q.respondentId = ".RESPONDENT_PATIENT.";"
+);
+
+
+define("SQL_QUESTIONNAIRE_GET_QUESTIONNAIRES_BY_ID","
+    SELECT ID FROM ".QUESTIONNAIRE_TABLE." WHERE ID IN (%%LISTIDS%%);
+");

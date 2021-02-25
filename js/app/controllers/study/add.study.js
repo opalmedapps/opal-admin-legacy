@@ -13,6 +13,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 		$scope.hideAssigned = false;
 		$scope.language = Session.retrieveObject('user').language;
 		$scope.patientsList = [];
+		$scope.questionnaireList = [];
 		$scope.filter = $filter('filter');
 
 		$scope.readyToSend = {
@@ -44,7 +45,8 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				start_date: "",
 				end_date: "",
 			},
-			patients: []
+			patients: [],
+			questionnaire: []
 		};
 
 		$scope.validator = {
@@ -73,6 +75,11 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				mandatory: false,
 				valid: true,
 			},
+			questionnaire: {
+				completed: false,
+				mandatory: false,
+				valid: true,
+			},
 		};
 
 		$scope.leftMenu = {
@@ -97,6 +104,11 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				preview: false,
 			},
 			patients: {
+				display: false,
+				open: false,
+				preview: false,
+			},
+			questionnaire: {
 				display: false,
 				open: false,
 				preview: false,
@@ -171,7 +183,6 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 		/* Function for the "Processing..." dialog */
 		var processingModal;
 		$scope.showProcessingModal = function () {
-
 			processingModal = $uibModal.open({
 				templateUrl: 'templates/processingModal.html',
 				backdrop: 'static',
@@ -183,6 +194,23 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 		studyCollectionService.getPatientsList().then(function (response) {
 			$scope.patientsList = response.data;
 			angular.forEach($scope.patientsList, function(item) {item.added = false;});
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
+		}).finally(function() {
+			processingModal.close(); // hide modal
+			processingModal = null; // remove reference
+		});
+
+		// Call our API service to get the current diagnosis translation details
+		studyCollectionService.getResearchPatient().then(function (response) {
+			$scope.questionnaireList = response.data;
+			angular.forEach($scope.questionnaireList, function(item) {
+				item.added = false;
+				if($scope.language === "FR")
+					item.name_display = item.name_FR;
+				else
+					item.name_display = item.name_EN;
+			});
 		}).catch(function(err) {
 			ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
 		}).finally(function() {
@@ -305,6 +333,28 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.validator.patients.completed = $scope.leftMenu.patients.open;
 		}, true);
 
+		$scope.$watch('questionnaireList', function (triggerList) {
+			triggerList = angular.copy(triggerList);
+			var pos = -1;
+			angular.forEach(triggerList, function (item) {
+				pos = $scope.toSubmit.questionnaire.findIndex(x => x === item.ID);
+				if(item.added) {
+					if (pos === -1) {
+						$scope.toSubmit.questionnaire.push(item.ID);
+					}
+				}
+				else {
+					if (pos !== -1) {
+						$scope.toSubmit.questionnaire.splice(pos, 1);
+					}
+				}
+			});
+			$scope.leftMenu.questionnaire.open = ($scope.toSubmit.questionnaire.length > 0);
+			$scope.leftMenu.questionnaire.display = $scope.leftMenu.questionnaire.open;
+			$scope.leftMenu.questionnaire.preview = $scope.leftMenu.questionnaire.open;
+			$scope.validator.questionnaire.completed = $scope.leftMenu.questionnaire.open;
+		}, true);
+
 		$scope.$watch('toSubmit.title_desc', function () {
 			$scope.validator.title_desc.completed = ($scope.toSubmit.title_desc.title_EN && $scope.toSubmit.title_desc.title_FR && $scope.toSubmit.title_desc.description_EN && $scope.toSubmit.title_desc.description_FR);
 			$scope.leftMenu.title_desc.open = ($scope.toSubmit.title_desc.title_EN || $scope.toSubmit.title_desc.title_FR || $scope.toSubmit.title_desc.description_EN || $scope.toSubmit.title_desc.description_FR);
@@ -323,6 +373,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.readyToSend.start_date = (($scope.toSubmit.dates.start_date) ? moment($scope.toSubmit.dates.start_date).format('X') : "");
 			$scope.readyToSend.end_date = (($scope.toSubmit.dates.end_date) ? moment($scope.toSubmit.dates.end_date).format('X') : "");
 			$scope.readyToSend.patients = $scope.toSubmit.patients;
+			$scope.readyToSend.questionnaire = $scope.toSubmit.questionnaire;
 
 			$.ajax({
 				type: 'POST',

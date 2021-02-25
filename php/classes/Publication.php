@@ -13,15 +13,14 @@ class Publication extends Module
      * @params  $OAUserId (ID of the user)
      * @returns None
      * */
-    protected function _connectQuestionnaireDB($OAUserId) {
+    protected function _connectQuestionnaireDB() {
         $this->questionnaireDB = new DatabaseQuestionnaire(
             QUESTIONNAIRE_DB_2019_HOST,
             QUESTIONNAIRE_DB_2019_NAME,
             QUESTIONNAIRE_DB_2019_PORT,
             QUESTIONNAIRE_DB_2019_USERNAME,
             QUESTIONNAIRE_DB_2019_PASSWORD,
-            false,
-            $OAUserId
+            false
         );
 
         $this->questionnaireDB->setUsername($this->opalDB->getUsername());
@@ -747,7 +746,7 @@ class Publication extends Module
      * @return  void
      * */
     protected function _insertPublicationQuestionnaire(&$publication) {
-        $this->_connectQuestionnaireDB($this->opalDB->getOAUserId());
+        $this->_connectQuestionnaireDB();
         $currentQuestionnaire = $this->questionnaireDB->getQuestionnaireDetails($publication["materialId"]["value"]);
 
         if(is_array($currentQuestionnaire) && count($currentQuestionnaire) != 1)
