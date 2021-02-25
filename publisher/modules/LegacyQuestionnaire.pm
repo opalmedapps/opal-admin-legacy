@@ -152,16 +152,16 @@ sub publishLegacyQuestionnaires
 {
 	my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
 	
-    my $today_date = strftime("%Y-%m-%d", localtime(time));
+    #my $today_date = strftime("%Y-%m-%d", localtime(time));
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
 
     # Date object of today at 7:30AM
-    my $today_at_eightAM = Time::Piece->strptime($today_date . " 07:30:00", "%Y-%m-%d %H:%M:%S");
+    #my $today_at_eightAM = Time::Piece->strptime($today_date . " 07:30:00", "%Y-%m-%d %H:%M:%S");
     # Date object of today at 9PM
-    my $today_at_eightPM = Time::Piece->strptime($today_date . " 21:00:00", "%Y-%m-%d %H:%M:%S");
+    #my $today_at_eightPM = Time::Piece->strptime($today_date . " 21:00:00", "%Y-%m-%d %H:%M:%S");
 
     # If we are not within the window to publish the messages then return
-    if ( (($now - $today_at_eightAM) < 0) or (($now - $today_at_eightPM) > 0) ) {return;}
+    #if ( (($now - $today_at_eightAM) < 0) or (($now - $today_at_eightPM) > 0) ) {return;}
 
 
 	# Retrieve all the legacy questionnaire controls
