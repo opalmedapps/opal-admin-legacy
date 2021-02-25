@@ -597,3 +597,11 @@ define("SQL_QUESTIONNAIRE_UPDATE_LAST_CHECKBOX_OPTION",
 define("SQL_QUESTIONNAIRE_CONDITIONAL_INSERT","
     SELECT %%VALUES%% FROM DUAL WHERE NOT EXISTS (SELECT * FROM ".DICTIONARY_TABLE." WHERE contentId = :controlContentId)
 ");
+
+define("SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_INFO","
+    CALL getQuestionnaireInfo(:pqser,:language);
+");
+
+define("SQL_QUESTIONNAIRE_GET_PREV_QUESTIONNAIRE","
+    CALL getLastAnsweredQuestionnaire(:questionnaireid, :ptser);
+");
