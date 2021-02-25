@@ -1014,18 +1014,26 @@ define("OPAL_GET_LEGACY_TEST_REPORT", "
 ");
 
 define("OPAL_GET_TEST_REPORT", "
-    SELECT DISTINCT IF(ptr.TestGroupExpressionSerNum IS NULL , '', tge.ExpressionName) as groupname,
-    ptr.ReadStatus as readstatus, tc.Name_EN as testname, ptr.AbnormalFlag as abnormalflag,
-    ptr.NormalRange as normalrange, ptr.TestValue as testvalue, ptr.UnitDescription as description,
-    ptr.DateAdded AS dateadded, ptr.CollectedDateTime AS datecollected, ptr.ResultDateTime AS resultdate
-    FROM ".OPAL_PATIENT_TEST_RESULT_TABLE." ptr, ".OPAL_TEST_EXPRESSION_TABLE." te, 
-    ".OPAL_TEST_GROUP_EXPRESSION_TABLE." tge, ".OPAL_TEST_CONTROL_TABLE." tc, 
-    ".OPAL_EDUCATION_MATERIAL_TABLE." emc
-    WHERE ptr.PatientSerNum = :pnum AND (ptr.TestGroupExpressionSerNum = tge.TestGroupExpressionSerNum OR ptr.TestGroupExpressionSerNum IS NULL)
-    AND ptr.TestExpressionSerNum = te.TestExpressionSerNum AND te.TestControlSerNum = tc.TestControlSerNum
-    AND tc.EducationalMaterialControlSerNum = emc.EducationalMaterialControlSerNum AND ptr.TestValueNumeric is not null
-    ORDER BY groupName, sequenceNum;
-");
+    SELECT IfNull((Select tge.ExpressionName from ".OPAL_TEST_GROUP_EXPRESSION_TABLE." tge where ptr.TestGroupExpressionSerNum = tge.TestGroupExpressionSerNum), '') as groupname,
+	ptr.ReadStatus as readstatus,
+	IfNull((select tc.Name_EN from ".OPAL_TEST_CONTROL_TABLE." tc where te.TestControlSerNum = tc.TestControlSerNum), te.ExpressionName) as testname,
+	ptr.AbnormalFlag as abnormalflag,
+	ptr.NormalRange as normalrange, 	
+	case
+		when ptr.TestValue = 'Non détecté' then '0'
+		when ptr.TestValue = 'Détecté' then '1'
+	else ptr.TestValue
+	end as testvalue,
+	ptr.UnitDescription as description,
+	ptr.DateAdded as dateadded,
+	ptr.CollectedDateTime as datecollected,
+	ptr.ResultDateTime as resultdate
+FROM ".OPAL_PATIENT_TEST_RESULT_TABLE." ptr, ".OPAL_TEST_EXPRESSION_TABLE." te
+WHERE
+	ptr.PatientSerNum = :pnum
+	AND ptr.TestExpressionSerNum = te.TestExpressionSerNum
+	AND ptr.TestValueNumeric is not null
+ORDER BY groupName, sequenceNum;");
 
 define("OPAL_GET_NOTIFICATIONS_REPORT", "
     SELECT n.DateAdded AS dateadded, n.LastUpdated lastupdated, n.ReadStatus AS readstatus,
