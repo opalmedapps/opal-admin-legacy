@@ -190,6 +190,46 @@ class DatabaseAccess extends HelpSetup
     }
 
     /*
+     * this function is used to fetch all stored procedure results from a SQL query by binding parameters.
+     * param   SQL query that begins with "SELECT" (string)
+     *          array of parameters to bind (optional) following PDO rules
+     *          ex: array(
+     *                  array(
+     *                      "parameter"=>":example",
+     *                      "variable"=>"Hello world!",
+     *                      "data_type"=>PDO::PARAM_STR,
+     *                  )
+     *              )
+     * return  array of result
+     * */
+    protected function _fetchAllStoredProcedure($sqlFetchAll, $paramList = array()) {
+        $results = array();
+        try {
+            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $stmt = $this->connection->prepare($sqlFetchAll);
+            if(is_array($paramList) && count($paramList) > 0) {
+                foreach($paramList as $value) {
+                    if(isset($value["data_type"]) &&  $value["data_type"] != "")
+                        $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
+                    else
+                        $stmt->bindParam($value["parameter"], $value["variable"], self::_getTypeOf($value["variable"]));
+                }
+            }
+            $stmt->execute();
+            do {
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                array_push($results, $result);
+
+            } while ($stmt->nextRowset() && $stmt->columnCount());
+            return $results;
+        }
+        catch(PDOException $e) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Fetch all failed.\r\nError : ". $e->getMessage());
+            return false;
+        }
+    }
+
+    /*
      * this function execute a SQL query and returns true once completed.
      * @param   SQL query (string)
      *          array of parameters to bind (optional) following PDO rules
@@ -256,7 +296,7 @@ class DatabaseAccess extends HelpSetup
                         $stmt->bindParam($value["parameter"], $value["variable"], self::_getTypeOf($value["variable"]));
                 }
             }
-            $stmt->execute();
+            $stmt->execute(); //error here
             return $this->connection->lastInsertId();
         }
         catch(PDOException $e) {
