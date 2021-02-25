@@ -278,6 +278,9 @@ RewriteRule ^test-result/insert/test-result php/test-result/insert.test_result.p
 RewriteRule ^test-result/update/test-result-publish-flags php/test-result/update.test_result_publish_flags.php [QSA,L]
 RewriteRule ^test-result/update/test-result php/test-result/update.test_result.php [QSA,L]
 
+# Trigger Section
+RewriteRule ^trigger/execute/questionnaire-triggers php/trigger/executeQuestionnaireTriggers.php
+
 # User Section
 RewriteRule ^user/delete/user php/user/delete.user.php [QSA,L]
 RewriteRule ^user/get/roles php/user/get.roles.php [QSA,L]

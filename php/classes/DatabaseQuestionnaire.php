@@ -1153,4 +1153,29 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . implode(" UNION ALL ", $sqlConditional);
         return $this->_queryInsertReplace($sqlInsert, $ready);
     }
+
+    /*
+     * Returns questionnaire info (including answers) from a questionnaire
+     * @params  int : $patientQuestionnaireSer - serial number of the particular questionnaire-patient relation 
+     * @return  questionnaire results (array)
+     * */
+    function getQuestionnaireResults($patientQuestionnaireSer, $language) {
+        return $this->_fetchAllStoredProcedure(SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_INFO, array(
+            array("parameter"=>":pqser","variable"=>$patientQuestionnaireSer,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":language","variable"=>$language,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Returns questionnaire info (including answers) from a questionnaire
+     * @params  int : $questionnaireId - id of the particular questionnaire 
+     * @params  int : $patientSerNum - serial of the patient 
+     * @return  questionnaire details (array)
+     * */
+    function getLastAnsweredQuestionnaire($questionnaireId, $patientSerNum) {
+        return $this->_fetchAllStoredProcedure(SQL_QUESTIONNAIRE_GET_PREV_QUESTIONNAIRE, array(
+            array("parameter"=>":questionnaireid","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":ptser","variable"=>$patientSerNum,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }

@@ -63,3 +63,6 @@ publisher/modules/ym.pm
 publisher/modules/Document2.pm
 publisher/dataControl2.pl
 dbv/config.php
+
+# ignore trigger system test file
+php/trigger/test-qTrigger.php
