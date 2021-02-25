@@ -530,11 +530,15 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
                 }
                 if(result.treatingteam){
                     $scope.txteamReport = result.treatingteam;
-                    strip($scope.txplanReport); 
+                    for(var i = 0; i < $scope.txteamReport.length; i++){
+                        $scope.txteamReport[i].body = strip($scope.txteamReport[i].body);
+                    }
                 }
                 if(result.general){
                     $scope.generalReport = result.general;
-                    strip($scope.generalReport); 
+                    for(var i = 0; i < $scope.generalReport.length; i++){
+                        $scope.generalReport[i].body = strip($scope.generalReport[i].body);
+                    } 
                 }
                 if(result.treatplan){
                     $scope.txplanReport = result.treatplan;
@@ -551,14 +555,8 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
 
 
     //Remove whitespace from input
-    function strip(inp){
-        for(var i=0; i<inp.length; i++){
-            for (var key in inp[i]){
-                if(inp[i][key]){
-                    inp[i][key] = inp[i][key].replace(/["']/g, "");
-                }
-            }
-        }
+    function strip(text){
+        return text ? String(text).replace(/<[^>]+>/gm, '') : '';
     }
 
 });
