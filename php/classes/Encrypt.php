@@ -26,6 +26,7 @@ class Encrypt {
        return $result;
     }
 
+
     /**
      * PHP replacement for JavaScript charCodeAt.
      *

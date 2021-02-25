@@ -31,6 +31,7 @@ define("OPAL_ALIAS_EXPRESSION_MH_TABLE","AliasExpressionMH");
 define("OPAL_DIAGNOSIS_TRANSLATION_MH_TABLE","DiagnosisTranslationMH");
 define("OPAL_DIAGNOSIS_CODE_MH_TABLE","DiagnosisCodeMH");
 define("OPAL_QUESTIONNAIRE_CONTROL_TABLE","QuestionnaireControl");
+define("OPAL_QUESTIONNAIRE_TABLE","Questionnaire");
 define("OPAL_QUESTIONNAIRE_MH_TABLE","QuestionnaireMH");
 define("OPAL_EMAIL_CONTROL_MH_TABLE","EmailControlMH");
 define("OPAL_HOSPITAL_MAP_MH_TABLE","HospitalMapMH");
@@ -93,6 +94,7 @@ define("OPAL_OA_ROLE_MODULE_TABLE","oaRoleModule");
 define("OPAL_SOURCE_DATABASE_TABLE","SourceDatabase");
 define("OPAL_HOSPITAL_MAP_TABLE","HospitalMap");
 define("OPAL_ALERT_TABLE","alert");
+define("OPAL_TRIGGER_TABLE","jsonTrigger");
 define("OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE","Patient_Hospital_Identifier");
 define("OPAL_DIAGNOSIS_TABLE","Diagnosis");
 define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
@@ -907,6 +909,14 @@ define("OPAL_DELETE_ALL_DIAGNOSIS_CODES","
 
 define("OPAL_DELETE_DIAGNOSIS_TRANSLATION","
     DELETE FROM ".OPAL_DIAGNOSIS_TRANSLATION_TABLE." WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum;
+");
+
+define("OPAL_GET_TRIGGERS_LIST","
+    SELECT sourceContentId, sourceModuleId, onCondition, eventType, targetContentId, targetModuleId FROM ".OPAL_TRIGGER_TABLE." WHERE active = ".ACTIVE_RECORD." AND sourceContentId = :sourceContentId AND sourceModuleId = :sourceModuleId;
+");
+
+define("OPAL_GET_PATIENT_SERNUM","
+    SELECT getPatientSerNum(:patientId);
 ");
 
 define("OPAL_GET_PATIENT_DIAGNOSIS","

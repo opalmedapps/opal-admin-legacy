@@ -1922,6 +1922,19 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
+     * Get all the triggers
+     * @params  int : $sourceContentId - content id the triggers are attached to
+     *          int : $sourceModuleId - module id of the source content 
+     * @return  triggers found (array)
+     * */
+    function getTriggersList($sourceContentId, $sourceModuleId) {
+        return $this->_fetchAll(OPAL_GET_TRIGGERS_LIST, array(
+            array("parameter"=>":sourceContentId","variable"=>$sourceContentId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":sourceModuleId","variable"=>$sourceModuleId,"data_type"=>PDO::PARAM_INT),
+        ));
+    } 
+
+    /*
      * Get the list patient diagnoses. MRN and site name are mandatory. If there is no source, ignore it. If there is
      * a source, add it in the SQL as = if include value is 1 or absent, and != if value is anthing else than 1. Start
      * and end date use the proper value or current date if no value.
@@ -2087,6 +2100,22 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(OPAL_GET_TEST_EXPRESSION_NAMES, array(
             array("parameter"=>":TestControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
         ));
+    }
+
+    /*
+     * Publish a patient questionnaire
+     * @params  int : $questionnaireControlSerNum - the questionnaire in OpalDB
+     *          int : $patientSerNum - patient serial in OpalDB
+     * @return int - ID of the record inserted
+     * */
+    function publishQuestionnaire($questionnaireControlSerNum, $patientSerNum) {
+        $toSubmit = array(
+            "QuestionnaireControlSerNum"=>$questionnaireControlSerNum,
+            "PatientSerNum"=>$patientSerNum,
+            "DateAdded"=>date("Y-m-d H:i:s"),
+            "SessionId"=>$this->getSessionId()
+        );
+        return $this->_insertRecordIntoTable(OPAL_QUESTIONNAIRE_TABLE, $toSubmit);
     }
 
     /*
