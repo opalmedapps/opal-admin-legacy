@@ -60,8 +60,8 @@
                                             <label class="control-label">
                                                 {{'PATIENTREPORT.GROUP.EDUC_TYPE'|translate}}
                                             </label>
-                                            <select ng-model="materialType" ng-options="x for x in materialTypes"
-                                                    ng-change="genEducationMaterialOptions()"></select>
+                                            <select ng-show="siteLanguage=='EN'" ng-model="materialType" ng-options="x for x in materialTypesEN" ng-change="genEducationMaterialOptions()"></select>
+                                            <select ng-show="siteLanguage=='FR'" ng-model="materialTypeFR" ng-options="x for x in materialTypesFR" ng-change="genEducationMaterialOptions()"></select>
                                         </div>
                                     </div>
                                     <div class="form-group" ng-show="displayMaterialList">
@@ -134,7 +134,7 @@
                     </div>
                     <div class="row" ng-show="showEducReport && category.education">
                         <div class="col-xs-12 animated fadeInRight">
-                            <div ng-if="!refresh" class="gridStyle" style="border:none;" ui-grid="educGridOptions"></div>
+                            <div resize ng-if="!refresh" class="gridStyle" style="border:none;" ng-style="{ 'width' : width, 'height' : height}" ui-grid="educGridOptions"></div>
                         </div>
                     </div>
                 
@@ -222,7 +222,7 @@
                     </div>
                     <div class="row" ng-show="showQstReport && category.questionnaire">
                         <div class="col-xs-12 animated fadeInRight">
-                            <div ng-if="!refresh" class="gridStyle" style="border:none;" ui-grid="qstGridOptions"></div>
+                            <div resize ng-if="!refresh" class="gridStyle" style="border:none;" ng-style="{ 'width' : width, 'height' : height}" ui-grid="qstGridOptions"></div>
                         </div>
                     </div>
                     
@@ -282,7 +282,7 @@
                     </div>
                     <div class="row" ng-show="category.demographics">
                         <div class="col-xs-12 animated fadeInRight">
-                            <div ng-if="!refresh" class="gridStyle" style="border:none;" ui-grid="demoGridOptions"></div>
+                            <div resize ng-if="!refresh" class="gridStyle" style="border:none;" ng-style="{ 'width' : width, 'height' : height}" ui-grid="demoGridOptions"></div>
                         </div>
                     </div>
                     
