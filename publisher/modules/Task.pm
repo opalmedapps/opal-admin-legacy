@@ -310,7 +310,9 @@ sub getTaskCronLogSer
 #======================================================================================
 sub getTasksFromSourceDB
 {
-	my ($cronLogSer, @patientList) = @_; # a list of patients and cron log serial from args
+	my $cronLogSer = @_[0];
+	my @patientList = @_[1];
+    my $global_patientInfo_sql = @_[2];
 
 	my @taskList = (); # initialize a list for task objects
 
@@ -373,22 +375,7 @@ sub getTasksFromSourceDB
 
 				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
-			my $numOfPatients = @patientList;
-			my $counter = 0;
-			foreach my $Patient (@patientList) {
-				my $patientSer 			= $Patient->getPatientSer();
-				my $id      		 	= $Patient->getPatientId(); # get patient ID
-				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
-
-				$patientInfo_sql .= "
-					SELECT '$id', '$patientLastTransfer', '$patientSer'
-				";
-
-				$counter++;
-				if ( $counter < $numOfPatients ) {
-					$patientInfo_sql .= "UNION";
-				}
-			}
+			$patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
 			$patientInfo_sql .= ")
 			Select c.* into #tempTask
 			from PatientInfo c;
