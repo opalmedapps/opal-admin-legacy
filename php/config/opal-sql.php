@@ -1088,6 +1088,18 @@ define("OPAL_GET_PATIENTS_STUDY","
     SELECT patientId FROM ".OPAL_PATIENT_STUDY_TABLE." WHERE studyId = :studyId ORDER BY patientId;
 ");
 
+define("OPAL_GET_QUESTIONNAIRES_STUDY","
+    SELECT questionnaireId FROM ".OPAL_QUESTIONNAIRE_STUDY_TABLE." WHERE studyId = :studyId ORDER BY questionnaireId;
+");
+
 define("OPAL_DELETE_PATIENTS_STUDY", "
     DELETE FROM ".OPAL_PATIENT_STUDY_TABLE." WHERE studyId = :studyId AND PatientId NOT IN (%%LISTIDS%%);
+");
+
+define("OPAL_DELETE_QUESTIONNAIRES_STUDY", "
+    DELETE FROM ".OPAL_QUESTIONNAIRE_STUDY_TABLE." WHERE studyId = :studyId AND questionnaireId NOT IN (%%LISTIDS%%);
+");
+
+define("OPAL_DELETE_QUESTIONNAIRE_FROM_STUDIES", "
+    DELETE FROM ".OPAL_QUESTIONNAIRE_STUDY_TABLE." WHERE questionnaireId = :questionnaireId;
 ");
