@@ -145,7 +145,7 @@ class Questionnaire extends QuestionnaireModule {
         return $questionLocked;
     }
 
-    public function GetPurposesRespondents() {
+    public function getPurposesRespondents() {
         $this->checkReadAccess();
         $result["purposes"] = $this->questionnaireDB->getPurposes();
         $result["respondents"] = $this->questionnaireDB->getRespondents();
@@ -320,10 +320,12 @@ class Questionnaire extends QuestionnaireModule {
             $this->questionnaireDB->markAsDeletedInDictionary($questionnaireToDelete["description"]);
             $this->questionnaireDB->markAsDeletedInDictionary($questionnaireToDelete["instruction"]);
 
+
             foreach($questionnaireToDelete["sections"] as $section)
                 $this->questionnaireDB->markAsDeletedNoUSer(SECTION_TABLE, $section);
 
             $this->questionnaireDB->markAsDeleted(QUESTIONNAIRE_TABLE, $questionnaireId);
+            $this->opalDB->purgeQuestionnaireFromStudies($questionnaireId);
             $response['value'] = true; // Success
             $response['message'] = 200;
             return $response;
@@ -453,6 +455,11 @@ class Questionnaire extends QuestionnaireModule {
             "respondentId"=>$updatedQuestionnaire["respondent"],
         );
         $questionnaireUpdated = $this->questionnaireDB->updateQuestionnaire($toUpdate);
+
+        // If the questionnaire is a draft or is not a research one or not for patient, make sure it's not assigned to
+        // any study
+        if($updatedQuestionnaire["final"] == NON_FINAL_RECORD || $updatedQuestionnaire["purpose"] != PURPOSE_RESEARCH || $updatedQuestionnaire["respondent"] != RESPONDENT_PATIENT)
+            $this->opalDB->purgeQuestionnaireFromStudies($oldQuestionnaire["ID"]);
 
         /*
          * If any modifications were made except to the questionnaire table, force the questionnaire entry to be updated

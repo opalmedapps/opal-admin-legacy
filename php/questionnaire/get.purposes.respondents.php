@@ -2,7 +2,7 @@
 include_once("../config.php");
 
 $questionnaire = new Questionnaire();
-$results = $questionnaire->GetPurposesRespondents();
+$results = $questionnaire->getPurposesRespondents();
 
 header('Content-Type: application/javascript');
 echo json_encode($results);

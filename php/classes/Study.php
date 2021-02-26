@@ -213,7 +213,6 @@ class Study extends Module {
                 else {
                     foreach ($post["questionnaire"] as &$id)
                         $id = intval($id);
-
                     $total = $this->questionnaireDB->getQuestionnairesListByIds($post["questionnaire"]);
                     if (count($total) != count($post["questionnaire"]))
                         $errCode = "1" . $errCode;
@@ -261,6 +260,10 @@ class Study extends Module {
             $temp = $this->opalDB->getPatientsStudy(intval($studyId));
             foreach($temp as $item)
                 array_push($result["patients"], $item["patientId"]);
+            $result["questionnaire"] = array();
+            $temp = $this->opalDB->getQuestionnairesStudy(intval($studyId));
+            foreach($temp as $item)
+                array_push($result["questionnaire"], $item["questionnaireId"]);
             return $result;
         }
         else
@@ -290,6 +293,7 @@ class Study extends Module {
      * */
     public function updateStudy($post) {
         $this->checkWriteAccess($post);
+        $this->_connectQuestionnaireDB();
         $study = HelpSetup::arraySanitization($post);
         $result = $this->_validateStudy($study, true);
         if(is_array($result) && count($result) > 0)
@@ -315,8 +319,9 @@ class Study extends Module {
 
         $total = $this->opalDB->updateStudy($toUpdate);
 
+        //Update patient-study table
         $currentPatients = array();
-        $toKeep = $toKeep = array(-1);
+        $toKeep = array(-1);
         $toAdd = array();
         if(array_key_exists("patients", $post) && is_array($post["patients"]) && count($post["patients"]) > 0) {
             $temp = $this->opalDB->getPatientsStudy($study["ID"]);
@@ -336,10 +341,36 @@ class Study extends Module {
             $toInsertMultiple = array();
             foreach ($toAdd as $patient)
                 array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$study["ID"]));
-            print_r($toInsertMultiple);
 
             $total += $this->opalDB->insertMultiplePatientsStudy($toInsertMultiple);
         }
+
+        //Update questionnaire-study table
+        $currentQuestionnaires = array();
+        $toKeep = array(-1);
+        $toAdd = array();
+        if(array_key_exists("questionnaire", $post) && is_array($post["questionnaire"]) && count($post["questionnaire"]) > 0) {
+            $temp = $this->opalDB->getQuestionnairesStudy($study["ID"]);
+            foreach($temp as $item)
+                array_push($currentQuestionnaires, $item["questionnaireId"]);
+
+            foreach ($study["questionnaire"] as $item) {
+                if(in_array($item, $currentQuestionnaires))
+                    array_push($toKeep, intval($item));
+                else
+                    array_push($toAdd, intval($item));
+            }
+        }
+        $total += $this->opalDB->deleteQuestionnairesStudy($study["ID"], $toKeep);
+
+        if(count($toAdd) > 0) {
+            $toInsertMultiple = array();
+            foreach ($toAdd as $questionnaire)
+                array_push($toInsertMultiple, array("questionnaireId"=>$questionnaire, "studyId"=>$study["ID"]));
+
+            $total += $this->opalDB->insertMultipleQuestionnairesStudy($toInsertMultiple);
+        }
+
         return $total;
     }
 }

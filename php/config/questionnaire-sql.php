@@ -647,9 +647,8 @@ define("SQL_QUESTIONNAIRE_GET_RESEARCH_PATIENT",
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR
     FROM ".QUESTIONNAIRE_TABLE." q
-    WHERE q.deleted = ".NON_DELETED_RECORD." AND q.final = ".FINAL_RECORD."  AND q.purposeId = ".PURPOSE_RESEARCH." AND q.respondentId = ".RESPONDENT_PATIENT.";"
+    WHERE q.deleted = ".NON_DELETED_RECORD." AND q.final = ".FINAL_RECORD." AND q.purposeId = ".PURPOSE_RESEARCH." AND q.respondentId = ".RESPONDENT_PATIENT.";"
 );
-
 
 define("SQL_QUESTIONNAIRE_GET_QUESTIONNAIRES_BY_ID","
     SELECT ID FROM ".QUESTIONNAIRE_TABLE." WHERE ID IN (%%LISTIDS%%);

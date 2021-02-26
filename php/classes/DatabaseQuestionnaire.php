@@ -1202,6 +1202,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
         ));
     }
 
+    /**
+     * Get the list of questionnaire found based on an array of IDs
+     * @param $list - list of questionnaire ID to verify
+     * @return array - list of the questionnaires found
+     */
     function getQuestionnairesListByIds($list) {
         $sql = str_replace("%%LISTIDS%%", implode(", ", $list), SQL_QUESTIONNAIRE_GET_QUESTIONNAIRES_BY_ID);
         return $this->_fetchAll($sql, array());
