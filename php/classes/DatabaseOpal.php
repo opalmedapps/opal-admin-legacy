@@ -2322,6 +2322,12 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetch($sql, array());
     }
 
+    /**
+     * Update a specific test expression
+     * @param $testId
+     * @param $testExpressionId
+     * @return int - number of record updated
+     */
     function updateTextExpression($testId, $testExpressionId) {
         $toUpdate = array(
             "LastUpdatedBy"=>$this->getOAUserId(),
@@ -2332,33 +2338,100 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_updateRecordIntoTable(OPAL_UPDATE_TEST_EXPRESSION, $toUpdate);
     }
 
+    /*
+     * Get the list of patients
+     * @params  void
+     * @return  array - List of patients
+     * */
     function getPatientsList() {
         return $this->_fetchAll(OPAL_GET_PATIENTS_LIST, array());
     }
 
+    /*
+     * Get a list of patients based on a list of IDs
+     * @params  $list - array - Id of patients
+     * @return  array - list of patients found
+     * */
     function getPatientsListByIds($list) {
         $sql = str_replace("%%LISTIDS%%", implode(", ", $list), OPAL_GET_PATIENTS_LIST_BY_ID);
         return $this->_fetchAll($sql, array());
     }
 
+    /**
+     * Insert multiple patients to a study
+     * @param $toInsert array - data to insert
+     * @return int Last ID inserted
+     */
     function insertMultiplePatientsStudy($toInsert) {
-        return $this->_replaceMultipleRecordsIntoTable(OPAL_PATIENT_STUDY_TABLE, $toInsert);
+        return $this->_insertMultipleRecordsIntoTable(OPAL_PATIENT_STUDY_TABLE, $toInsert);
     }
 
+    /**
+     * Insert multiple questionnaires to a study
+     * @param $toInsert - array - list of questionnaire/study ID
+     * @return int Last ID inserted
+     */
     function insertMultipleQuestionnairesStudy($toInsert) {
-        return $this->_replaceMultipleRecordsIntoTable(OPAL_QUESTIONNAIRE_STUDY_TABLE, $toInsert);
+        return $this->_insertMultipleRecordsIntoTable(OPAL_QUESTIONNAIRE_STUDY_TABLE, $toInsert);
     }
 
+    /**
+     * Get the list of patients of a specific study
+     * @param $studyId - ID of the study
+     * @return array list of patients found
+     */
     function getPatientsStudy($studyId) {
         return $this->_fetchAll(OPAL_GET_PATIENTS_STUDY, array(
             array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
+    /**
+     * Get the list of questionnaires of a specifc study
+     * @param $studyId - ID of the study
+     * @return array - list of questionnaires associated to the study
+     */
+    function getQuestionnairesStudy($studyId) {
+        return $this->_fetchAll(OPAL_GET_QUESTIONNAIRES_STUDY, array(
+            array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Delete all patients to a specific study EXCEPT the one provided in the array
+     * @param $studyId - Study ID
+     * @param $toKeep - array - List of patients to keep in the study
+     * @return int - number of lines affected
+     */
     function deletePatientsStudy($studyId, $toKeep) {
         $sql = str_replace("%%LISTIDS%%", implode(", ", $toKeep),OPAL_DELETE_PATIENTS_STUDY);
         return $this->_execute($sql, array(
             array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Delete all questionnaires to a specific study EXCEPT the one provided in the array
+     * @param $studyId - Study ID
+     * @param $toKeep - array - List of questionnaires to keep in the study
+     * @return int - number of lines affected
+     */
+    function deleteQuestionnairesStudy($studyId, $toKeep) {
+        $sql = str_replace("%%LISTIDS%%", implode(", ", $toKeep),OPAL_DELETE_QUESTIONNAIRES_STUDY);
+        echo "\r\n" . str_replace(":studyId", $studyId, $sql) . "\r\n";
+        return $this->_execute($sql, array(
+            array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Remove a specific questionnaire from all studies
+     * @param $questionnaireId - ID of the questionnaire
+     * @return int - number of lines affected
+     */
+    function purgeQuestionnaireFromStudies($questionnaireId) {
+        return $this->_execute(OPAL_DELETE_QUESTIONNAIRE_FROM_STUDIES, array(
+            array("parameter"=>":questionnaireId","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 }

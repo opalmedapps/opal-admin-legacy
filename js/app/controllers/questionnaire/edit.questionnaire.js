@@ -231,7 +231,6 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 			// Assign value
 			$scope.questionnaire = response.data;
 			$scope.questionnaire.questions = decodeQuestions($scope.questionnaire.questions);
-			console.log($scope.questionnaire);
 		}).catch(function (err) {
 			ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ERROR_QUESTIONNAIRE_DETAILS'));
 			$uibModalInstance.close();

@@ -2340,6 +2340,7 @@
       "END_DATE": "Invalid end date.",
       "DATE_RANGE": "Invalid date range.",
       "PATIENTS": "Invalid patients list.",
+      "QUESTIONNAIRE": "Invalid questionnaires list.",
       "ID": "Study ID missing or invalid."
     },
     "ADD": {
@@ -2414,6 +2415,9 @@
       "PATIENTS": "List of patients",
       "NO_PATIENT": "No patient",
       "CURRENT_PATIENTS": "Current Patients",
+      "QUESTIONNAIRE": "List of Research Questionnaires",
+      "NO_QUESTIONNAIRE": "No questionnaire",
+      "CURRENT_QUESTIONNAIRE": "Current Questionnaires",
       "SEARCH": "Search...",
       "ERROR_DETAILS": "An error occurred while getting the study details.",
       "ERROR_UPDATE": "An error occurred while updating the study."

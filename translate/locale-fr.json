@@ -2358,6 +2358,7 @@
       "END_DATE": "Date de fin invalide.",
       "DATE_RANGE": "Intervalle de dates invalide.",
       "PATIENTS": "Liste de patients invalide.",
+      "QUESTIONNAIRE": "Liste de questionnaires invalide.",
       "ID": "ID de l'étude invalide ou manquant."
     },
     "ADD": {

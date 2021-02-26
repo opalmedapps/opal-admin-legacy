@@ -25,7 +25,8 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			investigator: "",
 			start_date: "",
 			end_date: "",
-			patients: []
+			patients: [],
+			questionnaire: []
 		};
 
 		$scope.toSubmit = {
@@ -126,6 +127,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$filter('translate')('STUDY.VALIDATION.END_DATE'),
 			$filter('translate')('STUDY.VALIDATION.DATE_RANGE'),
 			$filter('translate')('STUDY.VALIDATION.PATIENTS'),
+			$filter('translate')('STUDY.VALIDATION.QUESTIONNAIRE'),
 			$filter('translate')('STUDY.VALIDATION.ID'),
 		];
 
