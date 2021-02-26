@@ -60,7 +60,7 @@
                     <strong>Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': descriptionSection.open, 'glyphicon-chevron-right': !descriptionSection.open}"></i>
                 </div>
             </uib-accordion-heading>
-            <div class="row"">
+            <div class="row">
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div style="text-align:center; margin-bottom: 10px;">
                         <span style="font-size:20px;">{{'STUDY.EDIT.HTML_ENGLISH'|translate}}</span>
@@ -145,7 +145,7 @@
             <div class="alert alert-info" role="alert">
                 <strong>{{'STUDY.EDIT.CURRENT_PATIENTS'|translate}}</strong><br>
                 <p>
-                    <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!(patientsList|filter:{added:true}).length || selectAll.study.all"></span>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!(patientsList|filter:{added:true}).length"></span>
                     <span ng-if="!(patientsList|filter:{added:true}).length">{{'STUDY.EDIT.NO_PATIENT'|translate}}</span>
                 <ul class="list-items" ng-if="(patientsList|filter:{added:true}).length">
                     <li ng-repeat="study in patientsList | filter: {added: true} : 1">{{study.name}}</li>
@@ -158,10 +158,40 @@
                     <input class="form-control" maxlength="100" type="text" ng-model="patientSearchField" placeholder="{{'STUDY.EDIT.SEARCH'|translate}}" />
                 </div>
 
-                <ul class="list-items" ng-show="!selectAll.study.checked || !selectAll.study.all">
-                    <li ng-repeat="study in patientsList | filter: patientSearchField">
+                <ul class="list-items">
+                    <li ng-repeat="patient in patientsList | filter: patientSearchField">
                         <label>
-                            <input ng-disabled="selectAll.study.checked && selectAll.study.all" type="checkbox" ng-model="study.added" ng-click="selectTrigger(study, selectAll.study, triggerSection.study)"> {{study.name}}
+                            <input type="checkbox" ng-model="patient.added"> {{patient.name}}
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- SECTION: Questionnaire list -->
+        <div uib-accordion-group is-open="questionnaireSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'STUDY.EDIT.QUESTIONNAIRE'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': questionnaireSection.open, 'glyphicon-chevron-right': !questionnaireSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="alert alert-info" role="alert">
+                <strong>{{'STUDY.EDIT.CURRENT_QUESTIONNAIRE'|translate}}</strong><br>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!(questionnaireList|filter:{added:true}).length"></span>
+                <span ng-if="!(questionnaireList|filter:{added:true}).length">{{'STUDY.EDIT.NO_QUESTIONNAIRE'|translate}}</span>
+                <ul class="list-items" ng-if="(questionnaireList|filter:{added:true}).length">
+                    <li ng-repeat="questionnaire in questionnaireList | filter: {added: true} : 1">{{questionnaire.name_display}}</li>
+                </ul>
+            </div>
+            <div>
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                    <input class="form-control" maxlength="100" type="text" ng-model="questionnaireSearchField" placeholder="{{'STUDY.EDIT.SEARCH'|translate}}" />
+                </div>
+
+                <ul class="list-items">
+                    <li ng-repeat="questionnaire in questionnaireList | filter: questionnaireSearchField">
+                        <label>
+                            <input type="checkbox" ng-model="questionnaire.added"> {{questionnaire.name_display}}
                         </label>
                     </li>
                 </ul>

@@ -99,7 +99,7 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 		};
 
 		function getQuestionsList() {
-			questionnaireCollectionService.getQuestions(Session.retrieveObject('user').id).then(function (response) {
+			questionnaireCollectionService.getQuestions().then(function (response) {
 				$scope.questionList = response.data;
 			}).catch(function(err) {
 				ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.ERROR_QUESTIONS'));
