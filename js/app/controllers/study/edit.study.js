@@ -12,7 +12,8 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 		investigator: "",
 		start_date: "",
 		end_date: "",
-		patients: []
+		patients: [],
+		questionnaire: []
 	};
 
 	$scope.toSubmit = {
@@ -33,7 +34,8 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			start_date: "",
 			end_date: "",
 		},
-		patients: []
+		patients: [],
+		questionnaire: []
 	};
 
 	// Default toolbar for wysiwyg
@@ -49,7 +51,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	$scope.formReady = false;
 	$scope.patientsList = [];
 	$scope.backupStudy = [];
-	$scope.ready = [false, false];
+	$scope.ready = [false, false, false];
 
 	$scope.validator = {
 		details: {
@@ -77,6 +79,11 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			mandatory: false,
 			valid: true,
 		},
+		questionnaire: {
+			completed: false,
+			mandatory: false,
+			valid: true,
+		},
 	};
 
 	// Date format for start and end frequency dates
@@ -93,6 +100,22 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 		minDate: null,
 		maxDate: null
 	};
+	$scope.questionnaireList = [];
+
+	var arrValidationInsert = [
+		$filter('translate')('STUDY.VALIDATION.CODE'),
+		$filter('translate')('STUDY.VALIDATION.TITLE_EN'),
+		$filter('translate')('STUDY.VALIDATION.TITLE_FR'),
+		$filter('translate')('STUDY.VALIDATION.DESCRIPTION_EN'),
+		$filter('translate')('STUDY.VALIDATION.DESCRPIPTION_FR'),
+		$filter('translate')('STUDY.VALIDATION.INVESTIGATOR'),
+		$filter('translate')('STUDY.VALIDATION.START_DATE'),
+		$filter('translate')('STUDY.VALIDATION.END_DATE'),
+		$filter('translate')('STUDY.VALIDATION.DATE_RANGE'),
+		$filter('translate')('STUDY.VALIDATION.PATIENTS'),
+		$filter('translate')('STUDY.VALIDATION.QUESTIONNAIRE'),
+		$filter('translate')('STUDY.VALIDATION.ID'),
+	];
 
 	$locale["DATETIME_FORMATS"]["SHORTDAY"] = [
 		$filter('translate')('DATEPICKER.SUNDAY_S'),
@@ -147,9 +170,15 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			var dateArray, year, month, date;
 			if($scope.patientsList.length > 0)
 				$scope.validator.patients.completed = true;
+			if($scope.questionnaireList.length > 0)
+				$scope.validator.questionnaire.completed = true;
 
 			angular.forEach($scope.patientsList, function(value) {
 				value.added = $scope.backupStudy.patients.includes(value.id);
+			});
+
+			angular.forEach($scope.questionnaireList, function(value) {
+				value.added = $scope.backupStudy.questionnaire.includes(value.ID);
 			});
 
 			$scope.toSubmit.ID = $scope.backupStudy.ID;
@@ -176,10 +205,10 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 				$scope.validator.dates.completed = true;
 			}
 			$scope.toSubmit.patients = $scope.backupStudy.patients;
+			$scope.toSubmit.questionnaire = $scope.backupStudy.questionnaire;
 			$scope.oldData = JSON.parse(JSON.stringify($scope.toSubmit));
 			$scope.oldData.dates.start_date = $scope.toSubmit.dates.start_date;
 			$scope.oldData.dates.end_date = $scope.toSubmit.dates.end_date;
-
 
 			$scope.changesDetected = false;
 		}
@@ -189,6 +218,21 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	studyCollectionService.getStudiesDetails($scope.currentStudy.ID).then(function (response) {
 		$scope.backupStudy = response.data;
 		$scope.ready[1] = true;
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
+	});
+
+	// Call our API service to get the current diagnosis translation details
+	studyCollectionService.getResearchPatient().then(function (response) {
+		$scope.questionnaireList = response.data;
+		angular.forEach($scope.questionnaireList, function(item) {
+			item.added = false;
+			if($scope.language === "FR")
+				item.name_display = item.name_FR;
+			else
+				item.name_display = item.name_EN;
+		});
+		$scope.ready[2] = true;
 	}).catch(function(err) {
 		ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
 	}).finally(function() {
@@ -289,6 +333,27 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 		});
 	}, true);
 
+	$scope.$watch('questionnaireList', function (triggerList) {
+		triggerList = angular.copy(triggerList);
+		var pos = -1;
+		angular.forEach(triggerList, function (item) {
+			pos = $scope.toSubmit.questionnaire.findIndex(x => x === item.ID);
+			if(item.added) {
+				if (pos === -1) {
+					$scope.toSubmit.questionnaire.push(item.ID);
+				}
+			}
+			else {
+				if (pos !== -1) {
+					$scope.toSubmit.questionnaire.splice(pos, 1);
+				}
+			}
+		});
+		$scope.toSubmit.questionnaire.sort(function(a, b) {
+			return a - b;
+		});
+	}, true);
+
 	// Submit changes
 	$scope.updateCustomCode = function() {
 		if($scope.formReady && $scope.changesDetected) {
@@ -302,6 +367,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			$scope.readyToSend.start_date = (($scope.toSubmit.dates.start_date) ? moment($scope.toSubmit.dates.start_date).format('X') : "");
 			$scope.readyToSend.end_date = (($scope.toSubmit.dates.end_date) ? moment($scope.toSubmit.dates.end_date).format('X') : "");
 			$scope.readyToSend.patients = $scope.toSubmit.patients;
+			$scope.readyToSend.questionnaire = $scope.toSubmit.questionnaire;
 
 			$.ajax({
 				type: "POST",
@@ -309,7 +375,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 				data: $scope.readyToSend,
 				success: function () {},
 				error: function (err) {
-					ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_UPDATE'));
+					ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_UPDATE'), arrValidationInsert);
 				},
 				complete: function () {
 					$uibModalInstance.close();

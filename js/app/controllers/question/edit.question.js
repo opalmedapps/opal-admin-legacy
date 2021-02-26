@@ -101,7 +101,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		$scope.showProcessingModal();
 
 		// Call our API service to get the questionnaire details
-		questionnaireCollectionService.getQuestionDetails($scope.currentQuestion.serNum, OAUserId).then(function (response) {
+		questionnaireCollectionService.getQuestionDetails($scope.currentQuestion.serNum).then(function (response) {
 			getLibrariesList();
 			$scope.question = response.data;
 			if($scope.language.toUpperCase() === "FR")
@@ -185,7 +185,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		};
 
 		function getLibrariesList() {
-			questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
+			questionnaireCollectionService.getLibraries().then(function (response) {
 				$scope.libraryFilterList = response.data;
 				$scope.libraryFilterList.forEach(function(entry) {
 					if($scope.language.toUpperCase() === "FR")

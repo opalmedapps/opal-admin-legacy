@@ -81,6 +81,7 @@ define("OPAL_ALIAS_TABLE","Alias");
 define("OPAL_DIAGNOSIS_TRANSLATION_TABLE","DiagnosisTranslation");
 define("OPAL_PATIENT_TABLE","Patient");
 define("OPAL_PATIENT_STUDY_TABLE","patientStudy");
+define("OPAL_QUESTIONNAIRE_STUDY_TABLE","questionnaireStudy");
 define("OPAL_TEST_RESULT_EXPRESSION_TABLE","TestResultExpression");
 //define("OPAL_TEST_RESULT_ADD_LINKS_TABLE","TestResultAdditionalLinks");
 define("OPAL_DIAGNOSIS_CODE_TABLE","DiagnosisCode");
@@ -1265,6 +1266,18 @@ define("OPAL_GET_PATIENTS_STUDY","
     SELECT patientId FROM ".OPAL_PATIENT_STUDY_TABLE." WHERE studyId = :studyId ORDER BY patientId;
 ");
 
+define("OPAL_GET_QUESTIONNAIRES_STUDY","
+    SELECT questionnaireId FROM ".OPAL_QUESTIONNAIRE_STUDY_TABLE." WHERE studyId = :studyId ORDER BY questionnaireId;
+");
+
 define("OPAL_DELETE_PATIENTS_STUDY", "
     DELETE FROM ".OPAL_PATIENT_STUDY_TABLE." WHERE studyId = :studyId AND PatientId NOT IN (%%LISTIDS%%);
+");
+
+define("OPAL_DELETE_QUESTIONNAIRES_STUDY", "
+    DELETE FROM ".OPAL_QUESTIONNAIRE_STUDY_TABLE." WHERE studyId = :studyId AND questionnaireId NOT IN (%%LISTIDS%%);
+");
+
+define("OPAL_DELETE_QUESTIONNAIRE_FROM_STUDIES", "
+    DELETE FROM ".OPAL_QUESTIONNAIRE_STUDY_TABLE." WHERE questionnaireId = :questionnaireId;
 ");
