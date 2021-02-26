@@ -31,6 +31,8 @@ define("DEFINITION_TABLE","definitionTable");
 define("DICTIONARY_TABLE","dictionary");
 define("LABEL_TABLE","label");
 define("LABEL_OPTION_TABLE","labelOption");
+define("PURPOSE_TABLE","purpose");
+define("RESPONDENT_TABLE","respondent");
 define("LANGUAGE_TABLE","language");
 define("LEGACY_TYPE_TABLE","legacyType");
 define("LEGACY_STATUS_TABLE","legacyStatus");
@@ -406,7 +408,8 @@ define("SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_DETAILS",
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS title_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS title_FR,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS description_EN,
-    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR 
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR,
+    q.purposeId AS purpose, q.respondentId AS respondent 
     FROM ".QUESTIONNAIRE_TABLE." q
     WHERE q.ID = :ID AND (q.private = 0 OR q.OAUserId = :OAUserId) AND q.deleted = ".NON_DELETED_RECORD.";"
 );
@@ -473,8 +476,7 @@ define("SQL_QUESTIONNAIRE_UPDATE_QUESTION",
     "UPDATE ".QUESTION_TABLE."
     SET updatedBy = :updatedBy, private = :private, final = :final
     WHERE ID = :ID
-    AND (private = 0 OR OAUserId = :OAUserId)
-    AND (private != :private OR final != :final) 
+    AND (private = ".PUBLIC_RECORD." OR OAUserId = :OAUserId)
     AND deleted = ".NON_DELETED_RECORD.";"
 );
 
@@ -497,10 +499,10 @@ define("SQL_QUESTIONNAIRE_FORCE_UPDATE_UPDATEDBY",
 
 define("SQL_QUESTIONNAIRE_UPDATE_QUESTIONNAIRE",
     "UPDATE ".QUESTIONNAIRE_TABLE."
-    SET updatedBy = :updatedBy, private = :private, final = :final, visualization = :visualization
+    SET updatedBy = :updatedBy, private = :private, final = :final, visualization = :visualization,
+    purposeId = :purposeId, respondentId = :respondentId
     WHERE ID = :ID
-    AND (private = 0 OR OAUserId = :OAUserId)
-    AND (private != :private OR final != :final OR visualization != :visualization) 
+    AND (private = ".PUBLIC_RECORD." OR OAUserId = :OAUserId)
     AND deleted = ".NON_DELETED_RECORD.";"
 );
 
@@ -604,4 +606,58 @@ define("SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_INFO","
 
 define("SQL_QUESTIONNAIRE_GET_PREV_QUESTIONNAIRE","
     CALL getLastAnsweredQuestionnaire(:questionnaireid, :ptser);
+");
+
+define("SQL_QUESTIONNAIRE_GET_PURPOSES",
+    "SELECT
+    p.ID AS ID,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = p.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS title_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = p.title AND d.languageId = ".FRENCH_LANGUAGE.") AS title_FR,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = p.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS description_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = p.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR
+    FROM ".PURPOSE_TABLE." p ORDER BY p.ID;"
+);
+
+define("SQL_QUESTIONNAIRE_GET_RESPONDENTS",
+    "SELECT
+    r.ID AS ID,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS title_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.title AND d.languageId = ".FRENCH_LANGUAGE.") AS title_FR,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS description_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR
+    FROM ".RESPONDENT_TABLE." r ORDER BY r.ID;"
+);
+
+define("SQL_QUESTIONNAIRE_GET_PURPOSE_DETAILS",
+    "SELECT
+    p.ID AS ID,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = p.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS title_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = p.title AND d.languageId = ".FRENCH_LANGUAGE.") AS title_FR,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = p.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS description_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = p.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR
+    FROM ".PURPOSE_TABLE." p WHERE p.ID = :ID;"
+);
+
+define("SQL_QUESTIONNAIRE_GET_RESPONDENT_DETAILS",
+    "SELECT
+    r.ID AS ID,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS title_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.title AND d.languageId = ".FRENCH_LANGUAGE.") AS title_FR,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS description_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR
+    FROM ".RESPONDENT_TABLE." r WHERE r.ID = :ID;"
+);
+
+
+define("SQL_QUESTIONNAIRE_GET_RESEARCH_PATIENT",
+    "SELECT
+    q.ID AS ID,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR
+    FROM ".QUESTIONNAIRE_TABLE." q
+    WHERE q.deleted = ".NON_DELETED_RECORD." AND q.final = ".FINAL_RECORD." AND q.purposeId = ".PURPOSE_RESEARCH." AND q.respondentId = ".RESPONDENT_PATIENT.";"
+);
+
+define("SQL_QUESTIONNAIRE_GET_QUESTIONNAIRES_BY_ID","
+    SELECT ID FROM ".QUESTIONNAIRE_TABLE." WHERE ID IN (%%LISTIDS%%);
 ");

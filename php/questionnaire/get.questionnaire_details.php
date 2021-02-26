@@ -1,5 +1,5 @@
 <?php
-include_once('questionnaire.inc');
+include_once("../config.php");
 
 $questionnaireId = strip_tags($_POST['questionnaireId']);
 

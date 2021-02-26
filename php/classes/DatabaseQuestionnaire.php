@@ -1178,4 +1178,62 @@ class DatabaseQuestionnaire extends DatabaseAccess
             array("parameter"=>":ptser","variable"=>$patientSerNum,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    /*
+     * List all available purposes.
+     * @params  void
+     * @return array - list of purposes
+     * */
+    function getPurposes() {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_PURPOSES, array());
+    }
+
+    /*
+     * List all available respondents.
+     * @params  void
+     * @return array - list of respondents
+     * */
+    function getRespondents() {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_RESPONDENTS, array());
+    }
+
+    /*
+     * Get a purpose details
+     * @params  $id - int : purpose ID
+     * @return  array - details of the purpose
+     * */
+    function getPurposeDetails($id) {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_PURPOSE_DETAILS, array(
+            array("parameter"=>":ID","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get a respondent details
+     * @params  $id - int : respondent ID
+     * @return  array - details of the respondent
+     * */
+    function getRespondentDetails($id) {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_RESPONDENT_DETAILS, array(
+            array("parameter"=>":ID","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get the list of questionnaires associated to research and patient
+     * */
+    function getResearchPatient() {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_RESEARCH_PATIENT, array(
+        ));
+    }
+
+    /**
+     * Get the list of questionnaire found based on an array of IDs
+     * @param $list - list of questionnaire ID to verify
+     * @return array - list of the questionnaires found
+     */
+    function getQuestionnairesListByIds($list) {
+        $sql = str_replace("%%LISTIDS%%", implode(", ", $list), SQL_QUESTIONNAIRE_GET_QUESTIONNAIRES_BY_ID);
+        return $this->_fetchAll($sql, array());
+    }
 }

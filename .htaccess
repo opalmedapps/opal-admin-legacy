@@ -249,6 +249,7 @@ RewriteRule ^question/update/question php/questionnaire/update.question.php [QSA
 # Questionnaire Section
 RewriteRule ^questionnaire/delete/questionnaire php/questionnaire/delete.questionnaire.php [QSA,L]
 RewriteRule ^questionnaire/get/finalized-questions php/questionnaire/get.finalizedQuestions.php [QSA,L]
+RewriteRule ^questionnaire/get/purposes-respondents php/questionnaire/get.purposes.respondents.php [QSA,L]
 RewriteRule ^questionnaire/get/questionnaires php/questionnaire/get.questionnaires.php [QSA,L]
 RewriteRule ^questionnaire/get/questionnaire-details php/questionnaire/get.questionnaire_details.php [QSA,L]
 RewriteRule ^questionnaire/insert/questionnaire php/questionnaire/insert.questionnaire.php [QSA,L]
@@ -264,6 +265,7 @@ RewriteRule ^role/update/role php/role/update.role.php [QSA,L]
 
 # Studies Section
 RewriteRule ^study/get/patients-list php/study/get.patients.list.php [QSA,L]
+RewriteRule ^study/get/research-patient php/study/get.research.patient.php [QSA,L]
 RewriteRule ^study/get/study-details php/study/get.study.details.php [QSA,L]
 RewriteRule ^study/get/studies php/study/get.studies.php [QSA,L]
 RewriteRule ^study/insert/study php/study/insert.study.php [QSA,L]
