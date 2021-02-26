@@ -97,6 +97,20 @@ define("OPAL_ALERT_TABLE","alert");
 define("OPAL_TRIGGER_TABLE","jsonTrigger");
 define("OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE","Patient_Hospital_Identifier");
 define("OPAL_DIAGNOSIS_TABLE","Diagnosis");
+define("OPAL_APPOINTMENTS_TABLE", "Appointment");
+define("OPAL_RESOURCE_TABLE", "Resource");
+define("OPAL_RESOURCE_APPOINTMENT_TABLE", "ResourceAppointment");
+define("OPAL_QUESTIONNAIRE_TABLE", "Questionnaire");
+define("OPAL_EDUCATIONAL_MATERIAL_TABLE", "EducationalMaterial");
+define("OPAL_LEGACY_TEST_RESULT_TABLE", "TestResult");
+define("OPAL_PATIENT_TEST_RESULT_TABLE", "PatientTestResult");
+define("OPAL_TEST_EXPRESSION_TABLE", "TestExpression");
+define("OPAL_TEST_GROUP_EXPRESSION_TABLE", "TestGroupExpression");
+define("OPAL_TEST_CONTROL_TABLE", "TestControl");
+define("OPAL_NOTIFICATION_TABLE", "Notification");
+define("OPAL_TASK_TABLE", "Task");
+define("OPAL_PRIORITY_TABLE", "Priority");
+define("OPAL_DOCUMENT_TABLE", "Document");
 define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
 define("OPAL_TEST_CONTROL_TABLE","TestControl");
 define("OPAL_TEST_EXPRESSION_TABLE","TestExpression");
@@ -957,6 +971,160 @@ define("OPAL_GET_PATIENT_DIAGNOSIS_ID","
 
 define("OPAL_DELETE_PATIENT_DIAGNOSIS","
     DELETE FROM ".OPAL_DIAGNOSIS_TABLE." WHERE DiagnosisSerNum = :DiagnosisSerNum; 
+");
+
+define("OPAL_GET_PATIENT_NAME", "
+    SELECT PatientSerNum AS psnum, PatientId AS pid, FirstName AS pname, LastName AS plname,
+    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang
+    FROM ".OPAL_PATIENT_TABLE." WHERE LastName LIKE :name;
+");
+
+define("OPAL_GET_PATIENT_MRN", "
+    SELECT PatientSerNum AS psnum, PatientId AS pid, FirstName AS pname, LastName AS plname,
+    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang
+    FROM ".OPAL_PATIENT_TABLE." WHERE PatientId LIKE :mrn;
+");
+
+define("OPAL_GET_PATIENT_RAMQ", "
+    SELECT PatientSerNum AS psnum, PatientId AS pid, FirstName AS pname, LastName AS plname,
+    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang
+    FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :ramq;
+");
+
+define("OPAL_GET_DIAGNOSIS_REPORT", "
+    SELECT DiagnosisSerNum AS sernum, CreationDate AS creationdate, Description_EN AS description
+    FROM ".OPAL_DIAGNOSIS_TABLE." WHERE PatientSerNum = :pnum;
+");
+
+define("OPAL_GET_APPOINTMENT_REPORT", "
+    SELECT a.ScheduledStartTime AS starttime, a.Status AS status, a.DateAdded AS dateadded,
+    als.AliasName_EN AS aliasname, als.AliasType AS aliastype, r.ResourceName AS resourcename
+    FROM ".OPAL_APPOINTMENTS_TABLE." a, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_ALIAS_TABLE." als, 
+    ".OPAL_RESOURCE_TABLE." r, ".OPAL_RESOURCE_APPOINTMENT_TABLE." ra
+    WHERE PatientSerNum = :pnum AND a.AliasExpressionSerNum = ae.AliasExpressionSerNum
+    AND ae.AliasSerNum = als.AliasSerNum AND r.ResourceSerNum = ra.ResourceSerNum
+    AND ra.AppointmentSerNum = a.AppointmentSerNum;
+");
+
+define("OPAL_GET_QUESTIONNAIRE_REPORT", "
+    SELECT q.DateAdded AS dateadded, q.CompletionDate AS datecompleted, qc.QuestionnaireName_EN AS name
+    FROM ".OPAL_QUESTIONNAIRE_TABLE." q, ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." qc
+    WHERE q.QuestionnaireControlSerNum = qc.QuestionnaireControlSerNum AND PatientSerNum = :pnum;
+");
+
+define("OPAL_GET_EDUCATIONAL_MATERIAL_REPORT", "
+    SELECT em.DateAdded AS dateadded, em.ReadStatus AS readstatus, emc.EducationalMaterialType_EN AS materialtype,
+    emc.Name_EN AS name
+    FROM ".OPAL_EDUCATIONAL_MATERIAL_TABLE." AS em, ".OPAL_EDUCATION_MATERIAL_TABLE." AS emc
+    WHERE em.EducationalMaterialControlSerNum = emc.EducationalMaterialControlSerNum
+    AND PatientSerNum = :pnum;
+");
+
+define("OPAL_GET_LEGACY_TEST_REPORT", "
+    SELECT DateAdded AS dateadded, TestDate AS testdate, ComponentName AS componentname,
+    AbnormalFlag AS abnormalflag, TestValue AS testvalue, MinNorm AS minnorm, MaxNorm AS maxnorm,
+    UnitDescription AS unitdescription, ReadStatus AS readstatus
+    FROM ".OPAL_LEGACY_TEST_RESULT_TABLE."
+    WHERE PatientSerNum = :pnum;
+");
+
+define("OPAL_GET_TEST_REPORT", "
+    SELECT IfNull((Select tge.ExpressionName from ".OPAL_TEST_GROUP_EXPRESSION_TABLE." tge where ptr.TestGroupExpressionSerNum = tge.TestGroupExpressionSerNum), '') as groupname,
+	ptr.ReadStatus as readstatus,
+	IfNull((select tc.Name_EN from ".OPAL_TEST_CONTROL_TABLE." tc where te.TestControlSerNum = tc.TestControlSerNum), te.ExpressionName) as testname,
+	ptr.AbnormalFlag as abnormalflag,
+	ptr.NormalRange as normalrange, 	
+	case
+		when ptr.TestValue = 'Non détecté' then '0'
+		when ptr.TestValue = 'Détecté' then '1'
+	else ptr.TestValue
+	end as testvalue,
+	ptr.UnitDescription as description,
+	ptr.DateAdded as dateadded,
+	ptr.CollectedDateTime as datecollected,
+	ptr.ResultDateTime as resultdate
+FROM ".OPAL_PATIENT_TEST_RESULT_TABLE." ptr, ".OPAL_TEST_EXPRESSION_TABLE." te
+WHERE
+	ptr.PatientSerNum = :pnum
+	AND ptr.TestExpressionSerNum = te.TestExpressionSerNum
+	AND ptr.TestValueNumeric is not null
+ORDER BY groupName, sequenceNum;");
+
+define("OPAL_GET_NOTIFICATIONS_REPORT", "
+    SELECT n.DateAdded AS dateadded, n.LastUpdated lastupdated, n.ReadStatus AS readstatus,
+    nc.Name_EN AS name, n.RefTableRowTitle_EN AS tablerowtitle
+    FROM ".OPAL_PATIENT_TABLE." p, ".OPAL_NOTIFICATION_TABLE." n, ".OPAL_NOTIFICATION_CONTROL_TABLE." nc
+    WHERE p.PatientSerNum = n.PatientSerNum
+    AND n.NotificationControlSerNum = nc.NotificationControlSerNum
+    AND p.PatientSerNum = :pnum;
+");
+
+define("OPAL_GET_TREATMENT_PLAN_REPORT", "
+    SELECT d.Description_EN AS diagnosisdescription, a.AliasType AS aliastype, pr.PriorityCode AS prioritycode,
+    ae.Description AS aliasexpressiondescription, a.AliasName_EN AS aliasname, a.AliasDescription_EN AS aliasdescription,
+    t.Status AS taskstatus, t.State AS taskstate, t.DueDateTime AS taskdue, t.CompletionDate AS taskcompletiondate
+    FROM ".OPAL_TASK_TABLE." t, ".OPAL_PATIENT_TABLE." p, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_ALIAS_TABLE." a, 
+    ".OPAL_DIAGNOSIS_TABLE." d, ".OPAL_PRIORITY_TABLE." AS pr
+    WHERE t.PatientSerNum = p.PatientSerNum AND p.PatientSerNum = pr.PatientSerNum
+    AND ae.AliasExpressionSerNum = t.AliasExpressionSerNum AND ae.AliasSerNum = a.AliasSerNum
+    AND t.DiagnosisSerNum = d.DiagnosisSerNum AND t.PrioritySerNum = pr.PrioritySerNum
+    AND p.PatientSerNum = :pnum;
+");
+
+define("OPAL_GET_CLINICAL_NOTES_REPORT", "
+    SELECT d.OriginalFileName AS originalname, d.FinalFileName AS finalname, d.CreatedTimeStamp AS created,
+    d.ApprovedTimeStamp AS approved, ae.ExpressionName AS aliasexpressionname
+    FROM ".OPAL_DOCUMENT_TABLE." d, ".OPAL_PATIENT_TABLE." p, ".OPAL_ALIAS_EXPRESSION_TABLE." AS ae
+    WHERE d.PatientSerNum = p.PatientSerNum AND d.AliasExpressionSerNum = ae.AliasExpressionSerNum
+    AND p.PatientSerNum = :pnum;
+");
+
+define("OPAL_GET_TREATING_TEAM_REPORT", "
+    SELECT tx.DateAdded AS dateadded, pc.PostName_EN AS name, tx.ReadStatus AS readstatus, pc.Body_EN AS body
+    FROM ".OPAL_TX_TEAM_MESSAGE_TABLE." tx, ".OPAL_POST_TABLE." pc, ".OPAL_PATIENT_TABLE." p
+    WHERE tx.PatientSerNum = p.PatientSerNum AND tx.PostControlSerNum = pc.PostControlSerNum
+    AND p.PatientSerNum = :pnum;
+");
+
+define("OPAL_GET_GENERAL_REPORT", "
+    SELECT a.DateAdded AS dateadded, a.ReadStatus AS readstatus, pc.PostName_EN AS name, pc.Body_EN AS body
+    FROM ".OPAL_PATIENT_TABLE." p, ".OPAL_ANNOUNCEMENT_TABLE." a, ".OPAL_POST_TABLE." pc
+    WHERE p.PatientSerNum = a.PatientSerNum AND a.PostControlSerNum = pc.PostControlSerNum
+    AND p.PatientSerNum = :pnum;
+");
+
+define("OPAL_GET_EDUCATIONAL_MATERIAL_OPTIONS", "
+    SELECT Name_EN AS name, PublishFlag AS pflag
+    FROM ".OPAL_EDUCATION_MATERIAL_TABLE."
+    WHERE EducationalMaterialType_EN = :matType;
+");
+
+define("OPAL_GET_EDUCATIONAL_MATERIAL_GROUP", "
+    SELECT p.FirstName AS pname, p.LastName AS plname, p.PatientSerNum AS pser, p.Sex AS psex,
+    p.Age AS page, p.DateOfBirth AS pdob, em.DateAdded AS edate, em.ReadStatus AS eread, em.LastUpdated AS eupdate
+    FROM ".OPAL_PATIENT_TABLE." p, ".OPAL_EDUCATIONAL_MATERIAL_TABLE." em, ".OPAL_EDUCATION_MATERIAL_TABLE." emc
+    WHERE em.PatientSerNum = p.PatientSerNum AND em.EducationalMaterialControlSerNum = emc.EducationalMaterialControlSerNum
+    AND emc.EducationalMaterialType_EN = :matType
+    AND emc.Name_EN = :matName
+");
+
+define("OPAL_GET_QUESTIONNAIRE_OPTIONS", "
+    SELECT QuestionnaireName_EN AS name FROM ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.";");
+
+define("OPAL_GET_QUESTIONNAIRE_REPORT_GROUP", "
+    SELECT p.FirstName AS pname, p.LastName AS plname, p.PatientSerNum AS pser, p.Sex AS psex,
+    p.DateOfBirth AS pdob, q.DateAdded AS qdate, q.CompletionDate AS qcomplete
+    FROM ".OPAL_PATIENT_TABLE." p, ".OPAL_QUESTIONNAIRE_TABLE." q, ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." qc
+    WHERE p.PatientSerNum = q.PatientSerNum AND q.QuestionnaireControlSerNum = qc.QuestionnaireControlSerNum
+    AND qc.QuestionnaireName_EN = :qName
+");
+
+define("OPAL_GET_DEMOGRAPHICS_REPORT_GROUP", "
+    SELECT p.PatientSerNum AS pser, p.FirstName AS pname, p.LastName AS plname, p.Sex AS psex,
+    p.DateOfBirth AS pdob, p.Age AS page, p.Email AS pemail, p.Language AS plang, p.RegistrationDate AS preg,
+    p.ConsentFormExpirationDate AS pcons, ifnull((select d1.Description_EN from ".OPAL_DIAGNOSIS_TABLE." d1 where p.PatientSerNum = d1.PatientSerNum order by CreationDate desc limit 1), 'NA') as diagdesc,
+    ifnull((select d2.CreationDate from ".OPAL_DIAGNOSIS_TABLE." d2 where p.PatientSerNum = d2.PatientSerNum order by CreationDate desc limit 1), now()) as diagdate
+    FROM ".OPAL_PATIENT_TABLE." p ORDER BY p.RegistrationDate
 ");
 
 define("OPAL_GET_TEST_RESULTS","

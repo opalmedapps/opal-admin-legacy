@@ -1,29 +1,70 @@
 <div id="main">
-    <div id="top">
+    <div id="top" class="home-main patient-main">
         <div class="clearfix">
             <div class="row">
                 <!-- Load side menu -->
                 <div id="side-panel-scrollbar" class="col-lg-2">
-                    <div ng-include="'templates/patient/menu-side.html'"></div>
-                </div>
+					<div ng-include="'templates/patient/menu-side.html'"></div>
+				</div>
                 <!-- Right side detail view -->
                 <div class="col-lg-10 animated fadeIn">
                     <div class="row main-title">
                         <!-- Page title -->
                         <div class="col-xs-12 col-md-8 title-content">
                             <span class="fa fa fa-file-text"></span>
-                            <h1><strong>{{'PATIENTREPORT.TITLE'|translate}}</strong></h1>
+                            <h1><strong>{{'PATIENTREPORT.TITLE.MAIN'|translate}}</strong></h1>
                         </div>
                         <!-- Breadcrumbs -->
                         <div class="col-md-4 title-breadcrumbs">
                             <span><a ui-sref="home">{{'BREADCRUMBS.HOME'|translate}}</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>{{'PATIENTS.LIST.TITLE'|translate}}</strong></span>
                         </div>
                     </div>
-
-                    <!-- Load main table -->
-                    <div class="iframe-container">
-                        <iframe id="serviceFrameSend" src="patientReport/public_html/index.html" class="responsive-iframe">
-                        </iframe>
+                    <div class="row" style="text-align:left;">
+						<div class="col-xs-12 side-menu-title">
+							<div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                				<span style="background-color:#e6edfa; padding: 0 10px;">
+									<span class="glyphicon glyphicon-menu-down"></span>
+                                    <h2>{{'PATIENTREPORT.TITLE.INTRODUCTION'|translate}}</h2>
+                                </span>
+							</div>
+						</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6 col-md-4 home-menu">
+                            <div class="panel-container animated" ng-class="{pulse: hoverMenuRegistration}" ng-mouseenter="hoverMenuRegistration=true" ng-mouseleave="hoverMenuRegistration=false" ng-click="goToIndividual();" style="cursor:pointer;">
+                                <div class="panel-info">
+                                    <div class="panel-content">
+                                        <div class="icon-home clearfix">
+                                            <span class="fa fa fa-file-text"></span>
+                                        </div>
+                                        <div class="panel-title">
+                                            <h1>{{'PATIENTREPORT.TITLE.INDIVIDUAL'|translate}}</h1>
+                                        </div>
+                                        <div class="panel-description">
+                                           <p>{{'PATIENTREPORT.TITLE.INDIVIDUAL_DESC'|translate}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-4 home-menu">
+                            <div class="panel-container animated" ng-class="{pulse: hoverMenu}" ng-mouseenter="hoverMenu=true" ng-mouseleave="hoverMenu=false" ng-click="goToGroup();" style="cursor:pointer;">
+                                <div class="panel-info">
+                                    <div class="panel-content">
+                                        <div class="icon-home clearfix">
+                                            <span class="fa fa fa-file-text"></span>
+                                        </div>
+                                        <div class="panel-title">
+                                            <h1>{{'PATIENTREPORT.TITLE.GROUP'|translate}}</h1>
+                                        </div>
+                                        <div class="panel-description">
+                                           <p>{{'PATIENTREPORT.TITLE.GROUP_DESC'|translate}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -31,3 +72,5 @@
     </div>
     <div class="bannerMessage alert-success">{{bannerMessage}}</div>
 </div>
+
+
