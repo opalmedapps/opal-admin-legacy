@@ -440,63 +440,10 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		// API to find patient given an SSN
-		patientAPI.findPatient = function (ssn, id) {
-			return $http.post(
-				"patient/find-patient",
-				$.param({
-					ssn: ssn,
-					id: id,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		// API to fetch security questions
-		patientAPI.fetchSecurityQuestions = function (lang) {
-			return $http.post(
-				"patient/get/security-questions",
-				$.param({
-					lang: lang,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		// API to check email existence
-		patientAPI.emailAlreadyInUse = function (email) {
-			return $http.post(
-				"patient/email-in-use",
-				$.param({
-					email: email,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
 		// API to get patient activity list
 		patientAPI.getPatientActivities = function () {
 			return $http.post(
 				"patient/get/patient-activities",
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		// API to get a patient's details
-		patientAPI.getPatientDetails = function (serial) {
-			return $http.post(
-				"patient/get/patient-details",
-				$.param({
-					serial: serial,
-				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}

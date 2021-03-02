@@ -101,7 +101,7 @@ define("OPAL_DIAGNOSIS_TABLE","Diagnosis");
 define("OPAL_APPOINTMENTS_TABLE", "Appointment");
 define("OPAL_RESOURCE_TABLE", "Resource");
 define("OPAL_RESOURCE_APPOINTMENT_TABLE", "ResourceAppointment");
-define("OPAL_QUESTIONNAIRE_TABLE", "Questionnaire");
+define("OPAL_PATIENT_CONTROL_TABLE", "PatientControl");
 define("OPAL_EDUCATIONAL_MATERIAL_TABLE", "EducationalMaterial");
 define("OPAL_LEGACY_TEST_RESULT_TABLE", "TestResult");
 define("OPAL_PATIENT_TEST_RESULT_TABLE", "PatientTestResult");
@@ -112,10 +112,8 @@ define("OPAL_NOTIFICATION_TABLE", "Notification");
 define("OPAL_TASK_TABLE", "Task");
 define("OPAL_PRIORITY_TABLE", "Priority");
 define("OPAL_DOCUMENT_TABLE", "Document");
+define("OPAL_USERS_TABLE", "Users");
 define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
-define("OPAL_TEST_CONTROL_TABLE","TestControl");
-define("OPAL_TEST_EXPRESSION_TABLE","TestExpression");
-define("OPAL_RESOURCE_TABLE","Resource");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -1280,4 +1278,15 @@ define("OPAL_DELETE_QUESTIONNAIRES_STUDY", "
 
 define("OPAL_DELETE_QUESTIONNAIRE_FROM_STUDIES", "
     DELETE FROM ".OPAL_QUESTIONNAIRE_STUDY_TABLE." WHERE questionnaireId = :questionnaireId;
+");
+
+define("OPAL_UPDATE_PATIENT_PUBLISH_FLAG","
+    UPDATE ".OPAL_PATIENT_CONTROL_TABLE." SET PatientUpdate = :PatientUpdate WHERE PatientSerNum = :PatientSerNum
+");
+
+define("OPAL_GET_PATIENTS","
+    SELECT DISTINCT pc.PatientSerNum AS serial, pc.PatientUpdate AS transfer CONCAT(pt.FirstName, ' ', pt.LastName) AS name,
+    pt.PatientId AS patientid, pc.LastTransferred AS lasttransferred, pt.BlockedStatus AS disabled, usr.Username AS uid,
+    pt.email AS email FROM ".OPAL_PATIENT_TABLE." pt RIGHT JOIN ".OPAL_PATIENT_CONTROL_TABLE." pc ON pt.PatientSerNum = pc.PatientSerNum
+    LEFT JOIN ".OPAL_USERS_TABLE." usr ON pt.PatientSerNum 	= usr.UserTypeSerNum WHERE usr.UserType = 'Patient';
 ");
