@@ -137,7 +137,7 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "patient/update/patient-publish-flags",
+					url: "patient/update/publish-flags",
 					data: $scope.patientTransfers,
 					success: function () {
 						$scope.setBannerClass('success');
@@ -151,26 +151,6 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 					}
 				});
 			}
-		};
-
-		// Function for when a user has been clicked for (un)blocking
-		// Open a modal
-		$scope.patientToToggleBlock = null;
-		$scope.toggleBlock = function (currentPatient) {
-
-			$scope.patientToToggleBlock = currentPatient;
-			var modalInstance = $uibModal.open({
-				templateUrl: 'templates/patient/block.patient.html',
-				windowClass: 'customModal',
-				controller: 'patient.block',
-				scope: $scope,
-				backdrop: 'static'
-			});
-
-			// After toggle, refresh the patient list
-			modalInstance.result.then(function () {
-				getPatientsList();
-			});
 		};
 
 		function getPatientsList() {

@@ -1,7 +1,7 @@
 <?php
 
 include_once("../config.php");
-$patReport = new PatientReports; // Object
+$patReport = new Patient(); // Object
 
 $response = $patReport->getPatientGroupReport();
 header('Content-Type: application/javascript');

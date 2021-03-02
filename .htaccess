@@ -195,16 +195,9 @@ RewriteRule ^notification/insert/notification php/notification/insert.notificati
 RewriteRule ^notification/update/notification php/notification/update.notification.php [QSA,L]
 
 # Patient Section
-RewriteRule ^patient/email-in-use php/patient/email_in_use.php [QSA,L]
-RewriteRule ^patient/find-patient php/patient/find_patient.php [QSA,L]
 RewriteRule ^patient/get/patient-activities php/patient/get.patient_activities.php [QSA,L]
-RewriteRule ^patient/get/patient-details php/patient/get.patient_details.php [QSA,L]
 RewriteRule ^patient/get/patients php/patient/get.patients.php [QSA,L]
-RewriteRule ^patient/get/security-questions php/patient/get.security_questions.php [QSA,L]
-RewriteRule ^patient/insert/patient php/patient/insert.patient.php [QSA,L]
-RewriteRule ^patient/toggle/block php/patient/toggle_block.php [QSA,L]
-RewriteRule ^patient/update/patient-publish-flags php/patient/update.patient_publish_flags.php [QSA,L]
-RewriteRule ^patient/update/patient php/patient/update.patient.php [QSA,L]
+RewriteRule ^patient/update/publish-flags php/patient/update.publish_flags.php [QSA,L]
 
 # Patient Reports Section
 RewriteRule ^patient-reports/find/patient-name php/patient-reports/find_name.php [QSA,L]
@@ -216,7 +209,6 @@ RewriteRule ^patient-reports/get/educ-report php/patient-reports/get.education_r
 RewriteRule ^patient-reports/find/questionnaire-options php/patient-reports/find_qst.php [QSA,L]
 RewriteRule ^patient-reports/get/qst-report php/patient-reports/get.questionnaire_report.php [QSA,L]
 RewriteRule ^patient-reports/get/pat-report php/patient-reports/get.patient_report.php [QSA,L]
-
 
 # Post Section
 RewriteRule ^post/delete/post php/post/delete.post.php [QSA,L]

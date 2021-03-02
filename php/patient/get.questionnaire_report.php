@@ -1,8 +1,8 @@
 <?php
 
 include_once("../config.php");
-$patReport = new PatientReports; // Object
-$response = $patReport->findPatientByRAMQ($_POST);
+$patReport = new Patient(); // Object
+$response = $patReport->getQuestionnaireReport($_POST);
 header('Content-Type: application/javascript');
 print json_encode($response); // Return response
 
