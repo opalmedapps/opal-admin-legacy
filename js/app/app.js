@@ -124,7 +124,6 @@ angular.module('opalAdmin', [
 			.state('notification-add', { url: '/notification/add', templateUrl: "templates/notification/add.notification.html", controller: "notification.add", data: { requireLogin: true } })
 			.state('patients/menu', { url: '/patients/menu', templateUrl: "templates/patient/menu-main.html", controller: "patient", data: { requireLogin: true, accessible: true } })
 			.state('patients', { url: '/patients', templateUrl: "templates/patient/patient.html", controller: "patient", data: { requireLogin: true } })
-			.state('patients-register', { url: '/patients/register', templateUrl: "templates/patient/patient-registration.html", controller: "patientRegistration", data: {  requireLogin: true } })
 			.state('patients/activity', { url: '/patients/activity', templateUrl: "templates/patient/patient-activity.html", controller: "patientActivity", data: { requireLogin: true } })
 			.state('patients/report', { url: '/patients/report', templateUrl: "templates/patient/patient-report.html", controller: "patientReportHandler", data: { requireLogin: true } })
 			.state('patients/report/individual', { url: '/patients/report/individual', templateUrl: "templates/patient/individual-reports.html", controller: "patientReports", data: { requireLogin: true } })

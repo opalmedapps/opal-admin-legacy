@@ -2670,4 +2670,25 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":questionnaireId","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    /**
+     * Update the publish flag of a specific patient
+     * @param $id - Patient ID (or sernum)
+     * @param $transfer - Status of the update
+     * @return int - total record updated
+     */
+    function updatePatientPublishFlag($id, $transfer) {
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT_PUBLISH_FLAG, array(
+            "PatientUpdate"=>$transfer,
+            "PatientSerNum"=>$id,
+        ));
+    }
+
+    /**
+     * Return the list of available patients
+     * @return array
+     */
+    function getPatients() {
+        return $this->_fetchAll(OPAL_GET_PATIENTS, array());
+    }
 }
