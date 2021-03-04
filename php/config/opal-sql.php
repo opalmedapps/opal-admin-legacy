@@ -114,6 +114,7 @@ define("OPAL_PRIORITY_TABLE", "Priority");
 define("OPAL_DOCUMENT_TABLE", "Document");
 define("OPAL_USERS_TABLE", "Users");
 define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
+define("OPAL_PATIENT_ACTIVITY_LOG_TABLE","PatientActivityLog");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -1285,8 +1286,19 @@ define("OPAL_UPDATE_PATIENT_PUBLISH_FLAG","
 ");
 
 define("OPAL_GET_PATIENTS","
-    SELECT DISTINCT pc.PatientSerNum AS serial, pc.PatientUpdate AS transfer CONCAT(pt.FirstName, ' ', pt.LastName) AS name,
+    SELECT DISTINCT pc.PatientSerNum AS serial, pc.PatientUpdate AS transfer, CONCAT(UCASE(LEFT(pt.FirstName, 1)),
+    LCASE(SUBSTRING(pt.FirstName, 2)), ' ', UCASE(LEFT(pt.LastName, 1)), LCASE(SUBSTRING(pt.LastName, 2))) AS name,
     pt.PatientId AS patientid, pc.LastTransferred AS lasttransferred, pt.BlockedStatus AS disabled, usr.Username AS uid,
     pt.email AS email FROM ".OPAL_PATIENT_TABLE." pt RIGHT JOIN ".OPAL_PATIENT_CONTROL_TABLE." pc ON pt.PatientSerNum = pc.PatientSerNum
-    LEFT JOIN ".OPAL_USERS_TABLE." usr ON pt.PatientSerNum 	= usr.UserTypeSerNum WHERE usr.UserType = 'Patient';
+    LEFT JOIN ".OPAL_USERS_TABLE." usr ON pt.PatientSerNum = usr.UserTypeSerNum WHERE usr.UserType = 'Patient';
+");
+
+define("OPAL_GET_PATIENT_ACTIVITY","
+    SELECT DISTINCT pt.PatientId AS patientid, CONCAT(UCASE(LEFT(pt.FirstName, 1)), LCASE(SUBSTRING(pt.FirstName, 2)),
+    ' ', UCASE(LEFT(pt.LastName, 1)), LCASE(SUBSTRING(pt.LastName, 2))) AS name, pal.DateTime AS login,
+    (CASE WHEN pal.DeviceId = 'browser' THEN pal.DeviceId WHEN UPPER(pal.DeviceId) = BINARY pal.DeviceId THEN
+    CONCAT('iOS/', pal.DeviceId) ELSE CONCAT('Android/', pal.DeviceId) END) AS deviceid FROM
+    ".OPAL_PATIENT_ACTIVITY_LOG_TABLE." pal LEFT JOIN ".OPAL_USERS_TABLE." u ON u.Username = pal.Username LEFT JOIN
+    ".OPAL_PATIENT_TABLE." pt ON pt.PatientSerNum = u.UserTypeSerNum WHERE u.UserType = 'Patient' AND
+    pal.Request = 'Login' ORDER BY pal.DateTime DESC LIMIT 20000;
 ");
