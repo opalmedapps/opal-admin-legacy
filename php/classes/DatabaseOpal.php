@@ -2691,4 +2691,12 @@ class DatabaseOpal extends DatabaseAccess {
     function getPatients() {
         return $this->_fetchAll(OPAL_GET_PATIENTS, array());
     }
+
+    /**
+     * Return the latest 20,000 entries of patient activity log
+     * @return array
+     */
+    function getPatientActivityLog() {
+        return $this->_fetchAll(OPAL_GET_PATIENT_ACTIVITY, array());
+    }
 }
