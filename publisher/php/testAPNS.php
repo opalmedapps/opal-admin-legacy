@@ -52,12 +52,15 @@ class testAPNS {
             $response = curl_exec($ch);
             $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-            var_dump($response); //success status code 200
-            var_dump($httpcode);
+            echo($response); //success status code 200
+            echo($httpcode);
 
 
 
+        }else{
+            echo("Error: curl and or Http2 not installed");
         }
+       
 
 		
   }
