@@ -35,7 +35,7 @@ class testAPNS {
 		);
 		// Encode the payload as JSON
 		// $payload = json_encode($body);
-
+        
 
         // use curl to send APN
         if(defined('CURL_HTTP_VERSION_2_0')){
@@ -47,8 +47,8 @@ class testAPNS {
             curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
             curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
             curl_setopt($ch, CURLOPT_HTTPHEADER, array("apns-topic: $apns_topic")); //opal app bundle ID
-            curl_setopt($ch, CURLOPT_SSLCERT, $certificate_file); //pem file
-            curl_setopt($ch, CURLOPT_SSLCERTPASSWD, $passphrase); //pem secret
+            curl_setopt($ch, CURLOPT_SSLCERT, self::$certificate_file); //pem file
+            curl_setopt($ch, CURLOPT_SSLCERTPASSWD, self::$passphrase); //pem secret
             $response = curl_exec($ch);
             $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
