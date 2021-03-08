@@ -16,7 +16,6 @@ class Patient extends Module {
      * @param $post
      */
     public function updatePublishFlags($post){
-        print_r($post);
         $this->checkWriteAccess($post);
         HelpSetup::arraySanitization($post);
         $errCode = $this->_validatePublishFlag($post);
@@ -38,7 +37,6 @@ class Patient extends Module {
         if (is_array($post) && array_key_exists("transferList", $post) && is_array($post["transferList"])) {
             $errFound = false;
             foreach ($post["transferList"] as $item) {
-                print_r($item);
                 if (!array_key_exists("serial", $item) || $item["serial"] == ""|| !array_key_exists("transfer", $item) || $item["transfer"] == "") {
                     $errFound = true;
                     break;
