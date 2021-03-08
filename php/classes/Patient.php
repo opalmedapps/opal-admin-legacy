@@ -16,11 +16,41 @@ class Patient extends Module {
      * @param $post
      */
     public function updatePublishFlags($post){
+        print_r($post);
         $this->checkWriteAccess($post);
         HelpSetup::arraySanitization($post);
+        $errCode = $this->_validatePublishFlag($post);
+
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         foreach ($post["transferList"] as $item)
             $this->opalDB->updatePatientPublishFlag($item["serial"], $item["transfer"]);
+    }
+
+    /**
+     * Validate a list of publication flags for patient.
+     * @param $post - publish flag to validate
+     * @return string - string to convert in int for error code
+     */
+    protected function _validatePublishFlag(&$post) {
+        $errCode = "";
+        if (is_array($post) && array_key_exists("transferList", $post) && is_array($post["transferList"])) {
+            $errFound = false;
+            foreach ($post["transferList"] as $item) {
+                print_r($item);
+                if (!array_key_exists("serial", $item) || $item["serial"] == ""|| !array_key_exists("transfer", $item) || $item["transfer"] == "") {
+                    $errFound = true;
+                    break;
+                }
+            }
+            if ($errFound)
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+        } else
+            $errCode = "1";
+        return $errCode;
     }
 
     /**
@@ -33,10 +63,8 @@ class Patient extends Module {
     }
 
     /**
-     *
-     * Gets a list of patient activities
-     *
-     * @return array $patientActivityList : the list of patient activities
+     * Get the last 20,000 patient activities entries
+     * @return array
      */
     public function getPatientActivities() {
         $this->checkReadAccess();
