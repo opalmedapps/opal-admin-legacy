@@ -244,7 +244,7 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
         }else if ($scope.searchName){ //find by name
             $.ajax({
                 type: "POST",
-                url: "patient-reports/find/patient-name",
+                url: "patient/get/patient-name",
                 data: {pname: $scope.searchName},
                 success: function(response){
                     displayName(JSON.parse(response));
@@ -256,7 +256,7 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
         }else if ($scope.searchMRN){ //find by MRN
             $.ajax({
                 type: "POST",
-                url: "patient-reports/find/patient-mrn",
+                url: "patient/get/patient-mrn",
                 data: {pmrn: $scope.searchMRN},
                 success: function(response){
                     displayName(JSON.parse(response));
@@ -268,7 +268,7 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
         }else if ($scope.searchRAMQ){ //find my RAMQ
             $.ajax({
                 type: "POST",
-                url: "patient-reports/find/patient-ramq",
+                url: "patient/get/patient-ramq",
                 data: {pramq: $scope.searchRAMQ},
                 success: function(response){
                     displayName(JSON.parse(response));
@@ -464,7 +464,7 @@ controller('patientReports', function($scope, $rootScope, Session, ErrorHandler,
     $scope.fetchData = function(){
         $.ajax({
             type: "POST",
-            url: "patient-reports/get/patient-data",
+            url: "patient/get/patient-data",
             data: {
                 psnum: $scope.psnum,
                 diagnosis: $scope.featureList.diagnosis,
