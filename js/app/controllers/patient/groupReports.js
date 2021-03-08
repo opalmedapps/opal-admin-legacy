@@ -190,7 +190,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
         $scope.selectedMaterial = "";
         $.ajax({
             type: "POST",
-            url: "patient-reports/find/education-options",
+            url: "patient/get/education-options",
             data: {matType: $scope.materialType},
             success: function(response){
                 prepareEducList(JSON.parse(response));
@@ -208,7 +208,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
     $scope.genEducReport = function(){
         $.ajax({
             type: "POST",
-            url: "patient-reports/get/educ-report",
+            url: "patient/get/educ-report",
             data: {
                 type: $scope.materialType, 
                 name: $scope.selectedMaterial},
@@ -359,7 +359,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
         //$scope.qstReport = "";
         $.ajax({
             type:"POST",
-            url:"patient-reports/find/questionnaire-options",
+            url:"patient/get/questionnaire-options",
             data: null,
             success: function(response){
                 prepareQstList(JSON.parse(response));
@@ -378,7 +378,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
     $scope.genQstReport = function(){
         $.ajax({
             type: "POST",
-            url: "patient-reports/get/qst-report",
+            url: "patient/get/questionnaire-report",
             data: {qstName: $scope.selectedQuestionnaire},
             success: function(response){
                 prepareQstReport(JSON.parse(response));
@@ -547,7 +547,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
     $scope.genPatientReport = function(){
         $.ajax({
             type: "POST",
-            url: "patient-reports/get/pat-report",
+            url: "patient/get/patient-report",
             data: null,
             success: function(response){
                 preparePatientReport(JSON.parse(response));
