@@ -23,7 +23,7 @@ class Patient extends Module {
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        foreach ($post["transferList"] as $item)
+        foreach ($post["data"] as $item)
             $this->opalDB->updatePatientPublishFlag($item["serial"], $item["transfer"]);
     }
 
@@ -34,9 +34,9 @@ class Patient extends Module {
      */
     protected function _validatePublishFlag(&$post) {
         $errCode = "";
-        if (is_array($post) && array_key_exists("transferList", $post) && is_array($post["transferList"])) {
+        if (is_array($post) && array_key_exists("data", $post) && is_array($post["data"])) {
             $errFound = false;
-            foreach ($post["transferList"] as $item) {
+            foreach ($post["data"] as $item) {
                 if (!array_key_exists("serial", $item) || $item["serial"] == ""|| !array_key_exists("transfer", $item) || $item["transfer"] == "") {
                     $errFound = true;
                     break;

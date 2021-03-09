@@ -2644,6 +2644,7 @@
       "RAMQ": "RAMQ",
       "PUBLISH_FLAG": "Publier",
       "LAST": "Dernière publication",
+      "VALIDATION_FLAGS": "Les indicateurs de publication sont erronées.",
       "ERROR_PATIENTS": "Une erreur s'est produite lors de l'obtention de la liste des patients.",
       "SUCCESS_FLAGS": "Les publications ont été mises à jour!",
       "ERROR_FLAGS": "Une erreur s'est produite lors de la mise à jour des publications."
