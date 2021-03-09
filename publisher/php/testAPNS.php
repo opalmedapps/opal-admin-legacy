@@ -1,5 +1,5 @@
 <?php 
-
+    include_once "database.inc";
 class testAPNS {
 	// (iOS) Private key's passphrase.
 	private static $passphrase = CERTIFICATE_PASSWORD; //pem secret
