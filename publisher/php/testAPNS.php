@@ -34,7 +34,7 @@ class testAPNS {
 			'sound' => 'default'
 		);
 		// Encode the payload as JSON
-		// $payload = json_encode($body);
+		$payload = json_encode($body);
         
 
         // use curl to send APN
@@ -44,7 +44,7 @@ class testAPNS {
             $url = "https://api.development.push.apple.com/3/device/$device_token";
 
             $ch = curl_init($url);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
             curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
             curl_setopt($ch, CURLOPT_HTTPHEADER, array("apns-topic: $apns_topic")); //opal app bundle ID
             curl_setopt($ch, CURLOPT_SSLCERT, self::$certificate_file); //pem file
@@ -58,7 +58,7 @@ class testAPNS {
 
 
         }else{
-            echo("Error: curl and or Http2 not installed");
+            echo("Error, CURL_HTTP_VERSION_2_0 does not exist");
         }
        
 
