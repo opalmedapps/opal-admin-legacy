@@ -16,6 +16,10 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 1)) !== 0);
 		$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 2)) !== 0);
 
+		var arrValidationInsert = [
+			$filter('translate')('PATIENTS.LIST.VALIDATION_FLAGS'),
+		];
+
 		$scope.bannerMessage = "";
 		// Function to show page banner
 		$scope.showBanner = function () {
@@ -96,9 +100,7 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 
 		// Initialize list of existing patients
 		$scope.patientList = [];
-		$scope.patientTransfers = {
-			transferList: []
-		};
+		$scope.patientTransfers = [];
 
 		getPatientsList();
 
@@ -129,16 +131,17 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 		$scope.submitTransferFlags = function () {
 			if ($scope.changesMade) {
 				angular.forEach($scope.patientList, function (patient) {
-					$scope.patientTransfers.transferList.push({
+					$scope.patientTransfers.push({
 						serial: patient.serial,
 						transfer: patient.transfer
 					});
 				});
+
 				// Submit form
 				$.ajax({
 					type: "POST",
 					url: "patient/update/publish-flags",
-					data: $scope.patientTransfers,
+					data: {data: $scope.patientTransfers},
 					success: function () {
 						$scope.setBannerClass('success');
 						$scope.bannerMessage = $filter('translate')('PATIENTS.LIST.SUCCESS_FLAGS');
@@ -147,7 +150,8 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 						getPatientsList();
 					},
 					error: function(err) {
-						ErrorHandler.onError(err, $filter('translate')('PATIENTS.LIST.ERROR_FLAGS'));
+						err.responseText = JSON.parse(err.responseText);
+						ErrorHandler.onError(err, $filter('translate')('PATIENTS.LIST.ERROR_FLAGS'), arrValidationInsert);
 					}
 				});
 			}

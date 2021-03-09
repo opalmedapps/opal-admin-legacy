@@ -2630,6 +2630,7 @@
       "RAMQ": "RAMQ",
       "PUBLISH_FLAG": "Publish Flag",
       "LAST": "Last Publish",
+      "VALIDATION_FLAGS": "Publicaton flags are invalid.",
       "ERROR_PATIENTS": "An error occurred while getting the list of patients.",
       "SUCCESS_FLAGS": "Flag(s) Successfully Saved!",
       "ERROR_FLAGS": "An error occurred while saving the flags."
