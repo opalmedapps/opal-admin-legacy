@@ -1,16 +1,8 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To delete an alias */
-	include_once('alias.inc');
+include_once("../config.php");
 
-	$alias = new Alias; // Object
+$alias = new Alias();
+$response = $alias->deleteAlias($_POST);
 
-	// Retrieve FORM param
-	$serial = $_POST['serial'];
-	$user = $_POST['user'];
-
-	// Call function
-	$response = $alias->deleteAlias($serial, $user);
-	print json_encode($response); // Return response
-
-?>
+header('Content-Type: application/javascript');
+http_response_code(HTTP_STATUS_SUCCESS);

@@ -2699,4 +2699,29 @@ class DatabaseOpal extends DatabaseAccess {
     function getPatientActivityLog() {
         return $this->_fetchAll(OPAL_GET_PATIENT_ACTIVITY, array());
     }
+
+    /**
+     * fetch all the available aliases in active source database
+     * @return array
+     */
+    function getAliases() {
+        return $this->_fetchAll(OPAL_GET_ALIASES, array());
+    }
+
+    /**
+     * Fetch all alias expression of a specific alias
+     * @param $aliasId
+     * @return array
+     */
+    function getAliasExpression($aliasId) {
+        return $this->_fetchAll(OPAL_GET_ALIASES_EXPRESSION, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function getAliasDetails($aliasId) {
+        return $this->_fetchAll(OPAL_GET_ALIAS_DETAILS, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }
