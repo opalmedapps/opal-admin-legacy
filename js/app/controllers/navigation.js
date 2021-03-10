@@ -167,5 +167,9 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 			$state.go('patient/report/group');
 		};
 
+		$scope.goToSMS = function(){
+			$state.go('sms');
+		};
+
 	});
 

@@ -160,7 +160,8 @@ angular.module('opalAdmin', [
 			.state('alert-add', { url: '/alert/add', templateUrl: "templates/alert/add.alert.html", controller: "alert.add", data: { requireLogin: true } })
 			.state('audit', { url: '/audit', templateUrl: "templates/audit/audits.html", controller: "audit", data: { requireLogin: true } })
 			.state('user-activity', { url: '/user-activity', templateUrl: "templates/user/user-activity.html", controller: "userActivity", data: { requireLogin: true } })
-			.state('protected-route', { url: '/protected', resolve: { auth: function resolveAuthentication(AuthResolver) { return AuthResolver.resolve(); } } });
+			.state('protected-route', { url: '/protected', resolve: { auth: function resolveAuthentication(AuthResolver) { return AuthResolver.resolve(); } } })
+			.state('sms',{ url: '/sms', templateUrl: "templates/sms/sms.html", controller: "sms", data:{ requireLogin: false } });
 
 	}])
 
