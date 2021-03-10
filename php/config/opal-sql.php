@@ -1302,3 +1302,42 @@ define("OPAL_GET_PATIENT_ACTIVITY","
     ".OPAL_PATIENT_TABLE." pt ON pt.PatientSerNum = u.UserTypeSerNum WHERE u.UserType = 'Patient' AND
     pal.Request = 'Login' ORDER BY pal.DateTime DESC LIMIT 20000;
 ");
+
+define("OPAL_GET_ALIASES","
+    SELECT a.AliasSerNum AS serial, a.AliasType AS type, a.AliasName_FR AS name_FR, a.AliasName_EN AS name_EN,
+    a.AliasUpdate AS `update`, a.SourceDatabaseSerNum AS sd_serial, sd.SourceDatabaseName AS sd_name, a.ColorTag AS color,
+    a.LastUpdated AS lastupdated, (SELECT COUNT(*) FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae WHERE ae.AliasSerNum = a.AliasSerNum)
+    AS count FROM ".OPAL_ALIAS_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." sd ON
+    sd.SourceDatabaseSerNum = a.SourceDatabaseSerNum WHERE a.SourceDatabaseSerNum = sd.SourceDatabaseSerNum AND
+    sd.Enabled = ".ACTIVE_RECORD.";
+");
+
+define("OPAL_GET_ALIASES_EXPRESSION","
+    SELECT ExpressionName AS id, Description AS description, 1 AS added FROM ".OPAL_ALIAS_EXPRESSION_TABLE."
+    WHERE AliasSerNum = :AliasSerNum;
+");
+
+define("OPAL_GET_ALIAS_DETAILS","
+    SELECT a.AliasSerNum AS serial,
+           a.AliasType AS type,
+					a.AliasName_FR AS name_FR,
+					a.AliasName_EN AS name_EN,
+					a.AliasDescription_FR AS description_FR,
+                    a.AliasDescription_EN AS description_EN,
+                    a.AliasUpdate AS `update`,
+                    a.EducationalMaterialControlSerNum AS eduMatSer,
+                    a.SourceDatabaseSerNum,
+                    s.SourceDatabaseName,
+                    a.ColorTag AS color,
+                    a.HospitalMapSerNum AS hospitalMapSer
+                        
+                        
+                        
+				FROM
+                    ".OPAL_ALIAS_TABLE." a,
+				     LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum
+				     
+                    
+				WHERE
+                    a.AliasSerNum = :AliasSerNum
+");
