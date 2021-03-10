@@ -22,7 +22,7 @@ class Alias extends Module {
         $this->checkReadAccess(array($sourceDBSer, $expressionType));
 
         $results = array();
-        $databaseObj = new Database();
+//        $databaseObj = new Database();
 
         try {
 
@@ -282,134 +282,38 @@ class Alias extends Module {
     }
 
     /**
-     *
-     * Gets a list of existing aliases
-     *
-     * @return array $aliasList : the list of existing aliases
+     * Return the list of aliases and they expressions
+     * @return $result
      */
     public function getAliases() {
         $this->checkReadAccess();
-        $aliasList = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $activeDB = Database::getActiveSourceDatabases();
-
-            $sql = "
-				SELECT DISTINCT
-					Alias.AliasSerNum,
-					Alias.AliasType,
-					Alias.AliasName_FR,
-					Alias.AliasName_EN,
-					Alias.AliasDescription_FR,
-                    Alias.AliasDescription_EN,
-                    Alias.AliasUpdate,
-                    Alias.EducationalMaterialControlSerNum,
-                    Alias.SourceDatabaseSerNum,
-                    SourceDatabase.SourceDatabaseName,
-                    Alias.ColorTag,
-                    Alias.LastUpdated
-				FROM
-                    Alias,
-                    SourceDatabase
-                WHERE
-                    Alias.SourceDatabaseSerNum = SourceDatabase.SourceDatabaseSerNum
-			";
-
-            if(count($activeDB) > 0)
-                $sql .= " AND Alias.SourceDatabaseSerNum IN (".implode(", ", $activeDB).")";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $aliasSer 	    = $data[0];
-                $aliasType	    = $data[1];
-                $aliasName_FR	= $data[2];
-                $aliasName_EN	= $data[3];
-                $aliasDesc_FR	= $data[4];
-                $aliasDesc_EN	= $data[5];
-                $aliasUpdate    = $data[6];
-                $aliasEduMatSer = $data[7];
-                $sourceDatabase = array(
-                    'serial'    => $data[8],
-                    'name'      => $data[9]
-                );
-                $aliasColorTag  = $data[10];
-                $aliasLU        = $data[11];
-                $aliasTerms	    = array();
-                $aliasEduMat    = "";
-
-                $sql = "
-					SELECT DISTINCT
-						AliasExpression.ExpressionName,
-                        AliasExpression.Description
-					FROM
-						Alias,
-						AliasExpression
-					WHERE
-						Alias.AliasSerNum 		        = $aliasSer
-					AND AliasExpression.AliasSerNum 	= Alias.AliasSerNum
-				";
-
-                $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $secondQuery->execute();
-
-                while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $termName = $secondData[0];
-                    $termDesc = $secondData[1];
-                    $termArray = array(
-                        'id' => $termName,
-                        'description' => $termDesc,
-                        'added'=> 1
-                    );
-
-                    array_push($aliasTerms, $termArray);
-                }
-
-                if ($aliasEduMatSer != 0) {
-                    $aliasEduMat = $this->_getEducationalMaterialDetails($aliasEduMatSer);
-                }
-
-                $aliasArray = array(
-                    'name_FR' 		    => $aliasName_FR,
-                    'name_EN' 		    => $aliasName_EN,
-                    'serial' 		    => $aliasSer,
-                    'type'			    => $aliasType,
-                    'color'             => $aliasColorTag,
-                    'update'            => $aliasUpdate,
-                    'changed'           => 0,
-                    'eduMatSer'         => $aliasEduMatSer,
-                    'eduMat'            => $aliasEduMat,
-                    'description_EN' 	=> $aliasDesc_EN,
-                    'description_FR' 	=> $aliasDesc_FR,
-                    'source_db'         => $sourceDatabase,
-                    'lastupdated'       => $aliasLU,
-                    'count' 		    => count($aliasTerms),
-                    'terms' 		    => $aliasTerms
-                );
-
-                array_push($aliasList, $aliasArray);
-            }
-            return $aliasList;
-
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
+        $result = $this->opalDB->getAliases();
+        foreach ($result as &$alias) {
+            $alias["source_db"] = array('serial' => $alias["sd_serial"], 'name' => $alias["sd_name"]);
+            unset($alias["sd_serial"]);
+            unset($alias["sd_name"]);
         }
+        return $result;
     }
 
-    /**
-     *
-     * Gets details for one particular alias
-     *
-     * @param integer $aliasSer : the alias serial number
-     * @return array $aliasDetails : the alias details
-     */
-    public function getAliasDetails($aliasSer) {
-        $this->checkReadAccess($aliasSer);
+    public function getAliasDetails($post) {
+        $this->checkReadAccess($post);
+        $id = intval($post["serial"]);
+
+        $result = $this->opalDB->getAliasDetails($id);
+        if (count($result) < 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation" => 1)));
+        else if (count($result) == 1)
+            $result = $result[0];
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates test results found.");
+
+        $result["terms"] = $this->opalDB->getAliasExpression($result["serial"]);
+        $result["count"] = count($result["terms"]);
+
+
+
+        return $result;
         $aliasDetails = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -460,7 +364,7 @@ class Alias extends Module {
             $hospitalMap    = "";
             $aliasTerms	    = array();
 
-            $checkinDetails = $this->getCheckinDetails($aliasSer, $aliasType);
+            $checkinDetails = $this->_getCheckinDetails($aliasSer, $aliasType);
 
             $sql = "
 				SELECT DISTINCT
@@ -666,16 +570,13 @@ class Alias extends Module {
         }
     }
 
-    /**
-     *
-     * Deletes an alias from the database
-     *
-     * @param integer $aliasSer : the alias serial number
-     * @param object $user : the session user
-     * @return array $response : response
-     */
-    public function deleteAlias( $aliasSer, $user ) {
-        $this->checkDeleteAccess(array($aliasSer, $user));
+
+    public function deleteAlias( $post ) {
+        $this->checkDeleteAccess($post);
+
+
+
+        return false;
 
         // Initialize a response array
         $response = array(
@@ -1003,7 +904,7 @@ class Alias extends Module {
      * @param string $type : the alias type
      * @return array $checkinDetails : the checkin details
      */
-    public function getCheckinDetails ($serial, $type) {
+    protected function _getCheckinDetails($serial, $type) {
 
         $checkinDetails = array();
         if ($type != 'Appointment') {
@@ -1014,13 +915,13 @@ class Alias extends Module {
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
-                    ac.CheckinPossible,
-                    ac.CheckinInstruction_EN,
-                    ac.CheckinInstruction_FR
+                    CheckinPossible AS checkin_possible,
+                    CheckinInstruction_EN AS instruction_EN,
+                    CheckinInstruction_FR AS instruction_FR
                 FROM
-                    AppointmentCheckin ac
+                    AppointmentCheckin
                 WHERE
-                    ac.AliasSerNum = $serial
+                    AliasSerNum = $serial
             ";
 
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
