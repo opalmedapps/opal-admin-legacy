@@ -34,32 +34,33 @@ class testAPNS {
 			'sound' => 'default'
 		);
 		// Encode the payload as JSON
-		$payload = json_encode($body);
-        
+        $payload = json_encode($body);
 
         // use curl to send APN
-        if(defined('CURL_HTTP_VERSION_2_0')){
-            $deviceToken = $devicetoken;
+        //if(defined('CURL_HTTP_VERSION_2_0')){
             $apns_topic = self::$apns_topic;
-            $url = "https://api.development.push.apple.com/3/device/$device_token";
+            //$url = "https://api.development.push.apple.com/3/device/$device_token";
+            $url = "https://api.sandbox.push.apple.com/3/device/$devicetoken";
 
             $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-            curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array("apns-topic: $apns_topic")); //opal app bundle ID
+            curl_setopt($ch, CURLOPT_HTTP_VERSION,3);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ["apns-topic: $apns_topic"]); //opal app bundle ID
             curl_setopt($ch, CURLOPT_SSLCERT, self::$certificate_file); //pem file
             curl_setopt($ch, CURLOPT_SSLCERTPASSWD, self::$passphrase); //pem secret
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
             $response = curl_exec($ch);
             $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-            echo($response); //success status code 200
-            echo($httpcode);
+           var_dump(curl_error($ch));
+           var_dump($response); //success status code 200
+           echo("$httpcode\n");
 
 
 
-        }else{
-            echo("Error, CURL_HTTP_VERSION_2_0 does not exist");
-        }
+        //}else{
+        //    echo("Error, CURL_HTTP_VERSION_2_0 does not exist");
+        //}
        
 
 		
