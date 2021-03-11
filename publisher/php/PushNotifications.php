@@ -112,7 +112,7 @@ class PushNotifications {
 			$wsBody = $data['mdesc'];
 		}
 		// Create the payload body
-		$body['apns'] = array(
+		$body['aps'] = array(
 			'alert' => array(
 				'title' => $wsTitle,
 				'body' => $wsBody,
@@ -123,8 +123,8 @@ class PushNotifications {
         $payload = json_encode($body);
 	
 		$apns_topic = self::$apns_topic;
-		$url = self::$ios_url . $devicetoken;
-		$ch = curl_init($url);
+		$url = self::$ios_url . $devicetoken;    
+        $ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
 		curl_setopt($ch, CURLOPT_HTTP_VERSION,3);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, ["apns-topic: $apns_topic"]); //opal app bundle ID
@@ -132,19 +132,15 @@ class PushNotifications {
 		curl_setopt($ch, CURLOPT_SSLCERTPASSWD, self::$passphrase); //pem secret
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
 		$response = curl_exec($ch);
-		//$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-		if (!$response) {
+		$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($httpcode != 200) {
 			$response =  array("success"=>0,"failure"=>1,"error"=>"Unable to send packets to APN socket");
 		} else {
 			$response =  array("success"=>1,"failure"=>0);
-		}
+        }
+        echo $httpcode;
 		return $response;
-	
-
 	}
-
-	
 	// Curl
 	private static function useCurl($url, $headers, $fields = null) {
 		// Open connection
