@@ -9,6 +9,7 @@
 
 class DatabaseOrms extends DatabaseAccess {
 
+
     function getAppointmentForAlias() {
         $result = $this->_fetchAll(ORMS_SQL_GET_APPOINTMENT_FOR_ALIAS, array());
         $toInsert = array();
@@ -20,6 +21,24 @@ class DatabaseOrms extends DatabaseAccess {
                 "code"=>$item["code"],
                 "expression"=>$item["expression"],
                 "source"=>2,
+            );
+            array_push($toInsert, $tempArr);
+        }
+        return $toInsert;
+    }
+
+    function getAppointmentForSms()
+    {
+        $result = $this->_fetchAll(ORMS_SQL_GET_APPOINTMENT_FOR_SMS, array());
+        $toInsert = array();
+
+        foreach ($result as $item) {
+            $tempArr = array(
+                "externalId" => -1,
+                "type" => 2,
+                "code" => $item["code"],
+                "expression" => $item["type"],
+                "source" => 2,
             );
             array_push($toInsert, $tempArr);
         }
