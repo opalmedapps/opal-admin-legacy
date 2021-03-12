@@ -26,7 +26,6 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		$scope.aliasModal = {}; // for deep copy
 		$scope.termList = []; // initialize list for unassigned expressions in our DB
 		$scope.eduMatList = [];
-		$scope.existingColorTags = [];
 		$scope.hospitalMapList = [];
 
 		$scope.termFilter = null;
@@ -224,16 +223,6 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 				processingModal.close(); // hide modal
 				processingModal = null; // remove reference
 			});
-
-			// Call our API service to get the list of existing color tags
-			aliasCollectionService.getExistingColorTags($scope.alias.type).then(function (response) {
-				$scope.existingColorTags = response.data; // Assign response
-
-			}).catch(function(err) {
-				ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_COLOR'));
-				$scope.cancel;
-			});
-
 		}).catch(function(err) {
 			ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_DETAILS'));
 			$scope.cancel;
