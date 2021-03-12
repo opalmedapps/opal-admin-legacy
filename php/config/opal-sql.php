@@ -115,6 +115,7 @@ define("OPAL_DOCUMENT_TABLE", "Document");
 define("OPAL_USERS_TABLE", "Users");
 define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
 define("OPAL_PATIENT_ACTIVITY_LOG_TABLE","PatientActivityLog");
+define("OPAL_APPOINTMENT_CHECKIN_TABLE","AppointmentCheckin");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -1318,26 +1319,11 @@ define("OPAL_GET_ALIASES_EXPRESSION","
 ");
 
 define("OPAL_GET_ALIAS_DETAILS","
-    SELECT a.AliasSerNum AS serial,
-           a.AliasType AS type,
-					a.AliasName_FR AS name_FR,
-					a.AliasName_EN AS name_EN,
-					a.AliasDescription_FR AS description_FR,
-                    a.AliasDescription_EN AS description_EN,
-                    a.AliasUpdate AS `update`,
-                    a.EducationalMaterialControlSerNum AS eduMatSer,
-                    a.SourceDatabaseSerNum,
-                    s.SourceDatabaseName,
-                    a.ColorTag AS color,
-                    a.HospitalMapSerNum AS hospitalMapSer
-                        
-                        
-                        
-				FROM
-                    ".OPAL_ALIAS_TABLE." a,
-				     LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum
-				     
-                    
-				WHERE
-                    a.AliasSerNum = :AliasSerNum
+    SELECT a.AliasSerNum AS serial, a.AliasType AS type, a.AliasName_FR AS name_FR, a.AliasName_EN AS name_EN,
+    a.AliasDescription_FR AS description_FR, a.AliasDescription_EN AS description_EN, a.AliasUpdate AS `update`,
+    a.EducationalMaterialControlSerNum AS eduMatSer, a.SourceDatabaseSerNum, s.SourceDatabaseName, a.ColorTag AS color,
+    a.HospitalMapSerNum AS hospitalMapSer, ac.CheckinPossible AS checkin_possible, ac.CheckinInstruction_EN AS instruction_EN,
+    ac.CheckinInstruction_FR AS instruction_FR FROM ".OPAL_ALIAS_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s
+    ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum LEFT JOIN ".OPAL_APPOINTMENT_CHECKIN_TABLE." ac ON
+    ac.AliasSerNum = a.AliasSerNum WHERE a.AliasSerNum = :AliasSerNum;
 ");

@@ -166,7 +166,7 @@ class Alias extends Module {
                 $query->execute();
             }
 
-            $this->sanitizeEmptyAliases($user);
+            $this->_sanitizeEmptyAliases($user);
 
             $response['value'] = 1; // Success
             return $response;
@@ -176,14 +176,7 @@ class Alias extends Module {
         }
     }
 
-    /**
-     *
-     * Removes publish flag for aliases without assigned terms
-     *
-     * @param object $user : the session user
-     * @return void
-     */
-    public function sanitizeEmptyAliases($user) {
+    protected function _sanitizeEmptyAliases($user) {
         $userSer = $user['id'];
         $sessionId = $user['sessionid'];
         try {
@@ -229,59 +222,6 @@ class Alias extends Module {
     }
 
     /**
-     *
-     * Gets a list of existing color tags
-     *
-     * @param string $aliasType : the alias type
-     * @return array $colorTags : the list of existing color tags
-     */
-    public function getColorTags($aliasType) {
-        $this->checkReadAccess($aliasType);
-
-        $colorTags = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "
-                SELECT DISTINCT
-                    Alias.AliasName_EN,
-                    Alias.AliasName_FR,
-                    Alias.ColorTag
-                FROM
-                    Alias
-                WHERE
-                    Alias.AliasType = '$aliasType'
-                ORDER BY
-                    Alias.AliasName_EN
-            ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $aliasName_EN       = $data[0];
-                $aliasName_FR       = $data[1];
-                $colorTag           = $data[2];
-
-                $colorArray = array(
-                    'name_EN'   => $aliasName_EN,
-                    'name_FR'   => $aliasName_FR,
-                    'color'     => $colorTag
-                );
-
-                array_push($colorTags, $colorArray);
-            }
-
-            return $colorTags;
-
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
-        }
-    }
-
-    /**
      * Return the list of aliases and they expressions
      * @return $result
      */
@@ -296,8 +236,14 @@ class Alias extends Module {
         return $result;
     }
 
+    /**
+     * Get the details of a specific alias. If the alias does not exists, return an error 400 and validation 1.
+     * @param $post - array - must contains serial entry
+     * @return array
+     */
     public function getAliasDetails($post) {
         $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
         $id = intval($post["serial"]);
 
         $result = $this->opalDB->getAliasDetails($id);
@@ -308,122 +254,23 @@ class Alias extends Module {
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates test results found.");
 
+        $result["source_db"] = array("serial"=>$result["SourceDatabaseSerNum"], "name"=>$result["SourceDatabaseName"]);
+
+        $result["checkin_details"] = ($result["checkin_possible"] != "" ? array("checkin_possible"=>$result["checkin_possible"], "instruction_EN"=>$result["instruction_EN"], "instruction_FR"=>$result["instruction_FR"]) : array());
+
+        $result["eduMat"] = ($result["eduMatSer"] != "" ? $this->_getEducationalMaterialDetails($result["eduMatSer"]) : "");
         $result["terms"] = $this->opalDB->getAliasExpression($result["serial"]);
         $result["count"] = count($result["terms"]);
+        $result["hospitalMap"] = ($result["hospitalMapSer"] != "" ? $this->opalDB->getHospitalMapDetails($result["hospitalMapSer"]) : "");
 
-
+        // Unset unused values
+        unset($result["checkin_possible"]);
+        unset($result["instruction_EN"]);
+        unset($result["instruction_FR"]);
+        unset($result["SourceDatabaseSerNum"]);
+        unset($result["SourceDatabaseName"]);
 
         return $result;
-        $aliasDetails = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "
-				SELECT DISTINCT
-					Alias.AliasType,
-					Alias.AliasName_FR,
-					Alias.AliasName_EN,
-					Alias.AliasDescription_FR,
-                    Alias.AliasDescription_EN,
-                    Alias.AliasUpdate,
-                    Alias.EducationalMaterialControlSerNum,
-                    Alias.SourceDatabaseSerNum,
-                    SourceDatabase.SourceDatabaseName,
-                    Alias.ColorTag,
-                    Alias.HospitalMapSerNum
-				FROM
-                    Alias,
-                    SourceDatabase
-				WHERE
-                    Alias.AliasSerNum                       = $aliasSer
-                AND SourceDatabase.SourceDatabaseSerNum     = Alias.SourceDatabaseSerNum
-
-			";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
-
-            $aliasType	    = $data[0];
-            $aliasName_FR	= $data[1];
-            $aliasName_EN	= $data[2];
-            $aliasDesc_FR	= $data[3];
-            $aliasDesc_EN	= $data[4];
-            $aliasUpdate    = $data[5];
-            $aliasEduMatSer = $data[6];
-            $sourceDatabase = array(
-                'serial'    => $data[7],
-                'name'      => $data[8]
-            );
-            $aliasColorTag  = $data[9];
-            $hospitalMapSer = $data[10];
-
-            $aliasEduMat    = "";
-            $hospitalMap    = "";
-            $aliasTerms	    = array();
-
-            $checkinDetails = $this->_getCheckinDetails($aliasSer, $aliasType);
-
-            $sql = "
-				SELECT DISTINCT
-					AliasExpression.ExpressionName,
-                    AliasExpression.Description
-				FROM
-					AliasExpression
-				WHERE
-					AliasExpression.AliasSerNum = $aliasSer
-			";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $termName = $data[0];
-                $termDesc = $data[1];
-                $termArray = array(
-                    'id' => $termName,
-                    'description' => $termDesc,
-                    'added'=> 1
-                );
-
-                array_push($aliasTerms, $termArray);
-            }
-
-            if ($aliasEduMatSer) {
-                $aliasEduMat = $this->_getEducationalMaterialDetails($aliasEduMatSer);
-            }
-
-            if ($hospitalMapSer) {
-                $hospitalMap = $hosMapDetails = $this->opalDB->getHospitalMapDetails(intval($hospitalMapSer));
-            }
-
-            $aliasDetails = array(
-                'name_FR' 		    => $aliasName_FR,
-                'name_EN' 		    => $aliasName_EN,
-                'serial' 		    => $aliasSer,
-                'type'			    => $aliasType,
-                'color'             => $aliasColorTag,
-                'update'            => $aliasUpdate,
-                'eduMatSer'         => $aliasEduMatSer,
-                'eduMat'            => $aliasEduMat,
-                'description_EN' 	=> $aliasDesc_EN,
-                'description_FR' 	=> $aliasDesc_FR,
-                'source_db'         => $sourceDatabase,
-                'count' 		    => count($aliasTerms),
-                'terms' 		    => $aliasTerms,
-                'checkin_details'   => $checkinDetails,
-                'hospitalMapSer'    => $hospitalMapSer,
-                'hospitalMap'       => $hospitalMap
-            );
-
-            return $aliasDetails;
-
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
-        }
     }
 
     /**
@@ -532,7 +379,7 @@ class Alias extends Module {
                 $query->execute();
             }
 
-            $this->sanitizeEmptyAliases($aliasDetails['user']);
+            $this->_sanitizeEmptyAliases($aliasDetails['user']);
 
             if ($checkinDetails and $aliasType == 'Appointment') {
                 $checkinPossible =  $checkinDetails['checkin_possible'];
@@ -840,7 +687,7 @@ class Alias extends Module {
                 }
             }
 
-            $this->sanitizeEmptyAliases($aliasDetails['user']);
+            $this->_sanitizeEmptyAliases($aliasDetails['user']);
 
             $response['value'] = 1; // Success
             return $response;
