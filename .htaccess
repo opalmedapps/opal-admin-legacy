@@ -93,7 +93,6 @@ RewriteRule ^alias/get/alias-chart-logs php/alias/get.alias_chart_logs.php [QSA,
 RewriteRule ^alias/get/alias-details php/alias/get.alias_details.php [QSA,L]
 RewriteRule ^alias/get/alias-list-logs php/alias/get.alias_list_logs.php [QSA,L]
 RewriteRule ^alias/get/aliases php/alias/get.aliases.php [QSA,L]
-RewriteRule ^alias/get/color-tags php/alias/get.color_tags.php [QSA,L]
 RewriteRule ^alias/get/educational-materials php/alias/get.educational.materials.php [QSA,L]
 RewriteRule ^alias/get/expressions php/alias/get.expressions.php [QSA,L]
 RewriteRule ^alias/get/hospital-maps php/alias/get.hospital.maps.php [QSA,L]
@@ -207,7 +206,6 @@ RewriteRule ^patient/get/patient-report php/patient/get.patient_report.php [QSA,
 RewriteRule ^patient/get/questionnaire-report php/patient/get.questionnaire_report.php [QSA,L]
 RewriteRule ^patient/get/questionnaire-options php/patient/find_qst.php [QSA,L]
 RewriteRule ^patient/update/publish-flags php/patient/update.publish_flags.php [QSA,L]
-
 
 # Post Section
 RewriteRule ^post/delete/post php/post/delete.post.php [QSA,L]

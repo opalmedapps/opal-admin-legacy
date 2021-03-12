@@ -97,9 +97,6 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 	// Initialize list that will hold source databases
 	$scope.sourceDBList = [];
 
-	// Initialize list that will hold existing color tags
-	$scope.existingColorTags = [];
-
 	// Initialize the termFilter from NULL to single quotes
 	$scope.termFilter = '';
 	$scope.eduMatFilter = null;

@@ -2719,6 +2719,11 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /**
+     * Fetch the alias details
+     * @param $aliasId
+     * @return array
+     */
     function getAliasDetails($aliasId) {
         return $this->_fetchAll(OPAL_GET_ALIAS_DETAILS, array(
             array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
