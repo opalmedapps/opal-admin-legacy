@@ -44,4 +44,51 @@ class DatabaseOrms extends DatabaseAccess {
         }
         return $toInsert;
     }
+
+    function getEventsForAppointment($type,$speciality)
+    {
+        $result = $this->_fetchAll(ORMS_SQL_GET_APPOINTMENT_FOR_SMS, array(
+            array("parameter"=>":t","variable"=>$type,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":s","variable"=>$speciality,"data_type"=>PDO::PARAM_STR),
+        ));
+        $toInsert = array();
+
+        foreach ($result as $item) {
+            $tempArr = array(
+                "externalId" => -1,
+                "type" => 2,
+                "event" => $item["event"],
+                "source" => 2,
+            );
+            array_push($toInsert, $tempArr);
+        }
+        return $toInsert;
+    }
+
+    function getMessageForAppointment($type,$event,$language)
+    {
+        if($language == 'EN'){
+            $language = 'English';
+        }
+        elseif($language == 'FR'){
+            $language = 'French';
+        }
+        $result = $this->_fetchAll(ORMS_SQL_GET_APPOINTMENT_FOR_SMS, array(
+            array("parameter"=>":t","variable"=>$type,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":e","variable"=>$event,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":lang","variable"=>$language,"data_type"=>PDO::PARAM_STR),
+        ));
+        $toInsert = array();
+
+        foreach ($result as $item) {
+            $tempArr = array(
+                "externalId" => -1,
+                "type" => 2,
+                "message" => $item["smsmessage"],
+                "source" => 2,
+            );
+            array_push($toInsert, $tempArr);
+        }
+        return $toInsert;
+    }
 }
