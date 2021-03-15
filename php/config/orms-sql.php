@@ -12,6 +12,7 @@ define( "WRM_DB_PASSWORD", $config['databaseConfig']['wrm']['password'] );
 
 define("ORMS_MEDIVISIT_APPOINTMENT_LIST_TABLE", "MediVisitAppointmentList");
 define("ORMS_SMS_APPOINTMENT_LIST_TABLE", "SmsAppointmentList");
+define("ORMS_SMS_MESSAGE_LIST_TABLE", "SmsMessage");
 
 define("ORMS_SQL_GET_APPOINTMENT_FOR_ALIAS","
     SELECT DISTINCT mval.AppointmentCode AS code, mval.ResourceDescription AS expression 
@@ -21,7 +22,21 @@ define("ORMS_SQL_GET_APPOINTMENT_FOR_ALIAS","
 ");
 
 define("ORMS_SQL_GET_APPOINTMENT_FOR_SMS","
-    SELECT DISTINCT smsa.AppintmentCode as code, sms.Type as type
+    SELECT DISTINCT smsa.AppintmentCode AS code, sms.Type AS type
     FROM ".ORMS_SMS_APPOINTMENT_LIST_TABLE." sms
     ORDER BY smsa.AppointmentCode
+");
+
+define("ORMS_SQL_GET_EVENTS_FOR_APPOINTMENT","
+    SELECT DISTINCT message.Event AS event
+    FROM ".ORMS_SMS_MESSAGE_LIST_TABLE." message
+    WHERE message.Type = :t AND (message.Speciality = 'any' OR message.Speciality = :s)
+    ORDER BY Event
+");
+
+define("ORMS_SQL_GET_MESSAGE_FOR_APPOINTMENT","
+    SELECT message.Message AS smsmessage
+    FROM ".ORMS_SMS_MESSAGE_LIST_TABLE." message
+    WHERE message.Type = :t AND message.Event = :e AND message.Language = :lang
+    LIMIT 1
 ");
