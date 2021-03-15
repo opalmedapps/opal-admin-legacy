@@ -34,4 +34,16 @@ class Sms extends Module {
 
         return $this->ormsDB->getAppointmentForSms();
     }
+
+    public function getEvents($type,$speciality) {
+        $this->checkReadAccess();
+
+        return $this->ormsDB->getEventsForAppointment($type,$speciality);
+    }
+
+    public function getMessage($type,$event,$language) {
+        $this->checkReadAccess();
+
+        return $this->ormsDB->getMessageForAppointment($type,$event,$language);
+    }
 }
