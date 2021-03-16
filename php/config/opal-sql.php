@@ -1327,3 +1327,14 @@ define("OPAL_GET_ALIAS_DETAILS","
     ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum LEFT JOIN ".OPAL_APPOINTMENT_CHECKIN_TABLE." ac ON
     ac.AliasSerNum = a.AliasSerNum WHERE a.AliasSerNum = :AliasSerNum;
 ");
+
+define("OPAL_SANITIZE_EMPTY_ALIASES","
+    UPDATE ".OPAL_ALIAS_TABLE." a LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON a.AliasSerNum = ae.AliasSerNum SET
+    a.AliasUpdate = ".NON_DELETED_RECORD.", a.SessionId = :SessionId, a.LastUpdatedBy = :LastUpdatedBy WHERE
+    ae.AliasSerNum IS NULL AND a.AliasUpdate != 0;
+");
+
+define("OPAL_UPDATE_ALIAS_PUBLISH_FLAG","
+    UPDATE ".OPAL_ALIAS_TABLE." SET AliasUpdate = :AliasUpdate, LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId
+    WHERE AliasSerNum = :AliasSerNum;
+");

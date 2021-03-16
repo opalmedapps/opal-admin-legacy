@@ -125,105 +125,45 @@ class Alias extends Module {
     }
 
     /**
-     *
-     * Updates Alias publish flags in our database
-     *
-     * @param array $aliasList : a list of aliases
-     * @param object $user : the session user
-     * @return array $response : response
+     * Validate a list of publication flags for patient.
+     * @param $post - publish flag to validate
+     * @return string - string to convert in int for error code
      */
-    public function updateAliasPublishFlags( $aliasList, $user ) {
-        $this->checkWriteAccess(array($aliasList, $user));
-
-        // Initialize a response array
-        $response = array(
-            'value'     => 0,
-            'message'   => ''
-        );
-        $userSer = $user['id'];
-        $sessionId = $user['sessionid'];
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            foreach ($aliasList as $alias) {
-
-                $aliasUpdate    = $alias['update'];
-                $aliasSer       = $alias['serial'];
-
-                $sql = "
-					UPDATE
-						Alias
-					SET
-						Alias.AliasUpdate = $aliasUpdate,
-                        Alias.LastUpdatedBy = $userSer,
-                        Alias.SessionId = '$sessionId'
-					WHERE
-						Alias.AliasSerNum = $aliasSer
-				";
-
-                $query = $host_db_link->prepare( $sql );
-                $query->execute();
+    protected function _validatePublishFlag(&$post) {
+        $errCode = "";
+        if (is_array($post) && array_key_exists("data", $post) && is_array($post["data"])) {
+            $errFound = false;
+            foreach ($post["data"] as $item) {
+                if (!array_key_exists("serial", $item) || $item["serial"] == "" || !array_key_exists("update", $item) || $item["update"] == "") {
+                    $errFound = true;
+                    break;
+                }
             }
-
-            $this->_sanitizeEmptyAliases($user);
-
-            $response['value'] = 1; // Success
-            return $response;
-
-        } catch( PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
-        }
+            if ($errFound)
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+        } else
+            $errCode = "1";
+        return $errCode;
     }
 
-    protected function _sanitizeEmptyAliases($user) {
-        $userSer = $user['id'];
-        $sessionId = $user['sessionid'];
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    Alias.AliasSerNum
-                FROM
-                    Alias
-                LEFT JOIN
-                    AliasExpression
-                ON  Alias.AliasSerNum = AliasExpression.AliasSerNum
-                 WHERE
-                    AliasExpression.AliasSerNum IS NULL
-                AND Alias.AliasUpdate != 0
-            ";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
+    public function updateAliasPublishFlags($post) {
+        $this->checkWriteAccess($post);
+        HelpSetup::arraySanitization($post);
+        $errCode = $this->_validatePublishFlag($post);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+        foreach ($post["data"] as $item)
+            $this->opalDB->updateAliasPublishFlag($item["serial"], $item["update"]);
 
-                $aliasSer = $data[0];
-
-                $sql = "
-                    UPDATE
-                        Alias
-                    SET
-                        Alias.AliasUpdate       = 0,
-                        Alias.LastUpdatedBy     = $userSer,
-                        Alias.SessionId         = '$sessionId'
-                    WHERE
-                        Alias.AliasSerNum       = $aliasSer
-                ";
-
-                $secondQuery = $host_db_link->prepare( $sql );
-                $secondQuery->execute();
-            }
-            return;
-        } catch( PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
-        }
+        $this->opalDB->sanitizeEmptyAliases();
     }
 
     /**
      * Return the list of aliases and they expressions
-     * @return $result
+     * @return array
      */
     public function getAliases() {
         $this->checkReadAccess();
@@ -260,6 +200,11 @@ class Alias extends Module {
 
         $result["eduMat"] = ($result["eduMatSer"] != "" ? $this->_getEducationalMaterialDetails($result["eduMatSer"]) : "");
         $result["terms"] = $this->opalDB->getAliasExpression($result["serial"]);
+
+        foreach ($result["terms"] as &$term) {
+            $term = intval($term);
+        }
+
         $result["count"] = count($result["terms"]);
         $result["hospitalMap"] = ($result["hospitalMapSer"] != "" ? $this->opalDB->getHospitalMapDetails($result["hospitalMapSer"]) : "");
 
@@ -379,7 +324,7 @@ class Alias extends Module {
                 $query->execute();
             }
 
-            $this->_sanitizeEmptyAliases($aliasDetails['user']);
+            $this->opalDB->sanitizeEmptyAliases();
 
             if ($checkinDetails and $aliasType == 'Appointment') {
                 $checkinPossible =  $checkinDetails['checkin_possible'];
@@ -687,7 +632,7 @@ class Alias extends Module {
                 }
             }
 
-            $this->_sanitizeEmptyAliases($aliasDetails['user']);
+            $this->opalDB->sanitizeEmptyAliases();
 
             $response['value'] = 1; // Success
             return $response;

@@ -125,7 +125,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 		// Initialize list of existing aliases
 		$scope.aliasList = [];
 		$scope.aliasUpdates = {
-			updateList: []
+			data: []
 		};
 
 		// Initialize an object for deleting alias
@@ -309,7 +309,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 			if ($scope.changesMade && $scope.writeAccess) {
 				angular.forEach($scope.aliasList, function (alias) {
 					if (alias.changed) {
-						$scope.aliasUpdates.updateList.push({
+						$scope.aliasUpdates.data.push({
 							serial: alias.serial,
 							update: alias.update
 						});
@@ -336,7 +336,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 							ErrorHandler.onError(response, $filter('translate')('ALIAS.LIST.ERROR_FLAGS'));
 						}
 						$scope.changesMade = false;
-						$scope.aliasUpdates.updateList = [];
+						$scope.aliasUpdates.data = [];
 					},
 					error: function(err) {
 						ErrorHandler.onError(err, $filter('translate')('ALIAS.LIST.ERROR_FLAGS'));

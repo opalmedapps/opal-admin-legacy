@@ -2729,4 +2729,30 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    /**
+     * Deactivate any alias without expressions.
+     * @return int - number of records affected
+     */
+    function sanitizeEmptyAliases() {
+        return $this->_updateRecordIntoTable(OPAL_SANITIZE_EMPTY_ALIASES, array(
+            "LastUpdatedBy"=>$this->getOAUserId(),
+            "SessionId"=>$this->getSessionId(),
+        ));
+    }
+
+    /**
+     * Update publish flag of a sepcific alias.
+     * @param $aliasId - ID of the alias
+     * @param $statusFlag - status of the alias
+     * @return int - number of records affected
+     */
+    function updateAliasPublishFlag($aliasId, $statusFlag) {
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_ALIAS_PUBLISH_FLAG, array(
+            "AliasUpdate"=>$statusFlag,
+            "AliasSerNum"=>$aliasId,
+            "LastUpdatedBy"=>$this->getOAUserId(),
+            "SessionId"=>$this->getSessionId(),
+        ));
+    }
 }
