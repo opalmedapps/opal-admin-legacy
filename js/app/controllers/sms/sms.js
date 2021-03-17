@@ -8,4 +8,42 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
         $scope.test = "Welcome";
         console.log($scope.test);
         $scope.navMenu = Session.retrieveObject('menu');
+
+        function buildOperations() {
+            $scope.updatedRole = JSON.parse(JSON.stringify($scope.toSubmit));
+            var newSubmit = [];
+            var noError = true;
+
+            $scope.toSubmit.operations.forEach(function(entry) {
+
+                sup = parseInt((+entry.delete + "" + +entry.write + "" + +entry.read), 2);
+                if (sup !== 0 && sup !== 1 && sup !== 3 && sup !== 7)
+                    noError = false;
+
+                if(sup !== 0) {
+                    newSubmit.push({"moduleId": entry.ID, "access": sup});
+                }
+            });
+            $scope.updatedRole.operations = newSubmit;
+            return noError;
+        }
+
+        $scope.updateSms = function() {
+            if($scope.formReady && $scope.changesDetected) {
+                var validResult = buildOperations();
+                $.ajax({
+                    type: "POST",
+                    url: "sms/update/sms",
+                    data: $scope.updatedRole,
+                    success: function () {},
+                    error: function (err) {
+                        ErrorHandler.onError(err, $filter('translate')('SMS.EDIT.ERROR_UPDATE'));
+                    },
+                    complete: function () {
+                        $uibModalInstance.close();
+                    }
+                });
+            }
+        };
     });
+
