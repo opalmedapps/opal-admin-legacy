@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
     /******************************************************************************
      * SMS Page controller
      *******************************************************************************/
-    controller('sms', function ($scope, $uibModal, $filter, $state, aliasCollectionService, uiGridConstants, Session, ErrorHandler, MODULE) {
+    controller('sms', function ($scope, $uibModal, $filter, $state, smsCollectionService, uiGridConstants, Session, ErrorHandler, MODULE) {
         $scope.test = "Welcome";
         console.log($scope.test);
         $scope.navMenu = Session.retrieveObject('menu');
@@ -45,5 +45,13 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                 });
             }
         };
+        get
+        function getSmsAppointmentList() {
+            smsCollectionService.getsmsAppointments().then(function (response) {
+                $scope.smsAppoinments = response.data;
+            }).catch(function(err) {
+                ErrorHandler.onError(err, $filter('translate')('SMS.LIST.ERROR_LIST'));
+            });
+        }
     });
 
