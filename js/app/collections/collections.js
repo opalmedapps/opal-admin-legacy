@@ -1211,4 +1211,19 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		return installAPI;
+	})
+
+	//sms API service
+	.factory('smsCollectionService',function($http){
+
+		var smsAPI = {};
+
+		smsAPI.getsmsAppointments = function(){
+			return $http.post(
+				"sms/get/smsAppointment",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
 	});
