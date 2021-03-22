@@ -45,7 +45,8 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                 });
             }
         };
-        get
+        getSmsAppointmentList();
+        console.log($scope.smsAppoinments);
         function getSmsAppointmentList() {
             smsCollectionService.getsmsAppointments().then(function (response) {
                 $scope.smsAppoinments = response.data;
