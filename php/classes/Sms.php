@@ -8,9 +8,9 @@ class Sms extends Module {
 
     protected $ormsDB;
 
-    public function __construct($moduleId, $guestStatus = false) {
+    public function __construct($guestStatus = false) {
         parent::__construct(MODULE_SMS, $guestStatus);
-        if($_SESSION["userAccess"][$moduleId]) {
+        if($_SESSION["userAccess"][MODULE_SMS]) {
             $this->ormsDB = new DatabaseOrms(
                 WRM_DB_HOST,
                 WRM_DB_NAME,
