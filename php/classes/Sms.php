@@ -10,6 +10,7 @@ class Sms extends Module {
 
     public function __construct($guestStatus = false) {
         parent::__construct(MODULE_SMS, $guestStatus);
+        echo "check point\n";
         if($_SESSION["userAccess"][MODULE_SMS]) {
             $this->ormsDB = new DatabaseOrms(
                 WRM_DB_HOST,
@@ -31,7 +32,7 @@ class Sms extends Module {
      * */
     public function getAppointments() {
         $this->checkReadAccess();
-
+        echo "check point\n";
         return $this->ormsDB->getAppointmentForSms();
     }
 
