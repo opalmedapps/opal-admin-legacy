@@ -1,6 +1,6 @@
 <?php
 
-require('../lib/JWadhams/JsonLogic.php');
+include('../lib/JWadhams/JsonLogic.php');
 /*
  * Trigger class object and methods
  * */
