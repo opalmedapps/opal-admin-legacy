@@ -52,6 +52,7 @@ publisher/logs/**
 publisher/php/ykmTestNotification.php
 publisher/php/TestNotification.php
 publisher/php/test.php
+publisher/php/kaTestAPNscript.php
 
 # ignore npm-debug log
 npm-debug.log
