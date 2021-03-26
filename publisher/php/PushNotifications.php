@@ -8,11 +8,12 @@ class PushNotifications {
 	private static $passphrase = CERTIFICATE_PASSWORD;
 	//(iOS) Location of certificate file
 	private static $certificate_file = CERTIFICATE_FILE;
-
-	// Change the above three vriables as per your app.
-	public function __construct() {
-		exit('Init function is not allowed');
-	}
+	// iOS Location of cert key
+	private static $certificate_key = CERTIFICATE_KEY;
+	// (iOS) APNS topic (staging, preprod, prod)
+	private static $apns_topic = APNS_TOPIC;
+	// (iOS) APN Url target (development or sandbox)
+	private static $ios_url = IOS_URL;
 
 	// **************************************************
 	// Sends Push notification for Android users
@@ -97,30 +98,18 @@ class PushNotifications {
 	*             push notification.
 	**/
 	public static function iOS($data, $devicetoken) {
-		$deviceToken = $devicetoken;
-		$ctx = stream_context_create();
-		// ck.pem is your certificate file
-		stream_context_set_option($ctx, 'ssl', 'local_cert', self::$certificate_file);
-		stream_context_set_option($ctx, 'ssl', 'passphrase', self::$passphrase);
-		// Open a connection to the APNS server
-		// $fp = stream_socket_client('ssl://gateway.sandbox.push.apple.com:2195', $err,
-		$fp = stream_socket_client(IOS_URL, $err,
-					$errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
-		if (!$fp) {
-			$response = array("success"=>0,"failure"=>1,"error"=>"Failed to connect: $err $errstr" . PHP_EOL);
+		//validation and message prep
+		if(is_array($data)){
+			if(isset($data['encode']) && ($data['encode'] == 'Yes')){
+				$wsTitle = utf8_encode($data['mtitle']);
+				$wsBody = utf8_encode($data['mdesc']);
+			}else{ // caller did not set encode property
+				$wsTitle = $data['mtitle'];
+				$wsBody = $data['mdesc'];
+			}
+        }else{ //data not array error
+			$response =  array("success"=>0,"failure"=>1,"error"=>"Request data invalid, unable to send push notification.");
 			return $response;
-		}
-
-		// Flag to identify when to use the utf8_encode because message coming
-		// from PERL alters the French characters
-		$wsFlag = (isset($data['encode'])? $data['encode'] :'Yes' );
-
-		if ($wsFlag == 'Yes') {
-			$wsTitle = utf8_encode($data['mtitle']);
-			$wsBody = utf8_encode($data['mdesc']);
-		} else {
-			$wsTitle = $data['mtitle'];
-			$wsBody = $data['mdesc'];
 		}
 
 		// Create the payload body
@@ -132,26 +121,29 @@ class PushNotifications {
 			'sound' => 'default'
 		);
 		// Encode the payload as JSON
-		$payload = json_encode($body);
-		// Build the binary notification
-
-		// echo 'Device Token :' .  $deviceToken . '<br />';
-		if (strlen($deviceToken) == 64) {
-			$msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
-			// Send it to the server
-			$result = fwrite($fp, $msg, strlen($msg));
-			// Close the connection to the server
-			fclose($fp);
-			if (!$result) {
-				$response =  array("success"=>0,"failure"=>1,"error"=>"Unable to send packets to APN socket");
-			} else {
-				$response =  array("success"=>1,"failure"=>0);
-			}
-			return $response;
-			}
-
-		}
-
+        $payload = json_encode($body);
+	
+		$apns_topic = self::$apns_topic;
+		$url = self::$ios_url . $devicetoken;    
+        $ch = curl_init($url);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+		curl_setopt($ch, CURLOPT_HTTP_VERSION,3);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, ["apns-topic: $apns_topic"]); //opal app bundle ID
+		curl_setopt($ch, CURLOPT_SSLCERT, self::$certificate_file); //pem file
+		//curl_setopt($ch, CURLOPT_SSLCERTPASSWD, self::$passphrase); //pem secret
+		curl_setopt($ch, CURLOPT_SSLKEY, self::$certificate_key); // cert key
+		//curl_setopt($ch, CURLOPT_SSLKEYPASSWD, ); if we add a password to the key file we'll specify that here
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+		$response = curl_exec($ch);
+		$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($httpcode != 200) {
+			$err = curl_error($ch);
+			$response =  array("success"=>0,"failure"=>1,"error"=>"$err");
+		} else {
+			$response =  array("success"=>1,"failure"=>0);
+        }
+		return $response;
+	}
 	// Curl
 	private static function useCurl($url, $headers, $fields = null) {
 		// Open connection
@@ -180,6 +172,6 @@ class PushNotifications {
 			curl_close($ch);
 			return $result;
 		}
-  }
+   }
 }
 ?>
