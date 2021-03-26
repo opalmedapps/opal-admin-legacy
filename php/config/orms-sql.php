@@ -11,7 +11,7 @@ define( "WRM_DB_USERNAME", $config['databaseConfig']['wrm']['username'] );
 define( "WRM_DB_PASSWORD", $config['databaseConfig']['wrm']['password'] );
 
 define("ORMS_MEDIVISIT_APPOINTMENT_LIST_TABLE", "MediVisitAppointmentList");
-define("ORMS_SMS_APPOINTMENT_LIST_TABLE", "SmsAppointmentList");
+define("ORMS_SMS_APPOINTMENT_LIST_TABLE", "SmsAppointment");
 define("ORMS_SMS_MESSAGE_LIST_TABLE", "SmsMessage");
 define("ORMS_CLINIC_RESOURCE_LIST_TABLE", "ClinicResources");
 define("ORMS_APPOINTMENT_CODE_LIST_TABLE", "AppointmentCode");
@@ -26,10 +26,11 @@ define("ORMS_SQL_GET_APPOINTMENT_FOR_ALIAS","
 
 define("ORMS_SQL_GET_APPOINTMENT_FOR_SMS","
     SELECT appc.AppointmentCode AS appcode, clir.ResourceCode AS rescode, smsa.Active AS state,
-           smsa.Speciality AS spec, smsa.Type AS type, smsa.ClinicResurcesSerNum AS ressernum, 
-           smsa.AppointmentCodeId AS codeid
+           smsa.Speciality AS spec, smsa.Type AS type, smsa.ClinicResourcesSerNum AS ressernum, 
+           smsa.AppointmentCodeId AS codeid, clir.ResourceName AS resname
     FROM ".ORMS_SMS_APPOINTMENT_LIST_TABLE." smsa 
-    INNER JOIN ".ORMS_APPOINTMENT_CODE_LIST_TABLE." appc ON appc.AppointmentCodeId = smsa.AppointmentCodeId
+    INNER JOIN ".ORMS_APPOINTMENT_CODE_LIST_TABLE." appc 
+    ON appc.AppointmentCodeId = smsa.AppointmentCodeId
     INNER JOIN ".ORMS_CLINIC_RESOURCE_LIST_TABLE." clir
     ON clir.ClinicResourcesSerNum = smsa.ClinicResourcesSerNum
 ");

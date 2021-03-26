@@ -31,13 +31,16 @@ class DatabaseOrms extends DatabaseAccess {
     {
         $result = $this->_fetchAll(ORMS_SQL_GET_APPOINTMENT_FOR_SMS, array());
         $toInsert = array();
-
         foreach ($result as $item) {
             $tempArr = array(
-                "externalId" => -1,
-                "type" => 2,
-                "code" => $item["code"],
-                "expression" => $item["type"],
+                "appcode" => $item["appcode"],
+                "rescode" => $item["rescode"],
+                "resname" => $item["resname"],
+                "state" => $item["state"],
+                "spec" => $item["spec"],
+                "ressernum" => $item["ressernum"],
+                "code" => $item["codeid"],
+                "apptype" => $item["type"],
                 "source" => 2,
             );
             array_push($toInsert, $tempArr);
