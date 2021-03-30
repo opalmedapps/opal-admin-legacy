@@ -12,6 +12,9 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
 
         getSmsAppointmentList();
 
+        var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents">' +
+            '<strong><a href="">{{row.entity.appcode}}</a></strong></div>';
+
         // Banner
         $scope.bannerMessage = "";
         // Function to show page banner
@@ -39,6 +42,42 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
 
         };
 
+        $scope.filterOptions = function (renderableRows) {
+            var matcher = new RegExp($scope.filterValue, 'i');
+            renderableRows.forEach(function (row) {
+                var match = false;
+                ['name_'+Session.retrieveObject('user').language.toUpperCase(), 'type_display'].forEach(function (field) {
+                    if (row.entity[field].match(matcher)) {
+                        match = true;
+                    }
+                });
+                if (!match) {
+                    row.visible = false;
+                }
+            });
+
+            return renderableRows;
+        };
+
+        $scope.gridOptions = {
+            data: 'smsAppointment',
+            columnDefs: [
+                {field:'appcode', displayName: 'Appointment Code',width: '50%',enableColumnMenu: false, cellTemplate: cellTemplateName},
+                {field:'resname', displayName: 'Resource Name', width:'50%', enableColumnMenu: false,cellTemplate: cellTemplateName},
+            ],
+            enableFiltering: true,
+            enableColumnResizing: true,
+            onRegisterApi: function (gridApi) {
+                $scope.gridApi = gridApi;
+                $scope.gridApi.grid.registerRowsProcessor($scope.filterOptions, 300);
+            },
+        }
+
+        $scope.smsAppoinments = [];
+        $scope.smsUpdates = {
+            updateList: []
+        };
+
         function buildOperations() {
             $scope.updatedRole = JSON.parse(JSON.stringify($scope.toSubmit));
             var newSubmit = [];
@@ -64,7 +103,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                 $.ajax({
                     type: "POST",
                     url: "sms/update/sms",
-                    data: $scope.updatedRole,
+                    data: $scope.smsUpdates,
                     success: function () {},
                     error: function (err) {
                         ErrorHandler.onError(err, $filter('translate')('SMS.EDIT.ERROR_UPDATE'));
