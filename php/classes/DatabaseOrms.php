@@ -94,4 +94,13 @@ class DatabaseOrms extends DatabaseAccess {
         }
         return $toInsert;
     }
+
+    function updateActivationState($state, $appointmentCodeId, $resourceSerNum) {
+        $toInsert = array(
+            array("parameter"=>":state","variable"=>$state,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":res","variable"=>$resourceSerNum,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":id","variable"=>$appointmentCodeId,"data_type"=>PDO::PARAM_INT),
+        );
+        return $this->_execute(ORMS_SQL_UPDATE_APPOINTMENT_ACTIVE_STATE, $toInsert);
+    }
 }
