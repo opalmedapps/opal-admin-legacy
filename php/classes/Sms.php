@@ -45,4 +45,10 @@ class Sms extends Module {
 
         return $this->ormsDB->getMessageForAppointment($type,$event,$language);
     }
+
+    public function updateActivationState($information){
+        $this->checkWriteAccess($information);
+
+        return $this->ormsDB->updateActivationState($information['state'],$information['appcode'],$information['ressernum']);
+    }
 }
