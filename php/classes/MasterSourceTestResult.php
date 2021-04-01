@@ -45,12 +45,12 @@ class MasterSourceTestResult extends MasterSourceModule {
             $errCode = "0" . $errCode;
         $errCode = bindec($errCode);
         if ($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
 
         $results = $this->opalDB->getSourceTestResultDetails($post["source"], $post["code"]);
 
         if(count($results) < 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>4));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>4));
         else if(count($results) > 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated entries detected in the records. Please contact your administrator.");
         return $results[0];
@@ -78,7 +78,7 @@ class MasterSourceTestResult extends MasterSourceModule {
         }
 
         if(count($errMsgs) > 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, $errMsgs);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, $errMsgs);
 
         return false;
     }
@@ -98,7 +98,7 @@ class MasterSourceTestResult extends MasterSourceModule {
         }
 
         if(count($errMsgs) > 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, $errMsgs);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, $errMsgs);
 
         return false;
     }
@@ -135,7 +135,7 @@ class MasterSourceTestResult extends MasterSourceModule {
 
         $errCode = bindec($errCode);
         if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
 
         $results = $this->opalDB->isSourceTestResultsExists($post["source"], $post["code"]);
         if(count($results) <= 0) return $results;
@@ -247,7 +247,7 @@ class MasterSourceTestResult extends MasterSourceModule {
                 }
             }
             else {
-                HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => 31));
+                HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => 31));
                 break;
             }
         }
@@ -279,7 +279,7 @@ class MasterSourceTestResult extends MasterSourceModule {
         $post = HelpSetup::arraySanitization($post);
 
         if(count($post) > MAXIMUM_RECORDS_BATCH)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => bindec("100000")));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => bindec("100000")));
 
         foreach ($post as $item) {
             if(is_array($item)) {
@@ -337,7 +337,7 @@ class MasterSourceTestResult extends MasterSourceModule {
                 }
             }
             else {
-                HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => 31));
+                HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => 31));
                 break;
             }
         }
@@ -366,7 +366,7 @@ class MasterSourceTestResult extends MasterSourceModule {
         $post = HelpSetup::arraySanitization($post);
 
         if(count($post) > MAXIMUM_RECORDS_BATCH)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => bindec("1000")));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => bindec("1000")));
 
         foreach ($post as $item) {
             if(is_array($item)) {
@@ -412,7 +412,7 @@ class MasterSourceTestResult extends MasterSourceModule {
                 }
             }
             else {
-                HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => 7));
+                HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => 7));
                 break;
             }
         }
@@ -442,7 +442,7 @@ class MasterSourceTestResult extends MasterSourceModule {
         }
 
         if(count($errMsgs) > 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, $errMsgs);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, $errMsgs);
 
         return false;
     }

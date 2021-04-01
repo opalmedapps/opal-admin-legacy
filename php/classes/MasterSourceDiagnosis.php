@@ -32,11 +32,11 @@ class MasterSourceDiagnosis extends MasterSourceModule {
 
         $errCode = bindec($errCode);
         if ($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
 
         $results = $this->opalDB->getSourceDiagnosisDetails($post["externalId"], $post["source"], $post["code"]);
         if(count($results) < 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>bindec("1000")));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>bindec("1000")));
         else if(count($results) > 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated entries detected in the records. Please contact your administrator.");
         return $results[0];
@@ -64,7 +64,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
         }
 
         if(count($errMsgs) > 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, $errMsgs);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, $errMsgs);
 
         return false;
     }
@@ -83,7 +83,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
             $this->opalDB->updateSourceDiagnosis($item);
 
         if(count($errMsgs) > 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, $errMsgs);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, $errMsgs);
 
         return false;
     }
@@ -108,7 +108,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
 
         $errCode = bindec($errCode);
         if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation"=>$errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
 
         $results = $this->opalDB->isMasterSourceDiagnosisExists($post["source"], $post["externalId"], $post["code"]);
         if(count($results) <= 0) return $results;
@@ -144,7 +144,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
         $post = HelpSetup::arraySanitization($post);
 
         if(count($post) > MAXIMUM_RECORDS_BATCH)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => bindec("100000")));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => bindec("100000")));
 
         foreach ($post as $item) {
             if(is_array($item)) {
@@ -202,7 +202,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
                     array_push($errMsgs, $item);
                 }
             } else {
-                HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => 31));
+                HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => 31));
                 break;
             }
         }
@@ -230,7 +230,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
         $post = HelpSetup::arraySanitization($post);
 
         if(count($post) > MAXIMUM_RECORDS_BATCH)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => bindec("100000")));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => bindec("100000")));
 
         foreach ($post as $item) {
             if(is_array($item)) {
@@ -274,7 +274,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
                 }
             }
             else {
-                HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => 31));
+                HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => 31));
                 break;
             }
         }
@@ -300,7 +300,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
         $post = HelpSetup::arraySanitization($post);
 
         if(count($post) > MAXIMUM_RECORDS_BATCH)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => bindec("1000")));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => bindec("1000")));
 
         foreach ($post as $item) {
             if(is_array($item)) {
@@ -332,7 +332,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
                 }
             }
             else {
-                HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, array("validation" => 7));
+                HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => 7));
                 break;
             }
         }
@@ -361,7 +361,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
             $this->opalDB->markAsDeletedSourceDiagnoses($item);
 
         if(count($errMsgs) > 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, $errMsgs);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, $errMsgs);
 
         return false;
     }
