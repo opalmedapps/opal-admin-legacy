@@ -94,6 +94,8 @@ define("OPAL_HOSPITAL_MAP_TABLE","HospitalMap");
 define("OPAL_ALERT_TABLE","alert");
 define("OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE","Patient_Hospital_Identifier");
 define("OPAL_DIAGNOSIS_TABLE","Diagnosis");
+define("OPAL_TEST_EXPRESSION_TABLE","TestExpression");
+define("OPAL_TEST_CONTROL_TABLE","TestControl");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
