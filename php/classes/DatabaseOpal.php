@@ -2244,7 +2244,7 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_execute(OPAL_MARKED_AS_DELETED_SOURCE_DIAGNOSIS, array(
             array("parameter"=>":externalId","variable"=>$todelete["externalId"],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":source","variable"=>$todelete["source"],"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":code","variable"=>$todelete["code"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":code","variable"=>$todelete["code"],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":deletedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
         ));
@@ -2297,7 +2297,7 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":externalId","variable"=>$toUpdate["externalId"],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":type","variable"=>$toUpdate["type"],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":source","variable"=>$toUpdate["source"],"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":code","variable"=>$toUpdate["code"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":code","variable"=>$toUpdate["code"],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":description","variable"=>$toUpdate["description"],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":createdBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
@@ -2313,6 +2313,7 @@ class DatabaseOpal extends DatabaseAccess {
     function updateSourceAlias($toUpdate) {
         return $this->_execute(OPAL_UPDATE_SOURCE_ALIAS, array(
             array("parameter"=>":type","variable"=>$toUpdate["type"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":code","variable"=>$toUpdate["code"],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":externalId","variable"=>$toUpdate["externalId"],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":source","variable"=>$toUpdate["source"],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":description","variable"=>$toUpdate["description"],"data_type"=>PDO::PARAM_STR),
@@ -2344,7 +2345,7 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_execute(OPAL_MARKED_AS_DELETED_SOURCE_ALIAS, array(
             array("parameter"=>":externalId","variable"=>$todelete["externalId"],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":source","variable"=>$todelete["source"],"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":code","variable"=>$todelete["code"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":code","variable"=>$todelete["code"],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":type","variable"=>$todelete["type"],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":deletedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
