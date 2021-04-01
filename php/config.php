@@ -184,6 +184,12 @@ define("ACCESS_DENIED", "DENIED");
 define("ENCRYPTED_DATA", "ENCRYPTED DATA");
 define("UNKNOWN_USER", "UNKNOWN USER");
 
+define("MAXIMUM_RECORDS_BATCH", 500);
+
+define("ALIAS_TYPE_TASK",1);
+define("ALIAS_TYPE_APPOINTMENT",2);
+define("ALIAS_TYPE_DOCUMENT",3);
+
 /*
  * List of HTTP status codes
  * */
