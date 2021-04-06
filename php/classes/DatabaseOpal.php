@@ -2081,7 +2081,7 @@ class DatabaseOpal extends DatabaseAccess {
             $item["createdBy"] = $this->getUsername();
             $item["updatedBy"] = $this->getUsername();
         }
-        return $this->_insertMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_TEST_RESULT_TABLE, $toInsert);
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_TEST_RESULT_TABLE, $toInsert);
     }
 
     /*
@@ -2185,7 +2185,7 @@ class DatabaseOpal extends DatabaseAccess {
             $item["createdBy"] = $this->getUsername();
             $item["updatedBy"] = $this->getUsername();
         }
-        return $this->_insertMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE, $toInsert);
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE, $toInsert);
     }
 
     /*
@@ -2284,7 +2284,7 @@ class DatabaseOpal extends DatabaseAccess {
             $item["createdBy"] = $this->getUsername();
             $item["updatedBy"] = $this->getUsername();
         }
-        return $this->_insertMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_ALIAS_TABLE, $toInsert);
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_ALIAS_TABLE, $toInsert);
     }
 
     /*
