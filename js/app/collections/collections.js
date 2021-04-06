@@ -1220,7 +1220,7 @@ angular.module('opalAdmin.collections', [])
 
 		smsAPI.getsmsAppointments = function(){
 			return $http.post(
-				"/php/sms/get.smsAppointment.php",
+				"sms/get/appointment",
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
