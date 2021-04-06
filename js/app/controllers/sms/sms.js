@@ -11,7 +11,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
         $scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.alias]) & (1 << 2)) !== 0);
 
         getSmsAppointmentList();
-
+        $scope.changesMade = false;
         var cellTemplateResourceName = '<div style="cursor:pointer;" class="ui-grid-cell-contents">' +
             '<strong><a href="">{{row.entity.resname}}</a></strong></div>';
         var cellTemplateAppointmentCode = '<div style="cursor:pointer;" class="ui-grid-cell-contents">' +
@@ -19,9 +19,33 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
 
         var checkboxCellTemplate;
         if($scope.writeAccess)
-            checkboxCellTemplate = '<div style="text-align: center; cursor: pointer;" ng-click="grid.appScope.checkAliasUpdate(row.entity)" class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ng-checked="grid.appScope.updateVal(row.entity.state)" ng-model="row.entity.state"></div>';
+            checkboxCellTemplate = '<div style="text-align: center; cursor: pointer;" ' +
+                'ng-click="grid.appScope.checkSmsUpdate(row.entity)" class="ui-grid-cell-contents">' +
+                '<input style="margin: 4px;" type="checkbox" ng-checked="grid.appScope.updateVal(row.entity.state)" ' +
+                'ng-model="row.entity.state"></div>';
         else
             checkboxCellTemplate = '<div style="text-align: center;" class="ui-grid-cell-contents"><i ng-class="row.entity.state == 1 ? \'Active\' : \'Disabled\'" class="fa"></i></div>';
+
+        $scope.updateVal = function(value){
+            return (parseInt(value) === 1);
+        }
+
+        $scope.checkSmsUpdate = function (sms) {
+
+            $scope.changesMade = true;
+            sms.state = parseInt(sms.state);
+            // If the "Update" column has been checked
+            if (sms.state) {
+                sms.state = 0; // set update to "true"
+            }
+
+            // Else the "Update" column was unchecked
+            else {
+                sms.state = 1; // set update to "false"
+            }
+            // flag parameter that changed
+            sms.modified = 1;
+        };
 
         // Banner
         $scope.bannerMessage = "";
@@ -52,7 +76,6 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
 
         $scope.filterOptions = function (renderableRows) {
             var matcher = new RegExp($scope.filterValue, 'i');
-            console.log(renderableRows);
             renderableRows.forEach(function (row) {
                 var match = false;
                 ['appcode','resname','apptype',].forEach(function (field) {
@@ -79,7 +102,8 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                     }
                 },
                 {field:'resname', displayName: 'Resource Name', width:'40%', enableColumnMenu: false,cellTemplate: cellTemplateResourceName},
-                { field: 'state', displayName: 'Activation State', enableColumnMenu: false, width: '10%', cellTemplate: checkboxCellTemplate, enableFiltering: false },
+                { field: 'state', displayName: 'Activation State', enableColumnMenu: false, width: '10%',
+                    cellTemplate: checkboxCellTemplate, enableFiltering: false },
             ],
             enableFiltering: true,
             enableColumnResizing: true,
@@ -94,38 +118,43 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             updateList: []
         };
 
-        function buildOperations() {
-            $scope.updatedRole = JSON.parse(JSON.stringify($scope.toSubmit));
-            var newSubmit = [];
-            var noError = true;
+        $scope.submitUpdate = function () {
 
-            $scope.toSubmit.operations.forEach(function(entry) {
-
-                sup = parseInt((+entry.delete + "" + +entry.write + "" + +entry.read), 2);
-                if (sup !== 0 && sup !== 1 && sup !== 3 && sup !== 7)
-                    noError = false;
-
-                if(sup !== 0) {
-                    newSubmit.push({"moduleId": entry.ID, "access": sup});
-                }
-            });
-            $scope.updatedRole.operations = newSubmit;
-            return noError;
-        }
-
-        $scope.updateSms = function() {
-            if($scope.formReady && $scope.changesDetected) {
-                var validResult = buildOperations();
+            if ($scope.changesMade && $scope.writeAccess) {
+                angular.forEach($scope.smsAppointments, function (sms) {
+                    if (sms.modified) {
+                        $scope.smsUpdates.updateList.push({
+                            resourceserial: sms.ressernum,
+                            codeid: sms.code,
+                            update: sms.state
+                        });
+                    }
+                });
+                // Log who updated alias
+                var currentUser = Session.retrieveObject('user');
+                $scope.smsUpdates.user = currentUser;
+                // Submit form
                 $.ajax({
                     type: "POST",
-                    url: "sms/update/sms",
-                    data: $scope.smsUpdates,
-                    success: function () {},
-                    error: function (err) {
-                        ErrorHandler.onError(err, $filter('translate')('SMS.EDIT.ERROR_UPDATE'));
+                    url: "sms/update/activation",
+                    data: $scope.aliasUpdates,
+                    success: function (response) {
+                        getSmsAppointmentList();
+                        response = JSON.parse(response);
+                        // Show success or failure depending on response
+                        if (response.value) {
+                            $scope.setBannerClass('success');
+                            $scope.bannerMessage = "success";
+                            $scope.showBanner();
+                        }
+                        else {
+                            ErrorHandler.onError(response, "error");
+                        }
+                        $scope.changesMade = false;
+                        $scope.smsUpdates.updateList = [];
                     },
-                    complete: function () {
-                        $uibModalInstance.close();
+                    error: function(err) {
+                        ErrorHandler.onError(err,"error");
                     }
                 });
             }
@@ -138,6 +167,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                         case null:
                             row.apptype = 'UNDEFINED';
                     }
+                    row.modified = 0;
                 })
                 $scope.smsAppointments = response.data;
                 console.log($scope.smsAppointments);

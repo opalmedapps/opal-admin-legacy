@@ -332,3 +332,7 @@ RewriteRule ^user/update/password php/user/update.password.php [QSA,L]
 RewriteRule ^user/update/user php/user/update.user.php [QSA,L]
 RewriteRule ^user/username-in-use php/user/username_in_use.php [QSA,L]
 RewriteRule ^user/validate-login php/user/user.login.php [QSA,L]
+
+# SMS Section
+RewriteRule ^sms/get/appointment /php/sms/get.smsAppointment.php [QSA,L]
+RewriteRule ^sms/update/activation /php/sms/update.activationState.php [QSA,L]
