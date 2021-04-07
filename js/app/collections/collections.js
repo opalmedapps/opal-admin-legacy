@@ -1218,6 +1218,7 @@ angular.module('opalAdmin.collections', [])
 
 		var smsAPI = {};
 
+		//Function to get all sms appointments in ORMS db
 		smsAPI.getsmsAppointments = function(){
 			return $http.post(
 				"sms/get/appointment",
