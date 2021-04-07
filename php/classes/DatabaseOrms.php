@@ -30,7 +30,7 @@ class DatabaseOrms extends DatabaseAccess {
     function getAppointmentForSms()
     {
         $result = $this->_fetchAll(ORMS_SQL_GET_APPOINTMENT_FOR_SMS, array());
-        $toInsert = array();
+        $appointmentList = array();
         foreach ($result as $item) {
             $tempArr = array(
                 "appcode" => $item["appcode"],
@@ -43,9 +43,9 @@ class DatabaseOrms extends DatabaseAccess {
                 "apptype" => $item["type"],
                 "source" => 2,
             );
-            array_push($toInsert, $tempArr);
+            array_push($appointmentList, $tempArr);
         }
-        return $toInsert;
+        return $appointmentList;
     }
 
     function getEventsForAppointment($type,$speciality)
