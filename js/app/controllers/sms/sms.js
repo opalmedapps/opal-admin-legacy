@@ -119,30 +119,31 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
         };
 
         $scope.submitUpdate = function () {
-
+            console.log("test");
             if ($scope.changesMade && $scope.writeAccess) {
                 angular.forEach($scope.smsAppointments, function (sms) {
                     if (sms.modified) {
                         $scope.smsUpdates.updateList.push({
-                            resourceserial: sms.ressernum,
-                            codeid: sms.code,
-                            update: sms.state
+                            ressernum: sms.ressernum,
+                            appcode: sms.code,
+                            state: sms.state
                         });
                     }
                 });
                 // Log who updated alias
-                var currentUser = Session.retrieveObject('user');
-                $scope.smsUpdates.user = currentUser;
+                //var currentUser = Session.retrieveObject('user');
+                //$scope.smsUpdates.user = currentUser;
+                console.log($scope.smsUpdates);
                 // Submit form
                 $.ajax({
                     type: "POST",
                     url: "sms/update/activation",
-                    data: $scope.aliasUpdates,
+                    data: $scope.smsUpdates,
                     success: function (response) {
                         getSmsAppointmentList();
                         response = JSON.parse(response);
                         // Show success or failure depending on response
-                        if (response.value) {
+                        if (response) {
                             $scope.setBannerClass('success');
                             $scope.bannerMessage = "success";
                             $scope.showBanner();
