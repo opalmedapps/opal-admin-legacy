@@ -582,9 +582,8 @@
                                                 </div>
                                                 <ul class="list-items">
                                                     <li ng-repeat="consentform in consentFormList | filter: consentSearchField">
-                                                        <label>
-                                                            <input type="checkbox" ng-model="consentform.added"> {{consentform.name_display}}
-                                                        </label>
+                                                        <input type="radio" ng-model="selectedForm.form" value="consentform.name_display"></input>
+                                                        <label>{{consentform.name_display}}</label>
                                                     </li>
                                                 </ul>
                                             </div>

@@ -226,7 +226,6 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				else
 					item.name_display = item.name_EN;
 			});
-			console.log($scope.questionnaireList);
 		}).catch(function(err) {
 			ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
 		}).finally(function() {
@@ -235,6 +234,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 		});
 
 		// Call our API to get current consent form options
+		$scope.selectedForm = {form: null};
 		studyCollectionService.getConsentForms().then(function (response) {
 			$scope.consentFormList = response.data;
 			angular.forEach($scope.consentFormList, function(item) {
@@ -244,7 +244,6 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				else
 					item.name_display = item.name_EN;
 			});
-			console.log($scope.consentFormList);
 		}).catch(function(err){
 			ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
 		}).finally(function(){
@@ -391,6 +390,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 		$scope.$watch('consentFormList', function (triggerList) {
 			triggerList = angular.copy(triggerList);
 			var pos = -1;
+			console.log("change");
 			angular.forEach(triggerList, function (item) {
 				pos = $scope.toSubmit.consent_form.findIndex(x => x === item.ID);
 				if(item.added) {
