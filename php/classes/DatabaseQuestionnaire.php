@@ -1236,4 +1236,9 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $sql = str_replace("%%LISTIDS%%", implode(", ", $list), SQL_QUESTIONNAIRE_GET_QUESTIONNAIRES_BY_ID);
         return $this->_fetchAll($sql, array());
     }
+
+    function getConsentForms(){
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_CONSENT_FORMS, array(
+        ));
+    }
 }
