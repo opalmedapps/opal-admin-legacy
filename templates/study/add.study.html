@@ -206,6 +206,27 @@
                                     </p>
                                 </div>
                             </div>
+                            <!-- SECTION: Consent Form -->
+                            <div uib-accordion-group is-open="leftMenu.consent_form.open" class="panel-container summary-box " ng-class="{fadeIn: validator.consent_form.completed}" ng-if="validator.consent_form.completed;" is-disabled="!validator.consent_form.completed">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="validator.consent_form.completed" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>[CONSENT TR]{{'STUDY.ADD.QUESTIONNAIRE'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.consent_form.open, 'glyphicon-chevron-right':!leftMenu.consent_form.open}" ng-if="validator.consent_form.completed"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div class="description">
+                                    <p style="margin-bottom:5px;">
+                                        [CONSENT TR]{{'STUDY.ADD.QUESTIONNAIRE_SELECTED'|translate}}
+                                    </p>
+                                </div>
+                            </div>
                         </uib-accordion>
                         <!-- Submit button -->
                         <div class="panel-container" ng-if="formReady">
@@ -525,6 +546,44 @@
                                                     <li ng-repeat="questionnaire in questionnaireList | filter: questionnaireSearchField">
                                                         <label>
                                                             <input type="checkbox" ng-model="questionnaire.added"> {{questionnaire.name_display}}
+                                                        </label>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Consent Form -->
+                        <div class="row fadeIn" ng-if="validator.investigator.completed">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                      <span class="fas fa-dot-circle"></span>
+                                      <h2>[FR] Add Consent Form</h2>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span><strong>[CONSENT TR]{{'STUDY.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
+                                    [CONSENT TR]{{'STUDY.ADD.QUESTIONNAIRE_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                            <div class="col-xs-12 col-lg-8">
+                                <div class="panel-container">
+                                    <div class="panel-info">
+                                        <div class="panel-content">
+                                            <div class="panel-input">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                    <input class="form-control" maxlength="100" type="text" ng-model="consentSearchField" placeholder="{{'STUDY.ADD.SEARCH'|translate}}" />
+                                                </div>
+                                                <ul class="list-items">
+                                                    <li ng-repeat="consentform in consentFormList | filter: consentSearchField">
+                                                        <label>
+                                                            <input type="checkbox" ng-model="consentform.added"> {{consentform.name_display}}
                                                         </label>
                                                     </li>
                                                 </ul>

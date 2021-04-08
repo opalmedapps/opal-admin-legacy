@@ -50,6 +50,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	$scope.changesDetected = false;
 	$scope.formReady = false;
 	$scope.patientsList = [];
+	$scope.consentForm = [];
 	$scope.backupStudy = [];
 	$scope.ready = [false, false, false];
 
@@ -80,6 +81,11 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			valid: true,
 		},
 		questionnaire: {
+			completed: false,
+			mandatory: false,
+			valid: true,
+		},
+		consent_form: {
 			completed: false,
 			mandatory: false,
 			valid: true,
