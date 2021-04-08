@@ -197,5 +197,18 @@
                 </ul>
             </div>
         </div>
+         <!-- SECTION: Consent Form -->
+         <div uib-accordion-group is-open="consentSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>[FR]Consent Form </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': consentSection.open, 'glyphicon-chevron-right': !consentSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div>
+                <ul class="list-items" style="border-style: none;" ng-if="(questionnaireList|filter:{added:true}).length">
+                    <li ng-repeat="questionnaire in questionnaireList | filter: {added: true} : 1">{{questionnaire.name_display}}</li>
+                </ul>
+            </div>
+        </div>
     </uib-accordion>
 </div>

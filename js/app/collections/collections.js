@@ -1022,6 +1022,15 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
+		studyAPI.getConsentForms = function() {
+			return $http.post(
+				"study/get/consent-forms",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		}
+
 		return studyAPI;
 	})
 

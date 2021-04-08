@@ -14,6 +14,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 		$scope.language = Session.retrieveObject('user').language;
 		$scope.patientsList = [];
 		$scope.questionnaireList = [];
+		$scope.consentFormList = [];
 		$scope.filter = $filter('filter');
 
 		$scope.readyToSend = {
@@ -26,7 +27,8 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			start_date: "",
 			end_date: "",
 			patients: [],
-			questionnaire: []
+			questionnaire: [],
+			consent_form: [],
 		};
 
 		$scope.toSubmit = {
@@ -47,7 +49,8 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				end_date: "",
 			},
 			patients: [],
-			questionnaire: []
+			questionnaire: [],
+			consent_form: [],
 		};
 
 		$scope.validator = {
@@ -77,6 +80,11 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				valid: true,
 			},
 			questionnaire: {
+				completed: false,
+				mandatory: false,
+				valid: true,
+			},
+			consent_form: {
 				completed: false,
 				mandatory: false,
 				valid: true,
@@ -114,9 +122,14 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				open: false,
 				preview: false,
 			},
+			consent_form: {
+				display: false,
+				open: false,
+				preview: false,
+			},
 		};
 
-		var arrValidationInsert = [
+		var arrValidationInsert = [ //TODO add consent form translation
 			$filter('translate')('STUDY.VALIDATION.CODE'),
 			$filter('translate')('STUDY.VALIDATION.TITLE_EN'),
 			$filter('translate')('STUDY.VALIDATION.TITLE_FR'),
@@ -213,6 +226,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				else
 					item.name_display = item.name_EN;
 			});
+			console.log($scope.questionnaireList);
 		}).catch(function(err) {
 			ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
 		}).finally(function() {
@@ -220,6 +234,23 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			processingModal = null; // remove reference
 		});
 
+		// Call our API to get current consent form options
+		studyCollectionService.getConsentForms().then(function (response) {
+			$scope.consentFormList = response.data;
+			angular.forEach($scope.consentFormList, function(item) {
+				item.added = false;
+				if($scope.language === "FR")
+					item.name_display = item.name_FR;
+				else
+					item.name_display = item.name_EN;
+			});
+			console.log($scope.consentFormList);
+		}).catch(function(err){
+			ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
+		}).finally(function(){
+			processingModal.close();
+			processingModal = null;
+		});
 		$scope.formLoaded = false;
 		// Function to load form as animations
 		$scope.loadForm = function () {
@@ -357,6 +388,28 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.validator.questionnaire.completed = $scope.leftMenu.questionnaire.open;
 		}, true);
 
+		$scope.$watch('consentFormList', function (triggerList) {
+			triggerList = angular.copy(triggerList);
+			var pos = -1;
+			angular.forEach(triggerList, function (item) {
+				pos = $scope.toSubmit.consent_form.findIndex(x => x === item.ID);
+				if(item.added) {
+					if (pos === -1) {
+						$scope.toSubmit.consent_form.push(item.ID);
+					}
+				}
+				else {
+					if (pos !== -1) {
+						$scope.toSubmit.consent_form.splice(pos, 1);
+					}
+				}
+			});
+			$scope.leftMenu.consent_form.open = ($scope.toSubmit.consent_form.length > 0);
+			$scope.leftMenu.consent_form.display = $scope.leftMenu.consent_form.open;
+			$scope.leftMenu.consent_form.preview = $scope.leftMenu.consent_form.open;
+			$scope.validator.consent_form.completed = $scope.leftMenu.consent_form.open;
+		}, true);
+
 		$scope.$watch('toSubmit.title_desc', function () {
 			$scope.validator.title_desc.completed = ($scope.toSubmit.title_desc.title_EN && $scope.toSubmit.title_desc.title_FR && $scope.toSubmit.title_desc.description_EN && $scope.toSubmit.title_desc.description_FR);
 			$scope.leftMenu.title_desc.open = ($scope.toSubmit.title_desc.title_EN || $scope.toSubmit.title_desc.title_FR || $scope.toSubmit.title_desc.description_EN || $scope.toSubmit.title_desc.description_FR);
@@ -375,7 +428,8 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.readyToSend.start_date = (($scope.toSubmit.dates.start_date) ? moment($scope.toSubmit.dates.start_date).format('X') : "");
 			$scope.readyToSend.end_date = (($scope.toSubmit.dates.end_date) ? moment($scope.toSubmit.dates.end_date).format('X') : "");
 			$scope.readyToSend.patients = $scope.toSubmit.patients;
-			$scope.readyToSend.questionnaire = $scope.toSubmit.questionnaire;
+			$scope.readyToSend.questionnaire = $scope.toSubmit.questionnaire
+			$scope.readyToSend.consent_form = $scope.toSubmit.consent_form;
 
 			$.ajax({
 				type: 'POST',

@@ -373,4 +373,15 @@ class Study extends Module {
 
         return $total;
     }
+
+    /*
+     * Get the list of consent forms
+     * @return  (array) questionnaire consent forms
+     * */
+    public function getConsentForms() {
+        $this->checkReadAccess();
+        $this->_connectQuestionnaireDB();
+        $result = $this->questionnaireDB->getConsentForms();
+        return $result;
+    }
 }
