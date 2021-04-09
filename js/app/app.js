@@ -161,7 +161,8 @@ angular.module('opalAdmin', [
 			.state('audit', { url: '/audit', templateUrl: "templates/audit/audits.html", controller: "audit", data: { requireLogin: true } })
 			.state('user-activity', { url: '/user-activity', templateUrl: "templates/user/user-activity.html", controller: "userActivity", data: { requireLogin: true } })
 			.state('protected-route', { url: '/protected', resolve: { auth: function resolveAuthentication(AuthResolver) { return AuthResolver.resolve(); } } })
-			.state('sms',{ url: '/sms', templateUrl: "templates/sms/sms.html", controller: "sms", data:{ requireLogin: false } });
+			.state('sms',{ url: '/sms', templateUrl: "templates/sms/sms.html", controller: "sms", data:{ requireLogin: false } })
+			.state('sms/message',{ url: '/sms/message', templateUrl: "templates/sms/sms.message.html", controller: "sms.message", data:{ requireLogin: false } });
 
 	}])
 
