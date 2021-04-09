@@ -200,10 +200,10 @@ class Alias extends Module {
 
         $result["eduMat"] = ($result["eduMatSer"] != "" ? $this->_getEducationalMaterialDetails($result["eduMatSer"]) : "");
         $result["terms"] = $this->opalDB->getAliasExpression($result["serial"]);
-
-        foreach ($result["terms"] as &$term) {
-            $term = intval($term);
-        }
+//
+//        foreach ($result["terms"] as &$term) {
+//            $term["added"] = intval($term["added"]);
+//        }
 
         $result["count"] = count($result["terms"]);
         $result["hospitalMap"] = ($result["hospitalMapSer"] != "" ? $this->opalDB->getHospitalMapDetails($result["hospitalMapSer"]) : "");
@@ -643,98 +643,12 @@ class Alias extends Module {
     }
 
     /**
-     *
-     * Gets a list of source databases
-     *
-     * @return array $sourceDBList : the list of source databases
+     * Get the list of all active source databases
+     * @return array
      */
     public function getSourceDatabases () {
         $this->checkReadAccess();
-        $sourceDBList = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "
-                SELECT DISTINCT
-                    sd.SourceDatabaseSerNum,
-                    sd.SourceDatabaseName
-                FROM
-                    SourceDatabase sd
-                WHERE
-                    sd.Enabled = 1
-                ORDER BY
-                    sd.SourceDatabaseSerNum
-            ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $sourceDBArray = array(
-                    'serial'    => $data[0],
-                    'name'      => $data[1]
-                );
-
-                array_push($sourceDBList, $sourceDBArray);
-
-            }
-
-            return $sourceDBList;
-
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
-        }
-    }
-
-    /**
-     *
-     * Gets appointment checkin details
-     *
-     * @param integer $serial : the alias serial number
-     * @param string $type : the alias type
-     * @return array $checkinDetails : the checkin details
-     */
-    protected function _getCheckinDetails($serial, $type) {
-
-        $checkinDetails = array();
-        if ($type != 'Appointment') {
-            return $checkinDetails;
-        }
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    CheckinPossible AS checkin_possible,
-                    CheckinInstruction_EN AS instruction_EN,
-                    CheckinInstruction_FR AS instruction_FR
-                FROM
-                    AppointmentCheckin
-                WHERE
-                    AliasSerNum = $serial
-            ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
-
-            $checkinPossible    = $data[0];
-            $instruction_EN     = $data[1];
-            $instruction_FR     = $data[2];
-
-            $checkinDetails = array(
-                'checkin_possible'  => $checkinPossible,
-                'instruction_EN'    => $instruction_EN,
-                'instruction_FR'    => $instruction_FR
-            );
-
-            return $checkinDetails;
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
-        }
+        return $this->opalDB->getSourceDatatabes();
     }
 
     /**

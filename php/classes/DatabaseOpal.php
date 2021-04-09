@@ -2755,4 +2755,12 @@ class DatabaseOpal extends DatabaseAccess {
             "SessionId"=>$this->getSessionId(),
         ));
     }
+
+    /**
+     * Get the list of source databases
+     * @return array - list of source databases
+     */
+    function getSourceDatatabes() {
+        return $this->_fetchAll(OPAL_GET_SOURCE_DATABASES, array());
+    }
 }
