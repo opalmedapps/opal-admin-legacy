@@ -413,10 +413,10 @@
                                 </p>
                             </div>
                             <div class="col-xs-12 col-md-6">
-                                <div class="panel" ng-class="(toSubmit.investigator.name) ? 'panel-success': 'panel-danger'">
+                                <div class="panel" ng-class="(toSubmit.investigator.name && toSubmit.investigator.phone && toSubmit.investigator.email) ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>{{'STUDY.ADD.NAME'|translate}}</strong>
-                                        <span ng-hide="toSubmit.investigator.name" style="float:right"><em>{{'STUDY.ADD.INCOMPLETE'|translate}}</em></span>
-                                        <span ng-show="toSubmit.investigator.name" style="float:right"><em>{{'STUDY.ADD.COMPLETE'|translate}}</em></span>
+                                        <span ng-hide="toSubmit.investigator.name && toSubmit.investigator.phone && toSubmit.investigator.email" style="float:right"><em>{{'STUDY.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="toSubmit.investigator.name && toSubmit.investigator.phone && toSubmit.investigator.email" style="float:right"><em>{{'STUDY.ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body form-horizontal">
                                         <div class="form-group">
@@ -425,6 +425,22 @@
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
                                                 <input class="form-control" type="text" ng-model="toSubmit.investigator.name" ng-change="nameUpdate()" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                [EMAIL]{{'STUDY.ADD.NAME'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-lg-10">
+                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.email" ng-change="nameUpdate()" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                [PHONE]{{'STUDY.ADD.NAME'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-lg-10">
+                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.phone" ng-change="nameUpdate()" />
                                             </div>
                                         </div>
                                     </div>
@@ -570,22 +586,17 @@
                                     <span><strong>[CONSENT TR]{{'STUDY.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
                                     [CONSENT TR]{{'STUDY.ADD.QUESTIONNAIRE_EXPLANATION'|translate}}
                                 </p>
-                            </div>
+                              </div>
                             <div class="col-xs-12 col-lg-8">
-                                <div class="panel-container">
+                                <div class="panel-container" >
                                     <div class="panel-info">
                                         <div class="panel-content">
                                             <div class="panel-input">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                                                    <input class="form-control" maxlength="100" type="text" ng-model="consentSearchField" placeholder="{{'STUDY.ADD.SEARCH'|translate}}" />
-                                                </div>
-                                                <ul class="list-items">
-                                                    <li ng-repeat="consentform in consentFormList | filter: consentSearchField">
-                                                        <input type="radio" ng-model="selectedForm.form" value="consentform.name_display"></input>
-                                                        <label>{{consentform.name_display}}</label>
-                                                    </li>
-                                                </ul>
+                                                
+                                               <div>
+                                                    <select ng-model="form" ng-options="consentform.name_display for consentform in consentFormList" ng-change="updateConsent()">
+                                                    </select> 
+                                               </div> 
                                             </div>
                                         </div>
                                     </div>
