@@ -70,7 +70,9 @@ class Study extends Module {
             "title_FR"=>$post["title_FR"],
             "description_EN"=>$post["description_EN"],
             "description_FR"=>$post["description_FR"],
-            "investigator"=>$post["investigator"]
+            "investigator"=>$post["investigator"],
+            "phoneNumber"=>$post["investigator_phone"],
+            "email"=>$post["investigator_email"]
         );
 
         if(array_key_exists("start_date", $post) && $post["start_date"] != "")
@@ -107,12 +109,15 @@ class Study extends Module {
      *                      4: english description missing
      *                      5: french description missing
      *                      6: investigator name missing
-     *                      7: start date (if present) invalid
-     *                      8: end date (if present) invalid
-     *                      9: date range (if start date and end date exist) invalid
-     *                      10: patient list (if exists) invalid
-     *                      11: questionnaire list (if exists) invalid
-     *                      12: study ID is missing or invalid if it is an update
+     *                      7: investigator phone missing
+     *                      8: investigator email missing
+     *                      9: start date (if present) invalid
+     *                      10: end date (if present) invalid
+     *                      11: date range (if start date and end date exist) invalid
+     *                      12: patient list (if exists) invalid
+     *                      13: questionnaire list (if exists) invalid
+     *                      14: consent_form (if exists) invalid
+     *                      15: study ID is missing or invalid if it is an update
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errCode : array - contains the invalid entries with an error code.
      * */
@@ -159,6 +164,18 @@ class Study extends Module {
                 $errCode = "0" . $errCode;
 
             // 7th bit
+            if (!array_key_exists("investigator_phone", $post) || $post["investigator_phone"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            // 8th bit
+            if (!array_key_exists("investigator_email", $post) || $post["investigator_email"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            // 9th bit
             if (array_key_exists("start_date", $post) && $post["start_date"] != "") {
                 if (!HelpSetup::isValidTimeStamp($post["start_date"]))
                     $errCode = "1" . $errCode;
@@ -169,7 +186,7 @@ class Study extends Module {
             } else
                 $errCode = "0" . $errCode;
 
-            // 8th bit
+            // 10th bit
             if (array_key_exists("end_date", $post) && $post["end_date"] != "") {
                 if (!HelpSetup::isValidTimeStamp($post["end_date"]))
                     $errCode = "1" . $errCode;
@@ -180,7 +197,7 @@ class Study extends Module {
             } else
                 $errCode = "0" . $errCode;
 
-            // 9th bit
+            // 11th bit
             if ($startDate && $endDate) {
                 if ((int)$post["end_date"] < (int)$post["start_date"])
                     $errCode = "1" . $errCode;
@@ -189,7 +206,7 @@ class Study extends Module {
             } else
                 $errCode = "0" . $errCode;
 
-            //10th bit
+            //12th bit
             if (array_key_exists("patients", $post)) {
                 if(!is_array($post["patients"]))
                     $errCode = "1" . $errCode;
@@ -206,7 +223,7 @@ class Study extends Module {
             } else
                 $errCode = "0" . $errCode;
 
-            //11th bit
+            //13th bit
             if (array_key_exists("questionnaire", $post)) {
                 if(!is_array($post["questionnaire"]))
                     $errCode = "1" . $errCode;
@@ -222,7 +239,19 @@ class Study extends Module {
             } else
                 $errCode = "0" . $errCode;
 
-            //12th bit
+            //14th bit
+            if (array_key_exists("consent_form", $post)) {
+                if(!is_array($post["consent_form"]))
+                    $errCode = "1" . $errCode;
+                else {
+                    if(count($post["consent_form"]) > 1){
+                        $errCode = "1" . $errCode;
+                    } 
+                }
+            } else
+                $errCode = "0" . $errCode;
+
+            //15th bit
             if($isAnUpdate) {
                 if (!array_key_exists("id", $post) || $post["id"] == "")
                     $errCode = "1" . $errCode;
@@ -238,7 +267,7 @@ class Study extends Module {
             } else
                 $errCode = "0" . $errCode;
         } else
-            $errCode .= "11111111111";
+            $errCode .= "11111111111111";
 
         return $errCode;
     }
