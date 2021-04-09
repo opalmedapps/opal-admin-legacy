@@ -1338,3 +1338,8 @@ define("OPAL_UPDATE_ALIAS_PUBLISH_FLAG","
     UPDATE ".OPAL_ALIAS_TABLE." SET AliasUpdate = :AliasUpdate, LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId
     WHERE AliasSerNum = :AliasSerNum;
 ");
+
+define("OPAL_GET_SOURCE_DATABASES","
+    SELECT SourceDatabaseSerNum AS serial, SourceDatabaseName AS name FROM ".OPAL_SOURCE_DATABASE_TABLE."
+    WHERE Enabled = ".ACTIVE_RECORD." ORDER BY SourceDatabaseSerNum
+");
