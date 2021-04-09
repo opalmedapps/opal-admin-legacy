@@ -171,5 +171,9 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 			$state.go('sms');
 		};
 
+		$scope.goToSMSMessage = function(){
+			$state.go('sms/message');
+		};
+
 	});
 
