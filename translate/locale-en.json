@@ -2312,6 +2312,8 @@
       "TITLE_2": "Title",
       "STUDY_ID": "Study ID",
       "INVESTIGATOR": "Main Investigator",
+      "PHONE": "Phone Number",
+      "EMAIL": "Email",
       "START_DATE": "Start Date",
       "END_DATE": "End Date",
       "CREATION_DATE": "Date of creation",

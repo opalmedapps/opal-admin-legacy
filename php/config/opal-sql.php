@@ -656,7 +656,7 @@ define("OPAL_GET_USER_TEST_RESULT_EXP","
 ");
 
 define("OPAL_GET_STUDIES_LIST","
-    SELECT ID, code, title_EN, title_FR, investigator, startDate, endDate, creationDate FROM ".OPAL_STUDY_TABLE."
+    SELECT ID, code, title_EN, title_FR, investigator, email, phoneNumber, startDate, endDate, creationDate FROM ".OPAL_STUDY_TABLE."
     WHERE deleted = ".NON_DELETED_RECORD.";
 ");
 

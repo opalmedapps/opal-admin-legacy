@@ -239,14 +239,15 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 
 		// Call our API to get current consent form options
 		studyCollectionService.getConsentForms().then(function (response) {
-			$scope.consentFormList = response.data;
-			angular.forEach($scope.consentFormList, function(item) {
-				item.added = false;
-				if($scope.language === "FR")
-					item.name_display = item.name_FR;
-				else
-					item.name_display = item.name_EN;
+			response.data.forEach(function(entry){
+				if($scope.language.toUpperCase() === "FR"){
+					entry.name_display = entry.name_FR;
+				}else{
+					entry.name_display = entry.name_EN;
+				}	
 			});
+			$scope.consentFormList = response.data;
+			console.log($scope.consentFormList);
 		}).catch(function(err){
 			ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
 		}).finally(function(){
@@ -260,11 +261,18 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$('.form-box-right').addClass('fadeInRight');
 		};
 
-		$scope.form = "";
-		$scope.updateConsent = function(){
-			console.log($scope.form);
-			//$scope.toSubmit.consent_form.id = selection.ID;
-			console.log($scope.toSubmit);
+	
+		$scope.consentFormUpdate = function(event, form){
+		
+			console.log(form);
+	
+			$scope.toSubmit.consent_form.id = form.ID;
+
+			$scope.leftMenu.consent_form.open = $scope.toSubmit.consent_form;
+			$scope.leftMenu.consent_form.display = $scope.leftMenu.consent_form.open;
+			$scope.leftMenu.consent_form.preview = $scope.leftMenu.consent_form.open;
+			$scope.validator.consent_form.completed = $scope.leftMenu.consent_form.open;
+		
 		}
 	
 
@@ -396,17 +404,6 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.leftMenu.questionnaire.display = $scope.leftMenu.questionnaire.open;
 			$scope.leftMenu.questionnaire.preview = $scope.leftMenu.questionnaire.open;
 			$scope.validator.questionnaire.completed = $scope.leftMenu.questionnaire.open;
-		}, true);
-
-		$scope.$watch('consentFormList', function (form) {
-			// form = angular.copy(form);
-			// console.log(form.ID);
-			// $scope.toSubmit.consent_form.id = form.ID;
-			
-			$scope.leftMenu.consent_form.open = $scope.toSubmit.consent_form;
-			$scope.leftMenu.consent_form.display = $scope.leftMenu.consent_form.open;
-			$scope.leftMenu.consent_form.preview = $scope.leftMenu.consent_form.open;
-			$scope.validator.consent_form.completed = $scope.leftMenu.consent_form.open;
 		}, true);
 
 		$scope.$watch('toSubmit.title_desc', function () {
