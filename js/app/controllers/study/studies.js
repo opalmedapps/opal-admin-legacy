@@ -81,10 +81,12 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 			columnDefs: [
 				{ field: 'title_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.TITLE_2'), cellTemplate: cellTemplateName, sort: {direction: uiGridConstants.ASC, priority: 0}},
 				{ field: 'code', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.STUDY_ID'), width: '10%'},
-				{ field: 'investigator', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.INVESTIGATOR'), width: '15%'},
+				{ field: 'investigator', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.INVESTIGATOR'), width: '10%'},
+				{ field: 'phoneNumber', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.PHONE'), width: '10%'},
+				{ field: 'email', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.EMAIL'), width: '10%'},
 				{ field: 'startDate', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.START_DATE'), width: '10%'},
 				{ field: 'endDate', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.END_DATE'), width: '10%'},
-				{ field: 'creationDate', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.CREATION_DATE'), width: '15%'},
+				{ field: 'creationDate', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.CREATION_DATE'), width: '10%'},
 				{ name: $filter('translate')('STUDY.LIST.OPERATIONS'), width: '10%', cellTemplate: cellTemplateOperations, enableColumnMenu: false, enableFiltering: false, sortable: false }
 			],
 			enableFiltering: true,
