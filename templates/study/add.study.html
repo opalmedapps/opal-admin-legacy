@@ -592,11 +592,19 @@
                                     <div class="panel-info">
                                         <div class="panel-content">
                                             <div class="panel-input">
-                                                
-                                               <div>
-                                                    <select ng-model="form" ng-options="consentform.name_display for consentform in consentFormList" ng-change="updateConsent()">
-                                                    </select> 
-                                               </div> 
+                                                <div class="list-space">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                        <input class="form-control" type="text" maxlength="100" ng-model="consentFormFilter" placeholder="{{'STUDY.ADD.SEARCH'|translate}}"/>
+                                                    </div>
+                                                    <ul class="list-items">
+                                                        <li ng-repeat="form in consentFormList | filter: consentFormFilter">
+                                                            <label>
+                                                                <input type="radio" ng-click="consentFormUpdate($event, form)" value="{{form.ID}}" /> {{form.name_display}}
+                                                            </label>
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
