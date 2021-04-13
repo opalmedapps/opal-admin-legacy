@@ -3,8 +3,43 @@
         <div class="clearfix">
             <div class="row">
                 <!-- Load side menu -->
-                <div id="side-panel-scrollbar" class="col-lg-2">
-                    <div ng-include="'templates/side-panel-menu.html'"></div>
+                <div class="col-lg-2">
+                    <div class="side-navbar" ng-controller="navigation">
+                        <div class="row side-logo" ng-click="goToHome()">
+                            <div class="col-md-12">
+                                <div class="logo">
+                                    <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+                                </div>
+                                <h1 class="animated fadeIn">opal <strong>ADMIN</strong></h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="summary-fix">
+                        <!-- Back button -->
+                        <div class="row side-panel-menu">
+                            <div class="col-xs-12 col-sm-5 col-lg-12">
+                                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                                    <div class="side-panel-info-sm">
+                                        <div class="panel-content">
+                                            <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                                            <h6 class="side-panel-title"><strong>Back to SMS</strong></h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right detail panel view -->
+                <div class="col-lg-10 animated fadeIn">
+                    <div class="row main-title">
+                        <!-- Page title -->
+                        <div class="col-xs-12 col-md-9 title-content">
+                            <span class="glyphicon glyphicon-envelope"></span>
+                            <h1><strong>SMS Message</strong></h1>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>

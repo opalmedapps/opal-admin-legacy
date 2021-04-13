@@ -118,6 +118,10 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             updateList: []
         };
 
+        $scope.goToMessage = function(){
+            $state.go('sms/message');
+        }
+
         $scope.submitUpdate = function () {
             console.log("test");
             if ($scope.changesMade && $scope.writeAccess) {
