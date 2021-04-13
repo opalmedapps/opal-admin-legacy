@@ -151,6 +151,38 @@
                 </div>
             </div>
         </div>
+        <!-- SECTION: Set Consent Status -->
+        <div uib-accordion-group is-open="statusSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>[Set Patient Consent Status Section]</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusSection.open, 'glyphicon-chevron-right': !statusSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="alert alert-info" role="alert">
+                <strong>[Current Stati]</strong><br>
+                <p>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!(patientsList|filter:{added:true}).length"></span>
+                    <span ng-if="!(patientsList|filter:{added:true}).length">{{'STUDY.EDIT.NO_PATIENT'|translate}}</span>
+                <ul class="list-items" ng-if="(patientsList|filter:{added:true}).length">
+                    <li ng-repeat="study in patientsList | filter: {added: true} : 1">{{study.name}}</li>
+                </ul>
+                </p>
+            </div>
+            <div>
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                    <input class="form-control" maxlength="100" type="text" ng-model="patientSearchField" placeholder="{{'STUDY.EDIT.SEARCH'|translate}}" />
+                </div>
+
+                <ul class="list-items">
+                    <li ng-repeat="patient in patientConsentList | filter: patientSearchField">
+                        <label>
+                            {{patient.name}} {{patient.consent}}
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
         <!-- SECTION: Patients list -->
         <div uib-accordion-group is-open="patienSection.open">
             <uib-accordion-heading>
