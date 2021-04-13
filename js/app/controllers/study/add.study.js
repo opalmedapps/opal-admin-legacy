@@ -24,6 +24,8 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			description_EN: "",
 			description_FR: "",
 			investigator: "",
+			investigator_email: "",
+			investigator_phone: "",
 			start_date: "",
 			end_date: "",
 			patients: [],
@@ -247,7 +249,6 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				}	
 			});
 			$scope.consentFormList = response.data;
-			console.log($scope.consentFormList);
 		}).catch(function(err){
 			ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
 		}).finally(function(){
@@ -263,16 +264,11 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 
 	
 		$scope.consentFormUpdate = function(event, form){
-		
-			console.log(form);
-	
 			$scope.toSubmit.consent_form.id = form.ID;
-
 			$scope.leftMenu.consent_form.open = $scope.toSubmit.consent_form;
 			$scope.leftMenu.consent_form.display = $scope.leftMenu.consent_form.open;
 			$scope.leftMenu.consent_form.preview = $scope.leftMenu.consent_form.open;
 			$scope.validator.consent_form.completed = $scope.leftMenu.consent_form.open;
-		
 		}
 	
 
@@ -427,22 +423,22 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.readyToSend.end_date = (($scope.toSubmit.dates.end_date) ? moment($scope.toSubmit.dates.end_date).format('X') : "");
 			$scope.readyToSend.patients = $scope.toSubmit.patients;
 			$scope.readyToSend.questionnaire = $scope.toSubmit.questionnaire
-			$scope.readyToSend.consent_form = $scope.toSubmit.consent_form;
+			$scope.readyToSend.consent_form = $scope.toSubmit.consent_form.id;
 			
 			console.log($scope.readyToSend);
-			// $.ajax({
-			// 	type: 'POST',
-			// 	url: 'study/insert/study',
-			// 	data: $scope.readyToSend,
-			// 	success: function () {},
-			// 	error: function (err) {
-			// 		err.responseText = JSON.parse(err.responseText);
-			// 		ErrorHandler.onError(err, $filter('translate')('STUDY.ADD.ERROR_ADD'), arrValidationInsert);
-			// 	},
-			// 	complete: function () {
-			// 		$state.go('study');
-			// 	}
-			// });
+			$.ajax({
+				type: 'POST',
+				url: 'study/insert/study',
+				data: $scope.readyToSend,
+				success: function () {},
+				error: function (err) {
+					err.responseText = JSON.parse(err.responseText);
+					ErrorHandler.onError(err, $filter('translate')('STUDY.ADD.ERROR_ADD'), arrValidationInsert);
+				},
+				complete: function () {
+					$state.go('study');
+				}
+			});
 		};
 
 		var fixmeTop = $('.summary-fix').offset().top;

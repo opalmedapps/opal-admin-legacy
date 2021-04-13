@@ -661,7 +661,7 @@ define("OPAL_GET_STUDIES_LIST","
 ");
 
 define("OPAL_GET_STUDY_DETAILS","
-    SELECT ID, code, title_EN, title_FR, description_EN, description_FR, investigator, startDate, endDate FROM ".OPAL_STUDY_TABLE." WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD.";
+    SELECT ID, consentQuestionnaireId, code, title_EN, title_FR, description_EN, description_FR, investigator, email, phoneNumber, startDate, endDate FROM ".OPAL_STUDY_TABLE." WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD.";
 ");
 
 define("OPAL_UPDATE_STUDY","
