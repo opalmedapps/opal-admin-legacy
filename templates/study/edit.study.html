@@ -94,6 +94,22 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">[PI Email]</span>
+                        <input class="form-control" type="text" ng-model="toSubmit.investigator.email" required="required" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">[PI Phone]</span>
+                        <input class="form-control" type="text" ng-model="toSubmit.investigator.phone" required="required" />
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- SECTION: Dates -->
         <div uib-accordion-group is-open="datesSection.open">
@@ -204,10 +220,13 @@
                     <strong>[FR]Consent Form </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': consentSection.open, 'glyphicon-chevron-right': !consentSection.open}"></i>
                 </div>
             </uib-accordion-heading>
-            <div>
-                <ul class="list-items" style="border-style: none;" ng-if="(questionnaireList|filter:{added:true}).length">
-                    <li ng-repeat="questionnaire in questionnaireList | filter: {added: true} : 1">{{questionnaire.name_display}}</li>
-                </ul>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">[Consent Form]</span>
+                        <input ng-disabled="true" class="form-control" type="text" ng-model="toSubmit.consent_form.id" required="required" />
+                    </div>
+                </div>
             </div>
         </div>
     </uib-accordion>

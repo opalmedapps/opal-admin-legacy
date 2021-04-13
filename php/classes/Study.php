@@ -72,7 +72,8 @@ class Study extends Module {
             "description_FR"=>$post["description_FR"],
             "investigator"=>$post["investigator"],
             "phoneNumber"=>$post["investigator_phone"],
-            "email"=>$post["investigator_email"]
+            "email"=>$post["investigator_email"],
+            "consentQuestionnaireId"=>$post["consent_form"]
         );
 
         if(array_key_exists("start_date", $post) && $post["start_date"] != "")
@@ -240,17 +241,13 @@ class Study extends Module {
                 $errCode = "0" . $errCode;
 
             //14th bit
-            if (array_key_exists("consent_form", $post)) {
-                if(!is_array($post["consent_form"]))
-                    $errCode = "1" . $errCode;
-                else {
-                    if(count($post["consent_form"]) > 1){
-                        $errCode = "1" . $errCode;
-                    } 
-                }
-            } else
+            if (!array_key_exists("consent_form", $post) || $post["consent_form"] == "")
+                $errCode = "1" . $errCode;
+            else if (count($post["consent_form"]) > 1)
+                $errCode = "1" . $errCode;
+            else
                 $errCode = "0" . $errCode;
-
+            
             //15th bit
             if($isAnUpdate) {
                 if (!array_key_exists("id", $post) || $post["id"] == "")

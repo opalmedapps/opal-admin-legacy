@@ -10,10 +10,13 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 		description_EN: "",
 		description_FR: "",
 		investigator: "",
+		investigator_phone: "",
+		investigator_email: "",
 		start_date: "",
 		end_date: "",
 		patients: [],
-		questionnaire: []
+		questionnaire: [],
+		consent_form: "",
 	};
 
 	$scope.toSubmit = {
@@ -28,14 +31,19 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			description_FR: "",
 		},
 		investigator: {
-			name: ""
+			name: "",
+			email: "",
+			phone: "",
 		},
 		dates: {
 			start_date: "",
 			end_date: "",
 		},
 		patients: [],
-		questionnaire: []
+		questionnaire: [],
+		consent_form: {
+			id: ""
+		}
 	};
 
 	// Default toolbar for wysiwyg
@@ -50,7 +58,6 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	$scope.changesDetected = false;
 	$scope.formReady = false;
 	$scope.patientsList = [];
-	$scope.consentForm = [];
 	$scope.backupStudy = [];
 	$scope.ready = [false, false, false];
 
@@ -86,8 +93,8 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			valid: true,
 		},
 		consent_form: {
-			completed: false,
-			mandatory: false,
+			completed: true,
+			mandatory: true,
 			valid: true,
 		},
 	};
@@ -194,6 +201,9 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			$scope.toSubmit.title_desc.description_EN = $scope.backupStudy.description_EN;
 			$scope.toSubmit.title_desc.description_FR = $scope.backupStudy.description_FR;
 			$scope.toSubmit.investigator.name = $scope.backupStudy.investigator;
+			$scope.toSubmit.investigator.email = $scope.backupStudy.email;
+			$scope.toSubmit.investigator.phone = $scope.backupStudy.phoneNumber;
+			$scope.toSubmit.consent_form.id = $scope.backupStudy.consentQuestionnaireId;
 			if($scope.backupStudy.startDate !== "" && $scope.backupStudy.startDate !== null) {
 				dateArray = $scope.backupStudy.startDate.split("-");
 				year = dateArray[0];
@@ -299,7 +309,11 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	}, true);
 
 	$scope.$watch('toSubmit.investigator', function(){
-		$scope.validator.details.completed = !!$scope.toSubmit.investigator.name;
+		$scope.validator.details.completed = !!($scope.toSubmit.investigator.name && $scope.toSubmit.investigator.phone && $scope.toSubmit.investigator.email);
+	}, true);
+
+	$scope.$watch('toSubmit.consent_form', function(){
+		$scope.validator.consent_form.completed = !!$scope.toSubmit.consent_form.id;
 	}, true);
 
 	// Watch to restrict the end calendar to not choose an earlier date than the start date
@@ -370,10 +384,13 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			$scope.readyToSend.description_EN = $scope.toSubmit.title_desc.description_EN;
 			$scope.readyToSend.description_FR = $scope.toSubmit.title_desc.description_FR;
 			$scope.readyToSend.investigator = $scope.toSubmit.investigator.name;
+			$scope.readyToSend.investigator_email = $scope.toSubmit.investigator.email;
+			$scope.readyToSend.investigator_phone = $scope.toSubmit.investigator.phone;
 			$scope.readyToSend.start_date = (($scope.toSubmit.dates.start_date) ? moment($scope.toSubmit.dates.start_date).format('X') : "");
 			$scope.readyToSend.end_date = (($scope.toSubmit.dates.end_date) ? moment($scope.toSubmit.dates.end_date).format('X') : "");
 			$scope.readyToSend.patients = $scope.toSubmit.patients;
 			$scope.readyToSend.questionnaire = $scope.toSubmit.questionnaire;
+			$scope.readyToSend.consent_form = $scope.toSubmit.consent_form.id;
 
 			$.ajax({
 				type: "POST",
