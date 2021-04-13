@@ -1013,6 +1013,18 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
+		studyAPI.getPatientConsentList = function (studyId) {
+			return $http.post(
+				"study/get/patients-consents",
+				$.param({
+					studyId: studyId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
 		studyAPI.getResearchPatient = function () {
 			return $http.post(
 				"study/get/research-patient",
