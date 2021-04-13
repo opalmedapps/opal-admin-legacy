@@ -14,6 +14,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 		investigator_email: "",
 		start_date: "",
 		end_date: "",
+		patientConsents: [],
 		patients: [],
 		questionnaire: [],
 		consent_form: "",
@@ -39,6 +40,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			start_date: "",
 			end_date: "",
 		},
+		patientConsents:[],
 		patients: [],
 		questionnaire: [],
 		consent_form: {
@@ -58,8 +60,9 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	$scope.changesDetected = false;
 	$scope.formReady = false;
 	$scope.patientsList = [];
+	$scope.patientConsentList = [];
 	$scope.backupStudy = [];
-	$scope.ready = [false, false, false];
+	$scope.ready = [false, false, false, false];
 
 	$scope.validator = {
 		details: {
@@ -78,6 +81,11 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			valid: true,
 		},
 		dates: {
+			completed: false,
+			mandatory: false,
+			valid: true,
+		},
+		patientConsents: {
 			completed: false,
 			mandatory: false,
 			valid: true,
@@ -177,6 +185,13 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 		ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
 	});
 
+	studyCollectionService.getPatientConsentList($scope.currentStudy.ID).then(function(response){
+		$scope.patientConsentList = response.data;
+		$scope.ready[1] = true;
+	}).catch(function(err){
+		ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
+	});
+
 	$scope.$watch('ready', function() {
 		if( $scope.ready.every(function (rd) {return rd;}) )
 		{
@@ -185,6 +200,10 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 				$scope.validator.patients.completed = true;
 			if($scope.questionnaireList.length > 0)
 				$scope.validator.questionnaire.completed = true;
+			
+			console.log($scope.patientsList);
+			console.log($scope.patientConsentList);
+			console.log($scope.backupStudy);
 
 			angular.forEach($scope.patientsList, function(value) {
 				value.added = $scope.backupStudy.patients.includes(value.id);
@@ -222,6 +241,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			}
 			$scope.toSubmit.patients = $scope.backupStudy.patients;
 			$scope.toSubmit.questionnaire = $scope.backupStudy.questionnaire;
+			$scope.toSubmit.patientConsents = $scope.patientConsentList;
 			$scope.oldData = JSON.parse(JSON.stringify($scope.toSubmit));
 			$scope.oldData.dates.start_date = $scope.toSubmit.dates.start_date;
 			$scope.oldData.dates.end_date = $scope.toSubmit.dates.end_date;
@@ -233,7 +253,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	// Call our API service to get the current diagnosis translation details
 	studyCollectionService.getStudiesDetails($scope.currentStudy.ID).then(function (response) {
 		$scope.backupStudy = response.data;
-		$scope.ready[1] = true;
+		$scope.ready[2] = true;
 	}).catch(function(err) {
 		ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
 	});
@@ -248,7 +268,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			else
 				item.name_display = item.name_EN;
 		});
-		$scope.ready[2] = true;
+		$scope.ready[3] = true;
 	}).catch(function(err) {
 		ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
 	}).finally(function() {

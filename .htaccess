@@ -287,6 +287,7 @@ RewriteRule ^role/update/role php/role/update.role.php [QSA,L]
 
 # Studies Section
 RewriteRule ^study/get/patients-list php/study/get.patients.list.php [QSA,L]
+RewriteRule ^study/get/patients-consents php/study/get.patient.consents.php [QSA,L]
 RewriteRule ^study/get/research-patient php/study/get.research.patient.php [QSA,L]
 RewriteRule ^study/get/study-details php/study/get.study.details.php [QSA,L]
 RewriteRule ^study/get/consent-forms php/study/get.consent.forms.php [QSA,L]

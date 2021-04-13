@@ -308,6 +308,18 @@ class Study extends Module {
         return $result;
     }
 
+    /*
+    * Get the list of patient consents for
+    * @params $studyId (int) ID of the study
+    * @return (array) details of patient consent status
+    */
+    public function getPatientsConsentList($studyId) {
+        $this->checkReadAccess($studyId);
+        $result = $this->opalDB->getPatientsStudyConsents($studyId);
+        return $result;
+    }
+
+
     protected static function _sort_name($a, $b){
         return strcmp($a["name"], $b["name"]);
     }
