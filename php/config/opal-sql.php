@@ -669,6 +669,10 @@ define("OPAL_UPDATE_STUDY","
     endDate = :endDate, updatedBy = :updatedBy WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD."; 
 ");
 
+define("OPAL_UPDATE_STUDY_CONSENT", "
+    UPDATE ".OPAL_PATIENT_STUDY_TABLE." SET consentStatus = :patientConsent WHERE studyId = :studyId AND patientId = :patientId;
+");
+
 define("OPAL_MARK_STUDY_AS_DELETED", "
     UPDATE ".OPAL_STUDY_TABLE." SET deleted = ".DELETED_RECORD.", updatedBy = :updatedBy WHERE ID = :ID;
 ");

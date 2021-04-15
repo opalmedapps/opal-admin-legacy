@@ -243,8 +243,6 @@ class Study extends Module {
             //14th bit
             if (!array_key_exists("consent_form", $post) || $post["consent_form"] == "")
                 $errCode = "1" . $errCode;
-            else if (count($post["consent_form"]) > 1)
-                $errCode = "1" . $errCode;
             else
                 $errCode = "0" . $errCode;
             
@@ -375,6 +373,16 @@ class Study extends Module {
         }
         $total += $this->opalDB->deletePatientsStudy($study["ID"], $toKeep);
 
+        //update any changed patient consents
+        if(array_key_exists("patientConsents", $post) && is_array($post["patientConsents"]) && count($post["patientConsents"]) > 0){
+            foreach($post["patientConsents"] as $item){
+                if($item['changed'] && $item['consent'] && $item['id']){
+                    $this->opalDB->updateStudyConsent($study["ID"], $item['id'], $item['consent']);  
+                    $total += 1;
+                }
+            }
+        }
+        
         if(count($toAdd) > 0) {
             $toInsertMultiple = array();
             foreach ($toAdd as $patient)
@@ -382,7 +390,7 @@ class Study extends Module {
 
             $total += $this->opalDB->insertMultiplePatientsStudy($toInsertMultiple);
         }
-
+        
         //Update questionnaire-study table
         $currentQuestionnaires = array();
         $toKeep = array(-1);

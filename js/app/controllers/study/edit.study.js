@@ -56,6 +56,8 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 		['html', 'insertLink']
 	];
 
+	$scope.consentChoices = ['invited','opalConsented','otherConsented','declined']; //hardcoded until we decide if we want to add a consent choices table in the DB
+
 	$scope.oldData = {};
 	$scope.changesDetected = false;
 	$scope.formReady = false;
@@ -178,6 +180,10 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	// Show processing dialog
 	$scope.showProcessingModal();
 
+	$scope.consentChange = function(value){
+		value.changed = true;
+	}
+
 	studyCollectionService.getPatientsList().then(function (response) {
 		$scope.patientsList = response.data;
 		$scope.ready[0] = true;
@@ -187,6 +193,9 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 
 	studyCollectionService.getPatientConsentList($scope.currentStudy.ID).then(function(response){
 		$scope.patientConsentList = response.data;
+		angular.forEach($scope.patientConsentList, function(value){
+			value.changed = null;
+		});
 		$scope.ready[1] = true;
 	}).catch(function(err){
 		ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
@@ -200,11 +209,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 				$scope.validator.patients.completed = true;
 			if($scope.questionnaireList.length > 0)
 				$scope.validator.questionnaire.completed = true;
-			
-			console.log($scope.patientsList);
-			console.log($scope.patientConsentList);
-			console.log($scope.backupStudy);
-
+		 
 			angular.forEach($scope.patientsList, function(value) {
 				value.added = $scope.backupStudy.patients.includes(value.id);
 			});
@@ -212,6 +217,8 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			angular.forEach($scope.questionnaireList, function(value) {
 				value.added = $scope.backupStudy.questionnaire.includes(value.ID);
 			});
+
+			
 
 			$scope.toSubmit.ID = $scope.backupStudy.ID;
 			$scope.toSubmit.details.code = $scope.backupStudy.code;
@@ -411,12 +418,13 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			$scope.readyToSend.patients = $scope.toSubmit.patients;
 			$scope.readyToSend.questionnaire = $scope.toSubmit.questionnaire;
 			$scope.readyToSend.consent_form = $scope.toSubmit.consent_form.id;
-
+			$scope.readyToSend.patientConsents = $scope.patientConsentList;
 			$.ajax({
 				type: "POST",
 				url: "study/update/study",
 				data: $scope.readyToSend,
-				success: function () {},
+				success: function () {
+				},
 				error: function (err) {
 					ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_UPDATE'), arrValidationInsert);
 				},
