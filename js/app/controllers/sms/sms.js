@@ -123,7 +123,6 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
         }
 
         $scope.submitUpdate = function () {
-            console.log("test");
             if ($scope.changesMade && $scope.writeAccess) {
                 angular.forEach($scope.smsAppointments, function (sms) {
                     if (sms.modified) {

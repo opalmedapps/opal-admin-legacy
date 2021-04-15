@@ -31,7 +31,7 @@
                     </div>
                 </div>
                 <!-- Right detail panel view -->
-                <div class="col-lg-10 animated fadeIn">
+                <div class="col-xs-12 col-lg-10 animated fadeInRight">
                     <div class="row main-title">
                         <!-- Page title -->
                         <div class="col-xs-12 col-md-9 title-content">
@@ -40,6 +40,28 @@
                         </div>
 
                     </div>
+                    <div class="row mobile-side-panel-menu">
+                        <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
+                            <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                                <div class="side-panel-info-sm">
+                                    <div class="panel-content">
+                                        <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                                        <h6 class="side-panel-title"><strong>{{'ALIAS.ADD.BACK'|translate}}</strong></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkForm()">
+                            <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
+                                    <span style="padding: 0 10px;">
+                                        <h2>{{'ALIAS.ADD.STEP'|translate}} {{numOfCompletedSteps}} {{'ALIAS.ADD.OF'|translate}} {{stepTotal}} {{'ALIAS.ADD.COMPLETED'|translate}}</h2>
+                                    </span>
+                            </div>
+                            <div class="progress progress-striped active">
+                                <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                                </div>
+                            </div>
+                        </div>
                 </div>
             </div>
         </div>

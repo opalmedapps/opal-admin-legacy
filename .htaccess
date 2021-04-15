@@ -336,3 +336,6 @@ RewriteRule ^user/validate-login php/user/user.login.php [QSA,L]
 # SMS Section
 RewriteRule ^sms/get/appointment /php/sms/get.smsAppointment.php [QSA,L]
 RewriteRule ^sms/update/activation /php/sms/update.activationState.php [QSA,L]
+RewriteRule ^sms/update/smsMessage /php/sms/update.smsMessage.php [QSA,L]
+RewriteRule ^sms/get/events /php/sms/get.events.php [QSA,L]
+RewriteRule ^sms/get/message /php/sms/get.message.php [QSA,L]
