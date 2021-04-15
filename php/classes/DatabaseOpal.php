@@ -1242,6 +1242,20 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_updateRecordIntoTable(OPAL_UPDATE_STUDY, $study);
     }
 
+    /**
+     * Update a specific patient consent status (invited, opalConsented, otherConsented, declined)
+     * @params $studyID (int) study id
+     *         $patId (int) patient Id
+     *         $patConsent (str) new patient consent
+     */
+    function updateStudyConsent($studyID, $patId, $patConsent){
+        return $this->_fetchAll(OPAL_UPDATE_STUDY_CONSENT, array(
+            array("parameter"=>":studyId","variable"=>$studyID,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":patientId","variable"=>$patId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":patientConsent","variable"=>$patConsent,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
     /*
      * Marks a specified study as deleted.
      * @param   int : $studyId (ID of the study to mark as deleted)
@@ -2665,7 +2679,6 @@ class DatabaseOpal extends DatabaseAccess {
      */
     function deleteQuestionnairesStudy($studyId, $toKeep) {
         $sql = str_replace("%%LISTIDS%%", implode(", ", $toKeep),OPAL_DELETE_QUESTIONNAIRES_STUDY);
-        echo "\r\n" . str_replace(":studyId", $studyId, $sql) . "\r\n";
         return $this->_execute($sql, array(
             array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
         ));
