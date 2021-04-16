@@ -451,4 +451,6 @@ class Patient extends Module {
         return $this->opalDB->getDemoReport();
 
     }
+
+
 }
