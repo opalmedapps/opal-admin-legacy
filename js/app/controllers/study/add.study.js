@@ -75,6 +75,11 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				mandatory: true,
 				valid: true,
 			},
+			consent_form: {
+				completed: false,
+				mandatory: true,
+				valid: true,
+			},
 			dates: {
 				completed: false,
 				mandatory: false,
@@ -89,12 +94,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				completed: false,
 				mandatory: false,
 				valid: true,
-			},
-			consent_form: {
-				completed: false,
-				mandatory: false,
-				valid: true,
-			},
+			}
 		};
 
 		$scope.leftMenu = {
@@ -263,8 +263,9 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 		};
 
 	
-		$scope.consentFormUpdate = function(event, form){
+		$scope.consentFormUpdate = function(form){
 			$scope.toSubmit.consent_form.id = form.ID;
+			$scope.selectedName = form.name_display;
 			$scope.leftMenu.consent_form.open = $scope.toSubmit.consent_form;
 			$scope.leftMenu.consent_form.display = $scope.leftMenu.consent_form.open;
 			$scope.leftMenu.consent_form.preview = $scope.leftMenu.consent_form.open;
@@ -424,7 +425,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.readyToSend.patients = $scope.toSubmit.patients;
 			$scope.readyToSend.questionnaire = $scope.toSubmit.questionnaire
 			$scope.readyToSend.consent_form = $scope.toSubmit.consent_form.id;
-			
+
 			$.ajax({
 				type: 'POST',
 				url: 'study/insert/study',

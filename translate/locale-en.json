@@ -2390,7 +2390,13 @@
       "PATIENTS_SELECTED": "patient(s) selected",
       "QUESTIONNAIRE_SELECTED": "questionnaire(s) selected",
       "ERROR_ADD": "An error occured while creating the study.",
-      "ERROR_PATIENTS_LIST": "An error occured while dowloading the list of patients."
+      "ERROR_PATIENTS_LIST": "An error occured while dowloading the list of patients.",
+      "CONSENT_SELECTED": "Consent form selected",
+      "CONSENT_FORM": "Consent Form",
+      "CONSENT_FORM_EXPLANATION": "Please select the study consent form from the list.",
+      "EMAIL": "Email",
+      "PHONE": "Phone Number",
+      "FORM": "Form"
     },
     "EDIT": {
       "TITLE": "Edit Study",
@@ -2422,7 +2428,10 @@
       "CURRENT_QUESTIONNAIRE": "Current Questionnaires",
       "SEARCH": "Search...",
       "ERROR_DETAILS": "An error occurred while getting the study details.",
-      "ERROR_UPDATE": "An error occurred while updating the study."
+      "ERROR_UPDATE": "An error occurred while updating the study.",
+      "CONSENT_STATUS": "Patient Consent Status",
+      "CONSENT_FORM": "Consent Form",
+      "CONSENT_ID": "Form:"
     }
   },
   "ALERT" : {

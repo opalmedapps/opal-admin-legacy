@@ -691,18 +691,19 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 						$scope.toSubmit.publishDateTime = tempDate;
 					}
 				}
-				$.ajax({
-					type: "POST",
-					url: "publication/insert/publication",
-					data: $scope.toSubmit,
-					success: function () {},
-					error: function (err) {
-						ErrorHandler.onError(err, $filter('translate')('PUBLICATION.ADD.ERROR_ADD'));
-					},
-					complete: function () {
-						$state.go('publication');
-					}
-				});
+				console.log($scope.toSubmit);
+				// $.ajax({
+				// 	type: "POST",
+				// 	url: "publication/insert/publication",
+				// 	data: $scope.toSubmit,
+				// 	success: function () {},
+				// 	error: function (err) {
+				// 		ErrorHandler.onError(err, $filter('translate')('PUBLICATION.ADD.ERROR_ADD'));
+				// 	},
+				// 	complete: function () {
+				// 		$state.go('publication');
+				// 	}
+				// });
 			}
 		};
 

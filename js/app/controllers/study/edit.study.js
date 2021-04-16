@@ -180,7 +180,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	// Show processing dialog
 	$scope.showProcessingModal();
 
-	$scope.consentChange = function(value){
+	$scope.patientConsentChange = function(value){
 		value.changed = true;
 	}
 
@@ -218,7 +218,12 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 				value.added = $scope.backupStudy.questionnaire.includes(value.ID);
 			});
 
-			
+			if($scope.language === "FR"){
+				$scope.consentTitle = $scope.backupStudy.consentQuestionnaireTitle[0].name_FR;
+			}else{
+				$scope.consentTitle = $scope.backupStudy.consentQuestionnaireTitle[0].name_EN;
+			}
+		
 
 			$scope.toSubmit.ID = $scope.backupStudy.ID;
 			$scope.toSubmit.details.code = $scope.backupStudy.code;

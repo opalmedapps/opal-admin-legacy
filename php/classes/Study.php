@@ -86,7 +86,7 @@ class Study extends Module {
         if(array_key_exists("patients", $post) && is_array($post["patients"]) && count($post["patients"]) > 0) {
             $toInsertMultiple = array();
             foreach ($post["patients"] as $patient)
-                array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$newStudyId));
+                array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$newStudyId, "consentStatus"=>'invited')); //default invited when patient is added to study
             $result = $this->opalDB->insertMultiplePatientsStudy($toInsertMultiple);
         }
 
@@ -288,6 +288,10 @@ class Study extends Module {
             $temp = $this->opalDB->getQuestionnairesStudy(intval($studyId));
             foreach($temp as $item)
                 array_push($result["questionnaire"], $item["questionnaireId"]);
+            if($result["consentQuestionnaireId"]){
+                $this->_connectQuestionnaireDB();
+                $result["consentQuestionnaireTitle"] = $this->questionnaireDB->getStudyConsentFormTitle(intval($result["consentQuestionnaireId"]));
+            }
             return $result;
         }
         else
@@ -386,7 +390,7 @@ class Study extends Module {
         if(count($toAdd) > 0) {
             $toInsertMultiple = array();
             foreach ($toAdd as $patient)
-                array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$study["ID"]));
+                array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$study["ID"], "consentStatus"=>'invited'));
 
             $total += $this->opalDB->insertMultiplePatientsStudy($toInsertMultiple);
         }
@@ -430,4 +434,6 @@ class Study extends Module {
         $result = $this->questionnaireDB->getConsentForms();
         return $result;
     }
+
+
 }
