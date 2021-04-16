@@ -38,15 +38,14 @@ define("ORMS_SQL_GET_APPOINTMENT_FOR_SMS","
 define("ORMS_SQL_GET_EVENTS_FOR_APPOINTMENT","
     SELECT DISTINCT message.Event AS event
     FROM ".ORMS_SMS_MESSAGE_LIST_TABLE." message
-    WHERE message.Type = :t AND (message.Speciality = 'any' OR message.Speciality = :s)
+    WHERE message.Type = :typ AND (message.Speciality = 'Any' OR message.Speciality = :spec)
     ORDER BY Event
 ");
 
 define("ORMS_SQL_GET_MESSAGE_FOR_APPOINTMENT","
     SELECT message.Message AS smsmessage
     FROM ".ORMS_SMS_MESSAGE_LIST_TABLE." message
-    WHERE message.Type = :t AND message.Event = :e AND message.Language = :lang
-    LIMIT 1
+    WHERE message.Speciality = :spec message.Type = :typ AND message.Event = :event AND message.Language = :lang
 ");
 
 define("ORMS_SQL_UPDATE_APPOINTMENT_ACTIVE_STATE","
@@ -56,5 +55,5 @@ define("ORMS_SQL_UPDATE_APPOINTMENT_ACTIVE_STATE","
 
 define("ORMS_SQL_UPDATE_MESSAGE_FOR_APPOINTMENT","
     UPDATE ".ORMS_SMS_MESSAGE_LIST_TABLE." SET Message = :message
-    WHERE message.Type = :t AND message.Event = :e AND message.Language = :lang
+    WHERE Speciality = :spec AND Type = :type AND Event = :event AND Language = :lang
 ");

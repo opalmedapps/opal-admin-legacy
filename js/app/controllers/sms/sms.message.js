@@ -11,22 +11,21 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             window.history.back();
         };
 
-        $scope.message = {
-            en : "",
-            fr : "",
-        }
-        $scope.selected = {
+        $scope.UpdateInformation = {
+            message: {English : "", French : "",},
             speciality : "",
             type : "",
             event :"",
         }
+
+        $scope.eventList = [];
 
         $scope.UpdateMessage = function(){
             if ($scope.changesMade && $scope.writeAccess) {
                 $.ajax({
                     type: "POST",
                     url: "sms/update/smsMessage",
-                    data:"",
+                    data:$scope.UpdateInformation,
                     success: function (response) {
                         getSmsAppointmentList();
                         response = JSON.parse(response);
@@ -59,7 +58,38 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
                 $scope.smsAppointments = response.data;
                 console.log($scope.smsAppointments);
             }).catch(function(err) {
-                ErrorHandler.onError(err, $filter('translate')('SMS.LIST.ERROR_LIST'));
+                ErrorHandler.onError(err, "error");
+            });
+        }
+
+        function getSmsEvents(){
+            smsCollectionService.getsmsEvents($scope.selected.type,$scope.selected.speciality).
+            then(function (response) {
+                $scope.eventList = response.data;
+                console.log($scope.eventList);
+            }).catch(function(err) {
+                ErrorHandler.onError(err, "error");
+            });
+        }
+
+        function getSmsMessage(){
+
+            smsCollectionService.getsmsMessge($scope.UpdateInformation.speciality,
+                $scope.UpdateInformation.type,$scope.UpdateInformation.event, "EN").
+            then(function (response) {
+                $scope.UpdateInformation.message.English = response.data;
+                console.log($scope.UpdateInformation.message.English);
+            }).catch(function(err) {
+                ErrorHandler.onError(err, "error");
+            });
+
+            smsCollectionService.getsmsMessge($scope.UpdateInformation.speciality,
+                $scope.UpdateInformation.type,$scope.UpdateInformation.event, "FR").
+            then(function (response) {
+                $scope.UpdateInformation.message.French = response.data;
+                console.log($scope.UpdateInformation.message.French);
+            }).catch(function(err) {
+                ErrorHandler.onError(err, "error");
             });
         }
     });

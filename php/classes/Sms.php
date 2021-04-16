@@ -40,15 +40,22 @@ class Sms extends Module {
         return $this->ormsDB->getEventsForAppointment($type,$speciality);
     }
 
-    public function getMessage($type,$event,$language) {
+    public function getMessage($speciality,$type,$event,$language) {
         $this->checkReadAccess();
 
-        return $this->ormsDB->getMessageForAppointment($type,$event,$language);
+        return $this->ormsDB->getMessageForAppointment($speciality,$type,$event,$language);
     }
 
     public function updateActivationState($information){
         $this->checkWriteAccess($information);
 
         return $this->ormsDB->updateActivationState($information['state'],$information['appcode'],$information['ressernum']);
+    }
+
+    public function updateSmsMessage($information,$language){
+        $this->$this->checkWriteAccess($information);
+
+        return $this->ormsDB->updateSmsMessage($information['message'][$language],$information['spec'],
+            $information['type'],$information['event'],$information['lang']);
     }
 }

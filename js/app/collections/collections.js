@@ -1228,5 +1228,42 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
+		smsAPI.getsmsAppointments = function(){
+			return $http.post(
+				"sms/get/appointment",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		smsAPI.getsmsEvents = function (type, speciality) {
+			return $http.post(
+				"sms/get/events",
+				$.param({
+					type: type,
+					speciality: speciality,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		smsAPI.getsmsMessge = function (type, speciality,event,language) {
+			return $http.post(
+				"sms/get/smsMessage",
+				$.param({
+					speciality: speciality,
+					type: type,
+					event:event,
+					language:language,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
 		return smsAPI;
 	});
