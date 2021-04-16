@@ -1,10 +1,7 @@
 <?php
 
-header('Content-Type: application/javascript');
-include_once('patient.inc');
+include_once("../config.php");
 
-$site = strip_tags($_POST['site']);
-$mrn = strip_tags($_POST['mrn']);
 $patientObj = new Patient; // Object
-$patientResponse = $patientObj->checkPatientExist($site, $mrn);
-echo json_encode($patientResponse);
+$response = $patientObj->checkPatientExist($_POST);
+echo json_encode($response);
