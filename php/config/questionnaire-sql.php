@@ -670,3 +670,10 @@ define("SQL_QUESTIONNAIRE_GET_CONSENT_FORMS",
     FROM ".QUESTIONNAIRE_TABLE." q
     WHERE q.deleted = ".NON_DELETED_RECORD." AND q.final = ".FINAL_RECORD." AND q.purposeId = ".PURPOSE_CONSENT.";"
 );
+
+define("SQL_QUESTIONNAIRE_GET_CONSENT_FORM_TITLE","
+    SELECT q.ID, 
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = 2) AS name_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = 1) AS name_FR
+    FROM ".QUESTIONNAIRE_TABLE." q WHERE q.ID = :consentId;"
+);

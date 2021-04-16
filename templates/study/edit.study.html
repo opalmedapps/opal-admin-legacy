@@ -151,11 +151,11 @@
                 </div>
             </div>
         </div>
-        <!-- SECTION: Set Consent Status -->
+        <!-- SECTION: Patient Consent Status -->
         <div uib-accordion-group is-open="statusSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>[Set Patient Consent Status Section]</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusSection.open, 'glyphicon-chevron-right': !statusSection.open}"></i>
+                    <strong>{{'STUDY.EDIT.CONSENT_STATUS'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusSection.open, 'glyphicon-chevron-right': !statusSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div>
@@ -171,7 +171,7 @@
                         </label>
                         <select
                             ng-options="status for status in consentChoices"
-                            ng-model="patient.consent" ng-click="consentChange(patient)">
+                            ng-model="patient.consent" ng-click="patientConsentChange(patient)">
                         </select>
                     </li>
                 </ul>
@@ -243,14 +243,14 @@
          <div uib-accordion-group is-open="consentSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>[FR]Consent Form </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': consentSection.open, 'glyphicon-chevron-right': !consentSection.open}"></i>
+                    <strong>{{'STUDY.EDIT.CONSENT_FORM'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': consentSection.open, 'glyphicon-chevron-right': !consentSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="row">
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div class="input-group">
-                        <span class="input-group-addon">[Consent Form]</span>
-                        <input ng-disabled="true" class="form-control" type="text" ng-model="toSubmit.consent_form.id" required="required" />
+                        <span class="input-group-addon">{{'STUDY.EDIT.CONSENT_ID'|translate}}</span>
+                        <input ng-disabled="true" class="form-control" type="text" ng-model="consentTitle" required="required" />
                     </div>
                 </div>
             </div>
