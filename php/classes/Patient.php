@@ -452,5 +452,23 @@ class Patient extends Module {
 
     }
 
+    /**
+     *
+     * Determines the existence of a patient
+     *
+     * @param string $site : Hospital Identifier Type
+     * @param string $mrn : Hospital Identifier Value
+     * @return array $response : 0 / 1
+     */
+    public function checkPatientExist (string $site, string $mrn)
+    {
+        $this->checkReadAccess(array($site, $mrn));
+        $response = array(
+            'status' => '',
+        );
+
+        return $response;
+    }
+
 
 }
