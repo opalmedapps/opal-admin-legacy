@@ -1228,6 +1228,15 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     /**
+     *  Get the title of a consent form questionnaire given the consentQuestionnaireId
+     */
+    function getStudyConsentFormTitle($consentId){
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_CONSENT_FORM_TITLE, array(
+            array("parameter"=>":consentId","variable"=>$consentId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
      * Get the list of questionnaire found based on an array of IDs
      * @param $list - list of questionnaire ID to verify
      * @return array - list of the questionnaires found
