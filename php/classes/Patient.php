@@ -460,12 +460,31 @@ class Patient extends Module {
      * @param string $mrn : Hospital Identifier Value
      * @return array $response : 0 / 1
      */
-    public function checkPatientExist (string $site, string $mrn)
+    public function checkPatientExist ($post )
     {
-        $this->checkReadAccess(array($site, $mrn));
         $response = array(
             'status' => '',
         );
+
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+
+        $pattern = "/^[0-9]*$/i";
+
+        if (preg_match($pattern,  $post["pmrn"] )) {
+            $mrn = str_pad( $post["pmrn"] ,7,"0",STR_PAD_LEFT);
+            $errCode = 0;
+        } else {
+            $errCode = 1;
+            $response['status']  = "Error";
+            $response['message'] = "Invalid MRN";
+        }
+
+        $errCode = bindec($errCode);
+        if($errCode != 0){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+        }
+
 
         return $response;
     }
