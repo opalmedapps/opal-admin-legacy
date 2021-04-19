@@ -142,13 +142,13 @@
         <div uib-accordion-group is-open="consentSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>[FR]Consent Form </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': consentSection.open, 'glyphicon-chevron-right': !consentSection.open}"></i>
+                    <strong>{{'STUDY.EDIT.CONSENT_FORM'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': consentSection.open, 'glyphicon-chevron-right': !consentSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="row">
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div class="input-group">
-                        <span class="input-group-addon">[Consent Form]</span>
+                        <span class="input-group-addon">{{'STUDY.EDIT.CONSENT_FORM'|translate}} ]</span>
                         <input ng-disabled="true" class="form-control" type="text" ng-model="toSubmit.consent_form.id" required="required" />
                     </div>
                 </div>
