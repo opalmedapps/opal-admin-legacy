@@ -303,6 +303,20 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 		$scope.popupEnd['opened'] = true;
 	};
 
+	$scope.syncConsent = function(patient){
+		if(patient.added == true){
+			$scope.patientConsentList.push({'id':patient.id,'consent':'','name':patient.name,'changed':null});
+		}else{
+			var idx = 0;
+			angular.forEach($scope.patientConsentList, function(val){
+				if(val.id == patient.id){
+					$scope.patientConsentList.splice(idx, 1);
+				}
+				idx++;
+			});
+		}
+	}
+
 	$scope.$watch('toSubmit', function() {
 		$scope.changesDetected = JSON.stringify($scope.toSubmit) !== JSON.stringify($scope.oldData);
 	}, true);
@@ -424,6 +438,8 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			$scope.readyToSend.questionnaire = $scope.toSubmit.questionnaire;
 			$scope.readyToSend.consent_form = $scope.toSubmit.consent_form.id;
 			$scope.readyToSend.patientConsents = $scope.patientConsentList;
+
+			console.log($scope.readyToSend);
 			$.ajax({
 				type: "POST",
 				url: "study/update/study",

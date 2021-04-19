@@ -261,8 +261,25 @@ class Study extends Module {
                 }
             } else
                 $errCode = "0" . $errCode;
+
+            //16th bit
+            if (array_key_exists("patientConsents", $post)) {
+                if(!is_array($post["patientConsents"]))
+                    $errCode = "1" . $errCode;
+                else {
+                    $patConsIds = array();
+                    foreach ($post["patientConsents"] as $patient)
+                        array_push($patConsIds, $patient['id']);
+                    $total = $this->opalDB->getPatientsListByIds($patConsIds);
+                    if (count($total) != count($patConsIds))
+                        $errCode = "1" . $errCode;
+                    else
+                        $errCode = "0" . $errCode;
+                }
+            } else
+                $errCode = "0" . $errCode;
         } else
-            $errCode .= "11111111111111";
+            $errCode .= "111111111111111";
 
         return $errCode;
     }
@@ -376,6 +393,14 @@ class Study extends Module {
             }
         }
         $total += $this->opalDB->deletePatientsStudy($study["ID"], $toKeep);
+        
+        if(count($toAdd) > 0) {
+            $toInsertMultiple = array();
+            foreach ($toAdd as $patient)
+                array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$study["ID"], "consentStatus"=>'invited'));
+
+            $total += $this->opalDB->insertMultiplePatientsStudy($toInsertMultiple);
+        }
 
         //update any changed patient consents
         if(array_key_exists("patientConsents", $post) && is_array($post["patientConsents"]) && count($post["patientConsents"]) > 0){
@@ -386,15 +411,6 @@ class Study extends Module {
                 }
             }
         }
-        
-        if(count($toAdd) > 0) {
-            $toInsertMultiple = array();
-            foreach ($toAdd as $patient)
-                array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$study["ID"], "consentStatus"=>'invited'));
-
-            $total += $this->opalDB->insertMultiplePatientsStudy($toInsertMultiple);
-        }
-        
         //Update questionnaire-study table
         $currentQuestionnaires = array();
         $toKeep = array(-1);

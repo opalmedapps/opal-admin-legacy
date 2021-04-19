@@ -425,7 +425,6 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.readyToSend.patients = $scope.toSubmit.patients;
 			$scope.readyToSend.questionnaire = $scope.toSubmit.questionnaire
 			$scope.readyToSend.consent_form = $scope.toSubmit.consent_form.id;
-
 			$.ajax({
 				type: 'POST',
 				url: 'study/insert/study',
