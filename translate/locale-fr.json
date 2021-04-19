@@ -2445,7 +2445,8 @@
       "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour de l'étude.",
       "CONSENT_STATUS": "[FR]Patient Consent Status",
       "CONSENT_FORM": "[FR]Consent Form",
-      "CONSENT_ID": "[FR]Form ID:"
+      "CONSENT_ID": "[FR]Form ID:",
+      "CURRENT_CONSENTS": "[FR]Current Consents"
     }
   },
   "ALERT" : {

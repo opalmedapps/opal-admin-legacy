@@ -158,6 +158,16 @@
                     <strong>{{'STUDY.EDIT.CONSENT_STATUS'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusSection.open, 'glyphicon-chevron-right': !statusSection.open}"></i>
                 </div>
             </uib-accordion-heading>
+            <div class="alert alert-info" role="alert">
+                <strong>{{'STUDY.EDIT.CURRENT_CONSENTS'|translate}}</strong><br>
+                <p>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!(patientConsentList.length)"></span>
+                    <span ng-if="!(patientConsentList.length)">{{'STUDY.EDIT.NO_PATIENT'|translate}}</span>
+                    <ul class="list-items" ng-if="(patientConsentList.length)">
+                        <li ng-repeat="pat in patientConsentList">{{pat.name}} {{pat.consent}}</li>
+                    </ul>
+                </p>
+            </div>
             <div>
                 <div class="input-group">
                     <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
@@ -167,7 +177,7 @@
                 <ul class="list-items">
                     <li ng-repeat="patient in patientConsentList | filter: patientSearchField">
                         <label>
-                            {{patient.name}} {{patient.consent}}
+                            {{patient.name}}
                         </label>
                         <select
                             ng-options="status for status in consentChoices"
@@ -203,7 +213,7 @@
                 <ul class="list-items">
                     <li ng-repeat="patient in patientsList | filter: patientSearchField">
                         <label>
-                            <input type="checkbox" ng-model="patient.added"> {{patient.name}}
+                            <input type="checkbox" ng-model="patient.added" ng-click="syncConsent(patient)"> {{patient.name}}
                         </label>
                     </li>
                 </ul>

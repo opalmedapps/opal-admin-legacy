@@ -2431,7 +2431,8 @@
       "ERROR_UPDATE": "An error occurred while updating the study.",
       "CONSENT_STATUS": "Patient Consent Status",
       "CONSENT_FORM": "Consent Form",
-      "CONSENT_ID": "Form:"
+      "CONSENT_ID": "Form:",
+      "CURRENT_CONSENTS": "Current Consents"
     }
   },
   "ALERT" : {
