@@ -129,6 +129,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
      *                      4: description invalid or missing
      *                      5: creation date (if present) is in invalid format
      *                      6: too many records to process
+     *                      7: record already exists (temporary)
      * @param $post array - $_POST content. Each entry must contains the following:
      *                      source : source database ID. See table SourceDatabase (mandatory)
      *                      externalID : external ID of the diagnosis in the source database (mandatory)
@@ -172,7 +173,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
                 $errCode = bindec($errCode);
                 if ($errCode == 0) {
                     $data = $this->opalDB->isMasterSourceDiagnosisExists($item["source"], $item["externalId"], $item["code"]);
-                    if (count($data) < 1 || (count($data) == 1 && $data[0]["deleted"] == DELETED_RECORD))
+                    if (count($data) < 1) // || (count($data) == 1 && $data[0]["deleted"] == DELETED_RECORD))
                         array_push($toInsert, array(
                             "source" => $item["source"],
                             "externalId" => $item["externalId"],
@@ -180,7 +181,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
                             "description" => $item["description"],
                             "creationDate" => $item["creationDate"]
                         ));
-                    else if (count($data) == 1) {
+/*                    else if (count($data) == 1) {
                         if($data[0]["code"] == $item["code"])
                             array_push($toUpdate, array(
                                 "source" => $item["source"],
@@ -193,9 +194,12 @@ class MasterSourceDiagnosis extends MasterSourceModule {
                             $item["validation"] = bindec("100");
                             array_push($errMsgs, $item);
                         }
+                    }*/
+                    else {
+/*                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");*/
+                        $item["validation"] = bindec("1000000");
+                        array_push($errMsgs, $item);
                     }
-                    else
-                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
                 }
                 else {
                     $item["validation"] = $errCode;

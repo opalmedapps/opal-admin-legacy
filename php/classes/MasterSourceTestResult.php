@@ -162,6 +162,7 @@ class MasterSourceTestResult extends MasterSourceModule {
      *                      4: description invalid or missing
      *                      5: creation date (if present) is in invalid format
      *                      6: too many records to process
+     *                      7: record already exists (temporary)
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
@@ -216,7 +217,7 @@ class MasterSourceTestResult extends MasterSourceModule {
                 $errCode = bindec($errCode);
                 if ($errCode == 0) {
                     $data = $this->opalDB->isSourceTestResultsExists($item["source"], $item["code"]);
-                    if (count($data) < 1 || (count($data) == 1 && $data[0]["deleted"] == DELETED_RECORD))
+                    if (count($data) < 1) // || (count($data) == 1 && $data[0]["deleted"] == DELETED_RECORD))
                         array_push($toInsert, array(
                             "source" => $item["source"],
                             "externalId" => $item["externalId"],
@@ -224,22 +225,25 @@ class MasterSourceTestResult extends MasterSourceModule {
                             "description" => $item["description"],
                             "creationDate" => $item["creationDate"]
                         ));
-                    else if (count($data) == 1) {
-                        if($data[0]["code"] == $item["code"])
-                            array_push($toUpdate, array(
-                                "source" => $item["source"],
-                                "externalId" => $item["externalId"],
-                                "code" => $item["code"],
-                                "description" => $item["description"],
-                                "creationDate" => $item["creationDate"]
-                            ));
-                        else {
-                            $item["validation"] = bindec("100");
-                            array_push($errMsgs, $item);
-                        }
+                    /*                    else if (count($data) == 1) {
+                                            if($data[0]["code"] == $item["code"])
+                                                array_push($toUpdate, array(
+                                                    "source" => $item["source"],
+                                                    "externalId" => $item["externalId"],
+                                                    "code" => $item["code"],
+                                                    "description" => $item["description"],
+                                                    "creationDate" => $item["creationDate"]
+                                                ));
+                                            else {
+                                                $item["validation"] = bindec("100");
+                                                array_push($errMsgs, $item);
+                                            }
+                                        }*/
+                    else {
+/*                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");*/
+                        $item["validation"] = bindec("1000000");
+                        array_push($errMsgs, $item);
                     }
-                    else
-                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
                 }
                 else {
                     $item["validation"] = $errCode;
