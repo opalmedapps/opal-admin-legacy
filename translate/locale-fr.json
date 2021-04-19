@@ -2330,8 +2330,8 @@
       "TITLE_2": "Titre",
       "STUDY_ID": "ID Étude",
       "INVESTIGATOR": "Coordinateur(trice) principal(e)",
-      "PHONE": "[FR]Phone Number",
-      "EMAIL": "[FR]Email",
+      "PHONE": "Numéro de téléphone",
+      "EMAIL": "Adresses courriel",
       "START_DATE": "Date début",
       "END_DATE": "Date fin",
       "CREATION_DATE": "Date de création",
@@ -2408,12 +2408,12 @@
       "QUESTIONNAIRE_SELECTED": "questionnaire(s) sélectionné(s)",
       "ERROR_ADD": "Une erreur s'est produite lors de la création de l'étude.",
       "ERROR_PATIENTS_LIST": "Une erreur s'est produite lors de l'obtention de la liste des patients.",
-      "CONSENT_SELECTED": "[FR]Consent form selected",
-      "CONSENT_FORM": "[FR]Consent Form",
-      "CONSENT_FORM_EXPLANATION": "[FR]Please select the study consent form from the list.",
-      "EMAIL": "[FR]Email",
-      "PHONE": "[FR]Phone Number",
-      "FORM": "[FR]Form"
+      "CONSENT_SELECTED": "Formulaire de consentement sélectionné",
+      "CONSENT_FORM": "Formulaire de consentement",
+      "CONSENT_FORM_EXPLANATION": "Veuillez sélectionner le formulaire de consentement à l'étude dans la liste.",
+      "EMAIL": "Adresses courriel",
+      "PHONE": "Numéro de téléphone",
+      "FORM": "Forme"
     },
     "EDIT": {
       "TITLE": "Modifier l'étude",
@@ -2443,10 +2443,10 @@
       "SEARCH": "Rechercher",
       "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails l'étude.",
       "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour de l'étude.",
-      "CONSENT_STATUS": "[FR]Patient Consent Status",
-      "CONSENT_FORM": "[FR]Consent Form",
-      "CONSENT_ID": "[FR]Form ID:",
-      "CURRENT_CONSENTS": "[FR]Current Consents"
+      "CONSENT_STATUS": "État du consentement du patient",
+      "CONSENT_FORM": "Formulaire de consentement",
+      "CONSENT_ID": "Forme identifiant:",
+      "CURRENT_CONSENTS": "Consentements actuels"
     }
   },
   "ALERT" : {
