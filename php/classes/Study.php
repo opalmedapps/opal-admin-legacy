@@ -117,8 +117,9 @@ class Study extends Module {
      *                      11: date range (if start date and end date exist) invalid
      *                      12: patient list (if exists) invalid
      *                      13: questionnaire list (if exists) invalid
-     *                      14: consent_form (if exists) invalid
+     *                      14: consent_form missing
      *                      15: study ID is missing or invalid if it is an update
+     *                      16: patient consent list (if exists) invalid
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errCode : array - contains the invalid entries with an error code.
      * */
