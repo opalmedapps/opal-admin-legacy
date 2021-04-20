@@ -542,6 +542,7 @@ class Patient extends Module {
         $response = array(
             'status' => 'Error',
         );
+        
         $errCode = "";
         $this->checkWriteAccess($post);
         HelpSetup::arraySanitization($post);
