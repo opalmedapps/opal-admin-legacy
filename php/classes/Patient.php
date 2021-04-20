@@ -508,14 +508,15 @@ class Patient extends Module {
 
         $post = HelpSetup::arraySanitization($post);
 
-        if(!array_key_exists("mrns", $post) || $post["mrns"] == "" || count($post["mrns"]) <= 0)
+        if(!array_key_exists("mrns", $post) || $post["mrns"] == "" )
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
 
 
         foreach ($post["mrns"] as $identifier) {
-            if (!preg_match($pattern,  $identifier["mrn"] )) {
+            $mrn = json_decode($identifier);
+            if (!preg_match($pattern,  $mrn )) {
                 $errCode = "1" . $errCode;
             }
         }
