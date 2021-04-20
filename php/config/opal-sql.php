@@ -1270,7 +1270,7 @@ define("OPAL_GET_PATIENTS_STUDY","
 ");
 
 define("OPAL_GET_PATIENTS_STUDY_CONSENTS","
-    SELECT ps.patientId AS id, ps.consentStatus AS consent, CONCAT(CONCAT(UCASE(SUBSTRING(p.LastName, 1, 1)), LOWER(SUBSTRING(p.LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(p.FirstName, 1, 1)), LOWER(SUBSTRING(p.FirstName, 2))), ' (', p.PatientId, ')') AS name
+    SELECT ps.patientId AS id, ps.consentStatus AS consent, CONCAT(CONCAT(UCASE(SUBSTRING(p.LastName, 1, 1)), LOWER(SUBSTRING(p.LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(p.FirstName, 1, 1)), LOWER(SUBSTRING(p.FirstName, 2))), ' (', p.PatientId, ')') AS name, p.PatientId as pid
     FROM ".OPAL_PATIENT_STUDY_TABLE." ps, ".OPAL_PATIENT_TABLE." p
     WHERE p.PatientSerNum = ps.patientId AND ps.studyId = :studyId;
 ");
