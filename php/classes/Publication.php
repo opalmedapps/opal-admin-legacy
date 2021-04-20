@@ -748,7 +748,6 @@ class Publication extends Module
     protected function _insertPublicationQuestionnaire(&$publication) {
         $this->_connectQuestionnaireDB();
         $currentQuestionnaire = $this->questionnaireDB->getQuestionnaireDetails($publication["materialId"]["value"]);
-
         if(is_array($currentQuestionnaire) && count($currentQuestionnaire) != 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire.");
         $currentQuestionnaire = $currentQuestionnaire[0];
@@ -768,6 +767,23 @@ class Publication extends Module
         $toInsert = array();
         if(!empty($publication['triggers'])) {
             foreach($publication['triggers'] as $trigger) {
+                if(($trigger['type'] == "Study") && ($currentQuestionnaire['purpose'] == 4)){ // we are publishing consent forms to patients of this study
+                    //fetch patient consents
+                    $patConsents = $this->opalDB->getPatientsStudyConsents($trigger['id']);
+                    foreach($patConsents as $patient){
+                        if($patient['consent'] == 'invited'){
+                            array_push($toInsert, array(
+                                "ControlTable"=>"LegacyQuestionnaireControl",
+                                "ControlTableSerNum"=>$publicationControlId,
+                                "FilterType"=>"Patient",
+                                "FilterId"=>$patient['pid'],
+                                "DateAdded"=>date("Y-m-d H:i:s"),
+                                "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
+                                "SessionId"=>$this->opalDB->getSessionId(),
+                            ));
+                        }
+                    }
+                }
                 array_push($toInsert, array(
                     "ControlTable"=>"LegacyQuestionnaireControl",
                     "ControlTableSerNum"=>$publicationControlId,
@@ -777,6 +793,7 @@ class Publication extends Module
                     "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
                     "SessionId"=>$this->opalDB->getSessionId(),
                 ));
+                
             }
             $this->opalDB->insertMultipleFilters($toInsert);
         }
