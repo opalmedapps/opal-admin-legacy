@@ -493,5 +493,64 @@ class Patient extends Module {
         return $response;
     }
 
+    /*
+     * Validate patient info
+     *
+     * @params  $post : array - Contains the following information
+     *                          mrn : Medical Record Number of the patient (mandatory)
+     *                          site : Site acronym of the establishment (mandatory)
+     * @return  $errCode : int - error code coded on bitwise operation. If 0, no error.
+     */
+    protected function _validatePatientParams(&$post, $isAnUpdate = false)
+    {
+        $errCode = "";
+        $post = HelpSetup::arraySanitization($post);
+
+        if(!array_key_exists("mrn", $post) || $post["mrn"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+        if(!array_key_exists("site", $post) || $post["site"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        $pattern = "/^[0-9]*$/i";
+
+        if (preg_match($pattern,  $post["mrn"] )) {
+            $errCode = "0" . $errCode;
+        } else {
+            $errCode = "1" . $errCode;
+        }
+
+        return bindec($errCode);
+    }
+    public function updatePatient($post){
+
+        $response = array(
+            'status' => 'Error',
+        );
+        $errCode = "";
+        $this->checkWriteAccess($post);
+        HelpSetup::arraySanitization($post);
+
+        $errCode = $this->_validatePatientParams($post, true) . $errCode;
+
+        $patientSite = $this->opalDB->getPatientSite($post["mrn"], $post["site"]);
+
+        if (count($patientSite) != 1){
+            $errCode = "1" . $errCode;
+        } else {
+            $response['status']  = "Success";
+            $response['data']  = json_encode($patientSite);
+        }
+
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        return $response;
+
+    }
+
 
 }
