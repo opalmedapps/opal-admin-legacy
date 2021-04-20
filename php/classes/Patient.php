@@ -503,39 +503,34 @@ class Patient extends Module {
      */
     protected function _validatePatientParams(&$post)
     {
+        $pattern = "/^[0-9]*$/i";
         $errCode = "";
 
         $post = HelpSetup::arraySanitization($post);
 
-        if(!array_key_exists("mrn", $post) || $post["mrn"] == "")
+        if(!array_key_exists("mrns", $post) || $post["mrns"] == "" || count($post["mrns"]) <= 0)
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
 
-        if(!array_key_exists("site", $post) || $post["site"] == "")
-            $errCode = "1" . $errCode;
-        else
-            $errCode = "0" . $errCode;
 
-        $pattern = "/^[0-9]*$/i";
-
-        if (preg_match($pattern,  $post["mrn"] )) {
-            $errCode = "0" . $errCode;
-        } else {
-            $errCode = "1" . $errCode;
+        foreach ($post["mrns"] as $identifier) {
+            if (!preg_match($pattern,  $identifier["mrn"] )) {
+                $errCode = "1" . $errCode;
+            }
         }
 
-        if(!array_key_exists("firstName", $post) || $post["firstName"] == "")
-            $errCode = "1" . $errCode;
-        else
-            $errCode = "0" . $errCode;
-
-        if(!array_key_exists("lastName", $post) || $post["lastName"] == "")
-            $errCode = "1" . $errCode;
-        else
-            $errCode = "0" . $errCode;
-
         if(!array_key_exists("ramq", $post) || $post["ramq"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        if(!array_key_exists("dateOfBirth", $post) || $post["dateOfBirth"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        if(!array_key_exists("name", $post) || $post["name"] == "" || count($post["name"]) <= 0)
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
