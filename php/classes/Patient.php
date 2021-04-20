@@ -548,8 +548,6 @@ class Patient extends Module {
             'status' => 'Error',
         );
 
-        $data = json_decode($post, true);
-        print_r($data);
 
         $errCode = "";
         $this->checkWriteAccess($post);
