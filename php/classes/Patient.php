@@ -471,9 +471,13 @@ class Patient extends Module {
 
         $pattern = "/^[0-9]*$/i";
 
-        if (preg_match($pattern,  $post["pmrn"] )) {
-            $mrn = str_pad( $post["pmrn"] ,7,"0",STR_PAD_LEFT);
+        if (preg_match($pattern,  $post["mrn"] )) {
+            $mrn = str_pad( $post["mrn"] ,7,"0",STR_PAD_LEFT);
+            $response['status']  = "Success";
             $errCode = 0;
+            $patientSite = $this->opalDB->getPatientSite($mrn, $post["site"]);
+            $response['data']  = boolval(count($patientSite));
+
         } else {
             $errCode = 1;
             $response['status']  = "Error";
