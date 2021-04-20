@@ -62,6 +62,88 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- SECTION: Body -->
+                        <div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom:2px solid rgba(111, 84, 153, 0.8);">
+                                <span style="background-color:#e6edfa; padding: 0 10px;">
+                                    <span class="fas fa-dot-circle"></span>
+                                    <h2>{{'POSTS.ADD.BODY_CONTENT'|translate}}</h2>
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 5px;">
+                                    <span style="color:#d9534f"><strong>{{'POSTS.ADD.REQUIRED'|translate}}</strong></span>
+                                    {{'POSTS.ADD.BODY_EXPLANATION'|translate}}
+                                </p>
+                                <p style="margin-bottom: 5px;">
+                                    <span style="color:#d9534f"><strong>{{'POSTS.ADD.HTML_EXCEPTIONS'|translate}}</strong></span><br>
+                                <ul style="margin-left: 15px; margin-bottom: 10px;">
+                                    <li ng-bind-html="'POSTS.ADD.IMG_RESPONSIVE'|translate"></li>
+                                    <li ng-bind-html="'POSTS.ADD.NO_ABSOLUTE'|translate"></li>
+                                </ul>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
+                            <div class="col-xs-12">
+                                <div class="panel" ng-class="(newPost.body_EN) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'POSTS.ADD.ENGLISH'|translate}}</strong>
+                                        <span ng-hide="newPost.body_EN" style="float:right"><em>{{'POSTS.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="newPost.body_EN" style="float:right"><em>{{'POSTS.ADD.COMPLETE'|translate}}</em></span>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-xs-12 col-md-8">
+                                                <div class="form-group">
+                                                    <div text-angular ng-model="newPost.body_EN" ng-change="bodyUpdate()"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-md-4">
+                                                <div style="text-align:center;">
+                                                    <span style="font-size:20px;">{{'POSTS.ADD.IPHONE'|translate}}</span>
+                                                </div>
+                                                <div class="render-html-iphone4">
+                                                    <iframe height="100%" width="100%" srcdoc="{{newPost.body_EN | deliberatelyTrustAsHtml}}" frameborder="0"></iframe>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
+                            <div class="col-xs-12">
+                                <div class="panel" ng-class="(newPost.body_FR) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'POSTS.ADD.FRENCH'|translate}}</strong>
+                                        <span ng-hide="newPost.body_FR" style="float:right"><em>{{'POSTS.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="newPost.body_FR" style="float:right"><em>{{'POSTS.ADD.COMPLETE'|translate}}</em></span>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-xs-12 col-md-8">
+                                                <div class="form-group">
+                                                    <div text-angular ng-model="newPost.body_FR" ng-change="bodyUpdate()"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-md-4">
+                                                <div style="text-align:center;">
+                                                    <span style="font-size:20px;">{{'POSTS.ADD.IPHONE'|translate}}</span>
+                                                </div>
+                                                <div class="render-html-iphone4">
+                                                    <iframe height="100%" width="100%" srcdoc="{{newPost.body_FR | deliberatelyTrustAsHtml}}" frameborder="0"></iframe>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- END SECTION -->
+
                 </div>
             </div>
         </div>
