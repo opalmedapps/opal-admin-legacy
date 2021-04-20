@@ -148,6 +148,8 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$filter('translate')('STUDY.VALIDATION.PATIENTS'),
 			$filter('translate')('STUDY.VALIDATION.QUESTIONNAIRE'),
 			$filter('translate')('STUDY.VALIDATION.ID'),
+			$filter('translate')('STUDY.VALIDATION.CONSENT'),
+			$filter('translate')('STUDY.VALIDATION.PATIENT_CONSENT'),
 		];
 
 		$scope.toolbar = [
