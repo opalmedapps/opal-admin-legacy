@@ -2343,7 +2343,9 @@
       "DATE_RANGE": "Invalid date range.",
       "PATIENTS": "Invalid patients list.",
       "QUESTIONNAIRE": "Invalid questionnaires list.",
-      "ID": "Study ID missing or invalid."
+      "ID": "Study ID missing or invalid.",
+      "CONSENT": "Study consent form ID missing or invalid.",
+      "PATIENT_CONSENT": "Invalid patient consent list"
     },
     "ADD": {
       "BACK": "Back",

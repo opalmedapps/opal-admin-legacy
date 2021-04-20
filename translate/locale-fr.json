@@ -2361,7 +2361,9 @@
       "DATE_RANGE": "Intervalle de dates invalide.",
       "PATIENTS": "Liste de patients invalide.",
       "QUESTIONNAIRE": "Liste de questionnaires invalide.",
-      "ID": "ID de l'étude invalide ou manquant."
+      "ID": "ID de l'étude invalide ou manquant.",
+      "CONSENT": "ID du formulaire de consentement à l'étude manquant ou non valide.",
+      "PATIENT_CONSENT": "Liste de consentement des patients non valide."
     },
     "ADD": {
       "BACK": "Retour",
