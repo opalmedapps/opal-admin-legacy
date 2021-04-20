@@ -501,7 +501,7 @@ class Patient extends Module {
      *                          site : Site acronym of the establishment (mandatory)
      * @return  $errCode : int - error code coded on bitwise operation. If 0, no error.
      */
-    protected function _validatePatientParams(&$post, $isAnUpdate = false)
+    protected function _validatePatientParams(&$post)
     {
         $errCode = "";
         $post = HelpSetup::arraySanitization($post);
@@ -523,6 +523,18 @@ class Patient extends Module {
             $errCode = "1" . $errCode;
         }
 
+        if(!array_key_exists("firstName", $post) || $post["firstName"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        if(!array_key_exists("lastName", $post) || $post["lastName"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+
+
         return bindec($errCode);
     }
     public function updatePatient($post){
@@ -534,7 +546,7 @@ class Patient extends Module {
         $this->checkWriteAccess($post);
         HelpSetup::arraySanitization($post);
 
-        $errCode = $this->_validatePatientParams($post, true) . $errCode;
+        $errCode = $this->_validatePatientParams($post) . $errCode;
 
         $patientSite = $this->opalDB->getPatientSite($post["mrn"], $post["site"]);
 
