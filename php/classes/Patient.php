@@ -504,12 +504,14 @@ class Patient extends Module {
     protected function _validatePatientParams(&$post)
     {
         $errCode = "";
+
         $post = HelpSetup::arraySanitization($post);
 
         if(!array_key_exists("mrn", $post) || $post["mrn"] == "")
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
+
         if(!array_key_exists("site", $post) || $post["site"] == "")
             $errCode = "1" . $errCode;
         else
@@ -533,7 +535,10 @@ class Patient extends Module {
         else
             $errCode = "0" . $errCode;
 
-
+        if(!array_key_exists("ramq", $post) || $post["ramq"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
 
         return bindec($errCode);
     }
@@ -542,7 +547,7 @@ class Patient extends Module {
         $response = array(
             'status' => 'Error',
         );
-        
+
         $errCode = "";
         $this->checkWriteAccess($post);
         HelpSetup::arraySanitization($post);
