@@ -27,6 +27,119 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- Summary -->
+                            <div class="side-menu-title col-lg-12">
+                                <div class="horz-line" style="height: 16px; text-align: center">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                      <h2>Summary</h2>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="progress progress-striped active">
+                                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <uib-accordion class="side-navbar">
+                            <!-- SECTION: Speciality -->
+                            <div uib-accordion-group is-open="specialitySection.open" class="panel-container summary-box" is-disabled="!UpdateInformation.speciality">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items:center">
+                                        <div class="col-md-2">
+                                            <span ng-if="UpdateInformation.speciality" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>Speciality</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i ng-if="UpdateInformation.speciality" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':specialitySection.open, 'glyphicon-chevron-right':!specialitySection.open}"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="UpdateInformation.speciality" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{UpdateInformation.speciality}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Type -->
+                            <div uib-accordion-group is-open="typeSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: typeSection.show}" ng-if="typeSection.show" is-disabled="!UpdateInformation.type && !UpdateInformation.type">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="UpdateInformation.type" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>Type</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':typeSection.open, 'glyphicon-chevron-right':!typeSection.open}" ng-if="UpdateInformation.type"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="UpdateInformation.type" class="description">
+                                    <p style="margin-bottom:5px;">
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{UpdateInformation.type}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Event -->
+                            <div uib-accordion-group is-open="eventSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:eventSection.show}" ng-if="eventSection.show" is-disabled="!UpdateInformation.event">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="UpdateInformation.event" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>Event</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': eventSection.open, 'glyphicon-chevron-right': !eventSection.open}" ng-if="UpdateInformation.event"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="UpdateInformation.event" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{UpdateInformation.event}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Message -->
+                            <div uib-accordion-group is-open="messageSection.open" class="panel-container summary-box animated"
+                                 ng-class="{fadeInUp:messageSection.show}" ng-if="messageSection.show" is-disabled="!UpdateInformation.message.English && !UpdateInformation.message.French">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="UpdateInformation.message.English && UpdateInformation.message.French" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>Message</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': messageSection.open,
+                                            'glyphicon-chevron-right': !messageSection.open}" ng-if="UpdateInformation.message.English || UpdateInformation.message.French"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="UpdateInformation.message.English || UpdateInformation.message.French" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        Message Completed
+                                    </p>
+                                </div>
+                            </div>
+                        </uib-accordion>
+                        <!-- Submit button -->
+                        <div class="panel-container">
+                            <a href="" ng-click="UpdateMessage()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                                <span style="font-size: 20px;"><strong>Submit</strong></span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -38,15 +151,15 @@
                             <span class="glyphicon glyphicon-envelope"></span>
                             <h1><strong>SMS Message</strong></h1>
                         </div>
-
                     </div>
+                    <!-- Mobile side panel view -->
                     <div class="row mobile-side-panel-menu">
                         <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
                             <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
                                 <div class="side-panel-info-sm">
                                     <div class="panel-content">
                                         <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
-                                        <h6 class="side-panel-title"><strong>{{'ALIAS.ADD.BACK'|translate}}</strong></h6>
+                                        <h6 class="side-panel-title"><strong>Back to SMS</strong></h6>
                                     </div>
                                 </div>
                             </div>
@@ -54,7 +167,7 @@
                         <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkForm()">
                             <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
                                     <span style="padding: 0 10px;">
-                                        <h2>{{'ALIAS.ADD.STEP'|translate}} {{numOfCompletedSteps}} {{'ALIAS.ADD.OF'|translate}} {{stepTotal}} {{'ALIAS.ADD.COMPLETED'|translate}}</h2>
+                                        <h2>Step {{numOfCompletedSteps}} Of {{stepTotal}} Completed</h2>
                                     </span>
                             </div>
                             <div class="progress progress-striped active">
@@ -62,88 +175,103 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- SECTION: Body -->
-                        <div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
+                        <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkForm()">
+                            <div class="panel-container">
+                                <a href="" ng-click="UpdateMessage()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                                    <span style="font-size: 20px;"><strong>Submit</strong></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <!-- SECTION: Type -->
+                        <div class="row">
                             <div class="col-xs-12 side-menu-title">
-                                <div style="height: 10px; border-bottom:2px solid rgba(111, 84, 153, 0.8);">
-                                <span style="background-color:#e6edfa; padding: 0 10px;">
-                                    <span class="fas fa-dot-circle"></span>
-                                    <h2>{{'POSTS.ADD.BODY_CONTENT'|translate}}</h2>
-                                </span>
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                      <span class="fas fa-dot-circle"></span>
+                                      <h2>Type</h2>
+                                    </span>
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
+                        <div class="row">
                             <div class="col-xs-12">
-                                <p style="margin-bottom: 5px;">
+                                <p style="margin-bottom: 10px;">
                                     <span style="color:#d9534f"><strong>{{'POSTS.ADD.REQUIRED'|translate}}</strong></span>
-                                    {{'POSTS.ADD.BODY_EXPLANATION'|translate}}
-                                </p>
-                                <p style="margin-bottom: 5px;">
-                                    <span style="color:#d9534f"><strong>{{'POSTS.ADD.HTML_EXCEPTIONS'|translate}}</strong></span><br>
-                                <ul style="margin-left: 15px; margin-bottom: 10px;">
-                                    <li ng-bind-html="'POSTS.ADD.IMG_RESPONSIVE'|translate"></li>
-                                    <li ng-bind-html="'POSTS.ADD.NO_ABSOLUTE'|translate"></li>
-                                </ul>
+                                    {{'POSTS.ADD.TYPE_EXPLANATION'|translate}}
                                 </p>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
+                        <div class="row">
+                            <div ng-repeat="type in postTypes" class="col-xs-4 col-lg-3 item-panel-select">
+                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: newPost.type.name == type.name}" ng-click="typeUpdate(type)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                    <div class="panel-info" ng-class="{active: newPost.type.name == type.name}">
+                                        <div class="panel-content" style="text-align:center">
+                                            <span style="font-size:30px;" class="fa fa-{{type.icon}}"></span>
+                                            <div class="option-panel-title">{{type.name_display}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Title -->
+                        <div class="row animated" ng-class="{fadeInUp:titleSection.show}" ng-if="titleSection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fa fa-dot-circle-o"></span>
+                                        <h2>{{'POSTS.ADD.TITLE_2'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp:titleSection.show}" ng-if="titleSection.show">
                             <div class="col-xs-12">
-                                <div class="panel" ng-class="(newPost.body_EN) ? 'panel-success': 'panel-danger'">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="color:#d9534f"><strong>{{'POSTS.ADD.REQUIRED'|translate}}</strong></span>
+                                    {{'POSTS.ADD.TITLE_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp:titleSection.show}" ng-if="titleSection.show">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="panel" ng-class="(newPost.name_EN) ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>{{'POSTS.ADD.ENGLISH'|translate}}</strong>
-                                        <span ng-hide="newPost.body_EN" style="float:right"><em>{{'POSTS.ADD.INCOMPLETE'|translate}}</em></span>
-                                        <span ng-show="newPost.body_EN" style="float:right"><em>{{'POSTS.ADD.COMPLETE'|translate}}</em></span>
+                                        <span ng-hide="newPost.name_EN" style="float:right"><em>{{'POSTS.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="newPost.name_EN" style="float:right"><em>{{'POSTS.ADD.COMPLETE'|translate}}</em></span>
                                     </div>
-                                    <div class="panel-body">
-                                        <div class="row">
-                                            <div class="col-xs-12 col-md-8">
-                                                <div class="form-group">
-                                                    <div text-angular ng-model="newPost.body_EN" ng-change="bodyUpdate()"></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-md-4">
-                                                <div style="text-align:center;">
-                                                    <span style="font-size:20px;">{{'POSTS.ADD.IPHONE'|translate}}</span>
-                                                </div>
-                                                <div class="render-html-iphone4">
-                                                    <iframe height="100%" width="100%" srcdoc="{{newPost.body_EN | deliberatelyTrustAsHtml}}" frameborder="0"></iframe>
-                                                </div>
+                                    <div class="panel-body form-horizontal">
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                Title
+                                            </label>
+                                            <div class="col-xs-12 col-lg-10">
+                                                <input class="form-control" type="text" ng-model="newPost.name_EN" ng-change="titleUpdate()" placeholder="{{'POSTS.ADD.ENGLISH_TITLE'|translate}}" required="required">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
-                            <div class="col-xs-12">
-                                <div class="panel" ng-class="(newPost.body_FR) ? 'panel-success': 'panel-danger'">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="panel" ng-class="(newPost.name_FR) ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>{{'POSTS.ADD.FRENCH'|translate}}</strong>
-                                        <span ng-hide="newPost.body_FR" style="float:right"><em>{{'POSTS.ADD.INCOMPLETE'|translate}}</em></span>
-                                        <span ng-show="newPost.body_FR" style="float:right"><em>{{'POSTS.ADD.COMPLETE'|translate}}</em></span>
+                                        <span ng-hide="newPost.name_FR" style="float:right"><em>{{'POSTS.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="newPost.name_FR" style="float:right"><em>{{'POSTS.ADD.COMPLETE'|translate}}</em></span>
                                     </div>
-                                    <div class="panel-body">
-                                        <div class="row">
-                                            <div class="col-xs-12 col-md-8">
-                                                <div class="form-group">
-                                                    <div text-angular ng-model="newPost.body_FR" ng-change="bodyUpdate()"></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-md-4">
-                                                <div style="text-align:center;">
-                                                    <span style="font-size:20px;">{{'POSTS.ADD.IPHONE'|translate}}</span>
-                                                </div>
-                                                <div class="render-html-iphone4">
-                                                    <iframe height="100%" width="100%" srcdoc="{{newPost.body_FR | deliberatelyTrustAsHtml}}" frameborder="0"></iframe>
-                                                </div>
+                                    <div class="panel-body form-horizontal">
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                Titre
+                                            </label>
+                                            <div class="col-xs-12 col-lg-10">
+                                                <input class="form-control" type="text" ng-model="newPost.name_FR" ng-change="titleUpdate()" placeholder="{{'POSTS.ADD.FRENCH_TITLE'|translate}}" required="required">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- END SECTION -->
-
                 </div>
             </div>
         </div>
