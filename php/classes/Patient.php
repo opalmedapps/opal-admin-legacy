@@ -547,17 +547,24 @@ class Patient extends Module {
         $response = array(
             'status' => 'Error',
         );
-
-
+        
         $errCode = "";
         $this->checkWriteAccess($post);
         HelpSetup::arraySanitization($post);
 
         $errCode = $this->_validatePatientParams($post) . $errCode;
 
-        $patientSite = $this->opalDB->getPatientSite($post["mrn"], $post["site"]);
+        $invalidValue = false;
+        foreach ($post["mrns"] as $identifier) {
 
-        if (count($patientSite) != 1){
+            $patientSite = $this->opalDB->getPatientSite($identifier["mrn"], $identifier["site"]);
+            $invalidValue = boolVal(count($patientSite)) | $invalidValue;
+            if (count($patientSite) == 1){
+                print_r(patientSite,true);
+            }
+        }
+
+        if ($invalidValue){
             $errCode = "1" . $errCode;
         } else {
             $response['status']  = "Success";
