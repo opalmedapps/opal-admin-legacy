@@ -18,8 +18,30 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             event :"",
         }
 
-        $scope.eventList = [];
+        // Default boolean variables
+        $scope.typeSection = {open:false, show:false};
+        $scope.eventSection = {open:false, show:false};
+        $scope.specialitySection = {open:false, show:true};
+        $scope.messageSection = {open:false, show:false};
 
+        // completed steps boolean object; used for progress bar
+        var steps = {
+            speciality: { completed: false },
+            type: { completed: false },
+            event: { completed: false },
+            message: { complete: false }
+        };
+        console.log("test4");
+        // Default count of completed steps
+        $scope.numOfCompletedSteps = 0;
+
+        // Default total number of steps
+        $scope.stepTotal = 4;
+
+        // Progress for progress bar on default steps and total
+        $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+
+        $scope.eventList = [];
         $scope.UpdateMessage = function(){
             if ($scope.changesMade && $scope.writeAccess) {
                 $.ajax({
@@ -44,6 +66,16 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
                     }
                 });
             }
+        }
+
+        // Function to return boolean for form completion
+        $scope.checkForm = function () {
+            return (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) === 100);
+        };
+
+        // Function to calculate / return step progress
+        function trackProgress(value, total) {
+            return Math.round(100 * value / total);
         }
 
         function getSmsAppointmentList() {
@@ -73,7 +105,6 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         }
 
         function getSmsMessage(){
-
             smsCollectionService.getsmsMessge($scope.UpdateInformation.speciality,
                 $scope.UpdateInformation.type,$scope.UpdateInformation.event, "EN").
             then(function (response) {
