@@ -135,7 +135,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			},
 		};
 
-		var arrValidationInsert = [ //TODO add consent form translation
+		var arrValidationInsert = [
 			$filter('translate')('STUDY.VALIDATION.CODE'),
 			$filter('translate')('STUDY.VALIDATION.TITLE_EN'),
 			$filter('translate')('STUDY.VALIDATION.TITLE_FR'),
