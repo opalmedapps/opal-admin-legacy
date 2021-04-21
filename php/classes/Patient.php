@@ -560,8 +560,10 @@ class Patient extends Module {
             $patientSite = $this->opalDB->getPatientSite($identifier["mrn"], $identifier["site"]);
             $invalidValue = !boolVal(count($patientSite)) && $invalidValue;
             if (count($patientSite) == 1){
-                print_r($patientSite,true);
+                print_r($patientSite);
             }
+            $toInsertMultiple = array();
+           // array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$newStudyId));
         }
 
         if ($invalidValue){
