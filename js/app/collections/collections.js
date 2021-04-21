@@ -1219,7 +1219,7 @@ angular.module('opalAdmin.collections', [])
 		var smsAPI = {};
 
 		//Function to get all sms appointments in ORMS db
-		smsAPI.getsmsAppointments = function(){
+		smsAPI.getSmsAppointments = function(){
 			return $http.post(
 				"sms/get/appointment",
 				{
@@ -1228,42 +1228,53 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		smsAPI.getsmsAppointments = function(){
-			return $http.post(
-				"sms/get/appointment",
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
+		smsAPI.getSmsEvents = function (type, speciality) {
+			// return $http.post(
+			// 	"sms/get/events",
+			// 	$.param({
+			// 		type: type,
+			// 		speciality: speciality,
+			// 	}),
+			// 	{
+			// 		headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+			// 	}
+			// );
+			return $http.get(
+				"sms/get/events?type="+type+"&speciality="+speciality,
+			)
 		};
 
-		smsAPI.getsmsEvents = function (type, speciality) {
-			return $http.post(
-				"sms/get/events",
-				$.param({
-					type: type,
-					speciality: speciality,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
+		smsAPI.getSmsMessge = function (speciality,type,event,language) {
+			// return $http.post(
+			// 	"sms/get/smsMessage",
+			// 	$.param({
+			// 		speciality: speciality,
+			// 		type: type,
+			// 		event:event,
+			// 		language:language,
+			// 	}),
+			// 	{
+			// 		headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+			// 	}
+			// );
+			return $http.get(
+				"sms/get/smsMessage?speciality="+speciality+"&type="+type+"&event="+event+"&language="+language,
+			)
 		};
 
-		smsAPI.getsmsMessge = function (type, speciality,event,language) {
+		smsAPI.getSmsSpeciality = function(){
 			return $http.post(
-				"sms/get/smsMessage",
-				$.param({
-					speciality: speciality,
-					type: type,
-					event:event,
-					language:language,
-				}),
+				"sms/get/smsSpeciality",
 				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+					header : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			);
-		};
+			)
+		}
 
+		smsAPI.getSmsType = function(speciality){
+			return $http.get(
+				"sms/get/smsType?speciality="+speciality,
+			)
+		}
 		return smsAPI;
 	});
