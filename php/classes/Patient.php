@@ -547,7 +547,7 @@ class Patient extends Module {
         $response = array(
             'status' => 'Error',
         );
-        
+
         $errCode = "";
         $this->checkWriteAccess($post);
         HelpSetup::arraySanitization($post);
@@ -560,7 +560,7 @@ class Patient extends Module {
             $patientSite = $this->opalDB->getPatientSite($identifier["mrn"], $identifier["site"]);
             $invalidValue = boolVal(count($patientSite)) | $invalidValue;
             if (count($patientSite) == 1){
-                print_r(patientSite,true);
+                print_r($patientSite,true);
             }
         }
 
