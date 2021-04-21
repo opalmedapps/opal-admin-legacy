@@ -511,20 +511,24 @@ class Patient extends Module {
         if(!array_key_exists("mrns", $post) || $post["mrns"] == "" || count($post["mrns"]) <= 0)
             $errCode = "1" . $errCode;
         else
-            $errCode = "0" . $errCode;
-
-
-        foreach ($post["mrns"] as $identifier) {
-            if (!preg_match($pattern,  $identifier["mrn"]  )) {
-                $errCode = "1" . $errCode;
-                print_r("PAS BON " . $identifier["mrn"]);
+            $invalidValue = false;
+            foreach ($post["mrns"] as $identifier) {
+                if (!preg_match($pattern,  $identifier["mrn"] )) {
+                    print_r("PAS BON " . $identifier["mrn"]);
+                }
+                $invalidValue = !preg_match($pattern,  $identifier["mrn"] );
             }
-        }
+            if ($invalidValue) {
+                $errCode = "1" . $errCode;
+            } else {
+                $errCode = "0" . $errCode;
+            }
 
         if(!array_key_exists("ramq", $post) || $post["ramq"] == "")
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
+
 
         if(!array_key_exists("birthdate", $post) || $post["birthdate"] == "")
             $errCode = "1" . $errCode;
