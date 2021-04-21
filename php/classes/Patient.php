@@ -549,7 +549,7 @@ class Patient extends Module {
         $this->checkWriteAccess($post);
         HelpSetup::arraySanitization($post);
 
-        $errCode = $this->_validatePatientParams($post) . $errCode;
+       // $errCode = $this->_validatePatientParams($post) . $errCode;
 
         $patientSite = $this->opalDB->getPatientSite($post["mrn"], $post["site"]);
 
