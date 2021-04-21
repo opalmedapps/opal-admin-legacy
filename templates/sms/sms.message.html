@@ -184,94 +184,174 @@
                         </div>
                     </div>
                     <div class="section-content">
-                        <!-- SECTION: Type -->
+                        <!-- SECTION: Speciality -->
                         <div class="row">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
-                                      <span class="fas fa-dot-circle"></span>
+                                      <span class="fa fa-dot-circle-o"></span>
+                                      <h2>Speciality</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="color:#d9534f"><strong>Require field: </strong></span>
+                                    Please select the speciality of the message.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div ng-repeat="element in SpecialityList" class="col-xs-4 col-lg-3 item-panel-select">
+                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: UpdateInformation.speciality == element.speciality}" ng-click="SpecialityUpdate(element)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                    <div class="panel-info" ng-class="{active: UpdateInformation.speciality == element.speciality}">
+                                        <div class="panel-content" style="text-align:center">
+                                            <span style="font-size:30px;" class="fa fa-database"></span>
+                                            <div class="option-panel-title">{{element.speciality}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Type -->
+                        <div class="row animated" ng-class="{fadeInUp:typeSection.show}" ng-if="typeSection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                      <span class="fa fa-dot-circle-o"></span>
                                       <h2>Type</h2>
                                     </span>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row animated" ng-class="{fadeInUp:typeSection.show}" ng-if="typeSection.show">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
-                                    <span style="color:#d9534f"><strong>{{'POSTS.ADD.REQUIRED'|translate}}</strong></span>
-                                    {{'POSTS.ADD.TYPE_EXPLANATION'|translate}}
+                                    <span style="color:#d9534f"><strong>Require field: </strong></span>
+                                    Please select the type of the message.
                                 </p>
                             </div>
                         </div>
-                        <div class="row">
-                            <div ng-repeat="type in postTypes" class="col-xs-4 col-lg-3 item-panel-select">
-                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: newPost.type.name == type.name}" ng-click="typeUpdate(type)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                                    <div class="panel-info" ng-class="{active: newPost.type.name == type.name}">
+                        <div class="row animated" ng-class="{fadeInUp:typeSection.show}" ng-if="typeSection.show">
+                            <div ng-repeat="element in TypeList" class="col-xs-4 col-lg-3 item-panel-select">
+                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: UpdateInformation.type == element.type}" ng-click="TypeUpdate(element)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                    <div class="panel-info" ng-class="{active: UpdateInformation.type == element.type}">
                                         <div class="panel-content" style="text-align:center">
-                                            <span style="font-size:30px;" class="fa fa-{{type.icon}}"></span>
-                                            <div class="option-panel-title">{{type.name_display}}</div>
+                                            <span style="font-size:30px;" class="fa fa-sticky-note"></span>
+                                            <div class="option-panel-title">{{element.type}}</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- SECTION: Title -->
-                        <div class="row animated" ng-class="{fadeInUp:titleSection.show}" ng-if="titleSection.show">
+                        <!-- SECTION: Event -->
+                        <div class="row animated" ng-class="{fadeInUp:eventSection.show}" ng-if="eventSection.show">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
-                                        <span class="fa fa-dot-circle-o"></span>
-                                        <h2>{{'POSTS.ADD.TITLE_2'|translate}}</h2>
+                                      <span class="fa fa-dot-circle-o"></span>
+                                      <h2>Event</h2>
                                     </span>
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp:titleSection.show}" ng-if="titleSection.show">
+                        <div class="row animated" ng-class="{fadeInUp:eventSection.show}" ng-if="eventSection.show">>
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
-                                    <span style="color:#d9534f"><strong>{{'POSTS.ADD.REQUIRED'|translate}}</strong></span>
-                                    {{'POSTS.ADD.TITLE_EXPLANATION'|translate}}
+                                    <span style="color:#d9534f"><strong>Require field: </strong></span>
+                                    Please select the event of the message.
                                 </p>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp:titleSection.show}" ng-if="titleSection.show">
-                            <div class="col-xs-12 col-md-6">
-                                <div class="panel" ng-class="(newPost.name_EN) ? 'panel-success': 'panel-danger'">
-                                    <div class="panel-heading"><strong>{{'POSTS.ADD.ENGLISH'|translate}}</strong>
-                                        <span ng-hide="newPost.name_EN" style="float:right"><em>{{'POSTS.ADD.INCOMPLETE'|translate}}</em></span>
-                                        <span ng-show="newPost.name_EN" style="float:right"><em>{{'POSTS.ADD.COMPLETE'|translate}}</em></span>
+                        <div class="row animated" ng-class="{fadeInUp:eventSection.show}" ng-if="eventSection.show">
+                            <div ng-repeat="element in EventList" class="col-xs-4 col-lg-3 item-panel-select">
+                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: UpdateInformation.event == element.event}" ng-click="EventUpdate(element)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                    <div class="panel-info" ng-class="{active: UpdateInformation.event == element.event}">
+                                        <div class="panel-content" style="text-align:center">
+                                            <span style="font-size:30px;" class="fa fa-paper-plane"></span>
+                                            <div class="option-panel-title">{{element.event}}</div>
+                                        </div>
                                     </div>
-                                    <div class="panel-body form-horizontal">
-                                        <div class="form-group">
-                                            <label class="control-label col-xs-12 col-lg-2">
-                                                Title
-                                            </label>
-                                            <div class="col-xs-12 col-lg-10">
-                                                <input class="form-control" type="text" ng-model="newPost.name_EN" ng-change="titleUpdate()" placeholder="{{'POSTS.ADD.ENGLISH_TITLE'|translate}}" required="required">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Message -->
+                        <div class="row animated" ng-class="{fadeInUp:messageSection.show}" ng-if="messageSection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fa fa-dot-circle-o"></span>
+                                        <h2>Message Content</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp:messageSection.show}" ng-if="messageSection.show">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="color:#d9534f"><strong>Required field: </strong></span>
+                                    Make sure the message are correct
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp:messageSection.show}" ng-if="messageSection.show">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="panel" ng-class="(UpdateInformation.message.English) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>English Message</strong>
+                                        <span ng-hide="UpdateInformation.message.English" style="float:right"><em>Incomplete</em></span>
+                                        <span ng-show="UpdateInformation.message.English" style="float:right"><em>Complete</em></span>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-xs-12 col-lg-12">
+                                                <div class="form-group">
+                                                    <div text-angular ng-model="UpdateInformation.message.English" ng-change="CheckMessage()"></div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xs-12 col-md-6">
-                                <div class="panel" ng-class="(newPost.name_FR) ? 'panel-success': 'panel-danger'">
-                                    <div class="panel-heading"><strong>{{'POSTS.ADD.FRENCH'|translate}}</strong>
-                                        <span ng-hide="newPost.name_FR" style="float:right"><em>{{'POSTS.ADD.INCOMPLETE'|translate}}</em></span>
-                                        <span ng-show="newPost.name_FR" style="float:right"><em>{{'POSTS.ADD.COMPLETE'|translate}}</em></span>
+                                <div class="panel" ng-class="(UpdateInformation.message.French) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>French Message</strong>
+                                        <span ng-hide="UpdateInformation.message.French" style="float:right"><em>Incomplete</em></span>
+                                        <span ng-show="UpdateInformation.message.French" style="float:right"><em>Complete</em></span>
                                     </div>
-                                    <div class="panel-body form-horizontal">
-                                        <div class="form-group">
-                                            <label class="control-label col-xs-12 col-lg-2">
-                                                Titre
-                                            </label>
-                                            <div class="col-xs-12 col-lg-10">
-                                                <input class="form-control" type="text" ng-model="newPost.name_FR" ng-change="titleUpdate()" placeholder="{{'POSTS.ADD.FRENCH_TITLE'|translate}}" required="required">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-xs-12 col-lg-12">
+                                                <div class="form-group">
+                                                    <div text-angular ng-model="UpdateInformation.message.French" ng-change="CheckMessage()"></div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <!-- SECTION: Resources -->
+                        <div class="row animated" ng-class="{fadeInUp:messageSection.show}" ng-if="messageSection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fa fa-dot-circle-o"></span>
+                                        <h2>Resources</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp:messageSection.show}" ng-if="messageSection.show">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="color:#d9534f"><strong>Required field: </strong></span>
+                                    Please select the resources you want to activate.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
