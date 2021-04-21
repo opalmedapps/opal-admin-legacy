@@ -17,14 +17,28 @@ require_once('PatientCheckInPushNotification.php');
 //
 // PROCESS INCOMING REQUEST
 //============================================
-$PatientId = $_GET["PatientId"];
+// $PatientId is for legacy systems/calls
+$PatientId = isset($_GET["PatientId"]) ? $_GET["PatientId"] : "---NA---";
+// $wsMRN is the hospital medical ID
+$wsMRN = isset($_GET["mrn"]) ? $_GET["mrn"] : "---NA---";
+// $wsSite is the site of the hospital code (should be three digit)
+// If $wsSite is empty, then default it to RVH because it could be from a legacy call
+$wsSite = isset($_GET["site"]) ? $_GET["site"] : "RVH";
 
-$response = OpalCheckin::ValidateCheckin($PatientId);
+// Only one MRN is accepted if somehow both $PatientId and $wsMRN is provided then we want to replace
+// the $PatientId with the $wsMRN. If no $PatientId provided, but $wsMRN is then we copy the $wsMRN to $PatientId.
+// The $PatientId is the original parameter in this entire code, so it is easier to just re-use it.
+if ( (($PatientId <> "---NA---") && ($wsMRN <> "---NA---")) ||
+    (($PatientId == "---NA---") && ($wsMRN <> "---NA---")) )
+{
+    $PatientId = $wsMRN;
+};
 
+$response = OpalCheckin::ValidateCheckin($PatientId, $wsSite);
 
 if($response['failure']) print("Error: " . $response['error']);
 else if (count($response['data']) > 0) {
-	$result = OpalCheckin::UpdateCheckinOnOpal($response['data'], $PatientId);
+	$result = OpalCheckin::UpdateCheckinOnOpal($response['data'], $PatientId, $wsSite);
 	print(implode($result['data']));
 }
 else print('Error: No appointments were successfully checked into or no appointments exist today');
@@ -37,10 +51,11 @@ class OpalCheckin{
     /**
      * Updates OpalDB with the checkin states of the inputted appointments and then sends notifications to the patient
      * @param $success
-     * @param $patientId
+     * @param $patientId Patient MRN
+     * @param $Site Hospital Code
      * @return array
      */
-	public static function UpdateCheckinOnOpal($success, $patientId){
+	public static function UpdateCheckinOnOpal($success, $patientId, $Site){
 
         //
 		// DATABASE CONFIGURATION
@@ -54,9 +69,11 @@ class OpalCheckin{
         //======================================================
 
         // Get the Opal Patient ID using the Aria Serial Number
-        $sql = "Select Patient.PatientSerNum
-				From Patient
-				Where PatientId = '$patientId'";
+        $sql = "select PHI.PatientSerNum 
+                From Patient_Hospital_Identifier PHI
+                where PHI.MRN = '$patientId'
+                    and PHI.Hospital_Identifier_Type_Code = '$Site'
+                ";
 
         try {
             $patientSerNum = $conn->query($sql);
@@ -91,22 +108,23 @@ class OpalCheckin{
     /**
      * Validates whether or not a patient's appointments were successfully checked in on Aria and/or Medivist and then
      * returns an array of appointments that were successfully checked in
-     * @param $patientId
+     * @param $patientId Patient MRN
+     * @param $Site Hospital Code
      * @return array
      */
-    public static function ValidateCheckin($patientId){
+    public static function ValidateCheckin($patientId, $Site){
 	    // Array that will hold appointmentsernum of appointments that were successfully checked in
 	    $success = array();
 
 	    // Get all of the patients appointments that are today
-        $apts = self::getTodaysAppointments($patientId);
+        $apts = self::getTodaysAppointments($patientId, $Site);
         if($apts['failure']) return self::ErrorResponse($apts['error']);
 		else $apts = $apts['data'];
         //If aria appointments exist...
         if(count($apts[0]) > 0){
 
             //Get appointmentsernums of successfully checked in aria appointments
-            $validAriaAppointments = self::validateCheckinsWithExternalDB($apts[0], $patientId, 'Aria');
+            $validAriaAppointments = self::validateCheckinsWithExternalDB($apts[0], $patientId, $Site, 'Aria');
             if($validAriaAppointments['failure']) return self::ErrorResponse($validAriaAppointments['error']);
             else $validAriaAppointments = $validAriaAppointments['data'];
 
@@ -119,7 +137,7 @@ class OpalCheckin{
         if(count($apts[1]) > 0){
 
             //Get appointmentsernums of successfully checked in medivist appointments
-            $validMediAppointments = self::validateCheckinsWithExternalDB($apts[1], $patientId, 'Medi');
+            $validMediAppointments = self::validateCheckinsWithExternalDB($apts[1], $patientId, $Site, 'Medi');
             if($validMediAppointments['failure']) return self::ErrorResponse($validMediAppointments['error']);
             else $validMediAppointments = $validMediAppointments['data'];
 
@@ -137,31 +155,36 @@ class OpalCheckin{
 
     /**
      * Gets a list of all appointments of patient on a given day from Aria and Medivisit
-     * @param $patientId
+     * @param $patientId Patient MRN
+     * @param $Site Hospital Code
      * @return array of appointments
      */
-    private static function getTodaysAppointments($patientId){
+    private static function getTodaysAppointments($patientId, $Site){
 
-        // Create DB connection  **** CURRENTLY OPAL_DB POINTS TO PRE_PROD ****
+        // Create DB connection
         $conn = new mysqli(OPAL_DB_HOST, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, OPAL_DB_NAME);
 
         // Get current patients appointments from OpalDB that exist in aria
         $sqlAria = "
-                Select Appointment.AppointmentSerNum, Appointment.AppointmentAriaSer
-                From Patient, Appointment
-                Where Patient.patientId = '$patientId'
-                    And Patient.PatientSerNum = Appointment.PatientSerNum
-                    And Appointment.SourceDatabaseSerNum = 1
-                    And DATE_FORMAT(Appointment.ScheduledStartTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d');";
+            Select A.AppointmentSerNum, A.AppointmentAriaSer
+            From Patient_Hospital_Identifier PHI, Appointment A
+            Where PHI.MRN = '$patientId'
+                And PHI.Hospital_Identifier_Type_Code = '$Site'
+                And PHI.PatientSerNum = A.PatientSerNum
+                And A.SourceDatabaseSerNum = 1
+                And DATE_FORMAT(A.ScheduledStartTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d');
+        ";
 
         // Get current patients appointments from OpalDB that exist in medivisit
         $sqlMediVisit = "
-                Select Appointment.AppointmentSerNum, Appointment.AppointmentAriaSer
-                From Patient, Appointment
-                Where Patient.patientId = '$patientId'
-                    And Patient.PatientSerNum = Appointment.PatientSerNum
-                    And Appointment.SourceDatabaseSerNum = 2
-                    And DATE_FORMAT(Appointment.ScheduledStartTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d');";
+            Select A.AppointmentSerNum, A.AppointmentAriaSer
+            From Patient_Hospital_Identifier PHI, Appointment A
+            Where PHI.MRN = '$patientId'
+                And PHI.Hospital_Identifier_Type_Code = '$Site'
+                And PHI.PatientSerNum = A.PatientSerNum
+                And A.SourceDatabaseSerNum = 2
+                And DATE_FORMAT(A.ScheduledStartTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d');
+        ";
          try{
              $apts = array();
              $aria = array();
@@ -191,16 +214,17 @@ class OpalCheckin{
     /**
      * Checks whether opalDB appointments exist in either aria or medivisit and returns array of verified appointments
      * @param $appts
-     * @param $patientId
-     * @param $location
+     * @param $patientId Patient MRN
+     * @param $Site Hospital Code
+     * @param $location used internally if it is an Aira system or Medi (ORMS) system
      * @return array
      */
-    private static function validateCheckinsWithExternalDB($appts, $patientId, $location){
+    private static function validateCheckinsWithExternalDB($appts, $patientId, $Site, $location){
         $success = array();
 
         //Get Aria ser num of each checked in appointment in Aria
         try{
-            $ext_appts = ($location == 'Aria') ?  self::getCheckedInAriaAppointments($patientId) : self::getCheckedInMediAppointments($patientId);
+            $ext_appts = ($location == 'Aria') ?  self::getCheckedInAriaAppointments($patientId, $Site) : self::getCheckedInMediAppointments($patientId, $Site);
             $ext_appts = $ext_appts['data'];
 
         } catch (Exception $e) {
@@ -220,26 +244,35 @@ class OpalCheckin{
 
     /**
      * Gets a list of checked in appointments in Aria
-     * @param $patientId
+     * @param $patientId Patient MRN
+     * @param $Site Hospital Code
      * @return array
      * @throws Exception
      */
-    private static function getCheckedInAriaAppointments($patientId){
+    private static function getCheckedInAriaAppointments($patientId, $Site){
         $host_db_link = new PDO(ARIA_DB_DSN, ARIA_DB_USERNAME, ARIA_DB_PASSWORD);
 
         // The first subquery gets the list of todays Schedule Activity of a patient
         // The top query gets the list of Schedule Activity Serial Number that exist in the patient location table (indicate that the patient have successfully checked in)
-        $sql = "SELECT ScheduledActivitySer AS AppointmentSerNum
-                FROM VARIAN.dbo.PatientLocation
-                WHERE ScheduledActivitySer IN
-                  (SELECT ScheduledActivity.ScheduledActivitySer
-                  FROM VARIAN.dbo.Patient, VARIAN.dbo.ScheduledActivity
-                  WHERE Patient.PatientSer = ScheduledActivity.PatientSer
-                    AND Patient.PatientId = '$patientId'
-                    AND LEFT(CONVERT(VARCHAR, ScheduledActivity.ScheduledStartTime, 120), 10) = LEFT(CONVERT(VARCHAR, getdate() - 0, 120), 10)
-                  )
-                AND CheckedInFlag = 1";
 
+        // ONLY get the list of schedule Activity Serial Number if the site is RVH
+        if ($Site == "RVH") {
+            $sql = "SELECT ScheduledActivitySer AS AppointmentSerNum
+            FROM VARIAN.dbo.PatientLocation
+            WHERE ScheduledActivitySer IN
+              (SELECT ScheduledActivity.ScheduledActivitySer
+              FROM VARIAN.dbo.Patient, VARIAN.dbo.ScheduledActivity
+              WHERE Patient.PatientSer = ScheduledActivity.PatientSer
+                AND Patient.PatientId = '$patientId'
+                AND LEFT(CONVERT(VARCHAR, ScheduledActivity.ScheduledStartTime, 120), 10) = LEFT(CONVERT(VARCHAR, getdate() - 0, 120), 10)
+              )
+            AND CheckedInFlag = 1";
+        } else { // if the site is not RVH, then return an empty query results
+                 // in theory, PatientLocationSer is an auto increment so it should never be a negative number
+            $sql = "SELECT ScheduledActivitySer AS AppointmentSerNum 
+                    FROM VARIAN.dbo.PatientLocation
+                    WHERE PatientLocationSer = -9999999"; 
+        }
 
         $host_db_link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -258,10 +291,11 @@ class OpalCheckin{
 
     /**
      * Gets a list of all checked in appointments on MediVisit
-     * @param $patientId
+     * @param $patientId Patient MRN
+     * @param $Site Hospital Code
      * @return array
      */
-    private static function getCheckedInMediAppointments($patientId){
+    private static function getCheckedInMediAppointments($patientId, $Site){
 
         // Create DB connection to WaitingRoomManagement
 
@@ -274,6 +308,9 @@ class OpalCheckin{
 				$opalDatabaseName = OPAL_DB_NAME;
 				$wrmDatabaseName = WRM_DB_NAME_FED;
 
+                // **********************************************************************
+                // TODO: ORMS doesn't have site yet, so query needs to wait for changes
+                // **********************************************************************
 				$sql = "Select PMH.AppointmentSerNum
                 From $wrmDatabaseName.PatientLocation PMH, $wrmDatabaseName.Patient P, $wrmDatabaseName.MediVisitAppointmentList MVA
                 Where P.PatientSerNum = MVA.PatientSerNum
