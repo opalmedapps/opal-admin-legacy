@@ -501,23 +501,23 @@ class Patient extends Module {
      *                          site : Site acronym of the establishment (mandatory)
      * @return  $errCode : int - error code coded on bitwise operation. If 0, no error.
      */
-    protected function _validatePatientParams(&$post)
+    protected function _validatePatientParams($post)
     {
         $pattern = "/^[0-9]*$/i";
         $errCode = "";
 
         $post = HelpSetup::arraySanitization($post);
 
-        if(!array_key_exists("mrns", $post) || $post["mrns"] == "" )
+        if(!array_key_exists("mrns", $post) || $post["mrns"] == "" || count($post["mrns"]) <= 0)
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
 
 
         foreach ($post["mrns"] as $identifier) {
-            $mrn = json_decode($identifier);
-            if (!preg_match($pattern,  $mrn )) {
+            if (!preg_match($pattern,  $identifier["mrn"]  )) {
                 $errCode = "1" . $errCode;
+                print_r("PAS BON " . $identifier["mrn"]);
             }
         }
 
@@ -526,7 +526,7 @@ class Patient extends Module {
         else
             $errCode = "0" . $errCode;
 
-        if(!array_key_exists("dateOfBirth", $post) || $post["dateOfBirth"] == "")
+        if(!array_key_exists("birthdate", $post) || $post["birthdate"] == "")
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
@@ -549,7 +549,7 @@ class Patient extends Module {
         $this->checkWriteAccess($post);
         HelpSetup::arraySanitization($post);
 
-       // $errCode = $this->_validatePatientParams($post) . $errCode;
+        $errCode = $this->_validatePatientParams($post) . $errCode;
 
         $patientSite = $this->opalDB->getPatientSite($post["mrn"], $post["site"]);
 
