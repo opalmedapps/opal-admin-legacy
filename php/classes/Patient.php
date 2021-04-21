@@ -572,6 +572,7 @@ class Patient extends Module {
         }
 
         print_r("errCode : " . $errCode);
+        // Update patient
 
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
