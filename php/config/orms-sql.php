@@ -45,7 +45,8 @@ define("ORMS_SQL_GET_EVENTS_FOR_APPOINTMENT","
 define("ORMS_SQL_GET_MESSAGE_FOR_APPOINTMENT","
     SELECT message.Message AS smsmessage
     FROM ".ORMS_SMS_MESSAGE_LIST_TABLE." message
-    WHERE message.Speciality = :spec message.Type = :typ AND message.Event = :event AND message.Language = :lang
+    WHERE (message.Speciality = 'Any' OR message.Speciality = :spec) AND message.Type = :typ AND message.Event = :event 
+    AND message.Language = :lang
 ");
 
 define("ORMS_SQL_UPDATE_APPOINTMENT_ACTIVE_STATE","
@@ -55,5 +56,14 @@ define("ORMS_SQL_UPDATE_APPOINTMENT_ACTIVE_STATE","
 
 define("ORMS_SQL_UPDATE_MESSAGE_FOR_APPOINTMENT","
     UPDATE ".ORMS_SMS_MESSAGE_LIST_TABLE." SET Message = :message
-    WHERE Speciality = :spec AND Type = :type AND Event = :event AND Language = :lang
+    WHERE (Speciality = 'Any' OR Speciality = :spec) AND Type = :type AND Event = :event AND Language = :lang
+");
+
+define("ORMS_SQL_GET_SPECIALITY_FOR_MESSAGE","
+    SELECT DISTINCT Speciality FROM ".ORMS_SMS_APPOINTMENT_LIST_TABLE
+);
+
+define("ORMS_SQL_GET_TYPE_FOR_MESSAGE","
+    SELECT DISTINCT message.Type FROM ".ORMS_SMS_MESSAGE_LIST_TABLE." message 
+    WHERE (message.Speciality = 'Any' OR message.Speciality = :spec)
 ");

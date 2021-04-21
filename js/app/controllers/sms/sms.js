@@ -165,7 +165,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
         };
 
         function getSmsAppointmentList() {
-            smsCollectionService.getsmsAppointments().then(function (response) {
+            smsCollectionService.getSmsAppointments().then(function (response) {
                 response.data.forEach(function (row){
                     switch (row.apptype){
                         case null:
