@@ -11,6 +11,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             window.history.back();
         };
 
+        $scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.sms]) & (1 << 1)) !== 0);
         $scope.SpecialityList = null;
         $scope.TypeList = null;
         $scope.EventList = null;
@@ -35,7 +36,6 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             event: { completed: false },
             message: { complete: false }
         };
-        console.log("test6");
         // Default count of completed steps
         $scope.numOfCompletedSteps = 0;
 
@@ -88,11 +88,13 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
 
         //Update Message information
         $scope.UpdateMessage = function(){
-            if ($scope.changesMade && $scope.writeAccess) {
+            console.log("ready");
+            if ($scope.checkForm() && $scope.writeAccess) {
+                console.log("going");
                 $.ajax({
                     type: "POST",
                     url: "sms/update/smsMessage",
-                    data:$scope.UpdateInformation,
+                    data:{'UpdateInformation':$scope.UpdateInformation},
                     success: function (response) {
                         getSmsAppointmentList();
                         response = JSON.parse(response);
@@ -103,8 +105,10 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
                             $scope.showBanner();
                         }
                         else {
+                            console.log("error");
                             ErrorHandler.onError(response, "error");
                         }
+                        alert("Task Complete");
                     },
                     error: function(err) {
                         ErrorHandler.onError(err,"error");
@@ -116,6 +120,15 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         // Function to return boolean for form completion
         $scope.checkForm = function () {
             return (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) === 100);
+        };
+
+        $scope.setBannerClass = function (classname) {
+            // Remove any classes starting with "alert-"
+            $(".bannerMessage").removeClass(function (index, css) {
+                return (css.match(/(^|\s)alert-\S+/g) || []).join(' ');
+            });
+            // Add class
+            $(".bannerMessage").addClass('alert-' + classname);
         };
 
         // Function to calculate / return step progress
@@ -170,7 +183,6 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             smsCollectionService.getSmsEvents($scope.UpdateInformation.type,$scope.UpdateInformation.speciality).
             then(function (response) {
                 $scope.EventList = response.data;
-                console.log($scope.EventList);
             }).catch(function(err) {
                 ErrorHandler.onError(err, "error");
             });
@@ -181,7 +193,6 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
                 $scope.UpdateInformation.type,$scope.UpdateInformation.event, "English").
             then(function (response) {
                 $scope.UpdateInformation.message.English = response.data.message;
-                $scope.CheckMessage();
             }).catch(function(err) {
                 ErrorHandler.onError(err, "error");
             });
@@ -190,7 +201,6 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
                 $scope.UpdateInformation.type,$scope.UpdateInformation.event, "French").
             then(function (response) {
                 $scope.UpdateInformation.message.French = response.data.message;
-                $scope.CheckMessage();
             }).catch(function(err) {
                 ErrorHandler.onError(err, "error");
             });
