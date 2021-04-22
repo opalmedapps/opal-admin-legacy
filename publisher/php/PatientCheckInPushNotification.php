@@ -11,8 +11,6 @@ class PatientCheckInPushNotification{
     /**
      * API METHODS
      * ===============================================
-
-    /**
      * @name sendPatientCheckInNotification
      * @desc Using the PatientID, it will send a notification to the patient cell phone stating that they are now checked in.
      * @param $patientSerNum

@@ -1,4 +1,6 @@
 <?php
+// 2021-04-22 YM: Not sure if this PHP is still in use
+
     include_once "database.inc";
 
 	public function updateAppointmentCheckIn($patientSerNum, $appointmentSerNum, $appointmentCheckIn, $response)
@@ -11,9 +13,7 @@
            $sql = "
                     SELECT ".$deviceSerNum.", $patientSerNum, ntc.NotificationControlSerNum, $appointmentSerNum,
                     NOW(),'".$sendStatus."','".$sendLog."' FROM NotificationControl ntc WHERE ntc.NotificationType = 'CheckInNotification'";
-
-
-		   
+	   
            if ($sendStatus == 0) {$sendStatus = 'F';}
            else {
                $sendStatus = 'T';
@@ -28,15 +28,5 @@
 
            return $sendStatus;
        }
-
-
-
-
-
-
-
-
-
-
 
 ?>

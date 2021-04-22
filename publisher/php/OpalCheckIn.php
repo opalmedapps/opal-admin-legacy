@@ -14,25 +14,18 @@ require_once "database.inc";
 // Used to send push notification to all of the user devices
 require_once('PatientCheckInPushNotification.php');
 
+// Used to determine which to use (PatientId or MRN)
+require_once('HospitalPushNotification.php');
+
 //
 // PROCESS INCOMING REQUEST
 //============================================
-// $PatientId is for legacy systems/calls
-$PatientId = isset($_GET["PatientId"]) ? $_GET["PatientId"] : "---NA---";
-// $wsMRN is the hospital medical ID
-$wsMRN = isset($_GET["mrn"]) ? $_GET["mrn"] : "---NA---";
+// // determine patientId or MRN
+$PatientId = HospitalPushNotification::getPatientIDorMRN(isset($_GET["PatientId"]) ? $_GET["PatientId"] : "---NA---", isset($_GET["mrn"]) ? $_GET["mrn"] : "---NA---");
+
 // $wsSite is the site of the hospital code (should be three digit)
 // If $wsSite is empty, then default it to RVH because it could be from a legacy call
 $wsSite = isset($_GET["site"]) ? $_GET["site"] : "RVH";
-
-// Only one MRN is accepted if somehow both $PatientId and $wsMRN is provided then we want to replace
-// the $PatientId with the $wsMRN. If no $PatientId provided, but $wsMRN is then we copy the $wsMRN to $PatientId.
-// The $PatientId is the original parameter in this entire code, so it is easier to just re-use it.
-if ( (($PatientId <> "---NA---") && ($wsMRN <> "---NA---")) ||
-    (($PatientId == "---NA---") && ($wsMRN <> "---NA---")) )
-{
-    $PatientId = $wsMRN;
-};
 
 $response = OpalCheckin::ValidateCheckin($PatientId, $wsSite);
 
