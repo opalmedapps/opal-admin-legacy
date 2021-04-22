@@ -55,8 +55,8 @@ class Sms extends Module {
     public function updateSmsMessage($information,$language){
         $this->checkWriteAccess($information);
 
-        return $this->ormsDB->updateSmsMessage($information['message'][$language],$information['spec'],
-            $information['type'],$information['event'],$information['lang']);
+        return $this->ormsDB->updateSmsMessage($information['message'][$language],$information['speciality'],
+            $information['type'],$information['event'],$language);
     }
 
     public function getSpecialityMessage(){
