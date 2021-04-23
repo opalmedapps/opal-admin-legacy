@@ -578,22 +578,20 @@ class Patient extends Module {
             }
         }
 
-        // Update patient demographics
-        $patientdata = array("PatientSerNum"=>$patientSerNum,
-            "PatientAriaSer"=>NULL,
-            "PatientId"=>$mrn,
-            "PatientId2"=>$mrn,
-            "FirstName"=>$post["name"]["firstName"],
-            "LastName"=>$post["name"]["lastName"],
-			"Alias"=>$post["name"]["alias"],
-			"Sex" => $post["sex"],
-			"SSN"=>$post["ramq"],
-			"DateOfBirth"=>$post["birthdate"],
-            "LastUpdated"=> date("Y-m-d H:i:s"));
+        //Update patient demographics
+        $patientdata = $this->opalDB->fetchTriggersData("SELECT * FROM Patient where PatientSerNum=" . $patientSerNum)[0];
+
+        $patientdata["PatientSerNum"] = $patientSerNum;
+        $patientdata["FirstName"] = $post["name"]["firstName"];
+        $patientdata["LastName"] = $post["name"]["lastName"];
+        $patientdata["Alias"] = $post["name"]["alias"];
+        $patientdata["Sex"] = $post["sex"];
+        $patientdata["SSN"] = $post["ramq"];
+        $patientdata["DateOfBirth"] = $post["birthdate"];
+        $patientdata["LastUpdated"] = date("Y-m-d H:i:s");
 
         print_r($toInsertMultiple);
         print_r($patientdata);
-
         $this->opalDB->updatePatient($patientdata);
 
         if ($invalidValue){
