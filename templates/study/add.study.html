@@ -441,8 +441,11 @@
                                             <label class="control-label col-xs-12 col-lg-2">
                                                 {{'STUDY.ADD.PHONE'|translate}}
                                             </label>
-                                            <div class="col-xs-12 col-lg-10">
-                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.phone" ng-change="nameUpdate()" />
+                                            <div class="col-xs-4 col-lg-2">
+                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.phoneExt" ng-change="nameUpdate()" placeholder="ext."/>
+                                            </div>
+                                            <div class="col-xs-8 col-lg-8">
+                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.phone" ng-change="nameUpdate()" placeholder="+1-438-123-4567"/>
                                             </div>
                                         </div>
                                     </div>

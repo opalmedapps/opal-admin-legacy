@@ -1252,7 +1252,7 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(OPAL_UPDATE_STUDY_CONSENT, array(
             array("parameter"=>":studyId","variable"=>$studyID,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":patientId","variable"=>$patId,"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":patientConsent","variable"=>$patConsent,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":patientConsent","variable"=>$patConsent,"data_type"=>PDO::PARAM_INT),
         ));
     }
 

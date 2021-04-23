@@ -110,6 +110,14 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'STUDY.LIST.PHONE_EXT'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="toSubmit.investigator.phoneExt" required="required" />
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- SECTION: Dates -->
         <div uib-accordion-group is-open="datesSection.open">
@@ -164,7 +172,7 @@
                     <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!(patientConsentList.length)"></span>
                     <span ng-if="!(patientConsentList.length)">{{'STUDY.EDIT.NO_PATIENT'|translate}}</span>
                     <ul class="list-items" ng-if="(patientConsentList.length)">
-                        <li ng-repeat="pat in patientConsentList">{{pat.name}} {{pat.consent}}</li>
+                        <li ng-repeat="pat in patientConsentList">{{pat.name}} {{pat.consent_display}}</li>
                     </ul>
                 </p>
             </div>
@@ -181,7 +189,7 @@
                         </label>
                         <select
                             ng-options="status for status in consentChoices"
-                            ng-model="patient.consent" ng-click="patientConsentChange(patient)">
+                            ng-model="patient.consent_display" ng-click="patientConsentChange(patient)">
                         </select>
                     </li>
                 </ul>

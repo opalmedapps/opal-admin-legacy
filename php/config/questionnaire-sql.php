@@ -675,5 +675,5 @@ define("SQL_QUESTIONNAIRE_GET_CONSENT_FORM_TITLE","
     SELECT q.ID, 
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = 2) AS name_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = 1) AS name_FR
-    FROM ".QUESTIONNAIRE_TABLE." q WHERE q.ID = :consentId;"
+    FROM ".QUESTIONNAIRE_TABLE." q WHERE q.ID = :consentId AND q.final = ".FINAL_RECORD.";"
 );

@@ -2331,6 +2331,7 @@
       "STUDY_ID": "ID Étude",
       "INVESTIGATOR": "Coordinateur(trice) principal(e)",
       "PHONE": "Numéro de téléphone",
+      "PHONE_EXT": "Extension de téléphone",
       "EMAIL": "Adresses courriel",
       "START_DATE": "Date début",
       "END_DATE": "Date fin",
@@ -2392,7 +2393,7 @@
       "TITLE_2": "Titre",
       "DESCRIPTION": "Description",
       "INVESTIGATOR": "Coordinateur(trice) principal(e)",
-      "INVESTIGATOR_EXPLANATION": "Veuillez entrer le nom complet de la personne responsable.",
+      "INVESTIGATOR_EXPLANATION": "Veuillez entrer le nom complet de la personne responsable, ainsi que leur téléphone principal, leur adresse e-mail et leur numéro de poste facultatif.",
       "PATIENTS": "List des patients",
       "PATIENTS_EXPLANATION": "Si certains patients sont déjà affectés à cette étude, veuillez les ajouter.",
       "QUESTIONNAIRE": "Liste des questionnaires de rechercher",
@@ -2451,7 +2452,11 @@
       "CONSENT_STATUS": "État du consentement du patient",
       "CONSENT_FORM": "Formulaire de consentement",
       "CONSENT_ID": "Forme identifiant:",
-      "CURRENT_CONSENTS": "Consentements actuels"
+      "CURRENT_CONSENTS": "Consentements actuels",
+      "INVITED": "[FR]invited",
+      "OPAL_CONSENTED": "[FR]opalConsented",
+      "OTHER_CONSENTED": "[FR]otherConsented",
+      "DECLINED": "[FR]declined"
     }
   },
   "ALERT" : {

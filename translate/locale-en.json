@@ -2313,6 +2313,7 @@
       "STUDY_ID": "Study ID",
       "INVESTIGATOR": "Main Investigator",
       "PHONE": "Phone Number",
+      "PHONE_EXT": "Phone Extension",
       "EMAIL": "Email",
       "START_DATE": "Start Date",
       "END_DATE": "End Date",
@@ -2374,7 +2375,7 @@
       "TITLE_2": "Title",
       "DESCRIPTION": "Description",
       "INVESTIGATOR": "Principal Investigator",
-      "INVESTIGATOR_EXPLANATION": "Please enter the complete name of the principal investigator.",
+      "INVESTIGATOR_EXPLANATION": "Please enter the complete name of the principal investigator, along with their primary phone, email, and optional extension number.",
       "PATIENTS": "List of Patients",
       "PATIENTS_EXPLANATION": "If any patients should be already assigned to this study, please add them.",
       "QUESTIONNAIRE": "List of Research Questionnaires",
@@ -2434,7 +2435,11 @@
       "CONSENT_STATUS": "Patient Consent Status",
       "CONSENT_FORM": "Consent Form",
       "CONSENT_ID": "Form:",
-      "CURRENT_CONSENTS": "Current Consents"
+      "CURRENT_CONSENTS": "Current Consents",
+      "INVITED": "invited",
+      "OPAL_CONSENTED": "opalConsented",
+      "OTHER_CONSENTED": "otherConsented",
+      "DECLINED": "declined"
     }
   },
   "ALERT" : {

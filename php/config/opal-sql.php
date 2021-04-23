@@ -656,17 +656,17 @@ define("OPAL_GET_USER_TEST_RESULT_EXP","
 ");
 
 define("OPAL_GET_STUDIES_LIST","
-    SELECT ID, code, title_EN, title_FR, investigator, email, phoneNumber, startDate, endDate, creationDate FROM ".OPAL_STUDY_TABLE."
+    SELECT ID, code, title_EN, title_FR, investigator, email, phone, phoneExt, startDate, endDate, creationDate FROM ".OPAL_STUDY_TABLE."
     WHERE deleted = ".NON_DELETED_RECORD.";
 ");
 
 define("OPAL_GET_STUDY_DETAILS","
-    SELECT ID, consentQuestionnaireId, code, title_EN, title_FR, description_EN, description_FR, investigator, email, phoneNumber, startDate, endDate FROM ".OPAL_STUDY_TABLE." WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD.";
+    SELECT ID, consentQuestionnaireId, code, title_EN, title_FR, description_EN, description_FR, investigator, email, phone, phoneExt, startDate, endDate FROM ".OPAL_STUDY_TABLE." WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD.";
 ");
 
 define("OPAL_UPDATE_STUDY","
-    UPDATE ".OPAL_STUDY_TABLE." SET code = :code, title_EN = :title_EN, title_FR = :title_FR, description_EN = :description_EN, description_FR = :description_FR, investigator = :investigator, startDate = :startDate,
-    endDate = :endDate, updatedBy = :updatedBy WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD."; 
+    UPDATE ".OPAL_STUDY_TABLE." SET code = :code, title_EN = :title_EN, title_FR = :title_FR, description_EN = :description_EN, description_FR = :description_FR, investigator = :investigator, phone = :phone, email = :email, phoneExt = :phoneExt, startDate = :startDate,
+    endDate = :endDate, consentQuestionnaireId = :consentQuestionnaireId, updatedBy = :updatedBy WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD."; 
 ");
 
 define("OPAL_UPDATE_STUDY_CONSENT", "
