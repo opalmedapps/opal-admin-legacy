@@ -582,16 +582,30 @@ class Patient extends Module {
         $patientdata = $this->opalDB->fetchTriggersData("SELECT * FROM Patient where PatientSerNum=" . $patientSerNum)[0];
 
         $patientdata["PatientSerNum"] = $patientSerNum;
+
+
+
         $patientdata["FirstName"] = $post["name"]["firstName"];
         $patientdata["LastName"] = $post["name"]["lastName"];
-        $patientdata["Alias"] = $post["name"]["alias"];
-        $patientdata["Sex"] = $post["sex"];
+
+        if (array_key_exists("alias", $post) && !empty($post["alias"])){
+            $patientdata["Alias"] = $post["gender"];
+        }
+
+        if (array_key_exists("gender", $post) && !empty($post["gender"])){
+            $patientdata["Sex"] = $post["gender"];
+        }
         $patientdata["SSN"] = $post["ramq"];
         $patientdata["DateOfBirth"] = $post["birthdate"];
+        $patientdata["TelNum"] = $post["phone"];
+        $patientdata["Email"] = $post["email"];
+        $patientdata["Language"] = $post["language"];
+        $patientdata["DeathDate"] = $post["deceasedDateTime"];
         unset($patientdata["LastUpdated"]);
 
 
         print_r($toInsertMultiple);
+        print_r($patientdata);
 
         $this->opalDB->updatePatient($patientdata);
 
