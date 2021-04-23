@@ -555,16 +555,46 @@ class Patient extends Module {
         $errCode = $this->_validatePatientParams($post) . $errCode;
 
         $invalidValue = true;
-        foreach ($post["mrns"] as $identifier) {
-
-            $patientSite = $this->opalDB->getPatientSite($identifier["mrn"], $identifier["site"]);
+        $mrns = $post["mrns"];
+        $toInsertMultiple = array();
+        $patientSerNum = "";
+        while (($identifier = array_shift($mrns)) !== NULL) {
+            $mrn = str_pad($identifier["mrn"] ,7,"0",STR_PAD_LEFT);
+            $patientSite = $this->opalDB->getPatientSite($mrn, $identifier["site"]);
             $invalidValue = !boolVal(count($patientSite)) && $invalidValue;
             if (count($patientSite) == 1){
-                print_r($patientSite);
+                //print_r($patientSite);
+                $patientSerNum = $patientSite[0]["PatientSerNum"];
+            } else {
+                if ($patientSerNum == ""){
+                    $mrns = array_merge($mrns,array($identifier));
+                    print_r("wait for patientSerNum");
+                } else {
+                    array_push($toInsertMultiple, array("PatientSerNum"=>$patientSerNum,
+                        "Hospital_Identifier_Type_Code"=>$identifier["site"],
+                        "MRN"=>$mrn,
+                        "Is_Active"=>$identifier["active"]));
+                }
             }
-            $toInsertMultiple = array();
-           // array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$newStudyId));
         }
+
+        // Update patient demographics
+        $patientdata = array("PatientSerNum"=>$patientSerNum,
+            "PatientAriaSer"=>NULL,
+            "PatientId"=>$mrn,
+            "PatientId2"=>$mrn,
+            "FirstName"=>$post["name"]["firstName"],
+            "LastName"=>$post["name"]["lastName"],
+			"Alias"=>$post["name"]["alias"],
+			"Sex" => $post["sex"],
+			"SSN"=>$post["ramq"],
+			"DateOfBirth"=>$post["birthdate"],
+            "LastUpdated"=> date("Y-m-d H:i:s"));
+
+        print_r($toInsertMultiple);
+        print_r($patientdata);
+
+        $this->opalDB->updatePatient($patientdata);
 
         if ($invalidValue){
             $errCode = "1" . $errCode;

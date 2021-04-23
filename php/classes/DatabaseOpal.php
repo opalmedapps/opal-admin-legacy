@@ -2236,7 +2236,7 @@ class DatabaseOpal extends DatabaseAccess {
 
     /**
      * Get questionnaire options
-     * @param none
+     * @param void
      * @return array - questionnaire names (EN)
      */
     function getQstOptions(){
@@ -2256,7 +2256,7 @@ class DatabaseOpal extends DatabaseAccess {
 
     /**
      * Get demographics group report
-     * @param none
+     * @param void
      * @return array - demographics report
      */
     function getDemoReport(){
@@ -2702,8 +2702,16 @@ class DatabaseOpal extends DatabaseAccess {
 
 
 
+    /**
+     * Update specific patient demographic information
+     * @params $toUpdate - array of demographics fields to be update
+     *
+     * @return void
+     */
 
-
+    function updatePatient($toUpdate) {
+        $this->_replaceRecordIntoTable(OPAL_PATIENT_TABLE, $toUpdate);
+    }
 
     /*
      * Get the list of all undeleted master diagnoses
