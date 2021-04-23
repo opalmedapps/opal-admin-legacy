@@ -2710,7 +2710,7 @@ class DatabaseOpal extends DatabaseAccess {
      */
 
     function updatePatient($toUpdate) {
-        $this->_replaceRecordIntoTable(OPAL_PATIENT_TABLE, $toUpdate);
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT, $toUpdate);
     }
 
     /*

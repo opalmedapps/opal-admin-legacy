@@ -1285,6 +1285,17 @@ define("OPAL_UPDATE_PATIENT_PUBLISH_FLAG","
     UPDATE ".OPAL_PATIENT_CONTROL_TABLE." SET PatientUpdate = :PatientUpdate WHERE PatientSerNum = :PatientSerNum
 ");
 
+define("OPAL_UPDATE_PATIENT","
+    UPDATE ".OPAL_PATIENT_TABLE." SET PatientAriaSer = :PatientAriaSer, PatientId = :PatientId,	PatientId2 = :PatientId2, 
+	FirstName = :FirstName, LastName = :LastName, Alias = :Alias, ProfileImage = :ProfileImage, Sex = :Sex, 
+	DateOfBirth = :DateOfBirth, Age = :Age, TelNum = :TelNum, EnableSMS = :EnableSMS, Email = :Email, 
+	Language = :Language, SSN = :SSN, AccessLevel = :AccessLevel, RegistrationDate = :RegistrationDate, 
+	ConsentFormExpirationDate = :ConsentFormExpirationDate, BlockedStatus = :BlockedStatus, StatusReasonTxt = :StatusReasonTxt, 
+	DeathDate = :DeathDate, SessionId = :SessionId, TestUser = :TestUser, TermsAndAgreementSign = :TermsAndAgreementSign, 
+	TermsAndAgreementSignDateTime = :TermsAndAgreementSignDateTime WHERE PatientSerNum = :PatientSerNum
+");
+
+
 define("OPAL_GET_PATIENTS","
     SELECT DISTINCT pc.PatientSerNum AS serial, pc.PatientUpdate AS transfer, CONCAT(UCASE(LEFT(pt.FirstName, 1)), LCASE(SUBSTRING(pt.FirstName, 2)),
     ' ', UCASE(LEFT(pt.LastName, 1)), LCASE(SUBSTRING(pt.LastName, 2))) AS name, pt.PatientId AS
