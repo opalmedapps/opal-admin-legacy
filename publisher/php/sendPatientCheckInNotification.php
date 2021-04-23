@@ -3,6 +3,7 @@
 	/* Script to send a notification to a patient that checked in.  */
 
 	// Check if the patient ID is not empty
+	// NOTE: $patientId is actually PatientSerNum. Do not know why it is using patientId
 	if (strlen(trim($patientId)) > 0){
 
 		include_once('PatientCheckInPushNotification.php');

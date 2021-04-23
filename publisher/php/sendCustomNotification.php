@@ -2,10 +2,11 @@
 	header('Content-Type: application/javascript');
   /* Script to send push notifications given the following POST requests. */
 
+  // Used to determine which to use (PatientId or MRN)
   require_once('HospitalPushNotification.php');
 
   // determine patientId or MRN
-  $patientId = HospitalPushNotification::getPatientIDorMRN(isset($_GET["PatientId"]) ? $_GET["PatientId"] : "---NA---", isset($_GET["mrn"]) ? $_GET["mrn"] : "---NA---");
+  $patientId = HospitalPushNotification::getPatientIDorMRN(isset($_GET["patientid"]) ? $_GET["patientid"] : "---NA---", isset($_GET["mrn"]) ? $_GET["mrn"] : "---NA---");
   
   // $wsSite is the site of the hospital code (should be three digit)
   // If $wsSite is empty, then default it to RVH because it could be from a legacy call

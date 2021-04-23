@@ -45,10 +45,10 @@ class OpalCheckin{
      * Updates OpalDB with the checkin states of the inputted appointments and then sends notifications to the patient
      * @param $success
      * @param $patientId Patient MRN
-     * @param $Site Hospital Code
+     * @param $site Hospital Code
      * @return array
      */
-	public static function UpdateCheckinOnOpal($success, $patientId, $Site){
+	public static function UpdateCheckinOnOpal($success, $patientId, $site){
 
         //
 		// DATABASE CONFIGURATION
@@ -65,7 +65,7 @@ class OpalCheckin{
         $sql = "select PHI.PatientSerNum 
                 From Patient_Hospital_Identifier PHI
                 where PHI.MRN = '$patientId'
-                    and PHI.Hospital_Identifier_Type_Code = '$Site'
+                    and PHI.Hospital_Identifier_Type_Code = '$site'
                 ";
 
         try {
@@ -303,15 +303,23 @@ class OpalCheckin{
 
                 // **********************************************************************
                 // TODO: ORMS doesn't have site yet, so query needs to wait for changes
+                //      For now only process RVH MRNs for now
                 // **********************************************************************
-				$sql = "Select PMH.AppointmentSerNum
-                From $wrmDatabaseName.PatientLocation PMH, $wrmDatabaseName.Patient P, $wrmDatabaseName.MediVisitAppointmentList MVA
-                Where P.PatientSerNum = MVA.PatientSerNum
-                    And P.PatientId = '$patientId'
-                    And MVA.AppointmentSerNum = PMH.AppointmentSerNum
-                    and MVA.AppointSys <> 'Aria'
-				    And DATE_FORMAT(ArrivalDateTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d')
+                if ($Site == "RVH") {
+                    $sql = "Select PMH.AppointmentSerNum
+                    From $wrmDatabaseName.PatientLocation PMH, $wrmDatabaseName.Patient P, $wrmDatabaseName.MediVisitAppointmentList MVA
+                    Where P.PatientSerNum = MVA.PatientSerNum
+                        And P.PatientId = '$patientId'
+                        And MVA.AppointmentSerNum = PMH.AppointmentSerNum
+                        and MVA.AppointSys <> 'Aria'
+                        And DATE_FORMAT(ArrivalDateTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d')
+                    ;";
+                } else {
+                    $sql = "select AppointmentSerNum
+                    from $wrmDatabaseName.MediVisitAppointmentList
+                    where AppointmentSerNum < 0
                 ;";
+                }
         try{
             $resultMedi = $conn->query($sql);
 

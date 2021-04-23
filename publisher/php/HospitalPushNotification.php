@@ -80,7 +80,7 @@
 
        }
       /**
-        *    sendRoomNotification($patientId, $mrn, $site, $room, $appointmentSerNum):
+        *    sendRoomNotification($patientId, $room, $appointmentSerNum, $mrn, $site):
         *    Consumes a PatientId or (MRN and Site), a room location, and an AppointmentAriaSer, it
         *    stores notification in database, updates appointment with room location, sends
         *    the notification to the pertinent devices that map to that particular patientId,
@@ -214,7 +214,7 @@
        }
 
        /**
-       *    (sendNotificationUsingPatientId($patientId, $title, $description))
+       *    (sendNotificationUsingPatientId($patientId, $title, $description, $mrn, $site))
        *    Consumes a patientId or (MRN and site), a title and a descriptions
        *    Description: Sends push notification containing title and description to all the
        *                 devices matching that $patientId.
@@ -305,7 +305,7 @@
         *    Consumes a PatientId, $patientId
         *    Returns: Returns array with devices that match that particular PatiendId.
         **/
-       private static function getDevicesForPatient($patientId, $Site)
+       private static function getDevicesForPatient($patientId, $site)
        {
            global $pdo;
            //Retrieving device registration id for notification and device
@@ -318,7 +318,7 @@
                     ";
                $s = $pdo->prepare($sql);
                $s->bindValue(':patientId', $patientId);
-               $s->bindValue(':sitecode', $Site);
+               $s->bindValue(':sitecode', $site);
                $s->execute();
                $result = $s->fetchAll();
            }catch(PDOException $e)

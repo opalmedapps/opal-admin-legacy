@@ -4,7 +4,7 @@
   require_once('HospitalPushNotification.php');
   
   // determine patientId or MRN
-  $patientId = HospitalPushNotification::getPatientIDorMRN(isset($_GET["PatientId"]) ? $_GET["PatientId"] : "---NA---", isset($_GET["mrn"]) ? $_GET["mrn"] : "---NA---");
+  $patientId = HospitalPushNotification::getPatientIDorMRN(isset($_GET["patientid"]) ? $_GET["patientid"] : "---NA---", isset($_GET["mrn"]) ? $_GET["mrn"] : "---NA---");
 
   $room_EN        = $_GET['room_EN'];
   $room_FR        = $_GET['room_FR'];
