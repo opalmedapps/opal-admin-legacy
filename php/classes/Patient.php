@@ -592,6 +592,7 @@ class Patient extends Module {
 
         print_r($toInsertMultiple);
         print_r($patientdata);
+        
         $this->opalDB->updatePatient($patientdata);
 
         if ($invalidValue){
