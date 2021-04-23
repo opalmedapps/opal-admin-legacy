@@ -2710,7 +2710,6 @@ class DatabaseOpal extends DatabaseAccess {
      */
 
     function updatePatient($toUpdate) {
-        $toUpdate["SessionId"]=$this->getSessionId();
         return $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT, $toUpdate);
     }
 

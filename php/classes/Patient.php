@@ -590,6 +590,7 @@ class Patient extends Module {
         $patientdata["DateOfBirth"] = $post["birthdate"];
         unset($patientdata["LastUpdated"]);
 
+
         print_r($toInsertMultiple);
 
         $this->opalDB->updatePatient($patientdata);
