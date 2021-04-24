@@ -559,7 +559,7 @@ class Patient extends Module {
     public function updatePatient($post){
 
         $response = array(
-            'status' => 'Error',
+            'status' => 'Error'
         );
 
         $errCode = "";
@@ -598,7 +598,7 @@ class Patient extends Module {
             $response['data']  = json_encode($patientSite);
         }
 
-        print_r("errCode : " . $errCode);
+        //print_r("errCode : " . $errCode);
         $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
@@ -627,12 +627,11 @@ class Patient extends Module {
         unset($patientdata["LastUpdated"]);
 
         if (count($toInsertMultiple) > 0){
-            print_r($toInsertMultiple);
             $this->opalDB->updatePatientLink($toInsertMultiple);
         }
 
         $this->opalDB->updatePatient($patientdata);
-        print_r($patientdata);
+        //print_r($patientdata);
         return $response;
     }
 
