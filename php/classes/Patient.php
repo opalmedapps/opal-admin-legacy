@@ -587,16 +587,17 @@ class Patient extends Module {
 
         $patientdata["FirstName"] = $post["name"]["firstName"];
         $patientdata["LastName"] = $post["name"]["lastName"];
+        $patientdata["SSN"] = $post["ramq"];
+        $patientdata["DateOfBirth"] = $post["birthdate"];
 
         if (array_key_exists("alias", $post) && !empty($post["alias"])){
-            $patientdata["Alias"] = $post["gender"];
+            $patientdata["Alias"] = $post["alias"];
         }
 
         if (array_key_exists("gender", $post) && !empty($post["gender"])){
             $patientdata["Sex"] = $post["gender"];
         }
-        $patientdata["SSN"] = $post["ramq"];
-        $patientdata["DateOfBirth"] = $post["birthdate"];
+
         $patientdata["TelNum"] = $post["phone"];
         $patientdata["Email"] = $post["email"];
         $patientdata["Language"] = $post["language"];
