@@ -540,6 +540,12 @@ class Patient extends Module {
         else
             $errCode = "0" . $errCode;
 
+        $validLang = array("EN", "FR", "SN");
+        if (!in_array($post["language"], $validLang))
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
         return bindec($errCode);
     }
     public function updatePatient($post){
@@ -600,6 +606,8 @@ class Patient extends Module {
 
         $patientdata["TelNum"] = $post["phone"];
         $patientdata["Email"] = $post["email"];
+
+
         $patientdata["Language"] = $post["language"];
         $patientdata["DeathDate"] = $post["deceasedDateTime"];
         unset($patientdata["LastUpdated"]);
