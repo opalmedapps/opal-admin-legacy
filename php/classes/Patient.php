@@ -631,6 +631,9 @@ class Patient extends Module {
         }
 
         $this->opalDB->updatePatient($patientdata);
+        $response['status']  = "Success";
+        $response['data']  = json_encode($patientdata);
+
         //print_r($patientdata);
         return $response;
     }
