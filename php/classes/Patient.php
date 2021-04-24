@@ -548,7 +548,7 @@ class Patient extends Module {
         else
             $errCode = "0" . $errCode;
 
-        if (!in_array($post["gender"], $validGender))
+        if ($post["gender"] != null && !in_array($post["gender"], $validGender))
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
@@ -628,7 +628,7 @@ class Patient extends Module {
 
         if (count($toInsertMultiple) > 0){
             print_r($toInsertMultiple);
-            $this->opalDB->updatePatientLink($patientdata);
+            $this->opalDB->updatePatientLink($toInsertMultiple);
         }
 
         $this->opalDB->updatePatient($patientdata);
