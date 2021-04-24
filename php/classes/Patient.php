@@ -503,6 +503,7 @@ class Patient extends Module {
      */
     protected function _validatePatientParams($post)
     {
+        $validLang = array("EN", "FR", "SN");
         $pattern = "/^[0-9]*$/i";
         $errCode = "";
 
@@ -540,7 +541,7 @@ class Patient extends Module {
         else
             $errCode = "0" . $errCode;
 
-        $validLang = array("EN", "FR", "SN");
+
         if (!in_array($post["language"], $validLang))
             $errCode = "1" . $errCode;
         else
@@ -584,13 +585,22 @@ class Patient extends Module {
             }
         }
 
+        if ($invalidValue){
+            $errCode = "1" . $errCode;
+        } else {
+            $response['status']  = "Success";
+            $response['data']  = json_encode($patientSite);
+        }
+
+        print_r("errCode : " . $errCode);
+        // Update patient
+
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
         //Update patient demographics
         $patientdata = $this->opalDB->fetchTriggersData("SELECT * FROM Patient where PatientSerNum=" . $patientSerNum)[0];
-
         $patientdata["PatientSerNum"] = $patientSerNum;
-
-
-
         $patientdata["FirstName"] = $post["name"]["firstName"];
         $patientdata["LastName"] = $post["name"]["lastName"];
         $patientdata["SSN"] = $post["ramq"];
@@ -617,20 +627,6 @@ class Patient extends Module {
         print_r($patientdata);
 
         $this->opalDB->updatePatient($patientdata);
-
-        if ($invalidValue){
-            $errCode = "1" . $errCode;
-        } else {
-            $response['status']  = "Success";
-            $response['data']  = json_encode($patientSite);
-        }
-
-        print_r("errCode : " . $errCode);
-        // Update patient
-
-        if ($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
-
         return $response;
     }
 
