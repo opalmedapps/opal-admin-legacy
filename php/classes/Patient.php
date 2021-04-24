@@ -553,7 +553,8 @@ class Patient extends Module {
         else
             $errCode = "0" . $errCode;
 
-        return bindec($errCode);
+        return $errCode;
+
     }
     public function updatePatient($post){
 
@@ -598,7 +599,7 @@ class Patient extends Module {
         }
 
         print_r("errCode : " . $errCode);
-
+        $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
