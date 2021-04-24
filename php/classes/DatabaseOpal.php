@@ -2713,6 +2713,17 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT, $toUpdate);
     }
 
+    /**
+     * Update patient identifiers list
+     * @params $toUpdate - array of identifier information
+     *
+     * @return void
+     */
+    function updatePatientLink($toUpdate) {
+        return $this->_insertMultipleRecordsIntoTable(OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE, $toUpdate);
+    }
+
+
     /*
      * Get the list of all undeleted master diagnoses
      * @params  void

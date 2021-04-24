@@ -504,6 +504,7 @@ class Patient extends Module {
     protected function _validatePatientParams($post)
     {
         $validLang = array("EN", "FR", "SN");
+        $validGender = array("Male","Female", "Unknown", "Other");
         $pattern = "/^[0-9]*$/i";
         $errCode = "";
 
@@ -547,6 +548,11 @@ class Patient extends Module {
         else
             $errCode = "0" . $errCode;
 
+        if (!in_array($post["gender"], $validGender))
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
         return bindec($errCode);
     }
     public function updatePatient($post){
@@ -575,7 +581,6 @@ class Patient extends Module {
             } else {
                 if ($patientSerNum == ""){
                     $mrns = array_merge($mrns,array($identifier));
-                    print_r("wait for patientSerNum");
                 } else {
                     array_push($toInsertMultiple, array("PatientSerNum"=>$patientSerNum,
                         "Hospital_Identifier_Type_Code"=>$identifier["site"],
@@ -593,7 +598,6 @@ class Patient extends Module {
         }
 
         print_r("errCode : " . $errCode);
-        // Update patient
 
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
@@ -617,18 +621,18 @@ class Patient extends Module {
         $patientdata["TelNum"] = $post["phone"];
         $patientdata["Email"] = $post["email"];
 
-
         $patientdata["Language"] = $post["language"];
         $patientdata["DeathDate"] = $post["deceasedDateTime"];
         unset($patientdata["LastUpdated"]);
 
-
-        print_r($toInsertMultiple);
-        print_r($patientdata);
+        if (count($toInsertMultiple) > 0){
+            print_r($toInsertMultiple);
+            $this->opalDB->updatePatientLink($patientdata);
+        }
 
         $this->opalDB->updatePatient($patientdata);
+        print_r($patientdata);
         return $response;
     }
-
 
 }
