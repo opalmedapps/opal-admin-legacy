@@ -611,6 +611,15 @@ class Patient extends Module {
         $patientdata["SSN"] = $post["ramq"];
         $patientdata["DateOfBirth"] = $post["birthdate"];
 
+        $from = new DateTime($patientdata["DateOfBirth"]);
+        $to   = new DateTime('today');
+        $age  =  $from->diff($to)->y;
+
+        if ($age > 13){
+            $patientdata["BlockedStatus"]   = 1;
+            $patientdata["StatusReasonTxt"] = "Patient passed 13 years of age";
+        }
+
         if (array_key_exists("alias", $post) && !empty($post["alias"])){
             $patientdata["Alias"] = $post["alias"];
         }
@@ -619,18 +628,19 @@ class Patient extends Module {
             $patientdata["Sex"] = $post["gender"];
         }
 
-        $patientdata["TelNum"] = $post["phone"];
-        $patientdata["Email"] = $post["email"];
-
+        $patientdata["Email"]    = $post["email"];
+        $patientdata["TelNum"]   = $post["phone"];
         $patientdata["Language"] = $post["language"];
 
         if(array_key_exists("deceasedDateTime", $post) && $post["deceasedDateTime"] != ""){
             $patientdata["StatusReasonTxt"] = "Deceased patient";
-            $this->opalDB->updatePatientPublishFlag(0, $patientSerNum);
+            $patientdata["BlockedStatus"] = 1;
+            $this->opalDB->updatePatientPublishFlag($patientSerNum,0);
         }
         if (array_key_exists("deceasedDateTime", $post) && $post["deceasedDateTime"] == null){
             $patientdata["StatusReasonTxt"] = " ";
-            $this->opalDB->updatePatientPublishFlag(1, $patientSerNum);
+            $patientdata["BlockedStatus"] = 0;
+            $this->opalDB->updatePatientPublishFlag($patientSerNum,0);
         }
 
         $patientdata["DeathDate"] = $post["deceasedDateTime"];
