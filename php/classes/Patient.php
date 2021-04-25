@@ -624,11 +624,11 @@ class Patient extends Module {
 
         $patientdata["Language"] = $post["language"];
 
-        if(array_key_exists("DeathDate", $post) && $post["DeathDate"] != ""){
+        if(array_key_exists("deceasedDateTime", $post) && $post["deceasedDateTime"] != ""){
             $patientdata["StatusReasonTxt"] = "Deceased patient";
             $this->opalDB->updatePatientPublishFlag(0, $patientSerNum);
         }
-        if (array_key_exists("DeathDate", $post) && $post["DeathDate"] == null){
+        if (array_key_exists("deceasedDateTime", $post) && $post["deceasedDateTime"] == null){
             $patientdata["StatusReasonTxt"] = " ";
             $this->opalDB->updatePatientPublishFlag(1, $patientSerNum);
         }
