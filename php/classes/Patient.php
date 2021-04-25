@@ -577,7 +577,6 @@ class Patient extends Module {
             $patientSite = $this->opalDB->getPatientSite($mrn, $identifier["site"]);
             $invalidValue = !boolVal(count($patientSite)) && $invalidValue;
             if (count($patientSite) == 1){
-                //print_r($patientSite);
                 $patientSerNum = $patientSite[0]["PatientSerNum"];
             } else {
                 if ($patientSerNum == ""){
@@ -598,7 +597,6 @@ class Patient extends Module {
             $response['data']  = json_encode($patientSite);
         }
 
-        //print_r("errCode : " . $errCode);
         $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
@@ -637,6 +635,7 @@ class Patient extends Module {
             $patientdata["BlockedStatus"] = 1;
             $this->opalDB->updatePatientPublishFlag($patientSerNum,0);
         }
+
         if (array_key_exists("deceasedDateTime", $post) && $post["deceasedDateTime"] == null){
             $patientdata["StatusReasonTxt"] = " ";
             $patientdata["BlockedStatus"] = 0;
@@ -652,7 +651,6 @@ class Patient extends Module {
 
         $this->opalDB->updatePatient($patientdata);
 
-        //print_r($patientdata);
         return $response;
     }
 
