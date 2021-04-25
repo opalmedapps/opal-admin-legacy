@@ -1296,6 +1296,8 @@ define("OPAL_UPDATE_PATIENT","
 ");
 
 
+
+
 define("OPAL_GET_PATIENTS","
     SELECT DISTINCT pc.PatientSerNum AS serial, pc.PatientUpdate AS transfer, CONCAT(UCASE(LEFT(pt.FirstName, 1)), LCASE(SUBSTRING(pt.FirstName, 2)),
     ' ', UCASE(LEFT(pt.LastName, 1)), LCASE(SUBSTRING(pt.LastName, 2))) AS name, pt.PatientId AS
