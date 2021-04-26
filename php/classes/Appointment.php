@@ -52,18 +52,23 @@ class Appointment extends Module {
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateAppointment($post);
         $errCode = bindec($errCode);
+
         if($errCode != 0){
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
         }
 
         if(!array_key_exists("startDate", $post) || $post["startDate"] == "") {
-
+            $startDate = null;
+        } else {
+            $startDate = $post["startDate"];
         }
 
         if(!array_key_exists("endDate", $post) || $post["endDate"] == "") {
-
+            $endDate = null;
+        } else {
+            $endDate = $post["endDate"];
         }
 
-        return $this->opalDB->getAppointment($post["site"],$post["mrn"]);
+        return $this->opalDB->getAppointment($post["site"],$post["mrn"],$startDate,$endDate);
     }
 }

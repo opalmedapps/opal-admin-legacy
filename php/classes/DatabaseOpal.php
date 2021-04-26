@@ -3025,10 +3025,12 @@ class DatabaseOpal extends DatabaseAccess {
      * @params $mrn  : int - Patient identifier mrn
      * @return array - patient appointment details
      */
-    function getAppointment($site,$mrn){
+    function getAppointment($site,$mrn,$startDate,$endDate){
         return $this->_fetchAll(OPAL_GET_APPOINTMENT, array(
             array("parameter"=>":site","variable"=>$site,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":mrn","variable"=>$mrn,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":startDate","variable"=>$startDate,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":endDate","variable"=>$endDate,"data_type"=>PDO::PARAM_STR),
         ));
     }
 

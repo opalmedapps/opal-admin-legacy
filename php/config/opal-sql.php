@@ -1006,7 +1006,9 @@ define("OPAL_GET_APPOINTMENT", "
     AND phi.mrn = :mrn 
     AND a.AliasExpressionSerNum = ae.AliasExpressionSerNum
     AND ae.AliasSerNum = als.AliasSerNum AND r.ResourceSerNum = ra.ResourceSerNum
-    AND ra.AppointmentSerNum = a.AppointmentSerNum;
+    AND ra.AppointmentSerNum = a.AppointmentSerNum
+    AND (:startTime IS NULL OR ScheduledStartTime >=  CAST(:startTime AS DATE))
+    AND (:endTime IS NULL OR ScheduledStartTime <= CAST(:endTime AS DATE));
 ");
 
 define("OPAL_GET_APPOINTMENT_REPORT", "
