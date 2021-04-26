@@ -997,7 +997,7 @@ define("OPAL_GET_DIAGNOSIS_REPORT", "
 ");
 
 define("OPAL_GET_APPOINTMENT", "
-    SELECT a.ScheduledStartTime AS starttime, a.Status AS status, a.DateAdded AS dateadded,
+    SELECT DISTINCT a.ScheduledStartTime AS starttime, a.Status AS status, a.DateAdded AS dateadded,
     als.AliasName_EN AS aliasname, als.AliasType AS aliastype, r.ResourceName AS resourcename
     FROM ".OPAL_APPOINTMENTS_TABLE." a, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_ALIAS_TABLE." als, 
     ".OPAL_RESOURCE_TABLE." r, ".OPAL_RESOURCE_APPOINTMENT_TABLE." ra,
