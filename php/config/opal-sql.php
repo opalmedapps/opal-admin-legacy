@@ -996,6 +996,19 @@ define("OPAL_GET_DIAGNOSIS_REPORT", "
     FROM ".OPAL_DIAGNOSIS_TABLE." WHERE PatientSerNum = :pnum;
 ");
 
+define("OPAL_GET_APPOINTMENT", "
+    SELECT a.ScheduledStartTime AS starttime, a.Status AS status, a.DateAdded AS dateadded,
+    als.AliasName_EN AS aliasname, als.AliasType AS aliastype, r.ResourceName AS resourcename
+    FROM ".OPAL_APPOINTMENTS_TABLE." a, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_ALIAS_TABLE." als, 
+    ".OPAL_RESOURCE_TABLE." r, ".OPAL_RESOURCE_APPOINTMENT_TABLE." ra,
+    ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE ." phi    
+    WHERE phi.Hospital_Identifier_Type_Code = :site
+    AND phi.mrn = :mrn 
+    AND a.AliasExpressionSerNum = ae.AliasExpressionSerNum
+    AND ae.AliasSerNum = als.AliasSerNum AND r.ResourceSerNum = ra.ResourceSerNum
+    AND ra.AppointmentSerNum = a.AppointmentSerNum;
+");
+
 define("OPAL_GET_APPOINTMENT_REPORT", "
     SELECT a.ScheduledStartTime AS starttime, a.Status AS status, a.DateAdded AS dateadded,
     als.AliasName_EN AS aliasname, als.AliasType AS aliastype, r.ResourceName AS resourcename

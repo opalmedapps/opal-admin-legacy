@@ -3017,4 +3017,19 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":deletedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
         ));
     }
+
+
+    /**
+     * Get patient appointment
+     * @params $site : String - Patient identifier site
+     * @params $mrn  : int - Patient identifier mrn
+     * @return array - patient appointment details
+     */
+    function getAppointment($site,$mrn){
+        return $this->_fetchAll(OPAL_GET_APPOINTMENT, array(
+            array("parameter"=>":site","variable"=>$site,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":mrn","variable"=>$mrn,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
 }
