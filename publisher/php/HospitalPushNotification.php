@@ -353,7 +353,7 @@
          * 
          * Returns: returns patientId
          **/
-        private static function getPatientIDorMRN($patientId, $mrn)
+        public static function getPatientIDorMRN($patientId, $mrn)
         {
             // $patientId is for legacy systems/calls
             $patientId = empty($patientId) ? "---NA---" : $patientId;
