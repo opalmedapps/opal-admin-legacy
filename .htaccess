@@ -242,7 +242,7 @@ RewriteRule ^patient/update/patient-data php/patient/update.patient_data.php [QS
 RewriteRule ^patient/update/publish-flags php/patient/update.publish_flags.php [QSA,L]
 
 # Appointment Section
-RewriteRule ^patient/get/appointment php/patient/get.appointment.php [QSA,L]
+RewriteRule ^appointment/get/appointments php/appointment/get.appointments.php [QSA,L]
 
 # Post Section
 RewriteRule ^post/delete/post php/post/delete.post.php [QSA,L]
