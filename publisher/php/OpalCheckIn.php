@@ -21,11 +21,14 @@ require_once('HospitalPushNotification.php');
 // PROCESS INCOMING REQUEST
 //============================================
 // // determine patientId or MRN
-$PatientId = HospitalPushNotification::getPatientIDorMRN(isset($_GET["PatientId"]) ? $_GET["PatientId"] : "---NA---", isset($_GET["mrn"]) ? $_GET["mrn"] : "---NA---");
+$wsPatientID = HospitalPushNotification::sanitizeInput(isset($_GET["PatientId"]) ? $_GET["PatientId"] : "---NA---");
+$wsMRN = HospitalPushNotification::sanitizeInput(isset($_GET["mrn"]) ? $_GET["mrn"] : "---NA---");
+
+$PatientId = HospitalPushNotification::getPatientIDorMRN($wsPatientID, $wsMRN);
 
 // $wsSite is the site of the hospital code (should be three digit)
 // If $wsSite is empty, then default it to RVH because it could be from a legacy call
-$wsSite = isset($_GET["site"]) ? $_GET["site"] : "RVH";
+$wsSite = HospitalPushNotification::sanitizeInput(isset($_GET["site"]) ? $_GET["site"] : "RVH");
 
 $response = OpalCheckin::ValidateCheckin($PatientId, $wsSite);
 

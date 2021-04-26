@@ -372,6 +372,23 @@
             return $patientId;
         }
 
+        /**
+         * sanitizeInput($inString)
+         * Description: This function is a basic string input sanitizer
+         * 
+         * Returns: returns outString
+         **/
+        public static function sanitizeInput($inString)
+        {
+            // sanitize the input string
+            if ($inString != '') {
+                $outString = filter_var($inString, FILTER_SANITIZE_STRING);
+             } else {
+                $outString = "";
+             }
+
+            return $outString;
+        }
 
    }
 
