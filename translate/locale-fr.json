@@ -2357,6 +2357,9 @@
       "DESCRIPTION_EN": "Description anglaise manquante.",
       "DESCRPIPTION_FR": "Description française manquante.",
       "INVESTIGATOR": "Coordinateur(trice) manquant(e).",
+      "INVESTIGATOR_EMAIL": "Adresses courriel manquant ou invalide. ",
+      "INVESTIGATOR_PHONE": "Téléphone manquant ou invalide.",
+      "INVESTIGATOR_PHONE_EXT": "Extension de téléphone manquante ou non valide.",
       "START_DATE": "Date de début invalide.",
       "END_DATE": "Date de fin invalide.",
       "DATE_RANGE": "Intervalle de dates invalide.",
@@ -2449,14 +2452,15 @@
       "SEARCH": "Rechercher",
       "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails l'étude.",
       "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour de l'étude.",
-      "CONSENT_STATUS": "État du consentement du patient",
+      "CONSENT_STATUS": "États de consentement des patients",
       "CONSENT_FORM": "Formulaire de consentement",
       "CONSENT_ID": "Forme identifiant:",
       "CURRENT_CONSENTS": "Consentements actuels",
-      "INVITED": "[FR]invited",
-      "OPAL_CONSENTED": "[FR]opalConsented",
-      "OTHER_CONSENTED": "[FR]otherConsented",
-      "DECLINED": "[FR]declined"
+      "INVITED": "invité",
+      "OPAL_CONSENTED": "opaleConsenté",
+      "OTHER_CONSENTED": "autreConsenté",
+      "DECLINED": "diminué",
+      "CONSENT_FORM_PUBLISHED": "Le formulaire de consentement a déjà été publié!"
     }
   },
   "ALERT" : {

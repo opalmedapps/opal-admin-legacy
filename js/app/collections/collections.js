@@ -1043,6 +1043,18 @@ angular.module('opalAdmin.collections', [])
 			);
 		}
 
+		studyAPI.consentFormPublished = function(consentId){
+			return $http.post(
+				"study/get/consent-published",
+				$.param({
+					consentId: consentId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		}
+
 		return studyAPI;
 	})
 

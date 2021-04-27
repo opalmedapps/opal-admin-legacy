@@ -270,6 +270,18 @@
                         <span class="input-group-addon">{{'STUDY.EDIT.CONSENT_ID'|translate}}</span>
                         <input ng-disabled="true" class="form-control" type="text" ng-model="consentTitle" required="required" />
                     </div>
+                    <ul class="list-items">
+                        <li ng-repeat="at in consentFormList | filter: consentFormFilter">
+                            <label>
+                                <input ng-disabled="formPublished" type="radio" name="formName" value="{{at.ID}}" ng-model="toSubmit.consent_form.id" ng-change="consentFormUpdate(at)"/> {{at.name_display}}
+                            </label>
+                        </li>
+                    </ul>
+                    <div ng-if="formPublished" class="col-xs-12 panel-danger">
+                        <p style="margin-bottom: 10px;">
+                            <span style="color:#d9534f"><strong>{{'STUDY.EDIT.CONSENT_FORM_PUBLISHED'|translate}}</strong></span>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
