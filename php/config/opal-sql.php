@@ -1007,8 +1007,7 @@ define("OPAL_GET_APPOINTMENT", "
     a.RoomLocation_EN,a.RoomLocation_FR,
     a.LastUpdated,emc.URL_EN,emc.URL_FR,
     ac.CheckinPossible,ac.CheckinInstruction_EN,ac.CheckinInstruction_FR,
-    hm.HospitalMapSerNum,         
-    
+    hm.HospitalMapSerNum,
     a.ScheduledStartTime AS starttime, a.Status AS status, a.DateAdded AS dateadded,    
     als.AliasName_EN AS aliasname, als.AliasType AS aliastype, r.ResourceName AS resourcename
     FROM ".OPAL_APPOINTMENTS_TABLE." a,
