@@ -426,7 +426,7 @@
                                                 {{'STUDY.ADD.NAME'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
-                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.name" ng-change="nameUpdate()" />
+                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.name" ng-change="nameUpdate()" required/>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -434,7 +434,7 @@
                                                 {{'STUDY.ADD.EMAIL'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
-                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.email" ng-change="nameUpdate()" />
+                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.email" ng-change="nameUpdate()" required/>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -445,7 +445,7 @@
                                                 <input class="form-control" type="text" ng-model="toSubmit.investigator.phoneExt" ng-change="nameUpdate()" placeholder="ext."/>
                                             </div>
                                             <div class="col-xs-8 col-lg-8">
-                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.phone" ng-change="nameUpdate()" placeholder="+1-438-123-4567"/>
+                                                <input class="form-control" type="tel" ng-model="toSubmit.investigator.phone" ng-change="nameUpdate()" required placeholder="+1 438 123 4567"/>
                                             </div>
                                         </div>
                                     </div>

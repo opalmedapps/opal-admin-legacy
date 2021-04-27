@@ -203,6 +203,20 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 		}
 	}
 
+	// Call our API to get current consent form options
+	studyCollectionService.getConsentForms().then(function (response) {
+		response.data.forEach(function(entry){
+			if($scope.language.toUpperCase() === "FR"){
+				entry.name_display = entry.name_FR;
+			}else{
+				entry.name_display = entry.name_EN;
+			}	
+		});
+		$scope.consentFormList = response.data;
+	}).catch(function(err){
+		ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
+	});
+
 	studyCollectionService.getPatientsList().then(function (response) {
 		$scope.patientsList = response.data;
 		$scope.ready[0] = true;
@@ -252,7 +266,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			angular.forEach($scope.questionnaireList, function(value) {
 				value.added = $scope.backupStudy.questionnaire.includes(value.ID);
 			});
-			console.log($scope.backupStudy);
+			
 			if($scope.language === "FR"){
 				$scope.consentTitle = $scope.backupStudy.consentQuestionnaireTitle[0].name_FR;
 			}else{
@@ -303,6 +317,17 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	studyCollectionService.getStudiesDetails($scope.currentStudy.ID).then(function (response) {
 		$scope.backupStudy = response.data;
 		$scope.ready[2] = true;
+		if($scope.backupStudy.consentQuestionnaireId){
+			studyCollectionService.consentFormPublished($scope.backupStudy.consentQuestionnaireId).then(function(response){
+				if(response.data.length == 1){
+					$scope.formPublished = true;
+				}else{
+					$scope.formPublished = false;
+				}
+			}).catch(function(err) {
+				ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
+			});
+		}
 	}).catch(function(err) {
 		ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
 	});
@@ -324,6 +349,11 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 		processingModal.close(); // hide modal
 		processingModal = null; // remove reference
 	});
+
+	$scope.consentFormUpdate = function(form){
+		$scope.toSubmit.consent_form.id = form.ID;
+		$scope.consentTitle = form.name_display;
+	}
 
 	$scope.popupStart = {};
 	$scope.popupEnd = {};
@@ -468,7 +498,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			$scope.readyToSend.description_FR = $scope.toSubmit.title_desc.description_FR;
 			$scope.readyToSend.investigator = $scope.toSubmit.investigator.name;
 			$scope.readyToSend.investigator_email = $scope.toSubmit.investigator.email;
-			$scope.readyToSend.investigator_phone = $scope.toSubmit.investigator.phone;
+			$scope.readyToSend.investigator_phone = (($scope.toSubmit.investigator.phone).replace(/-/g,"")).replace(/\s/g,"");
 			$scope.readyToSend.investigator_phoneExt = $scope.toSubmit.investigator.phoneExt;
 			$scope.readyToSend.start_date = (($scope.toSubmit.dates.start_date) ? moment($scope.toSubmit.dates.start_date).format('X') : "");
 			$scope.readyToSend.end_date = (($scope.toSubmit.dates.end_date) ? moment($scope.toSubmit.dates.end_date).format('X') : "");
@@ -476,7 +506,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			$scope.readyToSend.questionnaire = $scope.toSubmit.questionnaire;
 			$scope.readyToSend.consent_form = $scope.toSubmit.consent_form.id;
 			$scope.readyToSend.patientConsents = $scope.patientConsentList;
-			console.log($scope.readyToSend);
+			
 			$.ajax({
 				type: "POST",
 				url: "study/update/study",
