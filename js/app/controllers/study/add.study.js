@@ -144,14 +144,17 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$filter('translate')('STUDY.VALIDATION.DESCRIPTION_EN'),
 			$filter('translate')('STUDY.VALIDATION.DESCRPIPTION_FR'),
 			$filter('translate')('STUDY.VALIDATION.INVESTIGATOR'),
+			$filter('translate')('STUDY.VALIDATION.INVESTIGATOR_PHONE'),
+			$filter('translate')('STUDY.VALIDATION.INVESTIGATOR_EMAIL'),
 			$filter('translate')('STUDY.VALIDATION.START_DATE'),
 			$filter('translate')('STUDY.VALIDATION.END_DATE'),
 			$filter('translate')('STUDY.VALIDATION.DATE_RANGE'),
 			$filter('translate')('STUDY.VALIDATION.PATIENTS'),
 			$filter('translate')('STUDY.VALIDATION.QUESTIONNAIRE'),
-			$filter('translate')('STUDY.VALIDATION.ID'),
 			$filter('translate')('STUDY.VALIDATION.CONSENT'),
 			$filter('translate')('STUDY.VALIDATION.PATIENT_CONSENT'),
+			$filter('translate')('STUDY.VALIDATION.INVESTIGATOR_PHONE_EXT'),
+			$filter('translate')('STUDY.VALIDATION.ID'),
 		];
 
 		$scope.toolbar = [
@@ -423,13 +426,14 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.readyToSend.description_FR = $scope.toSubmit.title_desc.description_FR;
 			$scope.readyToSend.investigator = $scope.toSubmit.investigator.name;
 			$scope.readyToSend.investigator_email = $scope.toSubmit.investigator.email;
-			$scope.readyToSend.investigator_phone = $scope.toSubmit.investigator.phone;
-			$scope.readyToSend.investigator_phoneExt = $scope.toSubmit.investigator.phoneExt;
+			$scope.readyToSend.investigator_phone = (($scope.toSubmit.investigator.phone).replace(/-/g,"")).replace(/\s/g,"");
+			$scope.readyToSend.investigator_phoneExt = ($scope.toSubmit.investigator.phoneExt).replace(/-/g,"");
 			$scope.readyToSend.start_date = (($scope.toSubmit.dates.start_date) ? moment($scope.toSubmit.dates.start_date).format('X') : "");
 			$scope.readyToSend.end_date = (($scope.toSubmit.dates.end_date) ? moment($scope.toSubmit.dates.end_date).format('X') : "");
 			$scope.readyToSend.patients = $scope.toSubmit.patients;
 			$scope.readyToSend.questionnaire = $scope.toSubmit.questionnaire
 			$scope.readyToSend.consent_form = $scope.toSubmit.consent_form.id;
+			
 			$.ajax({
 				type: 'POST',
 				url: 'study/insert/study',

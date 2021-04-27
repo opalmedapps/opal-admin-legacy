@@ -2339,6 +2339,9 @@
       "DESCRIPTION_EN": "English description missing.",
       "DESCRPIPTION_FR": "French description missing.",
       "INVESTIGATOR": "Investigator missing.",
+      "INVESTIGATOR_EMAIL": "Email missing or invalid.",
+      "INVESTIGATOR_PHONE": "Phone missing or invalid.",
+      "INVESTIGATOR_PHONE_EXT": "Phone extension invalid.",
       "START_DATE": "Invalid start date.",
       "END_DATE": "Invalid end date.",
       "DATE_RANGE": "Invalid date range.",
@@ -2439,7 +2442,8 @@
       "INVITED": "invited",
       "OPAL_CONSENTED": "opalConsented",
       "OTHER_CONSENTED": "otherConsented",
-      "DECLINED": "declined"
+      "DECLINED": "declined",
+      "CONSENT_FORM_PUBLISHED": "Consent form has already been published!"
     }
   },
   "ALERT" : {

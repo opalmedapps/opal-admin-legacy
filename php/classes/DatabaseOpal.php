@@ -2648,6 +2648,17 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
+     * Check if a consent form is published
+     * @param $consentId - consent form Id 
+     * @return array list of forms found
+     */
+    function checkConsentFormPublished($consentId){
+        return $this->_fetchAll(OPAL_CHECK_CONSENT_FORM_PUBLISHED, array(
+            array("parameter"=>":consentId","variable"=>$consentId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
      * Get the list of questionnaires of a specifc study
      * @param $studyId - ID of the study
      * @return array - list of questionnaires associated to the study
