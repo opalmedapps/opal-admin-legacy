@@ -15,6 +15,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         $scope.SpecialityList = null;
         $scope.TypeList = null;
         $scope.EventList = null;
+        $scope.smsAppointments = null;
 
         $scope.UpdateInformation = {
             message: {English : "", French : "",},
@@ -74,7 +75,8 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             $scope.messageSection.show = true;
             $scope.numOfCompletedSteps = stepsCompleted(steps);
             $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-            getSmsMessage()
+            getSmsMessage();
+            getSmsAppointmentList();
         }
 
         $scope.CheckMessage = function(){
@@ -96,7 +98,6 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
                     url: "sms/update/smsMessage",
                     data:{'UpdateInformation':$scope.UpdateInformation},
                     success: function (response) {
-                        getSmsAppointmentList();
                         response = JSON.parse(response);
                         // Show success or failure depending on response
                         if (response) {
