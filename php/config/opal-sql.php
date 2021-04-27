@@ -52,7 +52,8 @@ define("OPAL_POST_TABLE","PostControl");
 define("OPAL_TX_TEAM_MESSAGE_TABLE","TxTeamMessage");
 define("OPAL_ANNOUNCEMENT_TABLE","Announcement");
 define("OPAL_PATIENTS_FOR_PATIENTS_TABLE","PatientsForPatients");
-define("OPAL_EDUCATION_MATERIAL_TABLE","EducationalMaterialControl");
+define("OPAL_EDUCATION_MATERIAL_TABLE","EducationalMaterial");
+define("OPAL_EDUCATION_MATERIAL_CONTROL_TABLE","EducationalMaterialControl");
 define("OPAL_EDUCATION_MATERIAL_TOC_TABLE","EducationalMaterialTOC");
 define("OPAL_PHASE_IN_TREATMENT_TABLE","PhaseInTreatment");
 define("OPAL_ANNOUNCEMENT_MH_TABLE","AnnouncementMH");
@@ -115,6 +116,7 @@ define("OPAL_DOCUMENT_TABLE", "Document");
 define("OPAL_USERS_TABLE", "Users");
 define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
 define("OPAL_PATIENT_ACTIVITY_LOG_TABLE","PatientActivityLog");
+define("OPAL_APPOINTMENT_CHECK_IN_TABLE", "AppointmentCheckin");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -997,15 +999,36 @@ define("OPAL_GET_DIAGNOSIS_REPORT", "
 ");
 
 define("OPAL_GET_APPOINTMENT", "
-    SELECT DISTINCT a.ScheduledStartTime AS starttime, a.Status AS status, a.DateAdded AS dateadded,
+    SELECT DISTINCT phi.PatientSerNum,
+    hm.MapUrl,hm.MapURL_EN,hm.MapURL_FR,hm.MapName_EN,hm.MapName_FR,hm.MapDescription_EN,hm.MapDescription_FR,
+    a.ScheduledStartTime AS starttime, a.ScheduledEndTime AS endtime,
+    a.checkin,a.SourceDatabaseSerNum,a.AppointmentAriaSer,em.ReadStatus,
+    r.ResourceName,r.ResourceType,a.Status , 
+    a.RoomLocation_EN,a.RoomLocation_FR,
+    a.LastUpdated,emc.URL_EN,emc.URL_FR,
+    ac.CheckinPossible,ac.CheckinInstruction_EN,ac.CheckinInstruction_FR,
+    hm.HospitalMapSerNum,         
+    
+    a.ScheduledStartTime AS starttime, a.Status AS status, a.DateAdded AS dateadded,    
     als.AliasName_EN AS aliasname, als.AliasType AS aliastype, r.ResourceName AS resourcename
-    FROM ".OPAL_APPOINTMENTS_TABLE." a, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_ALIAS_TABLE." als, 
+    FROM ".OPAL_APPOINTMENTS_TABLE." a,
+     ".OPAL_HOSPITAL_MAP_TABLE." hm,
+    ".OPAL_ALIAS_TABLE." als, 
+    ".OPAL_APPOINTMENT_CHECK_IN_TABLE." ac, 
+     ".OPAL_ALIAS_EXPRESSION_TABLE." ae,      
     ".OPAL_RESOURCE_TABLE." r, ".OPAL_RESOURCE_APPOINTMENT_TABLE." ra,
-    ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE ." phi    
+    ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE ." phi,   
+    ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." emc ,
+    ".OPAL_EDUCATION_MATERIAL_TABLE." em
     WHERE phi.Hospital_Identifier_Type_Code = :site
     AND phi.mrn = :mrn 
+    AND phi.PatientSerNum = a.PatientSerNum 
+    AND em.PatientSerNum = a.PatientSerNum 
+    AND em.EducationalMaterialControlSerNum=emc.EducationalMaterialControlSerNum 
     AND a.AliasExpressionSerNum = ae.AliasExpressionSerNum
-    AND ae.AliasSerNum = als.AliasSerNum AND r.ResourceSerNum = ra.ResourceSerNum
+    AND ae.AliasSerNum = als.AliasSerNum
+    AND als.AliasSerNum = ac.AliasSerNum 
+    AND r.ResourceSerNum = ra.ResourceSerNum    
     AND ra.AppointmentSerNum = a.AppointmentSerNum
     AND (:startDate IS NULL OR ScheduledStartTime >=  CAST(:startDate AS DATE))
     AND (:endDate IS NULL OR ScheduledStartTime <= CAST(:endDate AS DATE));
