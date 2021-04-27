@@ -107,8 +107,8 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                         selectOptions: [{ value: 'Oncology', label: 'Oncology'}]
                     }
                 },
-                {field:'resname', displayName: 'Resource Name', width:'30%', enableColumnMenu: false,cellTemplate: cellTemplateResourceName},
-                { field: 'state', displayName: 'Disable/Enable Appointment', enableColumnMenu: false, width: '10%',
+                {field:'resname', displayName: 'Resource Name', width:'25%', enableColumnMenu: false,cellTemplate: cellTemplateResourceName},
+                { field: 'state', displayName: 'Disable/Enable Appointment', enableColumnMenu: false, width: '15%',
                     cellTemplate: checkboxCellTemplate, enableFiltering: false },
             ],
             enableFiltering: true,
