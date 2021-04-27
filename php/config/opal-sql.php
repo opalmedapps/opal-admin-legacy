@@ -1027,6 +1027,7 @@ define("OPAL_GET_APPOINTMENT", "
     AND a.AliasExpressionSerNum = ae.AliasExpressionSerNum
     AND ae.AliasSerNum = als.AliasSerNum
     AND als.AliasSerNum = ac.AliasSerNum 
+    AND als.HospitalMapSerNum = hm.HospitalMapSerNum
     AND r.ResourceSerNum = ra.ResourceSerNum    
     AND ra.AppointmentSerNum = a.AppointmentSerNum
     AND (:startDate IS NULL OR ScheduledStartTime >=  CAST(:startDate AS DATE))
