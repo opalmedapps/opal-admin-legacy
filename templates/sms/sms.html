@@ -27,7 +27,7 @@
                                 <span style="font-size: 20px;"><strong>Edit/Add Message</strong></span>
                             </a>
                             <!-- Save changes button -->
-                            <a href="" ng-click="submitUpdate()" class="btn btn-md item-button-success animated"  ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false">
+                            <a href="" ng-if="writeAccess&&changesMade" ng-click="submitUpdate()" class="btn btn-md item-button-success animated"  ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false">
                                 <span style="font-size: 17px;" class="glyphicon glyphicon-ok"></span>
                                 <span style="font-size: 20px;"><strong>Save</strong></span>
                             </a>
