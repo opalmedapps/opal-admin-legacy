@@ -427,7 +427,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.readyToSend.investigator = $scope.toSubmit.investigator.name;
 			$scope.readyToSend.investigator_email = $scope.toSubmit.investigator.email;
 			$scope.readyToSend.investigator_phone = (($scope.toSubmit.investigator.phone).replace(/-/g,"")).replace(/\s/g,"");
-			$scope.readyToSend.investigator_phoneExt = ($scope.toSubmit.investigator.phoneExt).replace(/-/g,"");
+			$scope.readyToSend.investigator_phoneExt = $scope.toSubmit.investigator.phoneExt;
 			$scope.readyToSend.start_date = (($scope.toSubmit.dates.start_date) ? moment($scope.toSubmit.dates.start_date).format('X') : "");
 			$scope.readyToSend.end_date = (($scope.toSubmit.dates.end_date) ? moment($scope.toSubmit.dates.end_date).format('X') : "");
 			$scope.readyToSend.patients = $scope.toSubmit.patients;
