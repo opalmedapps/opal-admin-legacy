@@ -1246,7 +1246,7 @@ class DatabaseOpal extends DatabaseAccess {
      * Update a specific patient consent status (invited, opalConsented, otherConsented, declined)
      * @params $studyID (int) study id
      *         $patId (int) patient Id
-     *         $patConsent (str) new patient consent
+     *         $patConsent (int) new patient consent
      */
     function updateStudyConsent($studyID, $patId, $patConsent){
         return $this->_fetchAll(OPAL_UPDATE_STUDY_CONSENT, array(

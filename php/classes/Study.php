@@ -171,7 +171,7 @@ class Study extends Module {
             // 7th bit
             if (!array_key_exists("investigator_phone", $post) || $post["investigator_phone"] == "")
                 $errCode = "1" . $errCode;
-            else if($this->_validatePhone($post["investigator_phone"]) == 0){
+            else if(HelpSetup::validatePhone($post["investigator_phone"]) == 0){
                 $errCode = "1" . $errCode;
             }else{
                 $errCode = "0" . $errCode;
@@ -180,7 +180,7 @@ class Study extends Module {
             // 8th bit
             if (!array_key_exists("investigator_email", $post) || $post["investigator_email"] == "")
                 $errCode = "1" . $errCode;
-            else if(!($this->_validateEmail($post["investigator_email"]))){
+            else if(!(HelpSetup::validateEmail($post["investigator_email"]))){
                 $errCode = "1" . $errCode;
             }else{
                 $errCode = "0" . $errCode;
@@ -223,6 +223,9 @@ class Study extends Module {
                 if(!is_array($post["patients"]))
                     $errCode = "1" . $errCode;
                 else {
+                    foreach($post["patients"] as &$id){
+                        $id = intval($id);
+                    }
                     $total = $this->opalDB->getPatientsListByIds($post["patients"]);
                     if (count($total) != count($post["patients"]))
                         $errCode = "1" . $errCode;
@@ -267,8 +270,10 @@ class Study extends Module {
                     $errCode = "1" . $errCode;
                 else {
                     $patConsIds = array();
-                    foreach ($post["patientConsents"] as $patient)
-                        array_push($patConsIds, $patient['id']);
+                    foreach ($post["patientConsents"] as $patient){
+                        $id = intval($patient['id']);
+                        array_push($patConsIds, $id);
+                    }
                     $total = $this->opalDB->getPatientsListByIds($patConsIds);
                     if (count($total) != count($patConsIds))
                         $errCode = "1" . $errCode;
@@ -280,7 +285,7 @@ class Study extends Module {
             
             // 16th bit 
             if (array_key_exists("investigator_phoneExt", $post) && $post["investigator_phoneExt"] != "") {
-                if (($this->_validatePhoneExt($post["investigator_phoneExt"])) == 0)
+                if ((HelpSetup::validatePhoneExt($post["investigator_phoneExt"])) == 0)
                     $errCode = "1" . $errCode;
                 else {
                     $errCode = "0" . $errCode;
@@ -308,33 +313,6 @@ class Study extends Module {
             $errCode .= "11111111111111111";
 
         return $errCode;
-    }
-
-    /**
-     * Validate the users email
-     * @param (str) email
-     * @return (mixed) filtered data for valid false for invalid
-     */
-    protected function _validateEmail($email){
-        return filter_var($email, FILTER_VALIDATE_EMAIL);
-    }
-
-    /**
-     * Validate the users phone number (+1 optional, 10 digit number)
-     * @param (str) phone number
-     * @return (int) 1 for valid 0 for invalid
-     */
-    protected function _validatePhone($phone){
-        return preg_match('/\+?+[0-9]{10}/s', $phone);
-    }
-
-    /**
-     * Validate the users phone extension (0 to 5 digits)
-     * @param (str) phone extension
-     * @return (int) 1 for valid 0 for invalid
-     */
-    protected function _validatePhoneExt($phoneExt){
-        return preg_match('/^\d{0,6}$/', $phoneExt);
     }
 
     /*
@@ -438,7 +416,7 @@ class Study extends Module {
 
         //Update patient-study table
         $currentPatients = array();
-        $toKeep = array(-1);
+        $toKeep = array();
         $toAdd = array();
         if(array_key_exists("patients", $post) && is_array($post["patients"]) && count($post["patients"]) > 0) {
             $temp = $this->opalDB->getPatientsStudy($study["ID"]);

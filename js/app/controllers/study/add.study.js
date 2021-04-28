@@ -301,10 +301,40 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.leftMenu.details.display = $scope.validator.details.completed;
 		};
 
-		$scope.nameUpdate = function () {
-			$scope.validator.investigator.completed = ($scope.toSubmit.investigator.name !== "" && $scope.toSubmit.investigator.email !== "" && $scope.toSubmit.investigator.phone !== "");
-			$scope.leftMenu.investigator.open = $scope.validator.details.completed;
-			$scope.leftMenu.investigator.display = $scope.validator.details.completed;
+		/**
+		 * Validate the investigator personal info fields before allowing user to continue
+		 * phone regex checks for standard 10 digit number with options for deliniation by space, hyphen, or period
+		 * 		User can optionally enter country code eg +1 or +44
+		 * email regex checks for standard RFC2822 email format
+		 * phoneExt regex checks for any number of digits 0-9 up to a maximum length of 6
+		 */
+		$scope.validateInvestigatorInfo = function () {
+			$scope.phoneVal = false;
+			$scope.emVal = false;
+			$scope.extVal = false;
+			$scope.validator.investigator.completed = false;
+			if($scope.toSubmit.investigator.phone){
+				var phoneDigits = $scope.toSubmit.investigator.phone.replace(/[\s.,-]+/g, ""); //remove unwanted characters
+				var phoneReg = new RegExp(/^(\+\d{0,2})?[ .-]?\(?(\d{3})\)?[ .-]?(\d{3})[ .-]?(\d{4})$/);
+				$scope.phoneVal = phoneReg.test(phoneDigits);
+			}
+			if($scope.toSubmit.investigator.email){
+				var emReg = new RegExp(/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/);
+				$scope.emVal = emReg.test($scope.toSubmit.investigator.email);
+			}
+			if($scope.toSubmit.investigator.phoneExt){
+				var extDigits = $scope.toSubmit.investigator.phoneExt.replace(/[\s.,-]+/g, ""); //remove characters
+				var phoneExtReg = new RegExp(/^\d{0,6}$/);
+				$scope.extVal = phoneExtReg.test(extDigits);
+			}else{ //empty phone extension is valid
+				$scope.extVal = true;
+			}
+
+			if($scope.phoneVal && $scope.emVal && $scope.extVal){
+				$scope.validator.investigator.completed = true;
+				$scope.leftMenu.investigator.open = $scope.validator.details.completed;
+				$scope.leftMenu.investigator.display = $scope.validator.details.completed;
+			}
 		};
 
 		// Watch to restrict the end calendar to not choose an earlier date than the start date
@@ -426,7 +456,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.readyToSend.description_FR = $scope.toSubmit.title_desc.description_FR;
 			$scope.readyToSend.investigator = $scope.toSubmit.investigator.name;
 			$scope.readyToSend.investigator_email = $scope.toSubmit.investigator.email;
-			$scope.readyToSend.investigator_phone = (($scope.toSubmit.investigator.phone).replace(/-/g,"")).replace(/\s/g,"");
+			$scope.readyToSend.investigator_phone = ($scope.toSubmit.investigator.phone).replace(/[\s.,\-\(\)]+/g, ""); //strip away dot, hyphen, spaces, commas, brackets before sending to DB
 			$scope.readyToSend.investigator_phoneExt = $scope.toSubmit.investigator.phoneExt;
 			$scope.readyToSend.start_date = (($scope.toSubmit.dates.start_date) ? moment($scope.toSubmit.dates.start_date).format('X') : "");
 			$scope.readyToSend.end_date = (($scope.toSubmit.dates.end_date) ? moment($scope.toSubmit.dates.end_date).format('X') : "");
