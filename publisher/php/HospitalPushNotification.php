@@ -67,7 +67,7 @@
                 if($devices[$i]["DeviceType"]==0)
                 {
                     $response = PushNotifications::iOS($message, $devices[$i]["RegistrationId"]);
-                }else if($device[$i]["DeviceType"]==1)
+                }else if($devices[$i]["DeviceType"]==1)
                 {
                     $response = PushNotifications::android($message, $devices[$i]["RegistrationId"]);
                 }
@@ -313,8 +313,10 @@
                $sql = "SELECT PDI.PatientDeviceIdentifierSerNum, PDI.RegistrationId, PDI.DeviceType 
                         FROM PatientDeviceIdentifier PDI, Patient_Hospital_Identifier PHI
                         WHERE PHI.MRN = :patientId 
-                            and PHI.Hospital_Identifier_Type_Code = :sitecode'
+                            and PHI.Hospital_Identifier_Type_Code = :sitecode
                             AND PHI.PatientSerNum = PDI.PatientSerNum
+                            AND length(trim(PDI.RegistrationId)) > 0
+                            AND PDI.DeviceType in (0,1)
                     ";
                $s = $pdo->prepare($sql);
                $s->bindValue(':patientId', $patientId);
@@ -326,7 +328,7 @@
                echo $e;
                exit();
            }
-          return $result ->fetchAll();
+          return $result;
        }
 
        /**
@@ -382,7 +384,7 @@
         {
             // sanitize the input string
             if ($inString != '') {
-                $outString = filter_var($inString, FILTER_SANITIZE_STRING);
+                $outString = filter_var($inString, FILTER_SANITIZE_ADD_SLASHES, FILTER_SANITIZE_STRING);
              } else {
                 $outString = "";
              }

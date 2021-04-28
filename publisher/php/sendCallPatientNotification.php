@@ -2,17 +2,20 @@
 	header('Content-Type: application/javascript');
   /* Script to call sendCallPatientNotification given the following GET requests. */
   require_once('HospitalPushNotification.php');
-  
-  // determine patientId or MRN
-  $patientId = HospitalPushNotification::getPatientIDorMRN(isset($_GET["patientid"]) ? $_GET["patientid"] : "---NA---", isset($_GET["mrn"]) ? $_GET["mrn"] : "---NA---");
 
-  $room_EN        = $_GET['room_EN'];
-  $room_FR        = $_GET['room_FR'];
-  $apptSourceUID  = $_GET['appointment_ariaser'];
+  // determine patientId or MRN
+  $wsPatientID    = HospitalPushNotification::sanitizeInput(isset($_GET["patientid"]) ? $_GET["patientid"] : "---NA---");
+  $wsMRN          = HospitalPushNotification::sanitizeInput(isset($_GET["mrn"]) ? $_GET["mrn"] : "---NA---");
+  $patientId      = HospitalPushNotification::getPatientIDorMRN($wsPatientID, $wsMRN);
+
+  // Meesage and appointment ID
+  $room_EN        = HospitalPushNotification::sanitizeInput(isset($_GET['room_EN']) ? $_GET['room_EN'] : "");
+  $room_FR        = HospitalPushNotification::sanitizeInput(isset($_GET['room_FR']) ? $_GET['room_FR'] : "");
+  $apptSourceUID  = HospitalPushNotification::sanitizeInput(isset($_GET['appointment_ariaser']) ? $_GET['appointment_ariaser'] : "");
 
   // $wsSite is the site of the hospital code (should be three digit)
   // If $wsSite is empty, then default it to RVH because it could be from a legacy call
-  $wsSite = isset($_GET["site"]) ? $_GET["site"] : "RVH";
+  $wsSite         = HospitalPushNotification::sanitizeInput(isset($_GET["site"]) ? $_GET["site"] : "RVH");
 
   // Combine room info
   $room = array(
