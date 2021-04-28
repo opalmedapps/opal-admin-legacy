@@ -66,6 +66,9 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	$filter('translate')('STUDY.EDIT.OTHER_CONSENTED'),
 	$filter('translate')('STUDY.EDIT.DECLINED')];
 
+	$scope.phoneVal = true;
+	$scope.emVal = true;
+	$scope.extVal = true;
 	$scope.oldData = {};
 	$scope.changesDetected = false;
 	$scope.formReady = false;
@@ -140,14 +143,17 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 		$filter('translate')('STUDY.VALIDATION.DESCRIPTION_EN'),
 		$filter('translate')('STUDY.VALIDATION.DESCRPIPTION_FR'),
 		$filter('translate')('STUDY.VALIDATION.INVESTIGATOR'),
+		$filter('translate')('STUDY.VALIDATION.INVESTIGATOR_PHONE'),
+		$filter('translate')('STUDY.VALIDATION.INVESTIGATOR_EMAIL'),
 		$filter('translate')('STUDY.VALIDATION.START_DATE'),
 		$filter('translate')('STUDY.VALIDATION.END_DATE'),
 		$filter('translate')('STUDY.VALIDATION.DATE_RANGE'),
 		$filter('translate')('STUDY.VALIDATION.PATIENTS'),
 		$filter('translate')('STUDY.VALIDATION.QUESTIONNAIRE'),
-		$filter('translate')('STUDY.VALIDATION.ID'),
 		$filter('translate')('STUDY.VALIDATION.CONSENT'),
 		$filter('translate')('STUDY.VALIDATION.PATIENT_CONSENT'),
+		$filter('translate')('STUDY.VALIDATION.INVESTIGATOR_PHONE_EXT'),
+		$filter('translate')('STUDY.VALIDATION.ID'),
 	];
 
 	$locale["DATETIME_FORMATS"]["SHORTDAY"] = [
@@ -190,6 +196,39 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	// Show processing dialog
 	$scope.showProcessingModal();
 
+	/**
+		 * Validate the investigator personal info fields before allowing user to continue
+		 * phone regex checks for standard 10 digit number with options for deliniation by space, hyphen, or period
+		 * 		User can optionally enter country code eg +1 or +44
+		 * email regex checks for standard RFC2822 email format
+		 * phoneExt regex checks for any number of digits 0-9 up to a maximum length of 6
+		 */
+	 $scope.validateInvestigatorInfo = function () {
+		$scope.phoneVal = false;
+		$scope.emVal = false;
+		$scope.extVal = false;
+		$scope.validator.investigator.completed = false;
+		if($scope.toSubmit.investigator.phone){
+			var phoneDigits = $scope.toSubmit.investigator.phone.replace(/[\s.,-]+/g, ""); //remove unwanted characters
+			var phoneReg = new RegExp(/^(\+\d{0,2})?[ .-]?\(?(\d{3})\)?[ .-]?(\d{3})[ .-]?(\d{4})$/);
+			$scope.phoneVal = phoneReg.test(phoneDigits);
+		}
+		if($scope.toSubmit.investigator.email){
+			var emReg = new RegExp(/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/);
+			$scope.emVal = emReg.test($scope.toSubmit.investigator.email);
+		}
+		if($scope.toSubmit.investigator.phoneExt){
+			var extDigits = $scope.toSubmit.investigator.phoneExt.replace(/[\s.,-]+/g, ""); //remove characters
+			var phoneExtReg = new RegExp(/^\d{0,6}$/);
+			$scope.extVal = phoneExtReg.test(extDigits);
+		}else{ //empty phone extension is valid
+			$scope.extVal = true;
+		}
+		if($scope.phoneVal && $scope.emVal && $scope.extVal){
+			$scope.validator.investigator.completed = true;
+		}
+	};
+
 	$scope.patientConsentChange = function(value){
 		value.changed = true;
 		if(value.consent_display === $filter('translate')('STUDY.EDIT.INVITED')){
@@ -226,6 +265,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 
 	studyCollectionService.getPatientConsentList($scope.currentStudy.ID).then(function(response){
 		$scope.patientConsentList = response.data;
+	
 		angular.forEach($scope.patientConsentList, function(value){
 			value.changed = null;
 			switch (parseInt(value.consent)){
@@ -316,6 +356,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	// Call our API service to get the current diagnosis translation details
 	studyCollectionService.getStudiesDetails($scope.currentStudy.ID).then(function (response) {
 		$scope.backupStudy = response.data;
+		console.log($scope.backupStudy);
 		$scope.ready[2] = true;
 		if($scope.backupStudy.consentQuestionnaireId){
 			studyCollectionService.consentFormPublished($scope.backupStudy.consentQuestionnaireId).then(function(response){
@@ -370,19 +411,21 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 		$scope.popupEnd['opened'] = true;
 	};
 
-	$scope.syncConsent = function(patient){
-		if(patient.added == true){
-			$scope.patientConsentList.push({'id':patient.id,'consent':'','name':patient.name,'changed':null});
-		}else{
-			var idx = 0;
-			angular.forEach($scope.patientConsentList, function(val){
-				if(val.id == patient.id){
-					$scope.patientConsentList.splice(idx, 1);
-				}
-				idx++;
-			});
-		}
-	}
+	// $scope.syncConsent = function(patient){
+	// 	if(patient.added == true){
+	// 		$scope.patientConsentList.push({'id':patient.id,'consent':'','name':patient.name,'changed':null});
+	// 	}else{
+	// 		var idx = 0;
+	// 		console.log($scope.patientConsentList);
+	// 		angular.forEach($scope.patientConsentList, function(val){
+	// 			if(val.id === patient.id){
+	// 				$scope.patientConsentList.splice(idx, 1);
+	// 			}
+	// 			idx++;
+	// 		});
+	// 		console.log($scope.patientConsentList);
+	// 	}
+	// }
 
 	$scope.$watch('toSubmit', function() {
 		$scope.changesDetected = JSON.stringify($scope.toSubmit) !== JSON.stringify($scope.oldData);
@@ -410,7 +453,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			}
 
 		});
-		$scope.formReady = (completedSteps >= totalsteps) && (nonMandatoryCompleted >= nonMandatoryTotal);
+		$scope.formReady = (completedSteps >= totalsteps) && (nonMandatoryCompleted >= nonMandatoryTotal) && $scope.validator.investigator.completed;
 	}, true);
 
 	$scope.$watch('toSubmit.details', function(){
@@ -448,16 +491,24 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	$scope.$watch('patientsList', function (triggerList) {
 		triggerList = angular.copy(triggerList);
 		var pos = -1;
+		var posC = -1;
 		angular.forEach(triggerList, function (item) {
 			pos = $scope.toSubmit.patients.findIndex(x => x === item.id);
+			posC = $scope.patientConsentList.findIndex(x => x.id === item.id);
 			if(item.added) {
 				if (pos === -1) {
 					$scope.toSubmit.patients.push(item.id);
+				}
+				if(posC === -1){
+					$scope.patientConsentList.push({'id':item.id,'consent':'','name':item.name,'changed':null});
 				}
 			}
 			else {
 				if (pos !== -1) {
 					$scope.toSubmit.patients.splice(pos, 1);
+				}
+				if (posC !== -1){
+					$scope.patientConsentList.splice(posC, 1);
 				}
 			}
 		});
@@ -498,7 +549,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			$scope.readyToSend.description_FR = $scope.toSubmit.title_desc.description_FR;
 			$scope.readyToSend.investigator = $scope.toSubmit.investigator.name;
 			$scope.readyToSend.investigator_email = $scope.toSubmit.investigator.email;
-			$scope.readyToSend.investigator_phone = (($scope.toSubmit.investigator.phone).replace(/-/g,"")).replace(/\s/g,"");
+			$scope.readyToSend.investigator_phone = ($scope.toSubmit.investigator.phone).replace(/[\s.,\-\(\)]+/g, ""); //strip away dot, hyphen, spaces, commas, brackets before sending to DB
 			$scope.readyToSend.investigator_phoneExt = $scope.toSubmit.investigator.phoneExt;
 			$scope.readyToSend.start_date = (($scope.toSubmit.dates.start_date) ? moment($scope.toSubmit.dates.start_date).format('X') : "");
 			$scope.readyToSend.end_date = (($scope.toSubmit.dates.end_date) ? moment($scope.toSubmit.dates.end_date).format('X') : "");
@@ -506,7 +557,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			$scope.readyToSend.questionnaire = $scope.toSubmit.questionnaire;
 			$scope.readyToSend.consent_form = $scope.toSubmit.consent_form.id;
 			$scope.readyToSend.patientConsents = $scope.patientConsentList;
-			
+			console.log($scope.readyToSend);
 			$.ajax({
 				type: "POST",
 				url: "study/update/study",
