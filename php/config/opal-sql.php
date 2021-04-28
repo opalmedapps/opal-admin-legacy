@@ -670,7 +670,7 @@ define("OPAL_UPDATE_STUDY","
 ");
 
 define("OPAL_UPDATE_STUDY_CONSENT", "
-    UPDATE ".OPAL_PATIENT_STUDY_TABLE." SET consentStatus = :patientConsent WHERE studyId = :studyId AND patientId = :patientId;
+    UPDATE ".OPAL_PATIENT_STUDY_TABLE." SET consentStatus = :patientConsent, patientId = :patientId WHERE studyId = :studyId AND patientId = :patientId;
 ");
 
 define("OPAL_MARK_STUDY_AS_DELETED", "
@@ -1286,7 +1286,7 @@ define("OPAL_GET_QUESTIONNAIRES_STUDY","
 ");
 
 define("OPAL_DELETE_PATIENTS_STUDY", "
-    DELETE FROM ".OPAL_PATIENT_STUDY_TABLE." WHERE studyId = :studyId AND PatientId NOT IN (%%LISTIDS%%);
+    DELETE FROM ".OPAL_PATIENT_STUDY_TABLE." WHERE studyId = :studyId AND patientId NOT IN (%%LISTIDS%%);
 ");
 
 define("OPAL_DELETE_QUESTIONNAIRES_STUDY", "

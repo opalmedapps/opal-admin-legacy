@@ -415,10 +415,10 @@
                                 </p>
                             </div>
                             <div class="col-xs-12 col-md-6">
-                                <div class="panel" ng-class="(toSubmit.investigator.name && toSubmit.investigator.phone && toSubmit.investigator.email) ? 'panel-success': 'panel-danger'">
+                                <div class="panel" ng-class="(validator.investigator.completed) ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>{{'STUDY.ADD.NAME'|translate}}</strong>
-                                        <span ng-hide="toSubmit.investigator.name && toSubmit.investigator.phone && toSubmit.investigator.email" style="float:right"><em>{{'STUDY.ADD.INCOMPLETE'|translate}}</em></span>
-                                        <span ng-show="toSubmit.investigator.name && toSubmit.investigator.phone && toSubmit.investigator.email" style="float:right"><em>{{'STUDY.ADD.COMPLETE'|translate}}</em></span>
+                                        <span ng-hide="validator.investigator.completed" style="float:right"><em>{{'STUDY.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="validator.investigator.completed" style="float:right"><em>{{'STUDY.ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body form-horizontal">
                                         <div class="form-group">
@@ -426,7 +426,7 @@
                                                 {{'STUDY.ADD.NAME'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
-                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.name" ng-change="nameUpdate()" required/>
+                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.name" required="required"/>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -434,19 +434,19 @@
                                                 {{'STUDY.ADD.EMAIL'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
-                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.email" ng-change="nameUpdate()" required/>
+                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.email" ng-change="validateInvestigatorInfo()" required="required" ng-style="{'border-color' : emVal == true ? 'green':'red'}"/>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="control-label col-xs-12 col-lg-2">
                                                 {{'STUDY.ADD.PHONE'|translate}}
                                             </label>
-                                            <div class="col-xs-4 col-lg-2">
-                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.phoneExt" ng-change="nameUpdate()" placeholder="ext."/>
+                                            <div class="col-xs-12 col-lg-2">
+                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.phoneExt" ng-change="validateInvestigatorInfo()" ng-style="{'border-color' : extVal == true ? 'green':'red'}"/>
                                             </div>
-                                            <div class="col-xs-8 col-lg-8">
-                                                <input class="form-control" type="tel" ng-model="toSubmit.investigator.phone" ng-change="nameUpdate()" required placeholder="+1 438 123 4567"/>
-                                            </div>
+                                            <span class="col-xs-12 col-lg-8">
+                                                <input class="form-control" type="tel" ng-model="toSubmit.investigator.phone" ng-change="validateInvestigatorInfo()" required="required" placeholder="+1 438 123 4567" ng-style="{'border-color' : phoneVal == true ? 'green':'red'}"/>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
