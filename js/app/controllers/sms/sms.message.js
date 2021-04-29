@@ -16,6 +16,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         $scope.TypeList = null;
         $scope.EventList = null;
         $scope.smsAppointments = null;
+        $scope.smsResources = null;
 
         $scope.UpdateInformation = {
             message: {English : "", French : "",},
@@ -45,6 +46,11 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
 
         // Progress for progress bar on default steps and total
         $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+
+        //Filters for resources
+        $scope.resourceFilter = "";
+        $scope.resourceTypeFilter = 'all';
+        $scope.resourceUpdate = 0;
 
         getSmsSpecialityList();
 
@@ -90,9 +96,10 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
 
         //Update Message information
         $scope.UpdateMessage = function(){
-            console.log("ready");
+            if($scope.resourceUpdate && $scope.writeAccess){
+
+            }
             if ($scope.checkForm() && $scope.writeAccess) {
-                console.log("going");
                 $.ajax({
                     type: "POST",
                     url: "sms/update/smsMessage",
@@ -109,7 +116,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
                             console.log("error");
                             ErrorHandler.onError(response, "error");
                         }
-                        alert("Task Complete");
+                        $scope.goBack();
                     },
                     error: function(err) {
                         ErrorHandler.onError(err,"error");
@@ -121,6 +128,33 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         // Function to return boolean for form completion
         $scope.checkForm = function () {
             return (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) === 100);
+        };
+
+        //Filter functions
+        $scope.changeResourceFilter = function (field) {
+            $scope.resourceFilter = field;
+        };
+
+        $scope.searchResourcesFilter = function (Filter) {
+            var keyword = new RegExp($scope.resourceFilter, 'i');
+            return ((!$scope.resourceTypeFilter || keyword.test(Filter.name)) && (($scope.resourceTypeFilter == 'all') || ($scope.resourceTypeFilter == 'selected' && Filter.selected)
+                || ($scope.resourceTypeFilter == 'other' && !Filter.selected)));
+        };
+
+        $scope.setResourceTypeFilter = function (filter) {
+            $scope.resourceTypeFilter = filter;
+        };
+
+        //checkbox function for resource
+        $scope.toggleResourceSelection = function (resource) {
+            $scope.resourceUpdate = 1;
+
+            // If originally active, remove it
+            if (resource.active) {
+                resource.active = 0; // added parameter
+            } else { // Originally not active, add it
+                resource.active = 1;
+            }
         };
 
         $scope.setBannerClass = function (classname) {
@@ -166,15 +200,21 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         //Function to get Appointments from database
         function getSmsAppointmentList() {
             smsCollectionService.getSmsAppointments().then(function (response) {
+                var tempResourceList = [];
                 response.data.forEach(function (row){
                     switch (row.apptype){
                         case null:
                             row.apptype = 'UNDEFINED';
                     }
                     row.modified = 0;
+                    if(!tempResourceList.includes(row.rescode)){
+                        tempResourceList.push(row.rescode);
+                    }
                 })
+                $scope.smsResources = GenerateResourceList(tempResourceList,response.data);
                 $scope.smsAppointments = response.data;
                 console.log($scope.smsAppointments);
+                console.log($scope.smsResources)
             }).catch(function(err) {
                 ErrorHandler.onError(err, "error");
             });
@@ -206,6 +246,28 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
                 ErrorHandler.onError(err, "error");
             });
 
+        }
+
+        function GenerateResourceList(codeList,Appointment){
+            var resourceList = []
+            codeList.forEach(function(Code){
+                var resource = {code: Code, name: "", selected: 0, active: 1};
+                Appointment.forEach(function(appointment){
+                    if(appointment.rescode == resource.code){
+                        if(appointment.spec == $scope.UpdateInformation.speciality&& appointment.apptype == $scope.UpdateInformation.type){
+                            resource.selected = 1;
+                        }
+                        if(appointment.state == 0){
+                            resource.active = 0;
+                        }
+                        if(resource.name == ""){
+                            resource.name = appointment.resname;
+                        }
+                    }
+                });
+                resourceList.push(resource);
+            });
+            return resourceList;
         }
 
 
