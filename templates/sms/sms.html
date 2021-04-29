@@ -12,11 +12,11 @@
                         <!-- Page title -->
                         <div class="col-xs-12 col-md-9 title-content">
                             <span class="glyphicon glyphicon-phone"></span>
-                            <h1><strong>SMS</strong></h1>
+                            <h1><strong>{{'SMS.SMS'|translate}}</strong></h1>
                         </div>
                         <!-- Breadcrumbs -->
                         <div class="col-md-3 title-breadcrumbs">
-                            <span><a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>SMS</strong></span>
+                            <span><a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>{{'SMS.SMS'|translate}}</strong></span>
                         </div>
                     </div>
                     <div class="row clearfix operations">
@@ -24,12 +24,12 @@
                             <!-- Add button -->
                             <a ng-if="writeAccess" style="margin-right:20px;" href="" ng-click="goToMessage()" class="btn btn-md btn-outline item-button">
                                 <span style="font-size: 17px;" class="glyphicon glyphicon-pencil"></span>
-                                <span style="font-size: 20px;"><strong>Edit/Add Message</strong></span>
+                                <span style="font-size: 20px;"><strong>{{'SMS.LIST.EDIT'|translate}}</strong></span>
                             </a>
                             <!-- Save changes button -->
                             <a href="" ng-if="writeAccess&&changesMade" ng-click="submitUpdate()" class="btn btn-md item-button-success animated"  ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false">
                                 <span style="font-size: 17px;" class="glyphicon glyphicon-ok"></span>
-                                <span style="font-size: 20px;"><strong>Save</strong></span>
+                                <span style="font-size: 20px;"><strong>{{'SMS.LIST.SAVE'|translate}}</strong></span>
                             </a>
                         </div>
                         <!-- Search field -->
@@ -40,26 +40,8 @@
                             </div>
                         </div>
                     </div>
-<!--                    <div class="row list-logs">-->
-<!--                        <div class="col-xs-12 col-sm-offset-2 col-sm-8 col-lg-offset-4 col-lg-4">-->
-<!--                            <div class="btn-group btn-group-justified" role="group" aria-label="...">-->
-<!--                                <div class="btn-group" role="group">-->
-<!--                                    <button type="button" class="btn btn-default" ng-click="switchDetailView('list')" ng-class="{'active': detailView == 'list', 'disabled': changesMade}">-->
-<!--                                        <i class="fa fa-list"></i> {{'ALIAS.LIST.LIST'|translate}}-->
-<!--                                    </button>-->
-<!--                                </div>-->
-<!--                                <div class="btn-group" role="group">-->
-<!--                                    <button type="button" class="btn btn-default" ng-click="switchDetailView('chart')" ng-class="{'active': detailView == 'chart', 'disabled': changesMade}">-->
-<!--                                        <i class="fa fa-area-chart"></i> {{'ALIAS.LIST.LOGS'|translate}}-->
-<!--                                    </button>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
                     <div>
                         <div>
-<!--                        <div ng-if="detailView == 'list'">-->
-                            <!-- Load main table -->
                             <div class="panel-container" style="text-align:left;">
                                 <div class="panel-info">
                                     <div class="panel-input">
@@ -72,30 +54,6 @@
                                 </div>
                             </div>
                         </div>
-<!--                        <div ng-if="detailView == 'chart'">-->
-<!--                            &lt;!&ndash; Load chart &ndash;&gt;-->
-<!--                            <div class="panel-container" ng-if="!aliasChartLogs.length">-->
-<!--                                <div class="panel-info">-->
-<!--                                    <div class="jumbotron content" style="background-color: transparent; margin-bottom:0">-->
-<!--                                        <p style="font-size:45px;">{{'ALIAS.LIST.NO_DATA'|translate}}</p>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                            <div class="panel-container" ng-if="aliasChartLogs.length">-->
-<!--                                <div class="panel-info">-->
-<!--                                    <highchart id="chart1" config="chartConfig"></highchart>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                            <div class="panel-container" ng-if="aliasListLogs.length > 0">-->
-<!--                                <div class="panel-info">-->
-<!--                                    <div class="panel-input">-->
-<!--                                        <div id="data-table">-->
-<!--                                            <div class="gridStyle" ui-grid="gridLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (aliasListLogs.length*gridLogOptions.rowHeight)+32+'px'}"></div>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </div>-->
                     </div>
                 </div>
             </div>
