@@ -148,7 +148,7 @@
                     <div class="row main-title">
                         <!-- Page title -->
                         <div class="col-xs-12 col-md-9 title-content">
-                            <span class="glyphicon glyphicon-envelope"></span>
+                            <span class="glyphicon glyphicon-pencil"></span>
                             <h1><strong>SMS Message</strong></h1>
                         </div>
                     </div>
@@ -257,7 +257,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp:eventSection.show}" ng-if="eventSection.show">>
+                        <div class="row animated" ng-class="{fadeInUp:eventSection.show}" ng-if="eventSection.show">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span style="color:#d9534f"><strong>Require field: </strong></span>
@@ -362,7 +362,7 @@
                                 <ul class="list-items">
                                     <li ng-repeat="resource in smsResources | filter: searchResourcesFilter">
                                         <label ng-class="{greenText: resource.selected, grayText: !resource.selected}">
-                                            <input type="checkbox" ng-click="toggleTestSelection(resource)" ng-checked="resource.active" /> {{resource.name}}
+                                            <input type="checkbox" ng-click="toggleTestSelection(resource)" ng-checked="resource.state" /> {{resource.name}}
                                         </label>
                                     </li>
                                 </ul>
@@ -373,4 +373,5 @@
             </div>
         </div>
     </div>
+    <div class="bannerMessage alert-success">{{bannerMessage}}</div>
 </div>

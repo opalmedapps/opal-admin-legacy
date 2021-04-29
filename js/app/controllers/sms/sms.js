@@ -93,22 +93,22 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
         $scope.gridOptions = {
             data: 'smsAppointments',
             columnDefs: [
-                {field:'appcode', displayName: 'Appointment Code',width: '30%',enableColumnMenu: false, cellTemplate: cellTemplateAppointmentCode},
+                {field:'appcode', displayName: $filter('translate')('SMS.LIST.APPOINTMENT_CODE'),width: '30%',enableColumnMenu: false, cellTemplate: cellTemplateAppointmentCode},
                 {
-                    field: 'apptype', displayName: 'Appointment Type', width: '15%', enableColumnMenu: false, filter: {
+                    field: 'apptype', displayName: $filter('translate')('SMS.LIST.TYPE'), width: '15%', enableColumnMenu: false, filter: {
                         type: uiGridConstants.filter.SELECT,
                         selectOptions: [{ value: 'GENERAL', label: 'GENERAL'}, { value: 'RADONC', label: 'RADONC' },
                             { value: 'TELEMED', label: 'TELEMED' },{value:'TEST_CENTRE',label:'TEST_CENTRE'},{value:'UNDEFINED',label:'UNDEFINED'}]
                     }
                 },
                 {
-                    field: 'spec', displayName: 'Speciality', width: '15%', enableColumnMenu: false, filter: {
+                    field: 'spec', displayName:  $filter('translate')('SMS.LIST.SPECIALTY'), width: '15%', enableColumnMenu: false, filter: {
                         type: uiGridConstants.filter.SELECT,
                         selectOptions: [{ value: 'Oncology', label: 'Oncology'}]
                     }
                 },
-                {field:'resname', displayName: 'Resource Name', width:'25%', enableColumnMenu: false,cellTemplate: cellTemplateResourceName},
-                { field: 'state', displayName: 'Disable/Enable Appointment', enableColumnMenu: false, width: '15%',
+                {field:'resname', displayName:  $filter('translate')('SMS.LIST.RESOURCE_NAME'), width:'25%', enableColumnMenu: false,cellTemplate: cellTemplateResourceName},
+                { field: 'state', displayName: $filter('translate')('DISABLE/ENABLE'), enableColumnMenu: false, width: '15%',
                     cellTemplate: checkboxCellTemplate, enableFiltering: false },
             ],
             enableFiltering: true,
@@ -162,7 +162,6 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                         }
                         $scope.changesMade = false;
                         $scope.smsUpdates.updateList = [];
-                        alert("Task Complete");
                     },
                     error: function(err) {
                         ErrorHandler.onError(err,"error");
