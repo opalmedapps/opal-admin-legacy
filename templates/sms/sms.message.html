@@ -306,9 +306,7 @@
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-xs-12 col-lg-12">
-                                                <div class="form-group">
-                                                    <div text-angular ng-model="UpdateInformation.message.English" ng-change="CheckMessage()"></div>
-                                                </div>
+                                                <textarea class="form-control" rows="5" ng-model="UpdateInformation.message.English" ng-change="CheckMessage()"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -323,9 +321,7 @@
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-xs-12 col-lg-12">
-                                                <div class="form-group">
-                                                    <div text-angular ng-model="UpdateInformation.message.French" ng-change="CheckMessage()"></div>
-                                                </div>
+                                                <textarea class="form-control" rows="5" ng-model="UpdateInformation.message.French" ng-change="CheckMessage()"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -346,9 +342,30 @@
                         <div class="row animated" ng-class="{fadeInUp:messageSection.show}" ng-if="messageSection.show">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
-                                    <span style="color:#d9534f"><strong>Required field: </strong></span>
+                                    <span style="color:#d9534f"><strong>Optional field: </strong></span>
                                     Please select the resources you want to activate.
                                 </p>
+                            </div>
+                        </div>
+                        <div class="panel" ng-class="{fadeInUp:messageSection.show}" ng-if="messageSection.show">
+                            <div class="panel-heading panel-success">
+                                <div class="input-group" style="padding-bottom: 10px;">
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                    <input class="form-control" type="text" ng-model="resourceFilter" ng-change="changeResourceFilter(resourceFilter)" placeholder="Search"/>
+                                </div>
+                            <div class="btn-group btn-group-justified">
+                                <a class="btn btn-default" ng-class="{'active' : resourceTypeFilter == 'all'}" ng-click="setResourceTypeFilter('all')">Show all</a>
+                                <a class="btn btn-default" ng-class="{'active' : resourceTypeFilter == 'selected'}" ng-click="setResourceTypeFilter('selected')">Show resources selected</a>
+                                <a class="btn btn-default" ng-class="{'active' : resourceTypeFilter == 'other'}" ng-click="setResourceTypeFilter('other')">Show other resources</a>
+                            </div>
+                            <div class="panel-body"></div>
+                                <ul class="list-items">
+                                    <li ng-repeat="resource in smsResources | filter: searchResourcesFilter">
+                                        <label ng-class="{greenText: resource.selected, grayText: !resource.selected}">
+                                            <input type="checkbox" ng-click="toggleTestSelection(resource)" ng-checked="resource.active" /> {{resource.name}}
+                                        </label>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>

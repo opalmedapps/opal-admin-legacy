@@ -3068,6 +3068,60 @@
     }
 
   },
+  "SMS": {
+    "SMS": "SMS",
+    "LIST": {
+      "EDIT": "Edit/Add Message",
+      "SAVE": "Save",
+      "APPOINTMENT_CODE": "Appointment Code",
+      "TYPE": "Type",
+      "GENARAL": "General",
+      "RADONC": "Radonc",
+      "TELEMED": "Telemed",
+      "TEST_CENTRE": "Test Centre",
+      "UNDEFINE": "Undefine",
+      "SPECIALITY": "Speciality",
+      "RESOURCE_NAME": "Resource Name",
+      "DISABLE/ENABLE": "Disable/Enable Appointment",
+      "SEARCH": "Search"
+    },
+    "MESSAGE": {
+      "BACK": "Back to SMS",
+      "SUMMARY": "Summary",
+      "SPECIALITY": "Speciality",
+      "REQUIRED": "Required field:",
+      "OPTIONAL": "Optional field:",
+      "SPECIALITY_MESSAGE": "Please select the speciality of the message.",
+      "Oncology": "Oncology",
+      "TYPE": "Type",
+      "TYPE_MESSAGE": "Please select the type of the message.",
+      "GENARAL": "General",
+      "RADONC": "Radonc",
+      "TELEMED": "Telemed",
+      "TEST_CENTRE": "Test Centre",
+      "EVENT": "Event",
+      "EVENT_MESSAGE": "Please select the event of the message.",
+      "CHECK_IN": "Check In",
+      "FAILED_CHECK_IN": "Failed Check In",
+      "REGISTRATION": "Registration",
+      "REMINDER": "Reminder",
+      "UNKNOWN_COMMAND": "Unknown Command",
+      "CONTENT": "Message Content",
+      "CONTENT_MESSAGE": "Make sure the message are correct.",
+      "CONTENT_EN": "English Message",
+      "CONTENT_FR": "French Message",
+      "COMPLETE": "Complete",
+      "INCOMPLETE": "Incomplete",
+      "RESOURCE": "Resource",
+      "RESOURCE_MESSAGE": "Please check the resources of the appointment you want to activate",
+      "CONTENT_Complete": "Message Complete",
+      "SEARCH": "Search",
+      "SHOW_ALL": "Show all",
+      "SHOW_SELECTED": "Show resources with appointments of selected specialty and type",
+      "SHOW_NOT_SELECTED": "Show other resources",
+      "SUBMIT": "Submit"
+    }
+  },
   "ERROR_HANDLER": {
     "400": {
       "MESSAGE": "Code 400. Invalid request. Validation of the data by the server failed."

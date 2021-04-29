@@ -181,7 +181,6 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                     row.modified = 0;
                 })
                 $scope.smsAppointments = response.data;
-                console.log($scope.smsAppointments);
             }).catch(function(err) {
                 ErrorHandler.onError(err, $filter('translate')('SMS.LIST.ERROR_LIST'));
             });
