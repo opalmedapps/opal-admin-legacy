@@ -70,4 +70,10 @@ class Sms extends Module {
 
         return $this->ormsDB->getTypeForMessage($speciality);
     }
+
+    public function updateActivationStateByResource($information){
+        $this->checkReadAccess();
+
+        return $this->ormsDB->updateActivationStateByResource($information['state'],$information['ressernum']);
+    }
 }

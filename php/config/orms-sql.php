@@ -67,3 +67,8 @@ define("ORMS_SQL_GET_TYPE_FOR_MESSAGE","
     SELECT DISTINCT message.Type FROM ".ORMS_SMS_MESSAGE_LIST_TABLE." message 
     WHERE (message.Speciality = 'Any' OR message.Speciality = :spec)
 ");
+
+define("ORMS_SQL_UPDATE_APPOINTMENT_ACTIVE_STATE_BY_RESOURCE","
+    UPDATE ".ORMS_SMS_APPOINTMENT_LIST_TABLE." SET Active = :state
+    WHERE ClinicResourcesSerNum = :res"
+);

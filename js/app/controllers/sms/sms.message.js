@@ -148,14 +148,17 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         //checkbox function for resource
         $scope.toggleResourceSelection = function (resource) {
             $scope.resourceUpdate = 1;
-
+            resource.modified = 1;
             // If originally active, remove it
-            if (resource.active) {
-                resource.active = 0; // added parameter
+            if (resource.state) {
+                resource.state = 0; // added parameter
             } else { // Originally not active, add it
-                resource.active = 1;
+                resource.state = 1;
             }
         };
+
+        //Banner
+        $scope.bannerMessage = "";
 
         $scope.setBannerClass = function (classname) {
             // Remove any classes starting with "alert-"
@@ -164,6 +167,14 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             });
             // Add class
             $(".bannerMessage").addClass('alert-' + classname);
+        };
+
+        $scope.showBanner = function () {
+            $(".bannerMessage").slideDown(function () {
+                setTimeout(function () {
+                    $(".bannerMessage").slideUp();
+                }, 3000);
+            });
         };
 
         // Function to calculate / return step progress
@@ -200,18 +211,18 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         //Function to get Appointments from database
         function getSmsAppointmentList() {
             smsCollectionService.getSmsAppointments().then(function (response) {
-                var tempResourceList = [];
+                var resourceSerList = [];
                 response.data.forEach(function (row){
                     switch (row.apptype){
                         case null:
                             row.apptype = 'UNDEFINED';
                     }
                     row.modified = 0;
-                    if(!tempResourceList.includes(row.rescode)){
-                        tempResourceList.push(row.rescode);
+                    if(!resourceSerList.includes(row.ressernum)){
+                        resourceSerList.push(row.ressernum);
                     }
                 })
-                $scope.smsResources = GenerateResourceList(tempResourceList,response.data);
+                $scope.smsResources = GenerateResourceList(resourceSerList,response.data);
                 $scope.smsAppointments = response.data;
                 console.log($scope.smsAppointments);
                 console.log($scope.smsResources)
@@ -250,15 +261,15 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
 
         function GenerateResourceList(codeList,Appointment){
             var resourceList = []
-            codeList.forEach(function(Code){
-                var resource = {code: Code, name: "", selected: 0, active: 1};
+            codeList.forEach(function(serNum){
+                var resource = {ressernum: serNum, name: "", selected: 0, state: 1,modified: 0};
                 Appointment.forEach(function(appointment){
-                    if(appointment.rescode == resource.code){
+                    if(appointment.ressernum == resource.ressernum){
                         if(appointment.spec == $scope.UpdateInformation.speciality&& appointment.apptype == $scope.UpdateInformation.type){
                             resource.selected = 1;
                         }
                         if(appointment.state == 0){
-                            resource.active = 0;
+                            resource.state = 0;
                         }
                         if(resource.name == ""){
                             resource.name = appointment.resname;
