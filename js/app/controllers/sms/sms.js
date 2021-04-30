@@ -102,13 +102,13 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                     }
                 },
                 {
-                    field: 'spec', displayName:  $filter('translate')('SMS.LIST.SPECIALTY'), width: '15%', enableColumnMenu: false, filter: {
+                    field: 'spec', displayName:  $filter('translate')('SMS.LIST.SPECIALITY'), width: '15%', enableColumnMenu: false, filter: {
                         type: uiGridConstants.filter.SELECT,
                         selectOptions: [{ value: 'Oncology', label: 'Oncology'}]
                     }
                 },
                 {field:'resname', displayName:  $filter('translate')('SMS.LIST.RESOURCE_NAME'), width:'25%', enableColumnMenu: false,cellTemplate: cellTemplateResourceName},
-                { field: 'state', displayName: $filter('translate')('DISABLE/ENABLE'), enableColumnMenu: false, width: '15%',
+                { field: 'state', displayName: $filter('translate')('SMS.LIST.DISABLE/ENABLE'), enableColumnMenu: false, width: '15%',
                     cellTemplate: checkboxCellTemplate, enableFiltering: false },
             ],
             enableFiltering: true,
