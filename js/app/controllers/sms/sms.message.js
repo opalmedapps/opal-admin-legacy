@@ -16,7 +16,6 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         $scope.TypeList = null;
         $scope.EventList = null;
         $scope.smsAppointments = null;
-        $scope.smsResources = null;
 
         $scope.UpdateInformation = {
             message: {English : "", French : "",},
@@ -46,11 +45,6 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
 
         // Progress for progress bar on default steps and total
         $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-
-        //Filters for resources
-        $scope.resourceFilter = "";
-        $scope.resourceTypeFilter = 'all';
-        $scope.resourceUpdate = 0;
 
         getSmsSpecialityList();
 
@@ -96,9 +90,6 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
 
         //Update Message information
         $scope.UpdateMessage = function(){
-            if($scope.resourceUpdate && $scope.writeAccess){
-
-            }
             if ($scope.checkForm() && $scope.writeAccess) {
                 $.ajax({
                     type: "POST",
@@ -128,33 +119,6 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         // Function to return boolean for form completion
         $scope.checkForm = function () {
             return (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) === 100);
-        };
-
-        //Filter functions
-        $scope.changeResourceFilter = function (field) {
-            $scope.resourceFilter = field;
-        };
-
-        $scope.searchResourcesFilter = function (Filter) {
-            var keyword = new RegExp($scope.resourceFilter, 'i');
-            return ((!$scope.resourceTypeFilter || keyword.test(Filter.name)) && (($scope.resourceTypeFilter == 'all') || ($scope.resourceTypeFilter == 'selected' && Filter.selected)
-                || ($scope.resourceTypeFilter == 'other' && !Filter.selected)));
-        };
-
-        $scope.setResourceTypeFilter = function (filter) {
-            $scope.resourceTypeFilter = filter;
-        };
-
-        //checkbox function for resource
-        $scope.toggleResourceSelection = function (resource) {
-            $scope.resourceUpdate = 1;
-            resource.modified = 1;
-            // If originally active, remove it
-            if (resource.state) {
-                resource.state = 0; // added parameter
-            } else { // Originally not active, add it
-                resource.state = 1;
-            }
         };
 
         //Banner
@@ -211,21 +175,14 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         //Function to get Appointments from database
         function getSmsAppointmentList() {
             smsCollectionService.getSmsAppointments().then(function (response) {
-                var resourceSerList = [];
                 response.data.forEach(function (row){
                     switch (row.apptype){
                         case null:
                             row.apptype = 'UNDEFINED';
                     }
                     row.modified = 0;
-                    if(!resourceSerList.includes(row.ressernum)){
-                        resourceSerList.push(row.ressernum);
-                    }
                 })
-                $scope.smsResources = GenerateResourceList(resourceSerList,response.data);
                 $scope.smsAppointments = response.data;
-                console.log($scope.smsAppointments);
-                console.log($scope.smsResources)
             }).catch(function(err) {
                 ErrorHandler.onError(err, "error");
             });
@@ -240,46 +197,21 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             });
         }
 
-        function getSmsMessage(){
+        function getSmsMessage() {
             smsCollectionService.getSmsMessge($scope.UpdateInformation.speciality,
-                $scope.UpdateInformation.type,$scope.UpdateInformation.event, "English").
-            then(function (response) {
+                $scope.UpdateInformation.type, $scope.UpdateInformation.event, "English").then(function (response) {
                 $scope.UpdateInformation.message.English = response.data.message;
-            }).catch(function(err) {
+            }).catch(function (err) {
                 ErrorHandler.onError(err, "error");
             });
 
             smsCollectionService.getSmsMessge($scope.UpdateInformation.speciality,
-                $scope.UpdateInformation.type,$scope.UpdateInformation.event, "French").
-            then(function (response) {
+                $scope.UpdateInformation.type, $scope.UpdateInformation.event, "French").then(function (response) {
                 $scope.UpdateInformation.message.French = response.data.message;
-            }).catch(function(err) {
+            }).catch(function (err) {
                 ErrorHandler.onError(err, "error");
             });
 
         }
-
-        function GenerateResourceList(codeList,Appointment){
-            var resourceList = []
-            codeList.forEach(function(serNum){
-                var resource = {ressernum: serNum, name: "", selected: 0, state: 1,modified: 0};
-                Appointment.forEach(function(appointment){
-                    if(appointment.ressernum == resource.ressernum){
-                        if(appointment.spec == $scope.UpdateInformation.speciality&& appointment.apptype == $scope.UpdateInformation.type){
-                            resource.selected = 1;
-                        }
-                        if(appointment.state == 0){
-                            resource.state = 0;
-                        }
-                        if(resource.name == ""){
-                            resource.name = appointment.resname;
-                        }
-                    }
-                });
-                resourceList.push(resource);
-            });
-            return resourceList;
-        }
-
 
     });
