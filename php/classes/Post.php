@@ -105,9 +105,11 @@ class Post extends Module {
         $result = $this->opalDB->getPublicationChartLogs(MODULE_POST, $serial);
 
         //The Y value has to be converted to an int, or the chart log will reject it on the front end.
-        foreach ($result as &$item) {
+        $tempArray = array();
+        foreach($result as $item)
             $item["y"] = intval($item["y"]);
-        }
+            array_push($tempArray, $item);
+        $result = $tempArray;
 
         if (count($result) > 0)
             array_push($data, array("name"=>$type, "data"=>$result));
