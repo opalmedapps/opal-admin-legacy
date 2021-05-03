@@ -223,9 +223,11 @@ class Study extends Module {
                 if(!is_array($post["patients"]))
                     $errCode = "1" . $errCode;
                 else {
-                    foreach($post["patients"] as &$id){
-                        $id = intval($id);
-                    }
+                    $tempArray = array();
+                    foreach($post["patients"] as $id)
+                        array_push($tempArray, intval($id));
+                    $post["patients"] = $tempArray;
+    
                     $total = $this->opalDB->getPatientsListByIds($post["patients"]);
                     if (count($total) != count($post["patients"]))
                         $errCode = "1" . $errCode;
@@ -240,8 +242,10 @@ class Study extends Module {
                 if(!is_array($post["questionnaire"]))
                     $errCode = "1" . $errCode;
                 else {
-                    foreach ($post["questionnaire"] as &$id)
-                        $id = intval($id);
+                    $tempArray = array();
+                    foreach($post["questionnaire"] as $id)
+                        array_push($tempArray, intval($id));
+                    $post["questionnaire"] = $tempArray;
                     $total = $this->questionnaireDB->getQuestionnairesListByIds($post["questionnaire"]);
                     if (count($total) != count($post["questionnaire"]))
                         $errCode = "1" . $errCode;
@@ -383,8 +387,6 @@ class Study extends Module {
         $this->checkWriteAccess($post);
         $this->_connectQuestionnaireDB();
         $study = HelpSetup::arraySanitization($post);
-        print_r($post);
-        print_r($study);
         $result = $this->_validateStudy($study, true);
         if(is_array($result) && count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Study validation failed. " . implode(" ", $result));
@@ -418,13 +420,10 @@ class Study extends Module {
 
         //Update patient-study table
         $currentPatients = array();
-        $toKeep = array();
+        $toKeep = array(-1);
         $toAdd = array();
         if(array_key_exists("patients", $post) && is_array($post["patients"]) && count($post["patients"]) > 0) {
-            //print_r($post["patients"]);
             $temp = $this->opalDB->getPatientsStudy($study["ID"]);
-            //print_r($temp);
-            print_r($study["patients"]);
             foreach($temp as $item)
                 array_push($currentPatients, $item["patientId"]);
             
@@ -435,15 +434,14 @@ class Study extends Module {
                     array_push($toAdd, intval($item));
             }
         }
-        //print_r($toKeep);
+        
         $total += $this->opalDB->deletePatientsStudy($study["ID"], $toKeep);
         
+        
         if(count($toAdd) > 0) {
-            print_r($toAdd);
             $toInsertMultiple = array();
             foreach ($toAdd as $patient)
                 array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$study["ID"], "consentStatus"=>1));
-            print_r($toInsertMultiple);
             $total += $this->opalDB->insertMultiplePatientsStudy($toInsertMultiple);
         }
 
