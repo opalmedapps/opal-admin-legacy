@@ -383,6 +383,8 @@ class Study extends Module {
         $this->checkWriteAccess($post);
         $this->_connectQuestionnaireDB();
         $study = HelpSetup::arraySanitization($post);
+        print_r($post);
+        print_r($study);
         $result = $this->_validateStudy($study, true);
         if(is_array($result) && count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Study validation failed. " . implode(" ", $result));
@@ -419,10 +421,13 @@ class Study extends Module {
         $toKeep = array();
         $toAdd = array();
         if(array_key_exists("patients", $post) && is_array($post["patients"]) && count($post["patients"]) > 0) {
+            //print_r($post["patients"]);
             $temp = $this->opalDB->getPatientsStudy($study["ID"]);
+            //print_r($temp);
+            print_r($study["patients"]);
             foreach($temp as $item)
                 array_push($currentPatients, $item["patientId"]);
-
+            
             foreach ($study["patients"] as $item) {
                 if(in_array($item, $currentPatients))
                     array_push($toKeep, intval($item));
@@ -430,13 +435,15 @@ class Study extends Module {
                     array_push($toAdd, intval($item));
             }
         }
+        //print_r($toKeep);
         $total += $this->opalDB->deletePatientsStudy($study["ID"], $toKeep);
         
         if(count($toAdd) > 0) {
+            print_r($toAdd);
             $toInsertMultiple = array();
             foreach ($toAdd as $patient)
                 array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$study["ID"], "consentStatus"=>1));
-
+            print_r($toInsertMultiple);
             $total += $this->opalDB->insertMultiplePatientsStudy($toInsertMultiple);
         }
 
