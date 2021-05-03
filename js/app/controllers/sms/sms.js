@@ -134,6 +134,8 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                     if (sms.modified) {
                         $scope.smsUpdates.updateList.push({
                             ressernum: sms.ressernum,
+                            speciality:sms.spec,
+                            type:sms.apptype,
                             appcode: sms.code,
                             state: sms.state
                         });

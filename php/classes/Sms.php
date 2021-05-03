@@ -49,7 +49,8 @@ class Sms extends Module {
     public function updateActivationState($information){
         $this->checkWriteAccess($information);
 
-        return $this->ormsDB->updateActivationState($information['state'],$information['appcode'],$information['ressernum']);
+        return $this->ormsDB->updateActivationState($information['state'],$information['speciality'],
+            $information['type'],$information['appcode'],$information['ressernum']);
     }
 
     public function updateSmsMessage($information,$language){
@@ -71,9 +72,4 @@ class Sms extends Module {
         return $this->ormsDB->getTypeForMessage($speciality);
     }
 
-    public function updateActivationStateByResource($information){
-        $this->checkReadAccess();
-
-        return $this->ormsDB->updateActivationStateByResource($information['state'],$information['ressernum']);
-    }
 }
