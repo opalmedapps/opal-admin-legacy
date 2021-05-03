@@ -90,12 +90,12 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 			}
 
 			if(entry.typeId === "2") {
-				var increment = parseFloat(entry.options.increment);
-				var minValue = parseFloat(entry.options.minValue);
-				if (minValue === 0.0) minValue = increment;
-				var maxValue = parseFloat(entry.options.maxValue);
+				var increment = parseInt(entry.options.increment);
+				var minValue = parseInt(entry.options.minValue);
+				if (minValue < 0) minValue = 0;
+				var maxValue = parseInt(entry.options.maxValue);
 
-				var radiostep = new Array();
+				var radiostep = [];
 				for(var i = minValue; i <= maxValue; i += increment) {
 					radiostep.push({"description":" " + i,"description_EN":" " + i,"description_FR":" " + i});
 				}

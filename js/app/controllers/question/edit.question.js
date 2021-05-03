@@ -43,15 +43,15 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		};
 
 		$scope.updateSlider = function () {
-			var radiostep = new Array();
-			var increment = parseFloat($scope.question.options.increment);
-			var minValue = parseFloat($scope.question.options.minValue);
-			var maxValue = parseFloat($scope.question.options.maxValue);
+			var radiostep = [];
+			var increment = 1;
+			var minValue = parseInt($scope.question.options.minValue);
+			var maxValue = parseInt($scope.question.options.maxValue);
 
-			if (minValue <= 0.0 || maxValue <= 0.0 || increment <= 0 || minValue >= maxValue)
+			if (minValue < 0.0 || maxValue < 0.0 || increment != 1 || minValue >= maxValue)
 				$scope.validSlider = false;
 			else {
-				maxValue = (Math.floor((maxValue - minValue) / increment) * increment) + minValue;
+				// maxValue = (Math.floor((maxValue - minValue) / increment) * increment) + minValue;
 				$scope.validSlider = true;
 				for(var i = minValue; i <= maxValue; i += increment) {
 					radiostep.push({"description":" " + i,"description_EN":" " + i,"description_FR":" " + i});
@@ -78,7 +78,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		$scope.checkForm = function () {
 			if ($scope.question.question_EN && $scope.question.question_FR && $scope.question.display_EN && $scope.question.display_FR && $scope.changesMade) {
 				if($scope.question.typeId === "2") {
-					if ($scope.question.options.increment <= 0 || $scope.question.options.minValue <= 0 || $scope.question.options.maxValue <= 0 || $scope.question.options.minValue > $scope.question.options.maxValue || $scope.question.options.minCaption_EN === "" || $scope.question.options.minCaption_FR === "" || $scope.question.options.maxCaption_EN === "" || $scope.question.options.maxCaption_FR === "" )
+					if ($scope.question.options.increment != 1 || $scope.question.options.minValue < 0 || $scope.question.options.maxValue < 0 || $scope.question.options.minValue > $scope.question.options.maxValue || $scope.question.options.minCaption_EN === "" || $scope.question.options.minCaption_FR === "" || $scope.question.options.maxCaption_EN === "" || $scope.question.options.maxCaption_FR === "" )
 						return false;
 					else
 						return true;
