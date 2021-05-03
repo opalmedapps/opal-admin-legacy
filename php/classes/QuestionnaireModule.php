@@ -43,16 +43,4 @@ abstract class QuestionnaireModule extends Module
             $row["order"] = $cpt;
         }
     }
-    
-    protected function validateSliderForm($sliderOptions) {
-        $sliderOptions["minValue"] = floatval($sliderOptions["minValue"]);
-        $sliderOptions["maxValue"] = floatval($sliderOptions["maxValue"]);
-        $sliderOptions["increment"] = floatval($sliderOptions["increment"]);
-        if($sliderOptions["increment"] <= 0)
-            return false;
-        $sliderOptions["maxValue"] = floatval(floor(($sliderOptions["maxValue"] - $sliderOptions["minValue"]) / $sliderOptions["increment"]) * $sliderOptions["increment"]) + $sliderOptions["minValue"];
-        if ($sliderOptions["minCaption_EN"] == "" || $sliderOptions["minCaption_FR"] == "" || $sliderOptions["maxCaption_EN"] == "" || $sliderOptions["maxCaption_FR"] == "" || $sliderOptions["minValue"] <= 0.0 || $sliderOptions["maxValue"] <= 0.0 || $sliderOptions["minValue"] >= $sliderOptions["maxValue"])
-            return false;
-        return $sliderOptions;
-    }
 }
