@@ -82,12 +82,10 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 				{ field: 'title_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.TITLE_2'), cellTemplate: cellTemplateName, sort: {direction: uiGridConstants.ASC, priority: 0}},
 				{ field: 'code', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.STUDY_ID'), width: '10%'},
 				{ field: 'investigator', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.INVESTIGATOR'), width: '10%'},
-				{ field: 'phone', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.PHONE'), width: '12%'},
-				{ field: 'phoneExt', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.PHONE_EXT'), width: '10%'},
-				{ field: 'email', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.EMAIL'), width: '10%'},
-				{ field: 'startDate', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.START_DATE'), width: '8%'},
-				{ field: 'endDate', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.END_DATE'), width: '8%'},
-				{ field: 'creationDate', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.CREATION_DATE'), width: '10%'},
+				{ field: 'combinedPhone', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.PHONE'), width: '15%'},
+				{ field: 'email', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.EMAIL'), width: '15%'},
+				{ field: 'startDate', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.START_DATE'), width: '10%'},
+				{ field: 'endDate', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.END_DATE'), width: '10%'},
 				{ name: $filter('translate')('STUDY.LIST.OPERATIONS'), width: '8%', cellTemplate: cellTemplateOperations, enableColumnMenu: false, enableFiltering: false, sortable: false }
 			],
 			enableFiltering: true,
@@ -105,6 +103,16 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 		function getstudiesList() {
 			studyCollectionService.getStudies(OAUserId).then(function (response) {
 				$scope.studiesList = response.data;
+				angular.forEach($scope.studiesList, function(value){
+					if(value.phone && value.phoneExt){
+						value.combinedPhone = value.phone + " ext. " + value.phoneExt;
+					}else if(value.phone && !value.phoneExt){
+						value.combinedPhone = value.phone;
+					}else{
+						value.combinedPhone = "N/A";
+					}
+					
+				});
 			}).catch(function(err) {
 				ErrorHandler.onError(err, $filter('translate')('STUDY.LIST.ERROR_PUBLICATION'));
 			});
