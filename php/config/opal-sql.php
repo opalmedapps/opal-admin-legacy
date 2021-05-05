@@ -890,7 +890,7 @@ define("OPAL_GET_ACTIVATE_SOURCE_DB","
 ");
 
 define("OPAL_GET_ASSIGNED_DIAGNOSES","
-    SELECT dxc.SourceUID AS sourceuid, dxt.Name_EN AS name_EN, dxt.Name_FR AS name_FR FROM ".OPAL_DIAGNOSIS_CODE_TABLE." dxc
+    SELECT dxc.SourceUID AS sourceuid, Source AS source, dxt.Name_EN AS name_EN, dxt.Name_FR AS name_FR FROM ".OPAL_DIAGNOSIS_CODE_TABLE." dxc
     LEFT JOIN ".OPAL_DIAGNOSIS_TRANSLATION_TABLE." dxt ON dxt.DiagnosisTranslationSerNum = dxc.DiagnosisTranslationSerNum;
 ");
 
@@ -1343,3 +1343,17 @@ define("OPAL_GET_SOURCE_DATABASES","
     SELECT SourceDatabaseSerNum AS serial, SourceDatabaseName AS name FROM ".OPAL_SOURCE_DATABASE_TABLE."
     WHERE Enabled = ".ACTIVE_RECORD." ORDER BY SourceDatabaseSerNum
 ");
+
+define("OPAL_GET_ALIAS_EXPRESSIONS","
+    SELECT DISTINCT ae.ExpressionName AS id, ae.Description AS description, a.AliasName_EN AS name_EN
+    FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae LEFT JOIN ".OPAL_ALIAS_TABLE." a ON ae.AliasSerNum = a.AliasSerNum
+    WHERE a.SourceDatabaseSerNum = :SourceDatabaseSerNum;
+");
+
+define("OPAL_GET_ARIA_SOURCE_ALIASES","
+    SELECT description AS name, code AS id, description FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE."
+    WHERE type = :type AND source = :source AND deleted = ".NON_DELETED_RECORD." ORDER BY code");
+
+define("OPAL_GET_SOURCE_ALIASES","
+    SELECT CONCAT(code, ' (', description, ')') AS name, code AS id, description FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE."
+    WHERE type = :type AND source = :source AND deleted = ".NON_DELETED_RECORD." ORDER BY code");
