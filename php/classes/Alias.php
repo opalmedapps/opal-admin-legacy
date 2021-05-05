@@ -20,8 +20,26 @@ class Alias extends Module {
      */
     public function getExpressions ($sourceDBSer, $expressionType) {
         $this->checkReadAccess(array($sourceDBSer, $expressionType));
-
         $results = array();
+
+        $assignedExpressions = $this->opalDB->getAliasExpressions($sourceDBSer);
+
+        if ($expressionType == "Task")
+            $type = 1;
+        else if ($expressionType == "Appointment")
+            $type = 2;
+        else
+            $type = 3;
+
+        $data = $this->opalDB->getSourceAliasesByTypeAndSource($type, $sourceDBSer);
+
+
+        if($sourceDBSer == ARIA_SOURCE_DB) {
+
+        } else {
+
+        }
+
 //        $databaseObj = new Database();
 
         try {

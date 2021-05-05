@@ -2763,4 +2763,33 @@ class DatabaseOpal extends DatabaseAccess {
     function getSourceDatatabes() {
         return $this->_fetchAll(OPAL_GET_SOURCE_DATABASES, array());
     }
+
+    /**
+     * Return the list of alias expressions of a specific source database
+     * @param $SourceDatabaseSerNum - ID of the source database
+     * @return array
+     */
+    function getAliasExpressions($SourceDatabaseSerNum) {
+        return $this->_fetchAll(OPAL_GET_ALIAS_EXPRESSIONS, array(
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$SourceDatabaseSerNum,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the list of codes for aliases based on the type and the source
+     * @param $type int type of the alias (task, document or appointment)
+     * @param $source int source database (aria, orms, medivisit, etc)
+     * @return array
+     */
+    function getSourceAliasesByTypeAndSource($type, $source) {
+        if ($source == ARIA_SOURCE_DB)
+            $sqlQuery = OPAL_GET_ARIA_SOURCE_ALIASES;
+        else
+            $sqlQuery = OPAL_GET_SOURCE_ALIASES;
+
+        return $this->_fetchAll($sqlQuery, array(
+            array("parameter"=>":type","variable"=>$type,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }
