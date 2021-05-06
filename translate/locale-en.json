@@ -2643,6 +2643,8 @@
       "NAME": "Name",
       "DEVICEID": "Device ID",
       "LOGIN": "Login Time",
+      "TYPE": "Device Type",
+      "VERSION": "App Version",
       "LOGOUT": "Logout Time",
       "ERROR_ACTIVITIES": "An error occurred while getting the patients activities."
     }
