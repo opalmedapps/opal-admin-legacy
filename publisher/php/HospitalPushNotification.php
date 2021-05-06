@@ -39,46 +39,8 @@
             }else{ // Not within window, return empty response
 				return array("success"=>0,"failure"=>1,"error"=>"Unable to send PushNotification: Quiet hours.");
             }
-
-            
        }
 
-        /**
-        *    (sendNotificationToMultipleDevices($devices, $title, $description)
-        *    Consumes a $title,  a $description and an array of $devices.
-        *    Sends notification with $title and $description to those devices listed
-        *    Requires: $devices must have two fields for each array item: DeviceType,
-        *    RegistrationId.
-        *    Returns: Array of Objects, each object has keys of success, failure,
-        *    RegistrationId, DeviceType and error if any.
-        **/
-       public static function sendNotificationToMultipleDevices($devices, $title, $description)
-       {
-           //Create message
-           $message = array(
-               "mtitle"=>$title,
-               "mdesc"=>$description
-           );
-
-           //Go through list of devices
-           $resultsArray = array();
-           for ($i=0; $i <count($devices) ; $i++) {
-               //Determine device type
-                if($devices[$i]["DeviceType"]==0)
-                {
-                    $response = PushNotifications::iOS($message, $devices[$i]["RegistrationId"]);
-                }else if($devices[$i]["DeviceType"]==1)
-                {
-                    $response = PushNotifications::android($message, $devices[$i]["RegistrationId"]);
-                }
-                //Build response
-                $response["DeviceType"] = $devices[$i]["DeviceType"];
-                $response["RegistrationId"] = $devices[$i]["RegistrationId"];
-                $resultsArray[] = $response;
-           }
-          return array("responseDevices"=>$resultsArray);
-
-       }
       /**
         *    sendRoomNotification($patientId, $room, $appointmentSerNum, $mrn, $site):
         *    Consumes a PatientId or (MRN and Site), a room location, and an AppointmentAriaSer, it
@@ -212,60 +174,6 @@
 
             return array("success"=>1,"failure"=>0,"responseDevices"=>$resultsArray,"message"=>$message);
        }
-
-       /**
-       *    (sendNotificationUsingPatientId($patientId, $title, $description, $mrn, $site))
-       *    Consumes a patientId or (MRN and site), a title and a descriptions
-       *    Description: Sends push notification containing title and description to all the
-       *                 devices matching that $patientId.
-       *    NOTE: Does not log anything into database.
-       *    Returns: Object with success, failure, responseDevices
-       *            (array of response for each device), and the message array sent.
-       **/
-       public static function sendNotificationUsingPatientId($patientId, $title, $description, $mrn = null, $site = null)
-       {
-
-           // determine patientId or MRN
-           $patientId = self::getPatientIDorMRN($patientId, $mrn);
-
-            // $wsSite is the site of the hospital code (should be three digit)
-            // If $wsSite is empty, then default it to RVH because it could be from a legacy call
-            $wsSite = empty($site) ? "RVH" : $site;
-
-            //Creating message
-           $message = array(
-               "mtitle"=> $title,
-               "mdesc"=> $description
-           );
-
-            $patientDevices = self::getDevicesForPatient($patientId, $wsSite);
-            //If not identifiers return there are no identifiers
-            if(count($patientDevices)==0)
-            {
-                return array("success"=>1, "failure"=>0,"responseDevices"=>"No patient devices available for that patient");
-                exit();
-            }
-
-           foreach($patientDevices as $device)
-            {
-                //Determine device type
-                if($device["DeviceType"]==0)
-                {
-                    $response = PushNotifications::iOS($message, $device["RegistrationId"]);
-                }else if($device["DeviceType"]==1)
-                {
-                    $response = PushNotifications::android($message, $device["RegistrationId"]);
-                }
-
-                //Build response
-                $response["DeviceType"] = $device["DeviceType"];
-                $response["RegistrationId"] = $device["RegistrationId"];
-                $resultsArray[] = $response;
-            }
-
-            return array("success"=>1,"failure"=>0,"responseDevices"=>$resultsArray,"message"=>$message);
-       }
-
 
        /**
        * ==============================================================================
