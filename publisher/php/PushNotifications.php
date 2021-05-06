@@ -35,11 +35,11 @@ class PushNotifications {
 		$wsFlag = (isset($data['encode'])? $data['encode'] :'Yes' );
 
 		if ($wsFlag == 'Yes') {
-			$wsTitle = utf8_encode($data['mtitle']);
-			$wsBody = utf8_encode($data['mdesc']);
+			$wsTitle = stripslashes(utf8_encode($data['mtitle']));
+			$wsBody = stripslashes(utf8_encode($data['mdesc']));
 		} else {
-			$wsTitle = $data['mtitle'];
-			$wsBody = $data['mdesc'];
+			$wsTitle = stripslashes($data['mtitle']);
+			$wsBody = stripslashes($data['mdesc']);
 		}
 
 		// Create a unique Post ID so that the push notification
