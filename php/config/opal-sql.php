@@ -115,6 +115,7 @@ define("OPAL_DOCUMENT_TABLE", "Document");
 define("OPAL_USERS_TABLE", "Users");
 define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
 define("OPAL_PATIENT_ACTIVITY_LOG_TABLE","PatientActivityLog");
+define("OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE", "PatientDeviceIdentifier");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -1294,13 +1295,21 @@ define("OPAL_GET_PATIENTS","
 ");
 
 define("OPAL_GET_PATIENT_ACTIVITY","
-    SELECT DISTINCT pt.PatientId AS patientid, CONCAT(UCASE(LEFT(pt.FirstName, 1)), LCASE(SUBSTRING(pt.FirstName, 2)),
-    ' ', UCASE(LEFT(pt.LastName, 1)), LCASE(SUBSTRING(pt.LastName, 2))) AS name, pal.DateTime AS login,
-    (CASE WHEN pal.DeviceId = 'browser' THEN pal.DeviceId WHEN UPPER(pal.DeviceId) = BINARY pal.DeviceId THEN
-    CONCAT('iOS/', pal.DeviceId) ELSE CONCAT('Android/', pal.DeviceId) END) AS deviceid FROM
-    ".OPAL_PATIENT_ACTIVITY_LOG_TABLE." pal LEFT JOIN ".OPAL_USERS_TABLE." u ON u.Username = pal.Username LEFT JOIN
-    ".OPAL_PATIENT_TABLE." pt ON pt.PatientSerNum = u.UserTypeSerNum WHERE u.UserType = 'Patient' AND
-    pal.Request = 'Login' ORDER BY pal.DateTime DESC LIMIT 20000;
+SELECT DISTINCT 
+p.PatientId AS patientId,
+CONCAT(UCASE(LEFT(p.FirstName, 1)), LCASE(SUBSTRING(p.FirstName, 2)),
+' ', UCASE(LEFT(p.LastName, 1)), LCASE(SUBSTRING(p.LastName, 2))) AS name,
+pdi.DeviceId AS deviceId,
+CASE WHEN pdi.DeviceType = 0 THEN 'iOS'
+     WHEN pdi.DeviceType = 1 THEN 'Android'
+     ELSE 'Browser' END AS deviceType,
+pdi.LastUpdated AS login,
+pdi.appVersion AS appVersion
+FROM ".OPAL_PATIENT_TABLE." p, ".OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE." pdi, ".OPAL_USERS_TABLE." u
+WHERE pdi.PatientSerNum = p.PatientSerNum
+AND p.PatientSerNum = u.UserTypeSerNum
+AND u.UserType = 'Patient'
+ORDER BY pdi.LastUpdated DESC LIMIT 20000;
 ");
 
 define("OPAL_GET_SOURCE_TEST_RESULTS","
