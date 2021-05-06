@@ -2,7 +2,6 @@
     include_once "database.inc";
     require_once('PushNotifications.php');
 
-
    class HospitalPushNotification{
 
        /**
@@ -40,54 +39,16 @@
             }else{ // Not within window, return empty response
 				return array("success"=>0,"failure"=>1,"error"=>"Unable to send PushNotification: Quiet hours.");
             }
-
-            
        }
 
-        /**
-        *    (sendNotificationToMultipleDevices($devices, $title, $description)
-        *    Consumes a $title,  a $description and an array of $devices.
-        *    Sends notification with $title and $description to those devices listed
-        *    Requires: $devices must have two fields for each array item: DeviceType,
-        *    RegistrationId.
-        *    Returns: Array of Objects, each object has keys of success, failure,
-        *    RegistrationId, DeviceType and error if any.
-        **/
-       public static function sendNotificationToMultipleDevices($devices, $title, $description)
-       {
-           //Create message
-           $message = array(
-               "mtitle"=>$title,
-               "mdesc"=>$description
-           );
-
-           //Go through list of devices
-           $resultsArray = array();
-           for ($i=0; $i <count($devices) ; $i++) {
-               //Determine device type
-                if($devices[$i]["DeviceType"]==0)
-                {
-                    $response = PushNotifications::iOS($message, $devices[$i]["RegistrationId"]);
-                }else if($device[$i]["DeviceType"]==1)
-                {
-                    $response = PushNotifications::android($message, $devices[$i]["RegistrationId"]);
-                }
-                //Build response
-                $response["DeviceType"] = $devices[$i]["DeviceType"];
-                $response["RegistrationId"] = $devices[$i]["RegistrationId"];
-                $resultsArray[] = $response;
-           }
-          return array("responseDevices"=>$resultsArray);
-
-       }
       /**
-        *    sendRoomNotification($patientId, $room, $appointmentSerNum):
-        *    Consumes a PatientId, a room location, and an AppointmentAriaSer, it
+        *    sendRoomNotification($patientId, $room, $appointmentSerNum, $mrn, $site):
+        *    Consumes a PatientId or (MRN and Site), a room location, and an AppointmentAriaSer, it
         *    stores notification in database, updates appointment with room location, sends
         *    the notification to the pertinent devices that map to that particular patientId,
         *    and finally records the send status for the push notification.
         *    (sendRoomNotification String, String, String) -> Array
-        *    Requires: - PatientId and AppointmentSerNum are real values in the Database.
+        *    Requires: - PatientId or (MRN and Site) and AppointmentSerNum are real values in the Database.
         *              - NotificationControlSerNum = 10, Corresponds to the AssignedRoom
         *                notification.
         *    Returns:  Object containing keys of success, failure,
@@ -95,15 +56,30 @@
         *             registrationId, deviceId) for each device, and Message array containing
         *             (title,description),  NotificationSerNum, and error if any.
         **/
-       public static function sendCallPatientNotification($patientId, $room, $appointmentAriaSer)
+       public static function sendCallPatientNotification($patientId, $room, $appointmentAriaSer, $mrn = null, $site = null)
        {
            global $pdo;
 
+           // determine patientId or MRN
+           $patientId = self::getPatientIDorMRN($patientId, $mrn);
+
+           // $wsSite is the site of the hospital code (should be three digit)
+            // If $wsSite is empty, then default it to RVH because it could be from a legacy call
+            $wsSite = empty($site) ? "RVH" : $site;
+
            //Obtain Patient and appointment information from Database i.e. PatientSerNum, AppointmentSerNum and Language
-           $sql = "SELECT Patient.Language, Patient.PatientSerNum, Appointment.AppointmentSerNum FROM Appointment, Patient WHERE Patient.PatientId = :patientId AND Patient.PatientSerNum = Appointment.PatientSerNum AND Appointment.AppointmentAriaSer = :ariaSer";
+           $sql = "SELECT P.Language, P.PatientSerNum, A.AppointmentSerNum 
+                    FROM Appointment A, Patient P, Patient_Hospital_Identifier PHI
+                    WHERE P.PatientSerNum = PHI.PatientSerNum
+                        AND PHI.MRN = :patientId
+                        and PHI.Hospital_Identifier_Type_Code = :sitecode
+                        AND P.PatientSerNum = A.PatientSerNum 
+                        AND A.AppointmentAriaSer = :ariaSer
+                    ";
            try{
                 $s = $pdo->prepare($sql);
                 $s->bindValue(':patientId', $patientId);
+                $s->bindValue(':sitecode', $wsSite);
                 $s->bindValue(':ariaSer', $appointmentAriaSer);
                 $s->execute();
                 $result = $s->fetchAll();
@@ -166,7 +142,7 @@
 
             $message = self::buildMessageForRoomNotification($room["room_".$language], $messageLabels["Name_".$language ],$messageLabels["Description_".$language] );
            //Obtain patient device identifiers
-            $patientDevices = self::getDevicesForPatient($patientId);
+            $patientDevices = self::getDevicesForPatient($patientId, $wsSite);
 
             //If no identifiers return there are no identifiers
             if(count($patientDevices)==0)
@@ -199,101 +175,6 @@
             return array("success"=>1,"failure"=>0,"responseDevices"=>$resultsArray,"message"=>$message);
        }
 
-       /**
-       *    (sendNotificationUsingPatientId($patientId, $title, $description))
-       *    Consumes a patientId, a title and a descriptions
-       *    Description: Sends push notification containing title and description to all the
-       *                 devices matching that $patientId.
-       *    NOTE: Does not log anything into database.
-       *    Returns: Object with success, failure, responseDevices
-       *            (array of response for each device), and the message array sent.
-       **/
-       public static function sendNotificationUsingPatientId($patientId, $title, $description)
-       {
-           //Creating message
-           $message = array(
-               "mtitle"=> $title,
-               "mdesc"=> $description
-           );
-
-            $patientDevices = self::getDevicesForPatient($patientId);
-            //If not identifiers return there are no identifiers
-            if(count($patientDevices)==0)
-            {
-                return array("success"=>1, "failure"=>0,"responseDevices"=>"No patient devices available for that patient");
-                exit();
-            }
-
-           foreach($patientDevices as $device)
-            {
-                //Determine device type
-                if($device["DeviceType"]==0)
-                {
-                    $response = PushNotifications::iOS($message, $device["RegistrationId"]);
-                }else if($device["DeviceType"]==1)
-                {
-                    $response = PushNotifications::android($message, $device["RegistrationId"]);
-                }
-
-                //Build response
-                $response["DeviceType"] = $device["DeviceType"];
-                $response["RegistrationId"] = $device["RegistrationId"];
-                $resultsArray[] = $response;
-            }
-
-            return array("success"=>1,"failure"=>0,"responseDevices"=>$resultsArray,"message"=>$message);
-       }
-
-       /**
-       *    (sendFailedNotificationUsingNotificationSerNum($patientId, $title, $description,
-       *     $notificationSerNum))
-       *    Consumes a patientId, a title, a description, and a notificationSerNum
-       *    Description: Sends push notification containing title and description to all the
-       *                 devices matching that $patientId and records results into OpalDB
-       *    Returns: Object with success, failure, responseDevices
-       *            (array of response for each device), and the message array sent.
-       **/
-       /*
-       public function sendFailedNotificationUsingNotificationSerNum($patientId, $title, $description, $notificationSerNum)
-       {
-            //Creating message
-           $message = array(
-               "mtitle"=> $title,
-               "mdesc"=> $description
-           );
-
-           //Retrieve device identifiers for patient
-            $patientDevices = self::getDevicesForPatient($patientId);
-
-            //If not identifiers return there are no identifiers
-            if(count($patientDevices)==0)
-            {
-                return array("success"=>1, "failure"=>0,"response"=>"No patient devices available for that patient");
-                exit();
-            }
-           $resultsArray = array();
-           foreach($patientDevices as $device)
-            {
-                //Determine device type
-                if($device["DeviceType"]==0)
-                {
-                    $response = PushNotifications::iOS($message, $device["RegistrationId"]);
-                }else if($device["DeviceType"]==1)
-                {
-                    $response = PushNotifications::android($message, $device["RegistrationId"]);
-                }
-
-                //Log result of push notification on database.
-                self::pushNotificationDatabaseUpdate($device["PatientDeviceIdentifierSerNum"], $notificationSerNum, $response);
-                //Build response
-                $response["DeviceType"] = $device["DeviceType"];
-                $response["RegistrationId"] = $device["RegistrationId"];
-                $resultsArray[] = $response;
-            }
-
-            return array("success"=>1,"failure"=>0,"responseDevices"=>$resultsArray);
-       }
-        */
        /**
        * ==============================================================================
        *                    HELPER FUNCTIONS
@@ -328,23 +209,34 @@
        }
 
        /**
-        *    (getDevicesForPatient($patientId)
+        *    (getDevicesForPatient($patientId, $Site)
         *    Consumes a PatientId, $patientId
         *    Returns: Returns array with devices that match that particular PatiendId.
         **/
-       private static function getDevicesForPatient($patientId)
+       private static function getDevicesForPatient($patientId, $site)
        {
            global $pdo;
            //Retrieving device registration id for notification and device
            try{
-               $sql = "SELECT PatientDeviceIdentifier.PatientDeviceIdentifierSerNum, PatientDeviceIdentifier.RegistrationId, PatientDeviceIdentifier.DeviceType FROM PatientDeviceIdentifier, Patient WHERE Patient.PatientId = '".$patientId."' AND Patient.PatientSerNum = PatientDeviceIdentifier.PatientSerNum";
-               $result = $pdo->query($sql);
+               $sql = "SELECT PDI.PatientDeviceIdentifierSerNum, PDI.RegistrationId, PDI.DeviceType 
+                        FROM PatientDeviceIdentifier PDI, Patient_Hospital_Identifier PHI
+                        WHERE PHI.MRN = :patientId 
+                            and PHI.Hospital_Identifier_Type_Code = :sitecode
+                            AND PHI.PatientSerNum = PDI.PatientSerNum
+                            AND length(trim(PDI.RegistrationId)) > 0
+                            AND PDI.DeviceType in (0,1)
+                    ";
+               $s = $pdo->prepare($sql);
+               $s->bindValue(':patientId', $patientId);
+               $s->bindValue(':sitecode', $site);
+               $s->execute();
+               $result = $s->fetchAll();
            }catch(PDOException $e)
            {
                echo $e;
                exit();
            }
-          return $result ->fetchAll();
+          return $result;
        }
 
        /**
@@ -363,6 +255,51 @@
              );
              return $message;
         }
+
+        /**
+         * getPatientIDorMRN($patientId, $mrn)
+         * Description: This fucntion is to determine if it is to use PatientId or MRN and return
+         * the value.
+         * 
+         * Returns: returns patientId
+         **/
+        public static function getPatientIDorMRN($patientId, $mrn)
+        {
+            // $patientId is for legacy systems/calls
+            $patientId = empty($patientId) ? "---NA---" : $patientId;
+            // $wsMRN is the hospital medical ID
+            $wsMRN = empty($mrn) ? "---NA---" : $mrn;
+            
+            // Only one MRN is accepted if somehow both $patientId and $wsMRN is provided then we want to replace
+            // the $patientId with the $wsMRN. If no $patientId provided, but $wsMRN is then we copy the $wsMRN to $patientId.
+            // The $patientId is the original parameter in this entire code, so it is easier to just re-use it.
+            if ( (($patientId <> "---NA---") && ($wsMRN <> "---NA---")) ||
+                (($patientId == "---NA---") && ($wsMRN <> "---NA---")) )
+            {
+                $patientId = $wsMRN;
+            };
+
+            return $patientId;
+        }
+
+        /**
+         * sanitizeInput($inString)
+         * Description: This function is a basic string input sanitizer
+         * 
+         * Returns: returns outString
+         **/
+        public static function sanitizeInput($inString)
+        {
+            // sanitize the input string
+            if ($inString != '') {
+                $outString = filter_var($inString, FILTER_SANITIZE_ADD_SLASHES, FILTER_SANITIZE_STRING);
+             } else {
+                $outString = "";
+             }
+
+            return $outString;
+        }
+
    }
 
 ?>
