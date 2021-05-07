@@ -1281,6 +1281,10 @@ define("OPAL_CHECK_CONSENT_FORM_PUBLISHED","
     WHERE QuestionnaireDBSerNum = :consentId AND PublishFlag = 1;
 ");
 
+define("OPAL_GET_CONSENT_BY_STUDY_ID","
+    SELECT consentQuestionnaireId FROM ".OPAL_STUDY_TABLE." WHERE ID = :studyId;
+");
+
 define("OPAL_GET_QUESTIONNAIRES_STUDY","
     SELECT questionnaireId FROM ".OPAL_QUESTIONNAIRE_STUDY_TABLE." WHERE studyId = :studyId ORDER BY questionnaireId;
 ");
