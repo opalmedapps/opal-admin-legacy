@@ -2417,7 +2417,7 @@
       "CONSENT_SELECTED": "Formulaire de consentement sélectionné",
       "CONSENT_FORM": "Formulaire de consentement",
       "CONSENT_FORM_EXPLANATION": "Veuillez sélectionner le formulaire de consentement à l'étude dans la liste.",
-      "EMAIL": "Adresses courriel",
+      "EMAIL": "Adresse courriel",
       "PHONE": "Téléphone",
       "FORM": "Forme"
     },
@@ -2429,7 +2429,7 @@
       "CLOSE": "Fermer",
       "DETAILS": "Détails",
       "STUDY_ID": "ID étude",
-      "TITLES": "Titles",
+      "TITLES": "Titres",
       "ENGLISH_ABVR": "AN",
       "FRENCH_ABVR": "FR",
       "INVESTIGATOR": "Coordinateur(trice) principal(e)",
