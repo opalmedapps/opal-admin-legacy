@@ -309,6 +309,8 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 		 * phoneExt regex checks for any number of digits 0-9 up to a maximum length of 6
 		 */
 		$scope.validateInvestigatorInfo = function () {
+			$scope.leftMenu.investigator.open = $scope.validator.details.completed;
+			$scope.leftMenu.investigator.display = $scope.validator.details.completed;
 			$scope.phoneVal = false;
 			$scope.emVal = false;
 			$scope.extVal = false;
@@ -317,6 +319,16 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				var phoneDigits = $scope.toSubmit.investigator.phone.replace(/[\s.,-]+/g, ""); //remove unwanted characters
 				var phoneReg = new RegExp(/^(\+\d{0,2})?[ .-]?\(?(\d{3})\)?[ .-]?(\d{3})[ .-]?(\d{4})$/);
 				$scope.phoneVal = phoneReg.test(phoneDigits);
+				$scope.phoneDisplay = "";
+				if(phoneDigits.length === 10){ // 438 389 9312
+					$scope.phoneDisplay = phoneDigits.substr(0,3) + "-" + phoneDigits.substr(3,3) + "-" + phoneDigits.substr(6,4);
+				}else if(phoneDigits.length === 12){ // +1 438 389 5678
+					$scope.phoneDisplay = phoneDigits.substr(0,2) + " " + phoneDigits.substr(2,3) + "-" + phoneDigits.substr(5,3) + "-" + phoneDigits.substr(8,4);
+				}else if(phoneDigits.length === 13){ // +44 438 389 4356
+					$scope.phoneDisplay = phoneDigits.substr(0,3) + " " + phoneDigits.substr(3,3) + "-" + phoneDigits.substr(6,3) + "-" + phoneDigits.substr(9,4);
+				}else{
+					$scope.phoneDisplay = phoneDigits; // any other length is invalid number, just show the raw input in the preview until we get a valid number
+				}
 			}
 			if($scope.toSubmit.investigator.email){
 				var emReg = new RegExp(/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/);
@@ -326,14 +338,17 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				var extDigits = $scope.toSubmit.investigator.phoneExt.replace(/[\s.,-]+/g, ""); //remove characters
 				var phoneExtReg = new RegExp(/^\d{0,6}$/);
 				$scope.extVal = phoneExtReg.test(extDigits);
+
+				if($scope.extVal){
+					$scope.phoneDisplay = $scope.phoneDisplay + " ext. " + extDigits;
+				}
 			}else{ //empty phone extension is valid
 				$scope.extVal = true;
 			}
 
+
 			if($scope.phoneVal && $scope.emVal && $scope.extVal){
 				$scope.validator.investigator.completed = true;
-				$scope.leftMenu.investigator.open = $scope.validator.details.completed;
-				$scope.leftMenu.investigator.display = $scope.validator.details.completed;
 			}
 		};
 

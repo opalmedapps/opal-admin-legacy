@@ -2659,6 +2659,17 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
+     * Get the study's current consent form
+     * @param $studyId - int study ID
+     * @return array consent form found
+     */
+    function getConsentFormByStudyId($studyId){
+        return $this->_fetchAll(OPAL_GET_CONSENT_BY_STUDY_ID, array(
+            array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
      * Get the list of questionnaires of a specifc study
      * @param $studyId - ID of the study
      * @return array - list of questionnaires associated to the study
