@@ -2439,10 +2439,10 @@
       "CONSENT_FORM": "Consent Form",
       "CONSENT_ID": "Form:",
       "CURRENT_CONSENTS": "Current Consents",
-      "INVITED": "invited",
-      "OPAL_CONSENTED": "opalConsented",
-      "OTHER_CONSENTED": "otherConsented",
-      "DECLINED": "declined",
+      "INVITED": "Invited",
+      "OPAL_CONSENTED": "Consented (Opal app)",
+      "OTHER_CONSENTED": "Consented (other methods)",
+      "DECLINED": "Declined",
       "CONSENT_FORM_PUBLISHED": "Consent form has already been published!"
     }
   },
