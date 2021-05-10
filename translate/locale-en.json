@@ -2312,6 +2312,9 @@
       "TITLE_2": "Title",
       "STUDY_ID": "Study ID",
       "INVESTIGATOR": "Main Investigator",
+      "PHONE": "Phone Number",
+      "PHONE_EXT": "Phone Extension",
+      "EMAIL": "Email",
       "START_DATE": "Start Date",
       "END_DATE": "End Date",
       "CREATION_DATE": "Date of creation",
@@ -2336,12 +2339,17 @@
       "DESCRIPTION_EN": "English description missing.",
       "DESCRPIPTION_FR": "French description missing.",
       "INVESTIGATOR": "Investigator missing.",
+      "INVESTIGATOR_EMAIL": "Email missing or invalid.",
+      "INVESTIGATOR_PHONE": "Phone missing or invalid.",
+      "INVESTIGATOR_PHONE_EXT": "Phone extension invalid.",
       "START_DATE": "Invalid start date.",
       "END_DATE": "Invalid end date.",
       "DATE_RANGE": "Invalid date range.",
       "PATIENTS": "Invalid patients list.",
       "QUESTIONNAIRE": "Invalid questionnaires list.",
-      "ID": "Study ID missing or invalid."
+      "ID": "Study ID missing or invalid.",
+      "CONSENT": "Study consent form ID missing or invalid.",
+      "PATIENT_CONSENT": "Invalid patient consent list"
     },
     "ADD": {
       "BACK": "Back",
@@ -2369,8 +2377,8 @@
       "SEE_DESCRIPTION": "See rendered output for description",
       "TITLE_2": "Title",
       "DESCRIPTION": "Description",
-      "INVESTIGATOR": "Principal Investigator",
-      "INVESTIGATOR_EXPLANATION": "Please enter the complete name of the principal investigator.",
+      "INVESTIGATOR": "Main Investigator",
+      "INVESTIGATOR_EXPLANATION": "Please enter the complete name of the main investigator, along with their primary phone, email, and optional extension number.",
       "PATIENTS": "List of Patients",
       "PATIENTS_EXPLANATION": "If any patients should be already assigned to this study, please add them.",
       "QUESTIONNAIRE": "List of Research Questionnaires",
@@ -2388,7 +2396,13 @@
       "PATIENTS_SELECTED": "patient(s) selected",
       "QUESTIONNAIRE_SELECTED": "questionnaire(s) selected",
       "ERROR_ADD": "An error occured while creating the study.",
-      "ERROR_PATIENTS_LIST": "An error occured while dowloading the list of patients."
+      "ERROR_PATIENTS_LIST": "An error occured while dowloading the list of patients.",
+      "CONSENT_SELECTED": "Consent form selected",
+      "CONSENT_FORM": "Consent Form",
+      "CONSENT_FORM_EXPLANATION": "Please select the study consent form from the list.",
+      "EMAIL": "Email",
+      "PHONE": "Phone",
+      "FORM": "Form"
     },
     "EDIT": {
       "TITLE": "Edit Study",
@@ -2401,7 +2415,7 @@
       "TITLES": "Titles",
       "ENGLISH_ABVR": "EN",
       "FRENCH_ABVR": "FR",
-      "INVESTIGATOR": "Principal Investigator",
+      "INVESTIGATOR": "Main Investigator",
       "PLACEHOLDER_ENGLISH_TITLE": "English Title",
       "PLACEHOLDER_FRENCH_TITLE": "French Title",
       "PLACEHOLDER_ENGLISH_DESCRIPTION": "English Description",
@@ -2420,7 +2434,16 @@
       "CURRENT_QUESTIONNAIRE": "Current Questionnaires",
       "SEARCH": "Search...",
       "ERROR_DETAILS": "An error occurred while getting the study details.",
-      "ERROR_UPDATE": "An error occurred while updating the study."
+      "ERROR_UPDATE": "An error occurred while updating the study.",
+      "CONSENT_STATUS": "Patient Consent Status",
+      "CONSENT_FORM": "Consent Form",
+      "CONSENT_ID": "Form:",
+      "CURRENT_CONSENTS": "Current Consents",
+      "INVITED": "Invited",
+      "OPAL_CONSENTED": "Consented (Opal app)",
+      "OTHER_CONSENTED": "Consented (other methods)",
+      "DECLINED": "Declined",
+      "CONSENT_FORM_PUBLISHED": "Consent form has already been published!"
     }
   },
   "ALERT" : {
