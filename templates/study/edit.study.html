@@ -94,6 +94,27 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'STUDY.ADD.EMAIL'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="toSubmit.investigator.email" ng-change="validateInvestigatorInfo()" required="required"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'STUDY.ADD.PHONE'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="toSubmit.investigator.phone" ng-change="validateInvestigatorInfo()" required="required"/>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-2" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <input class="form-control" type="text" ng-model="toSubmit.investigator.phoneExt" ng-change="validateInvestigatorInfo()" placeholder="ext."/>
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- SECTION: Dates -->
         <div uib-accordion-group is-open="datesSection.open">
@@ -135,6 +156,42 @@
                 </div>
             </div>
         </div>
+        <!-- SECTION: Patient Consent Status -->
+        <div uib-accordion-group is-open="statusSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'STUDY.EDIT.CONSENT_STATUS'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusSection.open, 'glyphicon-chevron-right': !statusSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="alert alert-info" role="alert">
+                <strong>{{'STUDY.EDIT.CURRENT_CONSENTS'|translate}}</strong><br>
+                <p>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!(patientConsentList.length)"></span>
+                    <span ng-if="!(patientConsentList.length)">{{'STUDY.EDIT.NO_PATIENT'|translate}}</span>
+                    <ul class="list-items" ng-if="(patientConsentList.length)">
+                        <li ng-repeat="pat in patientConsentList">{{pat.name}} {{pat.consent_display}}</li>
+                    </ul>
+                </p>
+            </div>
+            <div>
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                    <input class="form-control" maxlength="100" type="text" ng-model="patientSearchField" placeholder="{{'STUDY.EDIT.SEARCH'|translate}}" />
+                </div>
+
+                <ul class="list-items">
+                    <li ng-repeat="patient in patientConsentList | filter: patientSearchField">
+                        <label>
+                            {{patient.name}}
+                        </label>
+                        <select
+                            ng-options="status for status in consentChoices"
+                            ng-model="patient.consent_display" ng-click="patientConsentChange(patient)">
+                        </select>
+                    </li>
+                </ul>
+            </div>
+        </div>
         <!-- SECTION: Patients list -->
         <div uib-accordion-group is-open="patienSection.open">
             <uib-accordion-heading>
@@ -161,7 +218,7 @@
                 <ul class="list-items">
                     <li ng-repeat="patient in patientsList | filter: patientSearchField">
                         <label>
-                            <input type="checkbox" ng-model="patient.added"> {{patient.name}}
+                            <input type="checkbox" ng-model="patient.added" ng-click=""> {{patient.name}}
                         </label>
                     </li>
                 </ul>
@@ -195,6 +252,34 @@
                         </label>
                     </li>
                 </ul>
+            </div>
+        </div>
+         <!-- SECTION: Consent Form -->
+         <div uib-accordion-group is-open="consentSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'STUDY.EDIT.CONSENT_FORM'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': consentSection.open, 'glyphicon-chevron-right': !consentSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'STUDY.EDIT.CONSENT_ID'|translate}}</span>
+                        <input ng-disabled="true" class="form-control" type="text" ng-model="consentTitle" required="required" />
+                    </div>
+                    <ul class="list-items" ng-show="!formPublished">
+                        <li ng-repeat="at in consentFormList | filter: consentFormFilter">
+                            <label>
+                                <input ng-disabled="formPublished" type="radio" name="formName" value="{{at.ID}}" ng-model="toSubmit.consent_form.id" ng-change="consentFormUpdate(at)"/> {{at.name_display}}
+                            </label>
+                        </li>
+                    </ul>
+                    <div ng-if="formPublished" class="col-xs-12 panel-danger">
+                        <p style="margin-bottom: 10px;">
+                            <span style="color:#d9534f"><strong>{{'STUDY.EDIT.CONSENT_FORM_PUBLISHED'|translate}}</strong></span>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </uib-accordion>

@@ -656,17 +656,21 @@ define("OPAL_GET_USER_TEST_RESULT_EXP","
 ");
 
 define("OPAL_GET_STUDIES_LIST","
-    SELECT ID, code, title_EN, title_FR, investigator, startDate, endDate, creationDate FROM ".OPAL_STUDY_TABLE."
+    SELECT ID, code, title_EN, title_FR, investigator, email, phone, phoneExt, startDate, endDate, creationDate FROM ".OPAL_STUDY_TABLE."
     WHERE deleted = ".NON_DELETED_RECORD.";
 ");
 
 define("OPAL_GET_STUDY_DETAILS","
-    SELECT ID, code, title_EN, title_FR, description_EN, description_FR, investigator, startDate, endDate FROM ".OPAL_STUDY_TABLE." WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD.";
+    SELECT ID, consentQuestionnaireId, code, title_EN, title_FR, description_EN, description_FR, investigator, email, phone, phoneExt, startDate, endDate FROM ".OPAL_STUDY_TABLE." WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD.";
 ");
 
 define("OPAL_UPDATE_STUDY","
-    UPDATE ".OPAL_STUDY_TABLE." SET code = :code, title_EN = :title_EN, title_FR = :title_FR, description_EN = :description_EN, description_FR = :description_FR, investigator = :investigator, startDate = :startDate,
-    endDate = :endDate, updatedBy = :updatedBy WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD."; 
+    UPDATE ".OPAL_STUDY_TABLE." SET code = :code, title_EN = :title_EN, title_FR = :title_FR, description_EN = :description_EN, description_FR = :description_FR, investigator = :investigator, phone = :phone, email = :email, phoneExt = :phoneExt, startDate = :startDate,
+    endDate = :endDate, consentQuestionnaireId = :consentQuestionnaireId, updatedBy = :updatedBy WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD."; 
+");
+
+define("OPAL_UPDATE_STUDY_CONSENT", "
+    UPDATE ".OPAL_PATIENT_STUDY_TABLE." SET consentStatus = :patientConsent, patientId = :patientId WHERE studyId = :studyId AND patientId = :patientId;
 ");
 
 define("OPAL_MARK_STUDY_AS_DELETED", "
@@ -1265,12 +1269,28 @@ define("OPAL_GET_PATIENTS_STUDY","
     SELECT patientId FROM ".OPAL_PATIENT_STUDY_TABLE." WHERE studyId = :studyId ORDER BY patientId;
 ");
 
+define("OPAL_GET_PATIENTS_STUDY_CONSENTS","
+    SELECT ps.patientId AS id, ps.consentStatus AS consent, CONCAT(CONCAT(UCASE(SUBSTRING(p.LastName, 1, 1)), LOWER(SUBSTRING(p.LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(p.FirstName, 1, 1)), LOWER(SUBSTRING(p.FirstName, 2))), ' (', p.PatientId, ')') AS name, p.PatientId as pid
+    FROM ".OPAL_PATIENT_STUDY_TABLE." ps, ".OPAL_PATIENT_TABLE." p
+    WHERE p.PatientSerNum = ps.patientId AND ps.studyId = :studyId;
+");
+
+define("OPAL_CHECK_CONSENT_FORM_PUBLISHED","
+    SELECT QuestionnaireControlSerNum, QuestionnaireName_EN, QuestionnaireName_FR, PublishFlag, DateAdded 
+    FROM ".OPAL_QUESTIONNAIRE_CONTROL_TABLE."
+    WHERE QuestionnaireDBSerNum = :consentId AND PublishFlag = 1;
+");
+
+define("OPAL_GET_CONSENT_BY_STUDY_ID","
+    SELECT consentQuestionnaireId FROM ".OPAL_STUDY_TABLE." WHERE ID = :studyId;
+");
+
 define("OPAL_GET_QUESTIONNAIRES_STUDY","
     SELECT questionnaireId FROM ".OPAL_QUESTIONNAIRE_STUDY_TABLE." WHERE studyId = :studyId ORDER BY questionnaireId;
 ");
 
 define("OPAL_DELETE_PATIENTS_STUDY", "
-    DELETE FROM ".OPAL_PATIENT_STUDY_TABLE." WHERE studyId = :studyId AND PatientId NOT IN (%%LISTIDS%%);
+    DELETE FROM ".OPAL_PATIENT_STUDY_TABLE." WHERE studyId = :studyId AND patientId NOT IN (%%LISTIDS%%);
 ");
 
 define("OPAL_DELETE_QUESTIONNAIRES_STUDY", "

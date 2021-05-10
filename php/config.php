@@ -83,6 +83,7 @@ define("HUMAN_USER", 1);
 define("SYSTEM_USER", 2);
 
 define("PURPOSE_RESEARCH", 2);
+define("PURPOSE_CONSENT", 4);
 define("RESPONDENT_PATIENT", 1);
 
 define("TRIGGER_EVENT_PUBLISH", 1);

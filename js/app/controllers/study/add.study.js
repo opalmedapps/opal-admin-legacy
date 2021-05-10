@@ -14,6 +14,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 		$scope.language = Session.retrieveObject('user').language;
 		$scope.patientsList = [];
 		$scope.questionnaireList = [];
+		$scope.consentFormList = [];
 		$scope.filter = $filter('filter');
 
 		$scope.readyToSend = {
@@ -23,10 +24,14 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			description_EN: "",
 			description_FR: "",
 			investigator: "",
+			investigator_email: "",
+			investigator_phone: "",
+			investigator_phoneExt: "",
 			start_date: "",
 			end_date: "",
 			patients: [],
-			questionnaire: []
+			questionnaire: [],
+			consent_form: "",
 		};
 
 		$scope.toSubmit = {
@@ -40,14 +45,20 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				description_FR: "",
 			},
 			investigator: {
-				name: ""
+				name: "",
+				email: "",
+				phone: "",
+				phoneExt: "",
 			},
 			dates: {
 				start_date: "",
 				end_date: "",
 			},
 			patients: [],
-			questionnaire: []
+			questionnaire: [],
+			consent_form: {
+				id: ""
+			},
 		};
 
 		$scope.validator = {
@@ -66,6 +77,11 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				mandatory: true,
 				valid: true,
 			},
+			consent_form: {
+				completed: false,
+				mandatory: true,
+				valid: true,
+			},
 			dates: {
 				completed: false,
 				mandatory: false,
@@ -80,7 +96,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				completed: false,
 				mandatory: false,
 				valid: true,
-			},
+			}
 		};
 
 		$scope.leftMenu = {
@@ -114,6 +130,11 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				open: false,
 				preview: false,
 			},
+			consent_form: {
+				display: false,
+				open: false,
+				preview: false,
+			},
 		};
 
 		var arrValidationInsert = [
@@ -123,11 +144,16 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$filter('translate')('STUDY.VALIDATION.DESCRIPTION_EN'),
 			$filter('translate')('STUDY.VALIDATION.DESCRPIPTION_FR'),
 			$filter('translate')('STUDY.VALIDATION.INVESTIGATOR'),
+			$filter('translate')('STUDY.VALIDATION.INVESTIGATOR_PHONE'),
+			$filter('translate')('STUDY.VALIDATION.INVESTIGATOR_EMAIL'),
 			$filter('translate')('STUDY.VALIDATION.START_DATE'),
 			$filter('translate')('STUDY.VALIDATION.END_DATE'),
 			$filter('translate')('STUDY.VALIDATION.DATE_RANGE'),
 			$filter('translate')('STUDY.VALIDATION.PATIENTS'),
 			$filter('translate')('STUDY.VALIDATION.QUESTIONNAIRE'),
+			$filter('translate')('STUDY.VALIDATION.CONSENT'),
+			$filter('translate')('STUDY.VALIDATION.PATIENT_CONSENT'),
+			$filter('translate')('STUDY.VALIDATION.INVESTIGATOR_PHONE_EXT'),
 			$filter('translate')('STUDY.VALIDATION.ID'),
 		];
 
@@ -220,12 +246,39 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			processingModal = null; // remove reference
 		});
 
+		// Call our API to get current consent form options
+		studyCollectionService.getConsentForms().then(function (response) {
+			response.data.forEach(function(entry){
+				if($scope.language.toUpperCase() === "FR"){
+					entry.name_display = entry.name_FR;
+				}else{
+					entry.name_display = entry.name_EN;
+				}	
+			});
+			$scope.consentFormList = response.data;
+		}).catch(function(err){
+			ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
+		}).finally(function(){
+			processingModal.close();
+			processingModal = null;
+		});
 		$scope.formLoaded = false;
 		// Function to load form as animations
 		$scope.loadForm = function () {
 			$('.form-box-left').addClass('fadeInDown');
 			$('.form-box-right').addClass('fadeInRight');
 		};
+
+	
+		$scope.consentFormUpdate = function(form){
+			$scope.toSubmit.consent_form.id = form.ID;
+			$scope.selectedName = form.name_display;
+			$scope.leftMenu.consent_form.open = $scope.toSubmit.consent_form;
+			$scope.leftMenu.consent_form.display = $scope.leftMenu.consent_form.open;
+			$scope.leftMenu.consent_form.preview = $scope.leftMenu.consent_form.open;
+			$scope.validator.consent_form.completed = $scope.leftMenu.consent_form.open;
+		}
+	
 
 		$scope.popupStart = {};
 		$scope.popupEnd = {};
@@ -248,10 +301,55 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.leftMenu.details.display = $scope.validator.details.completed;
 		};
 
-		$scope.nameUpdate = function () {
-			$scope.validator.investigator.completed = ($scope.toSubmit.investigator.name !== "");
+		/**
+		 * Validate the investigator personal info fields before allowing user to continue
+		 * phone regex checks for standard 10 digit number with options for deliniation by space, hyphen, or period
+		 * 		User can optionally enter country code eg +1 or +44
+		 * email regex checks for standard RFC2822 email format
+		 * phoneExt regex checks for any number of digits 0-9 up to a maximum length of 6
+		 */
+		$scope.validateInvestigatorInfo = function () {
 			$scope.leftMenu.investigator.open = $scope.validator.details.completed;
 			$scope.leftMenu.investigator.display = $scope.validator.details.completed;
+			$scope.phoneVal = false;
+			$scope.emVal = false;
+			$scope.extVal = false;
+			$scope.validator.investigator.completed = false;
+			if($scope.toSubmit.investigator.phone){
+				var phoneDigits = $scope.toSubmit.investigator.phone.replace(/[\s.,-]+/g, ""); //remove unwanted characters
+				var phoneReg = new RegExp(/^(\+\d{0,2})?[ .-]?\(?(\d{3})\)?[ .-]?(\d{3})[ .-]?(\d{4})$/);
+				$scope.phoneVal = phoneReg.test(phoneDigits);
+				$scope.phoneDisplay = "";
+				if(phoneDigits.length === 10){ // 438 389 9312
+					$scope.phoneDisplay = phoneDigits.substr(0,3) + "-" + phoneDigits.substr(3,3) + "-" + phoneDigits.substr(6,4);
+				}else if(phoneDigits.length === 12){ // +1 438 389 5678
+					$scope.phoneDisplay = phoneDigits.substr(0,2) + " " + phoneDigits.substr(2,3) + "-" + phoneDigits.substr(5,3) + "-" + phoneDigits.substr(8,4);
+				}else if(phoneDigits.length === 13){ // +44 438 389 4356
+					$scope.phoneDisplay = phoneDigits.substr(0,3) + " " + phoneDigits.substr(3,3) + "-" + phoneDigits.substr(6,3) + "-" + phoneDigits.substr(9,4);
+				}else{
+					$scope.phoneDisplay = phoneDigits; // any other length is invalid number, just show the raw input in the preview until we get a valid number
+				}
+			}
+			if($scope.toSubmit.investigator.email){
+				var emReg = new RegExp(/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/);
+				$scope.emVal = emReg.test($scope.toSubmit.investigator.email);
+			}
+			if($scope.toSubmit.investigator.phoneExt){
+				var extDigits = $scope.toSubmit.investigator.phoneExt.replace(/[\s.,-]+/g, ""); //remove characters
+				var phoneExtReg = new RegExp(/^\d{0,6}$/);
+				$scope.extVal = phoneExtReg.test(extDigits);
+
+				if($scope.extVal){
+					$scope.phoneDisplay = $scope.phoneDisplay + " ext. " + extDigits;
+				}
+			}else{ //empty phone extension is valid
+				$scope.extVal = true;
+			}
+
+
+			if($scope.phoneVal && $scope.emVal && $scope.extVal){
+				$scope.validator.investigator.completed = true;
+			}
 		};
 
 		// Watch to restrict the end calendar to not choose an earlier date than the start date
@@ -363,7 +461,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.leftMenu.title_desc.display = $scope.leftMenu.title_desc.open;
 			$scope.leftMenu.title_desc.preview = $scope.leftMenu.title_desc.open;
 		}, true);
-
+	
 		// Function to submit the new diagnosis translation
 		$scope.submitStudy = function () {
 			$scope.readyToSend.code = $scope.toSubmit.details.code;
@@ -372,11 +470,15 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.readyToSend.description_EN = $scope.toSubmit.title_desc.description_EN;
 			$scope.readyToSend.description_FR = $scope.toSubmit.title_desc.description_FR;
 			$scope.readyToSend.investigator = $scope.toSubmit.investigator.name;
+			$scope.readyToSend.investigator_email = $scope.toSubmit.investigator.email;
+			$scope.readyToSend.investigator_phone = ($scope.toSubmit.investigator.phone).replace(/[\s.,\-\(\)]+/g, ""); //strip away dot, hyphen, spaces, commas, brackets before sending to DB
+			$scope.readyToSend.investigator_phoneExt = $scope.toSubmit.investigator.phoneExt;
 			$scope.readyToSend.start_date = (($scope.toSubmit.dates.start_date) ? moment($scope.toSubmit.dates.start_date).format('X') : "");
 			$scope.readyToSend.end_date = (($scope.toSubmit.dates.end_date) ? moment($scope.toSubmit.dates.end_date).format('X') : "");
 			$scope.readyToSend.patients = $scope.toSubmit.patients;
-			$scope.readyToSend.questionnaire = $scope.toSubmit.questionnaire;
-
+			$scope.readyToSend.questionnaire = $scope.toSubmit.questionnaire
+			$scope.readyToSend.consent_form = $scope.toSubmit.consent_form.id;
+			
 			$.ajax({
 				type: 'POST',
 				url: 'study/insert/study',
