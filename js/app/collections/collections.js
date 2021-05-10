@@ -1013,6 +1013,18 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
+		studyAPI.getPatientConsentList = function (studyId) {
+			return $http.post(
+				"study/get/patients-consents",
+				$.param({
+					studyId: studyId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
 		studyAPI.getResearchPatient = function () {
 			return $http.post(
 				"study/get/research-patient",
@@ -1021,6 +1033,27 @@ angular.module('opalAdmin.collections', [])
 				}
 			);
 		};
+
+		studyAPI.getConsentForms = function() {
+			return $http.post(
+				"study/get/consent-forms",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		}
+
+		studyAPI.consentFormPublished = function(consentId){
+			return $http.post(
+				"study/get/consent-published",
+				$.param({
+					consentId: consentId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		}
 
 		return studyAPI;
 	})

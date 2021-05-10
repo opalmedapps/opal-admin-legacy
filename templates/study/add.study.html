@@ -114,7 +114,7 @@
 
 
                             <!-- SECTION: Principal investigator -->
-                            <div uib-accordion-group is-open="leftMenu.investigator.open" class="panel-container summary-box " ng-if="validator.investigator.completed;" is-disabled="!toSubmit.investigator.name">
+                            <div uib-accordion-group is-open="leftMenu.investigator.open" class="panel-container summary-box " ng-if="toSubmit.investigator.name || toSubmit.investigator.phone || toSubmit.investigator.email" is-disabled="!validator.investigator.completed">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -124,15 +124,46 @@
                                             <strong>{{'STUDY.ADD.INVESTIGATOR'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.investigator.open, 'glyphicon-chevron-right':!leftMenu.investigator.open}" ng-if="validator.investigator.completed"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.investigator.open, 'glyphicon-chevron-right':!leftMenu.investigator.open}" ng-if="toSubmit.investigator.name"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
-                                <div ng-if="toSubmit.investigator.name" class="description">
-                                    <p style="margin-bottom:5px;">
+                                <div class="description">
+                                    <p style="margin-bottom:5px;" ng-show="toSubmit.investigator.name">
                                         <strong>{{'STUDY.ADD.NAME'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         {{toSubmit.investigator.name}}
+                                    </p>
+                                    <p style="margin-bottom:0;" ng-show="toSubmit.investigator.email">
+                                        <b>Email</b> <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span> 
+                                        {{toSubmit.investigator.email}}
+                                    </p>
+                                    <p style="margin-bottom:0;" ng-show="toSubmit.investigator.phone">
+                                        <b>Phone</b> <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span> 
+                                        {{phoneDisplay}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Consent Form -->
+                            <div uib-accordion-group is-open="leftMenu.consent_form.open" class="panel-container summary-box " ng-class="{fadeIn: validator.consent_form.completed}" ng-if="validator.consent_form.completed;" is-disabled="!validator.consent_form.completed">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="validator.consent_form.completed" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'STUDY.ADD.CONSENT_FORM'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.consent_form.open, 'glyphicon-chevron-right':!leftMenu.consent_form.open}" ng-if="validator.consent_form.completed"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div class="description">
+                                    <p style="margin-bottom:5px;">
+                                        <strong>{{'STUDY.ADD.CONSENT_SELECTED'|translate}} </strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{selectedName}}
                                     </p>
                                 </div>
                             </div>
@@ -392,10 +423,10 @@
                                 </p>
                             </div>
                             <div class="col-xs-12 col-md-6">
-                                <div class="panel" ng-class="(toSubmit.investigator.name) ? 'panel-success': 'panel-danger'">
+                                <div class="panel" ng-class="(validator.investigator.completed) ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>{{'STUDY.ADD.NAME'|translate}}</strong>
-                                        <span ng-hide="toSubmit.investigator.name" style="float:right"><em>{{'STUDY.ADD.INCOMPLETE'|translate}}</em></span>
-                                        <span ng-show="toSubmit.investigator.name" style="float:right"><em>{{'STUDY.ADD.COMPLETE'|translate}}</em></span>
+                                        <span ng-hide="validator.investigator.completed" style="float:right"><em>{{'STUDY.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="validator.investigator.completed" style="float:right"><em>{{'STUDY.ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body form-horizontal">
                                         <div class="form-group">
@@ -403,15 +434,72 @@
                                                 {{'STUDY.ADD.NAME'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
-                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.name" ng-change="nameUpdate()" />
+                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.name" ng-change="validateInvestigatorInfo()" required="required"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                {{'STUDY.ADD.EMAIL'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-lg-10">
+                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.email" ng-change="validateInvestigatorInfo()" required="required"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                {{'STUDY.ADD.PHONE'|translate}}
+                                            </label>
+                                            <span class="col-xs-12 col-lg-8">
+                                                <input class="form-control" type="tel" ng-model="toSubmit.investigator.phone" ng-change="validateInvestigatorInfo()" required="required" placeholder="+1 438 123 4567"/>
+                                            </span>
+                                            <div class="col-xs-12 col-lg-2">
+                                                <input class="form-control" type="text" ng-model="toSubmit.investigator.phoneExt" ng-change="validateInvestigatorInfo()" placeholder="ext."/>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- SECTION: Start and end date -->
+                        <!-- SECTION: Consent Form -->
                         <div class="row fadeIn" ng-if="validator.investigator.completed">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                      <span class="fas fa-dot-circle"></span>
+                                      <h2>{{'STUDY.ADD.CONSENT_FORM'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="color:#d9534f"><strong>{{'STUDY.ADD.REQUIRED'|translate}}</strong></span>
+                                    {{'STUDY.ADD.CONSENT_FORM_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                            <div class="col-xs-12">
+                                <div class="panel" ng-class="toSubmit.consent_form.id ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'STUDY.ADD.FORM'|translate}}</strong>
+                                        <span ng-hide="toSubmit.consent_form.id" style="float:right"><em>{{'PUBLICATION.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="toSubmit.consent_form.id" style="float:right"><em>{{'PUBLICATION.ADD.COMPLETE'|translate}}</em></span>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                            <input class="form-control" maxlength="100" type="text" ng-model="consentFormFilter" placeholder="{{'STUDY.ADD.SEARCH'|translate}}"/>
+                                        </div>
+                                        <ul class="list-items">
+                                            <li ng-repeat="at in consentFormList | filter: consentFormFilter">
+                                                <label>
+                                                    <input type="radio" name="formName" value="{{at.ID}}" ng-model="toSubmit.consent_form.id" ng-change="consentFormUpdate(at)"/> {{at.name_display}}
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Start and end date -->
+                        <div class="row fadeIn" ng-if="validator.consent_form.completed">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -459,7 +547,7 @@
                             </div>
                         </div>
                         <!-- SECTION: Patient list -->
-                        <div class="row fadeIn" ng-if="validator.investigator.completed">
+                        <div class="row fadeIn" ng-if="validator.consent_form.completed">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -497,7 +585,7 @@
                             </div>
                         </div>
                         <!-- SECTION: Questionnaire list -->
-                        <div class="row fadeIn" ng-if="validator.investigator.completed">
+                        <div class="row fadeIn" ng-if="validator.consent_form.completed">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">

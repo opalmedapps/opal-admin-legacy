@@ -1242,6 +1242,20 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_updateRecordIntoTable(OPAL_UPDATE_STUDY, $study);
     }
 
+    /**
+     * Update a specific patient consent status (invited, opalConsented, otherConsented, declined)
+     * @params $studyID (int) study id
+     *         $patId (int) patient Id
+     *         $patConsent (int) new patient consent
+     */
+    function updateStudyConsent($studyID, $patId, $patConsent){
+        return $this->_fetchAll(OPAL_UPDATE_STUDY_CONSENT, array(
+            array("parameter"=>":studyId","variable"=>$studyID,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":patientId","variable"=>$patId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":patientConsent","variable"=>$patConsent,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
     /*
      * Marks a specified study as deleted.
      * @param   int : $studyId (ID of the study to mark as deleted)
@@ -2623,6 +2637,39 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
+     * Get the list of patient consents of a specific study
+     * @param $studyId - ID of the study
+     * @return array list of patients found
+     */
+    function getPatientsStudyConsents($studyId) {
+        return $this->_fetchAll(OPAL_GET_PATIENTS_STUDY_CONSENTS, array(
+            array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Check if a consent form is published
+     * @param $consentId - consent form Id 
+     * @return array list of forms found
+     */
+    function checkConsentFormPublished($consentId){
+        return $this->_fetchAll(OPAL_CHECK_CONSENT_FORM_PUBLISHED, array(
+            array("parameter"=>":consentId","variable"=>$consentId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the study's current consent form
+     * @param $studyId - int study ID
+     * @return array consent form found
+     */
+    function getConsentFormByStudyId($studyId){
+        return $this->_fetchAll(OPAL_GET_CONSENT_BY_STUDY_ID, array(
+            array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
      * Get the list of questionnaires of a specifc study
      * @param $studyId - ID of the study
      * @return array - list of questionnaires associated to the study
@@ -2654,7 +2701,6 @@ class DatabaseOpal extends DatabaseAccess {
      */
     function deleteQuestionnairesStudy($studyId, $toKeep) {
         $sql = str_replace("%%LISTIDS%%", implode(", ", $toKeep),OPAL_DELETE_QUESTIONNAIRES_STUDY);
-        echo "\r\n" . str_replace(":studyId", $studyId, $sql) . "\r\n";
         return $this->_execute($sql, array(
             array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
         ));
