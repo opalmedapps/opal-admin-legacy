@@ -483,7 +483,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 					$scope.toSubmit.patients.push(item.id);
 				}
 				if(posC === -1){
-					$scope.patientConsentList.push({'id':item.id,'consent':'','name':item.name,'changed':null});
+					$scope.patientConsentList.push({'id':item.id,'consent':'1','consent_display': $filter('translate')('STUDY.EDIT.INVITED'),'name':item.name,'changed':null});
 				}
 			}
 			else {
