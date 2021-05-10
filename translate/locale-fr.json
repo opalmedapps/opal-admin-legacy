@@ -2683,6 +2683,8 @@
       "NAME": "Nom",
       "DEVICEID": "ID appareil",
       "LOGIN": "Heure de connexion",
+      "TYPE": "Type d'appareil",
+      "VERSION": "Version de l'application",
       "LOGOUT": "Heure de déconnexion",
       "ERROR_ACTIVITIES": "Une erreur s'est produite lors de l'obtention de la liste des activités des patients."
     }
