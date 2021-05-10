@@ -37,7 +37,7 @@ controller('patientActivity', function ($scope, $uibModal, $filter, patientColle
 		var matcher = new RegExp($scope.filterValue, 'i');
 		renderableRows.forEach(function (row) {
 			var match = false;
-			['patientid', 'deviceid', 'name'].forEach(function (field) {
+			['patientId', 'deviceId', 'name'].forEach(function (field) {
 				if (row.entity[field].match(matcher)) {
 					match = true;
 				}
@@ -60,10 +60,12 @@ controller('patientActivity', function ($scope, $uibModal, $filter, patientColle
 	$scope.gridOptions = {
 		data: 'patientActivityList',
 		columnDefs: [
-			{ field: 'patientid', displayName: $filter('translate')('PATIENTS.ACTIVITY.PATIENTID'), width: '15%', enableColumnMenu: false },
+			{ field: 'patientId', displayName: $filter('translate')('PATIENTS.ACTIVITY.PATIENTID'), width: '10%', enableColumnMenu: false },
 			{ field: 'name', displayName: $filter('translate')('PATIENTS.ACTIVITY.NAME'), width: '15%', enableColumnMenu: false },
-			{ field: 'deviceid', displayName: $filter('translate')('PATIENTS.ACTIVITY.DEVICEID'), width: '50%', enableColumnMenu: false },
-			{ field: 'login', displayName: $filter('translate')('PATIENTS.ACTIVITY.LOGIN'), width: '20%', enableColumnMenu: false },
+			{ field: 'deviceId', displayName: $filter('translate')('PATIENTS.ACTIVITY.DEVICEID'), width: '35%', enableColumnMenu: false },
+			{ field: 'login', displayName: $filter('translate')('PATIENTS.ACTIVITY.LOGIN'), width: '15%', enableColumnMenu: false },
+			{ field: 'deviceType', displayName: $filter('translate')('PATIENTS.ACTIVITY.TYPE'), width: '15%', enableColumnMenu: false },
+			{ field: 'appVersion', displayName: $filter('translate')('PATIENTS.ACTIVITY.VERSION'), width: '10%', enableColumnMenu: false },
 			// { field: 'logout', displayName: $filter('translate')('PATIENTS.ACTIVITY.LOGOUT'), width: '20%', enableColumnMenu: false }
 		],
 		//useExternalFiltering: true,
