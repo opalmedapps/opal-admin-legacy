@@ -2,8 +2,6 @@ angular.module('opalAdmin.controllers.sms.edit', ['ngAnimate', 'ui.bootstrap', '
 
 controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, smsCollectionService, $state, Session, ErrorHandler, MODULE) {
 
-    console.log($scope.currentAppointment);
-
     $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');
     };
@@ -21,14 +19,16 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
         return !$scope.typeSearchField || keyword.test(Filter);
     };
     $scope.updateType = function(type){
-        if(type != $scope.currentAppointment.apptype)$scope.changesDetected = true;
+        if(type.type != $scope.currentAppointment.apptype)$scope.changesDetected = true;
         else $scope.changesDetected = false;
-
-        $scope.typeSelected = type;
+        $scope.TypeList.forEach(function(row){
+            if(row.type == type.type) row.selected = true;
+            else row.selected = false;
+        })
+        $scope.typeSelected = type.type;
     }
 
     $scope.updateAppointment = function() {
-        console.log("test");
         if($scope.changesDetected) {
             var update = {
                 information:{type:$scope.typeSelected, appcode:$scope.currentAppointment.code, ressernum:$scope.currentAppointment.ressernum}
@@ -50,9 +50,10 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
 
     function getSmsTypeList(){
         smsCollectionService.getSmsType($scope.currentAppointment.spec).then(function (response) {
-            $scope.TypeList = [];
-            response.data.forEach(function(row){
-                $scope.TypeList.push(row.type)
+            $scope.TypeList = response.data;
+            $scope.TypeList.forEach(function(row){
+                if(row.type == $scope.typeSelected) row.selected = true;
+                else row.selected = false;
             })
         });
     }
