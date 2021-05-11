@@ -2195,6 +2195,7 @@
       "SAVE": "Save Changes",
       "CANCEL": "Cancel",
       "CLOSE": "Close",
+      "DEACTIVATED_DIAGNOSES": "Deactivated assigned codes",
       "DIAGNOSES": "Assigned Diagnoses",
       "CURRENT_DIAGNOSES": "Currently assigned diagnoses",
       "SEARCH": "Search...",

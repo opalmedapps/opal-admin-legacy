@@ -21,6 +21,7 @@ class Diagnosis extends Module {
         $diagnosisId = $post["serial"];
         $result = $this->opalDB->getDiagnosisDetails($diagnosisId);
         $result["diagnoses"] = $this->opalDB->getDiagnosisCodes($diagnosisId);
+        $result["deactivated"] = $this->opalDB->getdeactivatedDiagnosesCodes($diagnosisId);
         $result["count"] = count($result["diagnoses"]);
 
         if ($result["eduMatSer"] != 0) {

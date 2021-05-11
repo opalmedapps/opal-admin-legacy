@@ -22,6 +22,16 @@
                     <strong>{{'DIAGNOSIS.EDIT.DIAGNOSES'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnosisSection.open, 'glyphicon-chevron-right': !diagnosisSection.open}"></i>
                 </div>
             </uib-accordion-heading>
+            <div class="alert alert-danger" role="alert">
+                <strong>{{'DIAGNOSIS.EDIT.DEACTIVATED_DIAGNOSES'|translate}}</strong><br>
+                <p>
+                <ul class="list-items">
+                    <li ng-repeat="deactivatedDiagnosis in diagnosisTranslation.deactivated">
+                        {{deactivatedDiagnosis.name}}
+                    </li>
+                </ul>
+                </p>
+            </div>
             <div class="alert alert-info" role="alert">
                 <strong>{{'DIAGNOSIS.EDIT.CURRENT_DIAGNOSES'|translate}}</strong><br>
                 <p>

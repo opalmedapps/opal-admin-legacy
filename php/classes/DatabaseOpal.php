@@ -2792,4 +2792,10 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    function getdeactivatedDiagnosesCodes($diagnosisTransId) {
+        return $this->_fetchAll(OPAL_GET_DEACTIVATED_DIAGNOSIS_CODES, array(
+            array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisTransId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }

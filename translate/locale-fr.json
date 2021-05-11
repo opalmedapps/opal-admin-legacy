@@ -2213,6 +2213,7 @@
       "CANCEL": "Annuler",
       "CLOSE": "Fermer",
       "DIAGNOSES": "Diagnostics assignés",
+      "DEACTIVATED_DIAGNOSES": "Codes assignés désactivés",
       "CURRENT_DIAGNOSES": "Diagnostics actuellement assignés",
       "SEARCH": "Rechercher",
       "SELECT_ALL": "Tout sélectionner",
