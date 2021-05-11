@@ -880,9 +880,10 @@ define("OPAL_GET_DIAG_TRANS_DETAILS","
 ");
 
 define("OPAL_GET_DIAGNOSIS_CODES","
-    SELECT DISTINCT SourceUID AS sourceuid, DiagnosisCode AS code, Description AS description,
-    CONCAT(DiagnosisCode, ' (', Description, ')') AS name, 1 AS added FROM ".OPAL_DIAGNOSIS_CODE_TABLE."
-    WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum;
+    SELECT DISTINCT d.SourceUID AS sourceuid, d.DiagnosisCode AS code, d.Description AS description,
+    CONCAT(d.DiagnosisCode, ' (', d.Description, ')') AS name, 1 AS added FROM ".OPAL_DIAGNOSIS_CODE_TABLE." d
+    LEFT JOIN ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." m ON m.code = d.DiagnosisCode AND m.description = d.Description
+    WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum AND m.deleted = ".NON_DELETED_RECORD.";
 ");
 
 define("OPAL_GET_ACTIVATE_SOURCE_DB","
@@ -1357,3 +1358,10 @@ define("OPAL_GET_ARIA_SOURCE_ALIASES","
 define("OPAL_GET_SOURCE_ALIASES","
     SELECT CONCAT(code, ' (', description, ')') AS name, code AS id, description FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE."
     WHERE type = :type AND source = :source AND deleted = ".NON_DELETED_RECORD." ORDER BY code");
+
+define("OPAL_GET_DEACTIVATED_DIAGNOSIS_CODES","
+    SELECT DISTINCT d.SourceUID AS sourceuid, d.DiagnosisCode AS code, d.Description AS description,
+    CONCAT(d.DiagnosisCode, ' (', d.Description, ')') AS name FROM ".OPAL_DIAGNOSIS_CODE_TABLE." d
+    LEFT JOIN ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." m ON m.code = d.DiagnosisCode AND m.description = d.Description
+    WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum AND m.deleted = ".DELETED_RECORD.";
+");
