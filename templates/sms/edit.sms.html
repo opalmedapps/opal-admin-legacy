@@ -50,12 +50,12 @@
             <div>
                 <div class="input-group">
                     <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                    <input class="form-control" maxlength="100" type="text" ng-model="patientSearchField" placeholder="Search" />
+                    <input class="form-control" maxlength="100" type="text" ng-model="typeSearchField" placeholder="Search" />
                 </div>
                 <ul class="list-items">
                     <li ng-repeat="type in TypeList | filter: typeSearchField">
                         <label>
-                            <input ng-disabled="selectAll.patient.checked && selectAll.patient.all" type="checkbox" ng-model="type==typeSelected" ng-click="updateType(type)"> {{type}}
+                            <input type="checkbox" ng-model="type.selected" ng-click="updateType(type)"> {{type.type}}
                         </label>
                     </li>
                 </ul>
