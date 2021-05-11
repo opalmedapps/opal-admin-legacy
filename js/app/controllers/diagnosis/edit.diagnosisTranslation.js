@@ -126,6 +126,8 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 			}
 		}
 		$scope.diagnosisTranslation = response.data;
+		console.log($scope.diagnosisTranslation.diagnoses);
+		console.log($scope.diagnosisTranslation.deactivated);
 
 		// Call our API service to get the list of diagnosis codes
 		diagnosisCollectionService.getDiagnoses().then(function (response) {
