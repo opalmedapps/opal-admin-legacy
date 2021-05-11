@@ -49,8 +49,13 @@ class Sms extends Module {
     public function updateActivationState($information){
         $this->checkWriteAccess($information);
 
-        return $this->ormsDB->updateActivationState($information['state'],$information['speciality'],
-            $information['type'],$information['appcode'],$information['ressernum']);
+        return $this->ormsDB->updateActivationState($information['state'],$information['appcode'],$information['ressernum']);
+    }
+
+    public function updateAppointmentType($information){
+        $this->checkWriteAccess($information);
+
+        return $this->ormsDB->updateAppointmentType($information['type'],$information['appcode'],$information['ressernum']);
     }
 
     public function updateSmsMessage($information,$language){

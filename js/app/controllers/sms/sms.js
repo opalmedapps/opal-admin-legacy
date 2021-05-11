@@ -13,9 +13,9 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
         getSmsAppointmentList();
         $scope.changesMade = false;
         var cellTemplateResourceName = '<div style="cursor:pointer;" class="ui-grid-cell-contents">' +
-            '<strong><a href="">{{row.entity.resname}}</a></strong></div>';
+            '<strong><a href=""  ng-click="grid.appScope.editAppointment(row.entity)">{{row.entity.resname}}</a></strong></div>';
         var cellTemplateAppointmentCode = '<div style="cursor:pointer;" class="ui-grid-cell-contents">' +
-            '<strong><a href="">{{row.entity.appcode}}</a></strong></div>';
+            '<strong><a href=""  ng-click="grid.appScope.editAppointment(row.entity)">{{row.entity.appcode}}</a></strong></div>';
 
         var checkboxCellTemplate;
         if($scope.writeAccess)
@@ -134,8 +134,6 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                     if (sms.modified) {
                         $scope.smsUpdates.updateList.push({
                             ressernum: sms.ressernum,
-                            speciality:sms.spec,
-                            type:sms.apptype,
                             appcode: sms.code,
                             state: sms.state
                         });
@@ -168,6 +166,23 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                     error: function(err) {
                         ErrorHandler.onError(err,"error");
                     }
+                });
+            }
+        };
+
+        $scope.editAppointment = function(appointment){
+            if($scope.writeAccess){
+                $scope.currentAppointment = appointment;
+                var modalInstance = $uibModal.open({ // open modal
+                    templateUrl: 'templates/sms/edit.sms.html',
+                    controller: 'sms.edit',
+                    scope: $scope,
+                    windowClass: 'customModal',
+                    backdrop: 'static',
+                });
+
+                modalInstance.result.then(function () {
+                    getSmsAppointmentList();
                 });
             }
         };

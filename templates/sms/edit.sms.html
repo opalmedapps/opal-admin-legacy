@@ -1,0 +1,65 @@
+<div class="modal-header">
+    <div class="col-xs-12 col-md-6">
+        <h2 class="modal-title">
+            <span class="glyphicon glyphicon-pencil"></span>
+            Edit Appointment
+        </h2>
+        <p class="text-info">You are now editing an appointment, click "Save" button to Save the changes</p>
+    </div>
+    <div class="modal-buttons col-xs-12 col-md-6">
+        <form method="post" ng-submit="updateAppointment()">
+            <input ng-if="!locked" class="btn btn-primary submit" ng-class="{'disabled': (!changesDetected)}" type="submit" value="Save">
+            <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+        </form>
+    </div>
+</div>
+<div class="modal-body">
+    <uib-accordion close-others="false">
+        <!-- SECTION: Appointment information -->
+        <div uib-accordion-group is-open="infoSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>Appointment information</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': infoSection.open, 'glyphicon-chevron-right': !infoSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12">
+                    <label><strong>Resource Name</strong></label> : {{currentAppointment.resname}}
+                </div>
+                <div class="col-xs-12">
+                    <label><strong>Appointment Code</strong></label> : {{currentAppointment.appcode}}
+                </div>
+                <div class="col-xs-12">
+                    <label><strong>Speciality</strong></label> : {{currentAppointment.spec}}
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Type -->
+        <div uib-accordion-group is-open="typeSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>Type</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': typeSection.open, 'glyphicon-chevron-right': !typeSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="alert alert-info" role="alert">
+                <strong>Current Type</strong><br>
+                <p>
+                    <li>{{currentAppointment.apptype}}</li>
+                </p>
+            </div>
+            <div>
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                    <input class="form-control" maxlength="100" type="text" ng-model="patientSearchField" placeholder="Search" />
+                </div>
+                <ul class="list-items">
+                    <li ng-repeat="type in TypeList | filter: typeSearchField">
+                        <label>
+                            <input ng-disabled="selectAll.patient.checked && selectAll.patient.all" type="checkbox" ng-model="type==typeSelected" ng-click="updateType(type)"> {{type}}
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </uib-accordion>
+</div>
