@@ -89,15 +89,22 @@ class DatabaseOrms extends DatabaseAccess {
         return $messages;
     }
 
-    function updateActivationState($state, $speciality, $type, $appointmentCodeId, $resourceSerNum) {
+    function updateActivationState($state,$appointmentCodeId, $resourceSerNum) {
         $toInsert = array(
             array("parameter"=>":state","variable"=>$state,"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":typ","variable"=>$type,"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":spec","variable"=>$speciality,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":res","variable"=>$resourceSerNum,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":id","variable"=>$appointmentCodeId,"data_type"=>PDO::PARAM_INT),
         );
         return $this->_execute(ORMS_SQL_UPDATE_APPOINTMENT_ACTIVE_STATE, $toInsert);
+    }
+
+    function updateAppointmentType($type, $appointmentCodeId, $resourceSerNum) {
+        $toInsert = array(
+            array("parameter"=>":typ","variable"=>$type,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":res","variable"=>$resourceSerNum,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":id","variable"=>$appointmentCodeId,"data_type"=>PDO::PARAM_INT),
+        );
+        return $this->_execute(ORMS_SQL_UPDATE_APPOINTMENT_TYPE, $toInsert);
     }
 
     function updateSmsMessage($smsMessage,$speciality, $type, $event, $language) {

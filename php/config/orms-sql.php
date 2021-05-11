@@ -50,7 +50,12 @@ define("ORMS_SQL_GET_MESSAGE_FOR_APPOINTMENT","
 ");
 
 define("ORMS_SQL_UPDATE_APPOINTMENT_ACTIVE_STATE","
-    UPDATE ".ORMS_SMS_APPOINTMENT_LIST_TABLE." SET Active = :state AND Type = :typ AND Speciality = :spec
+    UPDATE ".ORMS_SMS_APPOINTMENT_LIST_TABLE." SET Active = :state
+    WHERE ClinicResourcesSerNum = :res AND AppointmentCodeId = :id
+");
+
+define("ORMS_SQL_UPDATE_APPOINTMENT_TYPE","
+    UPDATE ".ORMS_SMS_APPOINTMENT_LIST_TABLE." SET Type = :typ
     WHERE ClinicResourcesSerNum = :res AND AppointmentCodeId = :id
 ");
 
