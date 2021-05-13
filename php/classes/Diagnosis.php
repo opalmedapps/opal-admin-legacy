@@ -43,13 +43,14 @@ class Diagnosis extends Module {
         $ad = $this->opalDB->getAssignedDiagnoses();
         $assignedDiagnoses = array();
         foreach($ad as $item) {
-            $assignedDiagnoses[$item["sourceuid"]] = $item;
+            $assignedDiagnoses[$item["code"]["description"]] = $item;
         }
         $results = $this->opalDB->getDiagnoses($assignedDB);
+
         foreach ($results as &$item) {
             $item["added"] = 0;
-            if ($assignedDiagnoses[$item["sourceuid"]])
-                $item['assigned'] = $assignedDiagnoses[$item["sourceuid"]];
+            if ($assignedDiagnoses[$item["code"]["description"]])
+                $item['assigned'] = $assignedDiagnoses[$item["code"]["description"]];
         }
 
         return $results;
