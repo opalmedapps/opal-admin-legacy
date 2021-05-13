@@ -126,8 +126,6 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 			}
 		}
 		$scope.diagnosisTranslation = response.data;
-		console.log($scope.diagnosisTranslation.diagnoses);
-		console.log($scope.diagnosisTranslation.deactivated);
 
 		// Call our API service to get the list of diagnosis codes
 		diagnosisCollectionService.getDiagnoses().then(function (response) {
@@ -169,10 +167,8 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 	// Function to assign '1' to existing diagnosis
 	function checkAdded(diagnosisList) {
 		angular.forEach($scope.diagnosisTranslation.diagnoses, function (selectedDiagnosis) {
-			var selectedDiagnosisSourceUID = selectedDiagnosis.sourceuid;
 			angular.forEach(diagnosisList, function (diagnosis) {
-				var sourceuid = diagnosis.sourceuid;
-				if (sourceuid == selectedDiagnosisSourceUID) {
+				if (diagnosis.code === selectedDiagnosis.code && diagnosis.description === selectedDiagnosis.description) {
 					diagnosis.added = 1;
 					diagnosis.assigned = null; // remove self assigned diagnoses
 				}
