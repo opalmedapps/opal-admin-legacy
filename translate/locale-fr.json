@@ -3100,10 +3100,11 @@
       "UNDEFINE": "Indéfini",
       "SPECIALITY": "Spécialité",
       "RESOURCE_NAME": "Nom de la Ressource",
-      "DISABLE/ENABLE": "Désactiver / Activer le Rendez-vous",
+      "DISABLE/ENABLE": "Activer le Rendez-vous",
       "SEARCH": "Rechercher"
     },
     "MESSAGE": {
+      "TITLE": "Message de SMS",
       "BACK": "Retour au SMS",
       "SUMMARY": "Sommaire",
       "SPECIALITY": "Spécialité",
@@ -3138,6 +3139,10 @@
       "SHOW_SELECTED": "Afficher les ressources avec des rendez-vous de la spécialité et du type sélectionnés",
       "SHOW_NOT_SELECTED": "Afficher d'autres ressources",
       "SUBMIT": "Soumettre"
+    },
+    "EDIT": {
+      "TITLE" : "Edit Appointment",
+      "INFO_MESSAGE" : "You are now editing an appointment, click 'Save' button to Save the changes"
     }
   },
   "ERROR_HANDLER": {

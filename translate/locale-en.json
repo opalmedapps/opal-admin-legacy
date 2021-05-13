@@ -3082,10 +3082,11 @@
       "UNDEFINE": "Undefine",
       "SPECIALITY": "Speciality",
       "RESOURCE_NAME": "Resource Name",
-      "DISABLE/ENABLE": "Disable/Enable Appointment",
+      "DISABLE/ENABLE": "Enable Appointment",
       "SEARCH": "Search"
     },
     "MESSAGE": {
+      "TITLE": "SMS Message",
       "BACK": "Back to SMS",
       "SUMMARY": "Summary",
       "SPECIALITY": "Speciality",
@@ -3120,6 +3121,10 @@
       "SHOW_SELECTED": "Show resources with appointments of selected specialty and type",
       "SHOW_NOT_SELECTED": "Show other resources",
       "SUBMIT": "Submit"
+    },
+    "EDIT": {
+      "TITLE" : "Edit Appointment",
+      "INFO_MESSAGE" : "You are now editing an appointment, click 'Save' button to Save the changes"
     }
   },
   "ERROR_HANDLER": {
