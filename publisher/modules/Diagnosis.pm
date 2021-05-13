@@ -244,86 +244,86 @@ sub getDiagnosesFromSourceDB
 
         if ($sourceDatabase) {
 
-			my $patientInfo_sql = "
-				use VARIAN;
+			# my $patientInfo_sql = "
+			# 	use VARIAN;
 
-                IF OBJECT_ID('tempdb.dbo.#tempDiag', 'U') IS NOT NULL
-                	DROP TABLE #tempDiag;
+            #     IF OBJECT_ID('tempdb.dbo.#tempDiag', 'U') IS NOT NULL
+            #     	DROP TABLE #tempDiag;
 
-				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
-					DROP TABLE #tempPatient;
+			# 	IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
+			# 		DROP TABLE #tempPatient;
 
-				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
-			";
-			$patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
-			$patientInfo_sql .= ")
-			Select c.* into #tempDiag
-			from PatientInfo c;
-			Create Index temporaryindexDiag1 on #tempDiag (ID);
-			Create Index temporaryindexDiag2 on #tempDiag (PatientSerNum);
+			# 	WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
+			# ";
+			# $patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
+			# $patientInfo_sql .= ")
+			# Select c.* into #tempDiag
+			# from PatientInfo c;
+			# Create Index temporaryindexDiag1 on #tempDiag (ID);
+			# Create Index temporaryindexDiag2 on #tempDiag (PatientSerNum);
 
-			Select p.PatientSer, p.PatientId into #tempPatient
-			from VARIAN.dbo.Patient p;
-			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
-			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
-			";
+			# Select p.PatientSer, p.PatientId into #tempPatient
+			# from VARIAN.dbo.Patient p;
+			# Create Index temporaryindexPatient1 on #tempPatient (PatientId);
+			# Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
+			# ";
 			
-			my $diagInfo_sql = $patientInfo_sql . "
-		    	SELECT DISTINCT
-			    	dx.DiagnosisSer,
-				    CONVERT(VARCHAR, dx.DateStamp, 120),
-    				RTRIM(REPLACE(REPLACE(dx.Description,'Malignant neoplasm','malignant neoplasm'),'malignant neoplasm','Ca')),
-                    dx.DiagnosisId,
-                    pmdx.SummaryStage,
-                    RTRIM(pmdx.StageCriteria),
-					PatientInfo.PatientSerNum
-		    	FROM
-			    	VARIAN.dbo.Diagnosis dx with(nolock),
-				    VARIAN.dbo.Patient pt with(nolock),
-				    VARIAN.dbo.PrmryDiagnosis pmdx with(nolock),
-					#tempDiag as PatientInfo
-    			WHERE
-	    		 	dx.DiagnosisSer 		= pmdx.DiagnosisSer
-			    AND	dx.Description 			NOT LIKE '%ERROR%'
-    			AND	dx.HstryDateTime    	> PatientInfo.LastTransfer
-	    		AND dx.DateStamp			> '1970-01-01 00:00:00'
-				AND dx.PatientSer 			= (select pt.PatientSer 
-					from #tempPatient pt where pt.PatientId = PatientInfo.ID)
-		    ";
+			# my $diagInfo_sql = $patientInfo_sql . "
+		    # 	SELECT DISTINCT
+			#     	dx.DiagnosisSer,
+			# 	    CONVERT(VARCHAR, dx.DateStamp, 120),
+    		# 		RTRIM(REPLACE(REPLACE(dx.Description,'Malignant neoplasm','malignant neoplasm'),'malignant neoplasm','Ca')),
+            #         dx.DiagnosisId,
+            #         pmdx.SummaryStage,
+            #         RTRIM(pmdx.StageCriteria),
+			# 		PatientInfo.PatientSerNum
+		    # 	FROM
+			#     	VARIAN.dbo.Diagnosis dx with(nolock),
+			# 	    VARIAN.dbo.Patient pt with(nolock),
+			# 	    VARIAN.dbo.PrmryDiagnosis pmdx with(nolock),
+			# 		#tempDiag as PatientInfo
+    		# 	WHERE
+	    	# 	 	dx.DiagnosisSer 		= pmdx.DiagnosisSer
+			#     AND	dx.Description 			NOT LIKE '%ERROR%'
+    		# 	AND	dx.HstryDateTime    	> PatientInfo.LastTransfer
+	    	# 	AND dx.DateStamp			> '1970-01-01 00:00:00'
+			# 	AND dx.PatientSer 			= (select pt.PatientSer 
+			# 		from #tempPatient pt where pt.PatientId = PatientInfo.ID)
+		    # ";
 
-    		# prepare query
-	    	my $query = $sourceDatabase->prepare($diagInfo_sql)
-		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
+    		# # prepare query
+	    	# my $query = $sourceDatabase->prepare($diagInfo_sql)
+		    # 	or die "Could not prepare query: " . $sourceDatabase->errstr;
 
-		    # execute query
-	    	$query->execute()
-			    or die "Could not execute query: " . $query->errstr;
+		    # # execute query
+	    	# $query->execute()
+			#     or die "Could not execute query: " . $query->errstr;
 
-            my $data = $query->fetchall_arrayref();
-            foreach my $row (@$data) {
+            # my $data = $query->fetchall_arrayref();
+            # foreach my $row (@$data) {
 
-    			my $diagnosis = new Diagnosis(); # new diagnosis object
+    		# 	my $diagnosis = new Diagnosis(); # new diagnosis object
 
-	    		$sourceuid		= $row->[0];
-		    	$datestamp		= $row->[1];
-			    $description	= $row->[2];
-                $code           = $row->[3];
-                $stage 			= $row->[4];
-                $stagecriteria 	= $row->[5];
-				$patientSer 	= $row->[6];
+	    	# 	$sourceuid		= $row->[0];
+		    # 	$datestamp		= $row->[1];
+			#     $description	= $row->[2];
+            #     $code           = $row->[3];
+            #     $stage 			= $row->[4];
+            #     $stagecriteria 	= $row->[5];
+			# 	$patientSer 	= $row->[6];
 
-	    		# set diagnostic information
-		    	$diagnosis->setDiagnosisSourceUID($sourceuid);
-			    $diagnosis->setDiagnosisDateStamp($datestamp);
-    			$diagnosis->setDiagnosisDescription($description);
-	    		$diagnosis->setDiagnosisPatientSer($patientSer);
-                $diagnosis->setDiagnosisCode($code);
-                $diagnosis->setDiagnosisStage($stage);
-                $diagnosis->setDiagnosisStageCriteria($stagecriteria);
-                $diagnosis->setDiagnosisSourceDatabaseSer($sourceDBSer);
+	    	# 	# set diagnostic information
+		    # 	$diagnosis->setDiagnosisSourceUID($sourceuid);
+			#     $diagnosis->setDiagnosisDateStamp($datestamp);
+    		# 	$diagnosis->setDiagnosisDescription($description);
+	    	# 	$diagnosis->setDiagnosisPatientSer($patientSer);
+            #     $diagnosis->setDiagnosisCode($code);
+            #     $diagnosis->setDiagnosisStage($stage);
+            #     $diagnosis->setDiagnosisStageCriteria($stagecriteria);
+            #     $diagnosis->setDiagnosisSourceDatabaseSer($sourceDBSer);
 
-	    		push(@diagnosisList, $diagnosis);
-		    }
+	    	# 	push(@diagnosisList, $diagnosis);
+		    # }
 
             $sourceDatabase->disconnect();
         }

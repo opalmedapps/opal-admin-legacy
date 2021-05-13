@@ -436,183 +436,183 @@ sub getTestResultsFromSourceDB
 
         if ($sourceDatabase) {
 
-			my $expressionHash = {};
-			my $expressionDict = {};
-			foreach my $TestResult (@testResultList) {
-				my $testResultSourceDBSer 	= $TestResult->getTestResultControlSourceDatabaseSer();
-				my @expressions         = $TestResult->getTestResultControlExpressions();
+			# my $expressionHash = {};
+			# my $expressionDict = {};
+			# foreach my $TestResult (@testResultList) {
+			# 	my $testResultSourceDBSer 	= $TestResult->getTestResultControlSourceDatabaseSer();
+			# 	my @expressions         = $TestResult->getTestResultControlExpressions();
 
-				if ($sourceDBSer eq $testResultSourceDBSer) {
-					if (!exists $expressionHash{$sourceDBSer}) {
-						$expressionHash{$sourceDBSer} = {}; # initialize key value
-					}
+			# 	if ($sourceDBSer eq $testResultSourceDBSer) {
+			# 		if (!exists $expressionHash{$sourceDBSer}) {
+			# 			$expressionHash{$sourceDBSer} = {}; # initialize key value
+			# 		}
 
-					foreach my $Expression (@expressions) {
+			# 		foreach my $Expression (@expressions) {
 
-						my $expressionSer = $Expression->{_ser};
-						my $expressionName = $Expression->{_name};
-						my $expressionLastPublished = $Expression->{_lastpublished};
+			# 			my $expressionSer = $Expression->{_ser};
+			# 			my $expressionName = $Expression->{_name};
+			# 			my $expressionLastPublished = $Expression->{_lastpublished};
 
-						# append expression (surrounded by single quotes) to string
-						if (exists $expressionHash{$sourceDBSer}{$expressionLastPublished}) {
-							$expressionHash{$sourceDBSer}{$expressionLastPublished} .= ",'$expressionName'";
-						} else {
-							# start a new string
-							$expressionHash{$sourceDBSer}{$expressionLastPublished} = "'$expressionName'";
-						}
+			# 			# append expression (surrounded by single quotes) to string
+			# 			if (exists $expressionHash{$sourceDBSer}{$expressionLastPublished}) {
+			# 				$expressionHash{$sourceDBSer}{$expressionLastPublished} .= ",'$expressionName'";
+			# 			} else {
+			# 				# start a new string
+			# 				$expressionHash{$sourceDBSer}{$expressionLastPublished} = "'$expressionName'";
+			# 			}
 
-						$expressionDict{$expressionName} = $expressionSer;
+			# 			$expressionDict{$expressionName} = $expressionSer;
 
-					}
-				}
-			}
+			# 		}
+			# 	}
+			# }
 
-			my $patientInfo_sql = "
-				use VARIAN;
+			# my $patientInfo_sql = "
+			# 	use VARIAN;
 
-                IF OBJECT_ID('tempdb.dbo.#tempTR', 'U') IS NOT NULL
-                	DROP TABLE #tempTR;
+            #     IF OBJECT_ID('tempdb.dbo.#tempTR', 'U') IS NOT NULL
+            #     	DROP TABLE #tempTR;
 
-				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
-					DROP TABLE #tempPatient;
+			# 	IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
+			# 		DROP TABLE #tempPatient;
 
-				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
-			";
-			$patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
-			$patientInfo_sql .= ")
-			Select c.* into #tempTR
-			from PatientInfo c;
-			Create Index temporaryindexTR1 on #tempTR (ID);
-			Create Index temporaryindexTR2 on #tempTR (PatientSerNum);
+			# 	WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
+			# ";
+			# $patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
+			# $patientInfo_sql .= ")
+			# Select c.* into #tempTR
+			# from PatientInfo c;
+			# Create Index temporaryindexTR1 on #tempTR (ID);
+			# Create Index temporaryindexTR2 on #tempTR (PatientSerNum);
 
-			Select p.PatientSer, p.PatientId into #tempPatient
-			from VARIAN.dbo.Patient p;
-			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
-			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
-			";
+			# Select p.PatientSer, p.PatientId into #tempPatient
+			# from VARIAN.dbo.Patient p;
+			# Create Index temporaryindexPatient1 on #tempPatient (PatientId);
+			# Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
+			# ";
 
-			my $trInfo_sql = $patientInfo_sql . "
-				SELECT DISTINCT
-					tr.pt_id,
-					tr.pt_visit_id,
-					tr.test_id,
-					tr.test_result_group_id,
-					tr.test_result_id,
-					RTRIM(tr.abnormal_flag_cd),
-					RTRIM(tr.comp_name),
-					RTRIM(tr.fac_comp_name),
-					CONVERT(VARCHAR, tr.date_test_pt_test, 120),
-					tr.max_norm,
-					tr.min_norm,
-					tr.result_appr_ind,
-					case
-						when RTRIM(tr.comp_name) = 'SARS-2 Coronavirus-2019, NAA' then
-							case
-								when LEFT(LTRIM(tr.test_value_string), 11) = 'Non détecté' then 0
-								when LEFT(LTRIM(tr.test_value_string), 11) = 'Non-détecté' then 0
-								when LEFT(LTRIM(tr.test_value_string), 7) = 'Détecté' then 1
-							end
-						else
-							tr.test_value
-					end as test_value,
-					tr.test_value_string,
-					RTRIM(tr.unit_desc),
-					tr.valid_entry_ind,
-					PatientInfo.PatientSerNum
-				FROM
-					VARIAN.dbo.test_result tr with(nolock),
-					VARIAN.dbo.pt pt with(nolock),
-					#tempTR as PatientInfo
-				WHERE
-					tr.pt_id                		= pt.pt_id
-				AND pt.patient_ser          		= (select pt.PatientSer
-					from #tempPatient pt where pt.PatientId = PatientInfo.ID)
-				AND tr.valid_entry_ind 				= 'Y'
-				AND (
-			";
+			# my $trInfo_sql = $patientInfo_sql . "
+			# 	SELECT DISTINCT
+			# 		tr.pt_id,
+			# 		tr.pt_visit_id,
+			# 		tr.test_id,
+			# 		tr.test_result_group_id,
+			# 		tr.test_result_id,
+			# 		RTRIM(tr.abnormal_flag_cd),
+			# 		RTRIM(tr.comp_name),
+			# 		RTRIM(tr.fac_comp_name),
+			# 		CONVERT(VARCHAR, tr.date_test_pt_test, 120),
+			# 		tr.max_norm,
+			# 		tr.min_norm,
+			# 		tr.result_appr_ind,
+			# 		case
+			# 			when RTRIM(tr.comp_name) = 'SARS-2 Coronavirus-2019, NAA' then
+			# 				case
+			# 					when LEFT(LTRIM(tr.test_value_string), 11) = 'Non détecté' then 0
+			# 					when LEFT(LTRIM(tr.test_value_string), 11) = 'Non-détecté' then 0
+			# 					when LEFT(LTRIM(tr.test_value_string), 7) = 'Détecté' then 1
+			# 				end
+			# 			else
+			# 				tr.test_value
+			# 		end as test_value,
+			# 		tr.test_value_string,
+			# 		RTRIM(tr.unit_desc),
+			# 		tr.valid_entry_ind,
+			# 		PatientInfo.PatientSerNum
+			# 	FROM
+			# 		VARIAN.dbo.test_result tr with(nolock),
+			# 		VARIAN.dbo.pt pt with(nolock),
+			# 		#tempTR as PatientInfo
+			# 	WHERE
+			# 		tr.pt_id                		= pt.pt_id
+			# 	AND pt.patient_ser          		= (select pt.PatientSer
+			# 		from #tempPatient pt where pt.PatientId = PatientInfo.ID)
+			# 	AND tr.valid_entry_ind 				= 'Y'
+			# 	AND (
+			# ";
 
-			my $numOfExpressions = keys %{$expressionHash{$sourceDBSer}};
-			my $counter = 0;
-			# loop through each transfer date
-			foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
+			# my $numOfExpressions = keys %{$expressionHash{$sourceDBSer}};
+			# my $counter = 0;
+			# # loop through each transfer date
+			# foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
 
-				# concatenate query
+			# 	# concatenate query
 
-				# 2020-02-05 YM: removed the filter so that we get all of the lab results as per John's request
-				# $trInfo_sql .= "
-				# (tr.comp_name IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
-					# AND tr.trans_log_mtstamp > (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
-				# ";
-				$trInfo_sql .= "
-				( tr.trans_log_mtstamp > (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
-				";
+			# 	# 2020-02-05 YM: removed the filter so that we get all of the lab results as per John's request
+			# 	# $trInfo_sql .= "
+			# 	# (tr.comp_name IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
+			# 		# AND tr.trans_log_mtstamp > (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
+			# 	# ";
+			# 	$trInfo_sql .= "
+			# 	( tr.trans_log_mtstamp > (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
+			# 	";
 
-				$counter++;
-				# concat "UNION" until we've reached the last query
-				if ($counter < $numOfExpressions) {
-					$trInfo_sql .= "OR";
-				}
-				# close bracket at end
-				else {
-					$trInfo_sql .= ")";
-				}
-			}
+			# 	$counter++;
+			# 	# concat "UNION" until we've reached the last query
+			# 	if ($counter < $numOfExpressions) {
+			# 		$trInfo_sql .= "OR";
+			# 	}
+			# 	# close bracket at end
+			# 	else {
+			# 		$trInfo_sql .= ")";
+			# 	}
+			# }
 
-			# print "query: $trInfo_sql\n";
-			# prepare query
+			# # print "query: $trInfo_sql\n";
+			# # prepare query
 
-			my $query = $sourceDatabase->prepare($trInfo_sql)
-				or die "Could not prepare query: " . $sourceDatabase->errstr;
+			# my $query = $sourceDatabase->prepare($trInfo_sql)
+			# 	or die "Could not prepare query: " . $sourceDatabase->errstr;
 
-			# execute query
-			$query->execute()
-				or die "Could not execute query: " . $query->errstr;
+			# # execute query
+			# $query->execute()
+			# 	or die "Could not execute query: " . $query->errstr;
 
-			$data = $query->fetchall_arrayref();
-			foreach my $row (@$data) {
+			# $data = $query->fetchall_arrayref();
+			# foreach my $row (@$data) {
 
-				my $testresult = new TestResult();
+			# 	my $testresult = new TestResult();
 
-				$pt_id              = $row->[0];
-				$visit_id           = $row->[1];
-				$test_id            = $row->[2];
-				$tr_group_id        = $row->[3];
-				$tr_id              = $row->[4];
-				# combine the above id to create a unique id
-				$sourceuid          = $pt_id.$visit_id.$test_id.$tr_group_id.$tr_id;
+			# 	$pt_id              = $row->[0];
+			# 	$visit_id           = $row->[1];
+			# 	$test_id            = $row->[2];
+			# 	$tr_group_id        = $row->[3];
+			# 	$tr_id              = $row->[4];
+			# 	# combine the above id to create a unique id
+			# 	$sourceuid          = $pt_id.$visit_id.$test_id.$tr_group_id.$tr_id;
 
-				$abnormalflag       = $row->[5];
-				$expressionname     = $row->[6];
-				$facname            = $row->[7];
-				$testdate           = $row->[8];
-				$maxnorm            = $row->[9];
-				$minnorm            = $row->[10];
-				$apprvflag          = $row->[11];
-				$testvalue          = $row->[12];
-				$testvaluestring    = $row->[13];
-				$unitdesc           = $row->[14];
-				$validentry         = $row->[15];
-				$patientSer 		= $row->[16];
+			# 	$abnormalflag       = $row->[5];
+			# 	$expressionname     = $row->[6];
+			# 	$facname            = $row->[7];
+			# 	$testdate           = $row->[8];
+			# 	$maxnorm            = $row->[9];
+			# 	$minnorm            = $row->[10];
+			# 	$apprvflag          = $row->[11];
+			# 	$testvalue          = $row->[12];
+			# 	$testvaluestring    = $row->[13];
+			# 	$unitdesc           = $row->[14];
+			# 	$validentry         = $row->[15];
+			# 	$patientSer 		= $row->[16];
 
-				$testresult->setTestResultPatientSer($patientSer);
-				$testresult->setTestResultSourceDatabaseSer($sourceDBSer);
-				$testresult->setTestResultSourceUID($sourceuid);
-				$testresult->setTestResultExpressionSer($expressionDict{$expressionname} // 0);
-				$testresult->setTestResultName($expressionname);
-				$testresult->setTestResultFacName($facname);
-				$testresult->setTestResultAbnormalFlag($abnormalflag);
-				$testresult->setTestResultTestDate($testdate);
-				$testresult->setTestResultMaxNorm($maxnorm);
-				$testresult->setTestResultMinNorm($minnorm);
-				$testresult->setTestResultApprovedFlag($apprvflag);
-				$testresult->setTestResultTestValue($testvalue);
-				$testresult->setTestResultTestValueString($testvaluestring);
-				$testresult->setTestResultUnitDesc($unitdesc);
-				$testresult->setTestResultValidEntry($validentry);
-				$testresult->setTestResultCronLogSer($cronLogSer);
+			# 	$testresult->setTestResultPatientSer($patientSer);
+			# 	$testresult->setTestResultSourceDatabaseSer($sourceDBSer);
+			# 	$testresult->setTestResultSourceUID($sourceuid);
+			# 	$testresult->setTestResultExpressionSer($expressionDict{$expressionname} // 0);
+			# 	$testresult->setTestResultName($expressionname);
+			# 	$testresult->setTestResultFacName($facname);
+			# 	$testresult->setTestResultAbnormalFlag($abnormalflag);
+			# 	$testresult->setTestResultTestDate($testdate);
+			# 	$testresult->setTestResultMaxNorm($maxnorm);
+			# 	$testresult->setTestResultMinNorm($minnorm);
+			# 	$testresult->setTestResultApprovedFlag($apprvflag);
+			# 	$testresult->setTestResultTestValue($testvalue);
+			# 	$testresult->setTestResultTestValueString($testvaluestring);
+			# 	$testresult->setTestResultUnitDesc($unitdesc);
+			# 	$testresult->setTestResultValidEntry($validentry);
+			# 	$testresult->setTestResultCronLogSer($cronLogSer);
 
-				push(@TRList, $testresult);
-			}
+			# 	push(@TRList, $testresult);
+			# }
 
 			$sourceDatabase->disconnect();
 		}
