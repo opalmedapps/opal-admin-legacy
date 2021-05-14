@@ -43,14 +43,14 @@ class Diagnosis extends Module {
         $ad = $this->opalDB->getAssignedDiagnoses();
         $assignedDiagnoses = array();
         foreach($ad as $item) {
-            $assignedDiagnoses[$item["code"]["description"]] = $item;
+            $assignedDiagnoses[$item["SourceUID"]] = $item;
         }
         $results = $this->opalDB->getDiagnoses($assignedDB);
 
         foreach ($results as &$item) {
             $item["added"] = 0;
-            if ($assignedDiagnoses[$item["code"]["description"]])
-                $item['assigned'] = $assignedDiagnoses[$item["code"]["description"]];
+            if ($assignedDiagnoses[$item["ID"]])
+                $item['assigned'] = $assignedDiagnoses[$item["ID"]];
         }
 
         return $results;
@@ -65,6 +65,7 @@ class Diagnosis extends Module {
      * */
     protected function _validateAndSanitizeDiagnosis($post) {
         $post = HelpSetup::arraySanitization($post);
+        $listDiagnosisCodes = array();
         $validatedDiagnosis = array();
         if(!$post["name_EN"] || !$post["name_FR"] || !$post["description_EN"] || !$post["description_FR"])
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing informations.");
@@ -91,7 +92,7 @@ class Diagnosis extends Module {
 
         foreach ($post["diagnoses"] as $item) {
             array_push($validatedDiagnosis["diagnoses"], array(
-                "sourceuid"=>intval($item['sourceuid']),
+                "ID"=>intval($item['sourceuid']),
                 "code"=>$item['code'],
                 "description"=>$item['description'],
             ));
@@ -119,16 +120,6 @@ class Diagnosis extends Module {
         );
 
         $diagnosisId = $this->opalDB->insertDiagnosisTranslation($toInsert);
-        $toInsert = array();
-
-        foreach($validatedPost["diagnoses"] as $item) {
-            array_push($toInsert, array(
-                "DiagnosisTranslationSerNum"=>$diagnosisId,
-                "SourceUID"=>$item['sourceuid'],
-                "DiagnosisCode"=>$item['code'],
-                "Description"=>$item['description'],
-            ));
-        }
 
         return $this->_insertDiagnosisCodes($validatedPost["diagnoses"], $diagnosisId);
     }
