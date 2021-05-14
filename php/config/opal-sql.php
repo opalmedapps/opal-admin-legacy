@@ -891,12 +891,12 @@ define("OPAL_GET_ACTIVATE_SOURCE_DB","
 ");
 
 define("OPAL_GET_ASSIGNED_DIAGNOSES","
-    SELECT dxc.DiagnosisCode AS code, dxc.Description AS description, Source AS source, dxt.Name_EN AS name_EN, dxt.Name_FR AS name_FR FROM ".OPAL_DIAGNOSIS_CODE_TABLE." dxc
+    SELECT SourceUID, dxc.DiagnosisCode AS code, dxc.Description AS description, Source AS source, dxt.Name_EN AS name_EN, dxt.Name_FR AS name_FR FROM ".OPAL_DIAGNOSIS_CODE_TABLE." dxc
     LEFT JOIN ".OPAL_DIAGNOSIS_TRANSLATION_TABLE." dxt ON dxt.DiagnosisTranslationSerNum = dxc.DiagnosisTranslationSerNum;
 ");
 
 define("OPAL_GET_DIAGNOSES","
-    SELECT externalId AS sourceuid, code, description, CONCAT(code, ' (', description, ')') AS name
+    SELECT ID, code, description, CONCAT(code, ' (', description, ')') AS name
     FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE deleted = ".NON_DELETED_RECORD." AND source IN(%%SOURCE_DB_IDS%%) ORDER BY code
 ");
 
