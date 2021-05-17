@@ -920,8 +920,9 @@ define("OPAL_UPDATE_DIAGNOSIS_TRANSLATION","
 ");
 
 define("OPAL_DELETE_DIAGNOSIS_CODES","
-    DELETE FROM ".OPAL_DIAGNOSIS_CODE_TABLE." WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum AND
-    SourceUID NOT IN (%%LIST_SOURCES_UIDS%%);
+    DELETE dc FROM ".OPAL_DIAGNOSIS_CODE_TABLE." dc LEFT JOIN ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." msd ON msd.ID = dc.SourceUID
+    WHERE dc.DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum AND msd.deleted = ".NON_DELETED_RECORD." AND
+    dc.SourceUID NOT IN (%%LIST_SOURCES_UIDS%%);
 ");
 
 define("OPAL_DELETE_ALL_DIAGNOSIS_CODES","
