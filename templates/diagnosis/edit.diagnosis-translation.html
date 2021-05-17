@@ -15,15 +15,14 @@
 </div>
 <div class="modal-body">
     <uib-accordion close-others="false">
-        <!-- SECTION: Diagnosis names -->
-        <div uib-accordion-group is-open="diagnosisSection.open">
+        <!-- SECTION: Deactivated diagnosis codes -->
+        <div uib-accordion-group is-open="deactivatedCodeSection.open" ng-if="diagnosisTranslation.deactivated.length > 0">
             <uib-accordion-heading>
                 <div>
-                    <strong>{{'DIAGNOSIS.EDIT.DIAGNOSES'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnosisSection.open, 'glyphicon-chevron-right': !diagnosisSection.open}"></i>
+                    <strong>{{'DIAGNOSIS.EDIT.DEACTIVATED_DIAGNOSES'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': deactivatedCodeSection.open, 'glyphicon-chevron-right': !deactivatedCodeSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="alert alert-danger" role="alert">
-                <strong>{{'DIAGNOSIS.EDIT.DEACTIVATED_DIAGNOSES'|translate}}</strong><br>
                 <p>
                 <ul class="list-items">
                     <li ng-repeat="deactivatedDiagnosis in diagnosisTranslation.deactivated">
@@ -32,6 +31,14 @@
                 </ul>
                 </p>
             </div>
+        </div>
+        <!-- SECTION: Diagnosis names -->
+        <div uib-accordion-group is-open="diagnosisSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'DIAGNOSIS.EDIT.DIAGNOSES'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnosisSection.open, 'glyphicon-chevron-right': !diagnosisSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
                 <strong>{{'DIAGNOSIS.EDIT.CURRENT_DIAGNOSES'|translate}}</strong><br>
                 <p>
@@ -69,7 +76,6 @@
                 </ul>
             </div>
         </div>
-
         <!-- SECTION: Titles -->
         <div uib-accordion-group is-open="titleSection.open">
             <uib-accordion-heading>

@@ -80,11 +80,12 @@ class Diagnosis extends Module {
         if($post["serial"] && $post["serial"] != "")
             $validatedDiagnosis["serial"] = intval($post["serial"]);
 
-        if($post['eduMat'] && isset($post["eduMat"]["serial"])) {
-            $tempEdu = $this->opalDB->validateEduMaterialId($post["eduMat"]["serial"]);
+        if($post['eduMat'] && isset($post["eduMat"])) {
+            $post["eduMat"] = intval($post["eduMat"]);
+            $tempEdu = $this->opalDB->validateEduMaterialId($post["eduMat"]);
             if($tempEdu["total"] != "1")
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid educational material.");
-            $validatedDiagnosis["eduMat"] = $post["eduMat"]["serial"];
+            $validatedDiagnosis["eduMat"] = $post["eduMat"];
         }
 
         if(!$post["diagnoses"] || !is_array($post["diagnoses"]) || count($post["diagnoses"]) <= 0)
@@ -182,9 +183,8 @@ class Diagnosis extends Module {
         $this->opalDB->updateDiagnosisTranslation($toUpdate);
 
         $existingSourceUIDs = array();
-        foreach ($validatedPost["diagnoses"] as $diagnosis) {
-            array_push($existingSourceUIDs, $diagnosis["sourceuid"]);
-        }
+        foreach ($validatedPost["diagnoses"] as $diagnosis)
+            array_push($existingSourceUIDs, $diagnosis["ID"]);
 
         $this->opalDB->deleteDiagnosisCodes($validatedPost["serial"], $existingSourceUIDs);
         return $this->_insertDiagnosisCodes($validatedPost["diagnoses"], $validatedPost["serial"]);
