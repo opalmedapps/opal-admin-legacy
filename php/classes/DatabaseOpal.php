@@ -2798,4 +2798,8 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisTransId,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    function getListDiagnosisCodes($listIds) {
+        return $this->_fetchAll(str_replace("%%LISTIDS%%", implode(", ", $listIds), OPAL_GET_LIST_DIAGNOSIS_CODES), array());
+    }
 }
