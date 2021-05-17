@@ -19,10 +19,11 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
 
         var checkboxCellTemplate;
         if($scope.writeAccess)
-            checkboxCellTemplate = '<div style="text-align: center; cursor: pointer;" ' +
+            checkboxCellTemplate = '<div ng-if= "row.entity.apptype != \'UNDEFINED\'" style="text-align: center; cursor: pointer;" ' +
                 'ng-click="grid.appScope.checkSmsUpdate(row.entity)" class="ui-grid-cell-contents">' +
                 '<input style="margin: 4px;" type="checkbox" ng-checked="grid.appScope.updateVal(row.entity.state)" ' +
-                'ng-model="row.entity.state"></div>';
+                'ng-model="row.entity.state"></div>' +
+                '<div ng-if= "!(row.entity.apptype != \'UNDEFINED\')" style="text-align: center;" class="ui-grid-cell-contents">Disabled</div>';
         else
             checkboxCellTemplate = '<div style="text-align: center;" class="ui-grid-cell-contents"><i ng-class="row.entity.state == 1 ? \'Active\' : \'Disabled\'" class="fa"></i></div>';
 
