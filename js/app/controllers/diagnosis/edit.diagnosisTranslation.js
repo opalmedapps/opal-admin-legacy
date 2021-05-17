@@ -278,11 +278,12 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 			// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
 
 			var toSubmit = {
+				serial: $scope.currentDiagnosisTranslation.serial,
 				description_EN: $scope.diagnosisTranslation.description_EN.replace(/\u200B/g,''),
 				description_FR: $scope.diagnosisTranslation.description_FR.replace(/\u200B/g,''),
 				name_EN: $scope.diagnosisTranslation.name_EN,
 				name_FR: $scope.diagnosisTranslation.name_FR,
-				eduMat: $scope.diagnosisTranslation.eduMat.serial,
+				eduMat: ($scope.diagnosisTranslation.eduMat != null ? $scope.diagnosisTranslation.eduMat.serial : null),
 				diagnoses: []
 			};
 
