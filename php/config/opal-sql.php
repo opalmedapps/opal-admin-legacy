@@ -1365,3 +1365,7 @@ define("OPAL_GET_DEACTIVATED_DIAGNOSIS_CODES","
     LEFT JOIN ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." m ON m.code = d.DiagnosisCode AND m.description = d.Description
     WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum AND m.deleted = ".DELETED_RECORD.";
 ");
+
+define("OPAL_GET_LIST_DIAGNOSIS_CODES","
+    SELECT ID, code, description, source FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE ID IN (%%LISTIDS%%) AND deleted = ".NON_DELETED_RECORD.";
+");
