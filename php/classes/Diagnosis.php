@@ -65,7 +65,7 @@ class Diagnosis extends Module {
      * */
     protected function _validateAndSanitizeDiagnosis($post) {
         $post = HelpSetup::arraySanitization($post);
-        $listDiagnosisCodes = array();
+        $listDiagnoses = array();
         $validatedDiagnosis = array();
         if(!$post["name_EN"] || !$post["name_FR"] || !$post["description_EN"] || !$post["description_FR"])
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing informations.");
@@ -90,13 +90,14 @@ class Diagnosis extends Module {
         if(!$post["diagnoses"] || !is_array($post["diagnoses"]) || count($post["diagnoses"]) <= 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Diagnosis codes are missing.");
 
-        foreach ($post["diagnoses"] as $item) {
-            array_push($validatedDiagnosis["diagnoses"], array(
-                "ID"=>intval($item['sourceuid']),
-                "code"=>$item['code'],
-                "description"=>$item['description'],
-            ));
-        }
+        foreach ($post["diagnoses"] as $item)
+            array_push($listDiagnoses, intval($item));
+
+        $diagCode = $this->opalDB->getListDiagnosisCodes($listDiagnoses);
+        if(count($diagCode) != count($post["diagnoses"]))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid diagnosis codes list.");
+
+        $validatedDiagnosis["diagnoses"] = $diagCode;
 
         return $validatedDiagnosis;
     }
@@ -135,9 +136,10 @@ class Diagnosis extends Module {
         foreach($codes as $item) {
             array_push($toInsert, array(
                 "DiagnosisTranslationSerNum"=>$diagnosisId,
-                "SourceUID"=>$item['sourceuid'],
+                "SourceUID"=>$item['ID'],
                 "DiagnosisCode"=>$item['code'],
                 "Description"=>$item['description'],
+                "Source"=>$item['source'],
             ));
         }
 
