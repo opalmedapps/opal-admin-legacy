@@ -234,7 +234,7 @@ use Patient;
 use Task;
 use Appointment;
 use ResourceAppointment;
-use Document;
+#use Document;
 use Alias;
 use Doctor;
 use Diagnosis;
@@ -243,15 +243,15 @@ use TestResult;
 use TestResultControl;
 use Cron;
 use PostControl;
-use Announcement;
-use TxTeamMessage;
-use PatientsForPatients; # custom PatientsForPatients.pm
+#use Announcement;
+#use TxTeamMessage;
+#use PatientsForPatients; # custom PatientsForPatients.pm
 use EducationalMaterialControl;
 use EducationalMaterial;
 use Priority;
 use PatientLocation;
-use Questionnaire;
-use LegacyQuestionnaire;
+#use Questionnaire;
+#use LegacyQuestionnaire;
 
 # Get the current time (for last-updates/logs)
 my $start_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
@@ -680,17 +680,17 @@ print "Finished patient location MH list\n" if $verbose;
 # Data Retrieval DOCUMENTS - get list of patients with documents updated since last update
 #
 ##########################################################################################
-print "\n--- Start getDocsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@DocList = Document::getDocsFromSourceDB($cronLogSer, \@patientList, $global_patientInfo_sql);
-print "--- End getDocsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Got document list\n" if $verbose;
+# print "\n--- Start getDocsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# @DocList = Document::getDocsFromSourceDB($cronLogSer, \@patientList, $global_patientInfo_sql);
+# print "--- End getDocsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Got document list\n" if $verbose;
 
-# Transfer and log patient documents
-print "\n--- Start transferPatientDocuments: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-Document::transferPatientDocuments(@DocList);
-print "--- End transferPatientDocuments: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# # Transfer and log patient documents
+# print "\n--- Start transferPatientDocuments: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# Document::transferPatientDocuments(@DocList);
+# print "--- End transferPatientDocuments: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 
-print "Finished document list\n" if $verbose;
+# print "Finished document list\n" if $verbose;
 
 ##########################################################################################
 #
@@ -740,40 +740,40 @@ print "Finished test result list\n" if $verbose;
 # Publishing ANNOUNCEMENTS
 #
 ##########################################################################################
-print "\n--- Start publishAnnouncements: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-Announcement::publishAnnouncements($cronLogSer, @patientList);
-print "--- End publishAnnouncements: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished announcements\n" if $verbose;
+# print "\n--- Start publishAnnouncements: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# Announcement::publishAnnouncements($cronLogSer, @patientList);
+# print "--- End publishAnnouncements: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Finished announcements\n" if $verbose;
 
 ##########################################################################################
 #
 # Publishing TREATMENT TEAM MESSAGES
 #
 ##########################################################################################
-print "\n--- Start publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-TxTeamMessage::publishTxTeamMessages($cronLogSer, @patientList);
-print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished treatment team messages\n" if $verbose;
+# print "\n--- Start publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# TxTeamMessage::publishTxTeamMessages($cronLogSer, @patientList);
+# print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Finished treatment team messages\n" if $verbose;
 
 ##########################################################################################
 #
 # Publishing PATIENTS FOR PATIENTS
 #
 ##########################################################################################
-print "\n--- Start publishPatientsForPatients: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-PatientsForPatients::publishPatientsForPatients($cronLogSer, @patientList);
-print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished patients for patients\n";
+# print "\n--- Start publishPatientsForPatients: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# PatientsForPatients::publishPatientsForPatients($cronLogSer, @patientList);
+# print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Finished patients for patients\n";
 
 ##########################################################################################
 #
 # Publishing EDUCATIONAL MATERIALS
 #
 ##########################################################################################
-print "\n--- Start publishEducationalMaterials: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-EducationalMaterial::publishEducationalMaterials($cronLogSer, @patientList);
-print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished Educational materials\n" if $verbose;
+# print "\n--- Start publishEducationalMaterials: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# EducationalMaterial::publishEducationalMaterials($cronLogSer, @patientList);
+# print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Finished Educational materials\n" if $verbose;
 
 ##########################################################################################
 #
@@ -789,10 +789,10 @@ print "Finished Educational materials\n" if $verbose;
 # Publishing LEGACY QUESTIONNAIRES
 #
 ##########################################################################################
-print "\n--- Start publishLegacyQuestionnaires: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-LegacyQuestionnaire::publishLegacyQuestionnaires($cronLogSer, @patientList);
-print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished Legacy Questionnaires\n" if $verbose;
+# print "\n--- Start publishLegacyQuestionnaires: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# LegacyQuestionnaire::publishLegacyQuestionnaires($cronLogSer, @patientList);
+# print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Finished Legacy Questionnaires\n" if $verbose;
 
 # Once everything is complete, we update the "last transferred" field for all controls
 # Patient control
