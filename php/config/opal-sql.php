@@ -1316,8 +1316,9 @@ define("OPAL_GET_ALIASES","
 ");
 
 define("OPAL_GET_ALIASES_EXPRESSION","
-    SELECT ExpressionName AS id, Description AS description, 1 AS added FROM ".OPAL_ALIAS_EXPRESSION_TABLE."
-    WHERE AliasSerNum = :AliasSerNum;
+    SELECT a.ExpressionName AS id, a.Description AS description, 1 AS added FROM ".OPAL_ALIAS_EXPRESSION_TABLE." a
+    LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m ON m.code = a.ExpressionName AND m.description = a.Description
+    WHERE AliasSerNum = :AliasSerNum AND m.deleted = ".NON_DELETED_RECORD.";
 ");
 
 define("OPAL_GET_ALIAS_DETAILS","
@@ -1369,4 +1370,10 @@ define("OPAL_GET_DEACTIVATED_DIAGNOSIS_CODES","
 
 define("OPAL_GET_LIST_DIAGNOSIS_CODES","
     SELECT ID, code, description, source FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE ID IN (%%LISTIDS%%) AND deleted = ".NON_DELETED_RECORD.";
+");
+
+define("OPAL_GET_DEACTIVATED_ALIASES_EXPRESSION","
+    SELECT a.ExpressionName AS id, a.Description AS description FROM ".OPAL_ALIAS_EXPRESSION_TABLE." a
+    LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m ON m.code = a.ExpressionName AND m.description = a.Description
+    WHERE AliasSerNum = :AliasSerNum AND m.deleted = ".DELETED_RECORD.";
 ");

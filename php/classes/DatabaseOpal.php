@@ -2793,13 +2793,34 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /**
+     * Get the list of deactivated diagnoses codes for a specific diagnosis
+     * @param $diagnosisTransId
+     * @return array
+     */
     function getdeactivatedDiagnosesCodes($diagnosisTransId) {
         return $this->_fetchAll(OPAL_GET_DEACTIVATED_DIAGNOSIS_CODES, array(
             array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisTransId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
+    /**
+     * get the list of all non deleted diagnosis codes ID
+     * @param $listIds
+     * @return array
+     */
     function getListDiagnosisCodes($listIds) {
         return $this->_fetchAll(str_replace("%%LISTIDS%%", implode(", ", $listIds), OPAL_GET_LIST_DIAGNOSIS_CODES), array());
+    }
+
+    /**
+     * Get the list of deactivated alias expressions of a specific alias
+     * @param $aliasId
+     * @return array
+     */
+    function getDeactivatedAliasExpressions($aliasId) {
+        return $this->_fetchAll(OPAL_GET_DEACTIVATED_ALIASES_EXPRESSION, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
+        ));
     }
 }
