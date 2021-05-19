@@ -234,7 +234,7 @@ use Patient;
 use Task;
 use Appointment;
 use ResourceAppointment;
-#use Document;
+use Document;
 use Alias;
 use Doctor;
 use Diagnosis;
@@ -243,15 +243,15 @@ use TestResult;
 use TestResultControl;
 use Cron;
 use PostControl;
-#use Announcement;
-#use TxTeamMessage;
-#use PatientsForPatients; # custom PatientsForPatients.pm
+use Announcement;
+use TxTeamMessage;
+use PatientsForPatients; # custom PatientsForPatients.pm
 use EducationalMaterialControl;
 use EducationalMaterial;
 use Priority;
 use PatientLocation;
-#use Questionnaire;
-#use LegacyQuestionnaire;
+use Questionnaire;
+use LegacyQuestionnaire;
 
 # Get the current time (for last-updates/logs)
 my $start_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
