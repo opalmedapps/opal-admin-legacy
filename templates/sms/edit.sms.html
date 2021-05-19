@@ -2,14 +2,14 @@
     <div class="col-xs-12 col-md-6">
         <h2 class="modal-title">
             <span class="glyphicon glyphicon-pencil"></span>
-            Edit Appointment
+            {{'SMS.EDIT.TITLE'|translate}}
         </h2>
-        <p class="text-info">You are now editing an appointment, click "Save" button to Save the changes</p>
+        <p class="text-info">{{'SMS.EDIT.INFO_MESSAGE'|translate}}</p>
     </div>
     <div class="modal-buttons col-xs-12 col-md-6">
         <form method="post" ng-submit="updateAppointment()">
-            <input ng-if="!locked" class="btn btn-primary submit" ng-class="{'disabled': (!changesDetected)}" type="submit" value="Save">
-            <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+            <input ng-if="!locked" class="btn btn-primary submit" ng-class="{'disabled': (!changesDetected)}" type="submit" value="{{'SMS.EDIT.SAVE'|translate}}">
+            <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'SMS.EDIT.CANCEL'|translate}}">
         </form>
     </div>
 </div>
@@ -19,18 +19,18 @@
         <div uib-accordion-group is-open="infoSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>Appointment information</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': infoSection.open, 'glyphicon-chevron-right': !infoSection.open}"></i>
+                    <strong>{{'SMS.EDIT.APPOINTMENT_INFORMATION'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': infoSection.open, 'glyphicon-chevron-right': !infoSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="row">
                 <div class="col-xs-12">
-                    <label><strong>Resource Name</strong></label> : {{currentAppointment.resname}}
+                    <label><strong>{{'SMS.EDIT.RESOURCE_NAME'|translate}}</strong></label> : {{currentAppointment.resname}}
                 </div>
                 <div class="col-xs-12">
-                    <label><strong>Appointment Code</strong></label> : {{currentAppointment.appcode}}
+                    <label><strong>{{'SMS.EDIT.APPOINTMENT_CODE'|translate}}</strong></label> : {{currentAppointment.appcode}}
                 </div>
                 <div class="col-xs-12">
-                    <label><strong>Speciality</strong></label> : {{currentAppointment.spec}}
+                    <label><strong>{{'SMS.EDIT.SPECIALITY'|translate}}</strong></label> : {{'SMS.EDIT.'+currentAppointment.spec|translate}}
                 </div>
             </div>
         </div>
@@ -38,24 +38,24 @@
         <div uib-accordion-group is-open="typeSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>Type</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': typeSection.open, 'glyphicon-chevron-right': !typeSection.open}"></i>
+                    <strong>{{'SMS.EDIT.TYPE'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': typeSection.open, 'glyphicon-chevron-right': !typeSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
-                <strong>Current Type</strong><br>
+                <strong>{{'SMS.EDIT.CURRENT_TYPE'|translate}}</strong><br>
                 <p>
-                    <li>{{currentAppointment.apptype}}</li>
+                    <li>{{'SMS.EDIT.'+currentAppointment.apptype|translate}}</li>
                 </p>
             </div>
             <div>
                 <div class="input-group">
                     <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                    <input class="form-control" maxlength="100" type="text" ng-model="typeSearchField" placeholder="Search" />
+                    <input class="form-control" maxlength="100" type="text" ng-model="typeSearchField" placeholder="{{'SMS.EDIT.SEARCH'|translate}}" />
                 </div>
                 <ul class="list-items">
                     <li ng-repeat="type in TypeList | filter: typeSearchField">
                         <label>
-                            <input type="radio" ng-model="type.selected" ng-click="updateType(type)"> {{type.type}}
+                            <input type="radio" ng-model="type.selected" ng-click="updateType(type)"> {{'SMS.EDIT.'+type.type|translate}}
                         </label>
                     </li>
                 </ul>
