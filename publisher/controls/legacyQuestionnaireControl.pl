@@ -49,10 +49,10 @@ sub writeToLogFile
 
 # Get the current time (for last-updates/logs)
 my $start_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
-print "--- Start --- ", $start_datetime, "\n";
+print "--- Start legacyQuestionnaireControl --- ", $start_datetime, "\n";
 
 # Log that the script is initialized in the cronlog
-my $cronLogSer = Cron::setCronLog("Started", $start_datetime);
+my $cronLogSer = Cron::setCronLog("Started legacyQuestionnaireControl", $start_datetime);
 
 
 #=========================================================================================
@@ -134,11 +134,11 @@ EducationalMaterialControl::setEduMatControlLastPublishedIntoOurDB($start_dateti
 
 
 # Log that the script is finished in the cronlog
-Cron::setCronLog("Completed", $current_datetime);
+Cron::setCronLog("Completed legacyQuestionnaireControl", $current_datetime);
 print "--- Completed ---- ", $current_datetime, "\n\n";
 
-print "Start Time: -->> $start_datetime\n";
-print "End Time: -->> $current_datetime\n";
+print "Start Time [legacyQuestionnaireControl]: -->> $start_datetime\n";
+print "End Time [legacyQuestionnaireControl]: -->> $current_datetime\n";
 
 # success restart flag and counter for next run
 $json_log->{'start'} = 0;

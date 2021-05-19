@@ -47,10 +47,10 @@ sub writeToLogFile
 
 # Get the current time (for last-updates/logs)
 my $start_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
-print "--- Start --- ", $start_datetime, "\n";
+print "--- Start txTeamMessagesControl --- ", $start_datetime, "\n";
 
 # Log that the script is initialized in the cronlog
-my $cronLogSer = Cron::setCronLog("Started", $start_datetime);
+my $cronLogSer = Cron::setCronLog("Started txTeamMessagesControl", $start_datetime);
 
 #=========================================================================================
 # Retrieve all patients that are marked for update
@@ -131,11 +131,11 @@ EducationalMaterialControl::setEduMatControlLastPublishedIntoOurDB($start_dateti
 
 
 # Log that the script is finished in the cronlog
-Cron::setCronLog("Completed", $current_datetime);
+Cron::setCronLog("Completed txTeamMessagesControl", $current_datetime);
 print "--- Completed ---- ", $current_datetime, "\n\n";
 
-print "Start Time: -->> $start_datetime\n";
-print "End Time: -->> $current_datetime\n";
+print "Start Time [txTeamMessagesControl]: -->> $start_datetime\n";
+print "End Time [txTeamMessagesControl]: -->> $current_datetime\n";
 
 # success restart flag and counter for next run
 $json_log->{'start'} = 0;
