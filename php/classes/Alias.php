@@ -11,135 +11,49 @@ class Alias extends Module {
     }
 
     /**
-     *
-     * Gets a list of expressions from a source database
-     *
-     * @param int $sourceDBSer : the serial number of the source database
-     * @param string $expressionType : the type of expressions to look out for
-     * @return array $expressionList : the list of existing expressions
+     * Get the list of alias expressions ans mark those already assigned.
+     * @param $sourceDatabaseId int - Source database ID or sernum
+     * @param $aliasType string - type of alias (Task, Appointment or Document)
+     * @return array - list of results
      */
-    public function getExpressions ($sourceDBSer, $expressionType) {
-        $this->checkReadAccess(array($sourceDBSer, $expressionType));
+    public function getExpressions ($sourceDatabaseId, $aliasType) {
+        $this->checkReadAccess(array($sourceDatabaseId, $aliasType));
+
+
         $results = array();
+        $assignedExpressions = array();
 
-        $assignedExpressions = $this->opalDB->getAliasExpressions($sourceDBSer);
+        $aa = $this->opalDB->getAliasExpressions($sourceDatabaseId);
 
-        if ($expressionType == "Task")
+        if ($aliasType == "Task")
             $type = 1;
-        else if ($expressionType == "Appointment")
+        else if ($aliasType == "Appointment")
             $type = 2;
-        else
+        else if ($aliasType == "Document")
             $type = 3;
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, "Wrong alias type.");
 
-        $data = $this->opalDB->getSourceAliasesByTypeAndSource($type, $sourceDBSer);
+        $results = $this->opalDB->getSourceAliasesByTypeAndSource($type, $sourceDatabaseId);
 
-
-        if($sourceDBSer == ARIA_SOURCE_DB) {
-
-        } else {
-
-        }
-
-//        $databaseObj = new Database();
-
-        try {
-
-            // get already assigned expressions from our database
-            $assignedExpressions = $this->getAssignedExpressions($sourceDBSer, $expressionType);
-
-            if ($expressionType == "Task")
-                $type = 1;
-            else if ($expressionType == "Appointment")
-                $type = 2;
-            else
-                $type = 3;
-
-//            if ($sourceDBSer != ARIA_SOURCE_DB && $sourceDBSer != ORMS_SOURCE_DB && $sourceDBSer != MOSAIQ_SOURCE_DB && $sourceDBSer != LOCAL_SOURCE_DB)
-//                $sourceDBSer = ARIA_SOURCE_DB;
-
-            if($sourceDBSer == ARIA_SOURCE_DB)
-                $sql = "SELECT description AS name, code AS id, description FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." WHERE type = " . $type . " AND source = " . $sourceDBSer . " AND deleted = 0 ORDER BY code";
-            else
-                $sql = "SELECT CONCAT(code, ' (', description, ')') AS name, code AS id, description FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." WHERE type = " . $type . " AND source = " . $sourceDBSer . " AND deleted = 0 ORDER BY code";
-
-            $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD);
-            $host_db_link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-            $results = $query->fetchAll(PDO::FETCH_ASSOC);
-
-            if($sourceDBSer == ARIA_SOURCE_DB)
-                foreach ($results as &$item) {
-                    $assignedExpression = $this->assignedSearch($item["description"], $item["description"], $assignedExpressions);
-                    $item["added"] = 0;
-                    if ($assignedExpression)
-                        $item['assigned'] = $assignedExpression;
-                    else
-                        $item['assigned'] = null;
-                }
-            else
-                foreach ($results as &$item) {
-                    $assignedExpression = $this->assignedSearch($item["id"], $item["description"], $assignedExpressions);
-                    $item["added"] = 0;
-                    if ($assignedExpression)
-                        $item['assigned'] = $assignedExpression;
-                    else
-                        $item['assigned'] = null;
-                }
-
-            return $results;
-
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
-        }
-    }
-
-    /**
-     *
-     * Gets a list of already assigned expressions in our database
-     *
-     * @param int $sourceDBSer : the serial number of the source database
-     * @param string $expressionType : the type of expressions to look out for
-     * @return array $diagnoses : the list of diagnoses
-     */
-    public function getAssignedExpressions ($sourceDBSer, $expressionType) {
-
-        $expressions = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    ae.ExpressionName,
-                    ae.Description,
-                    Alias.AliasName_EN
-                FROM
-                    AliasExpression ae,
-                    Alias
-                WHERE
-                    ae.AliasSerNum = Alias.AliasSerNum
-                -- AND Alias.AliasType = '$expressionType'
-                AND Alias.SourceDatabaseSerNum = '$sourceDBSer'
-            ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $expressionDetails = array (
-                    'id'        => $data[0],
-                    'description'   => $data[1],
-                    'name_EN'   => "$data[2]"
-                );
-                array_push($expressions, $expressionDetails);
+        if($sourceDatabaseId == ARIA_SOURCE_DB) {
+            foreach($aa as $item)
+                $assignedExpressions[$item["description"]] = $item;
+            foreach ($results as &$item) {
+                $item["added"] = 0;
+                if ($assignedExpressions[$item["description"]])
+                    $item['assigned'] = $assignedExpressions[$item["ID"]];
             }
-
-            return $expressions;
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
+        } else {
+            foreach($aa as $item)
+                $assignedExpressions[$item["id"]["description"]] = $item;
+            foreach ($results as &$item) {
+                $item["added"] = 0;
+                if ($assignedExpressions[$item["id"]["description"]])
+                    $item['assigned'] = $assignedExpressions[$item["id"]["description"]];
+            }
         }
-
+        return $results;
     }
 
     /**
@@ -218,10 +132,7 @@ class Alias extends Module {
 
         $result["eduMat"] = ($result["eduMatSer"] != "" ? $this->_getEducationalMaterialDetails($result["eduMatSer"]) : "");
         $result["terms"] = $this->opalDB->getAliasExpression($result["serial"]);
-//
-//        foreach ($result["terms"] as &$term) {
-//            $term["added"] = intval($term["added"]);
-//        }
+        $result["deactivated"] = $this->opalDB->getDeactivatedAliasExpressions($result["serial"]);
 
         $result["count"] = count($result["terms"]);
         $result["hospitalMap"] = ($result["hospitalMapSer"] != "" ? $this->opalDB->getHospitalMapDetails($result["hospitalMapSer"]) : "");
@@ -379,7 +290,6 @@ class Alias extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
-
 
     public function deleteAlias( $post ) {
         $this->checkDeleteAccess($post);
@@ -980,29 +890,6 @@ class Alias extends Module {
             }
         }
         return 0;
-    }
-
-    /**
-     *
-     * Checks if an expression has been assigned to an alias
-     *
-     * @param string $id    : the needle id
-     * @param string $description  : the needle description
-     * @param array $array  : the key-value haystack
-     * @return $assignedAlias
-     */
-    public function assignedSearch($id, $description, $array) {
-        $assignedAlias = null;
-        if(empty($array) || !$id){
-            return $assignedAlias;
-        }
-        foreach ($array as $key => $val) {
-            if ($val['id'] === $id and $val['description'] === $description) {
-                $assignedAlias = $val;
-                return $assignedAlias;
-            }
-        }
-        return $assignedAlias;
     }
 
     /*
