@@ -2713,9 +2713,10 @@ class DatabaseOpal extends DatabaseAccess {
      * @param $aliasId
      * @return array
      */
-    function getAliasExpression($aliasId) {
+    function getAliasExpression($aliasId, $deleted = NON_DELETED_RECORD) {
         return $this->_fetchAll(OPAL_GET_ALIASES_EXPRESSION, array(
             array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":deleted","variable"=>$deleted,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
