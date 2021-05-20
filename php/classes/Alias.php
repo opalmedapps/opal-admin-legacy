@@ -19,7 +19,6 @@ class Alias extends Module {
     public function getExpressions ($sourceDatabaseId, $aliasType) {
         $this->checkReadAccess(array($sourceDatabaseId, $aliasType));
 
-
         $results = array();
         $assignedExpressions = array();
 
@@ -132,7 +131,7 @@ class Alias extends Module {
 
         $result["eduMat"] = ($result["eduMatSer"] != "" ? $this->_getEducationalMaterialDetails($result["eduMatSer"]) : "");
         $result["terms"] = $this->opalDB->getAliasExpression($result["serial"]);
-        $result["deactivated"] = $this->opalDB->getDeactivatedAliasExpressions($result["serial"]);
+        $result["deactivated"] = $this->opalDB->getAliasExpression($result["serial"], DELETED_RECORD);
 
         $result["count"] = count($result["terms"]);
         $result["hospitalMap"] = ($result["hospitalMapSer"] != "" ? $this->opalDB->getHospitalMapDetails($result["hospitalMapSer"]) : "");
