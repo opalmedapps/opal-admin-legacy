@@ -1317,10 +1317,8 @@ define("OPAL_GET_ALIASES","
 
 define("OPAL_GET_ALIASES_EXPRESSION","
     SELECT ae.ExpressionName AS id, ae.Description AS description, 1 AS added FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae
-    LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m ON m.code = ae.ExpressionName AND m.description = ae.Description
-    LEFT JOIN Alias a ON a.AliasSerNum = ae.AliasSerNum WHERE ae.AliasSerNum = :AliasSerNum AND (CASE WHEN
-    a.AliasType = 'Task' THEN 1 WHEN a.AliasType = 'Appointment' THEN 2 ELSE 3 END) = m.`type` AND
-    m.deleted = :deleted;
+    LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m ON m.ID = ae.masterSourceAliasId WHERE ae.AliasSerNum = :AliasSerNum
+    AND m.deleted = :deleted;
 ");
 
 define("OPAL_GET_ALIAS_DETAILS","
@@ -1350,18 +1348,24 @@ define("OPAL_GET_SOURCE_DATABASES","
 ");
 
 define("OPAL_GET_ALIAS_EXPRESSIONS","
-    SELECT DISTINCT ae.ExpressionName AS id, ae.Description AS description, a.AliasName_EN AS name_EN
+    SELECT DISTINCT ae.ExpressionName AS id, ae.Description AS description, a.AliasName_EN AS name_EN, masterSourceAliasId
     FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae LEFT JOIN ".OPAL_ALIAS_TABLE." a ON ae.AliasSerNum = a.AliasSerNum
     WHERE a.SourceDatabaseSerNum = :SourceDatabaseSerNum;
 ");
 
 define("OPAL_GET_ARIA_SOURCE_ALIASES","
-    SELECT description AS name, code AS id, description FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE."
-    WHERE type = :type AND source = :source AND deleted = ".NON_DELETED_RECORD." ORDER BY code");
+    SELECT m.ID AS masterSourceAliasId, m.description AS name, m.code AS id, m.description, a.AliasName_EN AS assigned
+    FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m
+    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = m.ID
+    LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
+    WHERE m.type = :type AND m.source = :source AND m.deleted = ".NON_DELETED_RECORD." ORDER BY m.code");
 
 define("OPAL_GET_SOURCE_ALIASES","
-    SELECT CONCAT(code, ' (', description, ')') AS name, code AS id, description FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE."
-    WHERE type = :type AND source = :source AND deleted = ".NON_DELETED_RECORD." ORDER BY code");
+    SELECT m.ID AS masterSourceAliasId, CONCAT(m.code, ' (', m.description, ')') AS name, m.code AS id, m.description,
+    a.AliasName_EN AS assigned FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m
+    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = m.ID
+    LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
+    WHERE m.type = :type AND m.source = :source AND m.deleted = ".NON_DELETED_RECORD." ORDER BY m.code");
 
 define("OPAL_GET_DEACTIVATED_DIAGNOSIS_CODES","
     SELECT DISTINCT d.SourceUID AS sourceuid, d.DiagnosisCode AS code, d.Description AS description,
