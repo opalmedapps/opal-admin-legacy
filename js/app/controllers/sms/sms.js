@@ -13,17 +13,16 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
         getSmsAppointmentList();
         $scope.changesMade = false;
         var cellTemplateResourceName = '<div style="cursor:pointer;" class="ui-grid-cell-contents">' +
-            '<strong><a href=""  ng-click="grid.appScope.editAppointment(row.entity)">{{row.entity.resname}}</a></strong></div>';
+            '<a href=""  ng-click="grid.appScope.editAppointment(row.entity)"><strong>{{row.entity.resname}}</strong>&nbsp&nbsp&nbsp{{row.entity.rescode}}</a></div>';
         var cellTemplateAppointmentCode = '<div style="cursor:pointer;" class="ui-grid-cell-contents">' +
             '<strong><a href=""  ng-click="grid.appScope.editAppointment(row.entity)">{{row.entity.appcode}}</a></strong></div>';
 
         var checkboxCellTemplate;
         if($scope.writeAccess)
-            checkboxCellTemplate = '<div ng-if= "row.entity.apptype != \'UNDEFINED\'" style="text-align: center; cursor: pointer;" ' +
+            checkboxCellTemplate = '<div style="text-align: center; cursor: pointer;" ' +
                 'ng-click="grid.appScope.checkSmsUpdate(row.entity)" class="ui-grid-cell-contents">' +
-                '<input style="margin: 4px;" type="checkbox" ng-checked="grid.appScope.updateVal(row.entity.state)" ' +
-                'ng-model="row.entity.state"></div>' +
-                '<div ng-if= "!(row.entity.apptype != \'UNDEFINED\')" style="text-align: center;" class="ui-grid-cell-contents">{{\'SMS.LIST.DISABLE\'|translate}}</div>';
+                '<input style="margin: 4px;" type="checkbox" ng-checked="grid.appScope.updateVal(row.entity.state)" ng-disabled="!(row.entity.apptype != \'UNDEFINED\')" ' +
+                'ng-model="row.entity.state"></div>';
         else
             checkboxCellTemplate = '<div style="text-align: center;" class="ui-grid-cell-contents"><i ng-class="row.entity.state == 1 ? \'Active\' : \'Disabled\'" class="fa"></i></div>';
 
@@ -94,12 +93,16 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
         $scope.gridOptions = {
             data: 'smsAppointments',
             columnDefs: [
-                {field:'appcode', displayName: $filter('translate')('SMS.LIST.APPOINTMENT_CODE'),width: '30%',enableColumnMenu: false, cellTemplate: cellTemplateAppointmentCode},
+                {field:'appcode', displayName: $filter('translate')('SMS.LIST.APPOINTMENT_CODE'),width: '25%',enableColumnMenu: false, cellTemplate: cellTemplateAppointmentCode},
+                {field:'resname', displayName:  $filter('translate')('SMS.LIST.RESOURCE_NAME'), width:'35%', enableColumnMenu: false,cellTemplate: cellTemplateResourceName},
                 {
                     field: 'displayType', displayName: $filter('translate')('SMS.LIST.TYPE'), width: '15%', enableColumnMenu: false, filter: {
                         type: uiGridConstants.filter.SELECT,
-                        selectOptions: [{ value: 'GENERAL', label: 'GENERAL'}, { value: 'RADONC', label: 'RADONC' },
-                            { value: 'TELEMED', label: 'TELEMED' },{value:'TEST_CENTRE',label:'TEST_CENTRE'},{value:'UNDEFINED',label:'UNDEFINED'}]
+                        selectOptions: [{ value: $filter('translate')('SMS.LIST.GENERAL'), label: $filter('translate')('SMS.LIST.GENERAL')},
+                            { value: $filter('translate')('SMS.LIST.RADONC'), label: $filter('translate')('SMS.LIST.RADONC')},
+                            { value: $filter('translate')('SMS.LIST.TELEMED'), label: $filter('translate')('SMS.LIST.TELEMED')},
+                            {value: $filter('translate')('SMS.LIST.TEST_CENTRE'),label: $filter('translate')('SMS.LIST.TEST_CENTRE')},
+                            {value: $filter('translate')('SMS.LIST.UNDEFINED'),label:'Undefined'}]
                     }
                 },
                 {
@@ -108,8 +111,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                         selectOptions: [{ value: 'Oncology', label: 'Oncology'}]
                     }
                 },
-                {field:'resname', displayName:  $filter('translate')('SMS.LIST.RESOURCE_NAME'), width:'25%', enableColumnMenu: false,cellTemplate: cellTemplateResourceName},
-                { field: 'state', displayName: $filter('translate')('SMS.LIST.DISABLE/ENABLE'), enableColumnMenu: false, width: '15%',
+                { field: 'state', displayName: $filter('translate')('SMS.LIST.DISABLE/ENABLE'), enableColumnMenu: false, width: '10%',
                     cellTemplate: checkboxCellTemplate, enableFiltering: false },
             ],
             enableFiltering: true,
@@ -143,7 +145,6 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                 // Log who updated alias
                 //var currentUser = Session.retrieveObject('user');
                 //$scope.smsUpdates.user = currentUser;
-                console.log($scope.smsUpdates);
                 // Submit form
                 $.ajax({
                     type: "POST",

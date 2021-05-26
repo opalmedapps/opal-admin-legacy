@@ -19,13 +19,11 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
         return !$scope.typeSearchField || keyword.test(Filter);
     };
     $scope.updateType = function(type){
+        $scope.typeSelected = null;
         if(type.type != $scope.currentAppointment.apptype)$scope.changesDetected = true;
         else $scope.changesDetected = false;
-        $scope.TypeList.forEach(function(row){
-            if(row.type == type.type) row.selected = true;
-            else row.selected = false;
-        })
         $scope.typeSelected = type.type;
+        console.log($scope.typeSelected);
     }
 
     $scope.updateAppointment = function() {
@@ -51,10 +49,7 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
     function getSmsTypeList(){
         smsCollectionService.getSmsType($scope.currentAppointment.spec).then(function (response) {
             $scope.TypeList = response.data;
-            $scope.TypeList.forEach(function(row){
-                if(row.type == $scope.typeSelected) row.selected = true;
-                else row.selected = false;
-            })
+            $scope.TypeList.push({type:'UNDEFINED'})
         });
     }
 });

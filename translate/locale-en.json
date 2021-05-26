@@ -2329,9 +2329,6 @@
       "TITLE_2": "Title",
       "STUDY_ID": "Study ID",
       "INVESTIGATOR": "Main Investigator",
-      "PHONE": "Phone Number",
-      "PHONE_EXT": "Phone Extension",
-      "EMAIL": "Email",
       "START_DATE": "Start Date",
       "END_DATE": "End Date",
       "CREATION_DATE": "Date of creation",
@@ -2356,17 +2353,12 @@
       "DESCRIPTION_EN": "English description missing.",
       "DESCRPIPTION_FR": "French description missing.",
       "INVESTIGATOR": "Investigator missing.",
-      "INVESTIGATOR_EMAIL": "Email missing or invalid.",
-      "INVESTIGATOR_PHONE": "Phone missing or invalid.",
-      "INVESTIGATOR_PHONE_EXT": "Phone extension invalid.",
       "START_DATE": "Invalid start date.",
       "END_DATE": "Invalid end date.",
       "DATE_RANGE": "Invalid date range.",
       "PATIENTS": "Invalid patients list.",
       "QUESTIONNAIRE": "Invalid questionnaires list.",
-      "ID": "Study ID missing or invalid.",
-      "CONSENT": "Study consent form ID missing or invalid.",
-      "PATIENT_CONSENT": "Invalid patient consent list"
+      "ID": "Study ID missing or invalid."
     },
     "ADD": {
       "BACK": "Back",
@@ -2394,8 +2386,8 @@
       "SEE_DESCRIPTION": "See rendered output for description",
       "TITLE_2": "Title",
       "DESCRIPTION": "Description",
-      "INVESTIGATOR": "Main Investigator",
-      "INVESTIGATOR_EXPLANATION": "Please enter the complete name of the main investigator, along with their primary phone, email, and optional extension number.",
+      "INVESTIGATOR": "Principal Investigator",
+      "INVESTIGATOR_EXPLANATION": "Please enter the complete name of the principal investigator.",
       "PATIENTS": "List of Patients",
       "PATIENTS_EXPLANATION": "If any patients should be already assigned to this study, please add them.",
       "QUESTIONNAIRE": "List of Research Questionnaires",
@@ -2413,13 +2405,7 @@
       "PATIENTS_SELECTED": "patient(s) selected",
       "QUESTIONNAIRE_SELECTED": "questionnaire(s) selected",
       "ERROR_ADD": "An error occured while creating the study.",
-      "ERROR_PATIENTS_LIST": "An error occured while dowloading the list of patients.",
-      "CONSENT_SELECTED": "Consent form selected",
-      "CONSENT_FORM": "Consent Form",
-      "CONSENT_FORM_EXPLANATION": "Please select the study consent form from the list.",
-      "EMAIL": "Email",
-      "PHONE": "Phone",
-      "FORM": "Form"
+      "ERROR_PATIENTS_LIST": "An error occured while dowloading the list of patients."
     },
     "EDIT": {
       "TITLE": "Edit Study",
@@ -2432,7 +2418,7 @@
       "TITLES": "Titles",
       "ENGLISH_ABVR": "EN",
       "FRENCH_ABVR": "FR",
-      "INVESTIGATOR": "Main Investigator",
+      "INVESTIGATOR": "Principal Investigator",
       "PLACEHOLDER_ENGLISH_TITLE": "English Title",
       "PLACEHOLDER_FRENCH_TITLE": "French Title",
       "PLACEHOLDER_ENGLISH_DESCRIPTION": "English Description",
@@ -2451,16 +2437,7 @@
       "CURRENT_QUESTIONNAIRE": "Current Questionnaires",
       "SEARCH": "Search...",
       "ERROR_DETAILS": "An error occurred while getting the study details.",
-      "ERROR_UPDATE": "An error occurred while updating the study.",
-      "CONSENT_STATUS": "Patient Consent Status",
-      "CONSENT_FORM": "Consent Form",
-      "CONSENT_ID": "Form:",
-      "CURRENT_CONSENTS": "Current Consents",
-      "INVITED": "Invited",
-      "OPAL_CONSENTED": "Consented (Opal app)",
-      "OTHER_CONSENTED": "Consented (other methods)",
-      "DECLINED": "Declined",
-      "CONSENT_FORM_PUBLISHED": "Consent form has already been published!"
+      "ERROR_UPDATE": "An error occurred while updating the study."
     }
   },
   "ALERT" : {
@@ -2683,8 +2660,6 @@
       "NAME": "Name",
       "DEVICEID": "Device ID",
       "LOGIN": "Login Time",
-      "TYPE": "Device Type",
-      "VERSION": "App Version",
       "LOGOUT": "Logout Time",
       "ERROR_ACTIVITIES": "An error occurred while getting the patients activities."
     }
@@ -3079,14 +3054,14 @@
       "RADONC": "Radonc",
       "TELEMED": "Telemed",
       "TEST_CENTRE": "Test Centre",
-      "UNDEFINED": "Undefine",
+      "UNDEFINED": " ",
       "SPECIALITY": "Speciality",
       "Oncology": "Oncology",
       "RESOURCE_NAME": "Resource Name",
       "DISABLE/ENABLE": "Enable Appointment",
       "SEARCH": "Search",
-      "SUCCESS": "Appointment Successfully Activate/Deactivate!",
-      "ERROR": "An error occurred when activating/deactivating appointments.",
+      "SUCCESS": "Changes Saved Successfully!",
+      "ERROR": "An error occurred when saving changes.",
       "ERROR_LIST": "An error occurred when getting appointments",
       "DISABLE": "Disable"
     },
@@ -3128,7 +3103,9 @@
       "SUBMIT": "Submit",
       "STEP": "Step",
       "OF": "of",
-      "COMPLETED": "completed"
+      "COMPLETED": "completed",
+      "SUCCESS": "Changes Saved Successfully!",
+      "ERROR": "An error occurred when saving changes."
     },
     "EDIT": {
       "TITLE" : "Edit Appointment",
@@ -3145,9 +3122,11 @@
       "RADONC": "Radonc",
       "TELEMED": "Telemed",
       "TEST_CENTRE": "Test Centre",
-      "UNDEFINED": "Undefine",
+      "UNDEFINED": "Undefined",
       "CURRENT_TYPE": "Current Type",
-      "APPOINTMENT_INFORMATION": "Appointment information"
+      "APPOINTMENT_INFORMATION": "Appointment information",
+      "SUCCESS": "Changes Saved Successfully!",
+      "ERROR": "An error occurred when saving changes."
     }
   },
   "ERROR_HANDLER": {

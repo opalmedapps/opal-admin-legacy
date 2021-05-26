@@ -100,17 +100,16 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
                         // Show success or failure depending on response
                         if (response) {
                             $scope.setBannerClass('success');
-                            $scope.bannerMessage = "success";
+                            $scope.bannerMessage = $filter('translate')('SMS.MESSAGE.SUCCESS');;
                             $scope.showBanner();
                         }
                         else {
-                            console.log("error");
-                            ErrorHandler.onError(response, "error");
+                            ErrorHandler.onError(response, $filter('translate')('SMS.MESSAGE.ERROR'));
                         }
                         $scope.goBack();
                     },
                     error: function(err) {
-                        ErrorHandler.onError(err,"error");
+                        ErrorHandler.onError(err,$filter('translate')('SMS.MESSAGE.ERROR'));
                     }
                 });
             }

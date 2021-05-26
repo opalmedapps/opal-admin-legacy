@@ -55,7 +55,8 @@ class Sms extends Module {
     public function updateAppointmentType($information){
         $this->checkWriteAccess($information);
 
-        return $this->ormsDB->updateAppointmentType($information['type'],$information['appcode'],$information['ressernum']);
+        if($information['type'] == 'UNDEFINED') return $this->ormsDB->setAppointmentTypeNull($information['appcode'],$information['ressernum']);
+        else return $this->ormsDB->updateAppointmentType($information['type'],$information['appcode'],$information['ressernum']);
     }
 
     public function updateSmsMessage($information,$language){
