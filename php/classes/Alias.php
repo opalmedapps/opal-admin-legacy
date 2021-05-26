@@ -19,9 +19,6 @@ class Alias extends Module {
     public function getExpressions ($sourceDatabaseId, $aliasType) {
         $this->checkReadAccess(array($sourceDatabaseId, $aliasType));
 
-        $results = array();
-        $assignedExpressions = array();
-
         $aa = $this->opalDB->getAliasExpressions($sourceDatabaseId);
 
         if ($aliasType == "Task")
@@ -35,133 +32,11 @@ class Alias extends Module {
 
         $results = $this->opalDB->getSourceAliasesByTypeAndSource($type, $sourceDatabaseId);
 
-//        if($sourceDatabaseId == ARIA_SOURCE_DB) {
-//            foreach($aa as $item)
-//                $assignedExpressions[$item["description"]] = $item;
-//            foreach ($results as &$item) {
-//                $item["added"] = 0;
-//                if ($assignedExpressions[$item["description"]])
-//                    $item['assigned'] = $assignedExpressions[$item["ID"]];
-//            }
-//        } else {
-            foreach($aa as $item)
-                $assignedExpressions[$item["id"]["description"]] = $item;
-            foreach ($results as &$item) {
-                $item["added"] = 0;
-                if ($assignedExpressions[$item["id"]["description"]])
-                    $item['assigned'] = $assignedExpressions[$item["id"]["description"]];
-            }
-//        }
+        foreach ($results as &$item)
+            $item["added"] = 0;
+
         return $results;
     }
-
-/*    public function getAssignedExpressions ($sourceDBSer, $expressionType) {
-
-        $expressions = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    ae.ExpressionName,
-                    ae.Description,
-                    Alias.AliasName_EN
-                FROM
-                    AliasExpression ae,
-                    Alias
-                WHERE
-                    ae.AliasSerNum = Alias.AliasSerNum
-                -- AND Alias.AliasType = '$expressionType'
-                AND Alias.SourceDatabaseSerNum = '$sourceDBSer'
-            ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $expressionDetails = array (
-                    'id'        => $data[0],
-                    'description'   => $data[1],
-                    'name_EN'   => "$data[2]"
-                );
-                array_push($expressions, $expressionDetails);
-            }
-
-            return $expressions;
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
-        }
-
-    }
-
-    public function getExpressions ($sourceDBSer, $expressionType) {
-        $this->checkReadAccess(array($sourceDBSer, $expressionType));
-        try {
-
-            // get already assigned expressions from our database
-            $assignedExpressions = $this->getAssignedExpressions($sourceDBSer, $expressionType);
-
-            if ($expressionType == "Task")
-                $type = 1;
-            else if ($expressionType == "Appointment")
-                $type = 2;
-            else
-                $type = 3;
-
-//            if ($sourceDBSer != ARIA_SOURCE_DB && $sourceDBSer != ORMS_SOURCE_DB && $sourceDBSer != MOSAIQ_SOURCE_DB && $sourceDBSer != LOCAL_SOURCE_DB)
-//                $sourceDBSer = ARIA_SOURCE_DB;
-
-            if($sourceDBSer == ARIA_SOURCE_DB)
-                $sql = "SELECT description AS name, code AS id, description FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." WHERE type = " . $type . " AND source = " . $sourceDBSer . " AND deleted = 0 ORDER BY code";
-            else
-                $sql = "SELECT CONCAT(code, ' (', description, ')') AS name, code AS id, description FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." WHERE type = " . $type . " AND source = " . $sourceDBSer . " AND deleted = 0 ORDER BY code";
-
-            $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD);
-            $host_db_link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-            $results = $query->fetchAll(PDO::FETCH_ASSOC);
-
-            if($sourceDBSer == ARIA_SOURCE_DB)
-                foreach ($results as &$item) {
-                    $assignedExpression = $this->assignedSearch($item["description"], $item["description"], $assignedExpressions);
-                    $item["added"] = 0;
-                    if ($assignedExpression)
-                        $item['assigned'] = $assignedExpression;
-                    else
-                        $item['assigned'] = null;
-                }
-            else
-                foreach ($results as &$item) {
-                    $assignedExpression = $this->assignedSearch($item["id"], $item["description"], $assignedExpressions);
-                    $item["added"] = 0;
-                    if ($assignedExpression)
-                        $item['assigned'] = $assignedExpression;
-                    else
-                        $item['assigned'] = null;
-                }
-
-            return $results;
-
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
-        }
-    }
-
-    public function assignedSearch($id, $description, $array) {
-        $assignedAlias = null;
-        if(empty($array) || !$id){
-            return $assignedAlias;
-        }
-        foreach ($array as $key => $val) {
-            if ($val['id'] === $id and $val['description'] === $description) {
-                $assignedAlias = $val;
-                return $assignedAlias;
-            }
-        }
-        return $assignedAlias;
-    }*/
 
     /**
      * Validate a list of publication flags for patient.
