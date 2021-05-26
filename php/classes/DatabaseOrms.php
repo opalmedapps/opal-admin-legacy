@@ -107,6 +107,14 @@ class DatabaseOrms extends DatabaseAccess {
         return $this->_execute(ORMS_SQL_UPDATE_APPOINTMENT_TYPE, $toInsert);
     }
 
+    function setAppointmentTypeNull($appointmentCodeId, $resourceSerNum) {
+        $toInsert = array(
+            array("parameter"=>":res","variable"=>$resourceSerNum,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":id","variable"=>$appointmentCodeId,"data_type"=>PDO::PARAM_INT),
+        );
+        return $this->_execute(ORMS_SQL_SET_APPOINTMENT_TYPE_TO_NULL, $toInsert);
+    }
+
     function updateSmsMessage($smsMessage,$speciality, $type, $event, $language) {
         $toInsert = array(
             array("parameter"=>":message","variable"=>$smsMessage,"data_type"=>PDO::PARAM_STR),
