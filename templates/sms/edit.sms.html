@@ -55,7 +55,7 @@
                 <ul class="list-items">
                     <li ng-repeat="type in TypeList | filter: typeSearchField">
                         <label>
-                            <input type="radio" ng-model="type.selected" ng-click="updateType(type)"> {{'SMS.EDIT.'+type.type|translate}}
+                            <input type="radio" ng-checked="type.type===typeSelected" ng-click="updateType(type)"> {{'SMS.EDIT.'+type.type|translate}}
                         </label>
                     </li>
                 </ul>

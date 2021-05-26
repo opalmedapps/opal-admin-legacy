@@ -59,6 +59,11 @@ define("ORMS_SQL_UPDATE_APPOINTMENT_TYPE","
     WHERE ClinicResourcesSerNum = :res AND AppointmentCodeId = :id
 ");
 
+define("ORMS_SQL_SET_APPOINTMENT_TYPE_TO_NULL","
+    UPDATE ".ORMS_SMS_APPOINTMENT_LIST_TABLE." SET Type = NULL
+    WHERE ClinicResourcesSerNum = :res AND AppointmentCodeId = :id
+");
+
 define("ORMS_SQL_UPDATE_MESSAGE_FOR_APPOINTMENT","
     UPDATE ".ORMS_SMS_MESSAGE_LIST_TABLE." sms SET Message = :message
     WHERE (sms.Speciality = 'Any' OR sms.Speciality = :spec) AND sms.Type = :type AND sms.Event = :event AND sms.Language = :lang
