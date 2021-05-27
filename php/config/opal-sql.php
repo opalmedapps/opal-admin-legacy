@@ -1377,3 +1377,67 @@ define("OPAL_GET_DEACTIVATED_DIAGNOSIS_CODES","
 define("OPAL_GET_LIST_DIAGNOSIS_CODES","
     SELECT ID, code, description, source FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE ID IN (%%LISTIDS%%) AND deleted = ".NON_DELETED_RECORD.";
 ");
+
+define("OPAL_GET_ALIAS_LOGS","
+    SELECT DISTINCT al.AliasName_EN AS name, apmh.CronLogSerNum AS cron_serial, COUNT(apmh.CronLogSerNum) AS y, cl.CronDateTime AS x
+    FROM ".OPAL_ALIAS_TABLE." al LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.AliasSerNum = al.AliasSerNum
+    LEFT JOIN ".OPAL_APPOINTMENT_MH_TABLE." apmh ON apmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
+    LEFT JOIN ".OPAL_CRON_LOG_TABLE." cl ON cl.CronLogSerNum = apmh.CronLogSerNum
+    WHERE cl.CronStatus = 'Started' AND cl.CronDateTime > curdate() - interval 1 year
+    GROUP BY al.AliasName_EN, apmh.CronLogSerNum, cl.CronDateTime
+    UNION ALL
+    SELECT DISTINCT al.AliasName_EN AS name, docmh.CronLogSerNum AS cron_serial, COUNT(docmh.CronLogSerNum) AS y, cl.CronDateTime AS x
+    FROM ".OPAL_ALIAS_TABLE." al LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.AliasSerNum = al.AliasSerNum
+    LEFT JOIN ".OPAL_DOCUMENT_MH_TABLE." docmh ON docmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
+    LEFT JOIN ".OPAL_CRON_LOG_TABLE." cl ON cl.CronLogSerNum = docmh.CronLogSerNum
+    WHERE cl.CronStatus = 'Started' AND cl.CronDateTime > curdate() - interval 1 year
+    GROUP BY al.AliasName_EN, docmh.CronLogSerNum, cl.CronDateTime
+    UNION ALL
+    SELECT DISTINCT al.AliasName_EN AS name, tmh.CronLogSerNum AS cron_serial, COUNT(tmh.CronLogSerNum) AS y, cl.CronDateTime AS x
+    FROM ".OPAL_ALIAS_TABLE." al LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.AliasSerNum = al.AliasSerNum
+    LEFT JOIN ".OPAL_TASK_MH_TABLE." tmh ON tmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
+    LEFT JOIN ".OPAL_CRON_LOG_TABLE." cl ON cl.CronLogSerNum = tmh.CronLogSerNum
+    WHERE cl.CronStatus = 'Started' AND cl.CronDateTime > curdate() - interval 1 year
+    GROUP BY al.AliasName_EN, tmh.CronLogSerNum, cl.CronDateTime
+    ORDER BY X ASC
+");
+
+define("OPAL_GET_APPOINTMENT_LOGS","
+    SELECT DISTINCT apmh.CronLogSerNum AS cron_serial, COUNT(apmh.CronLogSerNum) AS y, cl.CronDateTime AS x
+    FROM ".OPAL_APPOINTMENT_MH_TABLE." apmh
+    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON apmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
+    LEFT JOIN ".OPAL_CRON_LOG_TABLE." cl ON cl.CronLogSerNum = apmh.CronLogSerNum
+    WHERE cl.CronStatus = 'Started' AND ae.AliasSerNum = :AliasSerNum
+    GROUP BY apmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC
+");
+
+define("OPAL_GET_DOCUMENT_LOGS","
+    SELECT DISTINCT docmh.CronLogSerNum AS cron_serial, COUNT(docmh.CronLogSerNum) AS y, cl.CronDateTime AS x
+    FROM ".OPAL_DOCUMENT_MH_TABLE." docmh
+    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON docmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
+    LEFT JOIN ".OPAL_CRON_LOG_TABLE." cl ON cl.CronLogSerNum = docmh.CronLogSerNum
+    WHERE cl.CronStatus = 'Started' AND ae.AliasSerNum = :AliasSerNum
+    GROUP BY docmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC
+");
+
+define("OPAL_TASK_LOGS","
+    SELECT DISTINCT taskmh.CronLogSerNum AS cron_serial, COUNT(taskmh.CronLogSerNum) AS y, cl.CronDateTime AS x
+    FROM ".OPAL_TASK_MH_TABLE." taskmh
+    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON taskmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
+    LEFT JOIN ".OPAL_CRON_LOG_TABLE." cl ON cl.CronLogSerNum = taskmh.CronLogSerNum
+    WHERE cl.CronStatus = 'Started' AND ae.AliasSerNum = :AliasSerNum
+    GROUP BY taskmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC
+");
+
+define("OPAL_DELETE_ALIAS_EXPRESSIONS","
+    DELETE FROM ".OPAL_ALIAS_EXPRESSION_TABLE." WHERE AliasSerNum = :AliasSerNum;
+");
+
+define("OPAL_DELETE_ALIAS","
+    DELETE FROM ".OPAL_ALIAS_TABLE." WHERE AliasSerNum = :AliasSerNum;
+");
+
+define("OPAL_UPDATE_ALIAS_MH","
+    UPDATE ".OPAL_ALIAS_MH_TABLE." SET LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId WHERE
+    AliasSerNum = :AliasSerNum ORDER BY AliasRevSerNum DESC LIMIT 1
+");

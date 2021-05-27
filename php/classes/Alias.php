@@ -6,6 +6,10 @@
  */
 class Alias extends Module {
 
+    /**
+     * Alias constructor.
+     * @param boolean $guestStatus
+     */
     public function __construct($guestStatus = false) {
         parent::__construct(MODULE_ALIAS, $guestStatus);
     }
@@ -62,6 +66,10 @@ class Alias extends Module {
         return $errCode;
     }
 
+    /**
+     * Update the publication flags of a list of aliases
+     * @param $post
+     */
     public function updateAliasPublishFlags($post) {
         $this->checkWriteAccess($post);
         HelpSetup::arraySanitization($post);
@@ -77,7 +85,7 @@ class Alias extends Module {
 
     /**
      * Return the list of aliases and they expressions
-     * @return array
+     * @return array - results found
      */
     public function getAliases() {
         $this->checkReadAccess();
@@ -129,13 +137,6 @@ class Alias extends Module {
         return $result;
     }
 
-    /**
-     *
-     * Inserts an alias into the database
-     *
-     * @param array $aliasDetails : the alias details
-     * @return void
-     */
     public function insertAlias( $aliasDetails ) {
         $this->checkWriteAccess($aliasDetails);
 
@@ -275,8 +276,19 @@ class Alias extends Module {
 
     public function deleteAlias( $post ) {
         $this->checkDeleteAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        if(!$post["serial"])
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Alias cannot be found.");
 
+        $aliasId = $post["serial"];
 
+        $alias = $this->opalDB->getAliasDetails($aliasId);
+        if(count($alias) != 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Alias cannot be found.");
+
+        $this->opalDB->deleteAliasExpression($aliasId);
+        $this->opalDB->deleteAlias($aliasId);
+        $this->opalDB->updateAliasMH($aliasId);
 
         return false;
 
@@ -333,13 +345,6 @@ class Alias extends Module {
         }
     }
 
-    /**
-     *
-     * Updates an alias in the database
-     *
-     * @param array $aliasDetails : the alias details
-     * @return array $response : response
-     */
     public function updateAlias( $aliasDetails ) {
         $this->checkWriteAccess($aliasDetails);
 
@@ -562,307 +567,105 @@ class Alias extends Module {
     }
 
     /**
-     *
-     * Gets chart logs of a alias or aliases
-     *
-     * @param integer $serial : the alias serial number
-     * @param string $type : the alias type
-     * @return array $aliasLogs : the alias logs for highcharts
+     * Get the chart logs for all aliases or for a specific one
+     * @param $post array - May contains AliasId and the typy
+     * @return array - results found
      */
-    public function getAliasChartLogs ($serial, $type) {
-        $this->checkReadAccess(array($serial, $type));
+    public function getAliasChartLogs ($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $serial = $post["serial"];
+        $type = $post["type"];
 
         $aliasLogs = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+        if (!$serial && !$type) {
+            $aliasSeries = array();
+            $results = $this->opalDB->getAliasLogs();
 
-            // get all logs for all aliases
-            if (!$serial and !$type) {
-                $aliasSeries = array();
-
-                /* APPOINTMENTS */
-                $sql = "
-                    SELECT DISTINCT
-                        al.AliasName_EN,
-                        apmh.CronLogSerNum,
-                        COUNT(apmh.CronLogSerNum),
-                        cl.CronDateTime
-                    FROM
-                        Alias al,
-                        AliasExpression ae,
-                        AppointmentMH apmh,
-                        CronLog cl
-                    WHERE
-                        cl.CronStatus = 'Started'
-                    AND cl.CronLogSerNum = apmh.CronLogSerNum
-                    AND apmh.CronLogSerNum IS NOT NULL
-                    AND apmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
-                    AND ae.AliasSerNum = al.AliasSerNum
-                    GROUP BY
-                        al.AliasName_EN,
-                        apmh.CronLogSerNum,
-                        cl.CronDateTime
-                    ORDER BY
-                        cl.CronDateTime ASC
-                ";
-
-                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
-
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $seriesName = $data[0];
-                    $aliasDetail = array (
-                        'x' => $data[3],
-                        'y' => intval($data[2]),
-                        'cron_serial' => $data[1]
+            foreach ($results as $result) {
+                $seriesName = $result["name"];
+                $aliasDetail = array (
+                    'x' => $result["x"],
+                    'y' => intval($result["y"]),
+                    'cron_serial' => $result["cron_serial"]
+                );
+                if(!isset($aliasSeries[$seriesName]))
+                    $aliasSeries[$seriesName] = array(
+                        'name'  => $seriesName,
+                        'data'  => array()
                     );
-                    if(!isset($aliasSeries[$seriesName])) {
-                        $aliasSeries[$seriesName] = array(
-                            'name'  => $seriesName,
-                            'data'  => array()
-                        );
-                    }
-                    array_push($aliasSeries[$seriesName]['data'], $aliasDetail);
-                }
-
-                /* DOCUMENTS */
-                $sql = "
-                    SELECT DISTINCT
-                        al.AliasName_EN,
-                        docmh.CronLogSerNum,
-                        COUNT(docmh.CronLogSerNum),
-                        cl.CronDateTime
-                    FROM
-                        Alias al,
-                        AliasExpression ae,
-                        DocumentMH docmh,
-                        CronLog cl
-                    WHERE
-                        cl.CronStatus = 'Started'
-                    AND cl.CronLogSerNum = docmh.CronLogSerNum
-                    AND docmh.CronLogSerNum IS NOT NULL
-                    AND docmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
-                    AND ae.AliasSerNum = al.AliasSerNum
-                    GROUP BY
-                        al.AliasName_EN,
-                        docmh.CronLogSerNum,
-                        cl.CronDateTime
-                    ORDER BY
-                        cl.CronDateTime ASC
-                ";
-
-                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
-
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $seriesName = $data[0];
-                    $aliasDetail = array (
-                        'x' => $data[3],
-                        'y' => intval($data[2]),
-                        'cron_serial' => $data[1]
-                    );
-                    if(!isset($aliasSeries[$seriesName])) {
-                        $aliasSeries[$seriesName] = array(
-                            'name'  => $seriesName,
-                            'data'  => array()
-                        );
-                    }
-                    array_push($aliasSeries[$seriesName]['data'], $aliasDetail);
-                }
-
-                /* TASKS */
-                $sql = "
-                    SELECT DISTINCT
-                        al.AliasName_EN,
-                        tmh.CronLogSerNum,
-                        COUNT(tmh.CronLogSerNum),
-                        cl.CronDateTime
-                    FROM
-                        Alias al,
-                        AliasExpression ae,
-                        TaskMH tmh,
-                        CronLog cl
-                    WHERE
-                        cl.CronStatus = 'Started'
-                    AND cl.CronLogSerNum = tmh.CronLogSerNum
-                    AND tmh.CronLogSerNum IS NOT NULL
-                    AND tmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
-                    AND ae.AliasSerNum = al.AliasSerNum
-                    GROUP BY
-                        al.AliasName_EN,
-                        tmh.CronLogSerNum,
-                        cl.CronDateTime
-                    ORDER BY
-                        cl.CronDateTime ASC
-                ";
-
-                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
-
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $seriesName = $data[0];
-                    $aliasDetail = array (
-                        'x' => $data[3],
-                        'y' => intval($data[2]),
-                        'cron_serial' => $data[1]
-                    );
-                    if(!isset($aliasSeries[$seriesName])) {
-                        $aliasSeries[$seriesName] = array(
-                            'name'  => $seriesName,
-                            'data'  => array()
-                        );
-                    }
-                    array_push($aliasSeries[$seriesName]['data'], $aliasDetail);
-                }
-
-                foreach ($aliasSeries as $seriesName => $series) {
-                    array_push($aliasLogs, $series);
-                }
-
+                array_push($aliasSeries[$seriesName]['data'], $aliasDetail);
             }
-            // get logs for specific alias
-            else {
-                if ($type == 'Appointment') {
 
-                    $sql = "
-                        SELECT DISTINCT
-                            apmh.CronLogSerNum,
-                            COUNT(apmh.CronLogSerNum),
-                            cl.CronDateTime
-                        FROM
-                            AppointmentMH apmh,
-                            AliasExpression ae,
-                            CronLog cl
-                        WHERE
-                            cl.CronStatus = 'Started'
-                        AND cl.CronLogSerNum = apmh.CronLogSerNum
-                        AND apmh.CronLogSerNum IS NOT NULL
-                        AND apmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
-                        AND ae.AliasSerNum = $serial
-                        GROUP BY
-                            apmh.CronLogSerNum,
-                            cl.CronDateTime
-                        ORDER BY
-                            cl.CronDateTime ASC
-                    ";
+        } else {
+            $aliasSeries = array();
+            if ($type == 'Appointment')
+                $results = $this->opalDB->getAppointmentLogs($serial);
+            else if ($type == 'Document')
+                $results = $this->opalDB->getDocumentLogs($serial);
+            else if ($type == 'Task')
+                $results = $this->opalDB->getTaskLogs($serial);
+            else
+                HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, "Wrong alias type.");
 
-                }
+            foreach ($results as $result) {
+                $seriesName = $type;
 
-                else if ($type == 'Document') {
-                    $sql = "
-                        SELECT DISTINCT
-                            docmh.CronLogSerNum,
-                            COUNT(docmh.CronLogSerNum),
-                            cl.CronDateTime
-                        FROM
-                            DocumentMH docmh,
-                            AliasExpression ae,
-                            CronLog cl
-                        WHERE
-                            cl.CronStatus = 'Started'
-                        AND cl.CronLogSerNum = docmh.CronLogSerNum
-                        AND docmh.CronLogSerNum IS NOT NULL
-                        AND docmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
-                        AND ae.AliasSerNum = $serial
-                        GROUP BY
-                            docmh.CronLogSerNum,
-                            cl.CronDateTime
-                        ORDER BY
-                            cl.CronDateTime ASC
-                    ";
-                }
-
-                else if ($type == 'Task') {
-                    $sql = "
-                        SELECT DISTINCT
-                            taskmh.CronLogSerNum,
-                            COUNT(taskmh.CronLogSerNum),
-                            cl.CronDateTime
-                        FROM
-                            TaskMH taskmh,
-                            AliasExpression ae,
-                            CronLog cl
-                        WHERE
-                            cl.CronStatus = 'Started'
-                        AND cl.CronLogSerNum = taskmh.CronLogSerNum
-                        AND taskmh.CronLogSerNum IS NOT NULL
-                        AND taskmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
-                        AND ae.AliasSerNum = $serial
-                        GROUP BY
-                            taskmh.CronLogSerNum,
-                            cl.CronDateTime
-                        ORDER BY
-                            cl.CronDateTime ASC
-                    ";
-                }
-                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
-
-                $aliasSeries = array();
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $seriesName = $type;
-                    $aliasDetail = array (
-                        'x' => $data[2],
-                        'y' => intval($data[1]),
-                        'cron_serial' => $data[0]
+                if(!isset($aliasSeries[$seriesName])) {
+                    $aliasSeries[$seriesName] = array(
+                        'name'  => $seriesName,
+                        'data'  => array()
                     );
-                    if(!isset($aliasSeries[$seriesName])) {
-                        $aliasSeries[$seriesName] = array(
-                            'name'  => $seriesName,
-                            'data'  => array()
-                        );
-                    }
-                    array_push($aliasSeries[$seriesName]['data'], $aliasDetail);
                 }
-
-                foreach ($aliasSeries as $seriesName => $series) {
-                    array_push($aliasLogs, $series);
-                }
+                array_push($aliasSeries[$seriesName]['data'], array (
+                    'x' => $result["x"],
+                    'y' => intval($result["y"]),
+                    'cron_serial' => $result["cron_serial"]
+                ));
             }
-            return $aliasLogs;
 
-        } catch( PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
-    }
-
-    /**
-     *
-     * Gets list logs of appointments/documents/tasks during one or many cron sessions
-     *
-     */
-    public function getAliasListLogs($aliasIds, $type) {
-        $aliasLogs = array();
-        foreach($aliasIds as &$id) {
-            $id = intval($id);
-        }
-        if (!$type)
-            $aliasLogs = $this->opalDB->getAliasesLogs($aliasIds);
-        else if ($type == 'Appointment')
-            $aliasLogs = $this->opalDB->getAppointmentsLogs($aliasIds);
-        else if ($type == 'Document')
-            $aliasLogs = $this->opalDB->getDocumentsLogs($aliasIds);
-        else if ($type == 'Task')
-            $aliasLogs = $this->opalDB->getTasksLogs($aliasIds);
+        foreach ($aliasSeries as $seriesName => $series)
+            array_push($aliasLogs, $series);
 
         return $aliasLogs;
     }
 
     /**
-     *
-     * Does a nested search for match
-     *
-     * @param string $id    : the needle id
-     * @param string $description  : the needle description
-     * @param array $array  : the key-value haystack
-     * @return boolean
+     * Get the logs of a specific list of aliases
+     * @param $post array - contains the list of ids and the type of aliases
+     * @return array - list of logs for a list of ids
      */
-    public function nestedSearch($id, $description, $array) {
+    public function getAliasListLogs($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+
+        $aliasIds = json_decode($post['serials']);
+        $type = ( $_POST['type'] === 'undefined' ) ? null : $_POST['type'];
+
+        $aliasLogs = array();
+        $validIds = array();
+        foreach($aliasIds as $id)
+            array_push($validIds, intval($id));
+
+        if(count($validIds) <= 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, "No alias IDs.");
+
+        if (!$type)
+            $aliasLogs = $this->opalDB->getAliasesLogs($validIds);
+        else if ($type == 'Appointment')
+            $aliasLogs = $this->opalDB->getAppointmentsLogs($validIds);
+        else if ($type == 'Document')
+            $aliasLogs = $this->opalDB->getDocumentsLogs($validIds);
+        else if ($type == 'Task')
+            $aliasLogs = $this->opalDB->getTasksLogs($validIds);
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, "Wrong alias type.");
+
+        return $aliasLogs;
+    }
+
+    protected function nestedSearch($id, $description, $array) {
         if(empty($array) || !$id || !$description){
             return 0;
         }
@@ -874,21 +677,19 @@ class Alias extends Module {
         return 0;
     }
 
-    /*
+    /**
      * Get the list of educational materials an alias can assign to.
-     * @params  void
-     * @returns array - list of available educational material an alias has access
-     * */
+     * @return array - list of available educational material an alias has access
+     */
     public function getEducationalMaterials() {
         $this->checkReadAccess();
         return $this->_getListEduMaterial();
     }
 
-    /*
+    /**
      * Get the list of hospital maps an alias can assign to.
-     * @params  void
-     * @returns array - list of available hospital maps an alias has access
-     * */
+     * @return false - list of available hospital maps an alias has access
+     */
     public function getHospitalMaps() {
         $this->checkReadAccess();
         return $this->opalDB->getHospitalMaps();
