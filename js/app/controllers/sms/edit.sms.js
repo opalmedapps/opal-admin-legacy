@@ -23,7 +23,6 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
         if(type.type != $scope.currentAppointment.apptype)$scope.changesDetected = true;
         else $scope.changesDetected = false;
         $scope.typeSelected = type.type;
-        console.log($scope.typeSelected);
     }
 
     $scope.updateAppointment = function() {
