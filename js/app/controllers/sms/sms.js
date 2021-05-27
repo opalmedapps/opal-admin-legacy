@@ -10,18 +10,20 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
         $scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.sms]) & (1 << 1)) !== 0);
         $scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.sms]) & (1 << 2)) !== 0);
 
+        getSmsTypeList();
         getSmsAppointmentList();
         $scope.changesMade = false;
         var cellTemplateResourceName = '<div style="cursor:pointer;" class="ui-grid-cell-contents">' +
-            '<a href=""  ng-click="grid.appScope.editAppointment(row.entity)"><strong>{{row.entity.resname}}</strong>&nbsp&nbsp&nbsp{{row.entity.rescode}}</a></div>';
+            '<a href=""  ng-click="grid.appScope.editAppointment(row.entity)"><strong>{{row.entity.resname}}</strong>&nbsp&nbsp&nbsp({{row.entity.rescode}})</a></div>';
         var cellTemplateAppointmentCode = '<div style="cursor:pointer;" class="ui-grid-cell-contents">' +
             '<strong><a href=""  ng-click="grid.appScope.editAppointment(row.entity)">{{row.entity.appcode}}</a></strong></div>';
 
         var checkboxCellTemplate;
         if($scope.writeAccess)
-            checkboxCellTemplate = '<div style="text-align: center; cursor: pointer;" ' +
-                'ng-click="grid.appScope.checkSmsUpdate(row.entity)" class="ui-grid-cell-contents">' +
-                '<input style="margin: 4px;" type="checkbox" ng-checked="grid.appScope.updateVal(row.entity.state)" ng-disabled="!(row.entity.apptype != \'UNDEFINED\')" ' +
+            checkboxCellTemplate = '<div style="text-align: center;" class="ui-grid-cell-contents" ' +
+                'ng-style = "(row.entity.apptype != \'UNDEFINED\') ? {cursor:\'pointer\'}:{cursor:\'not-allowed\'}" >' +
+                '<input style="margin: 4px;" type="checkbox" ng-checked="grid.appScope.updateVal(row.entity.state)" ' +
+                'ng-disabled="!(row.entity.apptype != \'UNDEFINED\')" ng-click="grid.appScope.checkSmsUpdate(row.entity)" ' +
                 'ng-model="row.entity.state"></div>';
         else
             checkboxCellTemplate = '<div style="text-align: center;" class="ui-grid-cell-contents"><i ng-class="row.entity.state == 1 ? \'Active\' : \'Disabled\'" class="fa"></i></div>';
@@ -98,11 +100,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                 {
                     field: 'displayType', displayName: $filter('translate')('SMS.LIST.TYPE'), width: '15%', enableColumnMenu: false, filter: {
                         type: uiGridConstants.filter.SELECT,
-                        selectOptions: [{ value: $filter('translate')('SMS.LIST.GENERAL'), label: $filter('translate')('SMS.LIST.GENERAL')},
-                            { value: $filter('translate')('SMS.LIST.RADONC'), label: $filter('translate')('SMS.LIST.RADONC')},
-                            { value: $filter('translate')('SMS.LIST.TELEMED'), label: $filter('translate')('SMS.LIST.TELEMED')},
-                            {value: $filter('translate')('SMS.LIST.TEST_CENTRE'),label: $filter('translate')('SMS.LIST.TEST_CENTRE')},
-                            {value: $filter('translate')('SMS.LIST.UNDEFINED'),label:'Undefined'}]
+                        selectOptions: []
                     }
                 },
                 {
@@ -188,6 +186,17 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                 });
             }
         };
+
+        function getSmsTypeList(){
+            smsCollectionService.getSmsType('Oncology').then(function (response) {
+                var TypeList = []
+                response.data.forEach(function (row){
+                    TypeList.push({value:row.type,label:row.type})
+                });
+                TypeList.push({value:'-',label:'UNDEFINED'});
+                $scope.gridOptions.columnDefs[2].filter.selectOptions = TypeList;
+            });
+        }
 
         function getSmsAppointmentList() {
             smsCollectionService.getSmsAppointments().then(function (response) {
