@@ -1,9 +1,7 @@
 <?php
-header('Content-Type: application/javascript');
-/* To update an alias for any changes */
-include_once('alias.inc');
+include_once("../config.php");
 
-$aliasObject = new Alias; // Object
+$aliasObject = new Alias();
 
 // Construct array from FORM params
 $aliasArray	= array(
@@ -24,6 +22,6 @@ $aliasArray	= array(
     'hospitalMapSer'					=> $_POST['hospitalMapSer']
 );
 
-// Call function
 $response = $aliasObject->updateAlias($aliasArray);
-print json_encode($response); // Return response
+header('Content-Type: application/javascript');
+echo json_encode($response);
