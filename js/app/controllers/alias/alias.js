@@ -58,8 +58,8 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.editAlias(row.entity)"><i title="' + $filter('translate')('ALIAS.LIST.EDIT') + '" class="fa fa-pencil"></i></a></strong> ';
 		else
 			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.editAlias(row.entity)"><i title="' + $filter('translate')('ALIAS.LIST.VIEW') + '" class="fa fa-eye"></i></a></strong> ';
-		if($scope.deleteAccess)
-			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.deleteAlias(row.entity)"><i title="' + $filter('translate')('ALIAS.LIST.DELETE') + '" class="fa fa-trash"></i></a></strong>';
+		// if($scope.deleteAccess)
+		// 	cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.deleteAlias(row.entity)"><i title="' + $filter('translate')('ALIAS.LIST.DELETE') + '" class="fa fa-trash"></i></a></strong>';
 		cellTemplateOperations += '</div>';
 
 		var cellTemplateColor = '<div class="color-palette-sm" style="margin-top: 7px; margin-left: auto; margin-right: auto" ' +
@@ -212,7 +212,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 			alias.changed = 1;
 		};
 
-		var chartConfig = $scope.chartConfig = {
+		$scope.chartConfig = {
 			chart: {
 				type: 'spline',
 				zoomType: 'x',
@@ -239,7 +239,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 								if (series.visible) {
 									var points = series.points;
 									angular.forEach(points, function (point) {
-										timeInMilliSeconds = point.x.getTime();
+										var timeInMilliSeconds = point.x.getTime();
 										if (timeInMilliSeconds >= selection.min && timeInMilliSeconds <= selection.max) {
 											if (!cronSerials.has(point.cron_serial)) {
 												cronSerials.add(point.cron_serial);
@@ -375,7 +375,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 		$scope.showAliasLog = function (alias) {
 
 			$scope.currentAlias = alias;
-			var modalInstance = $uibModal.open({
+			$uibModal.open({
 				templateUrl: 'templates/alias/log.alias.html',
 				controller: 'alias.log',
 				scope: $scope,
@@ -408,7 +408,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 
 		// Function for when the alias has been clicked for deletion
 		// Open a modal
-		$scope.deleteAlias = function (currentAlias) {
+/*		$scope.deleteAlias = function (currentAlias) {
 			if ($scope.deleteAccess) {
 				// Assign selected alias as the alias to delete
 				$scope.aliasToDelete = currentAlias;
@@ -425,5 +425,5 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 					getAliasesList();
 				});
 			}
-		};
+		};*/
 	});
