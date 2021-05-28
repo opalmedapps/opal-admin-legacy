@@ -570,10 +570,6 @@ sub getDocsFromSourceDB
 				}
 			}
 			
-			# open(my $fh, '>>', 'ym.txt');
-			# print $fh $docInfo_sql;
-			# close $fh;
-
 			# prepare query
 			my $query = $sourceDatabase->prepare($docInfo_sql)
 				or die "Could not prepare query: " . $sourceDatabase->errstr;

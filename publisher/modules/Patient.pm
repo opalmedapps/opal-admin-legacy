@@ -764,7 +764,7 @@ sub unsetPatientControl
 }
 
 #======================================================================================
-# Subroutine to set/update the "last transferred" field to current time  and reset the transfer flag back from 1 to 0
+# Subroutine to set/update the "last transferred" field to current time  and reset the transfer flag back from 1 to 0 (dataControl only)
 #======================================================================================
 sub setPatientLastTransferredIntoOurDB
 {
@@ -780,6 +780,35 @@ sub setPatientLastTransferredIntoOurDB
 			TransferFlag 		= 0
 		WHERE
 			TransferFlag		= 1
+	";
+
+	# prepare query
+	my $query = $SQLDatabase->prepare($update_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+}
+
+
+#======================================================================================
+# Subroutine to set/update the "last transferred" field to current time  and reset the transfer flag back from 1 to 0 (all other control modules)
+#======================================================================================
+sub setPatientLastTransferredModularControllers
+{
+	my ($current_datetime, $module) = @_; # current datetime, cron module type, 
+
+	my $update_sql = "
+		UPDATE 
+			cronControlPatient
+		SET
+			lastTransferred	= '$current_datetime',
+            lastUpdated 		= lastUpdated,
+			transferFlag 		= 0
+		WHERE
+			transferFlag		= 1
+		AND cronType 			= '$module'
 	";
 
 	# prepare query

@@ -292,10 +292,10 @@ print "Finished announcements\n" if $verbose;
 
 # Once everything is complete, we update the "last transferred" field for all controls
 # Patient control
-Patient::setPatientLastTransferredIntoOurDB($start_datetime);
+Patient::setPatientLastTransferredModularControllers($start_datetime, 'Announcement');
 
 # Alias control
-Alias::setAliasLastTransferIntoOurDB($start_datetime);
+Alias::setAliasLastTransferredModularControllers($start_datetime, 'Announcement');
 
 # Post control
 PostControl::setPostControlLastPublishedIntoOurDB($start_datetime);

@@ -328,10 +328,10 @@ print "Finished document list\n" if $verbose;
 
 # Once everything is complete, we update the "last transferred" field for all controls
 # Patient control
-Patient::setPatientLastTransferredIntoOurDB($start_datetime);
+Patient::setPatientLastTransferredModularControllers($start_datetime, 'Document');
 
 # Alias control
-Alias::setAliasLastTransferIntoOurDB($start_datetime);
+Alias::setAliasLastTransferredModularControllers($start_datetime, 'Document');
 
 # Post control
 PostControl::setPostControlLastPublishedIntoOurDB($start_datetime);

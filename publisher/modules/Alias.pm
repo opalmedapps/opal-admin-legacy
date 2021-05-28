@@ -336,6 +336,36 @@ sub setAliasLastTransferIntoOurDB
 		or die "Could not execute query: " . $query->errstr;
 }
 
+
+#======================================================================================
+# Subroutine to set/update the "last transferred" field to current time for modular controllers only (dataControl still uses the setAliasLastTransferIntoOurDB sub)
+#======================================================================================
+sub setAliasLastTransferredModularControllers
+{
+	my ($current_datetime, $module) = @_; # our current datetime in arguments
+
+	my $update_sql = "
+		UPDATE
+			cronControlAlias
+		SET
+			lastTransferred					= '$current_datetime',
+            lastUpdated    					= lastUpdated
+		WHERE
+			aliasUpdate			= 1
+		AND cronType			= '$module'
+	";
+
+	print "$update_sql\n" if $verbose;
+
+	# prepare query
+	my $query = $SQLDatabase->prepare($update_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+}
+
 #======================================================================================
 # Subroutine to get expression name from our db given an expression serial
 #======================================================================================

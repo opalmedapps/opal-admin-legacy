@@ -292,10 +292,10 @@ print "Finished patients for patients\n";
 
 # Once everything is complete, we update the "last transferred" field for all controls
 # Patient control
-Patient::setPatientLastTransferredIntoOurDB($start_datetime);
+Patient::setPatientLastTransferredModularControllers($start_datetime, 'PatientsForPatients');
 
 # Alias control
-Alias::setAliasLastTransferIntoOurDB($start_datetime);
+Alias::setAliasLastTransferredModularControllers($start_datetime, 'PatientsForPatients');
 
 # Post control
 PostControl::setPostControlLastPublishedIntoOurDB($start_datetime);
