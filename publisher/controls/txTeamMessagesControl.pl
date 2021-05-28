@@ -294,14 +294,12 @@ print "Finished treatment team messages\n" if $verbose;
 # Once everything is complete, we update the "last transferred" field for patients
 # Patient control
 Patient::setPatientLastTransferredModularControllers($start_datetime, 'TxTeamMessages');
-
 # Alias control
 Alias::setAliasLastTransferredModularControllers($start_datetime, 'TxTeamMessages');
-
 # Post control
-PostControl::setPostControlLastPublishedIntoOurDB($start_datetime);
+PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'TxTeamMessages');
 # Educational material control
-EducationalMaterialControl::setEduMatControlLastPublishedIntoOurDB($start_datetime);
+EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'TxTeamMessages');
 
 
 # Log that the script is finished in the cronlog

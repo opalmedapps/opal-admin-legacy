@@ -293,14 +293,12 @@ print "Finished announcements\n" if $verbose;
 # Once everything is complete, we update the "last transferred" field for all controls
 # Patient control
 Patient::setPatientLastTransferredModularControllers($start_datetime, 'Announcement');
-
 # Alias control
 Alias::setAliasLastTransferredModularControllers($start_datetime, 'Announcement');
-
 # Post control
-PostControl::setPostControlLastPublishedIntoOurDB($start_datetime);
+PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'Announcement');
 # Educational material control
-EducationalMaterialControl::setEduMatControlLastPublishedIntoOurDB($start_datetime);
+EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'Announcement');
 
 
 # Log that the script is finished in the cronlog

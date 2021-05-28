@@ -294,14 +294,12 @@ print "Finished Legacy Questionnaires\n" if $verbose;
 # Once everything is complete, we update the "last transferred" field for all controls
 # Patient control
 Patient::setPatientLastTransferredModularControllers($start_datetime, 'LegacyQuestionnaire');
-
 # Alias control
 Alias::setAliasLastTransferredModularControllers($start_datetime, 'LegacyQuestionnaire');
-
 # Post control
-PostControl::setPostControlLastPublishedIntoOurDB($start_datetime);
+PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'LegacyQuestionnaire');
 # Educational material control
-EducationalMaterialControl::setEduMatControlLastPublishedIntoOurDB($start_datetime);
+EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'LegacyQuestionnaire');
 
 
 # Log that the script is finished in the cronlog

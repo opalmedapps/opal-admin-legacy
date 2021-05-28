@@ -293,14 +293,12 @@ print "Finished patients for patients\n";
 # Once everything is complete, we update the "last transferred" field for all controls
 # Patient control
 Patient::setPatientLastTransferredModularControllers($start_datetime, 'PatientsForPatients');
-
 # Alias control
 Alias::setAliasLastTransferredModularControllers($start_datetime, 'PatientsForPatients');
-
 # Post control
-PostControl::setPostControlLastPublishedIntoOurDB($start_datetime);
+PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'PatientsForPatients');
 # Educational material control
-EducationalMaterialControl::setEduMatControlLastPublishedIntoOurDB($start_datetime);
+EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'PatientsForPatients');
 
 
 # Log that the script is finished in the cronlog

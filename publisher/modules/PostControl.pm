@@ -232,5 +232,32 @@ sub setPostControlLastPublishedIntoOurDB
 		or die "Could not execute query: " . $query->errstr;
 }
 
+
+#======================================================================================
+# Subroutine to set/update the "last published" field to current time for modular controllers
+#======================================================================================
+sub setPostControlLastPublishedModularControllers
+{
+    my ($current_datetime, $module) = @_; # our current datetime in args
+
+    my $update_sql = "
+        UPDATE
+            cronControlPostControl
+        SET
+            lastPublished = '$current_datetime'
+        WHERE
+            publishFlag = 1
+        AND cronType = '$module'
+    ";
+    	
+    # prepare query
+	my $query = $SQLDatabase->prepare($update_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+}
+
 # exit smoothly for module
 1;

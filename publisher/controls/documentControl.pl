@@ -329,14 +329,12 @@ print "Finished document list\n" if $verbose;
 # Once everything is complete, we update the "last transferred" field for all controls
 # Patient control
 Patient::setPatientLastTransferredModularControllers($start_datetime, 'Document');
-
 # Alias control
 Alias::setAliasLastTransferredModularControllers($start_datetime, 'Document');
-
 # Post control
-PostControl::setPostControlLastPublishedIntoOurDB($start_datetime);
+PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'Document');
 # Educational material control
-EducationalMaterialControl::setEduMatControlLastPublishedIntoOurDB($start_datetime);
+EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'Document');
 
 
 # Log that the script is finished in the cronlog
