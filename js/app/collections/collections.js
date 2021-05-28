@@ -1000,18 +1000,6 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		studyAPI.getPatientConsentList = function (studyId) {
-			return $http.post(
-				"study/get/patients-consents",
-				$.param({
-					studyId: studyId,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
 		studyAPI.getResearchPatient = function () {
 			return $http.post(
 				"study/get/research-patient",
@@ -1020,27 +1008,6 @@ angular.module('opalAdmin.collections', [])
 				}
 			);
 		};
-
-		studyAPI.getConsentForms = function() {
-			return $http.post(
-				"study/get/consent-forms",
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		}
-
-		studyAPI.consentFormPublished = function(consentId){
-			return $http.post(
-				"study/get/consent-published",
-				$.param({
-					consentId: consentId,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		}
 
 		return studyAPI;
 	})
@@ -1229,37 +1196,31 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		smsAPI.getSmsEvents = function (type, speciality) {
-			// return $http.post(
-			// 	"sms/get/events",
-			// 	$.param({
-			// 		type: type,
-			// 		speciality: speciality,
-			// 	}),
-			// 	{
-			// 		headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-			// 	}
-			// );
-			return $http.get(
-				"sms/get/events?type="+type+"&speciality="+speciality,
-			)
+			return $http.post(
+				"sms/get/events",
+				$.param({
+					type: type,
+					speciality: speciality,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		smsAPI.getSmsMessge = function (speciality,type,event,language) {
-			// return $http.post(
-			// 	"sms/get/smsMessage",
-			// 	$.param({
-			// 		speciality: speciality,
-			// 		type: type,
-			// 		event:event,
-			// 		language:language,
-			// 	}),
-			// 	{
-			// 		headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-			// 	}
-			// );
-			return $http.get(
-				"sms/get/smsMessage?speciality="+speciality+"&type="+type+"&event="+event+"&language="+language,
-			)
+			return $http.post(
+				"sms/get/smsMessage",
+				$.param({
+					speciality: speciality,
+					type: type,
+					event:event,
+					language:language,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		smsAPI.getSmsSpeciality = function(){
@@ -1272,9 +1233,15 @@ angular.module('opalAdmin.collections', [])
 		}
 
 		smsAPI.getSmsType = function(speciality){
-			return $http.get(
-				"sms/get/smsType?speciality="+speciality,
-			)
+			return $http.post(
+				"sms/get/smsType",
+				$.param({
+					speciality: speciality,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		}
 		return smsAPI;
 	});
