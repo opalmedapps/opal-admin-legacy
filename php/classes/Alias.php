@@ -137,7 +137,7 @@ class Alias extends Module {
         return $result;
     }
 
-    protected function _validateAndSanitzeAlias(&$post, $isAnUpdate = false) {
+    protected function _validateAndSanitizeAlias(&$post, $isAnUpdate = false) {
         $validatedPost = HelpSetup::arraySanitization($post);
         $errCode = "";
         if (is_array($post)) {
@@ -173,25 +173,110 @@ class Alias extends Module {
 
             // 5th bit
             if (array_key_exists("eduMat", $post) && $post["eduMat"] != "") {
-                $this->opalDB->getEduMaterialDetails($post["eduMat"]);
+                $total = $this->opalDB->countEduMaterial($post["eduMat"]);
+                $total = intval($total["total"]);
+                if($total <= 0)
+                    $errCode .= "1" . $errCode;
+                else if($total == 1)
+                    $errCode .= "0" . $errCode;
+                else
+                    HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, "Duplicate edu material found.");
+            } else
+                $errCode .= "0" . $errCode;
 
-//                $errCode .= "1" . $errCode;
-//            else
-//                $errCode .= "0" . $errCode;
+            // 6th bit
+            if (array_key_exists("hospitalMap", $post) && $post["hospitalMap"] != "") {
+                $total = $this->opalDB->countHospitalMap($post["hospitalMap"]);
+                $total = intval($total["total"]);
+                if($total <= 0)
+                    $errCode .= "1" . $errCode;
+                else if($total == 1)
+                    $errCode .= "0" . $errCode;
+                else
+                    HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, "Duplicate hospital maps found.");
+            } else
+                $errCode .= "0" . $errCode;
+
+            // 7th bit
+            if (!array_key_exists("name_EN", $post) || $post["name_EN"] == "")
+                $errCode .= "1" . $errCode;
+            else
+                $errCode .= "0" . $errCode;
+
+            // 8th bit
+            if (!array_key_exists("name_FR", $post) || $post["name_FR"] == "")
+                $errCode .= "1" . $errCode;
+            else
+                $errCode .= "0" . $errCode;
+
+            // 9th bit
+            if (!array_key_exists("source_db", $post) || $post["source_db"] == "")
+                $errCode .= "1" . $errCode;
+            else {
+                $total = $this->opalDB->getSourceDatabaseDetails($post["source_db"]);
+                $total = count($total);
+                if($total <= 0)
+                    $errCode .= "1" . $errCode;
+                else if($total == 1)
+                    $errCode .= "0" . $errCode;
+                else
+                    HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, "Duplicate source database found.");
+            }
+
+            // 10th bit
+            if (!array_key_exists("type", $post) || $post["type"] == "" ||
+                ($post["type"] != 'Appointment' && $post["type"] != 'Document' && $post["type"] != 'Task'))
+                $errCode .= "1" . $errCode;
+            else
+                $errCode .= "0" . $errCode;
+
+            // 11th bit
+            if (!array_key_exists("terms", $post) || (!is_array($post["terms"])))
+                $errCode .= "1" . $errCode;
+            else {
+                $listIds = array();
+                foreach ($post["terms"] as $term) {
+                    array_push($listIds, intval($term));
+                }
+
+                $total = $this->opalDB->countAliasExpressions($listIds);
+                if(intval($total["total"]) != count($post["terms"]))
+                    $errCode .= "1" . $errCode;
+                else
+                    $errCode .= "0" . $errCode;
+            }
+
+            // 12th bit
+            if($isAnUpdate) {
+                if (!array_key_exists("id", $post) || $post["id"] == "")
+                    $errCode = "1" . $errCode;
+                else {
+                    $result = $this->opalDB->getAliasDetails($post["id"]);
+                    if (count($result) < 1)
+                        $errCode = "1" . $errCode;
+                    else if (count($result) == 1)
+                        $errCode = "0" . $errCode;
+                    else
+                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates aliases found.");
+                }
             } else
                 $errCode = "0" . $errCode;
 
+        } else
+            $errCode = "111111111111";
 
-
-        } else {
-
-        }
-
+        return $errCode;
     }
 
     public function insertAlias( $post ) {
         $this->checkWriteAccess($post);
-        $this->_validateAndSanitzeAlias($post);
+        $errCode = $this->_validateAndSanitizeAlias($post);
+        print $errCode;
+        $errCode = bindec($errCode);
+
+
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         print_r($post);
         die();
