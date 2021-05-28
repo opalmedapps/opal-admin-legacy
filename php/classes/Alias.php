@@ -137,8 +137,64 @@ class Alias extends Module {
         return $result;
     }
 
-    public function insertAlias( $aliasDetails ) {
-        $this->checkWriteAccess($aliasDetails);
+    protected function _validateAndSanitzeAlias(&$post, $isAnUpdate = false) {
+        $validatedPost = HelpSetup::arraySanitization($post);
+        $errCode = "";
+        if (is_array($post)) {
+
+            // 1st bit
+            if (!array_key_exists("checkin_details", $post) || $post["checkin_details"] == "" ||
+                !array_key_exists("checkin_possible", $post["checkin_details"]) || $post["checkin_details"]["checkin_possible"] == "" ||
+                ($post["checkin_details"]["checkin_possible"] != 0 && $post["checkin_details"]["checkin_possible"] != 1 ) ||
+                !array_key_exists("instruction_EN", $post["checkin_details"]) || $post["checkin_details"]["instruction_EN"] == "" ||
+                !array_key_exists("instruction_FR", $post["checkin_details"]) || $post["checkin_details"]["instruction_FR"] == ""
+            )
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            // 2nd bit
+            if (!array_key_exists("color", $post) || $post["color"] == "" || !ctype_xdigit($post["color"]) || strlen($post["color"])!=6)
+                $errCode .= "1" . $errCode;
+            else
+                $errCode .= "0" . $errCode;
+
+            // 3rd bit
+            if (!array_key_exists("description_EN", $post) || $post["description_EN"] == "")
+                $errCode .= "1" . $errCode;
+            else
+                $errCode .= "0" . $errCode;
+
+            // 4th bit
+            if (!array_key_exists("description_FR", $post) || $post["description_FR"] == "")
+                $errCode .= "1" . $errCode;
+            else
+                $errCode .= "0" . $errCode;
+
+            // 5th bit
+            if (array_key_exists("eduMat", $post) && $post["eduMat"] != "") {
+                $this->opalDB->getEduMaterialDetails($post["eduMat"]);
+
+//                $errCode .= "1" . $errCode;
+//            else
+//                $errCode .= "0" . $errCode;
+            } else
+                $errCode = "0" . $errCode;
+
+
+
+        } else {
+
+        }
+
+    }
+
+    public function insertAlias( $post ) {
+        $this->checkWriteAccess($post);
+        $this->_validateAndSanitzeAlias($post);
+
+        print_r($post);
+        die();
 
         $aliasName_EN 	= $aliasDetails['name_EN'];
         $aliasName_FR 	= $aliasDetails['name_FR'];
