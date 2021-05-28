@@ -19,7 +19,7 @@ $aliasArray	= array(
 	'hospitalMap'				=> $_POST['hospitalMap']
 );
 
-$aliasObject = new Alias; // Object
+$aliasObject = new Alias(); // Object
 
 // Call function
-print $aliasObject->insertAlias($aliasArray);
+print $aliasObject->insertAlias($_POST);
