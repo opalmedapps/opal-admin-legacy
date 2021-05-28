@@ -88,7 +88,6 @@ RewriteRule ^alert/update/alert php/alert/update.alert.php [QSA,L]
 RewriteRule ^alert/update/activation-flag php/alert/update.activation.flag.php [QSA,L]
 
 # Tasks/Appts/Docs Section (Alias)
-RewriteRule ^alias/delete/alias php/alias/delete.alias.php [QSA,L]
 RewriteRule ^alias/get/alias-chart-logs php/alias/get.alias_chart_logs.php [QSA,L]
 RewriteRule ^alias/get/alias-details php/alias/get.alias_details.php [QSA,L]
 RewriteRule ^alias/get/alias-list-logs php/alias/get.alias_list_logs.php [QSA,L]
