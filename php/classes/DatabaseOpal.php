@@ -2856,37 +2856,28 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Delete all expressions of a specific alias
-     * @param $aliasId int - ID of the alias to delete the expression
-     * @return int - number of records affected
+     * count the number of educational material found with a specific ID
+     * @param $eduId
+     * @return array - total field counted
      */
-    function deleteAliasExpression($aliasId) {
-        return $this->_execute(OPAL_DELETE_ALIAS_EXPRESSIONS, array(
-            array("parameter"=>":AliasSerNum","variable"=>$aliasId),
+    function countEduMaterial($eduId) {
+        return $this->_fetch(OPAL_COUNT_EDU_MATERIAL, array(
+            array("parameter"=>":EducationalMaterialControl","variable"=>$eduId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
     /**
-     * Delete a specific alias
-     * @param $aliasId int - ID of the alias to delete the expression
-     * @return int - number of records affected
+     * count the number of hospital map found with a specific ID
+     * @param $mapId
+     * @return array - total field counted
      */
-    function deleteAlias($aliasId) {
-        return $this->_execute(OPAL_DELETE_ALIAS, array(
-            array("parameter"=>":AliasSerNum","variable"=>$aliasId),
+    function countHospitalMap($mapId) {
+        return $this->_fetch(OPAL_COUNT_HOSPITAL_MAP, array(
+            array("parameter"=>":HospitalMapSerNum","variable"=>$mapId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
-    /**
-     * Update AliasMH table to mark down the user and session for latest operation (aka delete)
-     * @param $aliasId int - ID of the alias to delete the expression
-     * @return int - number of records affected (by default only one, the most recent)
-     */
-    function updateAliasMH($aliasId) {
-        return $this->_updateRecordIntoTable(OPAL_UPDATE_ALIAS_MH, array(
-            "AliasSerNum"=>$aliasId,
-            "SessionId"=>$this->getSessionId(),
-            "LastUpdatedBy"=>$this->getOAUserId(),
-        ));
+    function countAliasExpressions($listIds) {
+        return $this->_fetch(str_replace("%%LISTIDS%%", implode(", ", $listIds), OPAL_COUNT_ALIAS_EXPRESSIONS), array());
     }
 }

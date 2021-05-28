@@ -1429,15 +1429,14 @@ define("OPAL_TASK_LOGS","
     GROUP BY taskmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC
 ");
 
-define("OPAL_DELETE_ALIAS_EXPRESSIONS","
-    DELETE FROM ".OPAL_ALIAS_EXPRESSION_TABLE." WHERE AliasSerNum = :AliasSerNum;
+define("OPAL_COUNT_EDU_MATERIAL","
+    SELECT COUNT(*) AS total FROM ".OPAL_EDUCATION_MATERIAL_TABLE." WHERE EducationalMaterialControl = :EducationalMaterialControl;
 ");
 
-define("OPAL_DELETE_ALIAS","
-    DELETE FROM ".OPAL_ALIAS_TABLE." WHERE AliasSerNum = :AliasSerNum;
+define("OPAL_COUNT_HOSPITAL_MAP","
+    SELECT COUNT(*) AS total FROM ".OPAL_HOSPITAL_MAP_TABLE." WHERE HospitalMapSerNum = :HospitalMapSerNum;
 ");
 
-define("OPAL_UPDATE_ALIAS_MH","
-    UPDATE ".OPAL_ALIAS_MH_TABLE." SET LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId WHERE
-    AliasSerNum = :AliasSerNum ORDER BY AliasRevSerNum DESC LIMIT 1
+define("OPAL_COUNT_ALIAS_EXPRESSIONS","
+    SELECT COUNT(*) AS total FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." WHERE ID IN (%%LISTIDS%%) AND deleted = ".NON_DELETED_RECORD.";
 ");
