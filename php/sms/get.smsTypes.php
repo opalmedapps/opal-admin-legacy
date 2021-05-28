@@ -1,7 +1,7 @@
 <?php
-
+header('Content-Type: application/javascript');
 include_once('sms.inc');
-$speciality = $_GET['speciality'];
+$speciality = $_POST['speciality'];
 
 $sms = new Sms();
 $smsTypeList = $sms->getTypeMessage($speciality);
