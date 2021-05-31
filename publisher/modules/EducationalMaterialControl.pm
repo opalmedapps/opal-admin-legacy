@@ -194,7 +194,7 @@ sub setEduMatControlLastPublishedModularControllers
 
     my $update_sql = "
         UPDATE
-            cronControlEducationalMaterialControl
+            cronControlEducationalMaterial
         SET
             lastPublished = '$current_datetime'
         WHERE

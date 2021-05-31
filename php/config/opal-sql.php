@@ -118,6 +118,7 @@ define("OPAL_PATIENT_ACTIVITY_LOG_TABLE","PatientActivityLog");
 define("OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE", "PatientDeviceIdentifier");
 define("OPAL_CRON_CONTROL_PATIENT_TABLE", "cronControlPatient");
 define("OPAL_CRON_CONTROL_POST_TABLE", "cronControlPost");
+define("OPAL_CRON_CONTROL_EDUMAT_TABLE", "cronControlEducationalMaterial");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -210,6 +211,14 @@ define("SQL_OPAL_UPDATE_CRON_CONTROL_POST", "
         lastPublished = :lastPublished,
         sessionId = :sessionId
     WHERE cronControlPostSerNum = :cronControlPostSerNum AND publishFlag != :publishFlag;
+");
+
+define("SQL_OPAL_UPDATE_CRON_CONTROL_EDUMAT","
+    UPDATE ".OPAL_CRON_CONTROL_EDUMAT_TABLE."
+    SET publishFlag = :publishFlag,
+        lastPublished = :lastPublished,
+        sessionId = :sessionId
+    WHERE cronControlEducationalMaterialControlSerNum = :cronControlEducationalMaterialControlSerNum AND publishFlag != publishFlag;
 ");
 
 define("SQL_OPAL_GET_ALL_PUBLICATION_MODULES",

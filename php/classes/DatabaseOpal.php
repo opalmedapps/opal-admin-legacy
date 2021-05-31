@@ -515,6 +515,22 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+     /**
+     * Update publish flag of the cronControlEducationalMaterial table
+     * @params publishFlag 1/0
+     *         serNum serial number of target post
+     *         sessionId current user session ID
+     * @return number of records affected
+     */
+    function updateControlControlEducationalMaterialPublicationFlag($publishFlag, $serNum, $sessionId){
+        return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_CRON_CONTROL_EDUMAT, array(
+            "publishFlag"=>$publishFlag,
+            "cronControlEducationalMaterialControlSerNum"=>$serNum,
+            "lastPublished"=>date("Y-m-d H:i:s"),
+            "sessionId"=>$this->getSessionId()
+        ));
+    }
+
     /*
      * Returns the list of modules.
      * @params  void

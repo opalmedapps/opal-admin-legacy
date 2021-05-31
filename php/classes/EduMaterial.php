@@ -49,6 +49,9 @@ class EduMaterial extends Module {
 
 				$query = $host_db_link->prepare( $sql );
 				$query->execute();
+
+                // 2021-05-31 Cron refactor: We will also update the cronControlEducationalMaterial table with this publishFlag info
+                $this->opalDB->updateControlControlEducationalMaterialPublicationFlag($eduMatPublish, $eduMatSer);
             }
 
             $response['value'] = 1; // Success
