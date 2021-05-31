@@ -238,6 +238,11 @@ class Publication extends Module
         foreach($clearedPublishList as $row) {
             foreach($publicationModules as $module) {
                 if ($module["ID"] == $row["moduleId"]) {
+                    // 2021-05-31 Cron Refactor: Because the new cron controls dont fit the definition of a "module"
+                    //      I will add an exception here and manually insert publish info into the cronControlPost table
+                    if($module["ID"] == "2"){
+                        $this->opalDB->updateCronControlPostPublicationFlag($row["publishFlag"], $row["ID"]);
+                    }
                     $this->opalDB->updatePublicationFlag($module["tableName"], $module["primaryKey"], $row["publishFlag"], $row["ID"]);
                     break;
                 }

@@ -242,7 +242,7 @@ sub setPostControlLastPublishedModularControllers
 
     my $update_sql = "
         UPDATE
-            cronControlPostControl
+            cronControlPost
         SET
             lastPublished = '$current_datetime'
         WHERE

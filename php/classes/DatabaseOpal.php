@@ -500,6 +500,21 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_execute($sqlToUpdate, $toUpdate);
     }
 
+    /**
+     * Update publish flag of the cronControlPost table
+     * @params publishFlag 1/0
+     *         PostControlSerNum cronControlPost serial number of target post (foreign key of PostControl.PostControlSerNum)
+     * @return number of records affected
+     */
+    function updateCronControlPostPublicationFlag($publishFlag, $serNum){
+        return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_CRON_CONTROL_POST, array(
+            "publishFlag"=>$publishFlag,
+            "cronControlPostSerNum"=>$serNum,
+            "lastPublished"=>date("Y-m-d H:i:s"),
+            "sessionId"=>$this->getSessionId()
+        ));
+    }
+
     /*
      * Returns the list of modules.
      * @params  void

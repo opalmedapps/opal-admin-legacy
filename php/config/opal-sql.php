@@ -117,6 +117,7 @@ define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
 define("OPAL_PATIENT_ACTIVITY_LOG_TABLE","PatientActivityLog");
 define("OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE", "PatientDeviceIdentifier");
 define("OPAL_CRON_CONTROL_PATIENT_TABLE", "cronControlPatient");
+define("OPAL_CRON_CONTROL_POST_TABLE", "cronControlPost");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -202,6 +203,14 @@ define("SQL_OPAL_UPDATE_PUBLICATION_STATUS_FLAG",
     WHERE %%ID_FIELD%% = :ID
     AND (PublishFlag != :PublishFlag);"
 );
+
+define("SQL_OPAL_UPDATE_CRON_CONTROL_POST", "
+    UPDATE ".OPAL_CRON_CONTROL_POST_TABLE."
+    SET publishFlag = :publishFlag,
+        lastPublished = :lastPublished,
+        sessionId = :sessionId
+    WHERE cronControlPostSerNum = :cronControlPostSerNum AND publishFlag != :publishFlag;
+");
 
 define("SQL_OPAL_GET_ALL_PUBLICATION_MODULES",
     "SELECT * FROM ".OPAL_MODULE_TABLE." m WHERE m.active = ".ACTIVE_RECORD." AND m.publication = ".ACTIVE_RECORD." ORDER BY m.order;"
