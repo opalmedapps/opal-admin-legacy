@@ -2731,6 +2731,19 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
+     * Update the publish flag of a specific patient in cronControlPatient table
+     * @param $id - PatientSerNum
+     * @param $transfer - Status of the update 1/0
+     * @return int - total record updated
+     */
+    function updateCronControlPatientPublishFlag($id, $transfer){
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_CRON_CONTROL_PATIENT_PUBLISH_FLAG, array(
+            "transferFlag"=>$transfer,
+            "PatientSerNum"=>$id,
+        ));
+    }
+
+    /**
      * Return the list of available patients
      * @return array
      */

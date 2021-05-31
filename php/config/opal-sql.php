@@ -116,6 +116,7 @@ define("OPAL_USERS_TABLE", "Users");
 define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
 define("OPAL_PATIENT_ACTIVITY_LOG_TABLE","PatientActivityLog");
 define("OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE", "PatientDeviceIdentifier");
+define("OPAL_CRON_CONTROL_PATIENT_TABLE", "cronControlPatient");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -1304,6 +1305,10 @@ define("OPAL_DELETE_QUESTIONNAIRE_FROM_STUDIES", "
 
 define("OPAL_UPDATE_PATIENT_PUBLISH_FLAG","
     UPDATE ".OPAL_PATIENT_CONTROL_TABLE." SET PatientUpdate = :PatientUpdate WHERE PatientSerNum = :PatientSerNum
+");
+
+define("OPAL_UPDATE_CRON_CONTROL_PATIENT_PUBLISH_FLAG", "
+    UPDATE ".OPAL_CRON_CONTROL_PATIENT_TABLE." SET transferFlag = :transferFlag WHERE PatientSerNum = :PatientSerNum
 ");
 
 define("OPAL_GET_PATIENTS","
