@@ -87,6 +87,21 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 		checkin_details: ''
 	};
 
+	var arrValidationInsert = [
+		$filter('translate')('ALIAS.VALIDATION.TYPE'),
+		$filter('translate')('ALIAS.VALIDATION.CHECKIN'),
+		$filter('translate')('ALIAS.VALIDATION.HOSPITAL'),
+		$filter('translate')('ALIAS.VALIDATION.COLOR'),
+		$filter('translate')('ALIAS.VALIDATION.DESCRPIPTION_EN'),
+		$filter('translate')('ALIAS.VALIDATION.DESCRPIPTION_FR'),
+		$filter('translate')('ALIAS.VALIDATION.EDU_MAT'),
+		$filter('translate')('ALIAS.VALIDATION.NAME_EN'),
+		$filter('translate')('ALIAS.VALIDATION.NAME_FR'),
+		$filter('translate')('ALIAS.VALIDATION.SOURCE_DB'),
+		$filter('translate')('ALIAS.VALIDATION.ALIAS_EXP'),
+		$filter('translate')('ALIAS.VALIDATION.ID'),
+	];
+
 	// Initialize list that will hold unassigned terms
 	$scope.termList = [];
 	// Initialize list that will hold educational materials
@@ -480,7 +495,8 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 				data: toSubmit,
 				success: function () {},
 				error: function (err) {
-					ErrorHandler.onError(err, $filter('translate')('ALIAS.ADD.ERROR_ADD'));
+					err.responseText = JSON.parse(err.responseText);
+					ErrorHandler.onError(err, $filter('translate')('ALIAS.ADD.ERROR_ADD'), arrValidationInsert);
 				},
 				complete: function() {
 					$state.go('alias');

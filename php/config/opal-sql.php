@@ -1430,7 +1430,7 @@ define("OPAL_TASK_LOGS","
 ");
 
 define("OPAL_COUNT_EDU_MATERIAL","
-    SELECT COUNT(*) AS total FROM ".OPAL_EDUCATION_MATERIAL_TABLE." WHERE EducationalMaterialControl = :EducationalMaterialControl;
+    SELECT COUNT(*) AS total FROM ".OPAL_EDUCATION_MATERIAL_TABLE." WHERE EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum;
 ");
 
 define("OPAL_COUNT_HOSPITAL_MAP","
@@ -1439,4 +1439,9 @@ define("OPAL_COUNT_HOSPITAL_MAP","
 
 define("OPAL_COUNT_ALIAS_EXPRESSIONS","
     SELECT COUNT(*) AS total FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." WHERE ID IN (%%LISTIDS%%) AND deleted = ".NON_DELETED_RECORD.";
+");
+
+define("OPAL_COUNT_SOURCE_DB","
+    SELECT COUNT(*) AS total FROM ".OPAL_SOURCE_DATABASE_TABLE." WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum
+    AND Enabled = ".ACTIVE_RECORD.";
 ");

@@ -1684,6 +1684,20 @@
       "SUCCESS": "L'alias a été supprimé avec succès.",
       "ERROR": "Une erreur s'est produite lors de la suppression de l'alias."
     },
+    "VALIDATION": {
+      "TYPE": "Type d'alias manquant ou invalide.",
+      "CHECKIN": "Détails de l'enregistreement manquant ou invalide.",
+      "HOSPITAL": "Carte de l'hôpital invalide.",
+      "COLOR": "Couleur manquante ou invalide.",
+      "DESCRPIPTION_EN": "Description anglaise manquante.",
+      "DESCRPIPTION_FR": "Description française manquante.",
+      "EDU_MAT": "Matériel éducatif invalide.",
+      "NAME_EN": "Nom anglais manquant.",
+      "NAME_FR": "Nom français manquant.",
+      "SOURCE_DB": "Source de données manquante ou invalide.",
+      "ALIAS_EXP": "Liste des codes cliniques manquants ou invalides.",
+      "ID": "ID de l'alias manquant ou invalide."
+    },
     "ADD": {
       "BACK": "Retour",
       "SUMMARY": "Sommaire",

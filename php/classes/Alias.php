@@ -137,113 +137,142 @@ class Alias extends Module {
         return $result;
     }
 
+    /**
+     * Validate and sanitize an alias
+     * Validation code :    Error validation code is coded as an int of 12 bits (value from 0 to 4095). Bit informations
+     *                      are coded from right to left:
+     *                      1: type of alias missing or invalid
+     *                      2: checkin details missing or invalid
+     *                      3: hospital map missing or invalid
+     *                      4: color missing or invalid
+     *                      5: english description missing
+     *                      6: french description missing
+     *                      7: educational material (if present) invalid
+     *                      8: english name missing
+     *                      9: french name missing
+     *                      10: source database missing or invalid
+     *                      11: list of alias expression missing or invalid
+     *                      12: alias ID is missing or invalid if it is an update
+     * @param $post array - data for the alias to validate
+     * @param $isAnUpdate boolean - if the validation must include the ID of the alias or not
+     * @return string - validation code
+     */
     protected function _validateAndSanitizeAlias(&$post, $isAnUpdate = false) {
         $validatedPost = HelpSetup::arraySanitization($post);
         $errCode = "";
         if (is_array($post)) {
-
             // 1st bit
-            if (!array_key_exists("checkin_details", $post) || $post["checkin_details"] == "" ||
-                !array_key_exists("checkin_possible", $post["checkin_details"]) || $post["checkin_details"]["checkin_possible"] == "" ||
-                ($post["checkin_details"]["checkin_possible"] != 0 && $post["checkin_details"]["checkin_possible"] != 1 ) ||
-                !array_key_exists("instruction_EN", $post["checkin_details"]) || $post["checkin_details"]["instruction_EN"] == "" ||
-                !array_key_exists("instruction_FR", $post["checkin_details"]) || $post["checkin_details"]["instruction_FR"] == ""
-            )
+            if (!array_key_exists("type", $post) || $post["type"] == "" ||
+                ($post["type"] != 'Appointment' && $post["type"] != 'Document' && $post["type"] != 'Task'))
+                $errCode = "001" . $errCode;
+            else {
+                $errCode = "0" . $errCode;
+
+                // 2nd bit
+                if (array_key_exists("checkin_details", $post) && $post["checkin_details"] != "") {
+
+                    if ($post["type"] != 'Appointment' || !array_key_exists("checkin_details", $post) || $post["checkin_details"] == "" ||
+                        !array_key_exists("checkin_possible", $post["checkin_details"]) || $post["checkin_details"]["checkin_possible"] == "" ||
+                        ($post["checkin_details"]["checkin_possible"] != 0 && $post["checkin_details"]["checkin_possible"] != 1) ||
+                        !array_key_exists("instruction_EN", $post["checkin_details"]) || $post["checkin_details"]["instruction_EN"] == "" ||
+                        !array_key_exists("instruction_FR", $post["checkin_details"]) || $post["checkin_details"]["instruction_FR"] == ""
+                    )
+                        $errCode = "1" . $errCode;
+                    else
+                        $errCode = "0" . $errCode;
+                }
+                else
+                    $errCode = "0" . $errCode;
+
+                // 3rd bit
+                if (array_key_exists("hospitalMap", $post) && $post["hospitalMap"] != "") {
+                    if($post["type"] != 'Appointment')
+                        $errCode = "1" . $errCode;
+                    else {
+                        $total = $this->opalDB->countHospitalMap($post["hospitalMap"]);
+                        $total = intval($total["total"]);
+                        if ($total <= 0)
+                            $errCode = "1" . $errCode;
+                        else if ($total == 1)
+                            $errCode = "0" . $errCode;
+                        else
+                            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, "Duplicate hospital maps found.");
+                    }
+                } else
+                    $errCode = "0" . $errCode;
+            }
+
+            // 4th bit
+            if (!array_key_exists("color", $post) || $post["color"] == "" || !preg_match("/#([a-f]|[A-F]|[0-9]){3}(([a-f]|[A-F]|[0-9]){3})?\b/", $post["color"]))
                 $errCode = "1" . $errCode;
             else
                 $errCode = "0" . $errCode;
 
-            // 2nd bit
-            if (!array_key_exists("color", $post) || $post["color"] == "" || !ctype_xdigit($post["color"]) || strlen($post["color"])!=6)
-                $errCode .= "1" . $errCode;
-            else
-                $errCode .= "0" . $errCode;
-
-            // 3rd bit
-            if (!array_key_exists("description_EN", $post) || $post["description_EN"] == "")
-                $errCode .= "1" . $errCode;
-            else
-                $errCode .= "0" . $errCode;
-
-            // 4th bit
-            if (!array_key_exists("description_FR", $post) || $post["description_FR"] == "")
-                $errCode .= "1" . $errCode;
-            else
-                $errCode .= "0" . $errCode;
-
             // 5th bit
+            if (!array_key_exists("description_EN", $post) || $post["description_EN"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            // 6th bit
+            if (!array_key_exists("description_FR", $post) || $post["description_FR"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            // 7th bit
             if (array_key_exists("eduMat", $post) && $post["eduMat"] != "") {
                 $total = $this->opalDB->countEduMaterial($post["eduMat"]);
                 $total = intval($total["total"]);
                 if($total <= 0)
-                    $errCode .= "1" . $errCode;
+                    $errCode = "1" . $errCode;
                 else if($total == 1)
-                    $errCode .= "0" . $errCode;
+                    $errCode = "0" . $errCode;
                 else
                     HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, "Duplicate edu material found.");
             } else
-                $errCode .= "0" . $errCode;
-
-            // 6th bit
-            if (array_key_exists("hospitalMap", $post) && $post["hospitalMap"] != "") {
-                $total = $this->opalDB->countHospitalMap($post["hospitalMap"]);
-                $total = intval($total["total"]);
-                if($total <= 0)
-                    $errCode .= "1" . $errCode;
-                else if($total == 1)
-                    $errCode .= "0" . $errCode;
-                else
-                    HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, "Duplicate hospital maps found.");
-            } else
-                $errCode .= "0" . $errCode;
-
-            // 7th bit
-            if (!array_key_exists("name_EN", $post) || $post["name_EN"] == "")
-                $errCode .= "1" . $errCode;
-            else
-                $errCode .= "0" . $errCode;
+                $errCode = "0" . $errCode;
 
             // 8th bit
-            if (!array_key_exists("name_FR", $post) || $post["name_FR"] == "")
-                $errCode .= "1" . $errCode;
+            if (!array_key_exists("name_EN", $post) || $post["name_EN"] == "")
+                $errCode = "1" . $errCode;
             else
-                $errCode .= "0" . $errCode;
+                $errCode = "0" . $errCode;
 
             // 9th bit
+            if (!array_key_exists("name_FR", $post) || $post["name_FR"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            // 10th bit
             if (!array_key_exists("source_db", $post) || $post["source_db"] == "")
-                $errCode .= "1" . $errCode;
+                $errCode = "1" . $errCode;
             else {
-                $total = $this->opalDB->getSourceDatabaseDetails($post["source_db"]);
-                $total = count($total);
+                $total = $this->opalDB->countSourceDatabase($post["source_db"]);
+                $total = intval($total["total"]);
                 if($total <= 0)
-                    $errCode .= "1" . $errCode;
+                    $errCode = "1" . $errCode;
                 else if($total == 1)
-                    $errCode .= "0" . $errCode;
+                    $errCode = "0" . $errCode;
                 else
                     HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, "Duplicate source database found.");
             }
 
-            // 10th bit
-            if (!array_key_exists("type", $post) || $post["type"] == "" ||
-                ($post["type"] != 'Appointment' && $post["type"] != 'Document' && $post["type"] != 'Task'))
-                $errCode .= "1" . $errCode;
-            else
-                $errCode .= "0" . $errCode;
-
             // 11th bit
             if (!array_key_exists("terms", $post) || (!is_array($post["terms"])))
-                $errCode .= "1" . $errCode;
+                $errCode = "1" . $errCode;
             else {
                 $listIds = array();
-                foreach ($post["terms"] as $term) {
+                foreach ($post["terms"] as $term)
                     array_push($listIds, intval($term));
-                }
 
                 $total = $this->opalDB->countAliasExpressions($listIds);
+                $post["terms"] = $listIds;
                 if(intval($total["total"]) != count($post["terms"]))
-                    $errCode .= "1" . $errCode;
+                    $errCode = "1" . $errCode;
                 else
-                    $errCode .= "0" . $errCode;
+                    $errCode = "0" . $errCode;
             }
 
             // 12th bit
@@ -271,15 +300,28 @@ class Alias extends Module {
     public function insertAlias( $post ) {
         $this->checkWriteAccess($post);
         $errCode = $this->_validateAndSanitizeAlias($post);
-        print $errCode;
         $errCode = bindec($errCode);
-
-
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
+        $toInsert = array(
+            "AliasType"=>$post["type"],
+            "AliasName_FR"=>$post["name_FR"],
+            "AliasName_EN"=>$post["name_EN"],
+            "AliasDescription_FR"=>$post["description_FR"],
+            "AliasDescription_EN"=>$post["description_EN"],
+            "SourceDatabaseSerNum"=>$post["source_db"],
+            "ColorTag"=>$post["color"],
+        );
+
+        if (array_key_exists("eduMat", $post) && $post["eduMat"] != "")
+            $toInsert["EducationalMaterialControlSerNum"] = $post["eduMat"];
+
+        if (array_key_exists("hospitalMap", $post) && $post["hospitalMap"] != "")
+            $toInsert["HospitalMapSerNum"] = $post["hospitalMap"];
+
         print_r($post);
-        die();
+        die($errCode);
 
         $aliasName_EN 	= $aliasDetails['name_EN'];
         $aliasName_FR 	= $aliasDetails['name_FR'];
@@ -561,8 +603,6 @@ class Alias extends Module {
                             AND AliasExpression.Description = \"$existingTermDesc\"
                             AND AliasExpression.AliasSerNum = $aliasSer
     					";
-
-                        //echo $sql;
 
                         $query = $host_db_link->prepare( $sql );
                         $query->execute();

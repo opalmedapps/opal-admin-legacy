@@ -2862,7 +2862,7 @@ class DatabaseOpal extends DatabaseAccess {
      */
     function countEduMaterial($eduId) {
         return $this->_fetch(OPAL_COUNT_EDU_MATERIAL, array(
-            array("parameter"=>":EducationalMaterialControl","variable"=>$eduId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":EducationalMaterialControlSerNum","variable"=>$eduId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
@@ -2877,7 +2877,23 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /**
+     * Count the number of alias expression from a list of IDs
+     * @param $listIds array - list of IDs of alias expressions
+     * @return array - total found
+     */
     function countAliasExpressions($listIds) {
         return $this->_fetch(str_replace("%%LISTIDS%%", implode(", ", $listIds), OPAL_COUNT_ALIAS_EXPRESSIONS), array());
+    }
+
+    /**
+     * Check if the source DB exists
+     * @param $sourceId int - ID of the source database
+     * @return array - total of source DB found
+     */
+    function countSourceDatabase($sourceId) {
+        return $this->_fetch(OPAL_COUNT_SOURCE_DB, array(
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
+        ));
     }
 }
