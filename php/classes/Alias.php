@@ -158,7 +158,7 @@ class Alias extends Module {
      * @return string - validation code
      */
     protected function _validateAndSanitizeAlias(&$post, $isAnUpdate = false) {
-        $validatedPost = HelpSetup::arraySanitization($post);
+        $post = HelpSetup::arraySanitization($post);
         $errCode = "";
         if (is_array($post)) {
             // 1st bit
@@ -374,9 +374,34 @@ class Alias extends Module {
             $this->_replaceAppointmentCheckin($post["checkin_details"], $newAliasId);
     }
 
-    public function updateAlias( $aliasDetails ) {
-        $this->checkWriteAccess($aliasDetails);
+    public function updateAlias( $post ) {
+        $this->checkWriteAccess($post);
+        $errCode = $this->_validateAndSanitizeAlias($post);
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
+        $toUpdate = array(
+            "AliasSerNum"=>$post["serial"],
+            "Name_EN"=>$post["name_EN"],
+            "Name_FR"=>$post["name_FR"],
+            "Description_EN"=>$post["description_EN"],
+            "Description_FR"=>$post["description_FR"],
+            "EducationalMaterialControlSerNum"=>$post["eduMat"],
+        );
+
+        $this->opalDB->updateAlias($toUpdate);
+
+        $existingSourceUIDs = array();
+        foreach ($post["diagnoses"] as $diagnosis)
+            array_push($existingSourceUIDs, $diagnosis["ID"]);
+
+        $this->opalDB->deleteDiagnosisCodes($post["serial"], $existingSourceUIDs);
+        return $this->_insertDiagnosisCodes($post["diagnoses"], $post["serial"]);
+
+        print_r($post);
+
+        die();
         $aliasName_EN 	= $aliasDetails['name_EN'];
         $aliasName_FR 	= $aliasDetails['name_FR'];
         $aliasDesc_EN	= $aliasDetails['description_EN'];
