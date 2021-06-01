@@ -119,6 +119,7 @@ define("OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE", "PatientDeviceIdentifier");
 define("OPAL_CRON_CONTROL_PATIENT_TABLE", "cronControlPatient");
 define("OPAL_CRON_CONTROL_POST_TABLE", "cronControlPost");
 define("OPAL_CRON_CONTROL_EDUMAT_TABLE", "cronControlEducationalMaterial");
+define("OPAL_CRON_CONTROL_ALIAS_TABLE", "cronControlAlias");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -204,22 +205,6 @@ define("SQL_OPAL_UPDATE_PUBLICATION_STATUS_FLAG",
     WHERE %%ID_FIELD%% = :ID
     AND (PublishFlag != :PublishFlag);"
 );
-
-define("SQL_OPAL_UPDATE_CRON_CONTROL_POST", "
-    UPDATE ".OPAL_CRON_CONTROL_POST_TABLE."
-    SET publishFlag = :publishFlag,
-        lastPublished = :lastPublished,
-        sessionId = :sessionId
-    WHERE cronControlPostSerNum = :cronControlPostSerNum AND publishFlag != :publishFlag;
-");
-
-define("SQL_OPAL_UPDATE_CRON_CONTROL_EDUMAT","
-    UPDATE ".OPAL_CRON_CONTROL_EDUMAT_TABLE."
-    SET publishFlag = :publishFlag,
-        lastPublished = :lastPublished,
-        sessionId = :sessionId
-    WHERE cronControlEducationalMaterialControlSerNum = :cronControlEducationalMaterialControlSerNum AND publishFlag != publishFlag;
-");
 
 define("SQL_OPAL_GET_ALL_PUBLICATION_MODULES",
     "SELECT * FROM ".OPAL_MODULE_TABLE." m WHERE m.active = ".ACTIVE_RECORD." AND m.publication = ".ACTIVE_RECORD." ORDER BY m.order;"
@@ -1325,10 +1310,6 @@ define("OPAL_UPDATE_PATIENT_PUBLISH_FLAG","
     UPDATE ".OPAL_PATIENT_CONTROL_TABLE." SET PatientUpdate = :PatientUpdate WHERE PatientSerNum = :PatientSerNum
 ");
 
-define("OPAL_UPDATE_CRON_CONTROL_PATIENT_PUBLISH_FLAG", "
-    UPDATE ".OPAL_CRON_CONTROL_PATIENT_TABLE." SET transferFlag = :transferFlag WHERE PatientSerNum = :PatientSerNum
-");
-
 define("OPAL_GET_PATIENTS","
     SELECT DISTINCT pc.PatientSerNum AS serial, pc.PatientUpdate AS transfer, CONCAT(UCASE(LEFT(pt.FirstName, 1)), LCASE(SUBSTRING(pt.FirstName, 2)),
     ' ', UCASE(LEFT(pt.LastName, 1)), LCASE(SUBSTRING(pt.LastName, 2))) AS name, pt.PatientId AS
@@ -1474,4 +1455,43 @@ define("OPAL_IS_SOURCE_ALIAS_EXISTS","
 define("OPAL_MARKED_AS_DELETED_SOURCE_ALIAS", "
     UPDATE ".OPAL_MASTER_SOURCE_ALIAS_TABLE." SET deleted = ".DELETED_RECORD.", updatedBy = :updatedBy, deletedBy = :deletedBy WHERE externalId = :externalId
     AND source = :source AND type = :type AND code = :code;
+");
+
+define("OPAL_UPDATE_CRON_CONTROL_PATIENT_PUBLISH_FLAG", "
+    UPDATE ".OPAL_CRON_CONTROL_PATIENT_TABLE." SET transferFlag = :transferFlag WHERE PatientSerNum = :PatientSerNum
+");
+
+define("SQL_OPAL_UPDATE_CRON_CONTROL_POST", "
+    UPDATE ".OPAL_CRON_CONTROL_POST_TABLE."
+    SET publishFlag = :publishFlag,
+        lastPublished = :lastPublished,
+        sessionId = :sessionId
+    WHERE cronControlPostSerNum = :cronControlPostSerNum AND publishFlag != :publishFlag;
+");
+
+define("SQL_OPAL_UPDATE_CRON_CONTROL_EDUMAT","
+    UPDATE ".OPAL_CRON_CONTROL_EDUMAT_TABLE."
+    SET publishFlag = :publishFlag,
+        lastPublished = :lastPublished,
+        sessionId = :sessionId
+    WHERE cronControlEducationalMaterialControlSerNum = :cronControlEducationalMaterialControlSerNum AND publishFlag != publishFlag;
+");
+
+define("OPAL_UPDATE_CRON_CONTROL_ALIAS","
+    UPDATE ".OPAL_CRON_CONTROL_ALIAS_TABLE."
+    SET aliasUpdate = :aliasUpdate,
+        sessionId = :sessionId
+    WHERE cronControlAliasSerNum = :aliasSer AND aliasUpdate != :aliasUpdate;
+");
+
+define("OPAL_SANITIZE_CRON_CONTROL_ALIAS", "
+    UPDATE ".OPAL_CRON_CONTROL_ALIAS_TABLE."
+    SET aliasUpdate = 0
+        sessionId = :sessionId
+    WHERE cronControlAliasSerNum = :aliasSer AND aliasUpdate != 0;
+");
+
+define("OPAL_DELETE_CRON_CONTROL_ALIAS","
+    DELETE FROM ".OPAL_CRON_CONTROL_ALIAS_TABLE."
+    WHERE cronControlAliasSerNum = :aliasSer;
 ");

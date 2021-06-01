@@ -501,6 +501,19 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
+     * Update the publish flag of a specific patient in cronControlPatient table
+     * @param $id - PatientSerNum
+     * @param $transfer - Status of the update 1/0
+     * @return int - total record updated
+     */
+    function updateCronControlPatientPublishFlag($id, $transfer){
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_CRON_CONTROL_PATIENT_PUBLISH_FLAG, array(
+            "transferFlag"=>$transfer,
+            "PatientSerNum"=>$id,
+        ));
+    }
+
+    /**
      * Update publish flag of the cronControlPost table
      * @params publishFlag 1/0
      *         PostControlSerNum cronControlPost serial number of target post (foreign key of PostControl.PostControlSerNum)
@@ -529,6 +542,59 @@ class DatabaseOpal extends DatabaseAccess {
             "lastPublished"=>date("Y-m-d H:i:s"),
             "sessionId"=>$this->getSessionId()
         ));
+    }
+
+    /**
+     * Update the publish flag of a specific patient in cronControlPatient table
+     * @param $aliasSer - aliasSerNum
+     * @param $aliasUpdate - Status of the update 1/0
+     * @return int - total record updated
+     */
+    function updateCronControlAliasPublishFlag($aliasSer, $aliasUpdate){
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_CRON_CONTROL_ALIAS, array(
+            "aliasUpdate"=>$aliasUpdate,
+            "aliasSer"=>$aliasSer,
+            "sessionId"=>$this->getSessionId()
+        ));
+    }
+
+    /**
+     * Sanitize and remove publish flag for alias without assigned terms 
+     *
+     */
+    function updateCronControlAliasSanitizeEmpty($aliasSer){
+        return $this->_updateRecordIntoTable(OPAL_SANITIZE_CRON_CONTROL_ALIAS, array(
+            "aliasSer"=>$aliasSer,
+            "sessionId"=>$this->getSessionId()
+        ));
+    }
+
+    /**
+     *  Insert details of new alias in cronControlAlias table  
+     *  @params aliasSer cronControlAliasSerNum foreign key with 
+     *
+     */
+    function updateCronControlAliasInsert($aliasSer, $lastTransferred, $aliasType){
+        $toSubmit = array(
+            "cronControlAliasSerNum"=>$aliasSer,
+            "cronType"=>$aliasType,
+            "aliasUpdate"=>'0',
+            "lastTransferred"=>$lastTransferred,
+            "lastUpdated"=>date("Y-m-d H:i:s"),
+            "sessionId"=>$this->getSessionId()
+        );
+        return $this->_insertRecordIntoTable(OPAL_CRON_CONTROL_ALIAS_TABLE, $toSubmit);
+    }
+
+    /**
+     * Delete from alias cronControl
+     * @params aliasSer 
+     */
+    function updateCronControlAliasDelete($aliasSer){
+        $toInsert = array(
+            array("parameter"=>":aliasSer","variable"=>$aliasSer,"data_type"=>PDO::PARAM_INT),
+        );
+        return $this->_execute(OPAL_DELETE_CRON_CONTROL_ALIAS, $toInsert);
     }
 
     /*
@@ -2757,19 +2823,6 @@ class DatabaseOpal extends DatabaseAccess {
     function updatePatientPublishFlag($id, $transfer) {
         return $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT_PUBLISH_FLAG, array(
             "PatientUpdate"=>$transfer,
-            "PatientSerNum"=>$id,
-        ));
-    }
-
-    /**
-     * Update the publish flag of a specific patient in cronControlPatient table
-     * @param $id - PatientSerNum
-     * @param $transfer - Status of the update 1/0
-     * @return int - total record updated
-     */
-    function updateCronControlPatientPublishFlag($id, $transfer){
-        return $this->_updateRecordIntoTable(OPAL_UPDATE_CRON_CONTROL_PATIENT_PUBLISH_FLAG, array(
-            "transferFlag"=>$transfer,
             "PatientSerNum"=>$id,
         ));
     }

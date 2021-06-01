@@ -164,6 +164,9 @@ class Alias extends Module {
 
                 $query = $host_db_link->prepare( $sql );
                 $query->execute();
+
+                // Also update the cronControlAlias table for our modular cron refactor, 2021-05-31
+                $this->opalDB->updateCronControlAliasPublishFlag($aliasSer, $aliasUpdate);
             }
 
             $this->sanitizeEmptyAliases($user);
@@ -221,6 +224,9 @@ class Alias extends Module {
 
                 $secondQuery = $host_db_link->prepare( $sql );
                 $secondQuery->execute();
+
+                // update cronControlAlias in parallel
+                $this->opalDB->updateCronControlAliasSanitizeEmpty($aliasSer);
             }
             return;
         } catch( PDOException $e) {
@@ -596,6 +602,8 @@ class Alias extends Module {
             $query->execute();
 
             $aliasSer = $host_db_link->lastInsertId();
+            // update cronControlAlias in parallel
+            $this->opalDB->updateCronControlAliasInsert($aliasSer, $lastTransferred, $aliasType);
 
             foreach ($aliasTerms as $aliasTerm) {
 
@@ -708,6 +716,11 @@ class Alias extends Module {
 
             $query = $host_db_link->prepare( $sql );
             $query->execute();
+
+            
+            // update cronControlAlias in parallel
+            $this->opalDB->updateCronControlAliasDelete($aliasSer);
+
 
             $sql = "
                 UPDATE AliasMH
