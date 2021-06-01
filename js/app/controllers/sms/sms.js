@@ -80,7 +80,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             var matcher = new RegExp($scope.filterValue, 'i');
             renderableRows.forEach(function (row) {
                 var match = false;
-                ['appcode','resname','apptype',].forEach(function (field) {
+                ['appcode','resname','displayType',"displaySpeciality"].forEach(function (field) {
                     if (row.entity[field].match(matcher)) {
                         match = true;
                     }
@@ -191,7 +191,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             smsCollectionService.getSmsType('Oncology').then(function (response) {
                 var TypeList = []
                 response.data.forEach(function (row){
-                    TypeList.push({value:row.type,label:row.type})
+                    TypeList.push({value:row.Type,label:row.Type})
                 });
                 TypeList.push({value:'-',label:'UNDEFINED'});
                 $scope.gridOptions.columnDefs[2].filter.selectOptions = TypeList;

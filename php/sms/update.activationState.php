@@ -1,11 +1,10 @@
 <?php
 header('Content-Type: application/javascript');
-include_once('sms.inc');
+include_once("../config.php");
 
 $sms = new Sms();
 
-$smsUpdates	= $_POST['updateList'];
-//$user = $_POST['user'];
+$smsUpdates	= strip_tags($_POST['updateList']);
 
 $response = 1;
 foreach ($smsUpdates as $information){

@@ -36,45 +36,45 @@ define("ORMS_SQL_GET_APPOINTMENT_FOR_SMS","
 ");
 
 define("ORMS_SQL_GET_EVENTS_FOR_APPOINTMENT","
-    SELECT DISTINCT message.Event AS event
-    FROM ".ORMS_SMS_MESSAGE_LIST_TABLE." message
-    WHERE message.Type = :typ AND (message.Speciality = 'Any' OR message.Speciality = :spec)
+    SELECT DISTINCT Event AS event, 2 AS source
+    FROM ".ORMS_SMS_MESSAGE_LIST_TABLE."
+    WHERE `Type` = :Type AND (Speciality = 'Any' OR Speciality = :Speciality)
     ORDER BY Event
 ");
 
 define("ORMS_SQL_GET_MESSAGE_FOR_APPOINTMENT","
-    SELECT message.Message AS smsmessage
-    FROM ".ORMS_SMS_MESSAGE_LIST_TABLE." message
-    WHERE (message.Speciality = 'Any' OR message.Speciality = :spec) AND message.Type = :typ AND message.Event = :event 
-    AND message.Language = :lang
+    SELECT Message AS smsmessage, 2 AS source
+    FROM ".ORMS_SMS_MESSAGE_LIST_TABLE."
+    WHERE (Speciality = 'Any' OR Speciality = :Speciality) AND `Type` = :Type AND Event = :Event 
+    AND `Language` = :Language
 ");
 
 define("ORMS_SQL_UPDATE_APPOINTMENT_ACTIVE_STATE","
-    UPDATE ".ORMS_SMS_APPOINTMENT_LIST_TABLE." SET Active = :state
-    WHERE ClinicResourcesSerNum = :res AND AppointmentCodeId = :id
+    UPDATE ".ORMS_SMS_APPOINTMENT_LIST_TABLE." SET Active = :Active
+    WHERE ClinicResourcesSerNum = :ClinicResourcesSerNum AND AppointmentCodeId = :AppointmentCodeId
 ");
 
 define("ORMS_SQL_UPDATE_APPOINTMENT_TYPE","
-    UPDATE ".ORMS_SMS_APPOINTMENT_LIST_TABLE." SET Type = :typ
-    WHERE ClinicResourcesSerNum = :res AND AppointmentCodeId = :id
+    UPDATE ".ORMS_SMS_APPOINTMENT_LIST_TABLE." SET `Type` = :Type
+    WHERE ClinicResourcesSerNum = :ClinicResourcesSerNum AND AppointmentCodeId = :AppointmentCodeId
 ");
 
 define("ORMS_SQL_SET_APPOINTMENT_TYPE_TO_NULL","
-    UPDATE ".ORMS_SMS_APPOINTMENT_LIST_TABLE." SET Type = NULL
-    WHERE ClinicResourcesSerNum = :res AND AppointmentCodeId = :id
+    UPDATE ".ORMS_SMS_APPOINTMENT_LIST_TABLE." SET `Type` = NULL
+    WHERE ClinicResourcesSerNum = :ClinicResourcesSerNum AND AppointmentCodeId = :AppointmentCodeId
 ");
 
 define("ORMS_SQL_UPDATE_MESSAGE_FOR_APPOINTMENT","
-    UPDATE ".ORMS_SMS_MESSAGE_LIST_TABLE." sms SET Message = :message
-    WHERE (sms.Speciality = 'Any' OR sms.Speciality = :spec) AND sms.Type = :type AND sms.Event = :event AND sms.Language = :lang
+    UPDATE ".ORMS_SMS_MESSAGE_LIST_TABLE." SET Message = :Message
+    WHERE (Speciality = 'Any' OR Speciality = :Speciality) AND `Type` = :Type AND Event = :Event AND `Language` = :Language
 ");
 
 define("ORMS_SQL_GET_SPECIALITY_FOR_MESSAGE","
-    SELECT DISTINCT Speciality FROM ".ORMS_SMS_APPOINTMENT_LIST_TABLE
+    SELECT DISTINCT Speciality, 2 AS source FROM ".ORMS_SMS_APPOINTMENT_LIST_TABLE
 );
 
 define("ORMS_SQL_GET_TYPE_FOR_MESSAGE","
-    SELECT DISTINCT message.Type FROM ".ORMS_SMS_MESSAGE_LIST_TABLE." message 
-    WHERE (message.Speciality = 'Any' OR message.Speciality = :spec)
+    SELECT DISTINCT `Type`,2 AS source FROM ".ORMS_SMS_MESSAGE_LIST_TABLE."
+    WHERE (Speciality = 'Any' OR Speciality = :Speciality)
 ");
 

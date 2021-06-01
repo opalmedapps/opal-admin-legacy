@@ -35,15 +35,22 @@ class Sms extends Module {
     }
 
     public function getEvents($type,$speciality) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($type);
 
         return $this->ormsDB->getEventsForAppointment($type,$speciality);
     }
 
     public function getMessage($speciality,$type,$event,$language) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($speciality);
 
-        return $this->ormsDB->getMessageForAppointment($speciality,$type,$event,$language);
+        $result = $this->ormsDB->getMessageForAppointment($speciality,$type,$event,$language);
+        $messages = array();
+        foreach ($result as $item) {
+            $messages = array(
+                "message" => $item["smsmessage"],
+            );
+        }
+        return $messages;
     }
 
     public function updateActivationState($information){
@@ -54,6 +61,12 @@ class Sms extends Module {
 
     public function updateAppointmentType($information){
         $this->checkWriteAccess($information);
+        $information = HelpSetup::arraySanitization($information);
+        $errCode = $this->_validateStudy($information);
+        $errCode = bindec($errCode);
+
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         if($information['type'] == 'UNDEFINED') return $this->ormsDB->setAppointmentTypeNull($information['appcode'],$information['ressernum']);
         else return $this->ormsDB->updateAppointmentType($information['type'],$information['appcode'],$information['ressernum']);
@@ -61,9 +74,18 @@ class Sms extends Module {
 
     public function updateSmsMessage($information,$language){
         $this->checkWriteAccess($information);
+        $information = HelpSetup::arraySanitization($information);
+        $errCode = $this->_validateStudy($information);
+        $errCode = bindec($errCode);
 
-        return $this->ormsDB->updateSmsMessage($information['message'][$language],$information['speciality'],
-            $information['type'],$information['event'],$language);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        $response =  $this->ormsDB->updateSmsMessage($information['message'][$language],$information['speciality'],
+            $information['type'],$information['event'],"English");
+        $response += $this->ormsDB->updateSmsMessage($information['message'][$language],$information['speciality'],
+            $information['type'],$information['event'],'French');
+        return $response;
     }
 
     public function getSpecialityMessage(){
@@ -73,7 +95,7 @@ class Sms extends Module {
     }
 
     public function getTypeMessage($speciality){
-        $this->checkReadAccess();
+        $this->checkReadAccess($speciality);
 
         return $this->ormsDB->getTypeForMessage($speciality);
     }
