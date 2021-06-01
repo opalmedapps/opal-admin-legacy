@@ -30,22 +30,8 @@ class DatabaseOrms extends DatabaseAccess {
     function getAppointmentForSms()
     {
         $result = $this->_fetchAll(ORMS_SQL_GET_APPOINTMENT_FOR_SMS, array());
-        $appointmentList = array();
-        foreach ($result as $item) {
-            $tempArr = array(
-                "appcode" => $item["appcode"],
-                "rescode" => $item["rescode"],
-                "resname" => $item["resname"],
-                "state" => $item["state"],
-                "spec" => $item["spec"],
-                "ressernum" => $item["ressernum"],
-                "code" => $item["codeid"],
-                "apptype" => $item["type"],
-                "source" => 2,
-            );
-            array_push($appointmentList, $tempArr);
-        }
-        return $appointmentList;
+
+        return $result;
     }
 
     function getEventsForAppointment($type,$speciality)

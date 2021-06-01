@@ -31,7 +31,7 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
             }
             $.ajax({
                 type: "POST",
-                url: "sms/update/smsType",
+                url: "sms/update/sms-type",
                 data: update,
                 success: function () {},
                 error: function (err) {
