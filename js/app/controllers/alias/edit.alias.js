@@ -22,6 +22,21 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			['html', 'insertLink']
 		];
 
+		var arrValidationInsert = [
+			$filter('translate')('ALIAS.VALIDATION.TYPE'),
+			$filter('translate')('ALIAS.VALIDATION.CHECKIN'),
+			$filter('translate')('ALIAS.VALIDATION.HOSPITAL'),
+			$filter('translate')('ALIAS.VALIDATION.COLOR'),
+			$filter('translate')('ALIAS.VALIDATION.DESCRPIPTION_EN'),
+			$filter('translate')('ALIAS.VALIDATION.DESCRPIPTION_FR'),
+			$filter('translate')('ALIAS.VALIDATION.EDU_MAT'),
+			$filter('translate')('ALIAS.VALIDATION.NAME_EN'),
+			$filter('translate')('ALIAS.VALIDATION.NAME_FR'),
+			$filter('translate')('ALIAS.VALIDATION.SOURCE_DB'),
+			$filter('translate')('ALIAS.VALIDATION.ALIAS_EXP'),
+			$filter('translate')('ALIAS.VALIDATION.ID'),
+		];
+		
 		$scope.alias = {}; // initialize alias object
 		$scope.aliasModal = {}; // for deep copy
 		$scope.termList = []; // initialize list for unassigned expressions in our DB
@@ -384,43 +399,41 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 		// Submit changes
 		$scope.updateAlias = function () {
-
 			if ($scope.checkForm()) {
+				var toSubmit = {
+					"id": $scope.currentAlias.serial,
+					"checkin_details" : $scope.alias.checkin_details,
+					"color" : $scope.alias.color,
+					"description_EN" : $scope.alias.description_EN.replace(/\u200B/g,''),
+					"description_FR" : $scope.alias.description_FR.replace(/\u200B/g,''),
+					"eduMat" : (typeof $scope.alias.eduMatSer !== "undefined" ? $scope.alias.eduMatSer: null),
+					"hospitalMap" : (typeof $scope.alias.hospitalMapSer !== "undefined" ? $scope.alias.hospitalMapSer: null),
+					"name_EN" : $scope.alias.name_EN,
+					"name_FR" : $scope.alias.name_FR,
+					"source_db" : $scope.alias.source_db.serial,
+					"type" : $scope.alias.type,
+					"terms" : []
+				};
 
-				// For some reason the HTML text fields add a zero-width-space
-				// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
-				$scope.alias.description_EN = $scope.alias.description_EN.replace(/\u200B/g,'');
-				$scope.alias.description_FR = $scope.alias.description_FR.replace(/\u200B/g,'');
-
-				if ($scope.alias.checkin_details_updated) {
-					$scope.alias.checkin_details.instruction_EN = $scope.alias.checkin_details.instruction_EN.replace(/\u200B/g,'');
-					$scope.alias.checkin_details.instruction_FR = $scope.alias.checkin_details.instruction_FR.replace(/\u200B/g,'');
-				}
-
-				// Empty alias terms list
-				$scope.alias.terms = [];
-
-				// Fill it with the added terms from termList
 				angular.forEach($scope.termList, function (term) {
 					if (term.added)
-						$scope.alias.terms.push(term);
+						toSubmit.terms.push(term.masterSourceAliasId);
 				});
-
-				// Log who updated alias
-				$scope.alias.user = Session.retrieveObject('user');
 
 				$.ajax({
 					type: "POST",
 					url: "alias/update/alias",
-					data: $scope.alias,
-					success: function (response) {
+					data: toSubmit,
+					success: function () {
 						$scope.setBannerClass('success');
 						$scope.$parent.bannerMessage = $filter('translate')('ALIAS.EDIT.SUCCESS_EDIT');
 						$scope.showBanner();
-						$uibModalInstance.close();
 					},
-					error: function(err) {
-						ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_EDIT'));
+					error: function (err) {
+						err.responseText = JSON.parse(err.responseText);
+						ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_EDIT'), arrValidationInsert);
+					},
+					complete: function () {
 						$uibModalInstance.close();
 					}
 				});
