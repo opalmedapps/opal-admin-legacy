@@ -205,11 +205,11 @@
                         </div>
                         <div class="row">
                             <div ng-repeat="element in SpecialityList" class="col-xs-4 col-lg-3 item-panel-select">
-                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: UpdateInformation.speciality == element.speciality}" ng-click="SpecialityUpdate(element)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                                    <div class="panel-info" ng-class="{active: UpdateInformation.speciality == element.speciality}">
+                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: UpdateInformation.speciality == element.Speciality}" ng-click="SpecialityUpdate(element)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                    <div class="panel-info" ng-class="{active: UpdateInformation.speciality == element.Speciality}">
                                         <div class="panel-content" style="text-align:center">
                                             <span style="font-size:30px;" class="fa fa-database"></span>
-                                            <div class="option-panel-title">{{'SMS.MESSAGE.'+element.speciality|translate}}</div>
+                                            <div class="option-panel-title">{{'SMS.MESSAGE.'+element.Speciality|translate}}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -236,11 +236,11 @@
                         </div>
                         <div class="row animated" ng-class="{fadeInUp:typeSection.show}" ng-if="typeSection.show">
                             <div ng-repeat="element in TypeList" class="col-xs-4 col-lg-3 item-panel-select">
-                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: UpdateInformation.type == element.type}" ng-click="TypeUpdate(element)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                                    <div class="panel-info" ng-class="{active: UpdateInformation.type == element.type}">
+                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: UpdateInformation.type == element.Type}" ng-click="TypeUpdate(element)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                    <div class="panel-info" ng-class="{active: UpdateInformation.type == element.Type}">
                                         <div class="panel-content" style="text-align:center">
                                             <span style="font-size:30px;" class="fa fa-sticky-note"></span>
-                                            <div class="option-panel-title">{{'SMS.MESSAGE.'+element.type|translate}}</div>
+                                            <div class="option-panel-title">{{'SMS.MESSAGE.'+element.Type|translate}}</div>
                                         </div>
                                     </div>
                                 </div>

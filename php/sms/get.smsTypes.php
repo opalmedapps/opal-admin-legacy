@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/javascript');
-include_once('sms.inc');
-$speciality = $_POST['speciality'];
+include_once("../config.php");
+$speciality = strip_tags($_POST['speciality']);
 
 $sms = new Sms();
 $smsTypeList = $sms->getTypeMessage($speciality);

@@ -49,7 +49,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         getSmsSpecialityList();
 
         $scope.SpecialityUpdate = function(element){
-            $scope.UpdateInformation.speciality = element.speciality;
+            $scope.UpdateInformation.speciality = element.Speciality;
             steps.speciality.completed = true;
             $scope.specialitySection.open = true;
             $scope.typeSection.show = true;
@@ -59,7 +59,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         }
 
         $scope.TypeUpdate = function(element){
-            $scope.UpdateInformation.type = element.type;
+            $scope.UpdateInformation.type = element.Type;
             steps.type.completed = true;
             $scope.typeSection.open = true;
             $scope.eventSection.show = true;
@@ -198,6 +198,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             smsCollectionService.getSmsMessge($scope.UpdateInformation.speciality,
                 $scope.UpdateInformation.type, $scope.UpdateInformation.event, "French").then(function (response) {
                 $scope.UpdateInformation.message.French = response.data.message;
+                console.log($scope.UpdateInformation);
             }).catch(function (err) {
                 ErrorHandler.onError(err, "error");
             });
