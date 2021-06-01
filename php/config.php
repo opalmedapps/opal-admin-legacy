@@ -44,6 +44,14 @@ define( "UPLOAD_ABS_PATH", FRONTEND_ABS_PATH . "uploads/" );
 define( "UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
 define( "ADMIN_REGISTRATION_URL", $config['pathConfig']['registration_url'] );
 
+define("ALIAS_TYPE_APPOINTMENT_TEXT", 'Appointment');
+define("ALIAS_TYPE_DOCUMENT_TEXT", 'Document');
+define("ALIAS_TYPE_TASK_TEXT", 'Task');
+
+define("ALIAS_TYPE_TASK", 1);
+define("ALIAS_TYPE_APPOINTMENT", 2);
+define("ALIAS_TYPE_DOCUMENT", 3);
+
 /*
  * Module ID of each module in the opalAdmin
  * */
