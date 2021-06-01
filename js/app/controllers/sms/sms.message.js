@@ -49,7 +49,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         getSmsSpecialityList();
 
         $scope.SpecialityUpdate = function(element){
-            $scope.UpdateInformation.speciality = element.Speciality;
+            $scope.UpdateInformation.speciality = element.speciality;
             steps.speciality.completed = true;
             $scope.specialitySection.open = true;
             $scope.typeSection.show = true;
@@ -59,7 +59,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         }
 
         $scope.TypeUpdate = function(element){
-            $scope.UpdateInformation.type = element.Type;
+            $scope.UpdateInformation.type = element.type;
             steps.type.completed = true;
             $scope.typeSection.open = true;
             $scope.eventSection.show = true;
