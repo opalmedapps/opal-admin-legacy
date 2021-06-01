@@ -191,7 +191,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             smsCollectionService.getSmsType('Oncology').then(function (response) {
                 var TypeList = []
                 response.data.forEach(function (row){
-                    TypeList.push({value:row.Type,label:row.Type})
+                    TypeList.push({value:row.type,label:row.type})
                 });
                 TypeList.push({value:'-',label:'UNDEFINED'});
                 $scope.gridOptions.columnDefs[2].filter.selectOptions = TypeList;
