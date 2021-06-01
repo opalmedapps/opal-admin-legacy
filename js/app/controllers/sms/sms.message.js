@@ -95,21 +95,12 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
                     type: "POST",
                     url: "sms/update/smsMessage",
                     data:{'UpdateInformation':$scope.UpdateInformation},
-                    success: function (response) {
-                        response = JSON.parse(response);
-                        // Show success or failure depending on response
-                        if (response) {
-                            $scope.setBannerClass('success');
-                            $scope.bannerMessage = $filter('translate')('SMS.MESSAGE.SUCCESS');;
-                            $scope.showBanner();
-                        }
-                        else {
-                            ErrorHandler.onError(response, $filter('translate')('SMS.MESSAGE.ERROR'));
-                        }
-                        $scope.goBack();
-                    },
+                    success: function (response) {},
                     error: function(err) {
                         ErrorHandler.onError(err,$filter('translate')('SMS.MESSAGE.ERROR'));
+                    },
+                    complete: function () {
+                        $state.go('sms');
                     }
                 });
             }
