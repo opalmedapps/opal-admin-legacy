@@ -1,10 +1,8 @@
 <?php
 header('Content-Type: application/javascript');
-include_once('sms.inc');
-//$type = strip_tags($_POST['type']);
-//$speciality = strip_tags($_POST['speciality']);
-$type = $_POST['type'];
-$speciality = $_POST['speciality'];
+include_once("../config.php");
+$type = strip_tags($_POST['type']);
+$speciality = strip_tags($_POST['speciality']);
 
 $sms = new Sms();
 $smsEventList = $sms->getEvents($type,$speciality);

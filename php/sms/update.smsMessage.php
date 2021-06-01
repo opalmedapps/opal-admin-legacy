@@ -1,11 +1,10 @@
 <?php
 header('Content-Type: application/javascript');
-include_once('sms.inc');
+include_once("../config.php");
 
-$messageUpdates	= $_POST['UpdateInformation'];
+$messageUpdates	= strip_tags($_POST['UpdateInformation']);
 
 $sms = new Sms();
-$response = $sms->updateSmsMessage($messageUpdates,'English');
-$response += $sms->updateSmsMessage($messageUpdates,'French');
+$response = $sms->updateSmsMessage($messageUpdates);
 
 echo json_encode($response);
