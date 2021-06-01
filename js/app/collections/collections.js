@@ -1028,7 +1028,7 @@ angular.module('opalAdmin.collections', [])
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
-		}
+		};
 
 		studyAPI.consentFormPublished = function(consentId){
 			return $http.post(
@@ -1040,7 +1040,7 @@ angular.module('opalAdmin.collections', [])
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
-		}
+		};
 
 		return studyAPI;
 	})
@@ -1262,8 +1262,8 @@ angular.module('opalAdmin.collections', [])
 				{
 					header : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			)
-		}
+			);
+		};
 
 		smsAPI.getSmsType = function(speciality){
 			return $http.post(
@@ -1275,6 +1275,6 @@ angular.module('opalAdmin.collections', [])
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
-		}
+		};
 		return smsAPI;
 	});

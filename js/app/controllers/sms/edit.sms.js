@@ -20,8 +20,7 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
     };
     $scope.updateType = function(type){
         $scope.typeSelected = null;
-        if(type.type != $scope.currentAppointment.apptype)$scope.changesDetected = true;
-        else $scope.changesDetected = false;
+        $scope.changesDetected = (type.type != $scope.currentAppointment.apptype);
         $scope.typeSelected = type.type;
     }
 
@@ -36,7 +35,7 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
                 data: update,
                 success: function () {},
                 error: function (err) {
-                    ErrorHandler.onError(err, "error message");
+                    ErrorHandler.onError(err, $filter('translate')('SMS.LIST.ERROR_LIST'));
                 },
                 complete: function () {
                     $uibModalInstance.close();
