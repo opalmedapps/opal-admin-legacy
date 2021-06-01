@@ -1243,7 +1243,7 @@ angular.module('opalAdmin.collections', [])
 
 		smsAPI.getSmsMessge = function (speciality,type,event,language) {
 			return $http.post(
-				"sms/get/smsMessage",
+				"sms/get/sms-message",
 				$.param({
 					speciality: speciality,
 					type: type,
@@ -1258,7 +1258,7 @@ angular.module('opalAdmin.collections', [])
 
 		smsAPI.getSmsSpeciality = function(){
 			return $http.post(
-				"sms/get/smsSpeciality",
+				"sms/get/sms-speciality",
 				{
 					header : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
@@ -1267,7 +1267,7 @@ angular.module('opalAdmin.collections', [])
 
 		smsAPI.getSmsType = function(speciality){
 			return $http.post(
-				"sms/get/smsType",
+				"sms/get/sms-type",
 				$.param({
 					speciality: speciality,
 				}),

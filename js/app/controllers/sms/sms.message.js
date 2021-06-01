@@ -93,7 +93,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             if ($scope.checkForm() && $scope.writeAccess) {
                 $.ajax({
                     type: "POST",
-                    url: "sms/update/smsMessage",
+                    url: "sms/update/sms-message",
                     data:{'UpdateInformation':$scope.UpdateInformation},
                     success: function (response) {},
                     error: function(err) {

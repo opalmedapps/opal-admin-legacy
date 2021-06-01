@@ -4,8 +4,6 @@ include_once("../config.php");
 
 $sms = new Sms();
 
-$information = strip_tags($_POST['information']);
-
-$response = $sms->updateAppointmentType($information);
+$response = $sms->updateAppointmentType($_POST);
 
 echo json_encode($response);
