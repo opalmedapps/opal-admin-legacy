@@ -25,12 +25,12 @@ class Alias extends Module {
 
         $aa = $this->opalDB->getAliasExpressions($sourceDatabaseId);
 
-        if ($aliasType == "Task")
-            $type = 1;
-        else if ($aliasType == "Appointment")
-            $type = 2;
-        else if ($aliasType == "Document")
-            $type = 3;
+        if ($aliasType == ALIAS_TYPE_TASK_TEXT)
+            $type = ALIAS_TYPE_TASK;
+        else if ($aliasType == ALIAS_TYPE_APPOINTMENT_TEXT)
+            $type = ALIAS_TYPE_APPOINTMENT;
+        else if ($aliasType == ALIAS_TYPE_DOCUMENT_TEXT)
+            $type = ALIAS_TYPE_DOCUMENT;
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, "Wrong alias type.");
 
@@ -163,7 +163,7 @@ class Alias extends Module {
         if (is_array($post)) {
             // 1st bit
             if (!array_key_exists("type", $post) || $post["type"] == "" ||
-                ($post["type"] != 'Appointment' && $post["type"] != 'Document' && $post["type"] != 'Task'))
+                ($post["type"] != ALIAS_TYPE_APPOINTMENT_TEXT && $post["type"] != ALIAS_TYPE_DOCUMENT_TEXT && $post["type"] != ALIAS_TYPE_TASK_TEXT))
                 $errCode = "001" . $errCode;
             else {
                 $errCode = "0" . $errCode;
@@ -171,7 +171,7 @@ class Alias extends Module {
                 // 2nd bit
                 if (array_key_exists("checkin_details", $post) && $post["checkin_details"] != "") {
 
-                    if ($post["type"] != 'Appointment' || !array_key_exists("checkin_details", $post) || $post["checkin_details"] == "" ||
+                    if ($post["type"] != ALIAS_TYPE_APPOINTMENT_TEXT || !array_key_exists("checkin_details", $post) || $post["checkin_details"] == "" ||
                         !array_key_exists("checkin_possible", $post["checkin_details"]) || $post["checkin_details"]["checkin_possible"] == "" ||
                         ($post["checkin_details"]["checkin_possible"] != 0 && $post["checkin_details"]["checkin_possible"] != 1) ||
                         !array_key_exists("instruction_EN", $post["checkin_details"]) || $post["checkin_details"]["instruction_EN"] == "" ||
@@ -186,7 +186,7 @@ class Alias extends Module {
 
                 // 3rd bit
                 if (array_key_exists("hospitalMap", $post) && $post["hospitalMap"] != "") {
-                    if($post["type"] != 'Appointment')
+                    if($post["type"] != ALIAS_TYPE_APPOINTMENT_TEXT)
                         $errCode = "1" . $errCode;
                     else {
                         $total = $this->opalDB->countHospitalMap($post["hospitalMap"]);
@@ -267,12 +267,14 @@ class Alias extends Module {
                 foreach ($post["terms"] as $term)
                     array_push($listIds, intval($term));
 
-                $total = $this->opalDB->countAliasExpressions($listIds);
+                $total = $this->opalDB->selectAliasExpressionsToInsert($listIds);
                 $post["terms"] = $listIds;
-                if(intval($total["total"]) != count($post["terms"]))
+                if(count($total) != count($post["terms"]))
                     $errCode = "1" . $errCode;
-                else
+                else {
+                    $post["terms"] = $total;
                     $errCode = "0" . $errCode;
+                }
             }
 
             // 12th bit
@@ -297,12 +299,55 @@ class Alias extends Module {
         return $errCode;
     }
 
-    public function insertAlias( $post ) {
+    /**
+     * Insert/replace list of alias expressions for an alias
+     * @param $aliasExpressions array - list of alias expressions
+     * @param $aliasId int - Alias ID (or sernum)
+     * @param $lastTransferred string - date of last transferred to use
+     */
+    protected function _replaceAliasExpressions(&$aliasExpressions, &$aliasId, &$lastTransferred) {
+        $toInsert = array();
+        foreach($aliasExpressions as $item) {
+            array_push($toInsert, array(
+                "AliasSerNum"=>$aliasId,
+                "masterSourceAliasId"=>$item['ID'],
+                "ExpressionName"=>$item['code'],
+                "Description"=>$item['description'],
+                "LastTransferred"=>$lastTransferred,
+            ));
+        }
+
+        $this->opalDB->replaceMultipleAliasExpressions($toInsert);
+    }
+
+    /**
+     * Insert/Replace appointment checkin details
+     * @param $checkin_details array - contains the checkin details
+     * @param $aliasId - Alias ID (or sernum) to associate the checkin details
+     */
+    protected function _replaceAppointmentCheckin(&$checkin_details, &$aliasId) {
+        $toInsert = array(
+            "AliasSerNum"=>$aliasId,
+            "CheckinPossible"=>$checkin_details["checkin_possible"],
+            "CheckinInstruction_EN"=>$checkin_details["instruction_EN"],
+            "CheckinInstruction_FR"=>$checkin_details["instruction_FR"],
+            "DateAdded"=>date("Y-m-d H:i:s"),
+        );
+        $this->opalDB->replaceAppointmentCheckin($toInsert);
+    }
+
+    /**
+     * Validate and insert a new alias. If alias is an appointment, insert appointment check in too.
+     * @param $post array - details of the alias to insert after validation and sanitization
+     */
+    public function insertAlias($post) {
         $this->checkWriteAccess($post);
         $errCode = $this->_validateAndSanitizeAlias($post);
         $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        $lastTransferred = ( in_array($post["type"], array(ALIAS_TYPE_TASK_TEXT, ALIAS_TYPE_APPOINTMENT_TEXT) ) ?  "2000-01-01 00:00:00" : "2019-01-01 00:00:00" );
 
         $toInsert = array(
             "AliasType"=>$post["type"],
@@ -312,6 +357,7 @@ class Alias extends Module {
             "AliasDescription_EN"=>$post["description_EN"],
             "SourceDatabaseSerNum"=>$post["source_db"],
             "ColorTag"=>$post["color"],
+            "LastTransferred"=>$lastTransferred,
         );
 
         if (array_key_exists("eduMat", $post) && $post["eduMat"] != "")
@@ -320,141 +366,12 @@ class Alias extends Module {
         if (array_key_exists("hospitalMap", $post) && $post["hospitalMap"] != "")
             $toInsert["HospitalMapSerNum"] = $post["hospitalMap"];
 
-        print_r($post);
-        die($errCode);
+        $newAliasId = $this->opalDB->insertAlias($toInsert);
 
-        $aliasName_EN 	= $aliasDetails['name_EN'];
-        $aliasName_FR 	= $aliasDetails['name_FR'];
-        $aliasDesc_EN	= $aliasDetails['description_EN'];
-        $aliasDesc_FR	= $aliasDetails['description_FR'];
-        $aliasType	    = $aliasDetails['type']['name'];
-        $aliasColorTag  = $aliasDetails['color'];
-        $aliasTerms	    = $aliasDetails['terms'];
-        $userSer        = $aliasDetails['user']['id'];
-        $sessionId      = $aliasDetails['user']['sessionid'];
-        $checkinDetails = isset($aliasDetails['checkin_details']) ? $aliasDetails['checkin_details'] : null;
-        $aliasEduMatSer = 'NULL';
-        if ( is_array($aliasDetails['edumat']) && isset($aliasDetails['edumat']['serial']) ) {
-            $aliasEduMatSer = $aliasDetails['edumat']['serial'];
-        }
-        $sourceDBSer    = $aliasDetails['source_db']['serial'];
-        $hospitalMapSer = 'NULL';
-        if ( is_array($aliasDetails['hospitalMap']) && isset($aliasDetails['hospitalMap']['serial']) ) {
-            $hospitalMapSer = $aliasDetails['hospitalMap']['serial'];
-        }
+        $this->_replaceAliasExpressions($post["terms"], $newAliasId, $lastTransferred);
 
-        $lastTransferred = ( in_array($aliasType, array('Appointment', 'Task') ) ?  "'2000-01-01 00:00:00'" : "'2019-01-01 00:00:00'" );
-
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-				INSERT INTO
-					Alias (
-						AliasSerNum,
-						AliasName_FR,
-						AliasName_EN,
-						AliasDescription_FR,
-                        AliasDescription_EN,
-                        EducationalMaterialControlSerNum,
-                        HospitalMapSerNum,
-                        SourceDatabaseSerNum,
-                        AliasType,
-                        ColorTag,
-                        AliasUpdate,
-                        LastUpdatedBy,
-                        SessionId,
-                        LastTransferred
-					)
-				VALUES (
-					NULL,
-					\"$aliasName_FR\",
-					\"$aliasName_EN\",
-					\"$aliasDesc_FR\",
-                    \"$aliasDesc_EN\",
-                    $aliasEduMatSer,
-                    $hospitalMapSer,
-                    '$sourceDBSer',
-                    '$aliasType',
-                    '$aliasColorTag',
-                    '0',
-                    '$userSer',
-                    '$sessionId',
-                    $lastTransferred
-				)
-			";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-            $aliasSer = $host_db_link->lastInsertId();
-
-            foreach ($aliasTerms as $aliasTerm) {
-
-                $termName = $aliasTerm['id'];
-                $termDesc = $aliasTerm['description'];
-                $sql = "
-                    INSERT INTO
-                        AliasExpression (
-                            AliasSerNum,
-                            ExpressionName,
-                            Description,
-                            LastTransferred,
-                            LastUpdatedBy,
-                            SessionId
-                        )
-                    VALUE (
-                        '$aliasSer',
-                        \"$termName\",
-                        \"$termDesc\",
-                        $lastTransferred,
-                        '$userSer',
-                        '$sessionId'
-                    )
-                    ON DUPLICATE KEY UPDATE
-                        AliasSerNum = '$aliasSer',
-                        LastUpdatedBy = '$userSer',
-                        SessionId = '$sessionId'
-				";
-                $query = $host_db_link->prepare( $sql );
-                $query->execute();
-            }
-
-            $this->opalDB->sanitizeEmptyAliases();
-
-            if ($checkinDetails and $aliasType == 'Appointment') {
-                $checkinPossible =  $checkinDetails['checkin_possible'];
-                $instruction_EN  =  $checkinDetails['instruction_EN'];
-                $instruction_FR  =  $checkinDetails['instruction_FR'];
-
-                $sql = "
-                    INSERT INTO
-                        AppointmentCheckin (
-                            AliasSerNum,
-                            CheckinPossible,
-                            CheckinInstruction_EN,
-                            CheckinInstruction_FR,
-                            DateAdded,
-                            LastUpdatedBy,
-                            SessionId
-                        )
-                    VALUE (
-                        '$aliasSer',
-                        '$checkinPossible',
-                        \"$instruction_EN\",
-                        \"$instruction_FR\",
-                        NOW(),
-                        '$userSer',
-                        '$sessionId'
-                    )
-                ";
-                $query = $host_db_link->prepare( $sql );
-                $query->execute();
-            }
-
-
-        } catch( PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
-        }
+        if($post["type"] == ALIAS_TYPE_APPOINTMENT_TEXT)
+            $this->_replaceAppointmentCheckin($post["checkin_details"], $newAliasId);
     }
 
     public function updateAlias( $aliasDetails ) {
@@ -709,11 +626,11 @@ class Alias extends Module {
 
         } else {
             $aliasSeries = array();
-            if ($type == 'Appointment')
+            if ($type == ALIAS_TYPE_APPOINTMENT_TEXT)
                 $results = $this->opalDB->getAppointmentLogs($serial);
-            else if ($type == 'Document')
+            else if ($type == ALIAS_TYPE_DOCUMENT_TEXT)
                 $results = $this->opalDB->getDocumentLogs($serial);
-            else if ($type == 'Task')
+            else if ($type == ALIAS_TYPE_TASK_TEXT)
                 $results = $this->opalDB->getTaskLogs($serial);
             else
                 HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, "Wrong alias type.");
@@ -763,11 +680,11 @@ class Alias extends Module {
 
         if (!$type)
             $aliasLogs = $this->opalDB->getAliasesLogs($validIds);
-        else if ($type == 'Appointment')
+        else if ($type == ALIAS_TYPE_APPOINTMENT_TEXT)
             $aliasLogs = $this->opalDB->getAppointmentsLogs($validIds);
-        else if ($type == 'Document')
+        else if ($type == ALIAS_TYPE_DOCUMENT_TEXT)
             $aliasLogs = $this->opalDB->getDocumentsLogs($validIds);
-        else if ($type == 'Task')
+        else if ($type == ALIAS_TYPE_TASK_TEXT)
             $aliasLogs = $this->opalDB->getTasksLogs($validIds);
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, "Wrong alias type.");

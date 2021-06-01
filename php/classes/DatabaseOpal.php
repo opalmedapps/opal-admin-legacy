@@ -2882,8 +2882,8 @@ class DatabaseOpal extends DatabaseAccess {
      * @param $listIds array - list of IDs of alias expressions
      * @return array - total found
      */
-    function countAliasExpressions($listIds) {
-        return $this->_fetch(str_replace("%%LISTIDS%%", implode(", ", $listIds), OPAL_COUNT_ALIAS_EXPRESSIONS), array());
+    function selectAliasExpressionsToInsert($listIds) {
+        return $this->_fetchAll(str_replace("%%LISTIDS%%", implode(", ", $listIds), OPAL_SELECT_ALIAS_EXPRESSIONS_TO_INSERT), array());
     }
 
     /**
@@ -2895,5 +2895,35 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetch(OPAL_COUNT_SOURCE_DB, array(
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
         ));
+    }
+
+    /**
+     * Insert new alias and returns latest ID created
+     * @param $toInsert array - data to insert
+     * @return int - new ID
+     */
+    function insertAlias($toInsert) {
+        $toInsert["LastUpdatedBy"] = $this->getOAUserId();
+        $toInsert["SessionId"] = $this->getSessionId();
+        return $this->_insertRecordIntoTable(OPAL_ALIAS_TABLE, $toInsert);
+    }
+
+    /**
+     * Insert a list of multiple alias expression
+     * @param $toInsert array - data to insert
+     * @return int - last inserted ID
+     */
+    function replaceMultipleAliasExpressions($toInsert) {
+        foreach ($toInsert as &$item) {
+            $item["LastUpdatedBy"] = $this->getOAUserId();
+            $item["SessionId"] = $this->getSessionId();
+        }
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_ALIAS_EXPRESSION_TABLE, $toInsert);
+    }
+
+    function replaceAppointmentCheckin($toInsert) {
+        $toInsert["LastUpdatedBy"] = $this->getOAUserId();
+        $toInsert["SessionId"] = $this->getSessionId();
+        return $this->_replaceRecordIntoTable(OPAL_APPOINTMENT_CHECKIN_TABLE, $toInsert);
     }
 }
