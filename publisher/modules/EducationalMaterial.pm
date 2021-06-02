@@ -165,7 +165,7 @@ sub publishEducationalMaterials
     #if ( (($now - $today_at_eightAM) < 0) or (($now - $today_at_eightPM) > 0) ) {return;}
 
     # Retrieve all the controls
-    my @eduMatControls = EducationalMaterialControl::getEduMatControlsMarkedForPublish();
+    my @eduMatControls = EducationalMaterialControl::getEduMatControlsMarkedForPublishModularCron();
 
     foreach my $Patient (@patientList) {
 

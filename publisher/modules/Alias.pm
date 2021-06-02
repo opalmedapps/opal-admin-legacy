@@ -242,12 +242,71 @@ sub getAliasesMarkedForUpdate
 
 			push(@aliasList, $Alias);
 		}
-	# 	1;
-	# }
-	# or do {
-	# 	my $error = $@ || 'Unknown failure in Alias';
-	# 	die "ERRRRORR: $error\n";
-	# };
+
+	return @aliasList;
+}
+# retrieve aliases marked for update from cronControlAlias
+sub getAliasesMarkedForUpdateModularCron
+{
+	my ($aliasType) = @_; # the type of alias from args
+	my @aliasList = (); # initialize our list of alias objects
+	my ($ser, $type, $sourcedbser, $lasttransfer);
+	my @expressions;
+
+	# eval {
+		#======================================================================================
+		# Retrieve the alias info
+		#======================================================================================
+		my $aliasInfo_sql = "
+			SELECT DISTINCT
+				cronControlAlias.cronControlAliasSerNum,
+				Alias.AliasType,
+				Alias.LastTransferred,
+	            Alias.SourceDatabaseSerNum
+			FROM
+				Alias,
+				cronControlAlias,
+				SourceDatabase
+			WHERE
+				cronControlAlias.aliasUpdate			= 1
+			AND	cronControlAlias.cronType				= \"$aliasType\"
+			AND Alias.SourceDatabaseSerNum 	= SourceDatabase.SourceDatabaseSerNum
+			AND SourceDatabase.Enabled 		= 1
+		";
+
+		print "$aliasInfo_sql\n" if $verbose;
+
+		# prepare query
+		my $query = $SQLDatabase->prepare($aliasInfo_sql)
+			or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+		# execute query
+		$query->execute()
+			or die "Could not execute query: " . $query->errstr;
+
+		while (my @data = $query->fetchrow_array()) {
+
+			my $Alias = new Alias(); # alias object
+
+			$ser		    = $data[0];
+			$type		    = $data[1];
+			$lasttransfer	= $data[2];
+	        $sourcedbser    = $data[3];
+
+			# set alias information
+			$Alias->setAliasSer($ser);
+			$Alias->setAliasType($type);
+			$Alias->setAliasLastTransfer($lasttransfer);
+	        $Alias->setAliasSourceDatabaseSer($sourcedbser);
+
+			# get expressions for this alias
+			@expressions	= $Alias->getAliasExpressionsFromOurDB();
+
+			# finally, set expressions
+			$Alias->setAliasExpressions(@expressions);
+
+			push(@aliasList, $Alias);
+		}
 
 	return @aliasList;
 }

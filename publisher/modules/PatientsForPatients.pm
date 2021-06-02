@@ -164,7 +164,7 @@ sub publishPatientsForPatients
     # If we are not within the window to publish patsforpats then return
     #if ( (($now - $today_at_eightAM) < 0) or (($now - $today_at_eightPM) > 0) ) {return;}
 
-    my @patsForPatsControls = PostControl::getPostControlsMarkedForPublish('Patients For Patients');
+    my @patsForPatsControls = PostControl::getPostControlsMarkedForPublishModularCron('PatientsForPatients');
 
     foreach my $Patient (@patientList) {
 

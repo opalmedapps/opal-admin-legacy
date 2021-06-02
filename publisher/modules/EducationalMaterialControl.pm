@@ -160,6 +160,51 @@ sub getEduMatControlsMarkedForPublish
     return @eduMatControlList;
 }
 
+sub getEduMatControlsMarkedForPublishModularCron
+{
+    my @eduMatControlList = (); # initialize a list
+
+    my $info_sql = "
+        SELECT DISTINCT
+            ccem.cronControlEducationalMaterialControlSerNum,
+            ccem.lastPublished
+        FROM
+            cronControlEducationalMaterial ccem
+        WHERE
+            ccem.publishFlag      = 1
+        AND ccem.cronType         = 'EducationalMaterial'
+    ";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($info_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+	while (my @data = $query->fetchrow_array()) {
+
+        my $edumatControl = new EducationalMaterialControl(); # new object
+
+        my $ser             = $data[0];
+        my $lastpublished   = $data[1];
+
+        # set information
+        $edumatControl->setEduMatControlSer($ser);
+        $edumatControl->setEduMatControlLastPublished($lastpublished);
+
+        # get all the filters
+        my $filters = Filter::getAllFiltersFromOurDB($ser, 'EducationalMaterialControl');
+
+        $edumatControl->setEduMatControlFilters($filters);
+
+        push(@eduMatControlList, $edumatControl);
+    }
+
+    return @eduMatControlList;
+}
+
 #======================================================================================
 # Subroutine to set/update the "last published" field to current time 
 #======================================================================================

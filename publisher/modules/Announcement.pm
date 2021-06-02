@@ -168,7 +168,7 @@ sub publishAnnouncements
     # If we are not within the window to publish announcements then return
     #if ( (($now - $today_at_eightAM) < 0) or (($now - $today_at_eightPM) > 0) ) {return;}
 
-    my @announcementControls = PostControl::getPostControlsMarkedForPublish('Announcement');
+    my @announcementControls = PostControl::getPostControlsMarkedForPublishModularCron('Announcement');
 
     foreach my $Patient (@patientList) {
 

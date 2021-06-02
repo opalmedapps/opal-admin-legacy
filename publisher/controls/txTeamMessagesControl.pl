@@ -230,7 +230,7 @@ print "\n--- Start getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", 
 
 # We will generate our patient list specifically from the cronControlPatient table, for all patients marked for an update whose cronType = 'txTeamMessages'
 # 	this is needed to ensure this control (and every other control) is completely separate from dataControl.pl, to avoid syncing issues / missed patients
-@registeredPatients = Patient::getPatientsMarkedForUpdateModularCron($cronLogSer, 'Treatment Team Message');
+@registeredPatients = Patient::getPatientsMarkedForUpdateModularCron($cronLogSer, 'TxTeamMessage');
 print "--- End getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got patient list\n" if $verbose;
 
@@ -293,13 +293,13 @@ print "Finished treatment team messages\n" if $verbose;
 
 # Once everything is complete, we update the "last transferred" field for patients
 # Patient control
-Patient::setPatientLastTransferredModularCron($start_datetime, 'Treatment Team Message');
+Patient::setPatientLastTransferredModularCron($start_datetime, 'TxTeamMessage');
 # Alias control
-Alias::setAliasLastTransferredModularControllers($start_datetime, 'Treatment Team Message');
+Alias::setAliasLastTransferredModularControllers($start_datetime, 'TxTeamMessage');
 # Post control
-PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'Treatment Team Message');
+PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'TxTeamMessage');
 # Educational material control
-EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'Treatment Team Message');
+EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'TxTeamMessage');
 
 
 # Log that the script is finished in the cronlog

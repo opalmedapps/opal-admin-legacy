@@ -430,7 +430,7 @@ sub getDocsFromSourceDB
     my $lasttransfer;
 
     # retrieve all aliases that are marked for update
-    my @aliasList = Alias::getAliasesMarkedForUpdate('Document');
+    my @aliasList = Alias::getAliasesMarkedForUpdateModularCron('Document');
 
 	######################################
     # ARIA
