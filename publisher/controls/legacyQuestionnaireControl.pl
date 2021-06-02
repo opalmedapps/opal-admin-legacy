@@ -293,7 +293,7 @@ print "Finished Legacy Questionnaires\n" if $verbose;
 
 # Once everything is complete, we update the "last transferred" field for all controls
 # Patient control
-Patient::setPatientLastTransferredModularControllers($start_datetime, 'LegacyQuestionnaire');
+Patient::setPatientLastTransferredModularCron($start_datetime, 'LegacyQuestionnaire');
 # Alias control
 Alias::setAliasLastTransferredModularControllers($start_datetime, 'LegacyQuestionnaire');
 # Post control

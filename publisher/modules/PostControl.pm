@@ -206,6 +206,61 @@ sub getPostControlsMarkedForPublish
 
     return @postControlList;
 }
+# get post controls marked for publish from the cronControlPost table, by type
+sub getPostControlsMarkedForPublishModularCron
+{
+
+    my ($postType) = @_; # the type from args
+    my @postControlList = (); # initialize a list 
+
+    my $info_sql = "
+        SELECT DISTINCT
+            ccp.cronControlPostSerNum,
+            ccp.cronType,
+            pc.PublishDate,
+            ccp.lastPublished
+        FROM
+            PostControl pc,
+            cronControlPost ccp
+        WHERE
+            ccp.publishFlag      = 1
+        AND ccp.cronType         = '$postType'
+        AND pc.PostControlSerNum = ccp.cronControlPostSerNum
+    ";
+
+	# prepare query
+	my $query = $SQLDatabase->prepare($info_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+	while (my @data = $query->fetchrow_array()) {
+
+        my $postControl = new PostControl(); # new object
+
+        my $ser            = $data[0];
+        my $type           = $data[1];
+        my $publishdate    = $data[2];
+        my $lastpublished  = $data[3];
+
+        # set post control information
+        $postControl->setPostControlSer($ser);
+        $postControl->setPostControlType($type);
+        $postControl->setPostControlPublishDate($publishdate);
+        $postControl->setPostControlLastPublished($lastpublished);
+
+        # get all the filters
+        my $filters = Filter::getAllFiltersFromOurDB($ser, 'PostControl');
+
+        $postControl->setPostControlFilters($filters);
+
+        push(@postControlList, $postControl);
+    }
+
+    return @postControlList;
+}
 
 #======================================================================================
 # Subroutine to set/update the "last published" field to current time 

@@ -1458,7 +1458,7 @@ define("OPAL_MARKED_AS_DELETED_SOURCE_ALIAS", "
 ");
 
 define("OPAL_UPDATE_CRON_CONTROL_PATIENT_PUBLISH_FLAG", "
-    UPDATE ".OPAL_CRON_CONTROL_PATIENT_TABLE." SET transferFlag = :transferFlag WHERE PatientSerNum = :PatientSerNum
+    UPDATE ".OPAL_CRON_CONTROL_PATIENT_TABLE." SET transferFlag = :transferFlag WHERE cronControlPatientSerNum = :PatientSerNum
 ");
 
 define("SQL_OPAL_UPDATE_CRON_CONTROL_POST", "

@@ -156,7 +156,7 @@ sub publishTxTeamMessages
     #my $today_date = strftime("%Y-%m-%d", localtime(time));
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
 
-    my @txTeamMessageControls = PostControl::getPostControlsMarkedForPublish('Treatment Team Message');
+    my @txTeamMessageControls = PostControl::getPostControlsMarkedForPublishModularCron('Treatment Team Message');
 
     foreach my $Patient (@patientList) {
 

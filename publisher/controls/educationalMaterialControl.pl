@@ -292,7 +292,7 @@ print "Finished Educational materials\n" if $verbose;
 
 # Once everything is complete, we update the "last transferred" field for all controls
 # Patient control
-Patient::setPatientLastTransferredModularControllers($start_datetime, 'EducationalMaterial');
+Patient::setPatientLastTransferredModularCron($start_datetime, 'EducationalMaterial');
 # Alias control
 Alias::setAliasLastTransferredModularControllers($start_datetime, 'EducationalMaterial');
 # Post control
