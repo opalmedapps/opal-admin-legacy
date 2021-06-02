@@ -2921,9 +2921,31 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_replaceMultipleRecordsIntoTable(OPAL_ALIAS_EXPRESSION_TABLE, $toInsert);
     }
 
+    /**
+     * @param $toInsert
+     * @return false
+     */
     function replaceAppointmentCheckin($toInsert) {
         $toInsert["LastUpdatedBy"] = $this->getOAUserId();
         $toInsert["SessionId"] = $this->getSessionId();
         return $this->_replaceRecordIntoTable(OPAL_APPOINTMENT_CHECKIN_TABLE, $toInsert);
+    }
+
+    /**
+     * @param $toUpdate
+     * @return int - number of row updated
+     */
+    function updateAlias($toUpdate) {
+        $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
+        $toUpdate["SessionId"] = $this->getSessionId();
+
+        $sql = OPAL_UPDATE_ALIAS;
+
+        foreach ($toUpdate as $key => $item) {
+            $sql = str_replace(":".$key, "'".$item."'", $sql);
+        }
+        echo $sql;
+
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_ALIAS, $toUpdate);
     }
 }
