@@ -31,22 +31,7 @@ class Sms extends Module {
      * */
     public function getAppointments() {
         $this->checkReadAccess();
-        $result = $this->ormsDB->getAppointmentForSms();
-        $appointmentList = array();
-        foreach ($result as $item) {
-            $tempArr = array(
-                "appcode" => $item["appcode"],
-                "rescode" => $item["rescode"],
-                "resname" => $item["resname"],
-                "state" => $item["state"],
-                "spec" => $item["spec"],
-                "ressernum" => $item["ressernum"],
-                "code" => $item["codeid"],
-                "apptype" => $item["type"],
-            );
-            array_push($appointmentList, $tempArr);
-        }
-        return $appointmentList;
+        return $this->ormsDB->getAppointmentForSms();
     }
 
     public function getEvents($post) {
@@ -65,6 +50,7 @@ class Sms extends Module {
         } else
             $errCode .= "11";
 
+        $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
@@ -95,26 +81,22 @@ class Sms extends Module {
         } else
             $errCode .= "1111";
 
+        $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        $result = $this->ormsDB->getMessageForAppointment($post["speciality"],$post["type"],$post["event"],$post["language"]);
-        $messages = array();
-        foreach ($result as $item) {
-            $messages = array(
-                "message" => $item["smsmessage"],
-            );
-        }
-        return $messages;
+        return $this->ormsDB->getMessageForAppointment($post["speciality"],$post["type"],$post["event"],$post["language"]);
     }
 
     public function updateActivationState($post){
         $this->checkWriteAccess($post);
         $post = HelpSetup::arraySanitization($post);
         $errCode = "";
+        $response = 0;
         if (is_array($post)) {
             if(array_key_exists("updateList", $post) || is_array($post["updateList"])) {
                 foreach ($post["updateList"] as $information) {
+                    $errCode = "";
                     if (is_array($information)){
                         if (!array_key_exists("state", $information) || $information["state"] == "")
                             $errCode = "1" . $errCode;
@@ -129,18 +111,21 @@ class Sms extends Module {
                         else
                             $errCode = "0" . $errCode;
                     }
+                    else
+                        $errCode = "111";
+                    $errCode = bindec($errCode);
+                    if ($errCode != 0)
+                        HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+                    $response += $this->ormsDB->updateActivationState($information['state'], $information['appcode'], $information['ressernum']);
                 }
             } else
-                $errCode = "2". $errCode;
+                $errCode = bindec("111");
         }else
-            $errCode .= "2";
+            $errCode .= bindec("111");
 
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
-        $response = 0;
-        foreach($post["updateList"] as $information){
-            $response += $this->ormsDB->updateActivationState($information['state'], $information['appcode'], $information['ressernum']);
-        }
+
         return $response;
     }
 
@@ -149,7 +134,6 @@ class Sms extends Module {
         $post = HelpSetup::arraySanitization($post);
         $errCode = "";
         if (is_array($post)) {
-            $errCode .= "0";
             if(array_key_exists("information", $post) || is_array($post["information"])) {
                 if (!array_key_exists("type", $post["information"]) || $post["information"]["type"] == "")
                     $errCode = "1" . $errCode;
@@ -166,8 +150,9 @@ class Sms extends Module {
             } else
                 $errCode = "111". $errCode;
         }else
-            $errCode .= "1111";
+            $errCode .= "111";
 
+        $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
@@ -182,7 +167,6 @@ class Sms extends Module {
         $post = HelpSetup::arraySanitization($post);
         $errCode = "";
         if (is_array($post)) {
-            $errCode .= "0";
             if(array_key_exists("UpdateInformation", $post) || is_array($post["UpdateInformation"])) {
                 if (!array_key_exists("type", $post["UpdateInformation"]) || $post["UpdateInformation"]["type"] == "")
                     $errCode = "1" . $errCode;
@@ -209,8 +193,9 @@ class Sms extends Module {
             } else
                 $errCode = "11111". $errCode;
         }else
-            $errCode .= "111111";
+            $errCode .= "11111";
 
+        $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
@@ -239,12 +224,17 @@ class Sms extends Module {
         } else
             $errCode .= "1";
 
+        $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         return $this->ormsDB->getTypeForMessage($post["speciality"]);
     }
 
+    public function getAllTypeMessage(){
+        $this->checkReadAccess();
 
+        return $this->ormsDB->getAllTypeForMessage();
+    }
 
 }

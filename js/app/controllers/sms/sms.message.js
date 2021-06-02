@@ -88,6 +88,13 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             }
         }
 
+        var arrValidationInsert = [
+            $filter('translate')('SMS.VALIDATION.TYPE'),
+            $filter('translate')('SMS.VALIDATION.SPECIALITY'),
+            $filter('translate')('SMS.VALIDATION.EVENT'),
+            $filter('translate')('SMS.VALIDATION.MESSAGE_EN'),
+            $filter('translate')('SMS.VALIDATION.MESSAGE_FR')
+        ];
         //Update Message information
         $scope.UpdateMessage = function(){
             if ($scope.checkForm() && $scope.writeAccess) {
@@ -97,7 +104,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
                     data:{'UpdateInformation':$scope.UpdateInformation},
                     success: function (response) {},
                     error: function(err) {
-                        ErrorHandler.onError(err,$filter('translate')('SMS.MESSAGE.ERROR'));
+                        ErrorHandler.onError(err,$filter('translate')('SMS.MESSAGE.ERROR'),arrValidationInsert);
                     },
                     complete: function () {
                         $state.go('sms');
@@ -190,14 +197,14 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         function getSmsMessage() {
             smsCollectionService.getSmsMessge($scope.UpdateInformation.speciality,
                 $scope.UpdateInformation.type, $scope.UpdateInformation.event, "English").then(function (response) {
-                $scope.UpdateInformation.message.English = response.data.message;
+                $scope.UpdateInformation.message.English = response.data[0].smsmessage;
             }).catch(function (err) {
                 ErrorHandler.onError(err, "error");
             });
 
             smsCollectionService.getSmsMessge($scope.UpdateInformation.speciality,
                 $scope.UpdateInformation.type, $scope.UpdateInformation.event, "French").then(function (response) {
-                $scope.UpdateInformation.message.French = response.data.message;
+                $scope.UpdateInformation.message.French = response.data[0].smsmessage;
                 console.log($scope.UpdateInformation);
             }).catch(function (err) {
                 ErrorHandler.onError(err, "error");
