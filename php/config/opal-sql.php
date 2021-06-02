@@ -1451,7 +1451,13 @@ define("OPAL_UPDATE_ALIAS","
     AliasDescription_EN = :AliasDescription_EN, EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum,
     HospitalMapSerNum = :HospitalMapSerNum, ColorTag = :ColorTag, LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId
     WHERE AliasSerNum = :AliasSerNum AND (AliasName_FR != :AliasName_FR OR AliasName_EN != :AliasName_EN OR
-    AliasDescription_FR != :AliasDescription_FR, AliasDescription_EN != :AliasDescription_EN OR
-    EducationalMaterialControlSerNum != :EducationalMaterialControlSerNum, HospitalMapSerNum != :HospitalMapSerNum OR
+    AliasDescription_FR != :AliasDescription_FR OR AliasDescription_EN != :AliasDescription_EN OR
+    EducationalMaterialControlSerNum != :EducationalMaterialControlSerNum OR HospitalMapSerNum != :HospitalMapSerNum OR
     ColorTag != :ColorTag OR LastUpdatedBy != :LastUpdatedBy OR SessionId != :SessionId)
+");
+
+define("OPAL_DELETE_ALIAS_EXPRESSIONS","
+    DELETE ae FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa ON msa.ID = ae.masterSourceAliasId
+    WHERE ae.AliasExpressionSerNum = :AliasExpressionSerNum AND msa.deleted = ".NON_DELETED_RECORD." AND
+    ae.masterSourceAliasId NOT IN (%%LIST_SOURCES_UIDS%%);
 ");

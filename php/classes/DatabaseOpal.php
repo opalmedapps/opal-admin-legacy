@@ -2939,13 +2939,16 @@ class DatabaseOpal extends DatabaseAccess {
         $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
         $toUpdate["SessionId"] = $this->getSessionId();
 
-        $sql = OPAL_UPDATE_ALIAS;
-
-        foreach ($toUpdate as $key => $item) {
-            $sql = str_replace(":".$key, "'".$item."'", $sql);
-        }
-        echo $sql;
-
         return $this->_updateRecordIntoTable(OPAL_UPDATE_ALIAS, $toUpdate);
+    }
+
+    function deleteAliasExpressions($aliasId, $sourceIds) {
+        $sql = str_replace("%%LIST_SOURCES_UIDS%%",implode(", ", $sourceIds), OPAL_DELETE_ALIAS_EXPRESSIONS);
+
+        print "$sql\r\n";
+
+        return $this->_execute($sql, array(
+            array("parameter"=>":AliasExpressionSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
+        ));
     }
 }
