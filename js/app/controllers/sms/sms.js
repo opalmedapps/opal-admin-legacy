@@ -10,7 +10,6 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
         $scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.sms]) & (1 << 1)) !== 0);
         $scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.sms]) & (1 << 2)) !== 0);
 
-        getSmsTypeList();
         getSmsAppointmentList();
         $scope.changesMade = false;
         var cellTemplateResourceName = '<div style="cursor:pointer;" class="ui-grid-cell-contents">' +
@@ -21,9 +20,9 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
         var checkboxCellTemplate;
         if($scope.writeAccess)
             checkboxCellTemplate = '<div style="text-align: center;" class="ui-grid-cell-contents" ' +
-                'ng-style = "(row.entity.apptype != \'UNDEFINED\') ? {cursor:\'pointer\'}:{cursor:\'not-allowed\'}" >' +
+                'ng-style = "(row.entity.apptype != \'-\') ? {cursor:\'pointer\'}:{cursor:\'not-allowed\'}" >' +
                 '<input style="margin: 4px;" type="checkbox" ng-checked="grid.appScope.updateVal(row.entity.state)" ' +
-                'ng-disabled="!(row.entity.apptype != \'UNDEFINED\')" ng-click="grid.appScope.checkSmsUpdate(row.entity)" ' +
+                'ng-disabled="!(row.entity.apptype != \'-\')" ng-click="grid.appScope.checkSmsUpdate(row.entity)" ' +
                 'ng-model="row.entity.state"></div>';
         else
             checkboxCellTemplate = '<div style="text-align: center;" class="ui-grid-cell-contents"><i ng-class="row.entity.state == 1 ? \'Active\' : \'Disabled\'" class="fa"></i></div>';
@@ -80,7 +79,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             var matcher = new RegExp($scope.filterValue, 'i');
             renderableRows.forEach(function (row) {
                 var match = false;
-                ['appcode','resname','displayType',"displaySpeciality"].forEach(function (field) {
+                ['appcode','resname','apptype',"spec"].forEach(function (field) {
                     if (row.entity[field].match(matcher)) {
                         match = true;
                     }
@@ -96,20 +95,20 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             data: 'smsAppointments',
             columnDefs: [
                 {field:'appcode', displayName: $filter('translate')('SMS.LIST.APPOINTMENT_CODE'),width: '25%',enableColumnMenu: false, cellTemplate: cellTemplateAppointmentCode},
-                {field:'resname', displayName:  $filter('translate')('SMS.LIST.RESOURCE_NAME'), width:'35%', enableColumnMenu: false,cellTemplate: cellTemplateResourceName},
+                {field:'resname', displayName:  $filter('translate')('SMS.LIST.RESOURCE_NAME'), width:'30%', enableColumnMenu: false,cellTemplate: cellTemplateResourceName},
                 {
-                    field: 'displayType', displayName: $filter('translate')('SMS.LIST.TYPE'), width: '15%', enableColumnMenu: false, filter: {
+                    field: 'apptype', displayName: $filter('translate')('SMS.LIST.TYPE'), width: '15%', enableColumnMenu: false, filter: {
                         type: uiGridConstants.filter.SELECT,
                         selectOptions: []
                     }
                 },
                 {
-                    field: 'displaySpeciality', displayName:  $filter('translate')('SMS.LIST.SPECIALITY'), width: '15%', enableColumnMenu: false, filter: {
+                    field: 'spec', displayName:  $filter('translate')('SMS.LIST.SPECIALITY'), width: '15%', enableColumnMenu: false, filter: {
                         type: uiGridConstants.filter.SELECT,
-                        selectOptions: [{ value: 'Oncology', label: 'Oncology'}]
+                        selectOptions: []
                     }
                 },
-                { field: 'state', displayName: $filter('translate')('SMS.LIST.DISABLE/ENABLE'), enableColumnMenu: false, width: '10%',
+                { field: 'state', displayName: $filter('translate')('SMS.LIST.DISABLE/ENABLE'), enableColumnMenu: false, width: '15%',
                     cellTemplate: checkboxCellTemplate, enableFiltering: false },
             ],
             enableFiltering: true,
@@ -119,6 +118,8 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                 $scope.gridApi.grid.registerRowsProcessor($scope.filterOptions, 300);
             },
         };
+        getSmsSpecialityList();
+        getSmsTypeList();
 
         $scope.smsAppointments = [];
         $scope.smsUpdates = {
@@ -128,6 +129,12 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
         $scope.goToMessage = function(){
             $state.go('sms/message');
         }
+
+        var arrValidationInsert = [
+            $filter('translate')('SMS.VALIDATION.STATE'),
+            $filter('translate')('SMS.VALIDATION.APPOINTMENT_CODE'),
+            $filter('translate')('SMS.VALIDATION.RESOURCE_NAME')
+        ];
 
         $scope.submitUpdate = function () {
             if ($scope.changesMade && $scope.writeAccess) {
@@ -140,9 +147,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                         });
                     }
                 });
-                // Log who updated alias
-                //var currentUser = Session.retrieveObject('user');
-                //$scope.smsUpdates.user = currentUser;
+
                 // Submit form
                 $.ajax({
                     type: "POST",
@@ -158,13 +163,13 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                             $scope.showBanner();
                         }
                         else {
-                            ErrorHandler.onError(response, $filter('translate')('SMS.LIST.ERROR'));
+                            ErrorHandler.onError(response, $filter('translate')('SMS.LIST.ERROR'),arrValidationInsert);
                         }
                         $scope.changesMade = false;
                         $scope.smsUpdates.updateList = [];
                     },
                     error: function(err) {
-                        ErrorHandler.onError(err,$filter('translate')('SMS.LIST.ERROR'));
+                        ErrorHandler.onError(err,$filter('translate')('SMS.LIST.ERROR'),arrValidationInsert);
                     }
                 });
             }
@@ -188,7 +193,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
         };
 
         function getSmsTypeList(){
-            smsCollectionService.getSmsType('Oncology').then(function (response) {
+            smsCollectionService.getAllSmsType().then(function (response) {
                 var TypeList = []
                 response.data.forEach(function (row){
                     TypeList.push({value:row.type,label:row.type})
@@ -198,16 +203,25 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             });
         }
 
+        function getSmsSpecialityList(){
+            smsCollectionService.getSmsSpeciality().then(function (response) {
+                var Speciality = []
+                response.data.forEach(function (row){
+                    Speciality.push({value:row.speciality,label:row.speciality})
+                });
+                $scope.gridOptions.columnDefs[3].filter.selectOptions = Speciality;
+            });
+        }
+
         function getSmsAppointmentList() {
             smsCollectionService.getSmsAppointments().then(function (response) {
                 response.data.forEach(function (row){
                     switch (row.apptype){
                         case null:
-                            row.apptype = 'UNDEFINED';
+                            row.apptype = '-';
                     }
-                    row.displayType = $filter('translate')('SMS.LIST.'+row.apptype);
-                    row.displaySpeciality = $filter('translate')('SMS.LIST.'+row.spec);
                     row.modified = 0;
+
                 })
                 $scope.smsAppointments = response.data;
             }).catch(function(err) {

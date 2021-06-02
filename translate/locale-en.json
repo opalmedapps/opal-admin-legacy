@@ -3117,16 +3117,26 @@
       "SPECIALITY": "Speciality",
       "Oncology": "Oncology",
       "RESOURCE_NAME": "Clinic Code",
-      "TYPE": "Appointment Type",
+      "TYPE": "Type",
       "GENERAL": "GENERAL",
       "RADONC": "RADONC",
       "TELEMED": "TELEMED",
       "TEST_CENTRE": "TEST_CENTRE",
       "UNDEFINED": "UNDEFINED",
       "CURRENT_TYPE": "Current Type",
-      "APPOINTMENT_INFORMATION": "Appointment information",
+      "APPOINTMENT_INFORMATION": "Details",
       "SUCCESS": "Changes Saved Successfully!",
       "ERROR": "An error occurred when saving changes."
+    },
+    "VALIDATION": {
+      "APPOINTMENT_CODE": "Appointment Code missing",
+      "EVENT": "Event missing",
+      "MESSAGE_EN": "English message missing",
+      "MESSAGE_FR": "French message missing",
+      "RESOURCE_NAME": "Clinic Code missing",
+      "SPECIALITY": "Speciality missing",
+      "STATE": "State flag missing",
+      "TYPE": "Type missing"
     }
   },
   "ERROR_HANDLER": {

@@ -104,4 +104,9 @@ class DatabaseOrms extends DatabaseAccess {
         ));
         return $result;
     }
+
+    function getAllTypeForMessage(){
+        $result = $this->_fetchAll(ORMS_SQL_GET_ALL_TYPE__FOR_MESSAGE, array());
+        return $result;
+    }
 }

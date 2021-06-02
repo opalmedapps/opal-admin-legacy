@@ -1276,5 +1276,14 @@ angular.module('opalAdmin.collections', [])
 				}
 			);
 		};
+
+		smsAPI.getAllSmsType = function(){
+			return $http.post(
+				"sms/get/all-sms-type",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
 		return smsAPI;
 	});
