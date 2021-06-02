@@ -496,7 +496,7 @@ define("OPAL_GET_TREATMENT_MACHINES_TRIGGERS","
 ");
 
 define("OPAL_GET_STUDIES_TRIGGERS","
-    SELECT DISTINCT ID AS id, CONCAT (code, ' ', title_EN) AS name, 'Study' AS 'type', 0 AS 'added' FROM ".OPAL_STUDY_TABLE." WHERE deleted = ".NON_DELETED_RECORD." ORDER BY code, title_EN;
+    SELECT DISTINCT ID AS id, CONCAT (code, ' ', title) AS name, 'Study' AS 'type', 0 AS 'added' FROM ".OPAL_STUDY_TABLE." WHERE deleted = ".NON_DELETED_RECORD." ORDER BY code, title;
 ");
 
 define("OPAL_COUNT_CODE_MASTER_SOURCE","
@@ -1444,4 +1444,14 @@ define("OPAL_SELECT_ALIAS_EXPRESSIONS_TO_INSERT","
 define("OPAL_COUNT_SOURCE_DB","
     SELECT COUNT(*) AS total FROM ".OPAL_SOURCE_DATABASE_TABLE." WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum
     AND Enabled = ".ACTIVE_RECORD.";
+");
+
+define("OPAL_UPDATE_ALIAS","
+    UPDATE ".OPAL_ALIAS_TABLE." SET AliasName_FR = :AliasName_FR, AliasName_EN = :AliasName_EN, AliasDescription_FR = :AliasDescription_FR,
+    AliasDescription_EN = :AliasDescription_EN, EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum,
+    HospitalMapSerNum = :HospitalMapSerNum, ColorTag = :ColorTag, LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId
+    WHERE AliasSerNum = :AliasSerNum AND (AliasName_FR != :AliasName_FR OR AliasName_EN != :AliasName_EN OR
+    AliasDescription_FR != :AliasDescription_FR, AliasDescription_EN != :AliasDescription_EN OR
+    EducationalMaterialControlSerNum != :EducationalMaterialControlSerNum, HospitalMapSerNum != :HospitalMapSerNum OR
+    ColorTag != :ColorTag OR LastUpdatedBy != :LastUpdatedBy OR SessionId != :SessionId)
 ");

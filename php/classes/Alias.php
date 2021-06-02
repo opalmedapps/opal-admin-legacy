@@ -305,9 +305,10 @@ class Alias extends Module {
      * @param $aliasId int - Alias ID (or sernum)
      * @param $lastTransferred string - date of last transferred to use
      */
-    protected function _replaceAliasExpressions(&$aliasExpressions, &$aliasId, &$lastTransferred) {
+    protected function _replaceAliasExpressions(&$aliasExpressions, &$aliasId, &$lastTransferred = "") {
         $toInsert = array();
         foreach($aliasExpressions as $item) {
+            if($lastTransferred != "")
             array_push($toInsert, array(
                 "AliasSerNum"=>$aliasId,
                 "masterSourceAliasId"=>$item['ID'],
@@ -315,6 +316,13 @@ class Alias extends Module {
                 "Description"=>$item['description'],
                 "LastTransferred"=>$lastTransferred,
             ));
+            else
+                array_push($toInsert, array(
+                    "AliasSerNum"=>$aliasId,
+                    "masterSourceAliasId"=>$item['ID'],
+                    "ExpressionName"=>$item['code'],
+                    "Description"=>$item['description']
+                ));
         }
 
         $this->opalDB->replaceMultipleAliasExpressions($toInsert);
@@ -383,21 +391,24 @@ class Alias extends Module {
 
         $toUpdate = array(
             "AliasSerNum"=>$post["serial"],
-            "Name_EN"=>$post["name_EN"],
-            "Name_FR"=>$post["name_FR"],
-            "Description_EN"=>$post["description_EN"],
-            "Description_FR"=>$post["description_FR"],
-            "EducationalMaterialControlSerNum"=>$post["eduMat"],
+            "AliasName_EN"=>$post["name_EN"],
+            "AliasName_FR"=>$post["name_FR"],
+            "AliasDescription_EN"=>$post["description_EN"],
+            "AliasDescription_FR"=>$post["description_FR"],
+            "ColorTag"=>$post["color"],
+            "EducationalMaterialControlSerNum"=>(array_key_exists("eduMat", $post) ? $post["eduMat"] : ""),
+            "HospitalMapSerNum"=>(array_key_exists("hospitalMap", $post) ? $post["hospitalMap"] : ""),
         );
 
         $this->opalDB->updateAlias($toUpdate);
+        die();
 
-        $existingSourceUIDs = array();
+        $existingAliasExpressions = array();
         foreach ($post["diagnoses"] as $diagnosis)
-            array_push($existingSourceUIDs, $diagnosis["ID"]);
+            array_push($existingAliasExpressions, $diagnosis["ID"]);
 
-        $this->opalDB->deleteDiagnosisCodes($post["serial"], $existingSourceUIDs);
-        return $this->_insertDiagnosisCodes($post["diagnoses"], $post["serial"]);
+        $this->opalDB->deleteAliasExpressions($post["serial"], $existingAliasExpressions);
+        $this->_replaceAliasExpressions($post["diagnoses"], $post["serial"]);
 
         print_r($post);
 
