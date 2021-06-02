@@ -390,29 +390,27 @@ class Alias extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         $toUpdate = array(
-            "AliasSerNum"=>$post["serial"],
+            "AliasSerNum"=>$post["id"],
             "AliasName_EN"=>$post["name_EN"],
             "AliasName_FR"=>$post["name_FR"],
             "AliasDescription_EN"=>$post["description_EN"],
             "AliasDescription_FR"=>$post["description_FR"],
             "ColorTag"=>$post["color"],
-            "EducationalMaterialControlSerNum"=>(array_key_exists("eduMat", $post) ? $post["eduMat"] : ""),
-            "HospitalMapSerNum"=>(array_key_exists("hospitalMap", $post) ? $post["hospitalMap"] : ""),
+            "EducationalMaterialControlSerNum"=>(array_key_exists("eduMat", $post) && $post["eduMat"] !="" ? $post["eduMat"] : null),
+            "HospitalMapSerNum"=>(array_key_exists("hospitalMap", $post) && $post["hospitalMap"] !="" ? $post["hospitalMap"] : null),
         );
 
         $this->opalDB->updateAlias($toUpdate);
-        die();
 
         $existingAliasExpressions = array();
-        foreach ($post["diagnoses"] as $diagnosis)
+        foreach ($post["terms"] as $diagnosis)
             array_push($existingAliasExpressions, $diagnosis["ID"]);
 
         $this->opalDB->deleteAliasExpressions($post["serial"], $existingAliasExpressions);
-        $this->_replaceAliasExpressions($post["diagnoses"], $post["serial"]);
-
-        print_r($post);
+        $this->_replaceAliasExpressions($post["terms"], $post["id"]);
 
         die();
+
         $aliasName_EN 	= $aliasDetails['name_EN'];
         $aliasName_FR 	= $aliasDetails['name_FR'];
         $aliasDesc_EN	= $aliasDetails['description_EN'];
