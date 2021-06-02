@@ -26,8 +26,8 @@ define("ORMS_SQL_GET_APPOINTMENT_FOR_ALIAS","
 
 define("ORMS_SQL_GET_APPOINTMENT_FOR_SMS","
     SELECT appc.AppointmentCode AS appcode, clir.ResourceCode AS rescode, smsa.Active AS state,
-           smsa.Speciality AS spec, smsa.Type AS type, smsa.ClinicResourcesSerNum AS ressernum, 
-           smsa.AppointmentCodeId AS codeid, clir.ResourceName AS resname
+           smsa.Speciality AS spec, smsa.Type AS apptype, smsa.ClinicResourcesSerNum AS ressernum, 
+           smsa.AppointmentCodeId AS code, clir.ResourceName AS resname
     FROM ".ORMS_SMS_APPOINTMENT_LIST_TABLE." smsa 
     INNER JOIN ".ORMS_APPOINTMENT_CODE_LIST_TABLE." appc 
     ON appc.AppointmentCodeId = smsa.AppointmentCodeId
@@ -76,5 +76,9 @@ define("ORMS_SQL_GET_SPECIALITY_FOR_MESSAGE","
 define("ORMS_SQL_GET_TYPE_FOR_MESSAGE","
     SELECT DISTINCT `Type` AS `type`,2 AS source FROM ".ORMS_SMS_MESSAGE_LIST_TABLE."
     WHERE (Speciality = 'Any' OR Speciality = :Speciality)
+");
+
+define("ORMS_SQL_GET_ALL_TYPE__FOR_MESSAGE","
+    SELECT DISTINCT `Type` AS `type`,2 AS source FROM ".ORMS_SMS_MESSAGE_LIST_TABLE."
 ");
 

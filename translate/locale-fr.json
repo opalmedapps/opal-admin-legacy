@@ -3128,7 +3128,7 @@
       "SEARCH": "Recherche",
       "SAVE": "Enregistrer",
       "CANCEL": "Annuler",
-      "TYPE": "Type de Rendez-vous",
+      "TYPE": "Type",
       "GENERAL": "GENERAL",
       "RADONC": "RADONC",
       "TELEMED": "TELEMED",
@@ -3139,9 +3139,19 @@
       "RESOURCE_NAME": "Code de la clinique",
       "UNDEFINED": "UNDEFINED",
       "CURRENT_TYPE": "Type Actuel",
-      "APPOINTMENT_INFORMATION": "Informations de Rendez-vous",
+      "APPOINTMENT_INFORMATION": "Détails ",
       "SUCCESS": "Changements sauvegardés avec succès",
       "ERROR": "Une erreur s'est produite lors de l'enregistrement des modifications."
+    },
+    "VALIDATION": {
+      "APPOINTMENT_CODE": "Code de Rendez-vous manquante",
+      "EVENT": "Événement manquant",
+      "MESSAGE_EN": "Message anglais manquant",
+      "MESSAGE_FR": "Message français manquant",
+      "RESOURCE_NAME": "Code de la clinique manquante",
+      "SPECIALITY": "Spécialité manquant",
+      "STATE": "Drapeau d'état manquant",
+      "TYPE": "Type manquant"
     }
   },
   "ERROR_HANDLER": {

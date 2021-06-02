@@ -24,6 +24,12 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
         $scope.typeSelected = type.type;
     }
 
+    var arrValidationInsert = [
+        $filter('translate')('SMS.VALIDATION.TYPE'),
+        $filter('translate')('SMS.VALIDATION.APPOINTMENT_CODE'),
+        $filter('translate')('SMS.VALIDATION.RESOURCE_NAME')
+    ];
+
     $scope.updateAppointment = function() {
         if($scope.changesDetected) {
             var update = {
@@ -35,7 +41,7 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
                 data: update,
                 success: function () {},
                 error: function (err) {
-                    ErrorHandler.onError(err, $filter('translate')('SMS.LIST.ERROR_LIST'));
+                    ErrorHandler.onError(err, $filter('translate')('SMS.LIST.ERROR_LIST'),arrValidationInsert);
                 },
                 complete: function () {
                     $uibModalInstance.close();
