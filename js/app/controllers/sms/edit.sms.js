@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.sms.edit', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, smsCollectionService, $state, Session, ErrorHandler, MODULE) {
+controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, smsCollectionService, $state, Session, ErrorHandler) {
 
     $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');
@@ -35,14 +35,16 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
     $scope.updateAppointment = function() {
         if($scope.changesDetected) {
             var update = {
-                information:{type:$scope.typeSelected, appcode:$scope.currentAppointment.code, ressernum:$scope.currentAppointment.ressernum}
+                type:$scope.typeSelected, appcode:$scope.currentAppointment.code, ressernum:$scope.currentAppointment.ressernum
             }
+            if(update.type == "UNDEFINED") update.type = 0;
             $.ajax({
                 type: "POST",
                 url: "sms/update/sms-type",
                 data: update,
                 success: function () {},
                 error: function (err) {
+                    err.responseText = JSON.parse(err.responseText);
                     ErrorHandler.onError(err, $filter('translate')('SMS.LIST.ERROR_LIST'),arrValidationInsert);
                 },
                 complete: function () {
