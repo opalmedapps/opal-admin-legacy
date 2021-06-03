@@ -297,9 +297,9 @@ Patient::setPatientLastTransferredModularCron($start_datetime, 'LegacyQuestionna
 # Alias control
 Alias::setAliasLastTransferredModularControllers($start_datetime, 'LegacyQuestionnaire');
 # Post control
-PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'LegacyQuestionnaire');
+#PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'LegacyQuestionnaire');
 # Educational material control
-EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'LegacyQuestionnaire');
+#EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'LegacyQuestionnaire');
 
 
 # Log that the script is finished in the cronlog

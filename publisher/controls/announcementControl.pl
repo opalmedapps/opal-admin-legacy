@@ -298,7 +298,7 @@ Alias::setAliasLastTransferredModularControllers($start_datetime, 'Announcement'
 # Post control
 PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'Announcement');
 # Educational material control
-EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'Announcement');
+#EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'Announcement');
 
 
 # Log that the script is finished in the cronlog

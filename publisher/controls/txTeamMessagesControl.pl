@@ -299,7 +299,7 @@ Alias::setAliasLastTransferredModularControllers($start_datetime, 'TxTeamMessage
 # Post control
 PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'TxTeamMessage');
 # Educational material control
-EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'TxTeamMessage');
+#EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'TxTeamMessage');
 
 
 # Log that the script is finished in the cronlog

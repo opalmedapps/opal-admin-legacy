@@ -547,7 +547,6 @@ class DatabaseOpal extends DatabaseAccess {
     function updateCronControlEducationalMaterialInsert($eduMatSer){
         $toSubmit = array(
             "cronControlEducationalMaterialControlSerNum"=>$eduMatSer,
-            "cronType"=>'EducationalMaterial',
             "lastPublished"=>date("Y-m-d H:i:s"),
             "lastUpdated"=>date("Y-m-d H:i:s"),
             "sessionId"=>$this->getSessionId()

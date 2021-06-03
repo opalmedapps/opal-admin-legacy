@@ -789,10 +789,10 @@ print "Finished test result list\n" if $verbose;
 # Publishing LEGACY QUESTIONNAIRES
 #
 ##########################################################################################
-# print "\n--- Start publishLegacyQuestionnaires: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-# LegacyQuestionnaire::publishLegacyQuestionnaires($cronLogSer, @patientList);
+print "\n--- Start publishLegacyQuestionnaires: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+LegacyQuestionnaire::publishLegacyQuestionnaires($cronLogSer, @patientList);
 # print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-# print "Finished Legacy Questionnaires\n" if $verbose;
+print "Finished Legacy Questionnaires\n" if $verbose;
 
 # Once everything is complete, we update the "last transferred" field for all controls
 # Patient control

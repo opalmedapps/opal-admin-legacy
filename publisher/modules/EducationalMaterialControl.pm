@@ -171,8 +171,7 @@ sub getEduMatControlsMarkedForPublishModularCron
         FROM
             cronControlEducationalMaterial ccem
         WHERE
-            ccem.publishFlag      = 1
-        AND ccem.cronType         = 'EducationalMaterial'
+            ccem.publishFlag      = 1;
     ";
 
     # prepare query
@@ -243,8 +242,7 @@ sub setEduMatControlLastPublishedModularControllers
         SET
             lastPublished = '$current_datetime'
         WHERE
-            publishFlag = 1
-        AND cronType    = '$module'
+            publishFlag = 1;
     ";
     	
     # prepare query

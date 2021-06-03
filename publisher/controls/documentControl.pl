@@ -332,9 +332,9 @@ Patient::setPatientLastTransferredModularCron($start_datetime, 'Document');
 # Alias control
 Alias::setAliasLastTransferredModularControllers($start_datetime, 'Document');
 # Post control
-PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'Document');
+#PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'Document');
 # Educational material control
-EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'Document');
+#EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'Document');
 
 
 # Log that the script is finished in the cronlog

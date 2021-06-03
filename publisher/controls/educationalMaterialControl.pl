@@ -294,11 +294,11 @@ print "Finished Educational materials\n" if $verbose;
 # Patient control
 Patient::setPatientLastTransferredModularCron($start_datetime, 'EducationalMaterial');
 # Alias control
-Alias::setAliasLastTransferredModularControllers($start_datetime, 'EducationalMaterial');
+#Alias::setAliasLastTransferredModularControllers($start_datetime, 'EducationalMaterial');
 # Post control
-PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'EducationalMaterial');
+#PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'EducationalMaterial');
 # Educational material control
-EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'EducationalMaterial');
+EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime);
 
 
 # Log that the script is finished in the cronlog
