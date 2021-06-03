@@ -69,7 +69,16 @@ class Post extends Module {
     public function insertPost( $toInsert ) {
         $this->checkWriteAccess($toInsert);
         $toInsert["PublishDate"]="0000-00-00 00:00:00";
-        return $this->opalDB->insertPost($toInsert);
+        // Cron refactor, we have to also update the cronControlPost table as part of the modular cron update
+        $temp = $this->opalDB->insertPost($toInsert);
+        $postSer = $host_db_link->lastInsertId();
+        if($toInsert["type"] == "Treatment Team Message"){
+            $toInsert["type"] = "TxTeamMessage"; // the rest of the cron uses TxTeamMessage as the string for type, need to stay consistent
+        }else if($toInsert["type"] == "Patients for Patients"){
+            $toInsert["type"] = "PatientsForPatients";
+        }
+        $this->opalDB->updateCronControlPostInsert($postSer, $toInsert["type"]);
+        return $temp;
     }
 
     /*

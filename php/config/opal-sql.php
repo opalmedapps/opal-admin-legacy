@@ -1495,3 +1495,8 @@ define("OPAL_DELETE_CRON_CONTROL_ALIAS","
     DELETE FROM ".OPAL_CRON_CONTROL_ALIAS_TABLE."
     WHERE cronControlAliasSerNum = :aliasSer;
 ");
+
+define("OPAL_DELETE_CRON_CONTROL_EDUMAT","
+    DELETE FROM ".OPAL_CRON_CONTROL_EDUMAT_TABLE."
+    WHERE cronControlEducationalMaterialControlSerNum = :eduMatSer;
+");

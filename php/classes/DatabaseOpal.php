@@ -535,13 +535,31 @@ class DatabaseOpal extends DatabaseAccess {
      *         sessionId current user session ID
      * @return number of records affected
      */
-    function updateControlControlEducationalMaterialPublicationFlag($publishFlag, $serNum, $sessionId){
+    function updateCronControlEducationalMaterialPublicationFlag($publishFlag, $serNum, $sessionId){
         return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_CRON_CONTROL_EDUMAT, array(
             "publishFlag"=>$publishFlag,
             "cronControlEducationalMaterialControlSerNum"=>$serNum,
             "lastPublished"=>date("Y-m-d H:i:s"),
             "sessionId"=>$this->getSessionId()
         ));
+    }
+
+    function updateCronControlEducationalMaterialInsert($eduMatSer){
+        $toSubmit = array(
+            "cronControlEducationalMaterialControlSerNum"=>$eduMatSer,
+            "cronType"=>'EducationalMaterial',
+            "lastPublished"=>date("Y-m-d H:i:s"),
+            "lastUpdated"=>date("Y-m-d H:i:s"),
+            "sessionId"=>$this->getSessionId()
+        );
+        return $this->_insertRecordIntoTable(OPAL_CRON_CONTROL_EDUMAT_TABLE, $toSubmit);
+    }
+
+    function updateCronControlEducationalMaterialDelete($eduMatSer){
+        $toInsert = array(
+            array("parameter"=>":eduMatSer","variable"=>$eduMatSer,"data_type"=>PDO::PARAM_INT),
+        );
+        return $this->_execute(OPAL_DELETE_CRON_CONTROL_EDUMAT, $toInsert);
     }
 
     /**
@@ -595,6 +613,21 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":aliasSer","variable"=>$aliasSer,"data_type"=>PDO::PARAM_INT),
         );
         return $this->_execute(OPAL_DELETE_CRON_CONTROL_ALIAS, $toInsert);
+    }
+
+    /**
+     * Insert into cronControlPost
+     *  @params postSer foreign key of PostControl.PostControlSerNum
+     *          toInsert postControl data
+     */
+    function updateCronControlPostInsert($postSer, $postType){
+        $toSubmit = array(
+            "cronControlPostSerNum"=>$postSer,
+            "cronType"=>$postType,
+            "lastUpdated"=>date("Y-m-d H:i:s"),
+            "sessionId"=>$this->getSessionId()
+        );
+        return $this->_insertRecordIntoTable(OPAL_CRON_CONTROL_POST_TABLE, $toSubmit);
     }
 
     /*
