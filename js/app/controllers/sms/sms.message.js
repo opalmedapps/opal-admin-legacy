@@ -102,8 +102,9 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
                     type: "POST",
                     url: "sms/update/sms-message",
                     data:{'UpdateInformation':$scope.UpdateInformation},
-                    success: function (response) {},
+                    success: function () {},
                     error: function(err) {
+                        err.responseText = JSON.parse(err.responseText);
                         ErrorHandler.onError(err,$filter('translate')('SMS.MESSAGE.ERROR'),arrValidationInsert);
                     },
                     complete: function () {
@@ -181,7 +182,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
                 })
                 $scope.smsAppointments = response.data;
             }).catch(function(err) {
-                ErrorHandler.onError(err, "error");
+                ErrorHandler.onError(err, $filter('translate')('SMS.MESSAGE.ERROR'));
             });
         }
 
@@ -190,24 +191,24 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             then(function (response) {
                 $scope.EventList = response.data;
             }).catch(function(err) {
-                ErrorHandler.onError(err, "error");
+                ErrorHandler.onError(err, $filter('translate')('SMS.MESSAGE.ERROR'));
             });
         }
 
         function getSmsMessage() {
             smsCollectionService.getSmsMessge($scope.UpdateInformation.speciality,
-                $scope.UpdateInformation.type, $scope.UpdateInformation.event, "English").then(function (response) {
+                $scope.UpdateInformation.type, $scope.UpdateInformation.event, 2).then(function (response) {
                 $scope.UpdateInformation.message.English = response.data[0].smsmessage;
             }).catch(function (err) {
-                ErrorHandler.onError(err, "error");
+                ErrorHandler.onError(err, $filter('translate')('SMS.MESSAGE.ERROR'));
             });
 
             smsCollectionService.getSmsMessge($scope.UpdateInformation.speciality,
-                $scope.UpdateInformation.type, $scope.UpdateInformation.event, "French").then(function (response) {
+                $scope.UpdateInformation.type, $scope.UpdateInformation.event, 1).then(function (response) {
                 $scope.UpdateInformation.message.French = response.data[0].smsmessage;
                 console.log($scope.UpdateInformation);
             }).catch(function (err) {
-                ErrorHandler.onError(err, "error");
+                ErrorHandler.onError(err, $filter('translate')('SMS.MESSAGE.ERROR'));
             });
 
         }
