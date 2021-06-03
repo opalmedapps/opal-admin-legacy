@@ -406,7 +406,10 @@ class Alias extends Module {
         foreach ($post["terms"] as $diagnosis)
             array_push($existingAliasExpressions, $diagnosis["ID"]);
 
-        $this->opalDB->deleteAliasExpressions($post["serial"], $existingAliasExpressions);
+        print_r($post);
+        print_r($existingAliasExpressions);
+
+        $this->opalDB->deleteAliasExpressions($post["id"], $existingAliasExpressions);
         $this->_replaceAliasExpressions($post["terms"], $post["id"]);
 
         die();

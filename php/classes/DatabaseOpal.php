@@ -2944,11 +2944,8 @@ class DatabaseOpal extends DatabaseAccess {
 
     function deleteAliasExpressions($aliasId, $sourceIds) {
         $sql = str_replace("%%LIST_SOURCES_UIDS%%",implode(", ", $sourceIds), OPAL_DELETE_ALIAS_EXPRESSIONS);
-
-        print "$sql\r\n";
-
         return $this->_execute($sql, array(
-            array("parameter"=>":AliasExpressionSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 }
