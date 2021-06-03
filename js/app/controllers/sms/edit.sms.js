@@ -6,8 +6,10 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
         $uibModalInstance.dismiss('cancel');
     };
     $scope.changesDetected = false;
-
-    $scope.typeSelected = $scope.currentAppointment.apptype;
+    if($scope.currentAppointment.apptype=='-')
+        $scope.typeSelected = "UNDEFINED";
+    else
+        $scope.typeSelected = $scope.currentAppointment.apptype;
     getSmsTypeList();
     $scope.typeSearchField = "";
 
