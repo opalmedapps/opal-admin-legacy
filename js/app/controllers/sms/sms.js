@@ -162,13 +162,11 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                             $scope.bannerMessage = $filter('translate')('SMS.LIST.SUCCESS');
                             $scope.showBanner();
                         }
-                        else {
-                            ErrorHandler.onError(response, $filter('translate')('SMS.LIST.ERROR'),arrValidationInsert);
-                        }
                         $scope.changesMade = false;
                         $scope.smsUpdates.updateList = [];
                     },
                     error: function(err) {
+                        err.responseText = JSON.parse(err.responseText);
                         ErrorHandler.onError(err,$filter('translate')('SMS.LIST.ERROR'),arrValidationInsert);
                     }
                 });
