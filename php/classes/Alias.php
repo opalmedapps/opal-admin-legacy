@@ -300,32 +300,40 @@ class Alias extends Module {
     }
 
     /**
-     * Insert/replace list of alias expressions for an alias
+     * Insert/replace list of alias expressions for an alias. First if checks if the alias expression exists or not
+     * already. If it exists, put it in the update list. If not, put it in the insert list.
      * @param $aliasExpressions array - list of alias expressions
      * @param $aliasId int - Alias ID (or sernum)
      * @param $lastTransferred string - date of last transferred to use
      */
     protected function _replaceAliasExpressions(&$aliasExpressions, &$aliasId, &$lastTransferred = "") {
         $toInsert = array();
+        $toUpdate = array();
         foreach($aliasExpressions as $item) {
-            if($lastTransferred != "")
-            array_push($toInsert, array(
+            $tempArray = array(
                 "AliasSerNum"=>$aliasId,
                 "masterSourceAliasId"=>$item['ID'],
                 "ExpressionName"=>$item['code'],
-                "Description"=>$item['description'],
-                "LastTransferred"=>$lastTransferred,
-            ));
+                "Description"=>$item['description']
+            );
+
+            if($lastTransferred != "")
+                $tempArray["LastTransferred"] = $lastTransferred;
+
+            if(array_key_exists("AliasExpressionSerNum", $item) && $item["AliasExpressionSerNum"] != "") {
+                $tempArray["AliasExpressionSerNum"] = $item["AliasExpressionSerNum"];
+                array_push($toUpdate, $tempArray);
+            }
             else
-                array_push($toInsert, array(
-                    "AliasSerNum"=>$aliasId,
-                    "masterSourceAliasId"=>$item['ID'],
-                    "ExpressionName"=>$item['code'],
-                    "Description"=>$item['description']
-                ));
+                array_push($toInsert, $tempArray);
         }
 
-        $this->opalDB->replaceMultipleAliasExpressions($toInsert);
+        if(count($toInsert) > 0)
+            $this->opalDB->replaceAliasExpressions($toInsert);
+        if(count($toUpdate) > 0) {
+            foreach ($toUpdate as $item)
+                $this->opalDB->updateAliasExpression($item);
+        }
     }
 
     /**
@@ -382,6 +390,10 @@ class Alias extends Module {
             $this->_replaceAppointmentCheckin($post["checkin_details"], $newAliasId);
     }
 
+    /**
+     * Update a specific alias with its alias expressions, and appointment checkin if necessary after validation/sanitization
+     * @param $post array - contains the alias, alias expressions and if necessary appointment checkin
+     */
     public function updateAlias( $post ) {
         $this->checkWriteAccess($post);
         $errCode = $this->_validateAndSanitizeAlias($post);
@@ -403,222 +415,14 @@ class Alias extends Module {
         $this->opalDB->updateAlias($toUpdate);
 
         $existingAliasExpressions = array();
-        foreach ($post["terms"] as $diagnosis)
-            array_push($existingAliasExpressions, $diagnosis["ID"]);
-
-        print_r($post);
-        print_r($existingAliasExpressions);
+        foreach ($post["terms"] as $terms)
+            array_push($existingAliasExpressions, $terms["ID"]);
 
         $this->opalDB->deleteAliasExpressions($post["id"], $existingAliasExpressions);
         $this->_replaceAliasExpressions($post["terms"], $post["id"]);
 
-        die();
-
-        $aliasName_EN 	= $aliasDetails['name_EN'];
-        $aliasName_FR 	= $aliasDetails['name_FR'];
-        $aliasDesc_EN	= $aliasDetails['description_EN'];
-        $aliasDesc_FR	= $aliasDetails['description_FR'];
-        $aliasSer	    = $aliasDetails['serial'];
-        $aliasTerms	    = $aliasDetails['terms'];
-        $aliasEduMatSer = $aliasDetails['edumatser'] ? $aliasDetails['edumatser'] : 'NULL';
-        $hospitalMapSer = $aliasDetails['hospitalMapSer'] ? $aliasDetails['hospitalMapSer'] : 'NULL';
-        $checkinDetails = $aliasDetails['checkin_details'] ? $aliasDetails['checkin_details'] : null;
-
-        $aliasColorTag  = $aliasDetails['color'];
-
-        $userSer        = $aliasDetails['user']['id'];
-        $sessionId      = $aliasDetails['user']['sessionid'];
-
-        $existingTerms	= array();
-
-        $detailsUpdated = $aliasDetails['details_updated'];
-        $expressionsUpdated = $aliasDetails['expressions_updated'];
-        $checkinDetailsUpdated = $aliasDetails['checkin_details_updated'];
-
-        // Initialize a response array
-        $response = array(
-            'value'     => 0,
-            'message'   => ''
-        );
-
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            if ($detailsUpdated) {
-                $sql = "
-    				UPDATE
-    					Alias
-    				SET
-    					Alias.AliasName_EN 		                = \"$aliasName_EN\",
-    					Alias.AliasName_FR 		                = \"$aliasName_FR\",
-    					Alias.AliasDescription_EN	            = \"$aliasDesc_EN\",
-                        Alias.AliasDescription_FR	            = \"$aliasDesc_FR\",
-                        Alias.EducationalMaterialControlSerNum  = $aliasEduMatSer,
-                        Alias.HospitalMapSerNum                 = $hospitalMapSer,
-                        Alias.ColorTag                          = '$aliasColorTag',
-                        Alias.LastUpdatedBy                     = '$userSer',
-                        Alias.SessionId                         = '$sessionId'
-    				WHERE
-    					Alias.AliasSerNum = $aliasSer
-    			";
-
-                $query = $host_db_link->prepare( $sql );
-                $query->execute();
-            }
-
-            if ($checkinDetailsUpdated) {
-                $checkinPossible = $checkinDetails['checkin_possible'];
-                $instruction_EN = $checkinDetails['instruction_EN'];
-                $instruction_FR = $checkinDetails['instruction_FR'];
-
-                $sql = "
-                    INSERT INTO
-                        AppointmentCheckin (
-                            AliasSerNum,
-                            CheckinPossible,
-                            CheckinInstruction_EN,
-                            CheckinInstruction_FR,
-                            DateAdded,
-                            LastUpdatedBy,
-                            SessionId
-                        )
-                    VALUE (
-                        '$aliasSer',
-                        '$checkinPossible',
-                        \"$instruction_EN\",
-                        \"$instruction_FR\",
-                        NOW(),
-                        '$userSer',
-                        '$sessionId'
-                    )
-										ON DUPLICATE KEY UPDATE
-											AliasSerNum = '$aliasSer',
-											CheckinPossible = '$checkinPossible',
-											CheckinInstruction_EN = \"$instruction_EN\",
-											CheckinInstruction_FR = \"$instruction_FR\",
-											LastUpdatedBy = '$userSer',
-											SessionId = '$sessionId';
-                ";
-
-                // $sql = "
-                //     UPDATE
-                //         AppointmentCheckin
-                //     SET
-                //         AppointmentCheckin.CheckinPossible          = '$checkinPossible',
-                //         AppointmentCheckin.CheckinInstruction_EN    = \"$instruction_EN\",
-                //         AppointmentCheckin.CheckinInstruction_FR    = \"$instruction_FR\",
-                //         AppointmentCheckin.LastUpdatedBy            = '$userSer',
-                //         AppointmentCheckin.SessionId                = '$sessionId'
-                //     WHERE
-                //         AppointmentCheckin.AliasSerNum = $aliasSer
-                // ";
-
-                $query = $host_db_link->prepare( $sql );
-                $query->execute();
-            }
-
-            if ($expressionsUpdated) {
-
-                $sql = "
-    				SELECT DISTINCT
-    					AliasExpression.ExpressionName,
-                        AliasExpression.Description
-    				FROM
-    					AliasExpression
-    				WHERE
-    					AliasExpression.AliasSerNum = $aliasSer
-    			";
-
-                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
-
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $termArray = array(
-                        'id'          => $data[0],
-                        'description'   => $data[1]
-                    );
-                    array_push($existingTerms, $termArray);
-
-                }
-
-                // This loop compares the old terms with the new
-                // If old terms not in new, then remove old
-                foreach ($existingTerms as $existingTerm) {
-                    $existingTermName = $existingTerm['id'];
-                    $existingTermDesc = $existingTerm['description'];
-                    if (!$this->nestedSearch($existingTermName, $existingTermDesc, $aliasTerms)) {
-                        $sql = "
-                            DELETE FROM
-    							AliasExpression
-    						WHERE
-                                AliasExpression.ExpressionName = \"$existingTermName\"
-                            AND AliasExpression.Description = \"$existingTermDesc\"
-                            AND AliasExpression.AliasSerNum = $aliasSer
-    					";
-
-                        $query = $host_db_link->prepare( $sql );
-                        $query->execute();
-
-                        $sql = "
-                            UPDATE AliasExpressionMH
-                            SET
-                                AliasExpressionMH.LastUpdatedBy = '$userSer',
-                                AliasExpressionMH.SessionId = '$sessionId'
-                            WHERE
-                                AliasExpressionMH.ExpressionName = \"$existingTermName\"
-                            AND AliasExpressionMH.Description = \"$existingTermDesc\"
-                            ORDER BY AliasExpressionMH.RevSerNum DESC
-                            LIMIT 1
-                        ";
-                        $query = $host_db_link->prepare( $sql );
-                        $query->execute();
-                    }
-                }
-
-                // If new terms, then insert
-                foreach ($aliasTerms as $term) {
-                    $termName = $term['id'];
-                    $termDesc = $term['description'];
-                    if (!$this->nestedSearch($termName, $termDesc, $existingTerms)) {
-                        $sql = "
-                            INSERT INTO
-                                AliasExpression (
-                                    AliasExpressionSerNum,
-                                    AliasSerNum,
-                                    ExpressionName,
-                                    Description,
-                                    LastUpdatedBy,
-                                    SessionId
-                                )
-                            VALUES (
-                                NULL,
-                                '$aliasSer',
-                                \"$termName\",
-                                \"$termDesc\",
-                                '$userSer',
-                                '$sessionId'
-                            )
-                            ON DUPLICATE KEY UPDATE
-                                AliasSerNum = '$aliasSer',
-                                LastUpdatedBy = '$userSer',
-                                SessionId = '$sessionId'
-    					";
-                        $query = $host_db_link->prepare( $sql );
-                        $query->execute();
-                    }
-                }
-            }
-
-            $this->opalDB->sanitizeEmptyAliases();
-
-            $response['value'] = 1; // Success
-            return $response;
-
-        } catch( PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
-        }
+        if($post["type"] == ALIAS_TYPE_APPOINTMENT_TEXT)
+            $this->_replaceAppointmentCheckin($post["checkin_details"], $post["id"]);
     }
 
     /**
@@ -727,18 +531,6 @@ class Alias extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, "Wrong alias type.");
 
         return $aliasLogs;
-    }
-
-    protected function nestedSearch($id, $description, $array) {
-        if(empty($array) || !$id || !$description){
-            return 0;
-        }
-        foreach ($array as $key => $val) {
-            if ($val['id'] === $id and $val['description'] === $description) {
-                return 1;
-            }
-        }
-        return 0;
     }
 
     /**

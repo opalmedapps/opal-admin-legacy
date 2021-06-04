@@ -1438,7 +1438,9 @@ define("OPAL_COUNT_HOSPITAL_MAP","
 ");
 
 define("OPAL_SELECT_ALIAS_EXPRESSIONS_TO_INSERT","
-    SELECT * FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." WHERE ID IN (%%LISTIDS%%) AND deleted = ".NON_DELETED_RECORD.";
+    SELECT msa.*, ae.AliasExpressionSerNum FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa
+    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = msa.ID
+    WHERE ID IN (%%LISTIDS%%) AND deleted = ".NON_DELETED_RECORD.";
 ");
 
 define("OPAL_COUNT_SOURCE_DB","
@@ -1460,4 +1462,40 @@ define("OPAL_DELETE_ALIAS_EXPRESSIONS","
     DELETE ae FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa ON
     msa.ID = ae.masterSourceAliasId WHERE ae.AliasSerNum = :AliasSerNum AND msa.deleted = ".NON_DELETED_RECORD."
     AND ae.masterSourceAliasId NOT IN (%%LIST_SOURCES_UIDS%%);
+");
+
+define("OPAL_UPDATE_ALIAS_EXPRESSION", "
+    UPDATE ".OPAL_ALIAS_EXPRESSION_TABLE." SET 
+    AliasSerNum = :AliasSerNum,
+    masterSourceAliasId = :masterSourceAliasId,
+    ExpressionName = :ExpressionName,
+    Description = :Description,
+    LastUpdatedBy = :LastUpdatedBy,
+    SessionId = :SessionId
+    WHERE AliasExpressionSerNum = :AliasExpressionSerNum AND
+    (AliasSerNum != :AliasSerNum OR 
+    masterSourceAliasId != :masterSourceAliasId OR 
+    ExpressionName != :ExpressionName OR 
+    Description != :Description OR 
+    LastUpdatedBy != :LastUpdatedBy OR 
+    SessionId != :SessionId)
+");
+
+define("OPAL_UPDATE_ALIAS_EXPRESSION_WITH_LAST_TRANSFERRED", "
+    UPDATE ".OPAL_ALIAS_EXPRESSION_TABLE." SET 
+    AliasSerNum = :AliasSerNum,
+    masterSourceAliasId = :masterSourceAliasId,
+    ExpressionName = :ExpressionName,
+    Description = :Description,
+    LastUpdatedBy = :LastUpdatedBy,
+    LastTransferred = :LastTransferred,
+    SessionId = :SessionId
+    WHERE AliasExpressionSerNum = :AliasExpressionSerNum AND
+    (AliasSerNum != :AliasSerNum OR 
+    masterSourceAliasId != :masterSourceAliasId OR 
+    ExpressionName != :ExpressionName OR 
+    Description != :Description OR 
+    LastUpdatedBy != :LastUpdatedBy OR 
+    SessionId != :SessionId OR 
+    LastTransferred != :LastTransferred)
 ");

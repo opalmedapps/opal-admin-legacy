@@ -2913,7 +2913,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @param $toInsert array - data to insert
      * @return int - last inserted ID
      */
-    function replaceMultipleAliasExpressions($toInsert) {
+    function replaceAliasExpressions($toInsert) {
         foreach ($toInsert as &$item) {
             $item["LastUpdatedBy"] = $this->getOAUserId();
             $item["SessionId"] = $this->getSessionId();
@@ -2947,5 +2947,16 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_execute($sql, array(
             array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
         ));
+    }
+
+    function updateAliasExpression($toUpdate) {
+        $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
+        $toUpdate["SessionId"] = $this->getSessionId();
+        if(array_key_exists("LastTransferred", $toUpdate) && $toUpdate["LastTransferred"] != "")
+            $sql = OPAL_UPDATE_ALIAS_EXPRESSION_WITH_LAST_TRANSFERRED;
+        else
+            $sql = OPAL_UPDATE_ALIAS_EXPRESSION;
+
+        return $this->_updateRecordIntoTable($sql, $toUpdate);
     }
 }
