@@ -8,7 +8,6 @@
 # We use our custom Perl Modules to help us with getting information and
 # setting them into the appropriate place.
 
-
 #-----------------------------------------------------------------------
 # Packages/Modules
 #-----------------------------------------------------------------------
@@ -21,9 +20,11 @@ use JSON;
 use MIME::Lite;
 use Data::Dumper;
 use Net::Address::IP::Local;
+
+use lib dirname($0) . "/../modules";
 use Cwd 'abs_path';
 
-use lib dirname($0) . '/../modules'; # specify where our modules are -- $0 = this script's location
+# specify where our modules are -- $0 = this script's location
 use Configs;
 use Database;
 use Patient;
