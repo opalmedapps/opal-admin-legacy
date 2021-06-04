@@ -287,7 +287,7 @@ print "Finished patient list\n" if $verbose;
 ##########################################################################################
 print "\n--- Start publishPatientsForPatients: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 PatientsForPatients::publishPatientsForPatients($cronLogSer, @patientList);
-print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+print "--- End publishPatientsForPatients: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished patients for patients\n";
 
 # Once everything is complete, we update the "last transferred" field for all controls
@@ -300,7 +300,7 @@ PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'Pat
 # Educational material control
 #EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'PatientsForPatients');
 
-
+my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 # Log that the script is finished in the cronlog
 Cron::setCronLog("Completed patientsForPatientsControl", $current_datetime);
 print "--- Completed ---- ", $current_datetime, "\n\n";

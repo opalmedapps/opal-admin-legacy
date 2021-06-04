@@ -336,7 +336,7 @@ Alias::setAliasLastTransferredModularControllers($start_datetime, 'Document');
 # Educational material control
 #EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'Document');
 
-
+my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 # Log that the script is finished in the cronlog
 Cron::setCronLog("Completed documentControl", $current_datetime);
 print "--- Completed ---- ", $current_datetime, "\n\n";

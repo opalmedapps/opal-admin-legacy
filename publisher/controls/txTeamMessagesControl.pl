@@ -301,7 +301,7 @@ PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'TxT
 # Educational material control
 #EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'TxTeamMessage');
 
-
+my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 # Log that the script is finished in the cronlog
 Cron::setCronLog("Completed txTeamMessagesControl", $current_datetime);
 print "--- Completed ---- ", $current_datetime, "\n\n";

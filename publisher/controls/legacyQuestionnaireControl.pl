@@ -287,7 +287,7 @@ print "Finished patient list\n" if $verbose;
 ##########################################################################################
 print "\n--- Start publishLegacyQuestionnaires: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 LegacyQuestionnaire::publishLegacyQuestionnaires($cronLogSer, @patientList);
-print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+print "--- End publishLegacyQuestionnaires: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished Legacy Questionnaires\n" if $verbose;
 
 
@@ -301,7 +301,7 @@ Alias::setAliasLastTransferredModularControllers($start_datetime, 'LegacyQuestio
 # Educational material control
 #EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'LegacyQuestionnaire');
 
-
+my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 # Log that the script is finished in the cronlog
 Cron::setCronLog("Completed legacyQuestionnaireControl", $current_datetime);
 print "--- Completed ---- ", $current_datetime, "\n\n";
