@@ -248,7 +248,7 @@ sub getAliasesMarkedForUpdate
 # retrieve aliases marked for update from cronControlAlias
 sub getAliasesMarkedForUpdateModularCron
 {
-	my ($aliasType) = @_; # the type of alias from args
+	my ($aliasType) = @_; # the type of alias from args - Appointment, Document, task
 	my @aliasList = (); # initialize our list of alias objects
 	my ($ser, $type, $sourcedbser, $lasttransfer);
 	my @expressions;
@@ -269,9 +269,10 @@ sub getAliasesMarkedForUpdateModularCron
 				SourceDatabase
 			WHERE
 				cronControlAlias.aliasUpdate			= 1
-			AND	cronControlAlias.cronType				= \"$aliasType\"
+			AND cronControlAlias.cronControlAliasSerNum = Alias.AliasSerNum
+			AND	cronControlAlias.cronType				= '$aliasType'
 			AND Alias.SourceDatabaseSerNum 	= SourceDatabase.SourceDatabaseSerNum
-			AND SourceDatabase.Enabled 		= 1
+			AND SourceDatabase.Enabled 		= 1;
 		";
 
 		print "$aliasInfo_sql\n" if $verbose;
