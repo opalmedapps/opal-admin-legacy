@@ -701,6 +701,8 @@ sub getPatientsMarkedForUpdateModularCron {
 	my @patientList = (); # initialize list of patient objects
 	my ($lasttransfer, $id, $registrationdate);
 	
+	MarkPatientForUpdateModularCron();
+
 	# Query
 	my $patients_sql = "
 		SELECT DISTINCT
@@ -1297,27 +1299,27 @@ sub MarkPatientForUpdate
 
 }
 
-# sub MarkPatientForUpdateModularCron
-# {	
-# 	my ($module) = @_; #args cronType module name
+sub MarkPatientForUpdateModularCron
+{	
+	my ($module) = @_; #args cronType module name
 
-# 	my $patients_sql = "
-# 	UPDATE 
-# 		cronControlPatient,
-# 		PatientControl
-# 	SET 
-# 		cronControlPatient.transferFlag = 1 
-# 	WHERE 
-# 		PatientControl.PatientUpdate 	= 1
-# 	AND cronControlPatient.cronType 	= '$module'";
-# 	# prepare query
-# 	my $query = $SQLDatabase->prepare($patients_sql)
-# 		or die "Could not prepare query: " . $SQLDatabase->errstr;
-# 	# execute query
-# 	$query->execute()
-# 		or die "Could not execute query: " . $query->errstr;
+	my $patients_sql = "
+	UPDATE 
+		cronControlPatient,
+		PatientControl
+	SET 
+		cronControlPatient.transferFlag = 1 
+	WHERE 
+		PatientControl.PatientUpdate 	= 1
+	AND cronControlPatient.cronType 	= '$module'";
+	# prepare query
+	my $query = $SQLDatabase->prepare($patients_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
 
-# }
+ }
 #exit module 
 1;
 
