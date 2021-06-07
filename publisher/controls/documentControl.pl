@@ -234,6 +234,8 @@ print "\n--- Start getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", 
 print "--- End getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got patient list\n" if $verbose;
 
+print "registeredPatients:: \n";
+print "@registeredPatients\n";
 print "--- Start Loop over each patient: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 #=========================================================================================
 # Loop over each patient.
@@ -279,7 +281,8 @@ foreach my $Patient (@registeredPatients) {
 
 print "-- End Loop over each patient: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished patient list\n" if $verbose;
-
+print "PatientList:: \n";
+print "@patientList\n";
 ##########################################################################################
 # @Kelly Agnew 2021-02-22 Cron Refactor
 # Data pre-loading: improve cron speed by preloading the patientInfo_sql list and passing to various modules
