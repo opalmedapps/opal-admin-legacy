@@ -701,7 +701,7 @@ sub getPatientsMarkedForUpdateModularCron {
 	my @patientList = (); # initialize list of patient objects
 	my ($lasttransfer, $id, $registrationdate);
 	
-	MarkPatientForUpdateModularCron();
+	MarkPatientForUpdateModularCron($cronType);
 
 	# Query
 	my $patients_sql = "
