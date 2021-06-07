@@ -717,8 +717,7 @@ sub getPatientsMarkedForUpdateModularCron {
 		AND cronControlPatient.cronType			   = '$cronType'
         AND Patient.PatientSerNum                  = cronControlPatient.cronControlPatientSerNum
 	";
-    print "getPatientsMarkedForUpdate query: ";
-    print "$patients_sql\n";
+
 	# prepare query
 	my $query = $SQLDatabase->prepare($patients_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -863,7 +862,7 @@ sub setPatientLastTransferredModularCron
 			transferFlag		= 1
 		AND cronType 			= '$module'
 	";
-  
+
 	# prepare query
 	my $query = $SQLDatabase->prepare($update_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -1313,10 +1312,7 @@ sub MarkPatientForUpdateModularCron
 	WHERE 
 		PatientControl.PatientUpdate 	= 1
 	AND cronControlPatient.cronType 	= '$module'";
-	
-    print "MarkPatientForUpdate query:\n";
-    print "$patients_sql \n";
-    # prepare query
+	# prepare query
 	my $query = $SQLDatabase->prepare($patients_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
 	# execute query
