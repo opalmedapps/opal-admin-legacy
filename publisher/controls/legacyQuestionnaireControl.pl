@@ -223,7 +223,7 @@ my $start_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 print "--- Start legacyQuestionnaireControl --- ", $start_datetime, "\n";
 
 # Log that the script is initialized in the cronlog
-my $cronLogSer = Cron::setCronLog("Started legacyQuestionnaireControl", $start_datetime);
+my $cronLogSer = Cron::setCronLog("Started legQstControl", $start_datetime);
 
 
 #=========================================================================================
@@ -303,7 +303,7 @@ Alias::setAliasLastTransferredModularControllers($start_datetime, 'LegacyQuestio
 
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 # Log that the script is finished in the cronlog
-Cron::setCronLog("Completed legacyQuestionnaireControl", $current_datetime);
+Cron::setCronLog("Completed legQstControl", $current_datetime);
 print "--- Completed ---- ", $current_datetime, "\n\n";
 
 print "Start Time [legacyQuestionnaireControl]: -->> $start_datetime\n";

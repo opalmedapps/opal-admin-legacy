@@ -223,7 +223,7 @@ my $start_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 print "--- Start patientsForPatientsControl --- ", $start_datetime, "\n";
 
 # Log that the script is initialized in the cronlog
-my $cronLogSer = Cron::setCronLog("Started patientsForPatientsControl", $start_datetime);
+my $cronLogSer = Cron::setCronLog("Started patsPatsControl", $start_datetime);
 
 
 #=========================================================================================
@@ -302,7 +302,7 @@ PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'Pat
 
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 # Log that the script is finished in the cronlog
-Cron::setCronLog("Completed patientsForPatientsControl", $current_datetime);
+Cron::setCronLog("Completed patsPatsControl", $current_datetime);
 print "--- Completed ---- ", $current_datetime, "\n\n";
 
 print "Start Time [patientsForPatientsControl]: -->> $start_datetime\n";

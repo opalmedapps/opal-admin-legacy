@@ -223,7 +223,7 @@ my $start_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 print "--- Start educationalMaterialControl--- ", $start_datetime, "\n";
 
 # Log that the script is initialized in the cronlog
-my $cronLogSer = Cron::setCronLog("Started educationalMaterialControl", $start_datetime);
+my $cronLogSer = Cron::setCronLog("Started educMatControl", $start_datetime);
 
 
 #=========================================================================================
@@ -302,7 +302,7 @@ EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($sta
 
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 # Log that the script is finished in the cronlog
-Cron::setCronLog("Completed educationalMaterialControl", $current_datetime);
+Cron::setCronLog("Completed educMatControl", $current_datetime);
 print "--- Completed ---- ", $current_datetime, "\n\n";
 
 print "Start Time [educationalMaterialControl]: -->> $start_datetime\n";

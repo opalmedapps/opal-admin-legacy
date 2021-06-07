@@ -224,7 +224,7 @@ my $start_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 print "--- Start announcementControl--- ", $start_datetime, "\n";
 
 # Log that the script is initialized in the cronlog
-my $cronLogSer = Cron::setCronLog("Started announcementControl", $start_datetime);
+my $cronLogSer = Cron::setCronLog("Started announceControl", $start_datetime);
 
 
 #=========================================================================================
@@ -303,7 +303,7 @@ PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'Ann
 
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 # Log that the script is finished in the cronlog
-Cron::setCronLog("Completed announcementControl", $current_datetime);
+Cron::setCronLog("Completed announceControl", $current_datetime);
 print "--- Completed ---- ", $current_datetime, "\n\n";
 
 print "Start Time [announcementControl]: -->> $start_datetime\n";

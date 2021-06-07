@@ -221,7 +221,7 @@ my $start_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 print "--- Start txTeamMessagesControl --- ", $start_datetime, "\n";
 
 # Log that the script is initialized in the cronlog
-my $cronLogSer = Cron::setCronLog("Started txTeamMessagesControl", $start_datetime);
+my $cronLogSer = Cron::setCronLog("Started txTmMessControl", $start_datetime);
 
 #=========================================================================================
 # Retrieve all patients that are marked for update
@@ -303,7 +303,7 @@ PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'TxT
 
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 # Log that the script is finished in the cronlog
-Cron::setCronLog("Completed txTeamMessagesControl", $current_datetime);
+Cron::setCronLog("Completed txTmMessControl", $current_datetime);
 print "--- Completed ---- ", $current_datetime, "\n\n";
 
 print "Start Time [txTeamMessagesControl]: -->> $start_datetime\n";
