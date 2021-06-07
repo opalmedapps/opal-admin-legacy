@@ -259,7 +259,7 @@ sub getAliasesMarkedForUpdateModularCron
 		#======================================================================================
 		my $aliasInfo_sql = "
 			SELECT DISTINCT
-				cronControlAlias.cronControlAliasSerNum,
+				cronControlAlias.cronControlAliasSerNum as AliasSerNum,
 				Alias.AliasType,
 				Alias.LastTransferred,
 	            Alias.SourceDatabaseSerNum
