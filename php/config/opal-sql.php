@@ -1315,10 +1315,41 @@ define("OPAL_GET_ALIASES","
     sd.Enabled = ".ACTIVE_RECORD.";
 ");
 
-define("OPAL_GET_ALIASES_EXPRESSION","
+define("OPAL_GET_ALIASES_UNPUBLISHED_EXPRESSION","
     SELECT ae.ExpressionName AS id, ae.Description AS description, 1 AS added FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae
-    LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m ON m.ID = ae.masterSourceAliasId WHERE ae.AliasSerNum = :AliasSerNum
-    AND m.deleted = :deleted;
+    LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m ON m.ID = ae.masterSourceAliasId
+    LEFT JOIN ".OPAL_ALIAS_TABLE." al ON al.AliasSerNum = ae.AliasSerNum
+    
+    AND CASE
+        WHEN al.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+        WHEN al.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." a WHERE a.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+    END
+    
+    WHERE ae.AliasSerNum = :AliasSerNum
+    AND m.deleted = ".NON_DELETED_RECORD.";
+");
+
+define("OPAL_GET_ALIASES_PUBLISHED_EXPRESSION","
+    SELECT ae.Description AS description FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae
+    LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m ON m.ID = ae.masterSourceAliasId
+    LEFT JOIN ".OPAL_ALIAS_TABLE." al ON al.AliasSerNum = ae.AliasSerNum
+    
+    AND CASE
+        WHEN al.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) > 0
+        WHEN al.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." a WHERE a.AliasExpressionSerNum = ae.AliasExpressionSerNum) > 0
+        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) > 0
+    END
+    
+    WHERE ae.AliasSerNum = :AliasSerNum
+    AND m.deleted = ".NON_DELETED_RECORD.";
+");
+
+define("OPAL_GET_DELETED_ALIASES_EXPRESSION","
+    SELECT ae.Description AS description FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae
+    LEFT JOIN ".OPAL_ALIAS_TABLE." al ON al.AliasSerNum = ae.AliasSerNum
+    LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa ON msa.ID = ae.masterSourceAliasId
+    WHERE msa.deleted = ".DELETED_RECORD." AND ae.AliasSerNum = :AliasSerNum;
 ");
 
 define("OPAL_GET_ALIAS_DETAILS","

@@ -283,16 +283,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			$scope.changesMade = true;
 			$scope.alias.details_updated = 1;
 
-			if ($scope.alias.name_EN && $scope.alias.name_FR) { // if textbox field is not empty
-
-				// Toggle boolean
-				$scope.emptyTitle = false;
-			}
-			else { // textbox is empty
-
-				// Toggle boolean
-				$scope.emptyTitle = true;
-			}
+			$scope.emptyTitle = !($scope.alias.name_EN && $scope.alias.name_FR);
 
 		};
 		// Function that triggers when the description is updated
@@ -302,16 +293,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			$scope.changesMade = true;
 			$scope.alias.details_updated = 1;
 
-			if ($scope.alias.description_EN && $scope.alias.description_FR) { // if textbox field is not empty
-
-				// Toggle boolean
-				$scope.emptyDescription = false;
-			}
-			else { // textbox is empty
-
-				// Toggle boolean
-				$scope.emptyDescription = true;
-			}
+			$scope.emptyDescription = !($scope.alias.description_EN && $scope.alias.description_FR);
 
 		};
 
@@ -385,16 +367,6 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 			if (color)
 				$scope.alias.color = color;
-		};
-
-
-		$scope.toggleAlertText = function () {
-			if ($scope.emptyTitle || $scope.emptyDescription || $scope.emptyTerms) {
-				return true; // boolean
-			}
-			else {
-				return false;
-			}
 		};
 
 		// Submit changes
