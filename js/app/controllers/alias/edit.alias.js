@@ -35,7 +35,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			$filter('translate')('ALIAS.VALIDATION.ALIAS_EXP'),
 			$filter('translate')('ALIAS.VALIDATION.ID'),
 		];
-		
+
 		$scope.alias = {}; // initialize alias object
 		$scope.aliasModal = {}; // for deep copy
 		$scope.termList = []; // initialize list for unassigned expressions in our DB
@@ -373,25 +373,26 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 					if (term.added)
 						toSubmit.terms.push(term.masterSourceAliasId);
 				});
+
 				console.log(toSubmit);
 
-				// $.ajax({
-				// 	type: "POST",
-				// 	url: "alias/update/alias",
-				// 	data: toSubmit,
-				// 	success: function () {
-				// 		$scope.setBannerClass('success');
-				// 		$scope.$parent.bannerMessage = $filter('translate')('ALIAS.EDIT.SUCCESS_EDIT');
-				// 		$scope.showBanner();
-				// 	},
-				// 	error: function (err) {
-				// 		err.responseText = JSON.parse(err.responseText);
-				// 		ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_EDIT'), arrValidationInsert);
-				// 	},
-				// 	complete: function () {
-				// 		$uibModalInstance.close();
-				// 	}
-				// });
+				$.ajax({
+					type: "POST",
+					url: "alias/update/alias",
+					data: toSubmit,
+					success: function () {
+						$scope.setBannerClass('success');
+						$scope.$parent.bannerMessage = $filter('translate')('ALIAS.EDIT.SUCCESS_EDIT');
+						$scope.showBanner();
+					},
+					error: function (err) {
+						err.responseText = JSON.parse(err.responseText);
+						ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_EDIT'), arrValidationInsert);
+					},
+					complete: function () {
+						$uibModalInstance.close();
+					}
+				});
 			}
 		};
 
@@ -439,18 +440,14 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 		// Function to return boolean for form completion
 		$scope.checkForm = function () {
+			var total = 0;
+			angular.forEach($scope.termList, function (term) {
+				if (term.added) total++;
+			});
 
-			console.log($scope.termList.length);
-			console.log($scope.alias.deleted.length);
-			console.log($scope.alias.published.length);
-
-			if (($scope.alias.name_EN && $scope.alias.name_FR && $scope.alias.description_EN
-				&& $scope.alias.description_FR && $scope.alias.type && ($scope.termList.length + $scope.alias.deleted.length + $scope.alias.published.length > 0)
+			return !!(($scope.alias.name_EN && $scope.alias.name_FR && $scope.alias.description_EN
+				&& $scope.alias.description_FR && $scope.alias.type && (total + $scope.alias.deleted.length + $scope.alias.published.length > 0)
 				&& $scope.changesMade) && ($scope.alias.type != 'Appointment' || ($scope.alias.type == 'Appointment' &&
-				$scope.alias.checkin_details.instruction_EN && $scope.alias.checkin_details.instruction_FR ))) {
-				return true;
-			}
-			else
-				return false;
+				$scope.alias.checkin_details.instruction_EN && $scope.alias.checkin_details.instruction_FR)));
 		};
 	});
