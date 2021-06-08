@@ -2708,15 +2708,15 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(OPAL_GET_ALIASES, array());
     }
 
-    /**
-     * Fetch all alias expression of a specific alias
-     * @param $aliasId
-     * @return array
-     */
-    function getAliasExpression($aliasId, $deleted = NON_DELETED_RECORD) {
-        return $this->_fetchAll(OPAL_GET_ALIASES_EXPRESSION, array(
-            array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":deleted","variable"=>$deleted,"data_type"=>PDO::PARAM_INT),
+    function getUnpublishedAliasExpression($aliasId) {
+        return $this->_fetchAll(OPAL_GET_ALIASES_UNPUBLISHED_EXPRESSION, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT)
+        ));
+    }
+
+    function getPublishedAliasExpression($aliasId) {
+        return $this->_fetchAll(OPAL_GET_ALIASES_PUBLISHED_EXPRESSION, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT)
         ));
     }
 
@@ -2958,5 +2958,11 @@ class DatabaseOpal extends DatabaseAccess {
             $sql = OPAL_UPDATE_ALIAS_EXPRESSION;
 
         return $this->_updateRecordIntoTable($sql, $toUpdate);
+    }
+
+    function getDeletedAliasExpressions($aliasId) {
+        return $this->_fetchAll(OPAL_GET_DELETED_ALIASES_EXPRESSION, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
+        ));
     }
 }
