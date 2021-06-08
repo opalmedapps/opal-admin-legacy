@@ -5,8 +5,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		// Default Booleans
 		$scope.changesMade = false; // changes have been made? 
 		$scope.emptyTitle = false; // alias title field empty? 
-		$scope.emptyDescription = false; // alias description field empty? 
-		$scope.emptyTerms = false; // alias terms field empty? 
+		$scope.emptyDescription = false; // alias description field empty?
 		$scope.nameMod = false; // name modified?
 		$scope.termsMod = false; // terms modified? 
 		$scope.selectAll = false;
@@ -251,28 +250,11 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			$scope.termsMod = true;
 			$scope.alias.expressions_updated = 1;
 
-			// Toggle boolean 
-			$scope.emptyTerms = false;
-
-			// If originally added, remove it
-			if (term.added) {
-
+			if (term.added)
 				term.added = 0;
-
-				// Check if there are still terms added, if not, flag
-				if (!$scope.checkTermsAdded($scope.termList)) {
-					$scope.emptyTerms = true;
-				}
-
-			} else { // Originally not added, add it
-
+			else
 				term.added = 1; // added parameter
 
-				// Just in case it was originally true
-				// For sure we have a term
-				$scope.emptyTerms = false;
-
-			}
 
 		};
 
@@ -391,24 +373,25 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 					if (term.added)
 						toSubmit.terms.push(term.masterSourceAliasId);
 				});
+				console.log(toSubmit);
 
-				$.ajax({
-					type: "POST",
-					url: "alias/update/alias",
-					data: toSubmit,
-					success: function () {
-						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = $filter('translate')('ALIAS.EDIT.SUCCESS_EDIT');
-						$scope.showBanner();
-					},
-					error: function (err) {
-						err.responseText = JSON.parse(err.responseText);
-						ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_EDIT'), arrValidationInsert);
-					},
-					complete: function () {
-						$uibModalInstance.close();
-					}
-				});
+				// $.ajax({
+				// 	type: "POST",
+				// 	url: "alias/update/alias",
+				// 	data: toSubmit,
+				// 	success: function () {
+				// 		$scope.setBannerClass('success');
+				// 		$scope.$parent.bannerMessage = $filter('translate')('ALIAS.EDIT.SUCCESS_EDIT');
+				// 		$scope.showBanner();
+				// 	},
+				// 	error: function (err) {
+				// 		err.responseText = JSON.parse(err.responseText);
+				// 		ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_EDIT'), arrValidationInsert);
+				// 	},
+				// 	complete: function () {
+				// 		$uibModalInstance.close();
+				// 	}
+				// });
 			}
 		};
 
@@ -420,10 +403,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 				if (term.added)
 					addedParam = true;
 			});
-			if (addedParam)
-				return true;
-			else
-				return false;
+			return addedParam;
 		};
 
 		// Function for selecting all terms in the term list
