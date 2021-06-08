@@ -150,9 +150,9 @@ class Sms extends Module {
                     $response += $this->ormsDB->updateActivationState($information['state'], $information['appcode'], $information['ressernum']);
                 }
             } else
-                $errCode = bindec("111");
+                $errCode = 7;
         }else
-            $errCode .= bindec("111");
+            $errCode = 7;
 
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
