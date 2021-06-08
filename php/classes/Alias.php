@@ -262,19 +262,38 @@ class Alias extends Module {
 
             // 11th bit
             if (!array_key_exists("terms", $post) || (!is_array($post["terms"])))
-                $errCode = "1" . $errCode;
-            else {
-                $listIds = array();
-                foreach ($post["terms"] as $term)
-                    array_push($listIds, intval($term));
+                $post["terms"] = array();
+            $validTerms = true;
+            $listIds = array();
+            foreach ($post["terms"] as $term)
+                array_push($listIds, intval($term));
 
-                $total = $this->opalDB->selectAliasExpressionsToInsert($listIds);
-                $post["terms"] = $listIds;
-                if(count($total) != count($post["terms"]))
+            if($isAnUpdate) {
+                if (count($this->opalDB->getPublishedAliasExpression($post["id"])) + count($this->opalDB->getDeletedAliasExpressions($post["id"])) + count($listIds) <= 0) {
                     $errCode = "1" . $errCode;
-                else {
-                    $post["terms"] = $total;
+                    $validTerms = false;
+                }
+            } else {
+                if(count($listIds) <= 0) {
+                    $errCode = "1" . $errCode;
+                    $validTerms = false;
+                }
+            }
+
+            if($validTerms) {
+                if($isAnUpdate && count($listIds) <= 0) {
+                    $post["terms"] = array();
                     $errCode = "0" . $errCode;
+                }
+                else {
+                    $total = $this->opalDB->selectAliasExpressionsToInsert($listIds);
+                    if(count($total) != count($listIds)) {
+                        $errCode = "1" . $errCode;
+                    }
+                    else {
+                        $post["terms"] = $total;
+                        $errCode = "0" . $errCode;
+                    }
                 }
             }
 
@@ -397,7 +416,7 @@ class Alias extends Module {
      */
     public function updateAlias( $post ) {
         $this->checkWriteAccess($post);
-        $errCode = $this->_validateAndSanitizeAlias($post);
+        $errCode = $this->_validateAndSanitizeAlias($post, true);
         $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
@@ -414,13 +433,18 @@ class Alias extends Module {
         );
 
         $this->opalDB->updateAlias($toUpdate);
-
         $existingAliasExpressions = array();
-        foreach ($post["terms"] as $terms)
-            array_push($existingAliasExpressions, $terms["ID"]);
+
+        if(count($post["terms"]) <= 0)
+            array_push($existingAliasExpressions, -1);
+        else
+            foreach ($post["terms"] as $terms)
+                array_push($existingAliasExpressions, $terms["ID"]);
 
         $this->opalDB->deleteAliasExpressions($post["id"], $existingAliasExpressions);
-        $this->_replaceAliasExpressions($post["terms"], $post["id"]);
+
+        if(count($post["terms"]) > 0)
+            $this->_replaceAliasExpressions($post["terms"], $post["id"]);
 
         if($post["type"] == ALIAS_TYPE_APPOINTMENT_TEXT)
             $this->_replaceAppointmentCheckin($post["checkin_details"], $post["id"]);

@@ -1479,7 +1479,14 @@ define("OPAL_COUNT_HOSPITAL_MAP","
 define("OPAL_SELECT_ALIAS_EXPRESSIONS_TO_INSERT","
     SELECT msa.*, ae.AliasExpressionSerNum FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa
     LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = msa.ID
-    WHERE ID IN (%%LISTIDS%%) AND deleted = ".NON_DELETED_RECORD.";
+    LEFT JOIN ".OPAL_ALIAS_TABLE." al ON al.AliasSerNum = ae.AliasSerNum
+    WHERE ID IN (%%LISTIDS%%)
+    AND CASE
+        WHEN al.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+        WHEN al.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." a WHERE a.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+    END
+    AND deleted = ".NON_DELETED_RECORD.";
 ");
 
 define("OPAL_COUNT_SOURCE_DB","
@@ -1499,7 +1506,14 @@ define("OPAL_UPDATE_ALIAS","
 
 define("OPAL_DELETE_ALIAS_EXPRESSIONS","
     DELETE ae FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa ON
-    msa.ID = ae.masterSourceAliasId WHERE ae.AliasSerNum = :AliasSerNum AND msa.deleted = ".NON_DELETED_RECORD."
+    msa.ID = ae.masterSourceAliasId
+    RIGHT JOIN ".OPAL_ALIAS_TABLE." al ON al.AliasSerNum = ae.AliasSerNum
+    WHERE ae.AliasSerNum = :AliasSerNum AND msa.deleted = ".NON_DELETED_RECORD."
+    AND CASE
+        WHEN al.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+        WHEN al.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." a WHERE a.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+    END
     AND ae.masterSourceAliasId NOT IN (%%LIST_SOURCES_UIDS%%);
 ");
 
