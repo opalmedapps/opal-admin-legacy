@@ -24,7 +24,7 @@ class Sms extends Module {
     }
 
     /*
-     * Sanitize, validate and get a list of sms appointments base on input.
+     * Get a list of sms appointments
      * @return  List of sms appointments
      * */
     public function getAppointments() {
@@ -33,8 +33,8 @@ class Sms extends Module {
     }
 
     /*
-     * Sanitize, validate and get a list of events base on input.
-     * Validation code :    Error validation code is coded as an int of 2 bits. Bit informations
+     * Sanitize, validate and get a list of events for the given type and speciality.
+     * Validation code :    Error validation code is coded as an int of 2 bits. Bit information
      *                      are coded from right to left:
      *                      1: appointment type missing
      *                      2: speciality missing
@@ -65,8 +65,8 @@ class Sms extends Module {
     }
 
     /*
-     * Sanitize, validate and get a list of events for the given type, speciality, event and language
-     * Validation code :    Error validation code is coded as an int of 4 bits. Bit informations
+     * Sanitize, validate and get the message for the given type, speciality, event and language
+     * Validation code :    Error validation code is coded as an int of 4 bits. Bit information
      *                      are coded from right to left:
      *                      1: appointment type missing
      *                      2: speciality missing
@@ -110,8 +110,8 @@ class Sms extends Module {
     }
 
     /*
-     * Sanitize, validate and update a list of events for the given type, speciality, event and language
-     * Validation code :    Error validation code is coded as an int of 3 bits. Bit informations
+     * Sanitize, validate and update the activation status for a list of appointments
+     * Validation code :    Error validation code is coded as an int of 3 bits. Bit information
      *                      are coded from right to left:
      *                      1: appointment activation state missing
      *                      2: appointment code id missing
@@ -161,14 +161,14 @@ class Sms extends Module {
     }
 
     /*
-     * Sanitize, validate and get a list of events for the given type, speciality, event and language
-     * Validation code :    Error validation code is coded as an int of 2 bits. Bit informations
+     * Sanitize, validate and update the type for an appointments
+     * Validation code :    Error validation code is coded as an int of 3 bits. Bit information
      *                      are coded from right to left:
-     *                      1: appointment activation state missing
+     *                      1: appointment type state missing
      *                      2: appointment code id missing
      *                      3: resource series number missing
      * @params  $post (array) data received from the front end.
-     * @return  Number records updated in database
+     * @return  1 for success 0 for fail
      * */
     public function updateAppointmentType($post){
         $this->checkWriteAccess($post);
@@ -200,6 +200,17 @@ class Sms extends Module {
             return $this->ormsDB->updateAppointmentType($post['type'],$post['appcode'],$post['ressernum']);
     }
 
+    /*
+     * Sanitize, validate and update the sms message the given type, speciality, event and language
+     * Validation code :    Error validation code is coded as an int of 4 bits. Bit information
+     *                      are coded from right to left:
+     *                      1: appointment type missing
+     *                      2: speciality missing
+     *                      3: event missing
+     *                      4: language missing
+     * @params  $post (array) data received from the front end.
+     * @return  1 if success 0 for fail
+     * */
     public function updateSmsMessage($post){
         $this->checkWriteAccess($post);
         $post = HelpSetup::arraySanitization($post);
@@ -244,12 +255,23 @@ class Sms extends Module {
         return $response;
     }
 
+    /*
+     * Get a list of speciality for appointment message
+     * @return  list of speciality updated in database
+     * */
     public function getSpecialityMessage(){
         $this->checkReadAccess();
 
         return $this->ormsDB->getSpecialityForMessage();
     }
 
+    /*
+     * Sanitize, validate and get a list of type for the given speciality
+     * * Validation code :    Error validation code is coded as an int of 1 bits. Bit information
+     *                      are coded from right to left:
+     *                      1: appointment type missing
+     * @return  list of type in database
+     * */
     public function getTypeMessage($post){
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
@@ -269,6 +291,10 @@ class Sms extends Module {
         return $this->ormsDB->getTypeForMessage($post["speciality"]);
     }
 
+    /*
+     * Sanitize, validate and get a list of all type
+     * @return  list of type in database
+     * */
     public function getAllTypeMessage(){
         $this->checkReadAccess();
 

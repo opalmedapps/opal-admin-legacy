@@ -5,14 +5,17 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
     $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');
     };
+
     $scope.changesDetected = false;
     if($scope.currentAppointment.apptype=='-')
         $scope.typeSelected = "UNDEFINED";
     else
         $scope.typeSelected = $scope.currentAppointment.apptype;
+
     getSmsTypeList();
     $scope.typeSearchField = "";
 
+    //Function for searchbar
     $scope.searchType = function (field) {
         $scope.typeSearchField = field;
     };
@@ -32,6 +35,7 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
         $filter('translate')('SMS.VALIDATION.RESOURCE_NAME')
     ];
 
+    // Submit changes
     $scope.updateAppointment = function() {
         if($scope.changesDetected) {
             var update = {
@@ -45,7 +49,7 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
                 success: function () {},
                 error: function (err) {
                     err.responseText = JSON.parse(err.responseText);
-                    ErrorHandler.onError(err, $filter('translate')('SMS.LIST.ERROR_LIST'),arrValidationInsert);
+                    ErrorHandler.onError(err, $filter('translate')('SMS.EDIT.ERROR'),arrValidationInsert);
                 },
                 complete: function () {
                     $uibModalInstance.close();
@@ -54,10 +58,13 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
         }
     };
 
+    //Function to get appointment type list.
     function getSmsTypeList(){
         smsCollectionService.getSmsType($scope.currentAppointment.spec).then(function (response) {
             $scope.TypeList = response.data;
             $scope.TypeList.push({type:'UNDEFINED'})
+        }).catch(function(err) {
+            ErrorHandler.onError(err, $filter('translate')('SMS.EDIT.ERROR_DETAILS'));
         });
     }
 });

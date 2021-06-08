@@ -12,6 +12,8 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
 
         getSmsAppointmentList();
         $scope.changesMade = false;
+
+        //Cell Templates
         var cellTemplateResourceName = '<div style="cursor:pointer;" class="ui-grid-cell-contents">' +
             '<a href=""  ng-click="grid.appScope.editAppointment(row.entity)"><strong>{{row.entity.resname}}</strong>&nbsp&nbsp&nbsp({{row.entity.rescode}})</a></div>';
         var cellTemplateAppointmentCode = '<div style="cursor:pointer;" class="ui-grid-cell-contents">' +
@@ -72,7 +74,6 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
         $scope.filterSms = function (filterValue) {
             $scope.filterValue = filterValue;
             $scope.gridApi.grid.refresh();
-
         };
 
         $scope.filterOptions = function (renderableRows) {
@@ -136,6 +137,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             $filter('translate')('SMS.VALIDATION.RESOURCE_NAME')
         ];
 
+        // Submit changes
         $scope.submitUpdate = function () {
             if ($scope.changesMade && $scope.writeAccess) {
                 angular.forEach($scope.smsAppointments, function (sms) {
@@ -173,6 +175,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             }
         };
 
+        //Open editor modal
         $scope.editAppointment = function(appointment){
             if($scope.writeAccess){
                 $scope.currentAppointment = appointment;
@@ -190,6 +193,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             }
         };
 
+        //Functions to get information from database.
         function getSmsTypeList(){
             smsCollectionService.getAllSmsType().then(function (response) {
                 var TypeList = []
@@ -198,6 +202,8 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                 });
                 TypeList.push({value:'-',label:'UNDEFINED'});
                 $scope.gridOptions.columnDefs[2].filter.selectOptions = TypeList;
+            }).catch(function(err) {
+                ErrorHandler.onError(err, $filter('translate')('SMS.LIST.ERROR_DETAILS'));
             });
         }
 
@@ -208,6 +214,8 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                     Speciality.push({value:row.speciality,label:row.speciality})
                 });
                 $scope.gridOptions.columnDefs[3].filter.selectOptions = Speciality;
+            }).catch(function(err) {
+                ErrorHandler.onError(err, $filter('translate')('SMS.LIST.ERROR_DETAILS'));
             });
         }
 
