@@ -440,8 +440,12 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		// Function to return boolean for form completion
 		$scope.checkForm = function () {
 
+			console.log($scope.termList.length);
+			console.log($scope.alias.deleted.length);
+			console.log($scope.alias.published.length);
+
 			if (($scope.alias.name_EN && $scope.alias.name_FR && $scope.alias.description_EN
-				&& $scope.alias.description_FR && $scope.alias.type && $scope.checkTermsAdded($scope.termList)
+				&& $scope.alias.description_FR && $scope.alias.type && ($scope.termList.length + $scope.alias.deleted.length + $scope.alias.published.length > 0)
 				&& $scope.changesMade) && ($scope.alias.type != 'Appointment' || ($scope.alias.type == 'Appointment' &&
 				$scope.alias.checkin_details.instruction_EN && $scope.alias.checkin_details.instruction_FR ))) {
 				return true;
