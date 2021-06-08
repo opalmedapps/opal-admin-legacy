@@ -3063,6 +3063,7 @@
       "SUCCESS": "Changes Saved Successfully!",
       "ERROR": "An error occurred when saving changes.",
       "ERROR_LIST": "An error occurred when getting appointments",
+      "ERROR_DETAILS": "An error occurred while getting the details of the sms appointment.",
       "DISABLE": "Disable"
     },
     "MESSAGE": {
@@ -3105,7 +3106,8 @@
       "OF": "of",
       "COMPLETED": "completed",
       "SUCCESS": "Changes Saved Successfully!",
-      "ERROR": "An error occurred when saving changes."
+      "ERROR": "An error occurred when saving changes.",
+      "ERROR_DETAILS": "An error occurred while getting the details of the sms message."
     },
     "EDIT": {
       "TITLE" : "Edit Appointment",
@@ -3126,7 +3128,8 @@
       "CURRENT_TYPE": "Current Type",
       "APPOINTMENT_INFORMATION": "Details",
       "SUCCESS": "Changes Saved Successfully!",
-      "ERROR": "An error occurred when saving changes."
+      "ERROR": "An error occurred when saving changes.",
+      "ERROR_DETAILS": "An error occurred while getting the details of the sms appointment."
     },
     "VALIDATION": {
       "APPOINTMENT_CODE": "Appointment Code missing",
