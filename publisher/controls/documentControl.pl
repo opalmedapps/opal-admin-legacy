@@ -43,8 +43,8 @@ use Cron;
 
 our $wsSlash = File::Spec->catfile('', '');
 
-$execution_log = dirname($0) . '/../logs/executions.log';
-$monitor_log = dirname($0) . '/../logs/monitor_log.json';
+$execution_log = dirname($0) . '/../logs/executions_document.log';
+$monitor_log = dirname($0) . '/../logs/monitor_log_document.json';
 
 my $this_script = abs_path($0);
 my $ip_address = Net::Address::IP::Local->public;
