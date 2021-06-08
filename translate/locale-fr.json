@@ -3078,6 +3078,7 @@
       "SUCCESS": "Changements sauvegardés avec succès",
       "ERROR": "Une erreur s'est produite lors de l'enregistrement des modifications.",
       "ERROR_LIST": "Une erreur s'est produite lors de l'obtention des rendez-vous",
+      "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails du rendez-vous.",
       "DISABLE": "Désactivé"
     },
     "MESSAGE": {
@@ -3120,7 +3121,8 @@
       "OF": "de",
       "COMPLETED": "complétée",
       "SUCCESS": "Changements sauvegardés avec succès",
-      "ERROR": "Une erreur s'est produite lors de l'enregistrement des modifications."
+      "ERROR": "Une erreur s'est produite lors de l'enregistrement des modifications.",
+      "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails de la message."
     },
     "EDIT": {
       "TITLE" : "Modifier le rendez-vous",
@@ -3141,7 +3143,8 @@
       "CURRENT_TYPE": "Type Actuel",
       "APPOINTMENT_INFORMATION": "Détails ",
       "SUCCESS": "Changements sauvegardés avec succès",
-      "ERROR": "Une erreur s'est produite lors de l'enregistrement des modifications."
+      "ERROR": "Une erreur s'est produite lors de l'enregistrement des modifications.",
+      "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails du rendez-voous."
     },
     "VALIDATION": {
       "APPOINTMENT_CODE": "Code de Rendez-vous manquante",
