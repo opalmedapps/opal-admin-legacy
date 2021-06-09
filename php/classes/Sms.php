@@ -232,8 +232,7 @@ class Sms extends Module {
                     $errCode = "1" . $errCode;
                 else
                     $errCode = "0" . $errCode;
-            }
-            else
+            } else
                 $errCode = "11" . $errCode;
         }else
             $errCode .= "11111";
