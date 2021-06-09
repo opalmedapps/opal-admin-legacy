@@ -1374,12 +1374,6 @@ define("OPAL_GET_SOURCE_DATABASES","
     WHERE Enabled = ".ACTIVE_RECORD." ORDER BY SourceDatabaseSerNum
 ");
 
-define("OPAL_GET_ALIAS_EXPRESSIONS","
-    SELECT DISTINCT ae.ExpressionName AS id, ae.Description AS description, a.AliasName_EN AS name_EN, masterSourceAliasId
-    FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae LEFT JOIN ".OPAL_ALIAS_TABLE." a ON ae.AliasSerNum = a.AliasSerNum
-    WHERE a.SourceDatabaseSerNum = :SourceDatabaseSerNum;
-");
-
 define("OPAL_GET_ARIA_SOURCE_ALIASES","
     SELECT m.ID AS masterSourceAliasId, m.description AS name, m.code AS id, m.description, a.AliasName_EN AS assigned
     FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m
