@@ -35,10 +35,9 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 
 		// Initialize a scope variable for a selected alias
 		$scope.currentAlias = {};
-
 		$scope.detailView = "list";
-
 		$scope.changesMade = false;
+		$scope.sourceDatabase = [];
 
 		// Templates for alias table
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents"' +
@@ -105,7 +104,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 				{
 					field: 'source_db.name', enableColumnMenu: false, displayName: $filter('translate')('ALIAS.LIST.CLINICAL_DATABASE'), width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: 'Local', label: $filter('translate')('ALIAS.LIST.LOCAL') }, { value: 'Aria', label: $filter('translate')('ALIAS.LIST.ARIA') }, { value: 'MediVisit', label: $filter('translate')('ALIAS.LIST.MEDIVISIT') }]
+						selectOptions: $scope.sourceDatabase
 					}
 				},
 				{ field: 'color', displayName: $filter('translate')('ALIAS.LIST.COLOR'), enableColumnMenu: false, width: '10%', cellTemplate: cellTemplateColor, enableFiltering: false },
@@ -138,6 +137,24 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 			}
 		};
 
+		aliasCollectionService.getSourceDatabases().then(function (response) {
+
+			response.data.forEach(function (row) {
+				$scope.sourceDatabase.push({value: row.name, label: row.name});
+			});
+			console.log($scope.sourceDatabase);
+
+			// $scope.aliasList = response.data;
+
+
+			/*
+			selectOptions: [{ value: 'Local', label: $filter('translate')('ALIAS.LIST.LOCAL') }, { value: 'Aria', label: $filter('translate')('ALIAS.LIST.ARIA') }, { value: 'MediVisit', label: $filter('translate')('ALIAS.LIST.MEDIVISIT') }]
+			* */
+
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('ALIAS.LIST.ERROR_ALIASES'));
+		});
+
 		function getAliasesList() {
 			// Call our API to get the list of existing aliases
 			aliasCollectionService.getAliases().then(function (response) {
@@ -157,6 +174,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 					}
 				});
 				$scope.aliasList = response.data;
+				console.log($scope.aliasList);
 
 			}).catch(function(err) {
 				ErrorHandler.onError(err, $filter('translate')('ALIAS.LIST.ERROR_ALIASES'));
