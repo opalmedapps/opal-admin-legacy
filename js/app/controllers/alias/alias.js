@@ -33,6 +33,10 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 			$(".bannerMessage").addClass('alert-' + className);
 		};
 
+		var arrValidationInsert = [
+			$filter('translate')('ALIAS.VALIDATION.ID'),
+		];
+
 		// Initialize a scope variable for a selected alias
 		$scope.currentAlias = {};
 		$scope.detailView = "list";
@@ -142,17 +146,8 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 			response.data.forEach(function (row) {
 				$scope.sourceDatabase.push({value: row.name, label: row.name});
 			});
-			console.log($scope.sourceDatabase);
-
-			// $scope.aliasList = response.data;
-
-
-			/*
-			selectOptions: [{ value: 'Local', label: $filter('translate')('ALIAS.LIST.LOCAL') }, { value: 'Aria', label: $filter('translate')('ALIAS.LIST.ARIA') }, { value: 'MediVisit', label: $filter('translate')('ALIAS.LIST.MEDIVISIT') }]
-			* */
-
 		}).catch(function(err) {
-			ErrorHandler.onError(err, $filter('translate')('ALIAS.LIST.ERROR_ALIASES'));
+			ErrorHandler.onError(err, $filter('translate')('ALIAS.LIST.ERROR_SOURCE_DB'));
 		});
 
 		function getAliasesList() {
@@ -174,7 +169,6 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 					}
 				});
 				$scope.aliasList = response.data;
-				console.log($scope.aliasList);
 
 			}).catch(function(err) {
 				ErrorHandler.onError(err, $filter('translate')('ALIAS.LIST.ERROR_ALIASES'));
@@ -308,7 +302,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 									$scope.aliasListLogs = response.data;
 								});
 							},
-							unselect: function (point) {
+							unselect: function () {
 								$scope.aliasListLogs = [];
 								$scope.gridApiLog.grid.refresh();
 
@@ -333,31 +327,28 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 						});
 					}
 				});
-				// Log who updated alias
-				var currentUser = Session.retrieveObject('user');
-				$scope.aliasUpdates.user = currentUser;
+
 				// Submit form
 				$.ajax({
 					type: "POST",
 					url: "alias/update/publish-flags",
 					data: $scope.aliasUpdates,
-					success: function (response) {
-						getAliasesList();
-						response = JSON.parse(response);
-						// Show success or failure depending on response
-						if (response.value) {
-							$scope.setBannerClass('success');
-							$scope.bannerMessage = $filter('translate')('ALIAS.LIST.SUCCESS_FLAGS');
-							$scope.showBanner();
-						}
-						else {
-							ErrorHandler.onError(response, $filter('translate')('ALIAS.LIST.ERROR_FLAGS'));
-						}
-						$scope.changesMade = false;
-						$scope.aliasUpdates.data = [];
+
+					success: function () {
+						$scope.setBannerClass('success');
+						$scope.bannerMessage = $filter('translate')('ALIAS.LIST.SUCCESS_FLAGS');
+						$scope.showBanner();
 					},
-					error: function(err) {
-						ErrorHandler.onError(err, $filter('translate')('ALIAS.LIST.ERROR_FLAGS'));
+					error: function (err) {
+						err.responseText = JSON.parse(err.responseText);
+						ErrorHandler.onError(err, $filter('translate')('ALIAS.LIST.ERROR_FLAGS'), arrValidationInsert);
+					},
+					complete: function () {
+						getAliasesList();
+						$scope.changesMade = false;
+						$scope.aliasUpdates = {
+							data: []
+						};
 					}
 				});
 			}

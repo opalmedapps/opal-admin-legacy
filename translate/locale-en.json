@@ -1642,6 +1642,7 @@
       "SUCCESS_FLAGS": "Flag(s) Successfully Saved!",
       "ERROR_ALIASES": "An error occurred while getting the aliases list.",
       "ERROR_FLAGS": "An error occurred while saving the flags.",
+      "ERROR_SOURCE_DB": "An error occurred while getting the list of sources.",
       "CODE": "Clinical Code",
       "RESOURCE": "Resource Description",
       "REVISION": "Revision No.",
@@ -1674,7 +1675,7 @@
       "NAME_FR": "English french missing.",
       "SOURCE_DB": "Source database missing or invalid.",
       "ALIAS_EXP": "List of clinical codes missing or invalid.",
-      "ID": "Study ID missing or invalid."
+      "ID": "Alias ID missing or invalid."
     },
     "ADD": {
       "BACK": "Back to Tasks/Appts/Documents",
