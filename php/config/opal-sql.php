@@ -1546,3 +1546,8 @@ define("OPAL_UPDATE_ALIAS_EXPRESSION_WITH_LAST_TRANSFERRED", "
     SessionId != :SessionId OR 
     LastTransferred != :LastTransferred)
 ");
+
+define("OPAL_GET_COUNT_ALIASES", "
+    SELECT COUNT(*) AS total from ".OPAL_ALIAS_TABLE." WHERE AliasSerNum IN (%%LISTIDS%%);
+");
+
