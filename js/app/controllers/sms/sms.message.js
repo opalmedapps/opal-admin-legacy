@@ -102,7 +102,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
                 $.ajax({
                     type: "POST",
                     url: "sms/update/sms-message",
-                    data:{'UpdateInformation':$scope.UpdateInformation},
+                    data:$scope.UpdateInformation,
                     success: function () {},
                     error: function(err) {
                         err.responseText = JSON.parse(err.responseText);
