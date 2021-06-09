@@ -23,8 +23,6 @@ class Alias extends Module {
     public function getExpressions ($sourceDatabaseId, $aliasType) {
         $this->checkReadAccess(array($sourceDatabaseId, $aliasType));
 
-        $aa = $this->opalDB->getAliasExpressions($sourceDatabaseId);
-
         if ($aliasType == ALIAS_TYPE_TASK_TEXT)
             $type = ALIAS_TYPE_TASK;
         else if ($aliasType == ALIAS_TYPE_APPOINTMENT_TEXT)
@@ -123,7 +121,7 @@ class Alias extends Module {
         $result["eduMat"] = ($result["eduMatSer"] != "" ? $this->_getEducationalMaterialDetails($result["eduMatSer"]) : "");
         $result["terms"] = $this->opalDB->getUnpublishedAliasExpression($result["serial"]);
         $result["published"] = $this->opalDB->getPublishedAliasExpression($result["serial"]);
-        $result["deleted"] = $this->opalDB->getDeletedAliasExpressions($result["serial"]);
+        $result["deleted"] = $this->opalDB->getDeactivatedAliasExpressions($result["serial"]);
 
         $result["count"] = count($result["terms"]);
         $result["hospitalMap"] = ($result["hospitalMapSer"] != "" ? $this->opalDB->getHospitalMapDetails($result["hospitalMapSer"]) : "");
@@ -143,7 +141,7 @@ class Alias extends Module {
      * Validation code :    Error validation code is coded as an int of 12 bits (value from 0 to 4095). Bit informations
      *                      are coded from right to left:
      *                      1: type of alias missing or invalid
-     *                      2: checkin details missing or invalid
+     *                      2: checkin details missing or invalid (if appointment. If not and present, error)
      *                      3: hospital map missing or invalid
      *                      4: color missing or invalid
      *                      5: english description missing
@@ -260,7 +258,12 @@ class Alias extends Module {
                     HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, "Duplicate source database found.");
             }
 
-            // 11th bit
+            /**
+             * 11th bit - This case is special. The terms has to be non empty and creating a new alias, which is normal
+             * because it does not exists yet. However when updating, the terms CAN be empty. In fact, the condition
+             * of validity is based if the total of codes that include the deleted code still attached, the published
+             * and unpublished are superior to 0. If it is, then the term can be empty. If not, reject it.
+             */
             if (!array_key_exists("terms", $post) || (!is_array($post["terms"])))
                 $post["terms"] = array();
             $validTerms = true;
@@ -269,7 +272,7 @@ class Alias extends Module {
                 array_push($listIds, intval($term));
 
             if($isAnUpdate) {
-                if (count($this->opalDB->getPublishedAliasExpression($post["id"])) + count($this->opalDB->getDeletedAliasExpressions($post["id"])) + count($listIds) <= 0) {
+                if (count($this->opalDB->getPublishedAliasExpression($post["id"])) + count($this->opalDB->getDeactivatedAliasExpressions($post["id"])) + count($listIds) <= 0) {
                     $errCode = "1" . $errCode;
                     $validTerms = false;
                 }

@@ -31,8 +31,8 @@
                     <strong>{{'ALIAS.EDIT.ASSIGNED_CODE'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': expressionSection.open, 'glyphicon-chevron-right': !expressionSection.open}"></i>
                 </div>
             </uib-accordion-heading>
-            <div class="alert alert-danger" role="alert">
-                <strong>{{'ALIAS.EDIT.PUBLISHED_CODE'|translate}}</strong><br>
+            <div class="alert alert-danger" role="alert" ng-if="alias.published.length > 0">
+                <strong><span class="fa fa-lock"></span> {{'ALIAS.EDIT.PUBLISHED_CODE'|translate}}</strong>
                 <ul class="list-items">
                     <li ng-repeat="publishedAlias in alias.published">
                         {{publishedAlias.description}}
