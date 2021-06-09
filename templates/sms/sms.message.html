@@ -62,7 +62,7 @@
                                 <div ng-if="UpdateInformation.speciality" class="description">
                                     <p>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{'SMS.MESSAGE.'+UpdateInformation.speciality|translate}}
+                                        {{UpdateInformation.speciality}}
                                     </p>
                                 </div>
                             </div>
@@ -84,7 +84,7 @@
                                 <div ng-if="UpdateInformation.type" class="description">
                                     <p style="margin-bottom:5px;">
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{'SMS.MESSAGE.'+UpdateInformation.type|translate}}
+                                        {{UpdateInformation.type}}
                                     </p>
                                 </div>
                             </div>
@@ -209,7 +209,7 @@
                                     <div class="panel-info" ng-class="{active: UpdateInformation.speciality == element.speciality}">
                                         <div class="panel-content" style="text-align:center">
                                             <span style="font-size:30px;" class="fa fa-database"></span>
-                                            <div class="option-panel-title">{{'SMS.MESSAGE.'+element.speciality|translate}}</div>
+                                            <div class="option-panel-title">{{element.speciality}}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -240,7 +240,7 @@
                                     <div class="panel-info" ng-class="{active: UpdateInformation.type == element.type}">
                                         <div class="panel-content" style="text-align:center">
                                             <span style="font-size:30px;" class="fa fa-sticky-note"></span>
-                                            <div class="option-panel-title">{{'SMS.MESSAGE.'+element.type|translate}}</div>
+                                            <div class="option-panel-title">{{element.type}}</div>
                                         </div>
                                     </div>
                                 </div>

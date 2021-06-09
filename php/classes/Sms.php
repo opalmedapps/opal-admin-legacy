@@ -92,7 +92,7 @@ class Sms extends Module {
                 $errCode = "1" . $errCode;
             else
                 $errCode = "0" . $errCode;
-            if (!array_key_exists("language", $post) || $post["language"] != 1 || $post["language"] != 2)
+            if (!array_key_exists("language", $post) || ($post["language"] != 1 && $post["language"] != 2))
                 $errCode = "1" . $errCode;
             else
                 $errCode = "0" . $errCode;
@@ -124,39 +124,38 @@ class Sms extends Module {
         $post = HelpSetup::arraySanitization($post);
         $errCode = "";
         $response = 0;
+        $idCount = 0;
+        $stateCount = 0;
         if (is_array($post)) {
             if(array_key_exists("updateList", $post) || is_array($post["updateList"])) {
                 foreach ($post["updateList"] as $information) {
-                    $errCode = "";
                     if (is_array($information)){
-                        if (!array_key_exists("state", $information) || $information["state"] == "")
-                            $errCode = "1" . $errCode;
-                        else
-                            $errCode = "0" . $errCode;
-                        if (!array_key_exists("appcode", $information) || $information["appcode"] == "")
-                            $errCode = "1" . $errCode;
-                        else
-                            $errCode = "0" . $errCode;
-                        if (!array_key_exists("ressernum", $information) || $information["ressernum"] == "")
-                            $errCode = "1" . $errCode;
-                        else
-                            $errCode = "0" . $errCode;
+                        if (array_key_exists("state", $information) && $information["state"] != "")
+                            $stateCount++;
+                        if (array_key_exists("id", $information) && $information["id"] != "")
+                            $idCount++;
                     }
-                    else
-                        $errCode = "111";
-                    $errCode = bindec($errCode);
-                    if ($errCode != 0)
-                        HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
-                    $response += $this->ormsDB->updateActivationState($information['state'], $information['appcode'], $information['ressernum']);
                 }
+                if ($stateCount != count($post["updateList"]))
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
+                if ($idCount != count($post["updateList"]))
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
             } else
-                $errCode = 7;
+                $errCode = "11";
         }else
-            $errCode = 7;
+            $errCode = "11";
 
+        bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
+        foreach ($post["updateList"] as $information) {
+            $response += $this->ormsDB->updateActivationState($information['state'], $information['id']);
+        }
         return $response;
     }
 
@@ -179,25 +178,21 @@ class Sms extends Module {
                 $errCode = "1" . $errCode;
             else
                 $errCode = "0" . $errCode;
-            if (!array_key_exists("appcode", $post) || $post["appcode"] == "")
-                $errCode = "1" . $errCode;
-            else
-                $errCode = "0" . $errCode;
-            if (!array_key_exists("ressernum", $post) || $post["ressernum"] == "")
+            if (!array_key_exists("id", $post) || $post["id"] == "")
                 $errCode = "1" . $errCode;
             else
                 $errCode = "0" . $errCode;
         }else
-            $errCode .= "111";
+            $errCode .= "11";
 
         $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        if($post["information"]['type'] == 0)
-            return $this->ormsDB->setAppointmentTypeNull($post['appcode'],$post['ressernum']);
+        if($post['type'] == 0)
+            return $this->ormsDB->setAppointmentTypeNull($post['id']);
         else
-            return $this->ormsDB->updateAppointmentType($post['type'],$post['appcode'],$post['ressernum']);
+            return $this->ormsDB->updateAppointmentType($post['type'],$post['id']);
     }
 
     /*
