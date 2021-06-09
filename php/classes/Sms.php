@@ -204,38 +204,37 @@ class Sms extends Module {
      *                      3: event missing
      *                      4: language missing
      * @params  $post (array) data received from the front end.
-     * @return  1 if success 0 for fail
+     * @return  0 for fail, success otherwise
      * */
     public function updateSmsMessage($post){
         $this->checkWriteAccess($post);
         $post = HelpSetup::arraySanitization($post);
         $errCode = "";
         if (is_array($post)) {
-            if(array_key_exists("UpdateInformation", $post) || is_array($post["UpdateInformation"])) {
-                if (!array_key_exists("type", $post["UpdateInformation"]) || $post["UpdateInformation"]["type"] == "")
+            if (!array_key_exists("type", $post) || $post["type"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+            if (!array_key_exists("speciality", $post) || $post["speciality"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+            if (!array_key_exists("event", $post) || $post["event"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+            if(array_key_exists("message", $post) || is_array($post["message"])) {
+                if (!array_key_exists("English", $post["message"]) || $post["message"]["English"] == "")
                     $errCode = "1" . $errCode;
                 else
                     $errCode = "0" . $errCode;
-                if (!array_key_exists("speciality", $post["UpdateInformation"]) || $post["UpdateInformation"]["speciality"] == "")
+                if (!array_key_exists("French", $post["message"]) || $post["message"]["French"] == "")
                     $errCode = "1" . $errCode;
                 else
                     $errCode = "0" . $errCode;
-                if (!array_key_exists("event", $post["UpdateInformation"]) || $post["UpdateInformation"]["event"] == "")
-                    $errCode = "1" . $errCode;
-                else
-                    $errCode = "0" . $errCode;
-                if(array_key_exists("message", $post["UpdateInformation"]) || is_array($post["UpdateInformation"]["message"])) {
-                    if (!array_key_exists("English", $post["UpdateInformation"]["message"]) || $post["UpdateInformation"]["message"]["English"] == "")
-                        $errCode = "1" . $errCode;
-                    else
-                        $errCode = "0" . $errCode;
-                    if (!array_key_exists("French", $post["UpdateInformation"]["message"]) || $post["UpdateInformation"]["message"]["French"] == "")
-                        $errCode = "1" . $errCode;
-                    else
-                        $errCode = "0" . $errCode;
-                }
-            } else
-                $errCode = "11111". $errCode;
+            }
+            else
+                $errCode = "11" . $errCode;
         }else
             $errCode .= "11111";
 
@@ -243,10 +242,10 @@ class Sms extends Module {
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        $response =  $this->ormsDB->updateSmsMessage($post["UpdateInformation"]['message']['English'],$post["UpdateInformation"]['speciality'],
-            $post["UpdateInformation"]['type'],$post["UpdateInformation"]['event'],'English');
-        $response += $this->ormsDB->updateSmsMessage($post["UpdateInformation"]['message']['French'],$post["UpdateInformation"]['speciality'],
-            $post["UpdateInformation"]['type'],$post["UpdateInformation"]['event'],'French');
+        $response =  $this->ormsDB->updateSmsMessage($post['message']['English'],$post['speciality'],
+            $post['type'],$post['event'],'English');
+        $response += $this->ormsDB->updateSmsMessage($post['message']['French'],$post['speciality'],
+            $post['type'],$post['event'],'French');
         return $response;
     }
 
