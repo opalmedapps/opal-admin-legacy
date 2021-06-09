@@ -3132,11 +3132,10 @@
       "ERROR_DETAILS": "An error occurred while getting the details of the sms appointment."
     },
     "VALIDATION": {
-      "APPOINTMENT_CODE": "Appointment Code missing",
+      "APPOINTMENT_ID": "Appointment Id missing",
       "EVENT": "Event missing",
       "MESSAGE_EN": "English message missing",
       "MESSAGE_FR": "French message missing",
-      "RESOURCE_NAME": "Clinic Code missing",
       "SPECIALITY": "Speciality missing",
       "STATE": "State flag missing",
       "TYPE": "Type missing"

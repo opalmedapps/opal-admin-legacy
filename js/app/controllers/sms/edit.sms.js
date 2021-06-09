@@ -31,15 +31,14 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
 
     var arrValidationInsert = [
         $filter('translate')('SMS.VALIDATION.TYPE'),
-        $filter('translate')('SMS.VALIDATION.APPOINTMENT_CODE'),
-        $filter('translate')('SMS.VALIDATION.RESOURCE_NAME')
+        $filter('translate')('SMS.VALIDATION.APPOINTMENT_ID'),
     ];
 
     // Submit changes
     $scope.updateAppointment = function() {
         if($scope.changesDetected) {
             var update = {
-                type:$scope.typeSelected, appcode:$scope.currentAppointment.code, ressernum:$scope.currentAppointment.ressernum
+                type:$scope.typeSelected, id:$scope.currentAppointment.id
             }
             if(update.type == "UNDEFINED") update.type = 0;
             $.ajax({

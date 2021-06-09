@@ -55,28 +55,25 @@ class DatabaseOrms extends DatabaseAccess {
         return $result;
     }
 
-    function updateActivationState($state,$appointmentCodeId, $resourceSerNum) {
+    function updateActivationState($state, $id) {
         $toInsert = array(
             array("parameter"=>":Active","variable"=>$state,"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":ClinicResourcesSerNum","variable"=>$resourceSerNum,"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":AppointmentCodeId","variable"=>$appointmentCodeId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":id","variable"=>$id,"data_type"=>PDO::PARAM_INT),
         );
         return $this->_execute(ORMS_SQL_UPDATE_APPOINTMENT_ACTIVE_STATE, $toInsert);
     }
 
-    function updateAppointmentType($type, $appointmentCodeId, $resourceSerNum) {
+    function updateAppointmentType($type, $id) {
         $toInsert = array(
             array("parameter"=>":Type","variable"=>$type,"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":ClinicResourcesSerNum","variable"=>$resourceSerNum,"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":AppointmentCodeId","variable"=>$appointmentCodeId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":id","variable"=>$id,"data_type"=>PDO::PARAM_INT),
         );
         return $this->_execute(ORMS_SQL_UPDATE_APPOINTMENT_TYPE, $toInsert);
     }
 
-    function setAppointmentTypeNull($appointmentCodeId, $resourceSerNum) {
+    function setAppointmentTypeNull($id) {
         $toInsert = array(
-            array("parameter"=>":ClinicResourcesSerNum","variable"=>$resourceSerNum,"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":AppointmentCodeId","variable"=>$appointmentCodeId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":id","variable"=>$id,"data_type"=>PDO::PARAM_INT),
         );
         return $this->_execute(ORMS_SQL_SET_APPOINTMENT_TYPE_TO_NULL, $toInsert);
     }

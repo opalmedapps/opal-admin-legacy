@@ -26,8 +26,7 @@ define("ORMS_SQL_GET_APPOINTMENT_FOR_ALIAS","
 
 define("ORMS_SQL_GET_APPOINTMENT_FOR_SMS","
     SELECT appc.AppointmentCode AS appcode, clir.ResourceCode AS rescode, smsa.Active AS state,
-           smsa.Speciality AS spec, smsa.Type AS apptype, smsa.ClinicResourcesSerNum AS ressernum, 
-           smsa.AppointmentCodeId AS code, clir.ResourceName AS resname
+           smsa.Speciality AS spec, smsa.Type AS apptype, smsa.SmsAppointmentId AS id, clir.ResourceName AS resname
     FROM ".ORMS_SMS_APPOINTMENT_LIST_TABLE." smsa 
     INNER JOIN ".ORMS_APPOINTMENT_CODE_LIST_TABLE." appc 
     ON appc.AppointmentCodeId = smsa.AppointmentCodeId
@@ -51,17 +50,17 @@ define("ORMS_SQL_GET_MESSAGE_FOR_APPOINTMENT","
 
 define("ORMS_SQL_UPDATE_APPOINTMENT_ACTIVE_STATE","
     UPDATE ".ORMS_SMS_APPOINTMENT_LIST_TABLE." SET Active = :Active
-    WHERE ClinicResourcesSerNum = :ClinicResourcesSerNum AND AppointmentCodeId = :AppointmentCodeId
+    WHERE SmsAppointmentId = :id
 ");
 
 define("ORMS_SQL_UPDATE_APPOINTMENT_TYPE","
     UPDATE ".ORMS_SMS_APPOINTMENT_LIST_TABLE." SET `Type` = :Type
-    WHERE ClinicResourcesSerNum = :ClinicResourcesSerNum AND AppointmentCodeId = :AppointmentCodeId
+    WHERE SmsAppointmentId = :id
 ");
 
 define("ORMS_SQL_SET_APPOINTMENT_TYPE_TO_NULL","
     UPDATE ".ORMS_SMS_APPOINTMENT_LIST_TABLE." SET `Type` = NULL
-    WHERE ClinicResourcesSerNum = :ClinicResourcesSerNum AND AppointmentCodeId = :AppointmentCodeId
+    WHERE SmsAppointmentId = :id
 ");
 
 define("ORMS_SQL_UPDATE_MESSAGE_FOR_APPOINTMENT","
