@@ -3147,11 +3147,10 @@
       "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails du rendez-voous."
     },
     "VALIDATION": {
-      "APPOINTMENT_CODE": "Code de Rendez-vous manquante",
+      "APPOINTMENT_ID": "Id de Rendez-vous manquante",
       "EVENT": "Événement manquant",
       "MESSAGE_EN": "Message anglais manquant",
       "MESSAGE_FR": "Message français manquant",
-      "RESOURCE_NAME": "Code de la clinique manquante",
       "SPECIALITY": "Spécialité manquant",
       "STATE": "Drapeau d'état manquant",
       "TYPE": "Type manquant"

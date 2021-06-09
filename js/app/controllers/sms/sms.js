@@ -133,8 +133,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
 
         var arrValidationInsert = [
             $filter('translate')('SMS.VALIDATION.STATE'),
-            $filter('translate')('SMS.VALIDATION.APPOINTMENT_CODE'),
-            $filter('translate')('SMS.VALIDATION.RESOURCE_NAME')
+            $filter('translate')('SMS.VALIDATION.APPOINTMENT_ID'),
         ];
 
         // Submit changes
@@ -143,8 +142,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                 angular.forEach($scope.smsAppointments, function (sms) {
                     if (sms.modified) {
                         $scope.smsUpdates.updateList.push({
-                            ressernum: sms.ressernum,
-                            appcode: sms.code,
+                            id: sms.id,
                             state: sms.state
                         });
                     }
