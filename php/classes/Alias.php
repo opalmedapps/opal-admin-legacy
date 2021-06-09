@@ -48,17 +48,29 @@ class Alias extends Module {
     protected function _validatePublishFlag(&$post) {
         $errCode = "";
         if (is_array($post) && array_key_exists("data", $post) && is_array($post["data"])) {
+            $listIds = array();
             $errFound = false;
-            foreach ($post["data"] as $item) {
+            foreach ($post["data"] as &$item) {
                 if (!array_key_exists("serial", $item) || $item["serial"] == "" || !array_key_exists("update", $item) || $item["update"] == "") {
                     $errFound = true;
                     break;
                 }
+                if(!in_array($item["serial"], $listIds))
+                    array_push($listIds, intval($item["serial"]));
+                if(intval($item["update"]) != 0 && intval($item["update"]) != 1)
+                    $item["update"] = 0;
+                else
+                    $item["update"] = intval($item["update"]);
             }
             if ($errFound)
                 $errCode = "1" . $errCode;
-            else
-                $errCode = "0" . $errCode;
+            else {
+                $result = $this->opalDB->getCountAliases($listIds);
+                if(intval($result["total"]) != count($listIds))
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
+            }
         } else
             $errCode = "1";
         return $errCode;
@@ -71,6 +83,7 @@ class Alias extends Module {
     public function updateAliasPublishFlags($post) {
         $this->checkWriteAccess($post);
         HelpSetup::arraySanitization($post);
+
         $errCode = $this->_validatePublishFlag($post);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
@@ -269,7 +282,8 @@ class Alias extends Module {
             $validTerms = true;
             $listIds = array();
             foreach ($post["terms"] as $term)
-                array_push($listIds, intval($term));
+                if(!in_array(intval($term), $listIds))
+                    array_push($listIds, intval($term));
 
             if($isAnUpdate) {
                 if (count($this->opalDB->getPublishedAliasExpression($post["id"])) + count($this->opalDB->getDeactivatedAliasExpressions($post["id"])) + count($listIds) <= 0) {

@@ -2983,4 +2983,9 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    function getCountAliases($listIDs) {
+        $sql = str_replace("%%LISTIDS%%",implode(", ", $listIDs), OPAL_GET_COUNT_ALIASES);
+        return $this->_fetch($sql, array());
+    }
 }

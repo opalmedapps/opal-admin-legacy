@@ -1664,6 +1664,7 @@
       "SUCCESS_FLAGS": "Les publications ont été mises à jour!",
       "ERROR_ALIASES": "Une erreur s'est produite lors de l'obtention de la liste des alias.",
       "ERROR_FLAGS": "Une erreur s'est produite lors de l'enregistrement.",
+      "ERROR_SOURCE_DB": "Une erreur s'est produite lors de l'obtention de la liste des sources.",
       "CODE": "Code clinique",
       "RESOURCE": "Description de la ressource",
       "REVISION": "No. de révision",
