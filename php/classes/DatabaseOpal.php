@@ -2708,12 +2708,22 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(OPAL_GET_ALIASES, array());
     }
 
+    /**
+     * Get the list of alias expressions of an alias not yet published (or not used)
+     * @param $aliasId int - ID of the alias
+     * @return array - list of unpublished alias expressions
+     */
     function getUnpublishedAliasExpression($aliasId) {
         return $this->_fetchAll(OPAL_GET_ALIASES_UNPUBLISHED_EXPRESSION, array(
             array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT)
         ));
     }
 
+    /**
+     * Get the list of alias expressions of an alias already published (or in use)
+     * @param $aliasId int - ID of the alias
+     * @return array - list of published alias expressions
+     */
     function getPublishedAliasExpression($aliasId) {
         return $this->_fetchAll(OPAL_GET_ALIASES_PUBLISHED_EXPRESSION, array(
             array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT)
@@ -2722,8 +2732,8 @@ class DatabaseOpal extends DatabaseAccess {
 
     /**
      * Fetch the alias details
-     * @param $aliasId
-     * @return array
+     * @param $aliasId int - ID of the alias
+     * @return array - details
      */
     function getAliasDetails($aliasId) {
         return $this->_fetchAll(OPAL_GET_ALIAS_DETAILS, array(
@@ -2763,17 +2773,6 @@ class DatabaseOpal extends DatabaseAccess {
      */
     function getSourceDatatabes() {
         return $this->_fetchAll(OPAL_GET_SOURCE_DATABASES, array());
-    }
-
-    /**
-     * Return the list of alias expressions of a specific source database
-     * @param $SourceDatabaseSerNum - ID of the source database
-     * @return array
-     */
-    function getAliasExpressions($SourceDatabaseSerNum) {
-        return $this->_fetchAll(OPAL_GET_ALIAS_EXPRESSIONS, array(
-            array("parameter"=>":SourceDatabaseSerNum","variable"=>$SourceDatabaseSerNum,"data_type"=>PDO::PARAM_INT),
-        ));
     }
 
     /**
@@ -2922,8 +2921,9 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
+     * Insert (by doing a SQL REPLACE) an appointment checkin
      * @param $toInsert
-     * @return false
+     * @return int - ID of the last insert
      */
     function replaceAppointmentCheckin($toInsert) {
         $toInsert["LastUpdatedBy"] = $this->getOAUserId();
@@ -2932,6 +2932,7 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
+     * Update an alias
      * @param $toUpdate
      * @return int - number of row updated
      */
@@ -2942,6 +2943,13 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_updateRecordIntoTable(OPAL_UPDATE_ALIAS, $toUpdate);
     }
 
+    /**
+     * Delete alias expressions of an alias except the list of aliases to keep. Will also ignore published and marked
+     * as deleted source aliases.
+     * @param $aliasId int - ID of the alias to delete the alias expressions
+     * @param $sourceIds array - list of IDs of alias expression to keep
+     * @return int - number of records affected
+     */
     function deleteAliasExpressions($aliasId, $sourceIds) {
         $sql = str_replace("%%LIST_SOURCES_UIDS%%",implode(", ", $sourceIds), OPAL_DELETE_ALIAS_EXPRESSIONS);
         return $this->_execute($sql, array(
@@ -2949,6 +2957,11 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /**
+     * Update alias expression
+     * @param $toUpdate array - details of the alias expression
+     * @return int - number of records affected
+     */
     function updateAliasExpression($toUpdate) {
         $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
         $toUpdate["SessionId"] = $this->getSessionId();
@@ -2960,7 +2973,12 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_updateRecordIntoTable($sql, $toUpdate);
     }
 
-    function getDeletedAliasExpressions($aliasId) {
+    /**
+     * Get the list of deactivated alias expression where the source in masterSourceAlias is marked as deleted
+     * @param $aliasId int - ID of the alias
+     * @return array - list of alias expressions where the source mark tham as deleted
+     */
+    function getDeactivatedAliasExpressions($aliasId) {
         return $this->_fetchAll(OPAL_GET_DELETED_ALIASES_EXPRESSION, array(
             array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
         ));
