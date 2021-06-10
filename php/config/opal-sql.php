@@ -1417,14 +1417,6 @@ define("OPAL_MARKED_AS_DELETED_SOURCE_DIAGNOSIS", "
     AND source = :source AND code = :code;
 ");
 
-define("OPAL_GET_SOURCE_ALIASES","
-    SELECT msa.ID, msa.externalId, msa.code, msa.description, msa.type, msa.source, msa.creationDate, msa.createdBy, msa.lastUpdated,
-    msa.updatedBy, a.AliasSerNum, a.AliasName_EN AS name_EN, a.AliasName_FR AS name_FR FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa
-    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.ExpressionName = msa.code AND ae.Description = msa.description
-    LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
-    WHERE msa.deleted = ".NON_DELETED_RECORD.";
-");
-
 define("OPAL_GET_SOURCE_ALIAS_DETAILS","
     SELECT msa.ID, msa.externalId, msa.code, msa.description, msa.type, msa.source, msa.creationDate, msa.createdBy, msa.lastUpdated,
     msa.updatedBy, a.AliasSerNum, a.AliasName_EN AS name_EN, a.AliasName_FR AS name_FR, sc.SourceDatabaseName FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa
