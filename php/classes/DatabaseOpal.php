@@ -2353,11 +2353,11 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  $id : int - primary key in test result control table
      * @return  array - list of IDs of additional links
      * */
-/*    function getTestResultAdditionalLinks($id) {
-        return $this->_fetchAll(OPAL_GET_TEST_RESULT_ADD_LINK, array(
-            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
-        ));
-    }*/
+    /*    function getTestResultAdditionalLinks($id) {
+            return $this->_fetchAll(OPAL_GET_TEST_RESULT_ADD_LINK, array(
+                array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+            ));
+        }*/
 
     /*
      * Get list of test results groups in french and english
@@ -2400,12 +2400,12 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  $toInsert : array - list of test expression
      * @return  int - last ID entered
      * */
-/*    function insertTestResultAdditionalLinks($toInsert) {
-        foreach ($toInsert as &$item) {
-            $item["DateAdded"] = date("Y-m-d H:i:s");
-        }
-        return $this->_replaceMultipleRecordsIntoTable(OPAL_TEST_RESULT_ADD_LINKS_TABLE, $toInsert);
-    }*/
+    /*    function insertTestResultAdditionalLinks($toInsert) {
+            foreach ($toInsert as &$item) {
+                $item["DateAdded"] = date("Y-m-d H:i:s");
+            }
+            return $this->_replaceMultipleRecordsIntoTable(OPAL_TEST_RESULT_ADD_LINKS_TABLE, $toInsert);
+        }*/
 
     /*
      * Get if the educational material exists
@@ -2459,10 +2459,10 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  $ids - array : list of ids
      * @return  array: total count found
      * */
-/*    function countTestResultsAdditionalLinks($ids) {
-        $sqlCount = str_replace("%%LISTIDS%%", implode(", ", $ids), OPAL_COUNT_TR_ADDITIONAL_LINKS);
-        return $this->_fetch($sqlCount, array());
-    }*/
+    /*    function countTestResultsAdditionalLinks($ids) {
+            $sqlCount = str_replace("%%LISTIDS%%", implode(", ", $ids), OPAL_COUNT_TR_ADDITIONAL_LINKS);
+            return $this->_fetch($sqlCount, array());
+        }*/
 
     /*
      * Delete unused additionalk links that are not a list of IDS for a specific test result
@@ -2470,21 +2470,21 @@ class DatabaseOpal extends DatabaseAccess {
      *          $list - array : list of IDs not to delete
      * @return  int - number of records affected
      */
-/*    function deleteUnusedAddLinks($id, $list) {
-        $sqlDelete = str_replace("%%LISTIDS%%", implode(", ", $list), OPAL_DELETE_UNUSED_ADD_LINKS);
-        return $this->_execute($sqlDelete, array(
-            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
-        ));
-    }*/
+    /*    function deleteUnusedAddLinks($id, $list) {
+            $sqlDelete = str_replace("%%LISTIDS%%", implode(", ", $list), OPAL_DELETE_UNUSED_ADD_LINKS);
+            return $this->_execute($sqlDelete, array(
+                array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+            ));
+        }*/
 
     /*
      * Update a specific test restul additionnal link
      * @params  $toUpdate - array : contains all the additional links details
      * @return  int - number of records affected
      * */
-/*    function updateTestResultAdditionalLink($toUpdate) {
-        return $this->_updateRecordIntoTable(OPAL_UPDATE_ADDITIONAL_LINKS, $toUpdate);
-    }*/
+    /*    function updateTestResultAdditionalLink($toUpdate) {
+            return $this->_updateRecordIntoTable(OPAL_UPDATE_ADDITIONAL_LINKS, $toUpdate);
+        }*/
 
     /*
      * Get the test result chart log
@@ -2522,11 +2522,11 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  $id - int : ID of the test result
      * @return  int : number of records deleted.
      * */
-/*    function deleteTestResultAdditionalLinks($id) {
-        return $this->_execute(OPAL_DELETE_TEST_RESULT_ADDITIONAL_LINKS, array(
-            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
-        ));
-    }*/
+    /*    function deleteTestResultAdditionalLinks($id) {
+            return $this->_execute(OPAL_DELETE_TEST_RESULT_ADDITIONAL_LINKS, array(
+                array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+            ));
+        }*/
 
     /*
      * Delete a test result
@@ -2649,7 +2649,7 @@ class DatabaseOpal extends DatabaseAccess {
 
     /**
      * Check if a consent form is published
-     * @param $consentId - consent form Id 
+     * @param $consentId - consent form Id
      * @return array list of forms found
      */
     function checkConsentFormPublished($consentId){
@@ -3062,5 +3062,314 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":deletedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
         ));
+    }
+
+    /**
+     * fetch all the available aliases in active source database
+     * @return array
+     */
+    function getAliases() {
+        return $this->_fetchAll(OPAL_GET_ALIASES, array());
+    }
+
+    /**
+     * Get the list of alias expressions of an alias not yet published (or not used)
+     * @param $aliasId int - ID of the alias
+     * @return array - list of unpublished alias expressions
+     */
+    function getUnpublishedAliasExpression($aliasId) {
+        return $this->_fetchAll(OPAL_GET_ALIASES_UNPUBLISHED_EXPRESSION, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT)
+        ));
+    }
+
+    /**
+     * Get the list of alias expressions of an alias already published (or in use)
+     * @param $aliasId int - ID of the alias
+     * @return array - list of published alias expressions
+     */
+    function getPublishedAliasExpression($aliasId) {
+        return $this->_fetchAll(OPAL_GET_ALIASES_PUBLISHED_EXPRESSION, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT)
+        ));
+    }
+
+    /**
+     * Fetch the alias details
+     * @param $aliasId int - ID of the alias
+     * @return array - details
+     */
+    function getAliasDetails($aliasId) {
+        return $this->_fetchAll(OPAL_GET_ALIAS_DETAILS, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Deactivate any alias without expressions.
+     * @return int - number of records affected
+     */
+    function sanitizeEmptyAliases() {
+        return $this->_updateRecordIntoTable(OPAL_SANITIZE_EMPTY_ALIASES, array(
+            "LastUpdatedBy"=>$this->getOAUserId(),
+            "SessionId"=>$this->getSessionId(),
+        ));
+    }
+
+    /**
+     * Update publish flag of a sepcific alias.
+     * @param $aliasId - ID of the alias
+     * @param $statusFlag - status of the alias
+     * @return int - number of records affected
+     */
+    function updateAliasPublishFlag($aliasId, $statusFlag) {
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_ALIAS_PUBLISH_FLAG, array(
+            "AliasUpdate"=>$statusFlag,
+            "AliasSerNum"=>$aliasId,
+            "LastUpdatedBy"=>$this->getOAUserId(),
+            "SessionId"=>$this->getSessionId(),
+        ));
+    }
+
+    /**
+     * Get the list of source databases
+     * @return array - list of source databases
+     */
+    function getSourceDatatabes() {
+        return $this->_fetchAll(OPAL_GET_SOURCE_DATABASES, array());
+    }
+
+    /**
+     * Get the list of codes for aliases based on the type and the source
+     * @param $type int type of the alias (task, document or appointment)
+     * @param $source int source database (aria, orms, medivisit, etc)
+     * @return array
+     */
+    function getSourceAliasesByTypeAndSource($type, $source) {
+        if ($source == ARIA_SOURCE_DB)
+            $sqlQuery = OPAL_GET_ARIA_SOURCE_ALIASES;
+        else
+            $sqlQuery = OPAL_GET_SOURCE_ALIASES;
+
+        return $this->_fetchAll($sqlQuery, array(
+            array("parameter"=>":type","variable"=>$type,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the list of deactivated diagnoses codes for a specific diagnosis
+     * @param $diagnosisTransId
+     * @return array
+     */
+    function getdeactivatedDiagnosesCodes($diagnosisTransId) {
+        return $this->_fetchAll(OPAL_GET_DEACTIVATED_DIAGNOSIS_CODES, array(
+            array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisTransId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * get the list of all non deleted diagnosis codes ID
+     * @param $listIds
+     * @return array
+     */
+    function getListDiagnosisCodes($listIds) {
+        return $this->_fetchAll(str_replace("%%LISTIDS%%", implode(", ", $listIds), OPAL_GET_LIST_DIAGNOSIS_CODES), array());
+    }
+
+    /**
+     * Get all alias logs for one year
+     * @return array
+     */
+    function getAliasLogs() {
+        return $this->_fetchAll(OPAL_GET_ALIAS_LOGS, array());
+    }
+
+    /**
+     * Get the log of a specific appointment (alias
+     * @param $AliasSerNum - ID of the Alias
+     * @return array
+     */
+    function getAppointmentLogs($aliasSerNum) {
+        return $this->_fetchAll(OPAL_GET_APPOINTMENT_LOGS, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasSerNum,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the log of a specific task (alias
+     * @param $AliasSerNum - ID of the Alias
+     * @return array
+     */
+    function getTaskLogs($aliasSerNum) {
+        return $this->_fetchAll(OPAL_TASK_LOGS, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasSerNum,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the log of a specific document (alias
+     * @param $AliasSerNum - ID of the Alias
+     * @return array
+     */
+    function getDocumentLogs($aliasSerNum) {
+        return $this->_fetchAll(OPAL_GET_DOCUMENT_LOGS, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasSerNum,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * count the number of educational material found with a specific ID
+     * @param $eduId
+     * @return array - total field counted
+     */
+    function countEduMaterial($eduId) {
+        return $this->_fetch(OPAL_COUNT_EDU_MATERIAL, array(
+            array("parameter"=>":EducationalMaterialControlSerNum","variable"=>$eduId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * count the number of hospital map found with a specific ID
+     * @param $mapId
+     * @return array - total field counted
+     */
+    function countHospitalMap($mapId) {
+        return $this->_fetch(OPAL_COUNT_HOSPITAL_MAP, array(
+            array("parameter"=>":HospitalMapSerNum","variable"=>$mapId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Count the number of alias expression from a list of IDs
+     * @param $listIds array - list of IDs of alias expressions
+     * @return array - total found
+     */
+    function selectAliasExpressionsToInsert($listIds) {
+        return $this->_fetchAll(str_replace("%%LISTIDS%%", implode(", ", $listIds), OPAL_SELECT_ALIAS_EXPRESSIONS_TO_INSERT), array());
+    }
+
+    /**
+     * Check if the source DB exists
+     * @param $sourceId int - ID of the source database
+     * @return array - total of source DB found
+     */
+    function countSourceDatabase($sourceId) {
+        return $this->_fetch(OPAL_COUNT_SOURCE_DB, array(
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Insert new alias and returns latest ID created
+     * @param $toInsert array - data to insert
+     * @return int - new ID
+     */
+    function insertAlias($toInsert) {
+        $toInsert["LastUpdatedBy"] = $this->getOAUserId();
+        $toInsert["SessionId"] = $this->getSessionId();
+        return $this->_insertRecordIntoTable(OPAL_ALIAS_TABLE, $toInsert);
+    }
+
+    /**
+     * Insert a list of multiple alias expression
+     * @param $toInsert array - data to insert
+     * @return int - last inserted ID
+     */
+    function replaceAliasExpressions($toInsert) {
+        foreach ($toInsert as &$item) {
+            $item["LastUpdatedBy"] = $this->getOAUserId();
+            $item["SessionId"] = $this->getSessionId();
+        }
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_ALIAS_EXPRESSION_TABLE, $toInsert);
+    }
+
+    /**
+     * Insert (by doing a SQL REPLACE) an appointment checkin
+     * @param $toInsert
+     * @return int - ID of the last insert
+     */
+    function replaceAppointmentCheckin($toInsert) {
+        $toInsert["LastUpdatedBy"] = $this->getOAUserId();
+        $toInsert["SessionId"] = $this->getSessionId();
+        return $this->_replaceRecordIntoTable(OPAL_APPOINTMENT_CHECKIN_TABLE, $toInsert);
+    }
+
+    /**
+     * Update an alias.
+     * @param $toUpdate
+     * @return int - number of row updated
+     */
+    function updateAlias($toUpdate) {
+        $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
+        $toUpdate["SessionId"] = $this->getSessionId();
+
+        $sql = OPAL_UPDATE_ALIAS;
+        $eduTemp = OPAL_EDU_MATERIAL_SERNUM;
+        $eduTempCond = OPAL_EDU_MATERIAL_COND;
+        if(empty($toUpdate["EducationalMaterialControlSerNum"])) {
+            unset($toUpdate["EducationalMaterialControlSerNum"]);
+            $eduTemp = str_replace(":EducationalMaterialControlSerNum", "NULL", $eduTemp);
+            $eduTempCond = str_replace("!= :EducationalMaterialControlSerNum", "IS NOT NULL", $eduTempCond);
+        }
+
+        $hosTemp = OPAL_HOSP_MAP_SERNUM;
+        $hosTempCond = OPAL_HOSP_MAP_COND;
+        if(empty($toUpdate["HospitalMapSerNum"])) {
+            unset($toUpdate["HospitalMapSerNum"]);
+            $hosTemp = str_replace(":HospitalMapSerNum", "NULL", $hosTemp);
+            $hosTempCond = str_replace("!= :HospitalMapSerNum", "IS NOT NULL", $hosTempCond);
+        }
+
+        $sql = str_replace("%%EDU_MATERIAL_COND%%", $eduTempCond, str_replace("%%EDU_MATERIAL%%", $eduTemp, $sql));
+        $sql = str_replace("%%HOSP_MAP_COND%%", $hosTempCond, str_replace("%%HOSP_MAP%%", $hosTemp, $sql));
+
+        return $this->_updateRecordIntoTable($sql, $toUpdate);
+    }
+
+    /**
+     * Delete alias expressions of an alias except the list of aliases to keep. Will also ignore published and marked
+     * as deleted source aliases.
+     * @param $aliasId int - ID of the alias to delete the alias expressions
+     * @param $sourceIds array - list of IDs of alias expression to keep
+     * @return int - number of records affected
+     */
+    function deleteAliasExpressions($aliasId, $sourceIds) {
+        $sql = str_replace("%%LIST_SOURCES_UIDS%%",implode(", ", $sourceIds), OPAL_DELETE_ALIAS_EXPRESSIONS);
+        return $this->_execute($sql, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Update alias expression
+     * @param $toUpdate array - details of the alias expression
+     * @return int - number of records affected
+     */
+    function updateAliasExpression($toUpdate) {
+        $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
+        $toUpdate["SessionId"] = $this->getSessionId();
+        if(array_key_exists("LastTransferred", $toUpdate) && $toUpdate["LastTransferred"] != "")
+            $sql = OPAL_UPDATE_ALIAS_EXPRESSION_WITH_LAST_TRANSFERRED;
+        else
+            $sql = OPAL_UPDATE_ALIAS_EXPRESSION;
+
+        return $this->_updateRecordIntoTable($sql, $toUpdate);
+    }
+
+    /**
+     * Get the list of deactivated alias expression where the source in masterSourceAlias is marked as deleted
+     * @param $aliasId int - ID of the alias
+     * @return array - list of alias expressions where the source mark tham as deleted
+     */
+    function getDeactivatedAliasExpressions($aliasId) {
+        return $this->_fetchAll(OPAL_GET_DELETED_ALIASES_EXPRESSION, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function getCountAliases($listIDs) {
+        $sql = str_replace("%%LISTIDS%%",implode(", ", $listIDs), OPAL_GET_COUNT_ALIASES);
+        return $this->_fetch($sql, array());
     }
 }
