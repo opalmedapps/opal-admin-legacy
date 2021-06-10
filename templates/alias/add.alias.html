@@ -423,8 +423,8 @@
                                                 <li ng-repeat="term in termList | filter: searchTermsFilter">
                                                     <label ng-class="{greenText: term.added, grayText: term.assigned && !term.added}">
                                                         <input type="checkbox" ng-click="toggleTermSelection(term)" ng-checked="term.added" /> {{term.name}}
-                                                        <span ng-class="{redText: term.assigned && !term.added}" ng-if="term.assigned && !term.added"><em> --- {{'ALIAS.ADD.ASSIGN_TO'|translate}} {{term.assigned.name_EN}}</em></span>
-                                                        <span ng-class="{redText: term.assigned}" ng-if="term.assigned && term.added"><em> --- {{'ALIAS.ADD.WILL_REPLACE'|translate}} {{term.assigned.name_EN}}</em></span>
+                                                        <span ng-class="{redText: term.assigned && !term.added}" ng-if="term.assigned && !term.added"><em> --- {{'ALIAS.ADD.ASSIGN_TO'|translate}} {{term.assigned}}</em></span>
+                                                        <span ng-class="{redText: term.assigned}" ng-if="term.assigned && term.added"><em> --- {{'ALIAS.ADD.WILL_REPLACE'|translate}} {{term.assigned}}</em></span>
                                                     </label>
                                                 </li>
                                             </ul>
