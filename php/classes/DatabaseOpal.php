@@ -2932,7 +2932,7 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Update an alias
+     * Update an alias.
      * @param $toUpdate
      * @return int - number of row updated
      */
@@ -2940,7 +2940,27 @@ class DatabaseOpal extends DatabaseAccess {
         $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
         $toUpdate["SessionId"] = $this->getSessionId();
 
-        return $this->_updateRecordIntoTable(OPAL_UPDATE_ALIAS, $toUpdate);
+        $sql = OPAL_UPDATE_ALIAS;
+        $eduTemp = OPAL_EDU_MATERIAL_SERNUM;
+        $eduTempCond = OPAL_EDU_MATERIAL_COND;
+        if(empty($toUpdate["EducationalMaterialControlSerNum"])) {
+            unset($toUpdate["EducationalMaterialControlSerNum"]);
+            $eduTemp = str_replace(":EducationalMaterialControlSerNum", "NULL", $eduTemp);
+            $eduTempCond = str_replace("!= :EducationalMaterialControlSerNum", "IS NOT NULL", $eduTempCond);
+        }
+
+        $hosTemp = OPAL_HOSP_MAP_SERNUM;
+        $hosTempCond = OPAL_HOSP_MAP_COND;
+        if(empty($toUpdate["HospitalMapSerNum"])) {
+            unset($toUpdate["HospitalMapSerNum"]);
+            $hosTemp = str_replace(":HospitalMapSerNum", "NULL", $hosTemp);
+            $hosTempCond = str_replace("!= :HospitalMapSerNum", "IS NOT NULL", $hosTempCond);
+        }
+
+        $sql = str_replace("%%EDU_MATERIAL_COND%%", $eduTempCond, str_replace("%%EDU_MATERIAL%%", $eduTemp, $sql));
+        $sql = str_replace("%%HOSP_MAP_COND%%", $hosTempCond, str_replace("%%HOSP_MAP%%", $hosTemp, $sql));
+
+        return $this->_updateRecordIntoTable($sql, $toUpdate);
     }
 
     /**
