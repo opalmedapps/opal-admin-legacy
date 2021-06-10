@@ -1,15 +1,12 @@
 <?php
-header('Content-Type: application/javascript');
-/* To get a list of expressions from a particular source database*/
-include_once('alias.inc');
+include_once("../config.php");
 
 $sourceDBSer = $_POST['sourcedbser'];
 $type = $_POST['type'];
 
-$alias = new Alias; // Object
+$alias = new Alias();
 
-// Call function
 $expressionList = $alias->getExpressions($sourceDBSer, $type);
 
-// Callback to http request
+header('Content-Type: application/javascript');
 echo json_encode($expressionList);

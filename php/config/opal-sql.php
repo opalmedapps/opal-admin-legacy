@@ -99,6 +99,7 @@ define("OPAL_TRIGGER_TABLE","jsonTrigger");
 define("OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE","Patient_Hospital_Identifier");
 define("OPAL_DIAGNOSIS_TABLE","Diagnosis");
 define("OPAL_APPOINTMENTS_TABLE", "Appointment");
+define("OPAL_APPOINTMENT_CHECKIN_TABLE","AppointmentCheckin");
 define("OPAL_RESOURCE_TABLE", "Resource");
 define("OPAL_RESOURCE_APPOINTMENT_TABLE", "ResourceAppointment");
 define("OPAL_PATIENT_CONTROL_TABLE", "PatientControl");
@@ -496,7 +497,7 @@ define("OPAL_GET_TREATMENT_MACHINES_TRIGGERS","
 ");
 
 define("OPAL_GET_STUDIES_TRIGGERS","
-    SELECT DISTINCT ID AS id, CONCAT (code, ' ', title_EN) AS name, 'Study' AS 'type', 0 AS 'added' FROM ".OPAL_STUDY_TABLE." WHERE deleted = ".NON_DELETED_RECORD." ORDER BY code, title_EN;
+    SELECT DISTINCT ID AS id, CONCAT (code, ' ', title) AS name, 'Study' AS 'type', 0 AS 'added' FROM ".OPAL_STUDY_TABLE." WHERE deleted = ".NON_DELETED_RECORD." ORDER BY code, title;
 ");
 
 define("OPAL_COUNT_CODE_MASTER_SOURCE","
@@ -884,9 +885,10 @@ define("OPAL_GET_DIAG_TRANS_DETAILS","
 ");
 
 define("OPAL_GET_DIAGNOSIS_CODES","
-    SELECT DISTINCT SourceUID AS sourceuid, DiagnosisCode AS code, Description AS description,
-    CONCAT(DiagnosisCode, ' (', Description, ')') AS name, 1 AS added FROM ".OPAL_DIAGNOSIS_CODE_TABLE."
-    WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum;
+    SELECT DISTINCT d.SourceUID AS sourceuid, d.DiagnosisCode AS code, d.Description AS description,
+    CONCAT(d.DiagnosisCode, ' (', d.Description, ')') AS name, 1 AS added FROM ".OPAL_DIAGNOSIS_CODE_TABLE." d
+    LEFT JOIN ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." m ON m.code = d.DiagnosisCode AND m.description = d.Description
+    WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum AND m.deleted = ".NON_DELETED_RECORD.";
 ");
 
 define("OPAL_GET_ACTIVATE_SOURCE_DB","
@@ -894,12 +896,12 @@ define("OPAL_GET_ACTIVATE_SOURCE_DB","
 ");
 
 define("OPAL_GET_ASSIGNED_DIAGNOSES","
-    SELECT dxc.SourceUID AS sourceuid, dxt.Name_EN AS name_EN, dxt.Name_FR AS name_FR FROM ".OPAL_DIAGNOSIS_CODE_TABLE." dxc
+    SELECT SourceUID, dxc.DiagnosisCode AS code, dxc.Description AS description, Source AS source, dxt.Name_EN AS name_EN, dxt.Name_FR AS name_FR FROM ".OPAL_DIAGNOSIS_CODE_TABLE." dxc
     LEFT JOIN ".OPAL_DIAGNOSIS_TRANSLATION_TABLE." dxt ON dxt.DiagnosisTranslationSerNum = dxc.DiagnosisTranslationSerNum;
 ");
 
 define("OPAL_GET_DIAGNOSES","
-    SELECT externalId AS sourceuid, code, description, CONCAT(code, ' (', description, ')') AS name
+    SELECT ID, code, description, CONCAT(code, ' (', description, ')') AS name
     FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE deleted = ".NON_DELETED_RECORD." AND source IN(%%SOURCE_DB_IDS%%) ORDER BY code
 ");
 
@@ -923,8 +925,9 @@ define("OPAL_UPDATE_DIAGNOSIS_TRANSLATION","
 ");
 
 define("OPAL_DELETE_DIAGNOSIS_CODES","
-    DELETE FROM ".OPAL_DIAGNOSIS_CODE_TABLE." WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum AND
-    SourceUID NOT IN (%%LIST_SOURCES_UIDS%%);
+    DELETE dc FROM ".OPAL_DIAGNOSIS_CODE_TABLE." dc LEFT JOIN ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." msd ON msd.ID = dc.SourceUID
+    WHERE dc.DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum AND msd.deleted = ".NON_DELETED_RECORD." AND
+    dc.SourceUID NOT IN (%%LIST_SOURCES_UIDS%%);
 ");
 
 define("OPAL_DELETE_ALL_DIAGNOSIS_CODES","
@@ -1452,3 +1455,255 @@ define("OPAL_MARKED_AS_DELETED_SOURCE_ALIAS", "
     UPDATE ".OPAL_MASTER_SOURCE_ALIAS_TABLE." SET deleted = ".DELETED_RECORD.", updatedBy = :updatedBy, deletedBy = :deletedBy WHERE externalId = :externalId
     AND source = :source AND type = :type AND code = :code;
 ");
+
+define("OPAL_GET_ALIASES","
+    SELECT a.AliasSerNum AS serial, a.AliasType AS type, a.AliasName_FR AS name_FR, a.AliasName_EN AS name_EN,
+    a.AliasUpdate AS `update`, a.SourceDatabaseSerNum AS sd_serial, sd.SourceDatabaseName AS sd_name, a.ColorTag AS color,
+    a.LastUpdated AS lastupdated, (SELECT COUNT(*) FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae WHERE ae.AliasSerNum = a.AliasSerNum)
+    AS count FROM ".OPAL_ALIAS_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." sd ON
+    sd.SourceDatabaseSerNum = a.SourceDatabaseSerNum WHERE a.SourceDatabaseSerNum = sd.SourceDatabaseSerNum AND
+    sd.Enabled = ".ACTIVE_RECORD.";
+");
+
+define("OPAL_GET_ALIASES_UNPUBLISHED_EXPRESSION","
+    SELECT ae.ExpressionName AS id, ae.Description AS description, 1 AS added FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae
+    LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m ON m.ID = ae.masterSourceAliasId
+    RIGHT JOIN ".OPAL_ALIAS_TABLE." al ON al.AliasSerNum = ae.AliasSerNum
+    WHERE ae.AliasSerNum = :AliasSerNum
+    AND CASE
+        WHEN al.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+        WHEN al.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." a WHERE a.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+    END
+    AND m.deleted = ".NON_DELETED_RECORD.";
+");
+
+define("OPAL_GET_ALIASES_PUBLISHED_EXPRESSION","
+    SELECT ae.Description AS description FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae
+    LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m ON m.ID = ae.masterSourceAliasId
+    RIGHT JOIN ".OPAL_ALIAS_TABLE." al ON al.AliasSerNum = ae.AliasSerNum
+    WHERE ae.AliasSerNum = :AliasSerNum
+    AND CASE
+        WHEN al.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) > 0
+        WHEN al.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." a WHERE a.AliasExpressionSerNum = ae.AliasExpressionSerNum) > 0
+        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) > 0
+    END
+    AND m.deleted = ".NON_DELETED_RECORD.";
+");
+
+define("OPAL_GET_DELETED_ALIASES_EXPRESSION","
+    SELECT ae.Description AS description FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae
+    LEFT JOIN ".OPAL_ALIAS_TABLE." al ON al.AliasSerNum = ae.AliasSerNum
+    LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa ON msa.ID = ae.masterSourceAliasId
+    WHERE msa.deleted = ".DELETED_RECORD." AND ae.AliasSerNum = :AliasSerNum;
+");
+
+define("OPAL_GET_ALIAS_DETAILS","
+    SELECT a.AliasSerNum AS serial, a.AliasType AS type, a.AliasName_FR AS name_FR, a.AliasName_EN AS name_EN,
+    a.AliasDescription_FR AS description_FR, a.AliasDescription_EN AS description_EN, a.AliasUpdate AS `update`,
+    a.EducationalMaterialControlSerNum AS eduMatSer, a.SourceDatabaseSerNum, s.SourceDatabaseName, a.ColorTag AS color,
+    a.HospitalMapSerNum AS hospitalMapSer, ac.CheckinPossible AS checkin_possible, ac.CheckinInstruction_EN AS instruction_EN,
+    ac.CheckinInstruction_FR AS instruction_FR FROM ".OPAL_ALIAS_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s
+    ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum LEFT JOIN ".OPAL_APPOINTMENT_CHECKIN_TABLE." ac ON
+    ac.AliasSerNum = a.AliasSerNum WHERE a.AliasSerNum = :AliasSerNum;
+");
+
+define("OPAL_SANITIZE_EMPTY_ALIASES","
+    UPDATE ".OPAL_ALIAS_TABLE." a LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON a.AliasSerNum = ae.AliasSerNum SET
+    a.AliasUpdate = ".NON_DELETED_RECORD.", a.SessionId = :SessionId, a.LastUpdatedBy = :LastUpdatedBy WHERE
+    ae.AliasSerNum IS NULL AND a.AliasUpdate != 0;
+");
+
+define("OPAL_UPDATE_ALIAS_PUBLISH_FLAG","
+    UPDATE ".OPAL_ALIAS_TABLE." SET AliasUpdate = :AliasUpdate, LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId
+    WHERE AliasSerNum = :AliasSerNum;
+");
+
+define("OPAL_GET_SOURCE_DATABASES","
+    SELECT SourceDatabaseSerNum AS serial, SourceDatabaseName AS name FROM ".OPAL_SOURCE_DATABASE_TABLE."
+    WHERE Enabled = ".ACTIVE_RECORD." ORDER BY SourceDatabaseSerNum
+");
+
+define("OPAL_GET_ARIA_SOURCE_ALIASES","
+    SELECT m.ID AS masterSourceAliasId, m.description AS name, m.code AS id, m.description, a.AliasName_EN AS assigned
+    FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m
+    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = m.ID
+    LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
+    WHERE m.type = :type AND m.source = :source
+    AND CASE
+        WHEN a.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+        WHEN a.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." app WHERE app.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+    END
+    AND m.deleted = ".NON_DELETED_RECORD." ORDER BY m.code");
+
+define("OPAL_GET_SOURCE_ALIASES","
+    SELECT m.ID AS masterSourceAliasId, CONCAT(m.code, ' (', m.description, ')') AS name, m.code AS id, m.description,
+    a.AliasName_EN AS assigned FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m
+    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = m.ID
+    LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
+    WHERE m.type = :type AND m.source = :source
+    AND CASE
+        WHEN a.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+        WHEN a.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." app WHERE app.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+    END    
+    AND m.deleted = ".NON_DELETED_RECORD." ORDER BY m.code");
+
+define("OPAL_GET_DEACTIVATED_DIAGNOSIS_CODES","
+    SELECT DISTINCT d.SourceUID AS sourceuid, d.DiagnosisCode AS code, d.Description AS description,
+    CONCAT(d.DiagnosisCode, ' (', d.Description, ')') AS name FROM ".OPAL_DIAGNOSIS_CODE_TABLE." d
+    LEFT JOIN ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." m ON m.code = d.DiagnosisCode AND m.description = d.Description
+    WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum AND m.deleted = ".DELETED_RECORD.";
+");
+
+define("OPAL_GET_LIST_DIAGNOSIS_CODES","
+    SELECT ID, code, description, source FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE ID IN (%%LISTIDS%%) AND deleted = ".NON_DELETED_RECORD.";
+");
+
+define("OPAL_GET_ALIAS_LOGS","
+    SELECT DISTINCT al.AliasName_EN AS name, apmh.CronLogSerNum AS cron_serial, COUNT(apmh.CronLogSerNum) AS y, cl.CronDateTime AS x
+    FROM ".OPAL_ALIAS_TABLE." al LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.AliasSerNum = al.AliasSerNum
+    LEFT JOIN ".OPAL_APPOINTMENT_MH_TABLE." apmh ON apmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
+    LEFT JOIN ".OPAL_CRON_LOG_TABLE." cl ON cl.CronLogSerNum = apmh.CronLogSerNum
+    WHERE cl.CronStatus = 'Started' AND cl.CronDateTime > curdate() - interval 1 year
+    GROUP BY al.AliasName_EN, apmh.CronLogSerNum, cl.CronDateTime
+    UNION ALL
+    SELECT DISTINCT al.AliasName_EN AS name, docmh.CronLogSerNum AS cron_serial, COUNT(docmh.CronLogSerNum) AS y, cl.CronDateTime AS x
+    FROM ".OPAL_ALIAS_TABLE." al LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.AliasSerNum = al.AliasSerNum
+    LEFT JOIN ".OPAL_DOCUMENT_MH_TABLE." docmh ON docmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
+    LEFT JOIN ".OPAL_CRON_LOG_TABLE." cl ON cl.CronLogSerNum = docmh.CronLogSerNum
+    WHERE cl.CronStatus = 'Started' AND cl.CronDateTime > curdate() - interval 1 year
+    GROUP BY al.AliasName_EN, docmh.CronLogSerNum, cl.CronDateTime
+    UNION ALL
+    SELECT DISTINCT al.AliasName_EN AS name, tmh.CronLogSerNum AS cron_serial, COUNT(tmh.CronLogSerNum) AS y, cl.CronDateTime AS x
+    FROM ".OPAL_ALIAS_TABLE." al LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.AliasSerNum = al.AliasSerNum
+    LEFT JOIN ".OPAL_TASK_MH_TABLE." tmh ON tmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
+    LEFT JOIN ".OPAL_CRON_LOG_TABLE." cl ON cl.CronLogSerNum = tmh.CronLogSerNum
+    WHERE cl.CronStatus = 'Started' AND cl.CronDateTime > curdate() - interval 1 year
+    GROUP BY al.AliasName_EN, tmh.CronLogSerNum, cl.CronDateTime
+    ORDER BY X ASC
+");
+
+define("OPAL_GET_APPOINTMENT_LOGS","
+    SELECT DISTINCT apmh.CronLogSerNum AS cron_serial, COUNT(apmh.CronLogSerNum) AS y, cl.CronDateTime AS x
+    FROM ".OPAL_APPOINTMENT_MH_TABLE." apmh
+    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON apmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
+    LEFT JOIN ".OPAL_CRON_LOG_TABLE." cl ON cl.CronLogSerNum = apmh.CronLogSerNum
+    WHERE cl.CronStatus = 'Started' AND ae.AliasSerNum = :AliasSerNum
+    GROUP BY apmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC
+");
+
+define("OPAL_GET_DOCUMENT_LOGS","
+    SELECT DISTINCT docmh.CronLogSerNum AS cron_serial, COUNT(docmh.CronLogSerNum) AS y, cl.CronDateTime AS x
+    FROM ".OPAL_DOCUMENT_MH_TABLE." docmh
+    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON docmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
+    LEFT JOIN ".OPAL_CRON_LOG_TABLE." cl ON cl.CronLogSerNum = docmh.CronLogSerNum
+    WHERE cl.CronStatus = 'Started' AND ae.AliasSerNum = :AliasSerNum
+    GROUP BY docmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC
+");
+
+define("OPAL_TASK_LOGS","
+    SELECT DISTINCT taskmh.CronLogSerNum AS cron_serial, COUNT(taskmh.CronLogSerNum) AS y, cl.CronDateTime AS x
+    FROM ".OPAL_TASK_MH_TABLE." taskmh
+    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON taskmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
+    LEFT JOIN ".OPAL_CRON_LOG_TABLE." cl ON cl.CronLogSerNum = taskmh.CronLogSerNum
+    WHERE cl.CronStatus = 'Started' AND ae.AliasSerNum = :AliasSerNum
+    GROUP BY taskmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC
+");
+
+define("OPAL_COUNT_EDU_MATERIAL","
+    SELECT COUNT(*) AS total FROM ".OPAL_EDUCATION_MATERIAL_TABLE." WHERE EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum;
+");
+
+define("OPAL_COUNT_HOSPITAL_MAP","
+    SELECT COUNT(*) AS total FROM ".OPAL_HOSPITAL_MAP_TABLE." WHERE HospitalMapSerNum = :HospitalMapSerNum;
+");
+
+define("OPAL_SELECT_ALIAS_EXPRESSIONS_TO_INSERT","
+    SELECT msa.*, ae.AliasExpressionSerNum FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa
+    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = msa.ID
+    LEFT JOIN ".OPAL_ALIAS_TABLE." al ON al.AliasSerNum = ae.AliasSerNum
+    WHERE ID IN (%%LISTIDS%%)
+    AND CASE
+        WHEN al.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+        WHEN al.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." a WHERE a.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+    END
+    AND deleted = ".NON_DELETED_RECORD.";
+");
+
+define("OPAL_COUNT_SOURCE_DB","
+    SELECT COUNT(*) AS total FROM ".OPAL_SOURCE_DATABASE_TABLE." WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum
+    AND Enabled = ".ACTIVE_RECORD.";
+");
+
+define("OPAL_UPDATE_ALIAS","
+    UPDATE ".OPAL_ALIAS_TABLE." SET AliasName_FR = :AliasName_FR, AliasName_EN = :AliasName_EN, AliasDescription_FR = :AliasDescription_FR,
+    AliasDescription_EN = :AliasDescription_EN, %%EDU_MATERIAL%%,
+    %%HOSP_MAP%%, ColorTag = :ColorTag, LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId
+    WHERE AliasSerNum = :AliasSerNum AND (AliasName_FR != :AliasName_FR OR AliasName_EN != :AliasName_EN OR
+    AliasDescription_FR != :AliasDescription_FR OR AliasDescription_EN != :AliasDescription_EN OR
+    %%EDU_MATERIAL_COND%% OR %%HOSP_MAP_COND%% OR
+    ColorTag != :ColorTag)
+");
+
+define("OPAL_EDU_MATERIAL_SERNUM", "EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum");
+define("OPAL_EDU_MATERIAL_COND", "ifnull(EducationalMaterialControlSerNum, -1) != :EducationalMaterialControlSerNum");
+
+define("OPAL_HOSP_MAP_SERNUM", "HospitalMapSerNum = :HospitalMapSerNum");
+define("OPAL_HOSP_MAP_COND", "ifnull(HospitalMapSerNum, -1) != :HospitalMapSerNum");
+
+define("OPAL_DELETE_ALIAS_EXPRESSIONS","
+    DELETE ae FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa ON
+    msa.ID = ae.masterSourceAliasId
+    RIGHT JOIN ".OPAL_ALIAS_TABLE." al ON al.AliasSerNum = ae.AliasSerNum
+    WHERE ae.AliasSerNum = :AliasSerNum AND msa.deleted = ".NON_DELETED_RECORD."
+    AND CASE
+        WHEN al.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+        WHEN al.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." a WHERE a.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+    END
+    AND ae.masterSourceAliasId NOT IN (%%LIST_SOURCES_UIDS%%);
+");
+
+define("OPAL_UPDATE_ALIAS_EXPRESSION", "
+    UPDATE ".OPAL_ALIAS_EXPRESSION_TABLE." SET 
+    AliasSerNum = :AliasSerNum,
+    masterSourceAliasId = :masterSourceAliasId,
+    ExpressionName = :ExpressionName,
+    Description = :Description,
+    LastUpdatedBy = :LastUpdatedBy,
+    SessionId = :SessionId
+    WHERE AliasExpressionSerNum = :AliasExpressionSerNum AND
+    (AliasSerNum != :AliasSerNum OR 
+    masterSourceAliasId != :masterSourceAliasId OR 
+    ExpressionName != :ExpressionName OR 
+    Description != :Description OR 
+    LastUpdatedBy != :LastUpdatedBy OR 
+    SessionId != :SessionId)
+");
+
+define("OPAL_UPDATE_ALIAS_EXPRESSION_WITH_LAST_TRANSFERRED", "
+    UPDATE ".OPAL_ALIAS_EXPRESSION_TABLE." SET 
+    AliasSerNum = :AliasSerNum,
+    masterSourceAliasId = :masterSourceAliasId,
+    ExpressionName = :ExpressionName,
+    Description = :Description,
+    LastUpdatedBy = :LastUpdatedBy,
+    LastTransferred = :LastTransferred,
+    SessionId = :SessionId
+    WHERE AliasExpressionSerNum = :AliasExpressionSerNum AND
+    (AliasSerNum != :AliasSerNum OR 
+    masterSourceAliasId != :masterSourceAliasId OR 
+    ExpressionName != :ExpressionName OR 
+    Description != :Description OR 
+    LastUpdatedBy != :LastUpdatedBy OR 
+    SessionId != :SessionId OR 
+    LastTransferred != :LastTransferred)
+");
+
+define("OPAL_GET_COUNT_ALIASES", "
+    SELECT COUNT(*) AS total from ".OPAL_ALIAS_TABLE." WHERE AliasSerNum IN (%%LISTIDS%%);
+");
+

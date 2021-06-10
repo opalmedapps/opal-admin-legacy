@@ -21,6 +21,7 @@ class Diagnosis extends Module {
         $diagnosisId = $post["serial"];
         $result = $this->opalDB->getDiagnosisDetails($diagnosisId);
         $result["diagnoses"] = $this->opalDB->getDiagnosisCodes($diagnosisId);
+        $result["deactivated"] = $this->opalDB->getdeactivatedDiagnosesCodes($diagnosisId);
         $result["count"] = count($result["diagnoses"]);
 
         if ($result["eduMatSer"] != 0) {
@@ -42,13 +43,14 @@ class Diagnosis extends Module {
         $ad = $this->opalDB->getAssignedDiagnoses();
         $assignedDiagnoses = array();
         foreach($ad as $item) {
-            $assignedDiagnoses[$item["sourceuid"]] = $item;
+            $assignedDiagnoses[$item["SourceUID"]] = $item;
         }
         $results = $this->opalDB->getDiagnoses($assignedDB);
+
         foreach ($results as &$item) {
             $item["added"] = 0;
-            if ($assignedDiagnoses[$item["sourceuid"]])
-                $item['assigned'] = $assignedDiagnoses[$item["sourceuid"]];
+            if ($assignedDiagnoses[$item["ID"]])
+                $item['assigned'] = $assignedDiagnoses[$item["ID"]];
         }
 
         return $results;
@@ -63,6 +65,7 @@ class Diagnosis extends Module {
      * */
     protected function _validateAndSanitizeDiagnosis($post) {
         $post = HelpSetup::arraySanitization($post);
+        $listDiagnoses = array();
         $validatedDiagnosis = array();
         if(!$post["name_EN"] || !$post["name_FR"] || !$post["description_EN"] || !$post["description_FR"])
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing informations.");
@@ -77,23 +80,25 @@ class Diagnosis extends Module {
         if($post["serial"] && $post["serial"] != "")
             $validatedDiagnosis["serial"] = intval($post["serial"]);
 
-        if($post['eduMat'] && isset($post["eduMat"]["serial"])) {
-            $tempEdu = $this->opalDB->validateEduMaterialId($post["eduMat"]["serial"]);
+        if($post['eduMat'] && isset($post["eduMat"])) {
+            $post["eduMat"] = intval($post["eduMat"]);
+            $tempEdu = $this->opalDB->validateEduMaterialId($post["eduMat"]);
             if($tempEdu["total"] != "1")
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid educational material.");
-            $validatedDiagnosis["eduMat"] = $post["eduMat"]["serial"];
+            $validatedDiagnosis["eduMat"] = $post["eduMat"];
         }
 
         if(!$post["diagnoses"] || !is_array($post["diagnoses"]) || count($post["diagnoses"]) <= 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Diagnosis codes are missing.");
 
-        foreach ($post["diagnoses"] as $item) {
-            array_push($validatedDiagnosis["diagnoses"], array(
-                "sourceuid"=>intval($item['sourceuid']),
-                "code"=>$item['code'],
-                "description"=>$item['description'],
-            ));
-        }
+        foreach ($post["diagnoses"] as $item)
+            array_push($listDiagnoses, intval($item));
+
+        $diagCode = $this->opalDB->getListDiagnosisCodes($listDiagnoses);
+        if(count($diagCode) != count($post["diagnoses"]))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid diagnosis codes list.");
+
+        $validatedDiagnosis["diagnoses"] = $diagCode;
 
         return $validatedDiagnosis;
     }
@@ -117,16 +122,6 @@ class Diagnosis extends Module {
         );
 
         $diagnosisId = $this->opalDB->insertDiagnosisTranslation($toInsert);
-        $toInsert = array();
-
-        foreach($validatedPost["diagnoses"] as $item) {
-            array_push($toInsert, array(
-                "DiagnosisTranslationSerNum"=>$diagnosisId,
-                "SourceUID"=>$item['sourceuid'],
-                "DiagnosisCode"=>$item['code'],
-                "Description"=>$item['description'],
-            ));
-        }
 
         return $this->_insertDiagnosisCodes($validatedPost["diagnoses"], $diagnosisId);
     }
@@ -142,9 +137,10 @@ class Diagnosis extends Module {
         foreach($codes as $item) {
             array_push($toInsert, array(
                 "DiagnosisTranslationSerNum"=>$diagnosisId,
-                "SourceUID"=>$item['sourceuid'],
+                "SourceUID"=>$item['ID'],
                 "DiagnosisCode"=>$item['code'],
                 "Description"=>$item['description'],
+                "Source"=>$item['source'],
             ));
         }
 
@@ -187,9 +183,8 @@ class Diagnosis extends Module {
         $this->opalDB->updateDiagnosisTranslation($toUpdate);
 
         $existingSourceUIDs = array();
-        foreach ($validatedPost["diagnoses"] as $diagnosis) {
-            array_push($existingSourceUIDs, $diagnosis["sourceuid"]);
-        }
+        foreach ($validatedPost["diagnoses"] as $diagnosis)
+            array_push($existingSourceUIDs, $diagnosis["ID"]);
 
         $this->opalDB->deleteDiagnosisCodes($validatedPost["serial"], $existingSourceUIDs);
         return $this->_insertDiagnosisCodes($validatedPost["diagnoses"], $validatedPost["serial"]);

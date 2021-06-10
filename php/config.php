@@ -44,6 +44,14 @@ define( "UPLOAD_ABS_PATH", FRONTEND_ABS_PATH . "uploads/" );
 define( "UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
 define( "ADMIN_REGISTRATION_URL", $config['pathConfig']['registration_url'] );
 
+define("ALIAS_TYPE_APPOINTMENT_TEXT", 'Appointment');
+define("ALIAS_TYPE_DOCUMENT_TEXT", 'Document');
+define("ALIAS_TYPE_TASK_TEXT", 'Task');
+
+define("ALIAS_TYPE_TASK", 1);
+define("ALIAS_TYPE_APPOINTMENT", 2);
+define("ALIAS_TYPE_DOCUMENT", 3);
+
 /*
  * Module ID of each module in the opalAdmin
  * */
@@ -97,7 +105,6 @@ require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_S
 // Include the classes
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Module.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "User.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Database.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Alias.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Audit.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Post.php" );
@@ -129,7 +136,6 @@ include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Library.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Diagnosis.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Application.php");
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Encrypt.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "HelpSetup.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseAccess.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseQuestionnaire.php" );
