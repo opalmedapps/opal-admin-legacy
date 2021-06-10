@@ -1490,13 +1490,19 @@ define("OPAL_COUNT_SOURCE_DB","
 
 define("OPAL_UPDATE_ALIAS","
     UPDATE ".OPAL_ALIAS_TABLE." SET AliasName_FR = :AliasName_FR, AliasName_EN = :AliasName_EN, AliasDescription_FR = :AliasDescription_FR,
-    AliasDescription_EN = :AliasDescription_EN, EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum,
-    HospitalMapSerNum = :HospitalMapSerNum, ColorTag = :ColorTag, LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId
+    AliasDescription_EN = :AliasDescription_EN, %%EDU_MATERIAL%%,
+    %%HOSP_MAP%%, ColorTag = :ColorTag, LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId
     WHERE AliasSerNum = :AliasSerNum AND (AliasName_FR != :AliasName_FR OR AliasName_EN != :AliasName_EN OR
     AliasDescription_FR != :AliasDescription_FR OR AliasDescription_EN != :AliasDescription_EN OR
-    EducationalMaterialControlSerNum != :EducationalMaterialControlSerNum OR HospitalMapSerNum != :HospitalMapSerNum OR
-    ColorTag != :ColorTag OR LastUpdatedBy != :LastUpdatedBy OR SessionId != :SessionId)
+    %%EDU_MATERIAL_COND%% OR %%HOSP_MAP_COND%% OR
+    ColorTag != :ColorTag)
 ");
+
+define("OPAL_EDU_MATERIAL_SERNUM", "EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum");
+define("OPAL_EDU_MATERIAL_COND", "ifnull(EducationalMaterialControlSerNum, -1) != :EducationalMaterialControlSerNum");
+
+define("OPAL_HOSP_MAP_SERNUM", "HospitalMapSerNum = :HospitalMapSerNum");
+define("OPAL_HOSP_MAP_COND", "ifnull(HospitalMapSerNum, -1) != :HospitalMapSerNum");
 
 define("OPAL_DELETE_ALIAS_EXPRESSIONS","
     DELETE ae FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa ON
