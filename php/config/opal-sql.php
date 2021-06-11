@@ -497,7 +497,7 @@ define("OPAL_GET_TREATMENT_MACHINES_TRIGGERS","
 ");
 
 define("OPAL_GET_STUDIES_TRIGGERS","
-    SELECT DISTINCT ID AS id, CONCAT (code, ' ', title) AS name, 'Study' AS 'type', 0 AS 'added' FROM ".OPAL_STUDY_TABLE." WHERE deleted = ".NON_DELETED_RECORD." ORDER BY code, title;
+    SELECT DISTINCT ID AS id, CONCAT (code, ' ', title_EN) AS name, 'Study' AS 'type', 0 AS 'added' FROM ".OPAL_STUDY_TABLE." WHERE deleted = ".NON_DELETED_RECORD." ORDER BY code, title_EN;
 ");
 
 define("OPAL_COUNT_CODE_MASTER_SOURCE","
