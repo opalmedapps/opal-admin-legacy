@@ -117,6 +117,7 @@ define("OPAL_USERS_TABLE", "Users");
 define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
 define("OPAL_PATIENT_ACTIVITY_LOG_TABLE","PatientActivityLog");
 define("OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE", "PatientDeviceIdentifier");
+define("OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE", "Patient_Hospital_Identifier");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -982,21 +983,24 @@ define("OPAL_DELETE_PATIENT_DIAGNOSIS","
 ");
 
 define("OPAL_GET_PATIENT_NAME", "
-    SELECT PatientSerNum AS psnum, PatientId AS pid, FirstName AS pname, LastName AS plname,
-    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang
-    FROM ".OPAL_PATIENT_TABLE." WHERE LastName LIKE :name;
+    SELECT p.PatientSerNum AS psnum, phi.MRN AS pid, p.FirstName AS pname, p.LastName AS plname, p.SSN AS pramq,
+    p.Sex AS psex, p.Email AS pemail, p.Language AS plang, phi.Hospital_Identifier_Type_Code AS hospital
+    FROM ".OPAL_PATIENT_TABLE." p LEFT JOIN ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi ON phi.PatientSerNum = p.PatientSerNum
+	WHERE LastName LIKE :name;
 ");
 
 define("OPAL_GET_PATIENT_MRN", "
-    SELECT PatientSerNum AS psnum, PatientId AS pid, FirstName AS pname, LastName AS plname,
-    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang
-    FROM ".OPAL_PATIENT_TABLE." WHERE PatientId LIKE :mrn;
+    SELECT p.PatientSerNum AS psnum, phi.MRN AS pid, p.FirstName AS pname, p.LastName AS plname,
+    p.SSN AS pramq, p.Sex AS psex, p.Email AS pemail, p.Language AS plang, phi.Hospital_Identifier_Type_Code AS hospital
+    FROM ".OPAL_PATIENT_TABLE." p LEFT JOIN ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi ON phi.PatientSerNum = p.PatientSerNum
+    WHERE PatientId LIKE :mrn;
 ");
 
 define("OPAL_GET_PATIENT_RAMQ", "
-    SELECT PatientSerNum AS psnum, PatientId AS pid, FirstName AS pname, LastName AS plname,
-    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang
-    FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :ramq;
+    SELECT p.PatientSerNum AS psnum, phi.MRN AS pid, p.FirstName AS pname, p.LastName AS plname,
+    p.SSN AS pramq, p.Sex AS psex, p.Email AS pemail, p.Language AS plang, phi.Hospital_Identifier_Type_Code AS hospital
+    FROM ".OPAL_PATIENT_TABLE." p LEFT JOIN ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi ON phi.PatientSerNum = p.PatientSerNum
+    WHERE SSN LIKE :ramq;
 ");
 
 define("OPAL_GET_DIAGNOSIS_REPORT", "
