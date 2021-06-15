@@ -552,7 +552,7 @@ class Patient extends Module {
             if (!in_array($post["language"], $validLang))
                 $errCode = "1" . $errCode;
             else
-                $errCode = "0" . $errCode;    
+                $errCode = "0" . $errCode;
         }
 
         if(!array_key_exists("gender", $post)){
@@ -561,8 +561,7 @@ class Patient extends Module {
             else
                 $errCode = "0" . $errCode;
         }
-
-
+        
         print_r($errCode);
         return $errCode;
 
