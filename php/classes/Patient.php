@@ -493,36 +493,43 @@ class Patient extends Module {
         return $response;
     }
 
-    /*
+    /**
      * Validate patient info
      *
      * @params  $post : array - Contains the following information
-     *                          mrn : Medical Record Number of the patient (mandatory)
-     *                          site : Site acronym of the establishment (mandatory)
-     * @return  $errCode : int - error code coded on bitwise operation. If 0, no error.
+     *                          mrns : List of patient identifiers
+     *                              mrn : Medical Record Number of the patient (mandatory)
+     *                              site : Site acronym of the establishment (mandatory)
+     *                          ramq: Quebec Health Medical Number
+     *                          birthdate : Date of birth
+     *                          name : LastName and Firstname
+     *
+     *  1st bit invalid mrn / site
+     *  2nd bit invalid ramq
+     *  3rd bit date of birth
+     *  4th bit name
+     *
+     * @return $errCode
      */
     protected function _validatePatientParams($post)
     {
         $pattern = "/^[0-9]*$/i";
         $errCode = "";
 
-        $post = HelpSetup::arraySanitization($post);
-
         if(!array_key_exists("mrns", $post) || $post["mrns"] == "" || count($post["mrns"]) <= 0)
             $errCode = "1" . $errCode;
-        else
+        else {
             $invalidValue = false;
             foreach ($post["mrns"] as $identifier) {
-                if (!preg_match($pattern,  $identifier["mrn"] )) {
-                    print_r("PAS BON " . $identifier["mrn"]);
-                }
-                $invalidValue = !preg_match($pattern,  $identifier["mrn"] );
+
+                $invalidValue = !preg_match($pattern, $identifier["mrn"]);
             }
             if ($invalidValue) {
                 $errCode = "1" . $errCode;
             } else {
                 $errCode = "0" . $errCode;
             }
+        }
 
         if(!array_key_exists("ramq", $post) || $post["ramq"] == "")
             $errCode = "1" . $errCode;
@@ -542,6 +549,20 @@ class Patient extends Module {
 
         return bindec($errCode);
     }
+
+    /**
+     * Update Patient information
+     *
+     * @params  $post : array - Contains the following information
+     *                          mrns : List of patient identifiers
+     *                              mrn : Medical Record Number of the patient (mandatory)
+     *                              site : Site acronym of the establishment (mandatory)
+     *                          ramq: Quebec Health Medical Number
+     *                          birthdate : Date of birth
+     *                          name : LastName and Firstname
+     *
+     * @return  $errCode : int - error code coded on bitwise operation. If 0, no error.
+     */
     public function updatePatient($post){
 
         $response = array(
@@ -559,9 +580,6 @@ class Patient extends Module {
 
             $patientSite = $this->opalDB->getPatientSite($identifier["mrn"], $identifier["site"]);
             $invalidValue = !boolVal(count($patientSite)) && $invalidValue;
-            if (count($patientSite) == 1){
-                print_r($patientSite,true);
-            }
         }
 
         if ($invalidValue){
@@ -570,15 +588,10 @@ class Patient extends Module {
             $response['status']  = "Success";
             $response['data']  = json_encode($patientSite);
         }
-
-        print_r("errCode : " . $errCode);
         // Update patient
-
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         return $response;
     }
-
-
 }

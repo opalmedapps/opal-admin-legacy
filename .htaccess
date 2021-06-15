@@ -2,8 +2,8 @@
 # Apache/PHP settings:
 #
 php_value max_input_vars 1000000
-php_value post_max_size 1024M
-php_value upload_max_filesize 1024M
+php_value post_max_size 2048M
+php_value upload_max_filesize 2048M
 
 # Protect files and directories from prying eyes.
 <FilesMatch "\.(engine|inc|info|install|make|module|profile|test|po|sh|.*sql|theme|tpl(\.php)?|xtmpl)(~|\.sw[op]|\.bak|\.orig|\.save)?$|^(\..*|Entries.*|Repository|Root|Tag|Template|composer\.(json|lock))$|^#.*#$|\.php(~|\.sw[op]|\.bak|\.orig\.save)$">
@@ -230,8 +230,8 @@ RewriteRule ^patient/get/education-options php/patient/find_educ.php [QSA,L]
 RewriteRule ^patient/get/educ-report php/patient/get.education_report.php [QSA,L]
 RewriteRule ^patient/get/patient-activities php/patient/get.patient_activities.php [QSA,L]
 RewriteRule ^patient/get/patients php/patient/get.patients.php [QSA,L]
-RewriteRule ^patient/get/patient-data php/patient/get.patient_data.php [QSA,L]
 RewriteRule ^patient/get/patient-exist php/patient/get.patient_exist.php [QSA,L]
+RewriteRule ^patient/get/patient-data php/patient/get.patient_data.php [QSA,L]
 RewriteRule ^patient/get/patient-mrn php/patient/find_mrn.php [QSA,L]
 RewriteRule ^patient/get/patient-name php/patient/find_name.php [QSA,L]
 RewriteRule ^patient/get/patient-ramq php/patient/find_ramq.php [QSA,L]
@@ -240,6 +240,10 @@ RewriteRule ^patient/get/questionnaire-report php/patient/get.questionnaire_repo
 RewriteRule ^patient/get/questionnaire-options php/patient/find_qst.php [QSA,L]
 RewriteRule ^patient/update/patient-data php/patient/update.patient_data.php [QSA,L]
 RewriteRule ^patient/update/publish-flags php/patient/update.publish_flags.php [QSA,L]
+
+# Appointment Section
+RewriteRule ^appointment/get/appointments php/appointment/get.appointments.php [QSA,L]
+RewriteRule ^api/public/v1/appointment php/appointment/get.appointments.php [QSA,L]
 
 
 # Post Section
