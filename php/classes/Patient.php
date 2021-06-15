@@ -549,7 +549,7 @@ class Patient extends Module {
             $errCode = "0" . $errCode;
 
 
-        if (!in_array($post["language"], $validLang))
+        /*if (!in_array($post["language"], $validLang))
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
@@ -558,7 +558,7 @@ class Patient extends Module {
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
-
+        */
         return $errCode;
 
     }
