@@ -666,6 +666,7 @@ class Patient extends Module {
             $patientdata["StatusReasonTxt"] = "Deceased patient";
             $patientdata["BlockedStatus"] = 1;
             $this->opalDB->updatePatientPublishFlag($patientSerNum,0);
+            $patientdata["DeathDate"] = $post["deceasedDateTime"];
         }
 
         if (array_key_exists("deceasedDateTime", $post) && $post["deceasedDateTime"] == null){
@@ -674,7 +675,6 @@ class Patient extends Module {
             $this->opalDB->updatePatientPublishFlag($patientSerNum,0);
         }
 
-        $patientdata["DeathDate"] = $post["deceasedDateTime"];
         unset($patientdata["LastUpdated"]);
 
         if (count($toInsertMultiple) > 0){
