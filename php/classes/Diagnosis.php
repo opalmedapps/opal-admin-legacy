@@ -198,6 +198,7 @@ class Diagnosis extends Module {
         $this->checkDeleteAccess($post);
         $total = $this->opalDB->deleteAllDiagnosisCodes($post['serial']);
         $total += $this->opalDB->deleteDiagnosisTranslation($post['serial']);
+        return $total;
     }
 
     /*
@@ -336,7 +337,7 @@ class Diagnosis extends Module {
                 $currentPatientDiagnosis = $currentPatientDiagnosis[0];
                 $toInsert["DiagnosisSerNum"] = $currentPatientDiagnosis["DiagnosisSerNum"];
             }
-            return $this->opalDB->insertPatientDiagnosis($toInsert);
+            return $this->opalDB->replacePatientDiagnosis($toInsert);
         }
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates patient diagnosis found.");
@@ -367,7 +368,7 @@ class Diagnosis extends Module {
         else if(count($currentPatientDiagnosis) < 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>32)));
         $currentPatientDiagnosis = $currentPatientDiagnosis[0];
-        return $this->opalDB->deletePatientDiagnosis($currentPatientDiagnosis["DiagnosisSerNum"]);
+        $this->opalDB->deletePatientDiagnosis($currentPatientDiagnosis["DiagnosisSerNum"]);
     }
 
     /*
@@ -429,10 +430,8 @@ class Diagnosis extends Module {
         //Fifth bit - external ID
         if(!array_key_exists("rowId", $post) || $post["rowId"] == "") {
             $errCode = "1" . $errCode;
-        }  else {
-            $post["rowId"] = intval($post["rowId"]);
+        }  else
             $errCode = "0" . $errCode;
-        }
         return $errCode;
     }
 
@@ -442,7 +441,7 @@ class Diagnosis extends Module {
      *                          mrn : Medical Record Number of the patient (mandatory)
      *                          site : Site acronym of the establishment (mandatory)
      *                          source : Source database of the diagnosis (mandatory)
-     *                          rowId : External ID of the diagnosis (mandatory)
+     *                          rowId : External ID of the diagnosis code (mandatory)
      *                          code : Diagnosis code (mandatory)
      *                          creationDate : creation date of the record (mandatory)
      *                          descriptionEn : english description of the diagnosis (mandatory)
@@ -454,14 +453,14 @@ class Diagnosis extends Module {
      * */
     protected function _validatePatientDiagnosis(&$post, &$patientSite, &$source) {
         $post = HelpSetup::arraySanitization($post);
-        $errCode = $this->_validateBasicPatientInfo($post, $patientSite, $source);
+        $errCode = $this->  _validateBasicPatientInfo($post, $patientSite, $source);
 
         //Sixth bit - code
         if(!array_key_exists("code", $post) || $post["code"] == "") {
             $errCode = "1" . $errCode;
         }
         else {
-            $code = $this->opalDB->getDiagnosisCodeDetails($post["code"], $source["SourceDatabaseSerNum"], $post["rowId"]);
+            $code = $this->opalDB->getDiagnosisCodeDetails($post["code"], $source["SourceDatabaseName"], $post["rowId"]);
             if(count($code) != 1) {
                 $errCode = "1" . $errCode;
             } else {
