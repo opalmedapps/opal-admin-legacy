@@ -578,7 +578,13 @@ class Patient extends Module {
      *                          birthdate : Date of birth
      *                          name : LastName and Firstname
      *
+     *  1st bit invalid mrn / site
+     *  2nd bit invalid ramq
+     *  3rd bit date of birth
+     *  4th bit name
+     *
      * @return  $errCode : int - error code coded on bitwise operation. If 0, no error.
+     * @throws Exception
      */
     public function updatePatient($post){
 
@@ -592,96 +598,110 @@ class Patient extends Module {
 
         $errCode = $this->_validatePatientParams($post) . $errCode;
 
-        $invalidValue = true;
+        $patientNotFound = true;
         $mrns = $post["mrns"];
-        $toInsertMultiple = array();
+        $toBeInsertPatientIds = array();
         $patientSerNum = "";
+        $cptIDs = 0;
+        $lenIDs = count($mrns);
+
+        // Looping patient Identifiers
         while (($identifier = array_shift($mrns)) !== NULL) {
             $mrn = str_pad($identifier["mrn"] ,7,"0",STR_PAD_LEFT);
-            $patientSite = $this->opalDB->getPatientSite($mrn, $identifier["site"]);
-            $invalidValue = !boolVal(count($patientSite)) && $invalidValue;
-            if (count($patientSite) == 1){
-                $patientSerNum = $patientSite[0]["PatientSerNum"];
+            $patientID = $this->opalDB->getPatientSite($mrn, $identifier["site"]);
+
+            $patientNotFound = !boolVal(count($patientID)) && $patientNotFound;
+            if (count($patientID) == 1){
+                $patientSerNum = $patientID[0]["PatientSerNum"];
             } else {
                 if ($patientSerNum == ""){
+                    // Return element to identifier list until PatientSerNum is found
                     $mrns = array_merge($mrns,array($identifier));
+                    $cptIDs = $cptIDs + 1;
                 } else {
-                    array_push($toInsertMultiple, array("PatientSerNum"=>$patientSerNum,
+                    // Add entry for Patient_Hospital_Identifier
+                    array_push($toBeInsertPatientIds, array("PatientSerNum"=>$patientSerNum,
                         "Hospital_Identifier_Type_Code"=>$identifier["site"],
                         "MRN"=>$mrn,
                         "Is_Active"=>$identifier["active"]));
                 }
             }
+
+            // Patient does not exist with any identifiers
+            if ($cptIDs > $lenIDs) {
+                break;
+            }
         }
 
-        if ($invalidValue){
+        // Patient does not exist with any identifiers
+        if ($patientNotFound)
             $errCode = "1" . $errCode;
-        } else {
-            $response['status']  = "Success";
-            $response['data']  = json_encode($patientSite);
-        }
+        else
+            $errCode = "0" . $errCode;
 
         $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        //Update patient demographics
-        $patientdata = $this->opalDB->fetchTriggersData("SELECT * FROM Patient where PatientSerNum=" . $patientSerNum)[0];
-        $patientdata["PatientSerNum"] = $patientSerNum;
-        $patientdata["FirstName"] = $post["name"]["firstName"];
-        $patientdata["LastName"] = $post["name"]["lastName"];
-        $patientdata["SSN"] = $post["ramq"];
-        $patientdata["DateOfBirth"] = $post["birthdate"];
+        // Get current patient demographic
+        $patientData = $this->opalDB->fetchTriggersData("SELECT * FROM Patient where PatientSerNum=" . $patientSerNum)[0];
 
-        $from = new DateTime($patientdata["DateOfBirth"]);
+        //Update patient demographics
+        $patientData["PatientSerNum"] = $patientSerNum;
+        $patientData["FirstName"] = $post["name"]["firstName"];
+        $patientData["LastName"] = $post["name"]["lastName"];
+        $patientData["SSN"] = $post["ramq"];
+        $patientData["DateOfBirth"] = $post["birthdate"];
+
+        $from = new DateTime($patientData["DateOfBirth"]);
         $to   = new DateTime('today');
         $age  =  $from->diff($to)->y;
 
         if ($age > 13){
-            $patientdata["BlockedStatus"]   = 1;
-            $patientdata["StatusReasonTxt"] = "Patient passed 13 years of age";
+            $patientData["BlockedStatus"]   = 1;
+            $patientData["StatusReasonTxt"] = "Patient passed 13 years of age";
         }
 
         if (array_key_exists("alias", $post) && !empty($post["alias"])){
-            $patientdata["Alias"] = $post["alias"];
+            $patientData["Alias"] = $post["alias"];
         }
 
         if (array_key_exists("gender", $post) && !empty($post["gender"])){
-            $patientdata["Sex"] = $post["gender"];
+            $patientData["Sex"] = $post["gender"];
         }
 
         if (array_key_exists("email", $post) && !empty($post["email"])){
-            $patientdata["Email"]    = $post["email"];
+            $patientData["Email"]    = $post["email"];
         }
 
         if (array_key_exists("phone", $post) && !empty($post["phone"])){
-            $patientdata["TelNum"]   = $post["phone"];
+            $patientData["TelNum"]   = $post["phone"];
         }
 
         if (array_key_exists("language", $post) && !empty($post["language"])){
-            $patientdata["Language"] = $post["language"];
+            $patientData["Language"] = $post["language"];
         }
 
         if(array_key_exists("deceasedDateTime", $post) && $post["deceasedDateTime"] != ""){
-            $patientdata["StatusReasonTxt"] = "Deceased patient";
-            $patientdata["BlockedStatus"] = 1;
+            $patientData["StatusReasonTxt"] = "Deceased patient";
+            $patientData["BlockedStatus"] = 1;
             $this->opalDB->updatePatientPublishFlag($patientSerNum,0);
-            $patientdata["DeathDate"] = $post["deceasedDateTime"];
+            $patientData["DeathDate"] = $post["deceasedDateTime"];
         }
 
         if (array_key_exists("deceasedDateTime", $post) && $post["deceasedDateTime"] == null){
-            $patientdata["StatusReasonTxt"] = " ";
-            $patientdata["BlockedStatus"] = 0;
+            $patientData["StatusReasonTxt"] = " ";
+            $patientData["BlockedStatus"] = 0;
             $this->opalDB->updatePatientPublishFlag($patientSerNum,0);
         }
 
-        unset($patientdata["LastUpdated"]);
+        unset($patientData["LastUpdated"]);
 
-        if (count($toInsertMultiple) > 0){
-            $this->opalDB->updatePatientLink($toInsertMultiple);
+        if (count($toBeInsertPatientIds) > 0){
+            $this->opalDB->updatePatientLink($toBeInsertPatientIds);
         }
 
-        $this->opalDB->updatePatient($patientdata);
+        $this->opalDB->updatePatient($patientData);
 
         return $response;
     }
