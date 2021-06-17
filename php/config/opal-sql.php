@@ -930,8 +930,10 @@ define("OPAL_GET_SOURCE_DB_DETAILS","
 ");
 
 define("OPAL_GET_DIAGNOSIS_CODE_DETAILS","
-    SELECT * FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE code = :code AND source = :source AND externalId = :externalId
-    AND deleted = ".NON_DELETED_RECORD."
+    SELECT * FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." msd
+    LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." sd ON sd.SourceDatabaseSerNum = msd.source
+    WHERE msd.code = :code AND sd.SourceDatabaseName = :SourceDatabaseName AND msd.externalId = :externalId
+    AND msd.deleted = ".NON_DELETED_RECORD."
 ");
 
 define("OPAL_GET_PATIENT_DIAGNOSIS_ID","

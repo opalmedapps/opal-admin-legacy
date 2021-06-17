@@ -1992,7 +1992,7 @@ class DatabaseOpal extends DatabaseAccess {
     function getDiagnosisCodeDetails($code, $source, $externalId) {
         return $this->_fetchAll(OPAL_GET_DIAGNOSIS_CODE_DETAILS, array(
             array("parameter"=>":code","variable"=>$code,"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SourceDatabaseName","variable"=>$source,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":externalId","variable"=>$externalId,"data_type"=>PDO::PARAM_STR),
         ));
     }
@@ -2002,10 +2002,10 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  $toInsert : array - Contains the patient diagnosis info
      * @return  int - last insert ID
      * */
-    function insertPatientDiagnosis($toInsert) {
+    function replacePatientDiagnosis($toInsert) {
         $toInsert["createdBy"] = $this->getUsername();
         $toInsert["updatedBy"] = $this->getUsername();
-        return $this->_insertRecordIntoTable(OPAL_DIAGNOSIS_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_DIAGNOSIS_TABLE, $toInsert);
     }
 
     /*
