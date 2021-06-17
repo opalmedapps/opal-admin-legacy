@@ -494,7 +494,7 @@ class Patient extends Module {
     }
 
     /**
-     * Validate patient info
+     * Validate patient demographics mandatory fields
      *
      * @params  $post : array - Contains the following information
      *                          mrns : List of patient identifiers
@@ -562,9 +562,7 @@ class Patient extends Module {
                 $errCode = "0" . $errCode;
         }
 
-        print_r($errCode);
         return $errCode;
-
     }
 
     /**
@@ -705,5 +703,4 @@ class Patient extends Module {
 
         return $response;
     }
-
 }
