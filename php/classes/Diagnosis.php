@@ -383,7 +383,14 @@ class Diagnosis extends Module {
      *                          site : Site acronym of the establishment (mandatory)
      *                          source : Source database of the diagnosis (mandatory)
      *                          rowId : External ID of the diagnosis (mandatory)
-     *                          code : Diagnosis code (mandatory)
+     * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
+     *                      Error validation code is coded as an int of 11 bits (value from 0 to 2047). Bit informations
+     *                      are coded from right to left:
+     *                      1: MRN invalid or missing
+     *                      2: site invalid or missing
+     *                      3: combo of MRN-site-patient does not exists
+     *                      4: source invalid or missing
+     *                      5: rowId invalid or missing
      * @return  $errCode : int - error code.
      *          $patientSite : array (reference) - site info
      *          $source : array (reference) - source database
@@ -391,22 +398,25 @@ class Diagnosis extends Module {
     protected function _validateBasicPatientInfo(&$post, &$patientSite, &$source) {
         $errCode = "";
 
-        //First bit - MRN
+        // 1st bit - MRN
         if(!array_key_exists("mrn", $post) || $post["mrn"] == "") {
             $errCode = "1" . $errCode;
         } else {
             $errCode = "0" . $errCode;
         }
 
-        //Second bit - Site
+        // 2nd bit - Site
         if(!array_key_exists("site", $post) || $post["site"] == "") {
             $errCode = "1" . $errCode;
         } else {
             $errCode = "0" . $errCode;
         }
 
-        //Third bit - MRN and site combo
-        if(array_key_exists("mrn", $post) && $post["mrn"] != "" && array_key_exists("site", $post) && $post["site"] != "") {
+        // 3rd bit - MRN and site combo must exists
+        if(bindec($errCode) != 0) {
+            $patientSite = array();
+            $errCode = "1" . $errCode;
+        } else {
             $patientSite = $this->opalDB->getPatientSite($post["mrn"], $post["site"]);
             if(count($patientSite) != 1) {
                 $patientSite = array();
@@ -418,7 +428,7 @@ class Diagnosis extends Module {
             }
         }
 
-        //Fourth bit - source
+        // 4th bit - source
         if(!array_key_exists("source", $post) || $post["source"] == "") {
             $errCode = "1" . $errCode;
         } else {
@@ -432,7 +442,7 @@ class Diagnosis extends Module {
             }
         }
 
-        //Fifth bit - external ID
+        // 5th bit - external ID
         if(!array_key_exists("rowId", $post) || $post["rowId"] == "")
             $errCode = "1" . $errCode;
         else
@@ -451,8 +461,23 @@ class Diagnosis extends Module {
      *                          code : Diagnosis code (mandatory)
      *                          creationDate : creation date of the record (mandatory)
      *                          descriptionEn : english description of the diagnosis (mandatory)
+     *                          descriptionFr : french description of the diagnosis (optional)
      *                          stage : no idea, but its for Aria (optional)
      *                          stageCriteria : no idea, but its for Aria (optional)
+     * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
+     *                      Error validation code is coded as an int of 11 bits (value from 0 to 2047). Bit informations
+     *                      are coded from right to left:
+     *                      1: MRN invalid or missing
+     *                      2: site invalid or missing
+     *                      3: combo of MRN-site does not exists
+     *                      4: source invalid or missing
+     *                      5: rowId invalid or missing
+     *                      6: externalId of the diagnosis code invalid or missing
+     *                      7: diagnosis code invalid or missing
+     *                      8: source diagnosis cannot be found
+     *                      9: creationDate invalid or missing
+     *                      10: descriptionEn invalid or missing
+     *                      11: descriptionFr invalid
      * @return  $errCode : int - error code.
      *          $patientSite : array (reference) - site info
      *          $source : array (reference) - source database
@@ -461,13 +486,13 @@ class Diagnosis extends Module {
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateBasicPatientInfo($post, $patientSite, $source);
 
-        // Sixth bit - externalId of the diagnosis code
+        // 6th bit - externalId of the diagnosis code
         if(!array_key_exists("externalId", $post) || $post["externalId"] == "")
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
 
-        // Seventh bit - diagnosis code
+        // 7th bit - diagnosis code
         if(!array_key_exists("code", $post) || $post["code"] == "")
             $errCode = "1" . $errCode;
         else
@@ -484,19 +509,19 @@ class Diagnosis extends Module {
                 $errCode = "0" . $errCode;
         }
 
-        //9th bit - creation date
+        // 9th bit - creation date
         if(!array_key_exists("creationDate", $post) || $post["creationDate"] == "" || !HelpSetup::verifyDate($post["creationDate"], false, "Y-m-d H:i:s"))
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
 
-        //10th bit - description EN
+        // 10th bit - description EN
         if(!array_key_exists("descriptionEn", $post) || $post["descriptionEn"] == "") {
             $errCode = "1" . $errCode;
         } else
             $errCode = "0" . $errCode;
 
-        //11th bit - description FR
+        // 11th bit - description FR
         if(!array_key_exists("descriptionFr", $post)) {
             $errCode = "1" . $errCode;
         } else
