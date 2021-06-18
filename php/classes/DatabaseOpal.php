@@ -2015,11 +2015,11 @@ class DatabaseOpal extends DatabaseAccess {
      *          $externalId : string - external ID from an outside source
      * @return  Diagnosis SerNum for a specific patient in a specific DB
      * */
-    function getPatientDiagnosisId($patientId, $source, $externalId) {
+    function getPatientDiagnosisId($patientId, $source, $diagnosisAriaSer) {
         return $this->_fetchAll(OPAL_GET_PATIENT_DIAGNOSIS_ID, array(
             array("parameter"=>":PatientSerNum","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$source,"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":DiagnosisAriaSer","variable"=>$externalId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":DiagnosisAriaSer","variable"=>$diagnosisAriaSer,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
