@@ -433,9 +433,9 @@ class Diagnosis extends Module {
         }
 
         //Fifth bit - external ID
-        if(!array_key_exists("rowId", $post) || $post["rowId"] == "") {
+        if(!array_key_exists("rowId", $post) || $post["rowId"] == "")
             $errCode = "1" . $errCode;
-        }  else
+        else
             $errCode = "0" . $errCode;
         return $errCode;
     }
@@ -446,6 +446,7 @@ class Diagnosis extends Module {
      *                          mrn : Medical Record Number of the patient (mandatory)
      *                          site : Site acronym of the establishment (mandatory)
      *                          source : Source database of the diagnosis (mandatory)
+     *                          externalId : External ID of the diagnosis code (mandatory)
      *                          rowId : External ID of the diagnosis code (mandatory)
      *                          code : Diagnosis code (mandatory)
      *                          creationDate : creation date of the record (mandatory)
@@ -458,36 +459,44 @@ class Diagnosis extends Module {
      * */
     protected function _validatePatientDiagnosis(&$post, &$patientSite, &$source) {
         $post = HelpSetup::arraySanitization($post);
-        $errCode = $this->  _validateBasicPatientInfo($post, $patientSite, $source);
+        $errCode = $this->_validateBasicPatientInfo($post, $patientSite, $source);
 
-        //Sixth bit - code
-        if(!array_key_exists("code", $post) || $post["code"] == "") {
+        // Sixth bit - externalId of the diagnosis code
+        if(!array_key_exists("externalId", $post) || $post["externalId"] == "")
             $errCode = "1" . $errCode;
-        }
-        else {
-            $code = $this->opalDB->getDiagnosisCodeDetails($post["code"], $source["SourceDatabaseName"], $post["rowId"]);
-            if(count($code) != 1) {
-                $errCode = "1" . $errCode;
-            } else {
-                $code = $code[0];
-                $errCode = "0" . $errCode;
-            }
-        }
-
-        //Seventh bit - creation date
-        if(!array_key_exists("creationDate", $post) || $post["creationDate"] == "" || !HelpSetup::verifyDate($post["creationDate"], false, "Y-m-d H:i:s")) {
-            $errCode = "1" . $errCode;
-        } else {
+        else
             $errCode = "0" . $errCode;
+
+        // Seventh bit - diagnosis code
+        if(!array_key_exists("code", $post) || $post["code"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        // 8th bit - the combo code/source/ExternalId exists as a master source diagnosis
+        if (bindec($errCode) != 0)
+            $errCode = "1" . $errCode;
+        else {
+            $code = $this->opalDB->getDiagnosisCodeDetails($post["code"], $source["SourceDatabaseName"], $post["externalId"]);
+            if(count($code) != 1)
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
         }
 
-        //bit eight - description EN
+        //9th bit - creation date
+        if(!array_key_exists("creationDate", $post) || $post["creationDate"] == "" || !HelpSetup::verifyDate($post["creationDate"], false, "Y-m-d H:i:s"))
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        //10th bit - description EN
         if(!array_key_exists("descriptionEn", $post) || $post["descriptionEn"] == "") {
             $errCode = "1" . $errCode;
         } else
             $errCode = "0" . $errCode;
 
-        //bit nine - description FR
+        //11th bit - description FR
         if(!array_key_exists("descriptionFr", $post)) {
             $errCode = "1" . $errCode;
         } else
