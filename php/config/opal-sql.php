@@ -117,7 +117,6 @@ define("OPAL_USERS_TABLE", "Users");
 define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
 define("OPAL_PATIENT_ACTIVITY_LOG_TABLE","PatientActivityLog");
 define("OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE", "PatientDeviceIdentifier");
-define("OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE", "Patient_Hospital_Identifier");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -1318,16 +1317,16 @@ define("OPAL_UPDATE_PATIENT_PUBLISH_FLAG","
 ");
 
 define("OPAL_GET_PATIENTS","
-    SELECT DISTINCT pc.PatientSerNum AS serial, pc.PatientUpdate AS transfer, CONCAT(UCASE(LEFT(pt.FirstName, 1)), LCASE(SUBSTRING(pt.FirstName, 2)),
-    ' ', UCASE(LEFT(pt.LastName, 1)), LCASE(SUBSTRING(pt.LastName, 2))) AS name, pt.PatientId AS
-    patientid, pc.LastTransferred AS lasttransferred, pt.email AS email FROM ".OPAL_PATIENT_TABLE." pt RIGHT JOIN
+    SELECT DISTINCT pc.PatientSerNum AS serial, pt.SSN AS RAMQ, pc.PatientUpdate AS transfer, CONCAT(UCASE(LEFT(pt.FirstName, 1)), LCASE(SUBSTRING(pt.FirstName, 2)),
+    ' ', UCASE(LEFT(pt.LastName, 1)), LCASE(SUBSTRING(pt.LastName, 2))) AS name, pc.LastTransferred AS lasttransferred, pt.email AS email FROM ".OPAL_PATIENT_TABLE." pt RIGHT JOIN
     ".OPAL_PATIENT_CONTROL_TABLE." pc ON pt.PatientSerNum = pc.PatientSerNum LEFT JOIN ".OPAL_USERS_TABLE." usr ON
     pt.PatientSerNum = usr.UserTypeSerNum WHERE usr.UserType = 'Patient';
 ");
 
 define("OPAL_GET_PATIENT_ACTIVITY","
-SELECT DISTINCT 
-p.PatientId AS patientId,
+SELECT DISTINCT
+p.PatientSerNum AS serial,
+p.SSN AS RAMQ,
 CONCAT(UCASE(LEFT(p.FirstName, 1)), LCASE(SUBSTRING(p.FirstName, 2)),
 ' ', UCASE(LEFT(p.LastName, 1)), LCASE(SUBSTRING(p.LastName, 2))) AS name,
 pdi.DeviceId AS deviceId,

@@ -2744,7 +2744,10 @@ class DatabaseOpal extends DatabaseAccess {
      * @return array
      */
     function getPatients() {
-        return $this->_fetchAll(OPAL_GET_PATIENTS, array());
+        $results = $this->_fetchAll(OPAL_GET_PATIENTS, array());
+        foreach ($results as &$item)
+            $item["MRN"] = $this->getMrnPatientSerNum($item["serial"]);
+        return $results;
     }
 
     /**
@@ -2752,7 +2755,12 @@ class DatabaseOpal extends DatabaseAccess {
      * @return array
      */
     function getPatientActivityLog() {
-        return $this->_fetchAll(OPAL_GET_PATIENT_ACTIVITY, array());
+        $results = $this->_fetchAll(OPAL_GET_PATIENT_ACTIVITY, array());
+        foreach ($results as &$item) {
+            $item["MRN"] = $this->getMrnPatientSerNum($item["serial"]);
+            unset($item["serial"]);
+        }
+        return $results;
     }
 
 
