@@ -1268,7 +1268,7 @@ define("OPAL_UPDATE_TEST_EXPRESSION","
 ");
 
 define("OPAL_GET_PATIENTS_LIST","
-    SELECT DISTINCT PatientSerNum AS id, 0 AS added, CONCAT(CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))), ' (', PatientId, ')') AS name
+    SELECT DISTINCT PatientSerNum AS id, 0 AS added, CONCAT(CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2)))) AS name
     FROM ".OPAL_PATIENT_TABLE." ORDER BY PatientSerNum;
 ");
 

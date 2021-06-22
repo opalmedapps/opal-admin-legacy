@@ -2603,7 +2603,16 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  array - List of patients
      * */
     function getPatientsList() {
-        return $this->_fetchAll(OPAL_GET_PATIENTS_LIST, array());
+        $results = $this->_fetchAll(OPAL_GET_PATIENTS_LIST, array());
+        foreach($results as &$item) {
+            $temp = $this->_fetchAll(OPAL_GET_MRN_PATIENT_SERNUM, array(array("parameter"=>":PatientSerNum","variable"=>$item["id"],"data_type"=>PDO::PARAM_INT)));
+            $mrnList = array();
+            foreach ($temp as $mrn)
+                array_push($mrnList, $mrn["MRN"] . " (".$mrn["hospital"].")");
+            if(count($mrnList) > 0)
+                $item["name"] .= " (MRN: " . implode(", ", $mrnList) . ")";
+        }
+        return $results;
     }
 
     /*
