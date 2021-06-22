@@ -2687,6 +2687,190 @@
       "VERSION": "App Version",
       "LOGOUT": "Logout Time",
       "ERROR_ACTIVITIES": "An error occurred while getting the patients activities."
+    },
+    "REPORT": {
+      "TITLE":{
+        "MAIN": "Patient Report",
+        "INTRODUCTION": "Search and generate report for opal patients.",
+        "INDIVIDUAL": "Individual Report",
+        "INDIVIDUAL_DESC": "Used for individual patient statistics",
+        "GROUP": "Group Report",
+        "GROUP_DESC": "Used for group reporting statistics"
+      },
+      "SEARCH":{
+        "DB_ERROR": "An error occured while contacting the database: ",
+        "SEARCH_FAIL": "No results returned based on search parameters",
+        "UNKNOWN": "Something really wrong happened: "
+      },
+      "COLUMNS":{
+        "DIAGNOSIS":{
+          "TITLE": "Diagnosis",
+          "DESC": "Diagnosis Description",
+          "DATE": "Diagnosis Date",
+          "SERIAL": "Opal Diagnosis Serial"
+        },
+        "QUESTIONNAIRE":{
+          "TITLE": "Questionnaires",
+          "NAME": "Questionnaire Name",
+          "DATE": "Date Sent",
+          "COMPLETE": "Date Completed"
+        },
+        "APPOINTMENT":{
+          "TITLE": "Appointments",
+          "SCHEDULED": "Scheduled Appointment Time",
+          "DATE": "Date Added to Opal",
+          "STATUS": "Status",
+          "NAME": "Appointment Name",
+          "TYPE": "Appointment Type",
+          "RESOURCE": "Resource"
+        },
+        "EDUCATIONAL_MATERIAL":{
+          "TITLE": "Educational Materials",
+          "NAME": "Material Name",
+          "TYPE": "Material Type",
+          "DATE": "Date Sent",
+          "STATUS": "Read Status"
+        },
+        "LEGACY_LAB_TESTS":{
+          "TITLE": "Legacy Lab Results",
+          "NAME": "Test Name",
+          "UNIT": "Test Unit",
+          "DATE": "Test Date",
+          "OPAL_DATE": "Opal Date Added",
+          "MIN": "Min Normal Value",
+          "RESULT": "Test Result",
+          "MAX": "Max Normal Result",
+          "ABNORMAL": "Abnormal Flag",
+          "STATUS": "Read Status"
+        },
+        "LAB_TESTS":{
+          "TITLE": "Lab Results",
+          "GROUP": "Group Name",
+          "STATUS": "Read Status",
+          "NAME": "Test Name",
+          "DESC": "Description",
+          "ABNORMAL": "Abnormal Flag",
+          "RANGE": "Normal Range",
+          "RESULT": "Test Result",
+          "DATE_TEST": "Testing Time",
+          "DATE_RESULT": "Result Time",
+          "DATE_OPAL": "Added to Opal"
+        },
+        "NOTES":{
+          "TITLE": "Notifications",
+          "TYPE": "Note Type",
+          "NAME": "Note Name",
+          "DATE": "Date Sent",
+          "DATE_READ": "Date Read"
+        },
+        "CLINICAL_NOTES":{
+          "TITLE": "Clinical Notes",
+          "TYPE": "Note Type",
+          "NAME_ORIG": "Original Name",
+          "NAME_FINAL": "Final Name",
+          "DATE_CREATED": "Date Created",
+          "DATE_APPROVED": "Date Approved"
+        },
+        "TREATMENT_TEAM":{
+          "TITLE": "Treating Team Messages",
+          "NAME": "Title",
+          "DESC": "Body",
+          "DATE": "Date Sent",
+          "STATUS": "Read Status"
+        },
+        "TREATMENT_PLAN":{
+          "TITLE": "Treatment Planning",
+          "DESC": "Diagnosis Description",
+          "TYPE": "Alias Type",
+          "PRIORITY": "Priority",
+          "DESC_EXP": "Expression Description",
+          "NAME": "Alias Name",
+          "DESC_ALI": "Alias Description",
+          "TASK_STATUS": "Task Status",
+          "TASK_STATE": "Task State",
+          "TASK_DUE": "Task Due",
+          "TASK_COMPLETE": "Task Complete"
+        },
+        "GENERAL":{
+          "TITLE": "General"
+        },
+        "GROUP_REPORTS":{
+          "NAME": "First Name",
+          "NAME_FAMILY": "Last Name",
+          "SERIAL": "Opal Serial",
+          "AGE": "Age",
+          "BIRTH": "Date of Birth",
+          "SEX": "Sex",
+          "EMAIL": "Email",
+          "LANG": "Language",
+          "REG": "Opal Registration",
+          "DIAGNOSIS": "Diagnosis",
+          "DATE_DIAG": "Date of Diagnosis",
+          "DATE_SENT": "Date Sent",
+          "DATE_READ": "Date Read",
+          "DATE_COMPLETE": "Date Complete"
+        }
+      },
+      "EDUC_MATERIALS":{
+        "BOOKLET": "Booklet",
+        "FACTSHEET": "Factsheet",
+        "PACKAGE": "Package",
+        "VIDEO": "Video",
+        "TREAT": "Treatment Guidelines"
+      },
+      "INDIVIDUAL":{
+        "TITLE": "Individual Patient Reports",
+        "PSEARCH": "Search for patient",
+        "PNAME": "Patient last name:",
+        "PRAMQ": "Patient RAMQ",
+        "PMRN": "Patient MRN",
+        "SUBMIT": "Submit",
+        "RESET": "Reset",
+        "MULTIPLE": "Multiple patients found matching search criteria, please select:",
+        "NONE": "No Patients found matching criteria, please try again",
+        "PSELECT": "Selected Patient",
+        "LAST": "Last Name",
+        "NO_RAMQ": "No RAMQ",
+        "NO_MRN": "No MRN",
+        "FIRST": "First Name",
+        "SEX": "Sex",
+        "SERIAL": "Patient Serial",
+        "EMAIL": "Email",
+        "LANG": "Opal App Language",
+        "ISELECT": "Selected Information",
+        "GEN": "Generate Report"
+      },
+      "GROUP": {
+        "TITLE": "Group Patient Reports",
+        "PSELECT": "Select group reporting category",
+        "TITLE_EDUC": "Educational Material",
+        "TITLE_QST": "Questionnaires",
+        "TITLE_DEMO": "Patient Demographics",
+        "TAIL": " Group Reporting",
+        "EDUC_TYPE": "Educational material type:",
+        "ALL": "All",
+        "FOUND": "currently found in OpalDB",
+        "STATS": "Statistics for this report",
+        "MF": "% Female / Male / Unknown",
+        "FE": "% French / English preferred",
+        "AVAGE": "Average patient age",
+        "YR": " years",
+        "DY": " days",
+        "READ": "% Material read",
+        "AVTIME": "Average time until complete",
+        "REPORT": "Full report on ",
+        "RECORDS": " records found",
+        "QST_CHOOSE": "Choose questionnaire:",
+        "UNIQUE": "Total # unique patients in report",
+        "PCNT_COMPLETE": "Total % completed questionnaires",
+        "REGS": "Opal Registrations Over Time",
+        "PAT_ALL": "All Patients",
+        "PAT_FEM": "Female Patients",
+        "PAT_MAL": "Male Patients",
+        "TOT_REG": "Total Regsitrations",
+        "TIME": "Time"
+      }
+
     }
   },
   "USERS": {
@@ -2885,188 +3069,6 @@
     "LANGUAGE_SUCCESS": "Préférence de langue modifiée avec succès",
     "LANGUAGE_ERROR": "An error occurred. Unable to change the language.",
     "SERVER_ERROR": "An error occurred. Answer from the server: "
-  },
-  "PATIENTREPORT": {
-    "TITLE":{
-      "MAIN": "Patient Report",
-      "INTRODUCTION": "Search and generate report for opal patients.",
-      "INDIVIDUAL": "Individual Report",
-      "INDIVIDUAL_DESC": "Used for individual patient statistics",
-      "GROUP": "Group Report",
-      "GROUP_DESC": "Used for group reporting statistics"
-    },
-    "SEARCH":{
-      "DB_ERROR": "An error occured while contacting the database: ",
-      "SEARCH_FAIL": "No results returned based on search parameters",
-      "UNKNOWN": "Something really wrong happened: "
-    },
-    "COLUMNS":{
-      "DIAGNOSIS":{
-        "TITLE": "Diagnosis",
-        "DESC": "Diagnosis Description",
-        "DATE": "Diagnosis Date",
-        "SERIAL": "Opal Diagnosis Serial"
-      },
-      "QUESTIONNAIRE":{
-        "TITLE": "Questionnaires",
-        "NAME": "Questionnaire Name",
-        "DATE": "Date Sent",
-        "COMPLETE": "Date Completed"
-      },
-      "APPOINTMENT":{
-        "TITLE": "Appointments",
-        "SCHEDULED": "Scheduled Appointment Time",
-        "DATE": "Date Added to Opal",
-        "STATUS": "Status",
-        "NAME": "Appointment Name",
-        "TYPE": "Appointment Type",
-        "RESOURCE": "Resource"
-      },
-      "EDUCATIONAL_MATERIAL":{
-        "TITLE": "Educational Materials",
-        "NAME": "Material Name",
-        "TYPE": "Material Type",
-        "DATE": "Date Sent",
-        "STATUS": "Read Status"
-      },
-      "LEGACY_LAB_TESTS":{
-        "TITLE": "Legacy Lab Results",
-        "NAME": "Test Name",
-        "UNIT": "Test Unit",
-        "DATE": "Test Date",
-        "OPAL_DATE": "Opal Date Added",
-        "MIN": "Min Normal Value",
-        "RESULT": "Test Result",
-        "MAX": "Max Normal Result",
-        "ABNORMAL": "Abnormal Flag",
-        "STATUS": "Read Status"
-      },
-      "LAB_TESTS":{
-        "TITLE": "Lab Results",
-        "GROUP": "Group Name",
-        "STATUS": "Read Status",
-        "NAME": "Test Name",
-        "DESC": "Description",
-        "ABNORMAL": "Abnormal Flag",
-        "RANGE": "Normal Range",
-        "RESULT": "Test Result",
-        "DATE_TEST": "Testing Time",
-        "DATE_RESULT": "Result Time",
-        "DATE_OPAL": "Added to Opal"
-      },
-      "NOTES":{
-        "TITLE": "Notifications",
-        "TYPE": "Note Type",
-        "NAME": "Note Name",
-        "DATE": "Date Sent",
-        "DATE_READ": "Date Read"
-      },
-      "CLINICAL_NOTES":{
-        "TITLE": "Clinical Notes",
-        "TYPE": "Note Type",
-        "NAME_ORIG": "Original Name",
-        "NAME_FINAL": "Final Name",
-        "DATE_CREATED": "Date Created",
-        "DATE_APPROVED": "Date Approved"
-      },
-      "TREATMENT_TEAM":{
-        "TITLE": "Treating Team Messages",
-        "NAME": "Title",
-        "DESC": "Body",
-        "DATE": "Date Sent",
-        "STATUS": "Read Status"
-      },
-      "TREATMENT_PLAN":{
-        "TITLE": "Treatment Planning",
-        "DESC": "Diagnosis Description",
-        "TYPE": "Alias Type",
-        "PRIORITY": "Priority",
-        "DESC_EXP": "Expression Description",
-        "NAME": "Alias Name",
-        "DESC_ALI": "Alias Description",
-        "TASK_STATUS": "Task Status",
-        "TASK_STATE": "Task State",
-        "TASK_DUE": "Task Due",
-        "TASK_COMPLETE": "Task Complete"
-      },
-      "GENERAL":{
-        "TITLE": "General"
-      },
-      "GROUP_REPORTS":{
-        "NAME": "First Name",
-        "NAME_FAMILY": "Last Name",
-        "SERIAL": "Opal Serial",
-        "AGE": "Age",
-        "BIRTH": "Date of Birth",
-        "SEX": "Sex",
-        "EMAIL": "Email",
-        "LANG": "Language",
-        "REG": "Opal Registration",
-        "DIAGNOSIS": "Diagnosis",
-        "DATE_DIAG": "Date of Diagnosis",
-        "DATE_SENT": "Date Sent",
-        "DATE_READ": "Date Read",
-        "DATE_COMPLETE": "Date Complete"
-      }
-    },
-    "EDUC_MATERIALS":{
-      "BOOKLET": "Booklet",
-      "FACTSHEET": "Factsheet",
-      "PACKAGE": "Package",
-      "VIDEO": "Video",
-      "TREAT": "Treatment Guidelines"
-    },
-    "INDIVIDUAL":{
-      "TITLE": "Individual Patient Reports",
-      "PSEARCH": "Search for patient",
-      "PNAME": "Patient last name:",
-      "PRAMQ": "Patient RAMQ",
-      "PMRN": "Patient MRN",
-      "SUBMIT": "Submit",
-      "RESET": "Reset",
-      "MULTIPLE": "Multiple patients found matching search criteria, please select:",
-      "NONE": "No Patients found matching criteria, please try again",
-      "PSELECT": "Selected Patient",
-      "LAST": "Last Name",
-      "FIRST": "First Name",
-      "SEX": "Sex",
-      "SERIAL": "Patient Serial",
-      "EMAIL": "Email",
-      "LANG": "Opal App Language",
-      "ISELECT": "Selected Information",
-      "GEN": "Generate Report"
-    },
-    "GROUP": {
-      "TITLE": "Group Patient Reports",
-      "PSELECT": "Select group reporting category",
-      "TITLE_EDUC": "Educational Material",
-      "TITLE_QST": "Questionnaires",
-      "TITLE_DEMO": "Patient Demographics",
-      "TAIL": " Group Reporting",
-      "EDUC_TYPE": "Educational material type:",
-      "ALL": "All",
-      "FOUND": "currently found in OpalDB",
-      "STATS": "Statistics for this report",
-      "MF": "% Female / Male / Unknown",
-      "FE": "% French / English preferred",
-      "AVAGE": "Average patient age",
-      "YR": " years",
-      "DY": " days",
-      "READ": "% Material read",
-      "AVTIME": "Average time until complete",
-      "REPORT": "Full report on ",
-      "RECORDS": " records found",
-      "QST_CHOOSE": "Choose questionnaire:",
-      "UNIQUE": "Total # unique patients in report",
-      "PCNT_COMPLETE": "Total % completed questionnaires",
-      "REGS": "Opal Registrations Over Time",
-      "PAT_ALL": "All Patients",
-      "PAT_FEM": "Female Patients",
-      "PAT_MAL": "Male Patients",
-      "TOT_REG": "Total Regsitrations",
-      "TIME": "Time"
-    }
-
   },
   "ERROR_HANDLER": {
     "400": {

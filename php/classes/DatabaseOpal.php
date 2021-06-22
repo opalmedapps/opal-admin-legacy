@@ -789,7 +789,16 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  patient triggers found (array)
      * */
     function getPatientsTriggers() {
-        return $this->_fetchAll(OPAL_GET_PATIENTS_TRIGGERS, array());
+        $results = $this->_fetchAll(OPAL_GET_PATIENTS_TRIGGERS, array());
+        foreach($results as &$item) {
+            $temp = $this->getMrnPatientSerNum($item["id"]);
+            $mrnList = array();
+            foreach ($temp as $mrn)
+                array_push($mrnList, $mrn["MRN"] . " (".$mrn["hospital"].")");
+            if(count($mrnList) > 0)
+                $item["name"] .= " (MRN: " . implode(", ", $mrnList) . ")";
+        }
+        return $results;
     }
 
     /*
@@ -2088,7 +2097,7 @@ class DatabaseOpal extends DatabaseAccess {
      * */
     function getPatientMRN($pmrn) {
         return $this->_fetchAll(OPAL_GET_PATIENT_MRN, array(
-            array("parameter"=>":mrn","variable"=>'%'.$pmrn.'%',"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":MRN","variable"=>'%'.$pmrn.'%',"data_type"=>PDO::PARAM_STR),
         ));
     }
 
@@ -2097,9 +2106,9 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  $mrn : string - target patient ramq
      * @return  array - list of patient(s) matching search
      * */
-    function getPatientRAMQ($pramq) {
+    function getPatientRAMQ($ssn) {
         return $this->_fetchAll(OPAL_GET_PATIENT_RAMQ, array(
-            array("parameter"=>":ramq","variable"=>'%'.$pramq.'%',"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":SSN","variable"=>'%'.$ssn.'%',"data_type"=>PDO::PARAM_STR),
         ));
     }
 
@@ -3371,5 +3380,10 @@ class DatabaseOpal extends DatabaseAccess {
     function getCountAliases($listIDs) {
         $sql = str_replace("%%LISTIDS%%",implode(", ", $listIDs), OPAL_GET_COUNT_ALIASES);
         return $this->_fetch($sql, array());
+    }
+
+    function getMrnPatientSerNum($patientSerNum) {
+        return $this->_fetchAll(OPAL_GET_MRN_PATIENT_SERNUM, array(
+            array("parameter"=>":PatientSerNum","variable"=>$patientSerNum,"data_type"=>PDO::PARAM_INT)));
     }
 }

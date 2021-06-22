@@ -98,10 +98,12 @@ class Patient extends Module {
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateName($post);
         $errCode = bindec($errCode);
-        if($errCode != 0){
+        if($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
-        }
-        return $this->opalDB->getPatientName($post['pname']);
+
+        $results = $this->opalDB->getPatientName($post['pname']);
+        $this->_findOtherMRNS($results);
+        return $results;
     }
 
     /**
@@ -133,10 +135,12 @@ class Patient extends Module {
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateMRN($post);
         $errCode = bindec($errCode);
-        if($errCode != 0){
+        if($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
-        }
-        return $this->opalDB->getPatientMRN($post['pmrn']);
+
+        $results = $this->opalDB->getPatientMRN($post['pmrn']);
+        $this->_findOtherMRNS($results);
+        return $results;
     }
 
     /**
@@ -168,11 +172,17 @@ class Patient extends Module {
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateRAMQ($post);
         $errCode = bindec($errCode);
-        if($errCode != 0){
+        if($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
-        }
-        return $this->opalDB->getPatientRAMQ($post['pramq']);
 
+        $results = $this->opalDB->getPatientRAMQ($post['pramq']);
+        $this->_findOtherMRNS($results);
+        return $results;
+    }
+
+    protected function _findOtherMRNS(&$data) {
+        foreach ($data as &$item)
+            $item["MRN"] = $this->opalDB->getMrnPatientSerNum($item["psnum"]);
     }
 
     /**

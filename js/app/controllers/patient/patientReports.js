@@ -13,7 +13,6 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 
 
 	$scope.foundPatient = false; //only show the report once patient is found/selected
-	$scope.selectPatient = false; //only show if multiple patients are found from search and user must choose one
 	$scope.featureList = { // Which features will be added into the report
 		diagnosis: false,
 		appointments: false,
@@ -65,19 +64,19 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		columnDefs: [
 			{
 				field: 'description',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.DIAGNOSIS.DESC'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.DIAGNOSIS.DESC'),
 				width: '40%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'creationdate',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.DIAGNOSIS.DATE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.DIAGNOSIS.DATE'),
 				width: '40%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'sernum',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.DIAGNOSIS.SERIAL'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.DIAGNOSIS.SERIAL'),
 				width: '20%',
 				enableColumnMenu: false
 			},
@@ -91,19 +90,19 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		columnDefs: [
 			{
 				field: 'name',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.QUESTIONNAIRE.NAME'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.QUESTIONNAIRE.NAME'),
 				width: '40%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'dateadded',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.QUESTIONNAIRE.DATE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.QUESTIONNAIRE.DATE'),
 				width: '40%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'datecompleted',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.QUESTIONNAIRE.COMPLETE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.QUESTIONNAIRE.COMPLETE'),
 				width: '20%',
 				enableColumnMenu: false
 			},
@@ -117,37 +116,37 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		columnDefs: [
 			{
 				field: 'starttime',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.APPOINTMENT.SCHEDULED'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.APPOINTMENT.SCHEDULED'),
 				width: '20%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'dateadded',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.APPOINTMENT.DATE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.APPOINTMENT.DATE'),
 				width: '20%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'status',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.APPOINTMENT.STATUS'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.APPOINTMENT.STATUS'),
 				width: '10%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'aliasname',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.APPOINTMENT.NAME'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.APPOINTMENT.NAME'),
 				width: '20%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'aliastype',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.APPOINTMENT.TYPE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.APPOINTMENT.TYPE'),
 				width: '10%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'resourcename',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.APPOINTMENT.RESOURCE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.APPOINTMENT.RESOURCE'),
 				width: '20%',
 				enableColumnMenu: false
 			},
@@ -162,25 +161,25 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		columnDefs: [
 			{
 				field: 'name',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.EDUCATIONAL_MATERIAL.NAME'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.EDUCATIONAL_MATERIAL.NAME'),
 				width: '40%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'materialtype',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.EDUCATIONAL_MATERIAL.TYPE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.EDUCATIONAL_MATERIAL.TYPE'),
 				width: '20%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'dateadded',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.EDUCATIONAL_MATERIAL.DATE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.EDUCATIONAL_MATERIAL.DATE'),
 				width: '30%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'readstatus',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.EDUCATIONAL_MATERIAL.STATUS'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.EDUCATIONAL_MATERIAL.STATUS'),
 				width: '10%',
 				enableColumnMenu: false
 			},
@@ -195,55 +194,55 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		columnDefs: [
 			{
 				field: 'componentname',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.LEGACY_LAB_TESTS.NAME'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LEGACY_LAB_TESTS.NAME'),
 				width: '15%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'unitdescription',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.LEGACY_LAB_TESTS.UNIT'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LEGACY_LAB_TESTS.UNIT'),
 				width: '10%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'testdate',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.LEGACY_LAB_TESTS.DATE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LEGACY_LAB_TESTS.DATE'),
 				width: '15%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'dateadded',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.LEGACY_LAB_TESTS.OPAL_DATE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LEGACY_LAB_TESTS.OPAL_DATE'),
 				width: '15%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'minnorm',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.LEGACY_LAB_TESTS.MIN'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LEGACY_LAB_TESTS.MIN'),
 				width: '10%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'testvalue',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.LEGACY_LAB_TESTS.RESULT'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LEGACY_LAB_TESTS.RESULT'),
 				width: '10%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'maxnorm',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.LEGACY_LAB_TESTS.MAX'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LEGACY_LAB_TESTS.MAX'),
 				width: '10%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'abnormalflag',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.LEGACY_LAB_TESTS.ABNORMAL'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LEGACY_LAB_TESTS.ABNORMAL'),
 				width: '10%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'readstatus',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.LEGACY_LAB_TESTS.STATUS'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LEGACY_LAB_TESTS.STATUS'),
 				width: '5%',
 				enableColumnMenu: false
 			},
@@ -256,61 +255,61 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		columnDefs: [
 			{
 				field: 'groupname',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.LAB_TESTS.GROUP'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LAB_TESTS.GROUP'),
 				width: '10%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'readstatus',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.LAB_TESTS.STATUS'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LAB_TESTS.STATUS'),
 				width: '5%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'testname',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.LAB_TESTS.NAME'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LAB_TESTS.NAME'),
 				width: '10%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'description',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.LAB_TESTS.DESC'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LAB_TESTS.DESC'),
 				width: '12%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'abnormalflag',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.LAB_TESTS.ABNORMAL'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LAB_TESTS.ABNORMAL'),
 				width: '5%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'normalrange',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.LAB_TESTS.RANGE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LAB_TESTS.RANGE'),
 				width: '10%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'testvalue',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.LAB_TESTS.RESULT'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LAB_TESTS.RESULT'),
 				width: '12%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'datecollected',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.LAB_TESTS.DATE_TEST'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LAB_TESTS.DATE_TEST'),
 				width: '12%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'resultdate',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.LAB_TESTS.DATE_RESULT'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LAB_TESTS.DATE_RESULT'),
 				width: '12%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'dateadded',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.LAB_TESTS.DATE_OPAL'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LAB_TESTS.DATE_OPAL'),
 				width: '12%',
 				enableColumnMenu: false
 			},
@@ -325,25 +324,25 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		columnDefs: [
 			{
 				field: 'name',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.NOTES.TYPE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.NOTES.TYPE'),
 				width: '20%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'tablerowtitle',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.NOTES.NAME'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.NOTES.NAME'),
 				width: '40%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'dateadded',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.NOTES.DATE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.NOTES.DATE'),
 				width: '20%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'lastupdated',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.NOTES.DATE_READ'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.NOTES.DATE_READ'),
 				width: '20%',
 				enableColumnMenu: false
 			},
@@ -358,31 +357,31 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		columnDefs: [
 			{
 				field: 'aliasexpressionname',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.CLINICAL_NOTES.TYPE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.CLINICAL_NOTES.TYPE'),
 				width: '20%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'originalname',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.CLINICAL_NOTES.NAME_ORIG'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.CLINICAL_NOTES.NAME_ORIG'),
 				width: '20%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'finalname',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.CLINICAL_NOTES.NAME_FINAL'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.CLINICAL_NOTES.NAME_FINAL'),
 				width: '20%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'created',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.CLINICAL_NOTES.DATE_CREATED'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.CLINICAL_NOTES.DATE_CREATED'),
 				width: '20%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'approved',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.CLINICAL_NOTES.DATE_APPROVED'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.CLINICAL_NOTES.DATE_APPROVED'),
 				width: '20%',
 				enableColumnMenu: false
 			},
@@ -396,25 +395,25 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		columnDefs: [
 			{
 				field: 'name',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_TEAM.NAME'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_TEAM.NAME'),
 				width: '30%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'body',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_TEAM.DESC'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_TEAM.DESC'),
 				width: '45%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'dateadded',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_TEAM.DATE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_TEAM.DATE'),
 				width: '15%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'readstatus',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_TEAM.STATUS'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_TEAM.STATUS'),
 				width: '10%',
 				enableColumnMenu: false
 			},
@@ -428,25 +427,25 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		columnDefs: [
 			{
 				field: 'name',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_TEAM.NAME'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_TEAM.NAME'),
 				width: '30%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'body',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_TEAM.DESC'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_TEAM.DESC'),
 				width: '45%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'dateadded',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_TEAM.DATE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_TEAM.DATE'),
 				width: '15%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'readstatus',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_TEAM.STATUS'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_TEAM.STATUS'),
 				width: '10%',
 				enableColumnMenu: false
 			},
@@ -460,61 +459,61 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		columnDefs: [
 			{
 				field: 'diagnosisdescription',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_PLAN.DESC'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.DESC'),
 				width: '15%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'aliastype',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_PLAN.TYPE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.TYPE'),
 				width: '10%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'prioritycode',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_PLAN.PRIORITY'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.PRIORITY'),
 				width: '15%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'aliasexpressiondescription',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_PLAN.DESC_EXP'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.DESC_EXP'),
 				width: '10%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'aliasname',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_PLAN.NAME'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.NAME'),
 				width: '10%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'aliasdescription',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_PLAN.DESC_ALI'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.DESC_ALI'),
 				width: '10%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'taskstatus',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_PLAN.TASK_STATUS'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.TASK_STATUS'),
 				width: '5%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'taskstate',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_PLAN.TASK_STATE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.TASK_STATE'),
 				width: '5%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'taskdue',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_PLAN.TASK_DUE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.TASK_DUE'),
 				width: '10%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'taskcompletiondate',
-				displayName: $filter('translate')('PATIENTREPORT.COLUMNS.TREATMENT_PLAN.TASK_COMPLETE'),
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.TASK_COMPLETE'),
 				width: '10%',
 				enableColumnMenu: false
 			},
@@ -556,7 +555,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 					displayName(JSON.parse(response));
 				},
 				error: function (err) {
-					ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.DB_ERROR'));
+					ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
 				}
 			});
 		} else if ($scope.searchMRN) { //find by MRN
@@ -568,10 +567,10 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 					displayName(JSON.parse(response));
 				},
 				error: function (err) {
-					ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.DB_ERROR'));
+					ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
 				}
 			});
-		} else if ($scope.searchRAMQ) { //find my RAMQ
+		} else  { //find my RAMQ
 			$.ajax({
 				type: "POST",
 				url: "patient/get/patient-ramq",
@@ -580,11 +579,10 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 					displayName(JSON.parse(response));
 				},
 				error: function (err) {
-					ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.DB_ERROR'));
+					ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
 				}
 			});
-		} else { //some other error?
-			ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.UNKNOWN'));
+
 		}
 	};
 
@@ -605,15 +603,24 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				$scope.noPatientFound = false;
 				$scope.patOptions = [];
 				var tmp = "";
+				var mrnList = "";
 				//load each result into patOptions array for selection
 				for (var i = 0; i < $scope.searchResult.length; i++) {
-					tmp = "MRN: " + $scope.searchResult[i].pid + " - " + $scope.searchResult[i].pname + " " + $scope.searchResult[i].plname + " (" +
-                        ($scope.searchResult[i].pramq ? $scope.searchResult[i].pramq : "No RAMQ")
-                        + ") at " + $scope.searchResult[i].hospital;
-					$scope.patOptions.push(tmp);
+					if ($scope.searchResult[i].MRN.length > 0) {
+						mrnList = "(MRN: ";
+						for (var j = 0; j < $scope.searchResult[i].MRN.length; j++) {
+							mrnList += $scope.searchResult[i].MRN[j].MRN + " (" + $scope.searchResult[i].MRN[j].hospital + "), ";
+						}
+						mrnList = mrnList.slice(0, -2) + ")";
+					} else
+						mrnList = "("+$filter('translate')('PATIENTS.REPORT.INDIVIDUAL.NO_MRN')+")";
+
+					tmp = $scope.searchResult[i].plname + " " + $scope.searchResult[i].pname + " (" +
+						($scope.searchResult[i].pramq ? $scope.searchResult[i].pramq : $filter('translate')('PATIENTS.REPORT.INDIVIDUAL.NO_RAMQ'))
+						+ ") " + mrnList;
+					$scope.patOptions.push(tmp);$scope.searchResult[i].name_display = tmp;
 					tmp = "";
 				}
-				$scope.selectPatient = true; //display dialog to select patient, result stored in scope.selectedName and displayPatient called
 			} else { //exactly one match
 				$scope.noPatientFound = false;
 				$scope.foundPatient = true; //display patient table
@@ -627,8 +634,8 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				if ($scope.searchResult[0].psnum) {
 					$scope.psnum = $scope.searchResult[0].psnum.replace(/["']/g, "");
 				}
-				if ($scope.searchResult[0].pid) {
-					$scope.pid = $scope.searchResult[0].pid.replace(/["']/g, "");
+				if ($scope.searchResult[0].MRN) {
+					$scope.MRN = $scope.searchResult[0].MRN;
 				}
 				if ($scope.searchResult[0].pramq) {
 					$scope.pramq = $scope.searchResult[0].pramq.replace(/["']/g, "");
@@ -666,48 +673,46 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 	$scope.displaySelection = function () {
 
 		$scope.safeApply(function () {
-		    console.log($scope.selectedName);
 			$scope.noPatientFound = false;
-			$scope.foundPatient = true; //display patient table
-			var idx = $scope.selectedName.split(" , ")[0]; // index of selected patient
-			//Set the chosen patient identifier variables
-			if ($scope.searchResult[idx].pname) {
-				$scope.pname = $scope.searchResult[idx].pname.replace(/["']/g, "");
+			$scope.foundPatient = !!($scope.selectedName);
+			if($scope.selectedName) {
+				if ($scope.selectedName.pname) {
+					$scope.pname = $scope.selectedName.pname.replace(/["']/g, "");
+				}
+				if ($scope.selectedName.plname) {
+					$scope.plname = $scope.selectedName.plname.replace(/["']/g, "");
+				}
+				if ($scope.selectedName.psnum) {
+					$scope.psnum = $scope.selectedName.psnum.replace(/["']/g, "");
+				}
+				if ($scope.selectedName.MRN) {
+					$scope.MRN = $scope.selectedName.MRN;
+				}
+				if ($scope.selectedName.pramq) {
+					$scope.pramq = $scope.selectedName.pramq.replace(/["']/g, "");
+				}
+				if ($scope.selectedName.psex) {
+					$scope.psex = $scope.selectedName.psex.replace(/["' ]/g, "");
+				}
+				if ($scope.selectedName.pemail) {
+					$scope.pemail = $scope.selectedName.pemail.replace(/["']/g, "");
+				}
+				if ($scope.selectedName.plang) {
+					$scope.plang = $scope.selectedName.plang.replace(/["']/g, "");
+				}
+				//prepare to generate full report by default
+				$scope.featureList.diagnosis = true;
+				$scope.featureList.appointments = true;
+				$scope.featureList.questionnaires = true;
+				$scope.featureList.education = true;
+				$scope.featureList.testresults = true;
+				$scope.featureList.pattestresults = true;
+				$scope.featureList.notifications = true;
+				$scope.featureList.treatplan = true;
+				$scope.featureList.clinicalnotes = true;
+				$scope.featureList.treatingteam = true;
+				$scope.featureList.general = true;
 			}
-			if ($scope.searchResult[idx].plname) {
-				$scope.plname = $scope.searchResult[idx].plname.replace(/["']/g, "");
-			}
-			if ($scope.searchResult[idx].psnum) {
-				$scope.psnum = $scope.searchResult[idx].psnum.replace(/["']/g, "");
-			}
-			if ($scope.searchResult[idx].pid) {
-				$scope.pid = $scope.searchResult[idx].pid.replace(/["']/g, "");
-			}
-			if ($scope.searchResult[idx].pramq) {
-				$scope.pramq = $scope.searchResult[idx].pramq.replace(/["']/g, "");
-			}
-			if ($scope.searchResult[idx].psex) {
-				$scope.psex = $scope.searchResult[idx].psex.replace(/["' ]/g, "");
-			}
-			if ($scope.searchResult[idx].pemail) {
-				$scope.pemail = $scope.searchResult[idx].pemail.replace(/["']/g, "");
-			}
-			if ($scope.searchResult[idx].plang) {
-				$scope.plang = $scope.searchResult[idx].plang.replace(/["']/g, "");
-			}
-			//prepare to generate full report by default
-			$scope.featureList.diagnosis = true;
-			$scope.featureList.appointments = true;
-			$scope.featureList.questionnaires = true;
-			$scope.featureList.education = true;
-			$scope.featureList.testresults = true;
-			$scope.featureList.pattestresults = true;
-			$scope.featureList.notifications = true;
-			$scope.featureList.treatplan = true;
-			$scope.featureList.clinicalnotes = true;
-			$scope.featureList.treatingteam = true;
-			$scope.featureList.general = true;
-
 
 		});
 
@@ -724,10 +729,11 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 			$scope.noPatientFound = false;
 			$scope.generateFinished = false;
 
+			$scope.searchResult = "";
 			$scope.pname = "";
 			$scope.plname = "";
 			$scope.psnum = "";
-			$scope.pid = "";
+			$scope.MRN = "";
 			$scope.pramq = "";
 			$scope.psex = "";
 			$scope.pemail = "";
@@ -746,7 +752,6 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 			$scope.featureList.treatingteam = false;
 			$scope.featureList.general = false;
 
-			$scope.selectPatient = false;
 			$scope.foundPatient = false;
 
 			// Reset the report values
@@ -792,7 +797,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				populateTables(JSON.parse(response));
 			},
 			error: function (err) {
-				ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.DB_ERROR'));
+				ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
 			}
 		});
 	};
@@ -857,7 +862,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				$scope.generateFinished = true; //finally we can show report segments
 
 			} else { //something went wrong, no result recieved
-				ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
+				ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.SEARCH_FAIL'));
 			}
 
 		});
