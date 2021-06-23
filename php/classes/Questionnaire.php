@@ -468,5 +468,36 @@ class Questionnaire extends QuestionnaireModule {
         if ($questionnaireUpdated == 0 && $total > 0)
             $this->questionnaireDB->forceUpdate($updatedQuestionnaire["ID"], QUESTIONNAIRE_TABLE);
     }
+
+    /**
+     * Get the list of questionnaires status, visualization form, and completion date for a specific patient on a site
+     * Validation code :    Error validation code is coded as an int of 2 bits (value from 0 to 3). Bit informations
+     *                      are coded from right to left:
+     *                      1: mrn is missing
+     *                      2: site is missing
+     * @param $post array - $_POST content
+     * @return array
+     */
+    public function getQuestionnaireListOrms($post) {
+        $errCode = "";
+        if (is_array($post)) {
+            // 1st bit
+            if (!array_key_exists("mrn", $post) || $post["mrn"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+            // 2nd bit
+            if (!array_key_exists("site", $post) || $post["site"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+        } else
+            $errCode = "11";
+
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        return $this->questionnaireDB->getQuestionnaireListOrms($post["mrn"], $post["site"]);
+    }
 }
-?>
