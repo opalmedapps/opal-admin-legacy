@@ -466,8 +466,12 @@ define("OPAL_UPDATE_EXTERNAL_ID_MASTER_SOURCE", "
 ");
 
 define("OPAL_GET_PATIENTS_TRIGGERS","
-    SELECT DISTINCT PatientId AS id, 'Patient' AS type, 0 AS added, CONCAT(CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))), ' (', PatientId, ')') AS name
-    FROM ".OPAL_PATIENT_TABLE." ORDER BY PatientSerNum;
+    SELECT DISTINCT PatientSerNum AS id, 'Patient' AS type, 0 AS added, CONCAT(CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2)))) AS name
+    FROM ".OPAL_PATIENT_TABLE." ORDER BY LastName;
+");
+
+define("OPAL_GET_MRN_PATIENT_SERNUM","
+    SELECT MRN, Hospital_Identifier_Type_Code AS hospital FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." WHERE PatientSerNum = :PatientSerNum;
 ");
 
 define("OPAL_GET_DIAGNOSIS_TRIGGERS","
@@ -1281,7 +1285,7 @@ define("OPAL_GET_PATIENTS_STUDY","
 ");
 
 define("OPAL_GET_PATIENTS_STUDY_CONSENTS","
-    SELECT ps.patientId AS id, ps.consentStatus AS consent, CONCAT(CONCAT(UCASE(SUBSTRING(p.LastName, 1, 1)), LOWER(SUBSTRING(p.LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(p.FirstName, 1, 1)), LOWER(SUBSTRING(p.FirstName, 2))), ' (', p.PatientId, ')') AS name, p.PatientId as pid
+    SELECT ps.patientId AS id, ps.consentStatus AS consent, CONCAT(CONCAT(UCASE(SUBSTRING(p.LastName, 1, 1)), LOWER(SUBSTRING(p.LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(p.FirstName, 1, 1)), LOWER(SUBSTRING(p.FirstName, 2)))) AS name
     FROM ".OPAL_PATIENT_STUDY_TABLE." ps, ".OPAL_PATIENT_TABLE." p
     WHERE p.PatientSerNum = ps.patientId AND ps.studyId = :studyId;
 ");
