@@ -677,3 +677,22 @@ define("SQL_QUESTIONNAIRE_GET_CONSENT_FORM_TITLE","
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = 1) AS name_FR
     FROM ".QUESTIONNAIRE_TABLE." q WHERE q.ID = :consentId AND q.final = ".FINAL_RECORD.";"
 );
+
+define("SQL_GET_QUESTIONNAIRE_LIST_ORMS","
+SELECT :MRN AS PatientId, MAX(CAST(DATE_FORMAT(Q.CompletionDate, '%Y-%m-%d') AS CHAR(30))) AS CompletionDate, CASE WHEN DATEDIFF(CAST(DATE_FORMAT(NOW(), '%Y-%m-%d') AS CHAR(30)), MAX(CAST(DATE_FORMAT(Q.CompletionDate, '%Y-%m-%d') AS CHAR(30)))) <= 3650 THEN 'New' ELSE 'Old' END AS STATUS,
+QC.QuestionnaireDBSerNum,
+QC.QuestionnaireName_EN, COUNT(*) AS Total,
+P.Sex,
+P.Age,
+PHI.Hospital_Identifier_Type_Code,
+qDB_q.visualization AS Visualization
+FROM opalDB.QuestionnaireControl QC, 
+opalDB.Questionnaire Q, 
+opalDB.Patient P, 
+opalDB.Users U,
+opalDB.Patient_Hospital_Identifier PHI,
+questionnaire qDB_q
+WHERE QC.QuestionnaireControlSerNum = Q.QuestionnaireControlSerNum AND qDB_q.ID = QC.QuestionnaireDBSerNum AND qDB_q.deleted = 0 AND Q.PatientSerNum = P.PatientSerNum AND U.UserTypeSerNum = P.PatientSerNum AND PHI.Hospital_Identifier_Type_Code = :Hospital_Identifier_Type_Code AND PHI.MRN = :MRN AND Q.CompletedFlag = 1
+GROUP BY QC.QuestionnaireDBSerNum, QC.QuestionnaireName_EN, P.Sex, P.Age, qDB_q.visualization
+ORDER BY QC.QuestionnaireName_EN;
+");

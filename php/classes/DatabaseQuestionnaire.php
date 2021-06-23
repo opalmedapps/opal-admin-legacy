@@ -1246,8 +1246,25 @@ class DatabaseQuestionnaire extends DatabaseAccess
         return $this->_fetchAll($sql, array());
     }
 
+    /**
+     * Get the list of questionnaires consent form
+     * @return array - results
+     */
     function getConsentForms(){
         return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_CONSENT_FORMS, array(
+        ));
+    }
+
+    /**
+     * Get the list of questionnaires status, visualization form, and completion date for a specific patient on a site
+     * @param $mrn - patient identification
+     * @param $site - code of the site
+     * @return array - results found
+     */
+    function getQuestionnaireListOrms($mrn, $site){
+        return $this->_fetchAll(SQL_GET_QUESTIONNAIRE_LIST_ORMS, array(
+            array("parameter"=>":Hospital_Identifier_Type_Code","variable"=>$site,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":MRN","variable"=>$mrn,"data_type"=>PDO::PARAM_STR),
         ));
     }
 }
