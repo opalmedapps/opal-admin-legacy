@@ -216,7 +216,7 @@ sub getPostControlsMarkedForPublishModularCron
     my $info_sql = "
         SELECT DISTINCT
             ccp.cronControlPostSerNum as PostControlSerNum,
-            pc.cronType,
+            pc.PostType,
             pc.PublishDate,
             pc.lastPublished
         FROM
