@@ -164,6 +164,9 @@ sub publishEducationalMaterials
     # If we are not within the window to publish the messages then return
     #if ( (($now - $today_at_eightAM) < 0) or (($now - $today_at_eightPM) > 0) ) {return;}
 
+	# Check for any new updates from the main cron control
+	CheckEduMatControlsMarkedForPublishModularCron();
+
     # Retrieve all the controls
     my @eduMatControls = EducationalMaterialControl::getEduMatControlsMarkedForPublishModularCron();
 
@@ -508,7 +511,31 @@ sub insertEducationalMaterialIntoOurDB
 	return $edumat;
 }
 
+#======================================================================================
+# Subroutine to insert new Educational Material Control records
+#======================================================================================
+sub CheckAliasesMarkedForUpdateModularCron
+{
+	my ($module) = @_; # current datetime, cron module type, 
 
+	my $insert_sql = "
+	INSERT INTO cronControlEducationalMaterial (cronControlEducationalMaterialControlSerNum, publishFlag, lastPublished, lastUpdated, sessionId)
+    SELECT EMC.EducationalMaterialControlSerNum, EMC.PublishFlag, EMC.LastPublished, EMC.LastUpdated, EMC.SessionId
+    FROM EducationalMaterialControl EMC
+    WHERE EMC.EducationalMaterialControlSerNum NOT IN (
+        SELECT cronControlEducationalMaterialControlSerNum FROM cronControlEducationalMaterial
+        );
+    ";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($insert_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+}
 # Exit smoothly 
 1;
 

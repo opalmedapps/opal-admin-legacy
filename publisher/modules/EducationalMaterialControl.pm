@@ -165,13 +165,14 @@ sub getEduMatControlsMarkedForPublishModularCron
     my @eduMatControlList = (); # initialize a list
 
     my $info_sql = "
-        SELECT DISTINCT
-            ccem.cronControlEducationalMaterialControlSerNum,
-            ccem.lastPublished
+        SELECT
+            EMC.EducationalMaterialControlSerNum,
+            EMC.LastPublished
         FROM
-            cronControlEducationalMaterial ccem
+        cronControlEducationalMaterial ccem, EducationalMaterialControl EMC
         WHERE
-            ccem.publishFlag      = 1;
+            ccem.cronControlEducationalMaterialControlSerNum = EMC.EducationalMaterialControlSerNum
+        AND EMC.PublishFlag = 1;
     ";
 
     # prepare query
@@ -238,11 +239,13 @@ sub setEduMatControlLastPublishedModularControllers
 
     my $update_sql = "
         UPDATE
-            cronControlEducationalMaterial
+            cronControlEducationalMaterial ccem, EducationalMaterialControl EMC
         SET
-            lastPublished = '$current_datetime'
+            ccem.lastPublished = '$current_datetime',
+            EMC.LastPublished =  '$current_datetime'
         WHERE
-            publishFlag = 1;
+            ccem.cronControlEducationalMaterialControlSerNum = EMC.EducationalMaterialControlSerNum
+        AND EMC.PublishFlag = 1;
     ";
     	
     # prepare query

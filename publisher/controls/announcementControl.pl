@@ -8,6 +8,18 @@
 # We use our custom Perl Modules to help us with getting information and
 # setting them into the appropriate place.
 
+#---------------------------------------------------------------------------------
+=Log
+This is the first phase for now in separating the dataContorl.pl
+
+Second phase will be modifying the OpalAdmin to use the new tables for
+the publishing control. This will allow a slow transition so that 
+it is easy to troubleshoot and validate the changes.
+
+YM 2021-06-28
+=cut
+#---------------------------------------------------------------------------------
+
 #-----------------------------------------------------------------------
 # Packages/Modules
 #-----------------------------------------------------------------------
@@ -90,9 +102,9 @@ if (-e $monitor_log) { # file exists
 			# email error
 			my $mime = MIME::Lite->new(
 				'From'		=> "opal\@muhc.mcgill.ca",
-				'To'		=> "ackeem.berry\@gmail.com",
-				'Cc'			=> "yickmo\@gmail.com",
-				'Subject'	=> "Potential hanging script - Opal dataControl.pl",
+				'To'		=> "yickmo\@gmail.com",
+				# 'Cc'			=> "yickmo\@gmail.com",
+				'Subject'	=> "Potential hanging script - Opal announcementControl.pl",
 				'Type'		=> 'text/html',
 				'Data'		=> \@logs,
 			);
@@ -143,9 +155,9 @@ if (-e $monitor_log) { # file exists
 				# email error
 				my $mime = MIME::Lite->new(
 					'From'		=> "opal\@muhc.mcgill.ca",
-					'To'		=> "ackeem.berry\@gmail.com",
-					'Cc'			=> "yickmo\@gmail.com",
-					'Subject'	=> "Script crash - Opal dataControl.pl",
+					'To'		=> "yickmo\@gmail.com",
+					# 'Cc'			=> "yickmo\@gmail.com",
+					'Subject'	=> "Script crash - Opal announcementControl.pl",
 					'Type'		=> 'text/html',
 					'Data'		=> \@logs,
 				);
@@ -226,7 +238,6 @@ print "--- Start announcementControl--- ", $start_datetime, "\n";
 # Log that the script is initialized in the cronlog
 my $cronLogSer = Cron::setCronLog("Started announceControl", $start_datetime);
 
-
 #=========================================================================================
 # Retrieve all patients that are marked for update
 #=========================================================================================
@@ -294,12 +305,9 @@ print "Finished announcements\n" if $verbose;
 # Once everything is complete, we update the "last transferred" field for all controls
 # Patient control
 Patient::setPatientLastTransferredModularCron($start_datetime, 'Announcement');
-# Alias control
-Alias::setAliasLastTransferredModularControllers($start_datetime, 'Announcement');
+
 # Post control
 PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'Announcement');
-# Educational material control
-#EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime, 'Announcement');
 
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 # Log that the script is finished in the cronlog

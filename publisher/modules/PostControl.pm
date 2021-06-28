@@ -215,15 +215,15 @@ sub getPostControlsMarkedForPublishModularCron
 
     my $info_sql = "
         SELECT DISTINCT
-            ccp.cronControlPostSerNum,
-            ccp.cronType,
+            ccp.cronControlPostSerNum as PostControlSerNum,
+            pc.cronType,
             pc.PublishDate,
-            ccp.lastPublished
+            pc.lastPublished
         FROM
             PostControl pc,
             cronControlPost ccp
         WHERE
-            ccp.publishFlag      = 1
+            pc.publishFlag      = 1
         AND ccp.cronType         = '$postType'
         AND pc.PostControlSerNum = ccp.cronControlPostSerNum
     ";
@@ -296,13 +296,14 @@ sub setPostControlLastPublishedModularControllers
     my ($current_datetime, $module) = @_; # our current datetime in args
 
     my $update_sql = "
-        UPDATE
-            cronControlPost
-        SET
-            lastPublished = '$current_datetime'
-        WHERE
-            publishFlag = 1
-        AND cronType = '$module'
+
+        UPDATE cronControlPost CCP, PostControl PC
+        SET PC.LastPublished = '$current_datetime',
+            CCP.lastPublished = '$current_datetime'
+        WHERE CCP.cronControlPostSerNum = PC.PostControlSerNum
+            AND CCP.cronType = '$module'
+            AND PC.PublishFlag = 1
+        ;
     ";
     	
     # prepare query
@@ -312,6 +313,32 @@ sub setPostControlLastPublishedModularControllers
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
+}
+
+#======================================================================================
+# Subroutine to insert new Post Control records
+#======================================================================================
+sub CheckPostControlsMarkedForPublishModularCron
+{
+	my ($module) = @_; # current datetime, cron module type, 
+
+	my $insert_sql = "
+		INSERT INTO cronControlPost (cronControlPostSerNum, cronType, publishFlag, lastPublished, lastUpdated, sessionId)
+		SELECT PC.PostControlSerNum, '$module' cronType, PC.PublishFlag, PC.LastPublished, PC.LastUpdated, PC.SessionId
+		FROM PostControl PC
+		WHERE PC.PostType = '$module'
+			AND PC.PostControlSerNum NOT IN (SELECT cronControlPostSerNum FROM cronControlPost CCP
+			WHERE CCP.cronType = '$module');
+    	";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($insert_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
 }
 
 # exit smoothly for module

@@ -268,7 +268,7 @@ sub getAliasesMarkedForUpdateModularCron
 				cronControlAlias,
 				SourceDatabase
 			WHERE
-				cronControlAlias.aliasUpdate			= 1
+				Alias.aliasUpdate			= 1
 			AND cronControlAlias.cronControlAliasSerNum = Alias.AliasSerNum
 			AND	cronControlAlias.cronType				= '$aliasType'
 			AND Alias.SourceDatabaseSerNum 	= SourceDatabase.SourceDatabaseSerNum
@@ -405,14 +405,18 @@ sub setAliasLastTransferredModularControllers
 	my ($current_datetime, $module) = @_; # our current datetime in arguments
 
 	my $update_sql = "
-		UPDATE
-			cronControlAlias
-		SET
-			lastTransferred					= '$current_datetime',
-            lastUpdated    					= lastUpdated
-		WHERE
-			aliasUpdate			= 1
-		AND cronType			= '$module'
+	UPDATE 
+		cronControlAlias,
+		Alias,
+		AliasExpression
+	SET Alias.LastTransferred = '$current_datetime',
+		AliasExpression.LastTransferred	= '$current_datetime',
+		cronControlAlias.lastTransferred = '$current_datetime'
+	WHERE
+		Alias.AliasUpdate = 1
+		AND cronControlAlias.cronType = '$module'
+		AND cronControlAlias.cronControlAliasSerNum = Alias.AliasSerNum
+		AND Alias.AliasSerNum = AliasExpression.AliasSerNum;
 	";
 
 	print "$update_sql\n" if $verbose;

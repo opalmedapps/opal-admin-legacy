@@ -429,6 +429,9 @@ sub getDocsFromSourceDB
 	my ($apprvby, $apprvts, $authoredby, $dos, $createdby, $createdts);
     my $lasttransfer;
 
+	# Check for any new updates from the main cron control
+	CheckAliasesMarkedForUpdateModularCron('Document');
+
     # retrieve all aliases that are marked for update
     my @aliasList = Alias::getAliasesMarkedForUpdateModularCron('Document');
 
@@ -1520,6 +1523,32 @@ sub compareWith
 	}
 
 	return $UpdatedDoc;
+}
+
+#======================================================================================
+# Subroutine to insert new Alias Control records
+#======================================================================================
+sub CheckAliasesMarkedForUpdateModularCron
+{
+	my ($module) = @_; # current datetime, cron module type, 
+
+	my $insert_sql = "
+	INSERT INTO cronControlAlias (cronControlAliasSerNum, cronType, aliasUpdate, lastPublished, lastUpdated, sessionId)
+	SELECT A.AliasSerNum, '$module' cronType, A.AliasUpdate, A.LastTransferred, A.LastUpdated, A.SessionId
+	FROM Alias A
+	WHERE A.AliasType = '$module'
+		AND A.AliasSerNum NOT IN (SELECT cronControlAliasSerNum FROM cronControlAlias CCP
+		WHERE CCP.cronType = '$module');
+    	";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($insert_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
 }
 
 # To exit/return always true (for the module itself)

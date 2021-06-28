@@ -155,6 +155,9 @@ sub publishTxTeamMessages
 
     #my $today_date = strftime("%Y-%m-%d", localtime(time));
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
+    
+    # Check for any new updates from the main cron control
+	PostControl::CheckPostControlsMarkedForPublishModularCron('TxTeamMessage');
 
     my @txTeamMessageControls = PostControl::getPostControlsMarkedForPublishModularCron('TxTeamMessage');
 

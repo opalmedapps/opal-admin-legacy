@@ -701,6 +701,10 @@ sub getPatientsMarkedForUpdateModularCron {
 	my @patientList = (); # initialize list of patient objects
 	my ($lasttransfer, $id, $registrationdate);
 	
+	# Check if the list of patient is up to date.
+	CheckPatientForUpdateModularCron($cronType);
+
+	# Tag all patient that are to be part of the patient list
 	MarkPatientForUpdateModularCron($cronType);
 
 	# Query
@@ -1299,6 +1303,33 @@ sub MarkPatientForUpdate
 
 }
 
+#======================================================================================
+# Subroutine to make sure that the cronControlPatient have the same records as in the
+# PatientControl. Reason is that the cronControlPatient handles the last update for
+# specific cron type 
+#======================================================================================
+sub CheckPatientForUpdateModularCron
+{	
+	my ($module) = @_; #args cronType module name
+
+	my $patients_sql = "
+		INSERT INTO cronControlPatient (cronControlPatientSerNum, cronType, LastTransferred, LastUpdated, TransferFlag)
+		SELECT PatientSerNum, '$module',  LastTransferred, LastUpdated, 0 TransferFlag  FROM PatientControl PC
+		WHERE PC.PatientSerNum NOT IN 
+			(SELECT cronControlPatientSerNum FROM cronControlPatient WHERE cronType = '$module');
+";
+	# prepare query
+	my $query = $SQLDatabase->prepare($patients_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+}
+
+#======================================================================================
+# Subroutine the transfer flag to 1 where patient control is active (PatientUpdate = 1)
+# This subroutine is for a specific cron type when getting the list of patient 
+#======================================================================================
 sub MarkPatientForUpdateModularCron
 {	
 	my ($module) = @_; #args cronType module name
