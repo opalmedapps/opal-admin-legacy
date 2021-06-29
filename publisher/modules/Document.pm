@@ -1561,7 +1561,7 @@ sub CheckAliasesMarkedForUpdateModularCron
 		SET CCA.aliasUpdate = A.AliasUpdate
 		WHERE A.AliasSerNum = CCA.cronControlAliasSerNum
 			AND CCA.aliasUpdate <> A.AliasUpdate
-			AND CCP.cronType = '$module';
+			AND CCA.cronType = '$module';
     	";
 
     # prepare query
