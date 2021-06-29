@@ -172,7 +172,7 @@ sub getEduMatControlsMarkedForPublishModularCron
         cronControlEducationalMaterial ccem, EducationalMaterialControl EMC
         WHERE
             ccem.cronControlEducationalMaterialControlSerNum = EMC.EducationalMaterialControlSerNum
-        AND EMC.PublishFlag = 1;
+        AND ccem.publishFlag = 2;
     ";
 
     # prepare query
@@ -242,10 +242,11 @@ sub setEduMatControlLastPublishedModularControllers
             cronControlEducationalMaterial ccem, EducationalMaterialControl EMC
         SET
             ccem.lastPublished = '$current_datetime',
-            EMC.LastPublished =  '$current_datetime'
+            EMC.LastPublished =  '$current_datetime',
+            ccem.publishFlag = 1
         WHERE
             ccem.cronControlEducationalMaterialControlSerNum = EMC.EducationalMaterialControlSerNum
-        AND EMC.PublishFlag = 1;
+            AND ccem.publishFlag = 2;
     ";
     	
     # prepare query

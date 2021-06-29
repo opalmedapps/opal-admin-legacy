@@ -223,7 +223,7 @@ sub getPostControlsMarkedForPublishModularCron
             PostControl pc,
             cronControlPost ccp
         WHERE
-            pc.publishFlag      = 1
+            ccp.publishFlag      = 2
         AND ccp.cronType         = '$postType'
         AND pc.PostControlSerNum = ccp.cronControlPostSerNum
     ";
@@ -296,13 +296,13 @@ sub setPostControlLastPublishedModularControllers
     my ($current_datetime, $module) = @_; # our current datetime in args
 
     my $update_sql = "
-
         UPDATE cronControlPost CCP, PostControl PC
         SET PC.LastPublished = '$current_datetime',
-            CCP.lastPublished = '$current_datetime'
+            CCP.lastPublished = '$current_datetime',
+            CCP.publishFlag = 1
         WHERE CCP.cronControlPostSerNum = PC.PostControlSerNum
             AND CCP.cronType = '$module'
-            AND PC.PublishFlag = 1
+            AND CCP.publishFlag = 2
         ;
     ";
     	
@@ -316,23 +316,22 @@ sub setPostControlLastPublishedModularControllers
 }
 
 #======================================================================================
-# Subroutine to insert new Post Control records
+# Subroutine to set the publish flag from 1 to 2. This will identify what is currently
+# being process by the cron job vs what have just been activated during the cron running
 #======================================================================================
 sub CheckPostControlsMarkedForPublishModularCron
 {
 	my ($module) = @_; # current datetime, cron module type, 
 
-	my $insert_sql = "
-		INSERT INTO cronControlPost (cronControlPostSerNum, cronType, publishFlag, lastPublished, lastUpdated, sessionId)
-		SELECT PC.PostControlSerNum, '$module' cronType, PC.PublishFlag, PC.LastPublished, PC.LastUpdated, PC.SessionId
-		FROM PostControl PC
-		WHERE PC.PostType = '$module'
-			AND PC.PostControlSerNum NOT IN (SELECT cronControlPostSerNum FROM cronControlPost CCP
-			WHERE CCP.cronType = '$module');
+	my $update_sql = "
+        UPDATE cronControlPost 
+        SET publishFlag = 2
+        WHERE cronType = '$module'
+            AND publishFlag = 1;
     	";
 
     # prepare query
-	my $query = $SQLDatabase->prepare($insert_sql)
+	my $query = $SQLDatabase->prepare($update_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
 
 	# execute query

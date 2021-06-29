@@ -514,21 +514,19 @@ sub insertEducationalMaterialIntoOurDB
 #======================================================================================
 # Subroutine to insert new Educational Material Control records
 #======================================================================================
-sub CheckAliasesMarkedForUpdateModularCron
+sub CheckEduMatControlsMarkedForPublishModularCron
 {
 	my ($module) = @_; # current datetime, cron module type, 
 
-	my $insert_sql = "
-	INSERT INTO cronControlEducationalMaterial (cronControlEducationalMaterialControlSerNum, publishFlag, lastPublished, lastUpdated, sessionId)
-    SELECT EMC.EducationalMaterialControlSerNum, EMC.PublishFlag, EMC.LastPublished, EMC.LastUpdated, EMC.SessionId
-    FROM EducationalMaterialControl EMC
-    WHERE EMC.EducationalMaterialControlSerNum NOT IN (
-        SELECT cronControlEducationalMaterialControlSerNum FROM cronControlEducationalMaterial
-        );
+	my $update_sql = "
+        UPDATE cronControlEducationalMaterial
+        SET publishFlag = 2
+        WHERE publishFlag = 1
+        ;
     ";
 
     # prepare query
-	my $query = $SQLDatabase->prepare($insert_sql)
+	my $query = $SQLDatabase->prepare($update_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
 
 	# execute query

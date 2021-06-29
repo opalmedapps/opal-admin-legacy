@@ -306,7 +306,6 @@ print "Finished Legacy Questionnaires\n" if $verbose;
 # Patient control
 Patient::setPatientLastTransferredModularCron($start_datetime, 'LegacyQuestionnaire');
 
-
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 # Log that the script is finished in the cronlog
 Cron::setCronLog("Completed legQstControl", $current_datetime);

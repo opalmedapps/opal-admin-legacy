@@ -1526,23 +1526,22 @@ sub compareWith
 }
 
 #======================================================================================
-# Subroutine to insert new Alias Control records
+# Subroutine to set the alias update flag from 1 to 2. This will identify what is currently
+# being process by the cron job vs what have just been activated during the cron running
 #======================================================================================
 sub CheckAliasesMarkedForUpdateModularCron
 {
 	my ($module) = @_; # current datetime, cron module type, 
 
-	my $insert_sql = "
-	INSERT INTO cronControlAlias (cronControlAliasSerNum, cronType, aliasUpdate, lastPublished, lastUpdated, sessionId)
-	SELECT A.AliasSerNum, '$module' cronType, A.AliasUpdate, A.LastTransferred, A.LastUpdated, A.SessionId
-	FROM Alias A
-	WHERE A.AliasType = '$module'
-		AND A.AliasSerNum NOT IN (SELECT cronControlAliasSerNum FROM cronControlAlias CCP
-		WHERE CCP.cronType = '$module');
+	my $update_sql = "
+		UPDATE cronControlAlias
+		SET aliasUpdate = 2
+		WHERE aliasUpdate = 1
+			AND cronType = '$module';
     	";
 
     # prepare query
-	my $query = $SQLDatabase->prepare($insert_sql)
+	my $query = $SQLDatabase->prepare($update_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
 
 	# execute query

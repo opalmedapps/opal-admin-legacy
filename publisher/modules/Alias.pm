@@ -268,9 +268,9 @@ sub getAliasesMarkedForUpdateModularCron
 				cronControlAlias,
 				SourceDatabase
 			WHERE
-				Alias.aliasUpdate			= 1
+				cronControlAlias.aliasUpdate = 2
 			AND cronControlAlias.cronControlAliasSerNum = Alias.AliasSerNum
-			AND	cronControlAlias.cronType				= '$aliasType'
+			AND	cronControlAlias.cronType 	= '$aliasType'
 			AND Alias.SourceDatabaseSerNum 	= SourceDatabase.SourceDatabaseSerNum
 			AND SourceDatabase.Enabled 		= 1;
 		";
@@ -411,9 +411,10 @@ sub setAliasLastTransferredModularControllers
 		AliasExpression
 	SET Alias.LastTransferred = '$current_datetime',
 		AliasExpression.LastTransferred	= '$current_datetime',
-		cronControlAlias.lastTransferred = '$current_datetime'
+		cronControlAlias.lastTransferred = '$current_datetime',
+		cronControlAlias.aliasUpdate = 1
 	WHERE
-		Alias.AliasUpdate = 1
+		cronControlAlias.aliasUpdate = 2
 		AND cronControlAlias.cronType = '$module'
 		AND cronControlAlias.cronControlAliasSerNum = Alias.AliasSerNum
 		AND Alias.AliasSerNum = AliasExpression.AliasSerNum;
