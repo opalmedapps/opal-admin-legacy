@@ -1537,7 +1537,7 @@ sub CheckAliasesMarkedForUpdateModularCron
 	# --------------------------------------------------
 	# First step is to make sure that the two tables have the same amount of records
 	my $insert_sql = "
-	INSERT INTO cronControlAlias (cronControlAliasSerNum, cronType, aliasUpdate, lastPublished, lastUpdated, sessionId)
+	INSERT INTO cronControlAlias (cronControlAliasSerNum, cronType, aliasUpdate, lastTransferred, lastUpdated, sessionId)
 	SELECT A.AliasSerNum, '$module' cronType, A.AliasUpdate, A.LastTransferred, A.LastUpdated, A.SessionId
 	FROM Alias A
 	WHERE A.AliasType = '$module'
