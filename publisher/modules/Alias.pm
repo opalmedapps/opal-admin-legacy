@@ -261,7 +261,7 @@ sub getAliasesMarkedForUpdateModularCron
 			SELECT DISTINCT
 				cronControlAlias.cronControlAliasSerNum as AliasSerNum,
 				Alias.AliasType,
-				Alias.LastTransferred,
+				cronControlAlias.lastTransferred,
 	            Alias.SourceDatabaseSerNum
 			FROM
 				Alias,

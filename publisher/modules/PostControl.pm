@@ -218,7 +218,7 @@ sub getPostControlsMarkedForPublishModularCron
             ccp.cronControlPostSerNum as PostControlSerNum,
             pc.PostType,
             pc.PublishDate,
-            pc.lastPublished
+            ccp.lastPublished
         FROM
             PostControl pc,
             cronControlPost ccp

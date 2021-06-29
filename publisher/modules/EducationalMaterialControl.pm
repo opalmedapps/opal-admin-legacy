@@ -167,7 +167,7 @@ sub getEduMatControlsMarkedForPublishModularCron
     my $info_sql = "
         SELECT
             EMC.EducationalMaterialControlSerNum,
-            EMC.LastPublished
+            ccem.lastPublished
         FROM
         cronControlEducationalMaterial ccem, EducationalMaterialControl EMC
         WHERE
