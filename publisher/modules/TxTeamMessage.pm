@@ -157,9 +157,9 @@ sub publishTxTeamMessages
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
     
     # Check for any new updates from the main cron control
-	PostControl::CheckPostControlsMarkedForPublishModularCron('TxTeamMessage');
+	PostControl::CheckPostControlsMarkedForPublishModularCron('Treatment Team Message');
 
-    my @txTeamMessageControls = PostControl::getPostControlsMarkedForPublishModularCron('TxTeamMessage');
+    my @txTeamMessageControls = PostControl::getPostControlsMarkedForPublishModularCron('Treatment Team Message');
 
     foreach my $Patient (@patientList) {
 

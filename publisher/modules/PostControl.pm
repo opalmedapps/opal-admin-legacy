@@ -316,14 +316,55 @@ sub setPostControlLastPublishedModularControllers
 }
 
 #======================================================================================
-# Subroutine to set the publish flag from 1 to 2. This will identify what is currently
-# being process by the cron job vs what have just been activated during the cron running
+# Subroutine to sync the master table to the slave table and then set the publish flag 
+# from 1 to 2. This will identify what is currently being process by the cron job vs what
+# have just been activated during the cron running
 #======================================================================================
 sub CheckPostControlsMarkedForPublishModularCron
 {
 	my ($module) = @_; # current datetime, cron module type, 
 
+    # --------------------------------------------------
+    # First step is to make sure that the two tables have the same amount of records
+	my $insert_sql = "
+		INSERT INTO cronControlPost (cronControlPostSerNum, cronType, publishFlag, lastPublished, lastUpdated, sessionId)
+		SELECT PC.PostControlSerNum, '$module' cronType, PC.PublishFlag, PC.LastPublished, PC.LastUpdated, PC.SessionId
+		FROM PostControl PC
+		WHERE PC.PostType = '$module'
+			AND PC.PostControlSerNum NOT IN (SELECT cronControlPostSerNum FROM cronControlPost CCP
+			WHERE CCP.cronType = '$module');
+    	";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($insert_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+    # --------------------------------------------------
+    # Second step is to sync the publish flag between the two tables
+    # PostControl is the master and cronControlPost is the slave
 	my $update_sql = "
+        UPDATE PostControl PC, cronControlPost CCP
+        SET CCP.publishFlag = PC.PublishFlag
+        WHERE PC.PostControlSerNum = CCP.cronControlPostSerNum
+            AND CCP.publishFlag <> PC.PublishFlag
+            AND CCP.cronType = '$module';
+    	";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($update_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+    # --------------------------------------------------
+    # Third step update the publish flag from 1 to 2
+	my $update2_sql = "
         UPDATE cronControlPost 
         SET publishFlag = 2
         WHERE cronType = '$module'
@@ -331,7 +372,7 @@ sub CheckPostControlsMarkedForPublishModularCron
     	";
 
     # prepare query
-	my $query = $SQLDatabase->prepare($update_sql)
+	my $query = $SQLDatabase->prepare($update2_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
 
 	# execute query

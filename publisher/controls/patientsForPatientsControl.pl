@@ -241,7 +241,7 @@ my $cronLogSer = Cron::setCronLog("Started patsPatsControl", $start_datetime);
 # Retrieve all patients that are marked for update
 #=========================================================================================
 print "\n--- Start getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@registeredPatients = Patient::getPatientsMarkedForUpdateModularCron($cronLogSer, 'PatientsForPatients');
+@registeredPatients = Patient::getPatientsMarkedForUpdateModularCron($cronLogSer, 'Patients for Patients');
 print "--- End getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got patient list\n" if $verbose;
 
@@ -303,10 +303,10 @@ print "Finished patients for patients\n";
 
 # Once everything is complete, we update the "last transferred" field for all controls
 # Patient control
-Patient::setPatientLastTransferredModularCron($start_datetime, 'PatientsForPatients');
+Patient::setPatientLastTransferredModularCron($start_datetime, 'Patients for Patients');
 
 # Post control
-PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'PatientsForPatients');
+PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'Patients for Patients');
 
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 # Log that the script is finished in the cronlog
