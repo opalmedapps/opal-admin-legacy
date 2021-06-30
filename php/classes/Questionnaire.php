@@ -471,7 +471,7 @@ class Questionnaire extends QuestionnaireModule {
 
     /**
      * Get the list of questionnaires status, visualization form, and completion date for a specific patient on a site
-     * Validation code :    Error validation code is coded as an int of 2 bits (value from 0 to 3). Bit information
+     * Validation code :    Error validation code is coded as an int of 3 bits (value from 0 to 7). Bit information
      *                      are coded from right to left:
      *                      1: mrn is missing
      *                      2: site is missing
