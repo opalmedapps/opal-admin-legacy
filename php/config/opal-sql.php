@@ -117,6 +117,10 @@ define("OPAL_USERS_TABLE", "Users");
 define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
 define("OPAL_PATIENT_ACTIVITY_LOG_TABLE","PatientActivityLog");
 define("OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE", "PatientDeviceIdentifier");
+define("OPAL_CRON_CONTROL_PATIENT_TABLE", "cronControlPatient");
+define("OPAL_CRON_CONTROL_POST_TABLE", "cronControlPost");
+define("OPAL_CRON_CONTROL_EDUMAT_TABLE", "cronControlEducationalMaterial");
+define("OPAL_CRON_CONTROL_ALIAS_TABLE", "cronControlAlias");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -1701,3 +1705,46 @@ define("OPAL_GET_COUNT_ALIASES", "
     SELECT COUNT(*) AS total from ".OPAL_ALIAS_TABLE." WHERE AliasSerNum IN (%%LISTIDS%%);
 ");
 
+define("OPAL_UPDATE_CRON_CONTROL_PATIENT_PUBLISH_FLAG", "
+    UPDATE ".OPAL_CRON_CONTROL_PATIENT_TABLE." SET transferFlag = :transferFlag WHERE cronControlPatientSerNum = :PatientSerNum
+");
+
+define("SQL_OPAL_UPDATE_CRON_CONTROL_POST", "
+    UPDATE ".OPAL_CRON_CONTROL_POST_TABLE."
+    SET publishFlag = :publishFlag,
+        lastPublished = :lastPublished,
+        sessionId = :sessionId
+    WHERE cronControlPostSerNum = :cronControlPostSerNum AND publishFlag != :publishFlag;
+");
+
+define("SQL_OPAL_UPDATE_CRON_CONTROL_EDUMAT","
+    UPDATE ".OPAL_CRON_CONTROL_EDUMAT_TABLE."
+    SET publishFlag = :publishFlag,
+        lastPublished = :lastPublished,
+        sessionId = :sessionId
+    WHERE cronControlEducationalMaterialControlSerNum = :cronControlEducationalMaterialControlSerNum AND publishFlag != publishFlag;
+");
+
+define("OPAL_UPDATE_CRON_CONTROL_ALIAS","
+    UPDATE ".OPAL_CRON_CONTROL_ALIAS_TABLE."
+    SET aliasUpdate = :aliasUpdate,
+        sessionId = :sessionId
+    WHERE cronControlAliasSerNum = :aliasSer AND aliasUpdate != :aliasUpdate;
+");
+
+define("OPAL_SANITIZE_CRON_CONTROL_ALIAS", "
+    UPDATE ".OPAL_CRON_CONTROL_ALIAS_TABLE."
+    SET aliasUpdate = 0
+        sessionId = :sessionId
+    WHERE cronControlAliasSerNum = :aliasSer AND aliasUpdate != 0;
+");
+
+define("OPAL_DELETE_CRON_CONTROL_ALIAS","
+    DELETE FROM ".OPAL_CRON_CONTROL_ALIAS_TABLE."
+    WHERE cronControlAliasSerNum = :aliasSer;
+");
+
+define("OPAL_DELETE_CRON_CONTROL_EDUMAT","
+    DELETE FROM ".OPAL_CRON_CONTROL_EDUMAT_TABLE."
+    WHERE cronControlEducationalMaterialControlSerNum = :eduMatSer;
+");
