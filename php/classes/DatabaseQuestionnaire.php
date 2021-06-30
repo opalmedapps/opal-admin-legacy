@@ -1267,4 +1267,35 @@ class DatabaseQuestionnaire extends DatabaseAccess
             array("parameter"=>":MRN","variable"=>$mrn,"data_type"=>PDO::PARAM_STR),
         ));
     }
+
+    /**
+     * Get the list of questions name and their respective answer from a specific patient to a specific question in a
+     * specific questionnaire. Using the $questionSectionId and $questionText does not seems to be the right thing to
+     * do but because of a lack of time and man power, we cannot test it more and simplify the SQL query. See ticket
+     * OPAL-1026.
+     * @param $patientId - internal patient ID
+     * @param $questionnaireId - questionnaire Id
+     * @param $questionSectionId - question section ID
+     * @param $questionText - text of the question
+     * @return array - results found
+     */
+    function getQuestionNameAnswer($patientId, $questionnaireId, $questionSectionId, $questionText) {
+        return $this->_fetchAll(GET_QUESTION_NAME_ANSWER, array(
+            array("parameter"=>":patientId","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":questionnaireId","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":questionSectionId","variable"=>$questionSectionId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":questionText","variable"=>$questionText,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient info based on the external ID
+     * @param $externalId - external ID of the patient
+     * @return array - data on patient found
+     */
+    function getPatientPerExternalId($externalId) {
+        return $this->_fetchAll(GET_PATIENT_PER_EXTERNALID, array(
+            array("parameter"=>":externalId","variable"=>$externalId,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
 }
