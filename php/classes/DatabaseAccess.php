@@ -274,6 +274,8 @@ class DatabaseAccess extends HelpSetup
             return PDO::PARAM_INT;
         else if (filter_var($aVar, FILTER_VALIDATE_BOOLEAN) !== false)
             return PDO::PARAM_BOOL;
+        else if (is_null($aVar))
+            return PDO::PARAM_NULL;
         else
             return PDO::PARAM_STR;
     }

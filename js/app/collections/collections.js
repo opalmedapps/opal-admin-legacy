@@ -98,19 +98,6 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		// Function to get existing color tags
-		aliasAPI.getExistingColorTags = function (type) {
-			return $http.post(
-				"alias/get/color-tags",
-				$.param({
-					type: type,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
 		// Function to get alias chart logs given a serial
 		aliasAPI.getAliasChartLogs = function (serial, type) {
 			return $http.post(
