@@ -358,7 +358,12 @@ class Diagnosis extends Module {
         $source = null;
         $this->checkDeleteAccess($post);
         $post = HelpSetup::arraySanitization($post);
-        $errCode = $this->_validateBasicPatientInfo($post, $patientSite, $source);
+
+        if (is_array($post))
+            $errCode = $this->_validatePatientSourceExternalId($post, $patientSite, $source);
+        else
+            $errCode = 31;
+
         if($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>$errCode)));
 
@@ -379,7 +384,7 @@ class Diagnosis extends Module {
      *                          source : Source database of the diagnosis (mandatory)
      *                          rowId : External ID of the diagnosis (mandatory)
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 11 bits (value from 0 to 2047). Bit informations
+     *                      Error validation code is coded as an int of 5 bits (value from 0 to 31). Bit informations
      *                      are coded from right to left:
      *                      1: MRN invalid or missing
      *                      2: site invalid or missing
@@ -390,38 +395,9 @@ class Diagnosis extends Module {
      *          $patientSite : array (reference) - site info
      *          $source : array (reference) - source database
      * */
-    protected function _validateBasicPatientInfo(&$post, &$patientSite, &$source) {
-        $errCode = "";
-
-        // 1st bit - MRN
-        if(!array_key_exists("mrn", $post) || $post["mrn"] == "") {
-            $errCode = "1" . $errCode;
-        } else {
-            $errCode = "0" . $errCode;
-        }
-
-        // 2nd bit - Site
-        if(!array_key_exists("site", $post) || $post["site"] == "") {
-            $errCode = "1" . $errCode;
-        } else {
-            $errCode = "0" . $errCode;
-        }
-
-        // 3rd bit - MRN and site combo must exists
-        if(bindec($errCode) != 0) {
-            $patientSite = array();
-            $errCode = "1" . $errCode;
-        } else {
-            $patientSite = $this->opalDB->getPatientSite($post["mrn"], $post["site"]);
-            if(count($patientSite) != 1) {
-                $patientSite = array();
-                $errCode = "1" . $errCode;
-            }
-            else {
-                $patientSite = $patientSite[0];
-                $errCode = "0" . $errCode;
-            }
-        }
+    protected function _validatePatientSourceExternalId(&$post, &$patientSite, &$source) {
+        $patientSite = array();
+        $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
 
         // 4th bit - source
         if(!array_key_exists("source", $post) || $post["source"] == "") {
@@ -479,53 +455,57 @@ class Diagnosis extends Module {
      * */
     protected function _validatePatientDiagnosis(&$post, &$patientSite, &$source) {
         $post = HelpSetup::arraySanitization($post);
-        $errCode = $this->_validateBasicPatientInfo($post, $patientSite, $source);
 
-        // 6th bit - externalId of the diagnosis code
-        if(!array_key_exists("externalId", $post) || $post["externalId"] == "")
-            $errCode = "1" . $errCode;
-        else
-            $errCode = "0" . $errCode;
-
-        // 7th bit - diagnosis code
-        if(!array_key_exists("code", $post) || $post["code"] == "")
-            $errCode = "1" . $errCode;
-        else
-            $errCode = "0" . $errCode;
-
-        // 8th bit - the combo code/source/ExternalId exists as a master source diagnosis
-        if (bindec($errCode) != 0)
-            $errCode = "1" . $errCode;
-        else {
-            $code = $this->opalDB->getDiagnosisCodeDetails($post["code"], $source["SourceDatabaseName"], $post["externalId"]);
-            if(count($code) != 1)
+        if (is_array($post)) {
+            $errCode = $this->_validatePatientSourceExternalId($post, $patientSite, $source);
+            // 6th bit - externalId of the diagnosis code
+            if (!array_key_exists("externalId", $post) || $post["externalId"] == "")
                 $errCode = "1" . $errCode;
             else
                 $errCode = "0" . $errCode;
-        }
 
-        // 9th bit - creation date
-        if(!array_key_exists("creationDate", $post) || $post["creationDate"] == "" || !HelpSetup::verifyDate($post["creationDate"], false, "Y-m-d H:i:s"))
-            $errCode = "1" . $errCode;
-        else
-            $errCode = "0" . $errCode;
+            // 7th bit - diagnosis code
+            if (!array_key_exists("code", $post) || $post["code"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
 
-        // 10th bit - description EN
-        if(!array_key_exists("descriptionEn", $post) || $post["descriptionEn"] == "") {
-            $errCode = "1" . $errCode;
+            // 8th bit - the combo code/source/ExternalId exists as a master source diagnosis
+            if (bindec($errCode) != 0)
+                $errCode = "1" . $errCode;
+            else {
+                $code = $this->opalDB->getDiagnosisCodeDetails($post["code"], $source["SourceDatabaseName"], $post["externalId"]);
+                if (count($code) != 1)
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
+            }
+
+            // 9th bit - creation date
+            if (!array_key_exists("creationDate", $post) || $post["creationDate"] == "" || !HelpSetup::verifyDate($post["creationDate"], false, "Y-m-d H:i:s"))
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            // 10th bit - description EN
+            if (!array_key_exists("descriptionEn", $post) || $post["descriptionEn"] == "") {
+                $errCode = "1" . $errCode;
+            } else
+                $errCode = "0" . $errCode;
+
+            // 11th bit - description FR
+            if (!array_key_exists("descriptionFr", $post)) {
+                $errCode = "1" . $errCode;
+            } else
+                $errCode = "0" . $errCode;
+
+            if (!array_key_exists("stage", $post))
+                $post["stage"] = "";
+            if (!array_key_exists("stageCriteria", $post))
+                $post["stageCriteria"] = "";
         } else
-            $errCode = "0" . $errCode;
+            $errCode = "11111111111";
 
-        // 11th bit - description FR
-        if(!array_key_exists("descriptionFr", $post)) {
-            $errCode = "1" . $errCode;
-        } else
-            $errCode = "0" . $errCode;
-
-        if(!array_key_exists("stage", $post))
-            $post["stage"] = "";
-        if(!array_key_exists("stageCriteria", $post))
-            $post["stageCriteria"] = "";
         return bindec($errCode);
     }
 }
