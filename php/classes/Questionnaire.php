@@ -471,10 +471,11 @@ class Questionnaire extends QuestionnaireModule {
 
     /**
      * Get the list of questionnaires status, visualization form, and completion date for a specific patient on a site
-     * Validation code :    Error validation code is coded as an int of 2 bits (value from 0 to 3). Bit informations
+     * Validation code :    Error validation code is coded as an int of 2 bits (value from 0 to 3). Bit information
      *                      are coded from right to left:
      *                      1: mrn is missing
      *                      2: site is missing
+     *                      3: combo mrn site does not exists
      * @param $post array - $_POST content
      * @return array
      */
@@ -482,10 +483,9 @@ class Questionnaire extends QuestionnaireModule {
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
         $errCode = "";
-        if (is_array($post)) {
-            if (is_array($post))
-                $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
-        } else
+        if (is_array($post))
+            $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
+        else
             $errCode = "111";
 
         $errCode = bindec($errCode);
