@@ -564,4 +564,33 @@ class Questionnaire extends QuestionnaireModule {
             $errCode = "111111";
         return $errCode;
     }
+
+    /**
+     * Return the list of published questionnaires found.
+     * @return array - published questionnaires found
+     */
+    public function getPublishedQuestionnaires() {
+        $this->checkReadAccess();
+        return $this->questionnaireDB->getPublishedQuestionnaires();
+    }
+
+    /**
+     * @param $post
+     * @return false
+     */
+    public function getAnsweredQuestionnairesPatient($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $patientSite = array();
+        if (is_array($post))
+            $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
+        else
+            $errCode = "111";
+
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        return $this->questionnaireDB->getAnsweredQuestionnairesPatient($post["mrn"], $post["site"]);
+    }
 }
