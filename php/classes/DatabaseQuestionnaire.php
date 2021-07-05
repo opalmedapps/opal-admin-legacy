@@ -1303,6 +1303,12 @@ class DatabaseQuestionnaire extends DatabaseAccess
         return $this->_fetchAll(SQL_GET_PUBLISHED_QUESTIONNAIRES, array());
     }
 
+    /**
+     * Get the list of answered questions from a specific patient
+     * @param $mrn - Patient MRN
+     * @param $hospitalCode - Code of the Hospital
+     * @return array - results found
+     */
     function getAnsweredQuestionnairesPatient($mrn, $hospitalCode) {
         return $this->_fetchAll(SQL_GET_ANSWERED_QUESTIONNAIRES_PATIENT, array(
             array("parameter"=>":MRN","variable"=>$mrn,"data_type"=>PDO::PARAM_STR),
