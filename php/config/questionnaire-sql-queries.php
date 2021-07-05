@@ -615,7 +615,7 @@ define("SQL_QUESTIONNAIRE_GET_CONSENT_FORM_TITLE","
 define("SQL_GET_QUESTIONNAIRE_LIST_ORMS","
     SELECT :MRN AS PatientId, MAX(CAST(DATE_FORMAT(Q.CompletionDate, '%Y-%m-%d') AS CHAR(30))) AS CompletionDate,
     CASE WHEN DATEDIFF(CAST(DATE_FORMAT(NOW(), '%Y-%m-%d') AS CHAR(30)), MAX(CAST(DATE_FORMAT(Q.CompletionDate, '%Y-%m-%d') AS CHAR(30)))) <= 3650 THEN 'New'
-    ELSE 'Old' END AS STATUS, QC.QuestionnaireDBSerNum, QC.QuestionnaireName_EN, COUNT(*) AS Total, P.Sex, P.Age,
+    ELSE 'Old' END AS status, QC.QuestionnaireDBSerNum, QC.QuestionnaireName_EN, COUNT(*) AS Total, P.Sex, P.Age,
     PHI.Hospital_Identifier_Type_Code, qDB_q.visualization AS Visualization 
     FROM ".OPAL_DB_NAME.".".OPAL_QUESTIONNAIRE_CONTROL_TABLE." QC, ".OPAL_DB_NAME.".".OPAL_QUESTIONNAIRE_TABLE." Q, 
     ".OPAL_DB_NAME.".".OPAL_PATIENT_TABLE." P, ".OPAL_DB_NAME.".".OPAL_USERS_TABLE." U,
@@ -693,4 +693,38 @@ define("GET_QUESTION_NAME_ANSWER","
 
 define("GET_PATIENT_PER_EXTERNALID", "
     SELECT * FROM ".PATIENT_TABLE." WHERE externalId = :externalId;
+");
+
+define("SQL_GET_PUBLISHED_QUESTIONNAIRES",
+    "SELECT q.ID,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR
+    FROM ".QUESTIONNAIRE_TABLE." q
+    WHERE q.deleted = ".NON_DELETED_RECORD." AND q.final = ".FINAL_RECORD." ORDER BY q.ID;"
+);
+
+define("SQL_GET_ANSWERED_QUESTIONNAIRES_PATIENT","
+    SELECT :MRN AS PatientId, MAX(CAST(DATE_FORMAT(Q.CompletionDate, '%Y-%m-%d') AS char(30))) AS CompletionDate,
+    CASE
+        WHEN DATEDIFF(CAST(DATE_FORMAT(now(), '%Y-%m-%d') AS CHAR(30)), MAX(CAST(DATE_FORMAT(Q.CompletionDate, '%Y-%m-%d') AS CHAR(30)))) <= 3650 THEN 'New'
+        ELSE 'Old'
+    END AS Status,
+		  QC.QuestionnaireDBSerNum,
+		  QC.QuestionnaireName_EN,
+		  COUNT(*) AS Total,
+		  P.Sex,
+		  YEAR(CURRENT_TIMESTAMP) - YEAR(P.DateOfBirth) - (RIGHT(CURRENT_TIMESTAMP, 5) < RIGHT(P.DateOfBirth, 5)) AS Age,
+		  qDB_q.visualization AS Visualization
+		FROM ".OPAL_DB_NAME.".".OPAL_QUESTIONNAIRE_CONTROL_TABLE." QC, ".OPAL_DB_NAME.".".OPAL_QUESTIONNAIRE_TABLE." Q, ".OPAL_DB_NAME.".".OPAL_PATIENT_TABLE." P, ".OPAL_DB_NAME.".".OPAL_USERS_TABLE." U,
+		  ".QUESTIONNAIRE_TABLE." qDB_q, ".OPAL_DB_NAME.".".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." PHI
+		WHERE QC.QuestionnaireControlSerNum = Q.QuestionnaireControlSerNum
+			AND qDB_q.ID = QC.QuestionnaireDBSerNum
+			AND qDB_q.deleted = 0
+			AND Q.PatientSerNum = P.PatientSerNum
+		  AND U.UserTypeSerNum = P.PatientSerNum
+		  AND PHI.PatientSerNum = P.PatientSerNum
+			AND PHI.MRN = :MRN AND PHI.Hospital_Identifier_Type_Code = :Hospital_Identifier_Type_Code
+			and Q.CompletedFlag = 1
+		GROUP BY QC.QuestionnaireDBSerNum, QC.QuestionnaireName_EN, P.Sex, P.Age, qDB_q.visualization
+		Order By QC.QuestionnaireName_EN;
 ");
