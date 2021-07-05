@@ -575,8 +575,9 @@ class Questionnaire extends QuestionnaireModule {
     }
 
     /**
-     * @param $post
-     * @return false
+     * Get the list of questionnaires a specific patient answered.
+     * @param $post - contains the MRN of the patient and the site of the hospital
+     * @return array - list of questionnaires found
      */
     public function getAnsweredQuestionnairesPatient($post) {
         $this->checkReadAccess($post);
