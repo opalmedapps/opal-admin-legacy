@@ -799,12 +799,12 @@ print "Finished test result list\n" if $verbose;
 Patient::setPatientLastTransferredIntoOurDB($start_datetime);
 
 # Alias control
-Alias::setAliasLastTransferIntoOurDB($start_datetime);
+# Alias::setAliasLastTransferIntoOurDB($start_datetime);
 
 # Post control
-PostControl::setPostControlLastPublishedIntoOurDB($start_datetime);
+# PostControl::setPostControlLastPublishedIntoOurDB($start_datetime);
 # Educational material control
-EducationalMaterialControl::setEduMatControlLastPublishedIntoOurDB($start_datetime);
+# EducationalMaterialControl::setEduMatControlLastPublishedIntoOurDB($start_datetime);
 
 ##########################################################################################
 #
