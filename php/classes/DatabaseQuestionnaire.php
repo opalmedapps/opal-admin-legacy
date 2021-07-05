@@ -1298,4 +1298,15 @@ class DatabaseQuestionnaire extends DatabaseAccess
             array("parameter"=>":externalId","variable"=>$externalId,"data_type"=>PDO::PARAM_STR),
         ));
     }
+
+    function getPublishedQuestionnaires() {
+        return $this->_fetchAll(SQL_GET_PUBLISHED_QUESTIONNAIRES, array());
+    }
+
+    function getAnsweredQuestionnairesPatient($mrn, $hospitalCode) {
+        return $this->_fetchAll(SQL_GET_ANSWERED_QUESTIONNAIRES_PATIENT, array(
+            array("parameter"=>":MRN","variable"=>$mrn,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Hospital_Identifier_Type_Code","variable"=>$hospitalCode,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
 }

@@ -3368,6 +3368,11 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /**
+     * Count the total of existing alises from a list of alias ID
+     * @param $listIDs - list of alias IDs
+     * @return array
+     */
     function getCountAliases($listIDs) {
         $sql = str_replace("%%LISTIDS%%",implode(", ", $listIDs), OPAL_GET_COUNT_ALIASES);
         return $this->_fetch($sql, array());

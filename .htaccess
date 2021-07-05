@@ -267,7 +267,9 @@ RewriteRule ^question/update/question php/questionnaire/update.question.php [QSA
 
 # Questionnaire Section
 RewriteRule ^questionnaire/delete/questionnaire php/questionnaire/delete.questionnaire.php [QSA,L]
+RewriteRule ^questionnaire/get/answered-questionnaires-patient php/questionnaire/get.answered.questionnaires.patient.php [QSA,L]
 RewriteRule ^questionnaire/get/finalized-questions php/questionnaire/get.finalizedQuestions.php [QSA,L]
+RewriteRule ^questionnaire/get/published-questionnaires php/questionnaire/get.published.questionnaires.php [QSA,L]
 RewriteRule ^questionnaire/get/purposes-respondents php/questionnaire/get.purposes.respondents.php [QSA,L]
 RewriteRule ^questionnaire/get/question-name-answer php/questionnaire/get.question.name.and.answer.php [QSA,L]
 RewriteRule ^questionnaire/get/questionnaires-list-orms php/questionnaire/get.questionnaire.list.orms.php [QSA,L]
