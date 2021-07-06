@@ -658,7 +658,7 @@ define("GET_QUESTION_NAME_ANSWER","
 		SELECT CONVERT(getDisplayName(rbOpt.description, ".ENGLISH_LANGUAGE."), CHAR(516)) 
 		FROM ".ANSWER_RADIO_BUTTON_TABLE." aRB, ".RADIO_BUTTON_OPTION_TABLE." rbOpt
 		WHERE aRB.answerId = A.ID
-			AND rbOpt.ID = aRB.`value`) AS value
+			AND rbOpt.ID = aRB.value) AS value
 	FROM ".ANSWER_TABLE." A
 	WHERE A.deleted = ".NON_DELETED_RECORD."
 	UNION
@@ -666,20 +666,20 @@ define("GET_QUESTION_NAME_ANSWER","
 	FROM ".ANSWER_TABLE." A, answerCheckbox aC, checkboxOption cOpt
 	WHERE A.deleted = ".NON_DELETED_RECORD."
 		AND aC.answerId = A.ID
-			AND cOpt.ID = aC.`value`
+			AND cOpt.ID = aC.value
 	UNION
 	SELECT A.Id, A.questionId, A.sectionId, A.answerSectionId,CONVERT(getDisplayName(lOpt.description, ".ENGLISH_LANGUAGE."), CHAR(516)) AS value
 	FROM ".ANSWER_TABLE." A, answerLabel aL, labelOption lOpt
 	WHERE A.deleted = ".NON_DELETED_RECORD."
 		AND aL.answerId = A.ID
-			AND lOpt.ID = aL.`value`) B
+			AND lOpt.ID = aL.value) B
 	WHERE
 		qSec.questionId = B.questionId
 		AND qSec.sectionId = B.sectionId
 		AND B.answerSectionId = aSec.ID
 		AND aSec.answerQuestionnaireId = aq.ID
 		AND aq.patientId = :patientId
-		AND aq.`status` = ".QUESTIONNAIRE_STATUS_COMPLETED."
+		AND aq.status = ".QUESTIONNAIRE_STATUS_COMPLETED."
 		AND aq.questionnaireId = :questionnaireId
 		AND aq.deleted = ".NON_DELETED_RECORD."
 		AND q.ID = B.questionId
@@ -715,7 +715,7 @@ define("SQL_GET_ANSWERED_QUESTIONNAIRES_PATIENT","
     P.Sex, P.Age, qDB_q.visualization ORDER BY QC.QuestionnaireName_EN;
 ");
 
-define("OPAL_GET_QUESTIONS_BY_QUESTIONNAIRE_ID","
+define("SQL_GET_QUESTIONS_BY_QUESTIONNAIRE_ID","
     SELECT qtnn.ID AS questionnaireId,
         qtnn.legacyName AS questionnaireLegacyName,
         getDisplayName(qtnn.title,".ENGLISH_LANGUAGE.") AS questionnaireName_EN,
@@ -744,4 +744,72 @@ define("OPAL_GET_QUESTIONS_BY_QUESTIONNAIRE_ID","
         AND sec.deleted = ".NON_DELETED_RECORD."
         AND q.deleted = ".NON_DELETED_RECORD."
     ORDER BY sec.order, qSec.order;
+");
+
+define("SQL_GET_COMPLETED_QUESTIONNAIRE_INFO","
+	SELECT 
+		aq.ID AS answerQuestionnaireId,
+		aq.patientId,
+		DATE_FORMAT(aq.lastUpdated, '%Y-%m-%d') AS dateTimeAnswered,
+		aq.lastUpdated AS FullDateTimeAnswered,
+		qSec.ID AS questionSectionId,
+		qtnn.ID AS questionnaireId,
+		qtnn.legacyName AS questionnaireLegacyName,
+		qSec.questionId,
+		getDisplayName(display, ".ENGLISH_LANGUAGE.") AS display_EN,
+		getDisplayName(display, ".FRENCH_LANGUAGE.") AS question_FR,
+		getDisplayName(q.question, ".ENGLISH_LANGUAGE.") AS question_EN,
+		getDisplayName(q.question, ".FRENCH_LANGUAGE.") AS question_FR,
+		q.legacyTypeId AS legacyTypeId
+	FROM ".ANSWER_QUESTIONNAIRE_TABLE." aq
+		LEFT JOIN ".QUESTIONNAIRE_TABLE." qtnn ON (aq.questionnaireId = qtnn.ID)
+		LEFT JOIN ".SECTION_TABLE." sec ON (sec.questionnaireId = qtnn.ID)
+		LEFT JOIN ".QUESTION_SECTION_TABLE." qSec ON (qSec.sectionId = sec.ID)
+		LEFT JOIN ".QUESTION_TABLE." q ON (qSec.questionId = q.ID)
+	WHERE qtnn.ID = :ID
+		AND qtnn.deleted = ".NON_DELETED_RECORD."
+		AND sec.deleted = ".NON_DELETED_RECORD."
+		AND q.deleted = ".NON_DELETED_RECORD."
+		AND aq.deleted = ".NON_DELETED_RECORD."
+		AND aq.patientId = :patientId
+		AND aq.status = ".OPAL_ANSWER_QUESTIONNAIRE_COMPLETED_FLAG."
+	ORDER BY DATE_FORMAT(aq.lastUpdated, '%Y-%m-%d') DESC, aq.ID ASC, qSec.order ASC
+	;
+");
+
+define("SQL_GET_QUESTION_CHOICES", "
+	SELECT rbOpt.order AS choiceValue,
+		getDisplayName(rbOpt.description, ".ENGLISH_LANGUAGE.") AS choiceDescription_EN,
+		getDisplayName(rbOpt.description, ".FRENCH_LANGUAGE.") AS choiceDescription_FR
+	FROM ".RADIO_BUTTON_TABLE." rb, ".RADIO_BUTTON_OPTION_TABLE." rbOpt
+	WHERE rb.Id = rbOpt.parentTableId AND rb.questionId = :questionId
+	UNION ALL 
+	SELECT
+		cOpt.order AS choiceValue,
+		getDisplayName(cOpt.description, ".ENGLISH_LANGUAGE.") AS choiceDescription_EN,
+		getDisplayName(cOpt.description, ".FRENCH_LANGUAGE.") AS choiceDescription_FR
+	FROM ".CHECKBOX_TABLE." c, ".CHECKBOX_OPTION_TABLE." cOpt
+	WHERE c.ID = cOpt.parentTableId AND c.questionId = :questionId
+	UNION ALL 
+	SELECT 
+		sld.minValue - 1 AS choiceValue,
+		getDisplayName(sld.minCaption, ".ENGLISH_LANGUAGE.") AS choiceDescription_EN,
+		getDisplayName(sld.minCaption, ".FRENCH_LANGUAGE.") AS choiceDescription_FR
+	FROM ".SLIDER_TABLE." sld
+	WHERE sld.questionId = :questionId
+	UNION ALL 
+	SELECT 
+		sld.maxValue AS choiceValue,
+		getDisplayName(sld.maxCaption, ".ENGLISH_LANGUAGE.") AS choiceDescription_EN,
+		getDisplayName(sld.maxCaption, ".FRENCH_LANGUAGE.") AS choiceDescription_FR
+	FROM ".SLIDER_TABLE." sld
+	WHERE sld.questionId = :questionId
+	UNION ALL 
+	SELECT 
+		lOpt.order AS choiceValue,
+		getDisplayName(lOpt.description, ".ENGLISH_LANGUAGE.") AS choiceDescription_EN,
+		getDisplayName(lOpt.description, ".FRENCH_LANGUAGE.") AS choiceDescription_FR
+	FROM ".LABEL_TABLE." l, ".LABEL_OPTION_TABLE." lOpt
+	WHERE l.ID = lOpt.parentTableId AND l.questionId = :questionId
+	ORDER BY choiceValue;
 ");

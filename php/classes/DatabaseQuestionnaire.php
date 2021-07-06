@@ -1322,8 +1322,22 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return array - list of questions
      */
     function getQuestionsByQuestionnaireId($questionnaireId) {
-        return $this->_fetchAll(OPAL_GET_QUESTIONS_BY_QUESTIONNAIRE_ID, array(
+        return $this->_fetchAll(SQL_GET_QUESTIONS_BY_QUESTIONNAIRE_ID, array(
             array("parameter"=>":ID","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    function getCompletedQuestionnaireInfo($patientId, $questionnaireId) {
+        return $this->_fetchAll(SQL_GET_COMPLETED_QUESTIONNAIRE_INFO, array(
+            array("parameter"=>":patientId","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":ID","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function getQuestionChoices($questionId) {
+        return $this->_fetchAll(SQL_GET_QUESTION_CHOICES, array(
+            array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
 }
