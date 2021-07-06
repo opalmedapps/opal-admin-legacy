@@ -96,6 +96,8 @@ define("RESPONDENT_PATIENT", 1);
 
 define("TRIGGER_EVENT_PUBLISH", 1);
 
+define("OPAL_QUESTIONNAIRE_COMPLETED_FLAG",1);
+
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql.php");

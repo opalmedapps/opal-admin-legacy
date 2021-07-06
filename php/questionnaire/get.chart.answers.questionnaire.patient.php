@@ -3,7 +3,7 @@
 include_once("../config.php");
 
 $ormsList = new Questionnaire();
-$result = $ormsList->getQuestionNameAndAnswer($_POST);
+$result = $ormsList->getChartAnswersFromQuestionnairePatient($_POST);
 
 header('Content-Type: application/javascript');
 echo json_encode($result);
