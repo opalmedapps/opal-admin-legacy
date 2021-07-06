@@ -532,6 +532,30 @@ class Questionnaire extends QuestionnaireModule {
         return $results;
     }
 
+    public function getNonChartAnswersFromQuestionnairePatient($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $patientSite = array();
+        $errCode = $this->_validateQuestionnaireAndPatient($post, $patientSite);
+
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        $patientInfo = $this->questionnaireDB->getPatientPerExternalId($patientSite["PatientSerNum"]);
+
+        if(count($patientInfo) != 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Patients info invalid in DB. Please contact your admin.");
+        $patientInfo = $patientInfo[0];
+
+        $results = $this->questionnaireDB->getCompletedQuestionnaireInfo($patientInfo["ID"], $post["questionnaireId"]);
+
+        foreach ($results as &$item) {
+            $item["choices"] = $this->questionnaireDB->getQuestionChoices($item["questionId"]);
+        }
+
+        return $results;
+    }
+
     /**
      * Validate questionnaire and patient information.
      * @param $post array - data to validate
