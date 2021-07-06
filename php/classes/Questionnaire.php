@@ -496,18 +496,19 @@ class Questionnaire extends QuestionnaireModule {
     }
 
     /**
-     * Get the list of questions name and their respective answer from a specific patient to a specific question in a
-     * specific questionnaire. Using questionSectionId and questionText does not seems to be the right thing to
-     * do but because of a lack of time and man power, we cannot test it more and simplify the SQL query. See ticket
-     * OPAL-1026 for more details.
-     * @param $post array - $_POST content. Contains mrn, site code, questionnaireId, questionSectionId and questionText
-     * @return array - data found
+     * Get the list of chart answer from a specific questionnaire for a specific patient.
+     *
+     * Note: Using questionSectionId and questionText does not seems to be the right thing to do but because of a lack
+     * of time and man power, we cannot test it more and simplify the SQL query. See ticket OPAL-1026 for more details.
+     *
+     * @param $post array - $_POST content. Contains mrn, site code and questionnaireId
+     * @return array - answer found (if any)
      */
-    public function getQuestionNameAndAnswer($post) {
+    public function getChartAnswersFromQuestionnairePatient($post) {
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
         $patientSite = array();
-        $errCode = $this->_validateQuestionAndAnswerById($post, $patientSite);
+        $errCode = $this->_validateQuestionnaireAndPatient($post, $patientSite);
 
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
@@ -518,25 +519,33 @@ class Questionnaire extends QuestionnaireModule {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Patients info invalid in DB. Please contact your admin.");
         $patientInfo = $patientInfo[0];
 
-        return $this->questionnaireDB->getQuestionNameAnswer($patientInfo["ID"], $post["questionnaireId"], $post["questionSectionId"], $post["questionText"]);
+        $results = $this->questionnaireDB->getQuestionsByQuestionnaireId($post["questionnaireId"]);
+        foreach ($results as &$result) {
+            $result["answer"] = $this->questionnaireDB->getQuestionNameAnswer(
+                $patientInfo["ID"],
+                $result["questionnaireId"],
+                $result["questionSectionId"],
+                $result["question_EN"]
+            );
+        }
+        
+        return $results;
     }
 
     /**
-     * Validate patient info and the presence of a questionnaire ID, question section ID and question text.
+     * Validate questionnaire and patient information.
      * @param $post array - data to validate
      * @param $patientSite array - patient info from specific site found
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 3 bits (value from 0 to 7). Bit information
+     *                      Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit information
      *                      are coded from right to left:
      *                      1: MRN invalid or missing
      *                      2: site invalid or missing
      *                      3: combo of MRN-site-patient does not exists
      *                      4: questionnaire ID does not exists
-     *                      5: question section ID does not exists
-     *                      6: question text does not exists
      * @return string - validation code in binary
      */
-    protected function _validateQuestionAndAnswerById(&$post, &$patientSite) {
+    protected function _validateQuestionnaireAndPatient(&$post, &$patientSite) {
         if (is_array($post)) {
             $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
 
@@ -546,22 +555,8 @@ class Questionnaire extends QuestionnaireModule {
             } else {
                 $errCode = "0" . $errCode;
             }
-
-            // 5th bit - QuestionSection ID
-            if(!array_key_exists("questionSectionId", $post) || $post["questionSectionId"] == "") {
-                $errCode = "1" . $errCode;
-            } else {
-                $errCode = "0" . $errCode;
-            }
-
-            // 6th bit - question text
-            if(!array_key_exists("questionText", $post) || $post["questionText"] == "") {
-                $errCode = "1" . $errCode;
-            } else {
-                $errCode = "0" . $errCode;
-            }
         } else
-            $errCode = "111111";
+            $errCode = "1111";
         return $errCode;
     }
 
