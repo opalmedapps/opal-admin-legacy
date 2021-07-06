@@ -1315,4 +1315,15 @@ class DatabaseQuestionnaire extends DatabaseAccess
             array("parameter"=>":Hospital_Identifier_Type_Code","variable"=>$hospitalCode,"data_type"=>PDO::PARAM_STR),
         ));
     }
+
+    /**
+     * Get the list of questions from a specific questionnaire
+     * @param $questionnaireId - ID of the questionnaire
+     * @return array - list of questions
+     */
+    function getQuestionsByQuestionnaireId($questionnaireId) {
+        return $this->_fetchAll(OPAL_GET_QUESTIONS_BY_QUESTIONNAIRE_ID, array(
+            array("parameter"=>":ID","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }
