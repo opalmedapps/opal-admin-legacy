@@ -23,6 +23,7 @@ define("ANSWER_SECTION_TABLE","answerSection");
 define("ANSWER_SLIDER_TABLE","answerSlider");
 define("ANSWER_DATE_TABLE","answerDate");
 define("ANSWER_TIME_TABLE","answerTime");
+define("ANSWER_LABEL_TABLE","answerLabel");
 define("ANSWER_TABLE","answer");
 define("ANSWER_TEXT_BOX_TABLE","answerTextBox");
 define("CHECKBOX_OPTION_TABLE","checkboxOption");
