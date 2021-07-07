@@ -779,40 +779,40 @@ define("SQL_GET_COMPLETED_QUESTIONNAIRE_INFO","
 ");
 
 define("SQL_GET_QUESTION_OPTIONS", "
-	SELECT rbOpt.order AS choiceValue,
-		getDisplayName(rbOpt.description, ".ENGLISH_LANGUAGE.") AS choiceDescription_EN,
-		getDisplayName(rbOpt.description, ".FRENCH_LANGUAGE.") AS choiceDescription_FR
+	SELECT rbOpt.order AS value,
+		getDisplayName(rbOpt.description, ".ENGLISH_LANGUAGE.") AS description_EN,
+		getDisplayName(rbOpt.description, ".FRENCH_LANGUAGE.") AS description_FR
 	FROM ".RADIO_BUTTON_TABLE." rb, ".RADIO_BUTTON_OPTION_TABLE." rbOpt
 	WHERE rb.Id = rbOpt.parentTableId AND rb.questionId = :questionId
 	UNION ALL 
 	SELECT
-		cOpt.order AS choiceValue,
-		getDisplayName(cOpt.description, ".ENGLISH_LANGUAGE.") AS choiceDescription_EN,
-		getDisplayName(cOpt.description, ".FRENCH_LANGUAGE.") AS choiceDescription_FR
+		cOpt.order AS value,
+		getDisplayName(cOpt.description, ".ENGLISH_LANGUAGE.") AS description_EN,
+		getDisplayName(cOpt.description, ".FRENCH_LANGUAGE.") AS description_FR
 	FROM ".CHECKBOX_TABLE." c, ".CHECKBOX_OPTION_TABLE." cOpt
 	WHERE c.ID = cOpt.parentTableId AND c.questionId = :questionId
 	UNION ALL 
 	SELECT 
-		sld.minValue - 1 AS choiceValue,
-		getDisplayName(sld.minCaption, ".ENGLISH_LANGUAGE.") AS choiceDescription_EN,
-		getDisplayName(sld.minCaption, ".FRENCH_LANGUAGE.") AS choiceDescription_FR
+		sld.minValue - 1 AS value,
+		getDisplayName(sld.minCaption, ".ENGLISH_LANGUAGE.") AS description_EN,
+		getDisplayName(sld.minCaption, ".FRENCH_LANGUAGE.") AS description_FR
 	FROM ".SLIDER_TABLE." sld
 	WHERE sld.questionId = :questionId
 	UNION ALL 
 	SELECT 
-		sld.maxValue AS choiceValue,
-		getDisplayName(sld.maxCaption, ".ENGLISH_LANGUAGE.") AS choiceDescription_EN,
-		getDisplayName(sld.maxCaption, ".FRENCH_LANGUAGE.") AS choiceDescription_FR
+		sld.maxValue AS value,
+		getDisplayName(sld.maxCaption, ".ENGLISH_LANGUAGE.") AS description_EN,
+		getDisplayName(sld.maxCaption, ".FRENCH_LANGUAGE.") AS description_FR
 	FROM ".SLIDER_TABLE." sld
 	WHERE sld.questionId = :questionId
 	UNION ALL 
 	SELECT 
-		lOpt.order AS choiceValue,
-		getDisplayName(lOpt.description, ".ENGLISH_LANGUAGE.") AS choiceDescription_EN,
-		getDisplayName(lOpt.description, ".FRENCH_LANGUAGE.") AS choiceDescription_FR
+		lOpt.order AS value,
+		getDisplayName(lOpt.description, ".ENGLISH_LANGUAGE.") AS description_EN,
+		getDisplayName(lOpt.description, ".FRENCH_LANGUAGE.") AS description_FR
 	FROM ".LABEL_TABLE." l, ".LABEL_OPTION_TABLE." lOpt
 	WHERE l.ID = lOpt.parentTableId AND l.questionId = :questionId
-	ORDER BY choiceValue;
+	ORDER BY value;
 ");
 
 define("GET_ANSWERS_NON_CHART_TYPE", "
