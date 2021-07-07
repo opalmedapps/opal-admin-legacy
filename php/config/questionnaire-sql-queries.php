@@ -758,7 +758,7 @@ define("SQL_GET_COMPLETED_QUESTIONNAIRE_INFO","
 		qSec.questionId,
 		qSec.sectionId,
 		getDisplayName(display, ".ENGLISH_LANGUAGE.") AS display_EN,
-		getDisplayName(display, ".FRENCH_LANGUAGE.") AS question_FR,
+		getDisplayName(display, ".FRENCH_LANGUAGE.") AS display_FR,
 		getDisplayName(q.question, ".ENGLISH_LANGUAGE.") AS question_EN,
 		getDisplayName(q.question, ".FRENCH_LANGUAGE.") AS question_FR,
 		q.legacyTypeId AS legacyTypeId
