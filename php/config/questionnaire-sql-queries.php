@@ -629,7 +629,7 @@ define("SQL_GET_QUESTIONNAIRE_LIST_ORMS","
 
 // This function has to be redone since it was not designed properly but we are lacking time and man power. It was
 // taken directly from the stored procedure getQuestionNameAndAnswerByID. See OPAL-1026
-define("GET_QUESTION_NAME_ANSWER","
+define("GET_ANSWERS_CHART_TYPE","
 	SELECT UNIX_TIMESTAMP(DATE_FORMAT(aq.lastUpdated, '%Y-%m-%d')) AS dateTimeAnswered,
 		B.value AS answer,
 		B.Id AS answerId
@@ -639,37 +639,37 @@ define("GET_QUESTION_NAME_ANSWER","
 		".QUESTION_TABLE." q,
 		(SELECT A.Id, A.questionId, A.sectionId, A.answerSectionId,
 	
-		(SELECT CONVERT(atb.VALUE, CHAR(516)) 
+		(SELECT CONVERT(atb.value, CHAR(516)) 
 		FROM ".ANSWER_TEXT_BOX_TABLE." atb
 		WHERE atb.answerId = A.ID
 		UNION 
-		SELECT CONVERT(asr.VALUE, CHAR(516))
+		SELECT CONVERT(asr.value, CHAR(516))
 		FROM ".ANSWER_SLIDER_TABLE." asr
 		WHERE asr.answerId = A.ID
 		UNION 
-		SELECT CONVERT(adt.VALUE, CHAR(516))
+		SELECT CONVERT(adt.value, CHAR(516))
 		FROM ".ANSWER_DATE_TABLE." adt
 		WHERE adt.answerId = A.ID
 		UNION 
-		SELECT CONVERT(atme.VALUE, CHAR(516))
+		SELECT CONVERT(atme.value, CHAR(516))
 		FROM ".ANSWER_TIME_TABLE." atme
 		WHERE atme.answerId = A.ID
 		UNION 
-		SELECT CONVERT(getDisplayName(rbOpt.description, ".ENGLISH_LANGUAGE."), CHAR(516)) 
+		SELECT CONVERT(getDisplayName(rbOpt.description, :languageId), CHAR(516)) 
 		FROM ".ANSWER_RADIO_BUTTON_TABLE." aRB, ".RADIO_BUTTON_OPTION_TABLE." rbOpt
 		WHERE aRB.answerId = A.ID
 			AND rbOpt.ID = aRB.value) AS value
 	FROM ".ANSWER_TABLE." A
 	WHERE A.deleted = ".NON_DELETED_RECORD."
 	UNION
-	SELECT A.Id, A.questionId, A.sectionId, A.answerSectionId, CONVERT(getDisplayName(cOpt.description, ".ENGLISH_LANGUAGE."), CHAR(516)) AS value
+	SELECT A.Id, A.questionId, A.sectionId, A.answerSectionId, CONVERT(getDisplayName(cOpt.description, :languageId), CHAR(516)) AS value
 	FROM ".ANSWER_TABLE." A, answerCheckbox aC, checkboxOption cOpt
 	WHERE A.deleted = ".NON_DELETED_RECORD."
 		AND aC.answerId = A.ID
 			AND cOpt.ID = aC.value
 	UNION
-	SELECT A.Id, A.questionId, A.sectionId, A.answerSectionId,CONVERT(getDisplayName(lOpt.description, ".ENGLISH_LANGUAGE."), CHAR(516)) AS value
-	FROM ".ANSWER_TABLE." A, answerLabel aL, labelOption lOpt
+	SELECT A.Id, A.questionId, A.sectionId, A.answerSectionId,CONVERT(getDisplayName(lOpt.description, :languageId), CHAR(516)) AS value
+	FROM ".ANSWER_TABLE." A, ".ANSWER_LABEL_TABLE." aL, ".LABEL_OPTION_TABLE." lOpt
 	WHERE A.deleted = ".NON_DELETED_RECORD."
 		AND aL.answerId = A.ID
 			AND lOpt.ID = aL.value) B
@@ -685,7 +685,7 @@ define("GET_QUESTION_NAME_ANSWER","
 		AND q.ID = B.questionId
 		AND q.deleted = ".NON_DELETED_RECORD."
 		AND qSec.ID = :questionSectionId
-		AND getDisplayName(q.question, ".ENGLISH_LANGUAGE.") = :questionText
+		AND getDisplayName(q.question, :languageId) = :questionText
 	;
 ");
 
@@ -751,11 +751,12 @@ define("SQL_GET_COMPLETED_QUESTIONNAIRE_INFO","
 		aq.ID AS answerQuestionnaireId,
 		aq.patientId,
 		DATE_FORMAT(aq.lastUpdated, '%Y-%m-%d') AS dateTimeAnswered,
-		aq.lastUpdated AS FullDateTimeAnswered,
+		aq.lastUpdated AS fullDateTimeAnswered,
 		qSec.ID AS questionSectionId,
 		qtnn.ID AS questionnaireId,
 		qtnn.legacyName AS questionnaireLegacyName,
 		qSec.questionId,
+		qSec.sectionId,
 		getDisplayName(display, ".ENGLISH_LANGUAGE.") AS display_EN,
 		getDisplayName(display, ".FRENCH_LANGUAGE.") AS question_FR,
 		getDisplayName(q.question, ".ENGLISH_LANGUAGE.") AS question_EN,
@@ -777,7 +778,7 @@ define("SQL_GET_COMPLETED_QUESTIONNAIRE_INFO","
 	;
 ");
 
-define("SQL_GET_QUESTION_CHOICES", "
+define("SQL_GET_QUESTION_OPTIONS", "
 	SELECT rbOpt.order AS choiceValue,
 		getDisplayName(rbOpt.description, ".ENGLISH_LANGUAGE.") AS choiceDescription_EN,
 		getDisplayName(rbOpt.description, ".FRENCH_LANGUAGE.") AS choiceDescription_FR
@@ -812,4 +813,58 @@ define("SQL_GET_QUESTION_CHOICES", "
 	FROM ".LABEL_TABLE." l, ".LABEL_OPTION_TABLE." lOpt
 	WHERE l.ID = lOpt.parentTableId AND l.questionId = :questionId
 	ORDER BY choiceValue;
+");
+
+define("GET_ANSWERS_NON_CHART_TYPE", "
+	SELECT B.Answer AS answer
+	FROM ".ANSWER_SECTION_TABLE." aSec,
+		(SELECT A.answerSectionId,
+			(SELECT CONVERT(atb.value, CHAR(516))
+			FROM ".ANSWER_TEXT_BOX_TABLE." atb
+			WHERE atb.answerId = A.ID
+			UNION
+			SELECT CONVERT(asldr.value, CHAR(516))
+			FROM ".ANSWER_SLIDER_TABLE." asldr
+			WHERE asldr.answerId = A.ID
+			UNION
+			SELECT CONVERT(adt.value, CHAR(516))
+			FROM ".ANSWER_DATE_TABLE." adt
+			WHERE adt.answerId = A.ID
+			UNION
+			SELECT CONVERT(atm.value, CHAR(516))
+			FROM ".ANSWER_TIME_TABLE." atm
+			WHERE atm.answerId = A.ID
+			UNION
+			SELECT CONVERT(getDisplayName(rbOpt.description, :languageId), CHAR(516))
+			FROM ".ANSWER_RADIO_BUTTON_TABLE." aRB, ".RADIO_BUTTON_OPTION_TABLE." rbOpt
+			WHERE aRB.answerId = A.ID
+				AND rbOpt.ID = aRB.value) AS answer
+		FROM ".ANSWER_TABLE." A
+		WHERE A.deleted = ".NON_DELETED_RECORD."
+			AND A.questionId = :questionId
+			AND A.sectionId = :sectionId
+			AND A.typeId IN (".SLIDERS.",".TEXT_BOX.",".RADIO_BUTTON.",".TIME.",".DATE.")
+	UNION
+	SELECT A.answerSectionId, CONVERT(getDisplayName(cOpt.description, :languageId), CHAR(516)) AS answer
+	FROM ".ANSWER_TABLE." A, ".ANSWER_CHECKBOX_TABLE." aC, ".CHECKBOX_OPTION_TABLE." cOpt
+	WHERE A.deleted = ".NON_DELETED_RECORD."
+		AND A.questionId = :questionId
+		AND A.sectionId = :sectionId
+		AND aC.answerId = A.ID
+		AND cOpt.ID = aC.value
+		AND A.typeId = ".CHECKBOXES."
+	UNION
+	SELECT A.answerSectionId, CONVERT(getDisplayName(lOpt.description, :languageId), CHAR(516)) AS answer
+	FROM ".ANSWER_TABLE." A, ".ANSWER_LABEL_TABLE." aL, ".LABEL_OPTION_TABLE." lOpt
+	WHERE A.deleted = ".NON_DELETED_RECORD."
+		AND A.questionId = :questionId
+		AND A.sectionId = :sectionId
+		AND aL.answerId = A.ID
+		AND lOpt.ID = aL.value
+		AND A.typeId = ".LABEL."
+	) B
+	WHERE
+		aSec.sectionId = :sectionId
+		AND B.answerSectionId = aSec.ID
+		AND aSec.answerQuestionnaireId = :answerQuestionnaireId;
 ");

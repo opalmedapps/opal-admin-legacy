@@ -1270,21 +1270,41 @@ class DatabaseQuestionnaire extends DatabaseAccess
 
     /**
      * Get the list of questions name and their respective answer from a specific patient to a specific question in a
-     * specific questionnaire. Using the $questionSectionId and $questionText does not seems to be the right thing to
-     * do but because of a lack of time and man power, we cannot test it more and simplify the SQL query. See ticket
-     * OPAL-1026.
+     * specific questionnaire for a chart view. Using the $questionSectionId and $questionText does not seems to be the
+     * right thing to do but because of a lack of time and man power, we cannot test it more and simplify the SQL query.
+     * See ticket OPAL-1026.
      * @param $patientId - internal patient ID
      * @param $questionnaireId - questionnaire Id
      * @param $questionSectionId - question section ID
      * @param $questionText - text of the question
+     * @param int $languageId - Primary key language - default english (2)
      * @return array - results found
      */
-    function getQuestionNameAnswer($patientId, $questionnaireId, $questionSectionId, $questionText) {
-        return $this->_fetchAll(GET_QUESTION_NAME_ANSWER, array(
+    function getAnswersChartType($patientId, $questionnaireId, $questionSectionId, $questionText, $languageId = 2) {
+        return $this->_fetchAll(GET_ANSWERS_CHART_TYPE, array(
+            array("parameter"=>":languageId","variable"=>$languageId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":patientId","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":questionnaireId","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":questionSectionId","variable"=>$questionSectionId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":questionText","variable"=>$questionText,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get the list of questions name and their respective answer from a specific patient to a specific question in a
+     * specific questionnaire for a non chart view.
+     * @param $answerQuestionnaireId - Primary key of answerQuestionnaire table
+     * @param $sectionId - Primary key of the section
+     * @param $questionId - Primary key of the question
+     * @param int $languageId - Primary key language - default english (2)
+     * @return false
+     */
+    function getAnswersNonChartType($answerQuestionnaireId, $sectionId, $questionId, $languageId = 2) {
+        return $this->_fetchAll(GET_ANSWERS_NON_CHART_TYPE, array(
+            array("parameter"=>":languageId","variable"=>$languageId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":sectionId","variable"=>$sectionId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":answerQuestionnaireId","variable"=>$answerQuestionnaireId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
@@ -1334,10 +1354,9 @@ class DatabaseQuestionnaire extends DatabaseAccess
         ));
     }
 
-    function getQuestionChoices($questionId) {
-        return $this->_fetchAll(SQL_GET_QUESTION_CHOICES, array(
+    function getQuestionOptions($questionId) {
+        return $this->_fetchAll(SQL_GET_QUESTION_OPTIONS, array(
             array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
         ));
     }
-
 }
