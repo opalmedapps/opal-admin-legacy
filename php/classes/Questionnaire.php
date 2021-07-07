@@ -502,7 +502,7 @@ class Questionnaire extends QuestionnaireModule {
      * of time and man power, we cannot test it more and simplify the SQL query. See ticket OPAL-1026 for more details.
      *
      * @param $post array - $_POST content. Contains mrn, site code and questionnaireId
-     * @return array - answer found (if any)
+     * @return array - answers found (if any)
      */
     public function getChartAnswersFromQuestionnairePatient($post) {
         $this->checkReadAccess($post);
@@ -521,7 +521,7 @@ class Questionnaire extends QuestionnaireModule {
 
         $results = $this->questionnaireDB->getQuestionsByQuestionnaireId($post["questionnaireId"]);
         foreach ($results as &$result) {
-            $result["answer"] = $this->questionnaireDB->getQuestionNameAnswer(
+            $result["answer"] = $this->questionnaireDB->getAnswersChartType(
                 $patientInfo["ID"],
                 $result["questionnaireId"],
                 $result["questionSectionId"],
@@ -532,6 +532,11 @@ class Questionnaire extends QuestionnaireModule {
         return $results;
     }
 
+    /**
+     * Get the list of non chart answer from a specific questionnaire for a specific patient.
+     * @param $post array - $_POST content. Contains mrn, site code and questionnaireId
+     * @return array - answers found (if any)
+     */
     public function getNonChartAnswersFromQuestionnairePatient($post) {
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
@@ -550,7 +555,12 @@ class Questionnaire extends QuestionnaireModule {
         $results = $this->questionnaireDB->getCompletedQuestionnaireInfo($patientInfo["ID"], $post["questionnaireId"]);
 
         foreach ($results as &$item) {
-            $item["choices"] = $this->questionnaireDB->getQuestionChoices($item["questionId"]);
+            $item["options"] = $this->questionnaireDB->getQuestionOptions($item["questionId"]);
+            $item["answers"] = $this->questionnaireDB->getAnswersNonChartType(
+                $item["answerQuestionnaireId"],
+                $item["sectionId"],
+                $item["questionId"]
+            );
         }
 
         return $results;

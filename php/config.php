@@ -99,6 +99,28 @@ define("TRIGGER_EVENT_PUBLISH", 1);
 define("OPAL_QUESTIONNAIRE_COMPLETED_FLAG",1);
 define("OPAL_ANSWER_QUESTIONNAIRE_COMPLETED_FLAG",2);
 
+/*
+ * Question type definition for the legacy questionnaire and the new questionnaire 2019
+ * */
+define("CHECKBOXES", 1);
+define("SLIDERS", 2);
+define("TEXT_BOX", 3);
+define("RADIO_BUTTON", 4);
+define("LABEL", 5);
+define("TIME", 6);
+define("DATE", 7);
+define("LEGACY_MC", 1);
+define("LEGACY_MINMAX", 2);
+define("LEGACY_SA", 3);
+define("LEGACY_CHECKBOX", 4);
+define("LEGACY_YESNO", 9);
+define("DEFAULT_TYPE", TEXT_BOX);
+
+define("ARIA_SOURCE_DB", 1);
+define("ORMS_SOURCE_DB", 2);
+define("MOSAIQ_SOURCE_DB", 3);
+define("LOCAL_SOURCE_DB", -1);
+
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql.php");
@@ -159,28 +181,6 @@ define( "APNS_TOPIC" , $config['pushNotificationConfig']['apple']['certificate']
 define( "CERTIFICATE_KEY" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['key'] );
 define( "IOS_URL" , $config['pushNotificationConfig']['apple']['appleURL'] );
 
-/*
- * Question type definition for the legacy questionnaire and the new questionnaire 2019
- * */
-define("CHECKBOXES", 1);
-define("SLIDERS", 2);
-define("TEXT_BOX", 3);
-define("RADIO_BUTTON", 4);
-define("LABEL", 5);
-define("TIME", 6);
-define("DATE", 7);
-define("LEGACY_MC", 1);
-define("LEGACY_MINMAX", 2);
-define("LEGACY_SA", 3);
-define("LEGACY_CHECKBOX", 4);
-define("LEGACY_YESNO", 9);
-define("DEFAULT_TYPE", TEXT_BOX);
-
-define("ARIA_SOURCE_DB", 1);
-define("ORMS_SOURCE_DB", 2);
-define("MOSAIQ_SOURCE_DB", 3);
-define("LOCAL_SOURCE_DB", -1);
-
 define("USER_SALT", $config["login"]["salt"]);
 define("ACTIVE_DIRECTORY", $config["login"]["activeDirectory"]);
 define("ACTIVE_DIRECTORY_SETTINGS", $config["login"]["activeDirectory"]["settings"]);
@@ -199,10 +199,6 @@ define("ENCRYPTED_DATA", "ENCRYPTED DATA");
 define("UNKNOWN_USER", "UNKNOWN USER");
 
 define("MAXIMUM_RECORDS_BATCH", 500);
-
-define("ALIAS_TYPE_TASK",1);
-define("ALIAS_TYPE_APPOINTMENT",2);
-define("ALIAS_TYPE_DOCUMENT",3);
 
 /*
  * List of HTTP status codes
