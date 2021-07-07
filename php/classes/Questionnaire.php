@@ -521,7 +521,7 @@ class Questionnaire extends QuestionnaireModule {
 
         $results = $this->questionnaireDB->getQuestionsByQuestionnaireId($post["questionnaireId"]);
         foreach ($results as &$result) {
-            $result["answer"] = $this->questionnaireDB->getAnswersChartType(
+            $result["answers"] = $this->questionnaireDB->getAnswersChartType(
                 $patientInfo["ID"],
                 $result["questionnaireId"],
                 $result["questionSectionId"],
