@@ -3379,7 +3379,7 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Get the last answered questionnaire from a specific patient on a site.
+     * Get the last completed questionnaire from a specific patient on a site.
      * @param $patientId - internal patient ID found
      * @return array - last answered questionnaire found (if any)
      */
