@@ -3383,8 +3383,8 @@ class DatabaseOpal extends DatabaseAccess {
      * @param $patientId - internal patient ID found
      * @return array - last answered questionnaire found (if any)
      */
-    function getLastAnsweredQuestionnaire($patientId) {
-        return $this->_fetch(OPAL_GET_LAST_ANSWERED_QUESTIONNAIRE, array(
+    function getLastCompletedQuestionnaire($patientId) {
+        return $this->_fetch(OPAL_GET_LAST_COMPLETED_QUESTIONNAIRE, array(
             array("parameter"=>":PatientSerNum","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
         ));
     }
