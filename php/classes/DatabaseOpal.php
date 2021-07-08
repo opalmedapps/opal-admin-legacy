@@ -3377,4 +3377,15 @@ class DatabaseOpal extends DatabaseAccess {
         $sql = str_replace("%%LISTIDS%%",implode(", ", $listIDs), OPAL_GET_COUNT_ALIASES);
         return $this->_fetch($sql, array());
     }
+
+    /**
+     * Get the last answered questionnaire from a specific patient on a site.
+     * @param $patientId - internal patient ID found
+     * @return array - last answered questionnaire found (if any)
+     */
+    function getLastAnsweredQuestionnaire($patientId) {
+        return $this->_fetch(OPAL_GET_LAST_ANSWERED_QUESTIONNAIRE, array(
+            array("parameter"=>":PatientSerNum","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }
