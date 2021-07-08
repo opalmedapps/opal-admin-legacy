@@ -1580,6 +1580,7 @@ define("OPAL_GET_COUNT_ALIASES", "
 ");
 
 const OPAL_GET_LAST_COMPLETED_QUESTIONNAIRE = "
-    SELECT QuestionnaireSerNum AS questionnaireId, CompletionDate, LastUpdated FROM Questionnaire WHERE
-    CompletedFlag = " . OPAL_QUESTIONNAIRE_COMPLETED_FLAG . " AND PatientSerNum = :PatientSerNum ORDER BY LastUpdated DESC
+    SELECT QuestionnaireControlSerNum AS questionnaireControlId, CompletionDate AS completionDate, LastUpdated AS lastUpdated
+    FROM ".OPAL_QUESTIONNAIRE_TABLE." WHERE CompletedFlag = " . OPAL_QUESTIONNAIRE_COMPLETED_FLAG . "
+    AND PatientSerNum = :PatientSerNum ORDER BY LastUpdated DESC;
 ";

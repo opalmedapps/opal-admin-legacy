@@ -625,7 +625,7 @@ class Questionnaire extends QuestionnaireModule {
     }
 
     /**
-     * Get the last answered questionnaire from a specific patient on a site.
+     * Get the last completed questionnaire from a specific patient on a site.
      * @param $post array - contains mrn and site
      * @return array - last answered questionnaire found (if any)
      */
