@@ -629,7 +629,7 @@ class Questionnaire extends QuestionnaireModule {
      * @param $post array - contains mrn and site
      * @return array - last answered questionnaire found (if any)
      */
-    public function getLastAnsweredQuestionnaire($post) {
+    public function getLastCompletedQuestionnaire($post) {
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
         $patientSite = array();
@@ -642,6 +642,6 @@ class Questionnaire extends QuestionnaireModule {
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        return $this->opalDB->getLastAnsweredQuestionnaire($patientSite["PatientSerNum"]);
+        return $this->opalDB->getLastCompletedQuestionnaire($patientSite["PatientSerNum"]);
     }
 }
