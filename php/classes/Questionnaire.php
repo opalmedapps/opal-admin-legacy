@@ -644,4 +644,30 @@ class Questionnaire extends QuestionnaireModule {
 
         return $this->opalDB->getLastCompletedQuestionnaire($patientSite["PatientSerNum"]);
     }
+
+    public function getPatientsCompletedQuestionnaires($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        if (is_array($post)) {
+            if (!array_key_exists("questionnaires", $post) || (!is_array($post["questionnaires"])))
+                $post["questionnaires"] = array();
+            $listIds = array();
+
+
+            foreach ($post["questionnaires"]as $item) {
+                $item = intval($item);
+                if(!in_array($item, $listIds))
+                    array_push($listIds, $item);
+            }
+            if (count($listIds) != count($post["questionnaires"]))
+                $errCode = "1";
+            else {
+                $errCode = "0";
+                $post["questionnaires"] = $listIds;
+            }
+        }
+        else
+            $errCode = "1";
+        return $this->opalDB->getPatientsCompletedQuestionnaires($post["questionnaires"]);
+    }
 }

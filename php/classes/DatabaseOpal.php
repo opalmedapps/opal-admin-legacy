@@ -3388,4 +3388,13 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":PatientSerNum","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    function getPatientsCompletedQuestionnaires($questionnaireList = array()) {
+        $sql = str_replace(
+            "%%CONDTION_OPTINAL%%",
+            count($questionnaireList) > 0 ? str_replace("%%QUESTIONNAIRES_LIST%%", implode(", ", $questionnaireList), OPAL_CONDITION_QUESTIONNAIRES_OPTIONAL) : "",
+            OPAL_GET_PATIENTS_COMPLETED_QUESTIONNAIRES
+        );
+        return $this->_fetchAll($sql, array());
+    }
 }
