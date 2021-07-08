@@ -623,4 +623,25 @@ class Questionnaire extends QuestionnaireModule {
 
         return $this->questionnaireDB->getAnsweredQuestionnairesPatient($post["mrn"], $post["site"]);
     }
+
+    /**
+     * Get the last answered questionnaire from a specific patient on a site.
+     * @param $post array - contains mrn and site
+     * @return array - last answered questionnaire found (if any)
+     */
+    public function getLastAnsweredQuestionnaire($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $patientSite = array();
+        if (is_array($post))
+            $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
+        else
+            $errCode = "111";
+
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        return $this->opalDB->getLastAnsweredQuestionnaire($patientSite["PatientSerNum"]);
+    }
 }
