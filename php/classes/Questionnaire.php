@@ -668,6 +668,11 @@ class Questionnaire extends QuestionnaireModule {
         }
         else
             $errCode = "1";
+
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
         return $this->opalDB->getPatientsCompletedQuestionnaires($post["questionnaires"]);
     }
 }
