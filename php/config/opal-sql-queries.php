@@ -1584,3 +1584,14 @@ const OPAL_GET_LAST_COMPLETED_QUESTIONNAIRE = "
     FROM ".OPAL_QUESTIONNAIRE_TABLE." WHERE CompletedFlag = " . OPAL_QUESTIONNAIRE_COMPLETED_FLAG . "
     AND PatientSerNum = :PatientSerNum ORDER BY LastUpdated DESC;
 ";
+
+const OPAL_GET_PATIENTS_COMPLETED_QUESTIONNAIRES = "
+    SELECT DISTINCT PHI.MRN AS mrn, PHI.Hospital_Identifier_Type_Code AS site, MAX(Q.CompletionDate) AS completionDate,
+    QC.QuestionnaireName_EN AS name_EN, QC.QuestionnaireName_FR AS name_FR, QC.QuestionnaireControlSerNum AS questionnaireControlId,
+    Q.LastUpdated AS lastUpdated FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." PHI INNER JOIN ".QUESTIONNAIRE_TABLE." Q
+    ON Q.PatientSerNum = PHI.PatientSerNum AND Q.CompletedFlag = 1 INNER JOIN ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." QC ON
+    QC.QuestionnaireControlSerNum = Q.QuestionnaireControlSerNum %%CONDTION_OPTINAL%% GROUP BY PHI.MRN ORDER BY
+    PHI.Hospital_Identifier_Type_Code ASC, PHI.MRN ASC, Q.CompletionDate DESC
+";
+
+const OPAL_CONDITION_QUESTIONNAIRES_OPTIONAL = " WHERE QC.QuestionnaireControlSerNum IN (%%QUESTIONNAIRES_LIST%%) ";
