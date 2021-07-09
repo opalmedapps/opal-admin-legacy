@@ -3402,4 +3402,15 @@ class DatabaseOpal extends DatabaseAccess {
         );
         return $this->_fetchAll($sql, array());
     }
+
+    /**
+     * Find the list of studies associated to one questionnaire
+     * @param $questionnaireId - ID of the questionnaire
+     * @return array - studies found
+     */
+    function getStudiesQuestionnaire($questionnaireId) {
+        return $this->_fetch(OPAL_GET_STUDIES_QUESTIONNAIRE, array(
+            array("parameter"=>":questionnaireId","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }
