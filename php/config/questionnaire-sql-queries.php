@@ -613,17 +613,17 @@ define("SQL_QUESTIONNAIRE_GET_CONSENT_FORM_TITLE","
 );
 
 define("SQL_GET_QUESTIONNAIRE_LIST_ORMS","
-    SELECT :MRN AS PatientId, MAX(CAST(DATE_FORMAT(Q.CompletionDate, '%Y-%m-%d') AS CHAR(30))) AS CompletionDate,
+    SELECT :MRN AS patientId, MAX(CAST(DATE_FORMAT(Q.CompletionDate, '%Y-%m-%d') AS CHAR(30))) AS completionDate,
     CASE WHEN DATEDIFF(CAST(DATE_FORMAT(NOW(), '%Y-%m-%d') AS CHAR(30)), MAX(CAST(DATE_FORMAT(Q.CompletionDate, '%Y-%m-%d') AS CHAR(30)))) <= 3650 THEN 'New'
-    ELSE 'Old' END AS status, QC.QuestionnaireDBSerNum, QC.QuestionnaireName_EN, COUNT(*) AS Total, P.Sex, P.Age,
-    PHI.Hospital_Identifier_Type_Code, qDB_q.visualization AS Visualization 
+    ELSE 'Old' END AS status, QC.QuestionnaireDBSerNum AS questionnaireDBId, QC.QuestionnaireName_EN AS name_EN,
+    QC.QuestionnaireName_FR AS name_FR, COUNT(*) AS total, PHI.Hospital_Identifier_Type_Code AS site, qDB_q.visualization
     FROM ".OPAL_DB_NAME.".".OPAL_QUESTIONNAIRE_CONTROL_TABLE." QC, ".OPAL_DB_NAME.".".OPAL_QUESTIONNAIRE_TABLE." Q, 
     ".OPAL_DB_NAME.".".OPAL_PATIENT_TABLE." P, ".OPAL_DB_NAME.".".OPAL_USERS_TABLE." U,
     ".OPAL_DB_NAME.".".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." PHI, ".QUESTIONNAIRE_TABLE." qDB_q
     WHERE QC.QuestionnaireControlSerNum = Q.QuestionnaireControlSerNum AND qDB_q.ID = QC.QuestionnaireDBSerNum
     AND qDB_q.deleted = 0 AND Q.PatientSerNum = P.PatientSerNum AND U.UserTypeSerNum = P.PatientSerNum
     AND PHI.Hospital_Identifier_Type_Code = :Hospital_Identifier_Type_Code AND PHI.MRN = :MRN AND Q.CompletedFlag = 1
-    GROUP BY QC.QuestionnaireDBSerNum, QC.QuestionnaireName_EN, P.Sex, P.Age, qDB_q.visualization
+    GROUP BY QC.QuestionnaireDBSerNum, QC.QuestionnaireName_EN, qDB_q.visualization
     ORDER BY QC.QuestionnaireName_EN;
 ");
 
