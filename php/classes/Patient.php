@@ -452,16 +452,51 @@ class Patient extends Module {
 
     }
 
+
+    /**
+     * Validate search patient mandatory fields
+     *
+     * @params  $post : array - Contains the following information
+     *                      mrn : Medical Record Number of the patient (mandatory)
+     *                      site : Site acronym of the establishment (mandatory)
+     *
+     *  1st bit invalid site
+     *  2nd bit invalid mrn
+     *
+     * @return $errCode
+     */
+    protected function _validatePatientExisitParams($post){
+
+        $errCode = "";
+
+        if(!array_key_exists("site", $post) || $post["site"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        if(!array_key_exists("mrn", $post) || $post["mrn"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        return $errCode;
+    }
+
     /**
      *
      * Determines the existence of a patient
      *
      * @param string $site : Hospital Identifier Type
      * @param string $mrn : Hospital Identifier Value
-     * @return array $response : 0 / 1
+     *
+     *  1st bit invalid site
+     *  2nd bit invalid mrn
+     *  3nd bit invalid format
+     *     * @return array $response : 0 / 1
      */
     public function checkPatientExist ($post )
     {
+        $errCode = "";
         $response = array(
             'status' => '',
         );
@@ -471,15 +506,17 @@ class Patient extends Module {
 
         $pattern = "/^[0-9]*$/i";
 
+        $errCode = $this->_validatePatientExisitParams($post) . $errCode;
+
         if (preg_match($pattern,  $post["mrn"] )) {
             $mrn = str_pad( $post["mrn"] ,7,"0",STR_PAD_LEFT);
             $response['status']  = "Success";
-            $errCode = 0;
+            $errCode = "0" . $errCode;
             $patientSite = $this->opalDB->getPatientSite($mrn, $post["site"]);
             $response['data']  = boolval(count($patientSite));
 
         } else {
-            $errCode = 1;
+            $errCode = "1" . $errCode;
             $response['status']  = "Error";
             $response['message'] = "Invalid MRN";
         }
@@ -488,7 +525,6 @@ class Patient extends Module {
         if($errCode != 0){
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
         }
-
 
         return $response;
     }
@@ -586,10 +622,6 @@ class Patient extends Module {
      */
     public function updatePatient($post){
 
-        $response = array(
-            'status' => 'Error'
-        );
-
         $errCode = "";
         $this->checkWriteAccess($post);
         HelpSetup::arraySanitization($post);
@@ -641,6 +673,7 @@ class Patient extends Module {
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
+
         // Get current patient demographic
         $patientData = $this->opalDB->fetchTriggersData("SELECT * FROM Patient where PatientSerNum=" . $patientSerNum)[0];
 
@@ -649,18 +682,23 @@ class Patient extends Module {
         $patientData["FirstName"] = $post["name"]["firstName"];
         $patientData["LastName"] = $post["name"]["lastName"];
         $patientData["SSN"] = $post["ramq"];
-        $patientData["DateOfBirth"] = $post["birthdate"];
 
-        $from = new DateTime($patientData["DateOfBirth"]);
-        $to   = new DateTime('today');
-        $age  =  $from->diff($to)->y;
+        if (array_key_exists("birthdate", $post) && !empty($post["birthdate"])){
+            $patientData["DateOfBirth"] = $post["birthdate"];
 
-        if ($age > 13){
-            $patientData["BlockedStatus"]   = 1;
-            $patientData["StatusReasonTxt"] = "Patient passed 13 years of age";
+            $from = new DateTime($patientData["DateOfBirth"]);
+            $to   = new DateTime('today');
+            $age  =  $from->diff($to)->y;
+
+            $patientData["Age"] = $age;
+
+            if ($age > 13){
+                $patientData["BlockedStatus"]   = 1;
+                $patientData["StatusReasonTxt"] = "Patient passed 13 years of age";
+            }
         }
 
-        if (array_key_exists("alias", $post) && !empty($post["alias"])){
+        if (array_key_exists("alias", $post)){
             $patientData["Alias"] = $post["alias"];
         }
 
@@ -668,12 +706,20 @@ class Patient extends Module {
             $patientData["Sex"] = $post["gender"];
         }
 
-        if (array_key_exists("email", $post) && !empty($post["email"])){
-            $patientData["Email"]    = $post["email"];
+        if (array_key_exists("email", $post) ){
+            if (!empty($post["email"])){
+                $patientData["Email"]    = $post["email"];
+            } else {
+                $patientData["Email"]    = null;
+            }
         }
 
-        if (array_key_exists("phone", $post) && !empty($post["phone"])){
-            $patientData["TelNum"]   = $post["phone"];
+        if (array_key_exists("phone", $post) ){
+            if(!empty($post["phone"])){
+                $patientData["TelNum"]   = $post["phone"];
+            } else {
+                $patientData["TelNum"]   = null;
+            }
         }
 
         if (array_key_exists("language", $post) && !empty($post["language"])){
@@ -701,6 +747,6 @@ class Patient extends Module {
 
         $this->opalDB->updatePatient($patientData);
 
-        return $response;
+        return false;
     }
 }
