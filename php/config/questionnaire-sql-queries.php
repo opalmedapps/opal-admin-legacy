@@ -607,8 +607,8 @@ define("SQL_QUESTIONNAIRE_GET_CONSENT_FORMS",
 
 define("SQL_QUESTIONNAIRE_GET_CONSENT_FORM_TITLE","
     SELECT q.ID, 
-    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = 2) AS name_EN,
-    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = 1) AS name_FR
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR
     FROM ".QUESTIONNAIRE_TABLE." q WHERE q.ID = :consentId AND q.final = ".FINAL_RECORD.";"
 );
 
@@ -616,15 +616,21 @@ define("SQL_GET_QUESTIONNAIRE_LIST_ORMS","
     SELECT :MRN AS patientId, MAX(CAST(DATE_FORMAT(Q.CompletionDate, '%Y-%m-%d') AS CHAR(30))) AS completionDate,
     CASE WHEN DATEDIFF(CAST(DATE_FORMAT(NOW(), '%Y-%m-%d') AS CHAR(30)), MAX(CAST(DATE_FORMAT(Q.CompletionDate, '%Y-%m-%d') AS CHAR(30)))) <= 3650 THEN 'New'
     ELSE 'Old' END AS status, QC.QuestionnaireDBSerNum AS questionnaireDBId, QC.QuestionnaireName_EN AS name_EN,
-    QC.QuestionnaireName_FR AS name_FR, COUNT(*) AS total, PHI.Hospital_Identifier_Type_Code AS site, qDB_q.visualization
+    QC.QuestionnaireName_FR AS name_FR, COUNT(*) AS total, PHI.Hospital_Identifier_Type_Code AS site, qDB_q.visualization,
+    qDB_q.purposeId, qDB_q.respondentId,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = p.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS purpose_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = p.title AND d.languageId = ".FRENCH_LANGUAGE.") AS purpose_FR,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS respondent_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.title AND d.languageId = ".FRENCH_LANGUAGE.") AS respondent_FR
     FROM ".OPAL_DB_NAME.".".OPAL_QUESTIONNAIRE_CONTROL_TABLE." QC, ".OPAL_DB_NAME.".".OPAL_QUESTIONNAIRE_TABLE." Q, 
     ".OPAL_DB_NAME.".".OPAL_PATIENT_TABLE." P, ".OPAL_DB_NAME.".".OPAL_USERS_TABLE." U,
     ".OPAL_DB_NAME.".".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." PHI, ".QUESTIONNAIRE_TABLE." qDB_q
+    LEFT JOIN ".PURPOSE_TABLE." p ON p.ID = qDB_q.purposeId LEFT JOIN ".RESPONDENT_TABLE." r ON r.ID = qDB_q.respondentId
     WHERE QC.QuestionnaireControlSerNum = Q.QuestionnaireControlSerNum AND qDB_q.ID = QC.QuestionnaireDBSerNum
-    AND qDB_q.deleted = 0 AND Q.PatientSerNum = P.PatientSerNum AND U.UserTypeSerNum = P.PatientSerNum
-    AND PHI.Hospital_Identifier_Type_Code = :Hospital_Identifier_Type_Code AND PHI.MRN = :MRN AND Q.CompletedFlag = 1
-    GROUP BY QC.QuestionnaireDBSerNum, QC.QuestionnaireName_EN, qDB_q.visualization
-    ORDER BY QC.QuestionnaireName_EN;
+    AND qDB_q.deleted = ".NON_DELETED_RECORD." AND Q.PatientSerNum = P.PatientSerNum AND U.UserTypeSerNum = P.PatientSerNum
+    AND PHI.Hospital_Identifier_Type_Code = :Hospital_Identifier_Type_Code AND PHI.MRN = :MRN
+    AND Q.CompletedFlag = ".OPAL_QUESTIONNAIRE_COMPLETED_FLAG." GROUP BY QC.QuestionnaireDBSerNum, QC.QuestionnaireName_EN,
+    qDB_q.visualization ORDER BY QC.QuestionnaireName_EN;
 ");
 
 // This function has to be redone since it was not designed properly but we are lacking time and man power. It was

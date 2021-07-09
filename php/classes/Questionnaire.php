@@ -470,7 +470,8 @@ class Questionnaire extends QuestionnaireModule {
     }
 
     /**
-     * Get the list of questionnaires status, visualization form, and completion date for a specific patient on a site
+     * Get the list of questionnaires status, visualization form, studies list and completion date for a specific
+     * patient on a site.
      * Validation code :    Error validation code is coded as an int of 3 bits (value from 0 to 7). Bit information
      *                      are coded from right to left:
      *                      1: mrn is missing
@@ -492,7 +493,15 @@ class Questionnaire extends QuestionnaireModule {
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        return $this->questionnaireDB->getQuestionnaireListOrms($post["mrn"], $post["site"]);
+        $results = $this->questionnaireDB->getQuestionnaireListOrms($post["mrn"], $post["site"]);
+        foreach ($results as &$item) {
+            $tempData = $this->opalDB->getStudiesQuestionnaire($item["questionnaireDBId"]);
+            $tempArray = array();
+            foreach ($tempData as $data)
+                array_push($tempArray, $data["studyId"]);
+            $item["studies"] = $tempArray;
+        }
+        return $results;
     }
 
     /**
