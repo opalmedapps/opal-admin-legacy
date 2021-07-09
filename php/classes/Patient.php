@@ -483,7 +483,6 @@ class Patient extends Module {
     }
 
     /**
-     *
      * Determines the existence of a patient
      *
      * @param string $site : Hospital Identifier Type
@@ -508,17 +507,19 @@ class Patient extends Module {
 
         $errCode = $this->_validatePatientExisitParams($post) . $errCode;
 
-        if (preg_match($pattern,  $post["mrn"] )) {
-            $mrn = str_pad( $post["mrn"] ,7,"0",STR_PAD_LEFT);
-            $response['status']  = "Success";
-            $errCode = "0" . $errCode;
-            $patientSite = $this->opalDB->getPatientSite($mrn, $post["site"]);
-            $response['data']  = boolval(count($patientSite));
+        if(!array_key_exists("mrn", $post) || $post["mrn"] == ""){
+            if (preg_match($pattern,  $post["mrn"] )) {
+                $mrn = str_pad( $post["mrn"] ,7,"0",STR_PAD_LEFT);
+                $response['status']  = "Success";
+                $errCode = "0" . $errCode;
+                $patientSite = $this->opalDB->getPatientSite($mrn, $post["site"]);
+                $response['data']  = boolval(count($patientSite));
 
-        } else {
-            $errCode = "1" . $errCode;
-            $response['status']  = "Error";
-            $response['message'] = "Invalid MRN";
+            } else {
+                $errCode = "1" . $errCode;
+                $response['status']  = "Error";
+                $response['message'] = "Invalid MRN";
+            }
         }
 
         $errCode = bindec($errCode);
