@@ -1347,6 +1347,12 @@ class DatabaseQuestionnaire extends DatabaseAccess
         ));
     }
 
+    /**
+     * Get the list of completed questionnaires and the questions associated.
+     * @param $patientId - ID of the patient
+     * @param $questionnaireId - ID of the questionnaire
+     * @return array - results found
+     */
     function getCompletedQuestionnaireInfo($patientId, $questionnaireId) {
         return $this->_fetchAll(SQL_GET_COMPLETED_QUESTIONNAIRE_INFO, array(
             array("parameter"=>":patientId","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
@@ -1354,6 +1360,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
         ));
     }
 
+    /**
+     * Get the list of available options for a specific question
+     * @param $questionId - ID of the question
+     * @return array - list of the options of the question
+     */
     function getQuestionOptions($questionId) {
         return $this->_fetchAll(SQL_GET_QUESTION_OPTIONS, array(
             array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
