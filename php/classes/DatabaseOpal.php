@@ -3389,6 +3389,11 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /**
+     * Get the lis of completed questionnaires of patient, grouped by MRN.
+     * @param array $questionnaireList - list of questionnaire ID (optional)
+     * @return array - results found
+     */
     function getPatientsCompletedQuestionnaires($questionnaireList = array()) {
         $sql = str_replace(
             "%%CONDTION_OPTINAL%%",

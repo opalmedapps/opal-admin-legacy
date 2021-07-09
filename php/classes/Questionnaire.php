@@ -645,6 +645,15 @@ class Questionnaire extends QuestionnaireModule {
         return $this->opalDB->getLastCompletedQuestionnaire($patientSite["PatientSerNum"]);
     }
 
+    /**
+     * Get the lis of completed questionnaires of patient, grouped by MRN.
+     * @param $post - list of questionnaire ID (optional)
+     * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
+     *                      Error validation code is coded as an int of 1 bit (value from 0 to 1). Bit information
+     *                      are coded from right to left:
+     *                      1: questionnaire ID list invalid if present
+     * @return array - results found
+     */
     public function getPatientsCompletedQuestionnaires($post) {
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
@@ -652,7 +661,6 @@ class Questionnaire extends QuestionnaireModule {
             if (!array_key_exists("questionnaires", $post) || (!is_array($post["questionnaires"])))
                 $post["questionnaires"] = array();
             $listIds = array();
-
 
             foreach ($post["questionnaires"]as $item) {
                 $item = intval($item);
