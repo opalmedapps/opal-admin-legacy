@@ -2720,7 +2720,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return void
      */
     function updatePatientLink($toUpdate) {
-        return $this->_insertMultipleRecordsIntoTable(OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE, $toUpdate);
+        return $this->_replaceMultipleRecordsIntoTableConditional(OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE, $toUpdate);
     }
 
 

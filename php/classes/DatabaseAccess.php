@@ -419,7 +419,7 @@ class DatabaseAccess extends HelpSetup
             foreach($record as $key=>$value) {
                 array_push($fieldsName, "`$key`");
                 array_push($subFieldsName, "tblnm.$key");
-                array_push($ids, $value);
+                array_push($ids,  "'$value'");
                 array_push($conditions, "tblnm.$key = :".$key.$cpt);
                 array_push($params, array("parameter"=>":".$key.$cpt, "variable"=>$value));
             }

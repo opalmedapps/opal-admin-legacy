@@ -507,7 +507,7 @@ class Patient extends Module {
 
         $errCode = $this->_validatePatientExisitParams($post) . $errCode;
 
-        if(!array_key_exists("mrn", $post) || $post["mrn"] == ""){
+        if(array_key_exists("mrn", $post)){
             if (preg_match($pattern,  $post["mrn"] )) {
                 $mrn = str_pad( $post["mrn"] ,7,"0",STR_PAD_LEFT);
                 $response['status']  = "Success";
@@ -623,39 +623,51 @@ class Patient extends Module {
      */
     public function updatePatient($post){
 
-        $errCode = "";
         $this->checkWriteAccess($post);
         HelpSetup::arraySanitization($post);
-
-        $errCode = $this->_validatePatientParams($post) . $errCode;
+        $errCode = $this->_validatePatientParams($post);
 
         $patientNotFound = true;
-        $mrns = $post["mrns"];
+        $idList = $post["mrns"];
         $toBeInsertPatientIds = array();
         $patientSerNum = "";
         $cptIDs = 0;
-        $lenIDs = count($mrns);
+        $lenIDs = count($idList);
 
         // Looping patient Identifiers
-        while (($identifier = array_shift($mrns)) !== NULL) {
+        while (($identifier = array_shift($idList)) !== NULL) {
             $mrn = str_pad($identifier["mrn"] ,7,"0",STR_PAD_LEFT);
-            $patientID = $this->opalDB->getPatientSite($mrn, $identifier["site"]);
+            $retrievedPatient = $this->opalDB->getPatientSite($mrn, $identifier["site"]);
+            $patientNotFound = !boolVal(count($retrievedPatient)) && $patientNotFound;
 
-            $patientNotFound = !boolVal(count($patientID)) && $patientNotFound;
-            if (count($patientID) == 1){
-                $patientSerNum = $patientID[0]["PatientSerNum"];
+            if (count($retrievedPatient) == 1) {
+
+                $patientIdArray = $retrievedPatient[0];
+
+                // Entry defined in Identifier List
+                $patientSerNum  = $patientIdArray["PatientSerNum"];
+
+                // Update entry status in Identifier List
+                $patientIdArray["Is_Active"]=$identifier["active"];
             } else {
+                // Entry not found in Identifier List
                 if ($patientSerNum == ""){
-                    // Return element to identifier list until PatientSerNum is found
-                    $mrns = array_merge($mrns,array($identifier));
+                    // Return element to Identifier List until Patient Id found
+                    $idList = array_merge($idList,array($identifier));
                     $cptIDs = $cptIDs + 1;
-                } else {
-                    // Add entry for Patient_Hospital_Identifier
-                    array_push($toBeInsertPatientIds, array("PatientSerNum"=>$patientSerNum,
+                } else{
+                    // Add new entry in Identifier List
+                    $patientIdArray = array(
+                        "PatientSerNum"=>$patientSerNum,
                         "Hospital_Identifier_Type_Code"=>$identifier["site"],
                         "MRN"=>$mrn,
-                        "Is_Active"=>$identifier["active"]));
+                        "Is_Active"=>$identifier["active"]);
                 }
+            }
+
+            // Add value for update
+            if (!empty($patientIdArray)){
+                array_push($toBeInsertPatientIds,$patientIdArray);
             }
 
             // Patient does not exist with any identifiers

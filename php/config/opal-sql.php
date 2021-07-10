@@ -1295,8 +1295,14 @@ define("OPAL_UPDATE_PATIENT","
 	TermsAndAgreementSignDateTime = :TermsAndAgreementSignDateTime WHERE PatientSerNum = :PatientSerNum
 ");
 
-
-
+define("OPAL_UPDATE_PATIENT_HOSPITAL_IDENTIFIER","
+    UPDATE " . OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE . " SET 
+    PatientSerNum = :PatientSerNum,
+    Hospital_Identifier_Type_Code = :Hospital_Identifier_Type_Code,
+    MRN = :MRN,
+    Is_Active = :Is_Active 
+    WHERE Patient_Hospital_Identifier_Id = :Patient_Hospital_Identifier_Id
+");
 
 define("OPAL_GET_PATIENTS","
     SELECT DISTINCT pc.PatientSerNum AS serial, pc.PatientUpdate AS transfer, CONCAT(UCASE(LEFT(pt.FirstName, 1)), LCASE(SUBSTRING(pt.FirstName, 2)),
