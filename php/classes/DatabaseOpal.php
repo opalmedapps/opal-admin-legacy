@@ -2722,7 +2722,11 @@ class DatabaseOpal extends DatabaseAccess {
     function updatePatientLink($toUpdate) {
 
         while (($identifier = array_shift($toUpdate)) !== NULL) {
-            $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT_HOSPITAL_IDENTIFIER,$identifier);
+            if (!empty($identifier["Patient_Hospital_Identifier_Id"])){
+                $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT_HOSPITAL_IDENTIFIER,$identifier);
+            } else {
+                $this->_insertRecordIntoTable(OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE,$identifier);
+            }
         }
         return ;
     }
