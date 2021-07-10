@@ -754,11 +754,16 @@ class Patient extends Module {
 
         unset($patientData["LastUpdated"]);
 
-        if (count($toBeInsertPatientIds) > 0){
-            $this->opalDB->updatePatientLink($toBeInsertPatientIds);
-        }
+        try{
+            if (count($toBeInsertPatientIds) > 0){
+                $this->opalDB->updatePatientLink($toBeInsertPatientIds);
+            }
 
-        $this->opalDB->updatePatient($patientData);
+            $this->opalDB->updatePatient($patientData);
+        } catch (Exception $e){
+            // Simply display error message
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array( "validation"=>$errCode, "status"=>"Error", "message"=>$e->getMessage() ));
+        }
 
         return false;
     }
