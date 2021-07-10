@@ -952,7 +952,7 @@ define("OPAL_SOURCE_DATABASE","AND s.SourceDatabaseName %%OPERATOR%% :SourceData
 
 define("OPAL_GET_PATIENT_SITE","
     SELECT * FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." WHERE Hospital_Identifier_Type_Code = :Hospital_Identifier_Type_Code
-    AND MRN = :MRN AND Is_Active = ".ACTIVE_RECORD."; 
+    AND MRN = :MRN; 
 ");
 
 define("OPAL_GET_SOURCE_DB_DETAILS","
