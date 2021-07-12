@@ -692,4 +692,13 @@ class Questionnaire extends QuestionnaireModule {
 
         return $this->opalDB->getPatientsCompletedQuestionnaires($post["questionnaires"]);
     }
+
+    /**
+     * Get the list of possible purposes for a questionnaire
+     * @return array - list of purposes, french and english
+     */
+    public function getPurposes() {
+        $this->checkReadAccess();
+        return $this->questionnaireDB->getPurposes();
+    }
 }
