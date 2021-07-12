@@ -271,6 +271,7 @@ RewriteRule ^questionnaire/get/answered-questionnaires-patient php/questionnaire
 RewriteRule ^questionnaire/get/finalized-questions php/questionnaire/get.finalizedQuestions.php [QSA,L]
 RewriteRule ^questionnaire/get/published-questionnaires php/questionnaire/get.published.questionnaires.php [QSA,L]
 RewriteRule ^questionnaire/get/purposes-respondents php/questionnaire/get.purposes.respondents.php [QSA,L]
+RewriteRule ^questionnaire/get/purposes php/questionnaire/get.purposes.php [QSA,L]
 RewriteRule ^questionnaire/get/chart-answers-patient php/questionnaire/get.chart.answers.questionnaire.patient.php [QSA,L]
 RewriteRule ^questionnaire/get/last-completed-quesitonnaire php/questionnaire/get.last.completed.questionnaire.php [QSA,L]
 RewriteRule ^questionnaire/get/non-chart-answers-patient php/questionnaire/get.non.chart.answers.questionnaire.patient.php [QSA,L]
