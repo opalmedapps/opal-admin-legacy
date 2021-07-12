@@ -3413,4 +3413,17 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":questionnaireId","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    /**
+     * List the studies a patient consented for.
+     * @param $mrn string - Medical Record Number
+     * @param $site string - Code of the site
+     * @return array - studies found
+     */
+    function getStudiesPatientConsented($mrn, $site) {
+        return $this->_fetchAll(OPAL_GET_STUDIES_PATIENT_CONSENTED, array(
+            array("parameter"=>":MRN","variable"=>$mrn,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Hospital_Identifier_Type_Code","variable"=>$site,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
 }

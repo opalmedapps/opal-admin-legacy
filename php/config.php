@@ -121,6 +121,12 @@ define("ORMS_SOURCE_DB", 2);
 define("MOSAIQ_SOURCE_DB", 3);
 define("LOCAL_SOURCE_DB", -1);
 
+// Definition of patient consent status for studies
+const CONSENT_STATUS_INVITED = 1;
+const CONSENT_STATUS_OPAL_CONSENTED = 2;
+const CONSENT_STATUS_OTHER_CONSENTED = 3;
+const CONSENT_STATUS_DECLINED = 4;
+
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql.php");

@@ -296,6 +296,7 @@ RewriteRule ^study/get/consent-published php/study/get.consent.published.php [QS
 RewriteRule ^study/get/research-patient php/study/get.research.patient.php [QSA,L]
 RewriteRule ^study/get/study-details php/study/get.study.details.php [QSA,L]
 RewriteRule ^study/get/consent-forms php/study/get.consent.forms.php [QSA,L]
+RewriteRule ^study/get/studies-patient-consented php/study/get.studies.patient.consented.php [QSA,L]
 RewriteRule ^study/get/studies php/study/get.studies.php [QSA,L]
 RewriteRule ^study/insert/study php/study/insert.study.php [QSA,L]
 RewriteRule ^study/update/study php/study/update.study.php [QSA,L]
