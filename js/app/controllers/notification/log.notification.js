@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.notification.log', ['ngAnimate', 'ngSaniti
 /******************************************************************************
  * Controller for the notification logs
  *******************************************************************************/
-controller('notification.log', function ($scope, $uibModal, $filter, notificationCollectionService, Session, $uibModalInstance) {
+controller('notification.log', function ($scope, $uibModal, $filter, notificationCollectionService, Session, $uibModalInstance, ErrorHandler) {
 
 	// Call our API to get notification logs
 	notificationCollectionService.getNotificationChartLogs($scope.currentNotification.serial).then(function (response) {
@@ -14,8 +14,8 @@ controller('notification.log', function ($scope, $uibModal, $filter, notificatio
 				log.x = new Date(log.x);
 			});
 		});
-	}).catch(function(response) {
-		alert($filter('translate')('NOTIFICATIONS.LOG.ERROR') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('NOTIFICATIONS.LOG.ERROR'));
 	});
 
 	var chartConfig = $scope.chartConfig = {

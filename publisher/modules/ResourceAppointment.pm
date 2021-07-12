@@ -149,7 +149,8 @@ sub getResourceAppointmentPrimaryFlag
 #====================================================================================
 sub getResourceAppointmentsFromSourceDB
 {
-	my (@patientList) = @_; # a list of appointments
+	my @patientList = @_[0];
+    my $global_patientInfo_sql = @_[1];
 
 	my @resapptList = (); # initialize a list for ResourceAppointment objects
 
@@ -208,31 +209,24 @@ sub getResourceAppointmentsFromSourceDB
 				use VARIAN;
 
                 IF OBJECT_ID('tempdb.dbo.#tempRA', 'U') IS NOT NULL
-                  DROP TABLE #tempRA;
+                	DROP TABLE #tempRA;
+				
+				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
+					DROP TABLE #tempPatient;
 
-				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
+				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
-			my $numOfPatients = @patientList;
-			my $counter = 0;
-			foreach my $Patient (@patientList) {
-				my $patientSer 			= $Patient->getPatientSer();
-				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
-				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
-
-				$patientInfo_sql .= "
-					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
-				";
-
-				$counter++;
-				if ( $counter < $numOfPatients ) {
-					$patientInfo_sql .= "UNION";
-				}
-			}
+			$patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
 			$patientInfo_sql .= ")
 			Select c.* into #tempRA
 			from PatientInfo c;
-			Create Index temporaryindexRA1 on #tempRA (SSN);
+			Create Index temporaryindexRA1 on #tempRA (ID);
 			Create Index temporaryindexRA2 on #tempRA (PatientSerNum);
+			
+			Select p.PatientSer, p.PatientId into #tempPatient
+			from VARIAN.dbo.Patient p;
+			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
+			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
 			";
 
 			my $raInfo_sql = $patientInfo_sql .
@@ -244,8 +238,7 @@ sub getResourceAppointmentsFromSourceDB
 						att.PrimaryFlag,
 						PatientInfo.PatientSerNum,
 						lt.Expression1
-					FROM
-						VARIAN.dbo.Patient pt with(nolock),
+					FROM						
 						VARIAN.dbo.Attendee att with(nolock),
 						VARIAN.dbo.ScheduledActivity sa with(nolock),
 						VARIAN.dbo.ActivityInstance ai with(nolock),
@@ -254,7 +247,8 @@ sub getResourceAppointmentsFromSourceDB
 						#tempRA as PatientInfo
 					WHERE
 						sa.ActivityInstanceSer		= ai.ActivityInstanceSer
-					AND sa.PatientSer = (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+					AND sa.PatientSer = (select pt.PatientSer 
+						from #tempPatient pt where pt.PatientId = PatientInfo.ID)
 					AND ai.ActivitySer			    = Activity.ActivitySer
 					AND	Activity.ActivityCode		= lt.LookupValue
 					AND	ai.ActivityInstanceSer		= att.ActivityInstanceSer
@@ -394,17 +388,18 @@ sub getResourceAppointmentsFromSourceDB
 					mval.ClinicResourcesSerNum,
 					pi.PatientSerNum,
 					mval.AppointmentCode,
-					mval.ResourceDescription
+					REPLACE(RTRIM(mval.ResourceDescription), '''', '') ResourceDescription
 				FROM
 					MediVisitAppointmentList mval,
 					Patient pt,
-					(Select SSN, LastTransferred LastTransfer, P.PatientSerNum
+					(Select PatientId, LastTransferred LastTransfer, P.PatientSerNum
 					from 	$databaseName.Patient P, $databaseName.PatientControl PC
 					where P.PatientSerNum = PC.PatientSerNum
 					and PC.TransferFlag = 1) pi
 				WHERE
-					LEFT(LTRIM(pt.SSN), 12)  = pi.SSN
+					pt.PatientId  = pi.PatientId
 					AND mval.PatientSerNum      = pt.PatientSerNum
+					and mval.AppointSys <> 'Aria'
 					AND (
 			";
 
@@ -415,7 +410,7 @@ sub getResourceAppointmentsFromSourceDB
 
 				# concatenate query
 				$raInfo_sql .= "
-					((mval.AppointmentCode, mval.ResourceDescription) IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
+					((mval.AppointmentCode, REPLACE(RTRIM(mval.ResourceDescription), '''', '')) IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
 					AND mval.LastUpdated	> (SELECT IF ('$lastTransferDate' > pi.LastTransfer, pi.LastTransfer, '$lastTransferDate')))
 				";
 				$counter++;

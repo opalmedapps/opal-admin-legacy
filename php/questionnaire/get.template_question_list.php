@@ -1,8 +1,7 @@
 <?php
-include_once('questionnaire.inc');
+include_once("../config.php");
 
-$OAUserId = strip_tags($_POST['OAUserId']);
-$answerType = new TemplateQuestion($OAUserId);
+$answerType = new TemplateQuestion();
 $answerTypeCategoryList = $answerType->getTemplateQuestionList();
 
 header('Content-Type: application/javascript');

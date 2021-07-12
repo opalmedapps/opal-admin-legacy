@@ -1,410 +1,116 @@
 <div id="main">
-	<div id="top" class="home-main">
-		<div class="clearfix">
-			<!-- SECTION: Logo -->
-			<div class="row home-logo">
-				<!-- Load side menu -->
-				<div class="col-xs-12">
-					<div class="home-header">
-						<div class="logo">
-							<img class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="120" width="120">
-						</div>
-						<h1 class="animated fadeIn">opal <strong>ADMIN</strong></h1>
-					</div>
-				</div>
-			</div>
-			<!-- Load side menu -->
-			<div class="home-side-panel col-xs-12">
-				<div ng-include="'templates/side-panel-menu.html'"></div>
-			</div>
-			<div class="row home-menu" ng-controller="navigation">
-				<!-- Publishing tools -->
-				<div class="col-xs-12 col-md-6" ng-if="isAuthorized([userRoles.admin])">
-					<div class="row">
-						<div class="col-xs-12">
-							<div class="home-side-menu" style="margin-top:20px; margin-bottom:20px">
-								<span class="fas fa-dot-circle"></span>
-								<span class="title">{{'NAVIGATION_MENU.PUBLISHING_TOOLS'|translate}}</span>
-							</div>
-						</div>
-					</div>
-					<!-- SECTION: Tasks/Appointments/Documents -->
-					<div class="row animated fadeIn" style="padding: 0 20px 0 20px">
-						<div class="col-xs-12 col-sm-6">
-							<div class="panel-container animated" ng-class="{pulse: hoverAliasMenu}" ng-mouseenter="hoverAliasMenu=true" ng-mouseleave="hoverAliasMenu=false" style="cursor:pointer;" ng-click="goToAlias()">
-								<div class="panel-info" >
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span  class="glyphicon glyphicon-cloud" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'NAVIGATION_MENU.TASKS_APPTS_DOCS'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p>{{'NAVIGATION_MENU.TASKS_APPTS_DOCS_SUB'|translate}}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- SECTION: Posts -->
-						<div class="col-xs-12 col-sm-6">
-							<div class="panel-container animated" ng-class="{pulse: hoverPostMenu}" ng-mouseenter="hoverPostMenu=true" ng-mouseleave="hoverPostMenu=false" style="cursor:pointer;" ng-click="goToPost()">
-								<div class="panel-info">
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span  class="glyphicon glyphicon-comment" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'NAVIGATION_MENU.POSTS'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p>{{'NAVIGATION_MENU.POSTS_SUB'|translate}}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- SECTION: Eductional material -->
-						<div class="col-xs-12 col-sm-6">
-							<div class="panel-container animated" ng-class="{pulse: hoverEduMatMenu}" ng-mouseenter="hoverEduMatMenu=true" ng-mouseleave="hoverEduMatMenu=false" style="cursor:pointer;" ng-click="goToEducationalMaterial()">
-								<div class="panel-info">
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span  class="glyphicon glyphicon-book" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'NAVIGATION_MENU.EDU_MATERIAL'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p>{{'NAVIGATION_MENU.EDU_MATERIAL_SUB'|translate}}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- SECTION: Hospital maps -->
-						<div class="col-xs-12 col-sm-6">
-							<div class="panel-container animated" ng-class="{pulse: hoverHosMapMenu}" ng-mouseenter="hoverHosMapMenu=true" ng-mouseleave="hoverHosMapMenu=false" style="cursor:pointer;" ng-click="goToHospitalMap()">
-								<div class="panel-info" >
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span  class="fa fa-map fa-sm" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'NAVIGATION_MENU.HOSPITAL_MAPS'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p>{{'NAVIGATION_MENU.HOSPITAL_MAPS_SUB'|translate}}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- SECTION: Notifications -->
-						<div class="col-xs-12 col-sm-6">
-							<div class="panel-container animated" ng-class="{pulse: hoverNotificationMenu}" ng-mouseenter="hoverNotificationMenu=true" ng-mouseleave="hoverNotificationMenu=false" style="cursor:pointer;" ng-click="goToNotification()">
-								<div class="panel-info" >
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span  class="glyphicon glyphicon-bell" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'NAVIGATION_MENU.NOTIFICATIONS'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p>{{'NAVIGATION_MENU.NOTIFICATIONS_SUB'|translate}}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- SECTION: Test results -->
-						<div class="col-xs-12 col-sm-6">
-							<div class="panel-container animated" ng-class="{pulse: hoverTestResultMenu}" ng-mouseenter="hoverTestResultMenu=true" ng-mouseleave="hoverTestResultMenu=false" style="cursor:pointer;" ng-click="goToTestResult()">
-								<div class="panel-info" >
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span  class="fa fa-heartbeat" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'NAVIGATION_MENU.LAB_RESULTS'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p>{{'NAVIGATION_MENU.TEST_RESULTS_SUB'|translate}}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- SECTION: Questionnaires -->
-						<div class="col-xs-12 col-sm-6">
-							<div class="panel-container animated" ng-class="{pulse: hoverQuestionnaireMenu}" ng-mouseenter="hoverQuestionnaireMenu=true" ng-mouseleave="hoverQuestionnaireMenu=false" style="cursor:pointer;" ng-click="goToQuestionnaireMainMenu()">
-								<div class="panel-info" >
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span  class="fa fa-pencil-square-o fa-sm" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'NAVIGATION_MENU.QUESTIONNAIRES'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p>{{'NAVIGATION_MENU.QUESTIONNAIRES_SUB'|translate}}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- SECTION: Publication tools -->
-						<div class="col-xs-12 col-sm-6">
-							<div class="panel-container animated" ng-class="{pulse: hoverPublicationMenu}" ng-mouseenter="hoverPublicationMenu=true" ng-mouseleave="hoverPublicationMenu=false" style="cursor:pointer;" ng-click="goToPublication()">
-								<div class="panel-info" >
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span  class="fa fa-cloud-upload fa-sm" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'NAVIGATION_MENU.PUBLICATIONS'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p>{{'NAVIGATION_MENU.PUBLICATIONS_SUB'|translate}}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- SECTION: Email -->
-                        <!-- <div class="col-xs-12 col-sm-6">
-                            <div class="panel-container animated" ng-class="{pulse: hoverEmailMenu}" ng-mouseenter="hoverEmailMenu=true" ng-mouseleave="hoverEmailMenu=false" style="cursor:pointer;" ng-click="goToEmail()">
-                                <div class="panel-info" >
-                                    <div class="panel-content">
-                                        <div class="icon-home clearfix">
-                                            <span class="fa fa-envelope fa-sm" aria-hidden="true"></span>
-                                        </div>
-                                        <div class="panel-title">
-                                            <h1>{{'NAVIGATION_MENU.EMAIL'|translate}}</h1>
-                                        </div>
-                                        <div class="panel-description">
-                                            <p>{{'NAVIGATION_MENU.EMAIL_SUB'|translate}}</p>
+    <div id="top" class="home-main">
+        <div class="clearfix">
+            <!-- SECTION: Logo -->
+            <div class="row home-logo">
+                <!-- Load side menu -->
+                <div class="col-xs-12">
+                    <div class="home-header">
+                        <div class="logo">
+                            <img class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="120"
+                                 width="120">
+                        </div>
+                        <h1 class="animated fadeIn">opal <strong>ADMIN</strong></h1>
+                    </div>
+                </div>
+            </div>
+            <!-- Load side menu -->
+            <div class="home-side-panel col-xs-12">
+                <div ng-include="'templates/side-panel-menu.html'"></div>
+            </div>
+            <div class="row home-menu" ng-controller="navigation">
+                <span ng-repeat="category in navMenu" ng-if="category.menu.length > 0">
+                    <div class="col-xs-12 col-md-6">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="home-side-menu" style="margin-top:20px; margin-bottom:20px">
+                                    <span class="fas fa-dot-circle"></span>
+                                    <span class="title">{{category.name}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated fadeIn" style="padding: 0 20px 0 20px">
+                            <div class="col-xs-12 col-sm-6" ng-repeat="menu in category.menu">
+                                <div class="panel-container animated" ng-class="{pulse: hoverMenu}"
+                                     ng-mouseenter="hoverMenu=true" ng-mouseleave="hoverMenu=false"
+                                     style="cursor:pointer;" ui-sref="{{menu.url}}">
+                                    <div class="panel-info">
+                                        <div class="panel-content">
+                                            <div class="icon-home clearfix">
+                                                <span class="{{menu.iconClass}}"></span>
+                                            </div>
+                                            <div class="panel-title">
+                                                <h1>{{menu.name}}</h1>
+                                            </div>
+                                            <div class="panel-description">
+                                                <p>{{menu.sub}}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div> -->
-					</div>
-				</div>
+                        </div>
+                    </div>
+                </span>
+                <!-- Profile tools -->
+                <div class="col-xs-12 col-md-6">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="home-side-menu" style="margin-top:20px; margin-bottom:20px">
+                                <span class="fas fa-dot-circle"></span>
+                                <span class="title">{{'NAVIGATION_MENU.PROFILE'|translate}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row animated fadeIn" style="padding: 0 20px 0 20px">
 
-				<!-- Administration tools -->
-				<div class="col-xs-12 col-md-6" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
-					<div class="row">
-						<div class="col-xs-12">
-							<div class="home-side-menu" style="margin-top:20px; margin-bottom:20px">
-								<span class="fas fa-dot-circle"></span>
-								<span class="title">{{'NAVIGATION_MENU.ADMINISTRATION'|translate}}</span>
-							</div>
-						</div>
-					</div>
-					<div class="row animated fadeIn" style="padding: 0 20px 0 20px">
+                        <!-- SECTION: Account settings -->
+                        <div class="col-xs-12 col-sm-6">
+                            <div class="panel-container animated" ng-class="{pulse: hoverAccountMenu}"
+                                 ng-mouseenter="hoverAccountMenu=true" ng-mouseleave="hoverAccountMenu=false"
+                                 style="cursor:pointer;" ng-click="goToAccount()">
+                                <div class="panel-info">
+                                    <div class="panel-content">
+                                        <div class="icon-home clearfix">
+                                            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                                        </div>
+                                        <div class="panel-title">
+                                            <h1>{{'NAVIGATION_MENU.ACCOUNT'|translate}}</h1>
+                                        </div>
+                                        <div class="panel-description">
+                                            <p>{{'NAVIGATION_MENU.ACCOUNT_SUB'|translate}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-						<!-- SECTION: Diagnosis translation control -->
-						<div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin])">
-							<div class="panel-container animated" ng-class="{pulse: hoverDiagnosisMenu}" ng-mouseenter="hoverDiagnosisMenu=true" ng-mouseleave="hoverDiagnosisMenu=false" style="cursor:pointer;" ng-click="goToDiagnosisTranslation()">
-								<div class="panel-info" >
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span class="fa fa-stethoscope fa-sm" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'NAVIGATION_MENU.DIAGNOSIS_TRANSLATION'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p>{{'NAVIGATION_MENU.DIAGNOSIS_TRANSLATION_SUB'|translate}}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-                        <!-- SECTION: Custom codes control -->
-						<div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin])">
-							<div class="panel-container animated" ng-class="{pulse: hoverDiagnosisMenu}" ng-mouseenter="hoverDiagnosisMenu=true" ng-mouseleave="hoverDiagnosisMenu=false" style="cursor:pointer;" ng-click="goToCustomCodes()">
-								<div class="panel-info" >
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span class="fa fa-exchange fa-sm" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'NAVIGATION_MENU.CUSTOM_CODES'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p>{{'NAVIGATION_MENU.CUSTOM_CODES_SUB'|translate}}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- SECTION: Cron control -->
-						<div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin])">
-							<div class="panel-container animated" ng-class="{pulse: hoverCronMenu}" ng-mouseenter="hoverCronMenu=true" ng-mouseleave="hoverCronMenu=false" style="cursor:pointer;" ng-click="goToCron()">
-								<div class="panel-info" >
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span  class="glyphicon glyphicon-time" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'NAVIGATION_MENU.CRON_LOGS'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p>{{'NAVIGATION_MENU.CRON_LOGS_SUB'|translate}}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- SECTION: Patient -->
-						<div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
-							<div class="panel-container animated" ng-class="{pulse: hoverPatientMenu}" ng-mouseenter="hoverPatientMenu=true" ng-mouseleave="hoverPatientMenu=false" style="cursor:pointer;" ng-click="goToPatient()">
-								<div class="panel-info" >
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span  class="fa fa-address-card" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'NAVIGATION_MENU.PATIENTS'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p>{{'NAVIGATION_MENU.PATIENTS_SUB'|translate}}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- SECTION: Patient registration -->
-						<div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
-							<div class="panel-container animated" ng-class="{pulse: hoverPatRegMenu}" ng-mouseenter="hoverPatRegMenu=true" ng-mouseleave="hoverPatRegMenu=false" style="cursor:pointer;" ng-click="goToPatientRegistration()">
-								<div class="panel-info" >
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span  class="fa fa-address-card" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'NAVIGATION_MENU.PATIENT_REGISTRATION'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p>{{'NAVIGATION_MENU.PATIENT_REGISTRATION_SUB'|translate}}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- SECTION: Patient activity -->
-						<div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin])">
-							<div class="panel-container animated" ng-class="{pulse: hoverPatActivityMenu}" ng-mouseenter="hoverPatActivityMenu=true" ng-mouseleave="hoverPatActivityMenu=false" style="cursor:pointer;" ng-click="goToPatientActivity()">
-								<div class="panel-info" >
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span  class="fa fa-hourglass-half fa-sm" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'NAVIGATION_MENU.PATIENT_ACTIVITY'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p>{{'NAVIGATION_MENU.PATIENT_ACTIVITY_SUB'|translate}}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- SECTION: Users -->
-						<div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin])">
-							<div class="panel-container animated" ng-class="{pulse: hoverUserMenu}" ng-mouseenter="hoverUserMenu=true" ng-mouseleave="hoverUserMenu=false" style="cursor:pointer;" ng-click="goToUsers()">
-								<div class="panel-info" >
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span  class="fa fa-users" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'NAVIGATION_MENU.USERS'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p>{{'NAVIGATION_MENU.USERS_SUB'|translate}}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-					</div>
-				</div>
-
-				<!-- Profile tools -->
-				<div class="col-xs-12 col-md-6">
-					<div class="row">
-						<div class="col-xs-12">
-							<div class="home-side-menu" style="margin-top:20px; margin-bottom:20px">
-								<span class="fas fa-dot-circle"></span>
-								<span class="title">{{'NAVIGATION_MENU.PROFILE'|translate}}</span>
-							</div>
-						</div>
-					</div>
-					<div class="row animated fadeIn" style="padding: 0 20px 0 20px">
-
-						<!-- SECTION: Account settings -->
-						<div class="col-xs-12 col-sm-6">
-							<div class="panel-container animated" ng-class="{pulse: hoverAccountMenu}" ng-mouseenter="hoverAccountMenu=true" ng-mouseleave="hoverAccountMenu=false" style="cursor:pointer;" ng-click="goToAccount()">
-								<div class="panel-info" >
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span  class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'NAVIGATION_MENU.ACCOUNT'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p>{{'NAVIGATION_MENU.ACCOUNT_SUB'|translate}}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- SECTION: Logout -->
-						<div class="col-xs-12 col-sm-6">
-							<div class="panel-container animated" ng-class="{pulse: hoverLogoutMenu}" ng-mouseenter="hoverLogoutMenu=true" ng-mouseleave="hoverLogoutMenu=false" style="cursor:pointer;" ng-click="goToLogout()">
-								<div class="panel-info" >
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span  class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'NAVIGATION_MENU.LOGOUT'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p></p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<!-- END SECTION -->
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                        <!-- SECTION: Logout -->
+                        <div class="col-xs-12 col-sm-6">
+                            <div class="panel-container animated" ng-class="{pulse: hoverLogoutMenu}"
+                                 ng-mouseenter="hoverLogoutMenu=true" ng-mouseleave="hoverLogoutMenu=false"
+                                 style="cursor:pointer;" ng-click="goToLogout()">
+                                <div class="panel-info">
+                                    <div class="panel-content">
+                                        <div class="icon-home clearfix">
+                                            <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                                        </div>
+                                        <div class="panel-title">
+                                            <h1>{{'NAVIGATION_MENU.LOGOUT'|translate}}</h1>
+                                        </div>
+                                        <div class="panel-description">
+                                            <p></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- END SECTION -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 

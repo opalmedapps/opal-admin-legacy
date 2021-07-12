@@ -1,0 +1,57 @@
+<!-- Modal title -->
+<div class="modal-header">
+    <div class="col-xs-12 col-md-6">
+        <h2 class="modal-title">
+            <span class="fa fa-eye"></span>
+            {{'USERS.EDIT.TITLE_VIEW'|translate}}
+        </h2>
+        <p class="modal-title-caption">
+            {{user.username}}
+        </p>
+    </div>
+    <div class="modal-buttons col-xs-12 col-md-6">
+            <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'USERS.EDIT.CLOSE'|translate}}">
+    </div>
+</div>
+<div class="modal-body">
+    <uib-accordion close-others="false">
+        <!-- SECTION: Role -->
+        <div uib-accordion-group is-open="roleSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'USERS.EDIT.CHANGE_ROLE'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': roleSection.open, 'glyphicon-chevron-right': !roleSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-10">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <select disabled ng-model="user.role.serial" ng-options="role.ID as role.name_display for role in roles" class="form-control">
+                                <option ng-hide="user.role" value="">{{'USERS.EDIT.SELECT_ROLE'|translate}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: Language -->
+        <div uib-accordion-group is-open="languageSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'USERS.EDIT.CHANGE_LANGUAGE'|translate}}</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': languageSection.open, 'glyphicon-chevron-right': !languageSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-10">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <select disabled ng-model="user.language" ng-options="language.id as language.name for language in languages" class="form-control">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </uib-accordion>
+</div>

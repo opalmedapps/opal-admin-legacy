@@ -1,1203 +1,604 @@
 <?php
 /**
- * User class
- *
- *
+ * User class to validate its identity and access levels
  */
-class Users {
-    public $username = null;
-    public $password = null;
-    public $role = null;
-    public $language = null;
-    public $userid = null;
-    public $sessionid = null;
-    public $salt = "Zo4rU5Z1YyKJAASY0PT6EUg7BBYdlEhPaNLuxAwU8lqu1ElzHv0Ri7EM6irpx5w";
+class User extends Module {
 
-    /* Class constructor*/
-    public function __construct( $data = array() ) {
-        if( isset( $data->username ) ) $this->username = stripslashes( strip_tags( $data->username ) );
-        if( isset( $data->password ) ) $this->password = stripslashes( strip_tags( $data->password ) );
-        if( isset( $data->cypher ) ) $this->cypher = stripslashes( strip_tags( $data->cypher ) );
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_USER, $guestStatus);
     }
 
-    public function storeFormValues( $params ) {
-        //store the parameters
-        $this->__construct( $params );
+    /*
+     * Validate the number of results of authentication. If different than one, returns an exception. If one result,
+     * remove the password (if any) and return only one result.
+     * @params  $result (array) results of authentication
+     * @return  $result (array) cleaned up data.
+     * */
+    protected function _validateUserAuthentication($result, $username) {
+        if(count($result) < 1) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Access denied");
+        }
+        else if(count($result) > 1) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Somethings's VERY wrong. There is too many entries!");
+        }
+        $result = $result[0];
+        unset($result["password"]);
+        return $result;
     }
 
-    /**
-     *
-     * Logs in a particular user
-     *
-     * @return boolean $success : successful login flag
-     */
-    public function userLogin() {
-        $success = false;
-        $d = new Encrypt;
-        try{
-            $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "SELECT * FROM OAUser WHERE OAUser.Username = :username AND OAUser.Password = :password";
+    /*
+     * Authentication with the Active Directory system. Check first if the user exists in opalDB. If not, no need to
+     * make and external call and throw the exception. Then, prepare the settings for the AD by inserting username and
+     * password. Wait for the answer, and if any problem, throw an exception. Otherwise, return the user info.
+     * @params  $username (string) duh!
+     *          $password (string) DUH!
+     * @return  $result (array) details of the user info.
+     * */
+    protected function _userLoginActiveDirectory($username, $password) {
 
-            $stmt = $con->prepare( $sql );
-            $stmt->bindValue( "username", $this->username, PDO::PARAM_STR );
-            $stmt->bindValue( "password", hash("sha256", $d->encodeString( $this->password, $this->cypher ) . $this->salt), PDO::PARAM_STR );
-            $stmt->execute();
+        $result = $this->opalDB->authenticateUserAD($username);
+        $result = $this->_validateUserAuthentication($result, $username);
 
-            $valid = $stmt->fetchColumn();
-            if( $valid ) {
-                $this->userid = $valid;
-                $userDetails = $this->getUserDetails($valid);
-                $this->role = $userDetails['role']['name'];
-                $this->language = $userDetails['language'];
-                $this->sessionid = $this->makeSessionId();
+        $settingsAD = json_encode(ACTIVE_DIRECTORY_SETTINGS);
+        $settingsAD = str_replace("%%USERNAME%%", $username, $settingsAD);
+        $settingsAD = str_replace("%%PASSWORD%%", $password, $settingsAD);
+        $settingsAD = json_decode($settingsAD, true);
 
-                $this->logActivity($this->userid, $this->sessionid, 'Login');
-                $success = true;
+        $fieldString = "";
+        foreach($settingsAD as $key=>$value) {
+            $fieldString .= $key.'='.$value.'&';
+        }
+        $fieldString = substr($fieldString, 0, -1);
+
+        $ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL, ACTIVE_DIRECTORY["url"]);
+        curl_setopt($ch,CURLOPT_POSTFIELDS,$fieldString);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        $requestResult = json_decode(curl_exec($ch),TRUE);
+        curl_close($ch);
+
+        if(!$requestResult["authenticate"]) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Wrong username and/or password.");
+        }
+
+        return $result;
+    }
+
+    /*
+     * Legacy authentication system when no AD is available. It validates the username and password directly into
+     * opalDB after encrypting the password.
+     * @params  $username (string) duh!
+     *          $password (string) DUH!
+     * @return  $result (array) details of the user info.
+     * */
+    protected function _userLoginLegacy($username, $password) {
+        $result = $this->opalDB->authenticateUserLegacy($username, hash("sha256", $password . USER_SALT));
+        $result = $this->_validateUserAuthentication($result, $username);
+        return $result;
+    }
+
+    /*
+     * Validate the user, log its activity and build the nav menu to display.
+     * @param   $post (array) contains username, password
+     * @return  $result (array) basic user informations
+     * */
+    public function userLogin($post) {
+        $userAccess = array();
+        $data = HelpSetup::arraySanitization($post);
+
+        if(!is_array($data)) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>"UNKNOWN USER"), ACCESS_DENIED, "UNKNOWN USER");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
+        }
+
+        $username = $data["username"];
+        $password = $data["password"];
+
+        if($username == "" || $password == "") {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
+        }
+
+        if(AD_LOGIN_ACTIVE)
+            $result = $this->_userLoginActiveDirectory($username, $password);
+        else
+            $result = $this->_userLoginLegacy($username, $password);
+
+        $_SESSION["ID"] = $result["id"];
+        $_SESSION["username"] = $result["username"];
+        $_SESSION["language"] = $result["language"];
+        $_SESSION["role"] = $result["role"];
+        $_SESSION['sessionId'] = HelpSetup::makeSessionId();
+        $_SESSION['lastActivity'] = time();
+        $_SESSION['created'] = time();
+
+        $this->_connectAsMain();
+        $tempAccess = $this->opalDB->getUserAccess($result["role"]);
+        if(count($tempAccess) <= 0) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "No access found. Please contact your administrator.");
+        }
+        foreach($tempAccess as $access) {
+            if(!HelpSetup::validateBitOperation($access["operation"],$access["access"])) {
+                HelpSetup::getModuleMethodName($moduleName, $methodeName);
+                $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+                HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access violation role-module. Please contact your administrator.");
             }
-
-            $con = null;
-            return $success;
-        }catch (PDOException $e) {
-            echo $e->getMessage();
-            return $success;
+            $userAccess[$access["ID"]] = array("ID"=>$access["ID"], "access"=>$access["access"]);
         }
-    }
 
-    /**
-     *
-     * Logs out a user
-     *
-     * @param $user : user object
-     * @return $response : response
-     */
-    public function userLogout($user) {
-        $userser = $user['userser'];
-        $sessionid = $user['sessionid'];
-        $response = $this->logActivity($userser, $sessionid, 'Logout');
-        return $response;
-    }
+        $newMenu = array();
+        $subMenu = array();
+        $menuDB = $this->opalDB->getCategoryNavMenu();
 
-    /**
-     *
-     * Logs when a user logs in or logs out
-     *
-     * @return $response : response
-     */
-    public function logActivity($userser, $sessionid, $activity) {
-        $response = array (
-            'value'		=> 0,
-            'message'	=> ''
-        );
-        try{
-            $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-				INSERT INTO 
-					OAActivityLog (
-						Activity,
-						OAUserSerNum,
-						SessionId,
-						DateAdded
-					)
-				VALUES (
-					'$activity',
-					'$userser',
-					'$sessionid',
-					NOW()
-				)
-			";
-            $query = $con->prepare($sql);
-            $query->execute();
-            $response['value'] = 1; // success
-            return $response;
-
-        }catch (PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response;
-        }
-    }
-
-    /**
-     *
-     * Sets a session id
-     *
-     * @return string $sessionid : session id
-     */
-    public function makeSessionId($length = 10) {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
-        }
-        return $randomString;
-    }
-
-    /**
-     *
-     * Updates a user's password
-     *
-     * @param array $userDetails  : the user details
-     * @return array $response : response
-     */
-    public function updatePassword($userDetails) {
-        $response = array (
-            'value'		=> 0,
-            'error'		=> array(
-                'code'		=> '',
-                'message'	=> ''
-            )
-        );
-        $oldPassword 	= $userDetails['oldPassword'];
-        $userSer		= $userDetails['user']['id'];
-        $newPassword	= $userDetails['password'];
-        $cypher 			= $userDetails['cypher'];
-        $d = new Encrypt;
-        try {
-            $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            if (!isset($userDetails['override'])) {
-                $sql = "SELECT * FROM OAUser WHERE OAUser.OAUserSerNum = :ser AND OAUser.Password = :password";
-
-                $stmt = $con->prepare( $sql );
-                $stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
-                $stmt->bindValue( "password", hash("sha256", $d->encodeString( $oldPassword, $cypher ) . $this->salt), PDO::PARAM_STR );
-                $stmt->execute();
-
-                $valid = $stmt->fetchColumn();
-                if( !$valid ) {
-                    $response['error']['code'] = 'old-password-incorrect';
-                    $response['error']['message'] = 'Your old password is incorrect.';
-                    return $response;
+        /*
+         * Builds the nav menus the user can see based on its role
+         * */
+        foreach ($menuDB as $category) {
+            $menuList = $this->opalDB->getNavMenu($category["ID"]);
+            if(count($menuList) > 0) {
+                $temp = $category;
+                $temp["menu"] = array();
+                foreach($menuList as $menu) {
+                    if(intval($menu["subModuleMenu"]) && $menu["subModule"] != "") {
+                        $subMenu[$menu["ID"]] = json_decode(str_replace("%%REGISTRATION_URL%%", ADMIN_REGISTRATION_URL, $menu["subModule"]));
+                    }
+                    if(((intval($menu["operation"]) >> 0) & 1) && ((intval($userAccess[$menu["ID"]]["access"]) >> 0) & 1)) {
+                        array_push($temp["menu"], array("ID"=>$menu["ID"], "operation"=>$menu["operation"], "name_EN"=>$menu["name_EN"], "name_FR"=>$menu["name_FR"], "description_EN"=>$menu["description_EN"], "description_FR"=>$menu["description_FR"], "iconClass"=>$menu["iconClass"], "url"=>$menu["url"]));
+                    }
                 }
+                array_push($newMenu, $temp);
             }
-
-            $sql = "UPDATE OAUser SET OAUser.Password = :password WHERE OAUser.OAUserSerNum = :ser";
-
-            $stmt = $con->prepare( $sql );
-            $stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
-            $stmt->bindValue( "password", hash("sha256", $d->encodeString( $newPassword, $cypher ) . $this->salt), PDO::PARAM_STR );
-            $stmt->execute();
-
-            $response['value'] = 1; // Success
-            return $response;
-
-        } catch (PDOException $e) {
-            $response['error']['code'] = 'db-catch';
-            $response['error']['message'] = $e->getMessage();
-            return $response;
         }
+
+        $_SESSION["userAccess"] = $userAccess;
+        $_SESSION["navMenu"] = $newMenu;
+        $_SESSION["subMenu"] = $subMenu;
+        $result["sessionid"] = $_SESSION['sessionId'];
+
+        $toReturn["user"] = $result;
+        $toReturn["access"] = $_SESSION["userAccess"];
+        $toReturn["menu"] = $_SESSION["navMenu"];
+        $toReturn["subMenu"] = $_SESSION["subMenu"];
+        $this->_logActivity($result["id"], $_SESSION['sessionId'], 'Login');
+
+        //Insert in the audit table user was granted access and return nav menu
+        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_GRANTED);
+
+        return $toReturn;
     }
 
     /**
-     *
-     * Updates a user's language
-     *
-     * @param array $userDetails  : the user details
-     * @return array $response : response
+     * Login for a system (non-human) user. It validates the user/name password, stored in the sessions, the access
+     * level and user info. It returns an array that contains user info (ID, username, language, role and sessionID)
+     * @param $post : array - contains username and password
+     * @return mixed : array - contains system user ID, username, language, role and sessionID
      */
-    public function updateLanguage($userDetails) {
-        $response = array (
-            'code'		=> "0",
-        );
-        $language 	= $userDetails['language'];
-        $userSer	= $userDetails['id'];
+    public function systemUserLogin($post) {
+        $userAccess = array();
+        $data = HelpSetup::arraySanitization($post);
 
-        try {
-            $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "UPDATE OAUser SET OAUser.Language = :language WHERE OAUser.OAUserSerNum = :ser";
-
-            $stmt = $con->prepare( $sql );
-            $stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
-            $stmt->bindValue( "language", $language, PDO::PARAM_STR );
-            $stmt->execute();
-
-            $response['code'] = "1"; // Success
-            return $response;
-
-        } catch (PDOException $e) {
-            $response['error']['code'] = 'db-catch';
-            $response['error']['message'] = $e->getMessage();
-            return $response;
+        if(!is_array($data)) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>"UNKNOWN USER"), ACCESS_DENIED, "UNKNOWN USER");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
         }
-    }
 
+        $username = $data["username"];
+        $password = $data["password"];
 
-    /**
-     *
-     * Updates a user
-     *
-     * @param array $userDetails  : the user details
-     * @return boolean
-     */
-    public function updateUser($userDetails) {
-        $response = array (
-            'value'		=> 0,
-            'error'		=> array(
-                'code'		=> '',
-                'message'	=> ''
-            )
-        );
-        $userSer			= $userDetails['user']['id'];
-        $newPassword 		= $userDetails['password'];
-        $confirmPassword 	= $userDetails['confirmPassword'];
-        $roleSer 			= $userDetails['role']['serial'];
-        $language 			= $userDetails['language'];
+        if($username == "" || $password == "") {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
+        }
 
-        try {
+        $result = $this->opalDB->authenticateSystemUser($username, hash("sha256", $password . USER_SALT));
+        $result = $this->_validateUserAuthentication($result, $username);
 
-            if ( ($newPassword && $confirmPassword) && ($newPassword == $confirmPassword) ) {
-                $response = $this->updatePassword($userDetails);
-                if ($response['value'] == 0) {
-                    return $response;
-                }
+        $_SESSION["ID"] = $result["id"];
+        $_SESSION["username"] = $result["username"];
+        $_SESSION["language"] = $result["language"];
+        $_SESSION["role"] = $result["role"];
+        $_SESSION['sessionId'] = HelpSetup::makeSessionId();
+        $_SESSION['lastActivity'] = time();
+        $_SESSION['created'] = time();
+
+        $this->_connectAsMain();
+        $tempAccess = $this->opalDB->getUserAccess($result["role"]);
+        if(count($tempAccess) <= 0) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "No access found. Please contact your administrator.");
+        }
+        foreach($tempAccess as $access) {
+            if(!HelpSetup::validateBitOperation($access["operation"],$access["access"])) {
+                HelpSetup::getModuleMethodName($moduleName, $methodeName);
+                $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+                HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access violation role-module. Please contact your administrator.");
             }
-
-            $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "UPDATE OAUserRole SET OAUserRole.RoleSerNum = $roleSer WHERE OAUserRole.OAUserSerNum = $userSer";
-
-            $stmt = $con->prepare( $sql );
-            $stmt->execute();
-
-            $sql = "UPDATE OAUser SET OAUser.Language = '$language' WHERE OAUser.OAUserSerNum = $userSer";
-            $stmt = $con->prepare( $sql );
-            $stmt->execute();
-
-            $response['value'] = 1; // Success
-            return $response;
-
-        } catch (PDOException $e) {
-            $response['error']['code'] = 'db-catch';
-            $response['error']['message'] = $e->getMessage();
-            return $response;
+            $userAccess[$access["ID"]] = array("ID"=>$access["ID"], "access"=>$access["access"]);
         }
+
+        $_SESSION["userAccess"] = $userAccess;
+        $result["sessionid"] = $_SESSION['sessionId'];
+
+        $this->_logActivity($result["id"], $_SESSION['sessionId'], 'Login');
+
+        //Insert in the audit table user was granted access and return nav menu
+        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_GRANTED);
+
+        return $result;
     }
+
+    /*
+     * Login for registration of patient. Before each inscription, the login of the user must be validated. Validation
+     * is made base on the Patient module write access. If the user got a valid user/pass and correct access level
+     * (read and write), then it is authorized to proceed. Otherwise, return error 401. No matter what, logs the result
+     * in the audit table.
+     * @param   $post (array) contains username, password
+     * @return  200 (success), 401 (denied) or 500 (server error, oops!)
+     * */
+    public function userLoginRegistration($post) {
+        $data = HelpSetup::arraySanitization($post);
+
+        if(!is_array($data)) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>"UNKNOWN USER"), ACCESS_DENIED, "UNKNOWN USER");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
+        }
+
+        $username = $data["username"];
+        $password = $data["password"];
+
+        if($username == "" || $password == "") {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>($data["username"] ? $data["username"] : "UNKNOWN USER")), ACCESS_DENIED, ($data["username"] ? $data["username"] : "UNKNOWN USER"));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
+        }
+
+        if(AD_LOGIN_ACTIVE)
+            $resultUser = $this->_userLoginActiveDirectory($username, $password);
+        else
+            $resultUser = $this->_userLoginLegacy($username, $password);
+
+        $this->_connectAsMain($resultUser["id"]);
+
+        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        $result = $this->opalDB->getUserAccessRegistration($resultUser["role"]);
+
+        if(count($result) != 1) {
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "No access found. Please contact your administrator.");
+        }
+        $result = $result[0];
+
+        if(!(($result["access"] >> 1) & 1) || !(($result["operation"] >> 1) & 1)) {
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Access denied.");
+        }
+
+        $this->_logActivity($resultUser["id"], HelpSetup::makeSessionId(), 'LoginRegistration');
+        $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_GRANTED, $username);
+        return HTTP_STATUS_SUCCESS;
+    }
+
+    /*
+     * Logs the user out by logging it in the logActivity.
+     * @params  void
+     * @return  answer from the log activity
+     * */
+    public function userLogout() {
+        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        $this->_insertAudit($moduleName, $methodeName, array(), ACCESS_GRANTED);
+        $result = $this->_logActivity($_SESSION["ID"], $_SESSION["sessionId"], 'Logout');
+        session_unset();     // unset $_SESSION variable for the run-time
+        session_destroy();   // destroy session data in storage
+        return $result;
+    }
+
+    /*
+     * Log activity into the table OAActivityLog.
+     * @params  $userId (int) ID of the user to enter
+     *          $sessionId (string) session ID of the user
+     *          $activity (string) type of activity to log in (Login or Logout)
+     * */
+    protected function _logActivity($userId, $sessionId, $activity) {
+        return $this->opalDB->insertUserActivity(array("Activity"=>$activity, "OAUserSerNum"=>$userId, "SessionId"=>$sessionId));
+    }
+
+    /*
+     * Function to validate a password. It confirms the password and confirmation are the same, check the length (min
+     * 8 char), check if there is ate least one special character, at least one number, at least one capital letter,
+     * at least one lower case number.
+     * @param   $password (string) new password to validate
+     *          $confirmPassword (string) confirmation of the password
+     * @return  $errMsg (array) array of error messages if any.
+     * */
+    protected function _passwordValidation($password, $confimPassword) {
+        $errMsgs = array();
+        if($confimPassword != $password)
+            array_push($errMsgs, "Password and password confirmation do not match.");
+
+        $length = (strlen($password) >= 8);
+        $special = preg_match('#[\W]+#', $password);
+        $number = preg_match("#[0-9]+#",$password);
+        $upper = preg_match("#[A-Z]+#",$password);
+        $lower = preg_match("#[a-z]+#",$password);
+
+        if(!$length || !$special || !$number || !$upper || !$lower)
+            array_push($errMsgs, "Invalid password format.");
+
+        return $errMsgs;
+    }
+
+    /*
+     * Updates the password of a specific user after validating it.
+     * @param   $post (array) array of data coming from the frontend that contains username, password and confirm
+     *          password.
+     * @return  number of updated record
+     * */
+    public function updatePassword($post) {
+        $this->checkWriteAccess(ENCRYPTED_DATA);
+        $post = HelpSetup::arraySanitization($post);
+
+        $username = $this->opalDB->getUserDetails($post["OAUserId"]);
+        $username = $username["username"];
+        $oldPassword = $post["oldPassword"];
+        $password = $post["password"];
+        $confirmPassword = $post["confirmPassword"];
+
+        if($username == "" || $password == "" || $oldPassword == "" || $confirmPassword == "" || $password == $oldPassword)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing update information.");
+
+        $result = $this->_passwordValidation($password, $confirmPassword);
+        if(count($result) > 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
+
+        $result = $this->opalDB->authenticateUserLegacy($username, hash("sha256", $oldPassword . USER_SALT));
+        if(count($result) < 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid username/password.");
+        else if(count($result) > 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Somethings's wrong. There is too many entries!");
+
+        $result = $result[0];
+
+        $updated = $this->opalDB->updateUserPassword($result["id"], hash("sha256", $password . USER_SALT));
+        return $updated;
+    }
+
+    /*
+     * Update the preferred language on how to display the opalAdmin to the user. Can only accept FR or EN
+     * @params  $post (array) contains language requested and userId
+     * @returns number of records modified
+     * */
+    public function updateLanguage($post) {
+        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        $this->_insertAudit($moduleName, $methodeName, HelpSetup::arraySanitization($post), ACCESS_GRANTED);
+
+        $post = HelpSetup::arraySanitization($post);
+        $post["language"] = strtoupper($post["language"]);
+
+        if($post["language"] != "EN" && $post["language"] != "FR")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid language");
+
+        $this->opalDB->updateUserLanguage($this->opalDB->getOAUserId(), $post["language"]);
+
+        return true;
+    }
+
+    /*
+     * validate its password before updating it, updating the language and the role. All the updates are optionals.
+     * @oarams  $post (array) informations on the user and the id.
+     * @return  true (boolean) means the update was successful.
+     * */
+    public function updateUser($post) {
+        $data = HelpSetup::arraySanitization($post);
+        $this->checkWriteAccess(array("userId"=>$data["id"], "roleId"=>$data["roleId"], "language"=>$data["language"]));
+
+        $userDetails = $this->opalDB->getUserDetails($data["id"]);
+
+        if(!is_array($userDetails))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid user.");
+
+        if(!AD_LOGIN_ACTIVE || intval($userDetails["type"]) == 2) {
+            if($data["password"] && $data["confirmPassword"]) {
+                $result = $this->_passwordValidation($data["password"], $data["confirmPassword"]);
+                if (count($result) > 0)
+                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
+                $this->opalDB->updateUserPassword($userDetails["serial"], hash("sha256", $data["password"] . USER_SALT));
+            }
+        }
+
+        $newRole = $this->opalDB->getRoleDetails($data["roleId"]);
+        if(!is_array($newRole))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid role.");
+
+        if($data["roleId"] != $userDetails["oaRoleId"] && $userDetails["serial"] == $this->opalDB->getOAUserId())
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "An user cannot change its own role.");
+
+        $this->opalDB->updateUserInfo($userDetails["serial"], $data["language"], $data["roleId"]);
+
+        return true;
+    }
+
+    /*
+     * insert a new user into the OAUser table and its role in OAUserRole table after sanitizing and validating the
+     * data. Depending if the AD system is active or not, the insertion is done differently.
+     * @params  $post (array) contains the username, password, confirmed password, role, language.
+     * @returns void
+     * */
+    public function insertUser($post) {
+        $data = HelpSetup::arraySanitization($post);
+        $this->checkWriteAccess(array("username"=>$data["username"], "roleId"=>$data["roleId"], "language"=>strtoupper($data["language"])));
+
+        $username = $data["username"];
+        $password = $data["password"];
+        $confirmPassword = $data["confirmPassword"];
+        $roleId = $data["roleId"];
+        $language = strtoupper($data["language"]);
+        $type = intval($data["type"]);
+
+        if($username == "" || $roleId == "" || $language == "" || ($type != 1 && $type != 2))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data to create user.");
+        if($language != "FR" && $language != "EN")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Wrong language.");
+
+        if(!AD_LOGIN_ACTIVE || $type == 2)
+            $userId = $this->_insertUserWithPassword($type, $username, $password, $confirmPassword, $language, $roleId);
+        else
+            $userId = $this->_insertUserAD($type, $username, $language, $roleId);
+
+        $role = $this->opalDB->getRoleDetails($roleId);
+        if(!is_array($role))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid role.");
+        return $this->opalDB->insertUserRole($userId, $roleId);
+    }
+
+    /*
+     * Insert an user with a password.
+     * @params  $username (string) username (duh!)
+     *          $password (string) password
+     *          $confirmPassword (string) confirmation of the password
+     *          $language (string) language of the user (EN, FR)
+     * @return  userId (int) ID of the new user created
+     * */
+    protected function _insertUserWithPassword($type, $username, $password, $confirmPassword, $language, $roleId) {
+        if($password == "" || $confirmPassword == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data to create user.");
+
+        $result = $this->_passwordValidation($password, $confirmPassword);
+        if(count($result) > 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
+
+        return $this->opalDB->insertUser($type, $username, hash("sha256", $password . USER_SALT), $language, $roleId);
+    }
+
+    /*
+     * Insert an user without a password. But to make sure there is somethign in the password field, the username is
+     * used by default.
+     * @params  $username (string) username (duh!)
+     *          $language (string) language of the user (EN, FR)
+     * @return  userId (int) ID of the new user created
+     * */
+    protected function _insertUserAD($type, $username, $language, $roleId) {
+        return $this->opalDB->insertUser($type, $username, hash("sha256", HelpSetup::generateRandomString() . USER_SALT), $language, $roleId);
+    }
+
+    /*
+     * Get the list of all users excluding the cronjob one
+     * @params  void
+     * @return  array of users
+     * */
+    public function getUsers() {
+        $this->checkReadAccess();
+        return $this->opalDB->getUsersList();
+    }
+
+    /*
+     * Get users details based on its ID. Format the data in a way the front won't crash. It sends username, role info,
+     * and language.
+     * @params  $post (array) data receive from the front in $_POST method
+     * @returns $userDetails (array) details of the user
+     * */
+    public function getUserDetails($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $userDetails = $this->opalDB->getUserDetails($post["userId"]);
+        $userDetails["role"] = array("serial"=>$userDetails["oaRoleId"], "name_EN"=>$userDetails["name_EN"], "name_FR"=>$userDetails["name_FR"]);
+        $userDetails["logs"] = array();
+        $userDetails["new_password"] = null;
+        $userDetails["confirm_password"] = null;
+        unset($userDetails["oaRoleId"]);
+        unset($userDetails["name_EN"]);
+        unset($userDetails["name_FR"]);
+        return $userDetails;
+    }
+
+    /*
+     * returns if the username is already in use or not
+     * @params  $username (string)
+     * @return  boolean if the result is greater than 0 or not
+     * */
+    public function usernameExists($username) {
+        $this->checkReadAccess($username);
+        $results = $this->opalDB->countUsername($username);
+        $results = intval($results["total"]);
+        return $results > 0;
+    }
+
     /**
+     * Mark a user as deleted. An user cannot delete its own record
      *
-     * Registers a user into the database
+     * WARNING!!! No record should be EVER be removed from the opalDB database!
      *
-     * @param array $userDetails : the user details
+     * REMEMBER !!! NO DELETE STATEMENT EVER !!! YOU HAVE BEING WARNED !!!
+     *
+     * @params $userId (int) ID of the user
      * @return void
      */
-    public function registerUser($userDetails) {
-        $username 		= $userDetails['username'];
-        $password 		= $userDetails['password'];
-        $roleSer 		= $userDetails['role']['serial'];
-        $language 		= $userDetails['language'];
-        $cypher 		= $userDetails['cypher'];
-        $d = new Encrypt;
-        try {
-            $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "INSERT INTO OAUser(Username, Password, Language, DateAdded) VALUES(:username, :password, :language, NOW())";
+    public function deleteUser($userId) {
+        $this->checkDeleteAccess($userId);
+        $userId = strip_tags($userId);
+        if($userId == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid user.");
+        elseif ($userId == $this->opalDB->getOAUserId())
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "An user cannot delete itself.");
 
-            $stmt = $con->prepare( $sql );
-            $stmt->bindValue( "username", $username, PDO::PARAM_STR );
-            $stmt->bindValue( "password", hash("sha256", $d->encodeString( $password, $cypher ) . $this->salt), PDO::PARAM_STR );
-            $stmt->bindValue( "language", $language, PDO::PARAM_STR );
-            $stmt->execute();
-
-            $userSer = $con->lastInsertId();
-
-            $sql = "INSERT INTO OAUserRole(OAUserSerNum, RoleSerNum) VALUES('$userSer','$roleSer')";
-            $query = $con->prepare($sql);
-            $query->execute();
-            return;
-
-        }catch( PDOException $e ) {
-            return $e->getMessage();
-        }
+        $this->opalDB->markUserAsDeleted($userId);
     }
 
-    /**
-     *
-     * Gets a list of existing users
-     *
-     * @param array $USERS : the list of existing users
-     * @return boolean
-     */
-    public function getUsers() {
-        $users = array();
-        try {
-            $connect = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "
-		 		SELECT DISTINCT
-			 		OAUser.OAUserSerNum,
-			 		OAUser.Username,
-			 		Role.RoleName,
-			 		OAUser.Language
-		 		FROM
-			 		OAUser,
-			 		OAUserRole,
-			 		Role
-		 		WHERE
-		 			OAUser.OAUserSerNum 	= OAUserRole.OAUserSerNum
-		 		AND OAUserRole.RoleSerNum	= Role.RoleSerNum
-		 		AND Role.RoleSerNum != ".ROLE_CRONJOB."
-	 		";
-            $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $serial 	= $data[0];
-                $name   	= $data[1];
-                $role 		= $data[2];
-                $language 	= $data[3];
-
-                $userArray = array(
-                    'serial'    	=> $serial,
-                    'username'      => $name,
-                    'role'			=> $role,
-                    'language' 		=> $language
-                );
-                array_push($users, $userArray);
-            }
-            return $users;
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $users;
-        }
-    }
-
-    /**
-     *
-     * Gets a user's details
-     *
-     * @param integer $userSer    : the user serial number
-     * @return array $userDetails : the user details
-     */
-    public function getUserDetails($userSer) {
-        $userDetails = array();
-        try {
-            $connect = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "
-		 		SELECT DISTINCT
-			 		OAUser.Username,
-			 		Role.RoleSerNum,
-			 		Role.RoleName,
-			 		OAUser.Language
-		 		FROM   
-			 		OAUser,
-			 		OAUserRole,
-			 		Role
-		 		WHERE
-			 		OAUser.OAUserSerNum 	= $userSer
-			 	AND OAUserRole.OAUserSerNum	= OAUser.OAUserSerNum
-			 	AND Role.RoleSerNum 		= OAUserRole.RoleSerNum
-			 	AND Role.RoleSerNum != ".ROLE_CRONJOB."
-	 		";
-            $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
-
-            $username   = $data[0];
-            $roleSer 	= $data[1];
-            $roleName 	= $data[2];
-            $language 	= $data[3];
-
-            $userDetails = array(
-                'serial'            => $userSer,
-                'username'          => $username,
-                'language' 			=> $language,
-                'role' 				=> array('serial'=>$roleSer,'name'=>$roleName),
-                'logs'              => array(),
-                'new_password'      => null,
-                'confirm_password'  => null
-            );
-
-            return $userDetails;
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $userDetails;
-        }
-    }
-
-
-    /**
-     *
-     * Determines the existence of a username
-     *
-     * @param string $username : username to check
-     *
-     * @return array $Response : response
-     */
-    public function usernameAlreadyInUse($username) {
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "
-            	SELECT DISTINCT
-            		ato.Username
-            	FROM
-            		OAUser ato
-            	WHERE
-            		ato.Username = \"$username\"
-            	LIMIT 1
-            ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            $Response = 0;
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                if ($data[0]) {
-                    $Response = 1;
-                }
-            }
-
-            return $Response;
-
-        } catch (PDOException $e) {
-            return $Response;
-        }
-    }
-
-    /**
-     *
-     * Deletes a user from the database
-     *
-     * @param integer $userSer : the user serial number
-     * @return array $response : response
-     */
-    public function deleteUser( $userSer ) {
-
-        // Initialize a response array
-        $response = array(
-            'value'		=> 0,
-            'message'	=> ''
-        );
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "DELETE FROM OAUserRole WHERE OAUserRole.OAUserSerNum = $userSer";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-            $sql = "DELETE FROM OAUser WHERE OAUser.OAUserSerNum = $userSer";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-            $response['value'] = 1; // Success
-            return $response;
-
-        } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response; // Fail
-        }
-    }
-
-    /**
-     *
-     * Gets a list of possible roles from the database
-     *
-     * @return array $roles : roles
-     */
-
+    /*
+     * Get the list of roles an user can have.
+     * @params  void
+     * @return  array with all roles found (not cronjob!)
+     * */
     public function getRoles() {
-        $roles = array();
-        try {
-            $connect = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "
-		 		SELECT DISTINCT
-		 			Role.RoleSerNum,
-		 			Role.RoleName
-		 		FROM
-			 		Role
-			 	WHERE Role.RoleSerNum != ".ROLE_CRONJOB."
-
-			 	ORDER BY 
-			 		Role.RoleName
-	 		";
-            $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $serial = $data[0];
-                $name   = $data[1];
-
-                $roleArray = array(
-                    'serial'    	=> $serial,
-                    'name'      	=> $name,
-                );
-                array_push($roles, $roleArray);
-            }
-            return $roles;
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $roles;
-        }
+        $this->checkReadAccess();
+        return $this->opalDB->getRoles();
     }
 
-    /**
-     *
-     * Gets a list of user activities
-     *
-     * @return array $userActivityList : the list of user activities
-     */
-    public function getUserActivities() {
-        $userActivityList = array();
-        try {
+    /*
+     * Get the activity logs of a specific user and determine if any data has being found.
+     * @params  $userId (int) ID of the user
+     * @return  $userLogs (array) all the logs of the specified user, with an extra field to specify if data was found
+     * */
+    public function getUserActivityLogs($userId) {
+        $this->checkReadAccess($userId);
+        $dataFound = false;
+        $userLogs = array();
+        $userLogs['login'] = $this->opalDB->getUserLoginDetails($userId);
+        $userLogs['alias'] = $this->opalDB->getUserAliasDetails($userId);
+        $userLogs['aliasExpression'] = $this->opalDB->getUserAliasExpressions($userId);
+        $userLogs['diagnosisTranslation'] = $this->opalDB->getUserDiagnosisTranslations($userId);
+        $userLogs['diagnosisCode'] = $this->opalDB->getUserDiagnosisCode($userId);
+        $userLogs['email'] = $this->opalDB->getUserEmail($userId);
+        $userLogs['trigger'] = $this->opalDB->getUserFilter($userId);
+        $userLogs['hospitalMap'] = $this->opalDB->getUserHospitalMap($userId);
+        $userLogs['post'] = $this->opalDB->getUserPost($userId);
+        $userLogs['notification'] = $this->opalDB->getUserNotification($userId);
+        $userLogs['legacyQuestionnaire'] = $this->opalDB->getUserQuestionnaire($userId);
+        $userLogs['testResult'] = $this->opalDB->getUserTestResult($userId);
+        $userLogs['testResultExpression'] = $this->opalDB->getUserTestResultExpression($userId);
 
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-	            SELECT DISTINCT 
-	            	oaa.OAUserSerNum,
-	            	oa.Username,
-	            	oaa.DateAdded as LoginTime, 
-	            	oaa2.DateAdded as LogoutTime, 
-	            	oaa.SessionId,
-	            	CONCAT (
-	            		IF(MOD(HOUR(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 24) > 0,
-	            			CONCAT(MOD(HOUR(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 24), 'h'),
-	            			''
-	            		),
-	            		IF(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)) > 0,
-	            			CONCAT(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 'm'),
-	            			''
-	            		),
-	            		SECOND(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 's'
-	            	) as SessionDuration
-
-	            FROM 
-	            	OAUser oa,
-	            	OAActivityLog oaa 
-	            LEFT JOIN 
-	            	OAActivityLog oaa2 
-	            ON oaa.SessionId = oaa2.SessionId  
-	            AND oaa2.Activity = 'Logout' 
-	            WHERE 
-	            	oaa.`Activity` 	= 'Login'
-	            AND oa.OAUserSerNum = oaa.OAUserSerNum
-
-                ORDER BY oaa.DateAdded DESC
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $userDetails = array(
-                    'serial'                => $data[0],
-                    'username'              => $data[1],
-                    'login'                 => $data[2],
-                    'logout'				=> $data[3],
-                    'sessionid'             => $data[4],
-                    'session_duration'		=> $data[5]
-                );
-
-                array_push($userActivityList, $userDetails);
+        foreach($userLogs as $log){
+            if(count($log) > 0) {
+                $dataFound = true;
+                break;
             }
-
-            return $userActivityList;
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $userActivityList;
         }
-    }
-
-    /**
-     *
-     * Gets logs of a user's activity
-     *
-     * @param integer $userSer : user serial
-     * @return array $userLogs : the logs of user activities
-     */
-    public function getUserActivityLogs($userSer) {
-        $userLogs = array(
-            'isData' 				=> 0,
-            'login'					=> array(),
-            'alias'					=> array(),
-            'aliasExpression'		=> array(),
-            'diagnosisTranslation'	=> array(),
-            'diagnosisCode'			=> array(),
-            'email'					=> array(),
-            'trigger'				=> array(),
-            'hospitalMap'			=> array(),
-            'post'					=> array(),
-            'notification'			=> array(),
-            'legacyQuestionnaire'	=> array(),
-            'testResult'			=> array(),
-            'testResultExpression'	=> array()
-        );
-        try {
-
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            /* Logins */
-            $sql = "
-	            SELECT DISTINCT 
-	            	oaa.OAUserSerNum,
-	            	oaa.DateAdded as LoginTime, 
-	            	oaa2.DateAdded as LogoutTime, 
-	            	oaa.SessionId,
-	            	CONCAT (
-	            		IF(MOD(HOUR(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 24) > 0,
-	            			CONCAT(MOD(HOUR(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 24), 'h'),
-	            			''
-	            		),
-	            		IF(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)) > 0,
-	            			CONCAT(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 'm'),
-	            			''
-	            		),
-	            		SECOND(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 's'
-	            	) as SessionDuration
-
-	            FROM 
-	            	OAUser oa,
-	            	OAActivityLog oaa 
-	            LEFT JOIN 
-	            	OAActivityLog oaa2 
-	            ON oaa.SessionId = oaa2.SessionId  
-	            AND oaa2.Activity = 'Logout' 
-	            WHERE 
-	            	oaa.`Activity` 	= 'Login'
-	            AND oa.OAUserSerNum = oaa.OAUserSerNum
-	            AND oa.OAUserSerNum = '$userSer'
-
-                ORDER BY oaa.DateAdded DESC
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $loginDetails = array(
-                    'serial'                => $data[0],
-                    'login'                 => $data[1],
-                    'logout'				=> $data[2],
-                    'sessionid'             => $data[3],
-                    'session_duration'		=> $data[4]
-                );
-
-                array_push($userLogs['login'], $loginDetails);
-                $userLogs['isData'] = 1;
-            }
-
-            /* Alias */
-            $sql = "
-            	SELECT DISTINCT 
-            		almh.AliasSerNum,
-            		almh.AliasRevSerNum,
-            		almh.SessionId,
-            		almh.AliasType,
-            		almh.AliasUpdate,
-            		almh.AliasName_EN,
-            		almh.AliasName_FR,
-            		almh.AliasDescription_EN,
-            		almh.AliasDescription_FR,
-            		almh.EducationalMaterialControlSerNum,
-            		almh.SourceDatabaseSerNum,
-            		almh.ColorTag,
-            		almh.ModificationAction,
-            		almh.DateAdded
-            	FROM
-            		AliasMH almh
-            	WHERE
-            		almh.LastUpdatedBy = $userSer
-            	ORDER BY 
-            		almh.DateAdded DESC
-            ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $aliasDetails = array(
-                    'serial'			=> $data[0],
-                    'revision'			=> $data[1],
-                    'sessionid'			=> $data[2],
-                    'type'				=> $data[3],
-                    'update'			=> $data[4],
-                    'name_EN'			=> $data[5],
-                    'name_FR'			=> $data[6],
-                    'description_EN'	=> $data[7],
-                    'description_FR'	=> $data[8],
-                    'educational_material'	=> $data[9],
-                    'source_db'				=> $data[10],
-                    'color'					=> $data[11],
-                    'mod_action'			=> $data[12],
-                    'date_added'			=> $data[13]
-                );
-
-                array_push($userLogs['alias'], $aliasDetails);
-                $userLogs['isData'] = 1;
-            }
-
-            /* Alias Expression */
-            $sql = "
-            	SELECT DISTINCT 
-            		aemh.AliasSerNum,
-            		aemh.RevSerNum,
-            		aemh.SessionId,
-            		aemh.ExpressionName,
-            		aemh.Description,
-            		aemh.ModificationAction,
-            		aemh.DateAdded
-            	FROM
-            		AliasExpressionMH aemh
-            	WHERE
-            		aemh.LastUpdatedBy = $userSer
-            	ORDER BY 
-            		aemh.DateAdded DESC
-            ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $aliasExpressionDetails = array(
-                    'serial'			=> $data[0],
-                    'revision'			=> $data[1],
-                    'sessionid'			=> $data[2],
-                    'expression'		=> $data[3],
-                    'resource_description'	=> $data[4],
-                    'mod_action'			=> $data[5],
-                    'date_added'			=> $data[6]
-                );
-
-                array_push($userLogs['aliasExpression'], $aliasExpressionDetails);
-                $userLogs['isData'] = 1;
-            }
-
-            /* Diagnosis Translation*/
-            $sql = "
-            	SELECT DISTINCT
-            		dtmh.DiagnosisTranslationSerNum,
-            		dtmh.RevSerNum,
-            		dtmh.SessionId,
-            		dtmh.EducationalMaterialControlSerNum,
-            		dtmh.Name_EN,
-            		dtmh.Name_FR,
-            		dtmh.Description_EN,
-            		dtmh.Description_FR,
-            		dtmh.ModificationAction,
-            		dtmh.DateAdded
-            	FROM
-            		DiagnosisTranslationMH dtmh
-            	WHERE
-            		dtmh.LastUpdatedBy = $userSer
-            	ORDER BY
-            		dtmh.DateAdded DESC
-
-            ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $diagnosisTranslationDetails = array (
-                    'serial'				=> $data[0],
-                    'revision'				=> $data[1],
-                    'sessionid'				=> $data[2],
-                    'educational_material'	=> $data[3],
-                    'name_EN'				=> $data[4],
-                    'name_FR'				=> $data[5],
-                    'description_EN'		=> $data[6],
-                    'description_FR'		=> $data[7],
-                    'mod_action'			=> $data[8],
-                    'date_added'			=> $data[9]
-                );
-                array_push($userLogs['diagnosisTranslation'], $diagnosisTranslationDetails);
-                $userLogs['isData'] = 1;
-            }
-
-            /* Diagnosis Code */
-            $sql = "
-	        	SELECT DISTINCT 
-	        		dcmh.DiagnosisTranslationSerNum,
-	        		dcmh.RevSerNum,
-	        		dcmh.SessionId,
-	        		dcmh.SourceUID,
-	        		dcmh.DiagnosisCode,
-	        		dcmh.Description,
-	        		dcmh.ModificationAction,
-	        		dcmh.DateAdded
-	        	FROM 
-	        		DiagnosisCodeMH dcmh
-	        	WHERE
-	        		dcmh.LastUpdatedBy = $userSer
-	        	ORDER BY
-	        		dcmh.DateAdded DESC
-	        ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $diagnosisCodeDetails = array(
-                    'serial'		=> $data[0],
-                    'revision'		=> $data[1],
-                    'sessionid'		=> $data[2],
-                    'sourceuid'		=> $data[3],
-                    'code'			=> $data[4],
-                    'description'	=> $data[5],
-                    'mod_action'	=> $data[6],
-                    'date_added'	=> $data[7]
-                );
-
-                array_push($userLogs['diagnosisCode'], $diagnosisCodeDetails);
-                $userLogs['isData'] = 1;
-            }
-
-            /* Email */
-            $sql = "
-            	SELECT DISTINCT
-            		ecmh.EmailControlSerNum,
-            		ecmh.RevSerNum,
-            		ecmh.SessionId,
-            		ecmh.Subject_EN,
-            		ecmh.Subject_FR,
-            		ecmh.Body_EN,
-            		ecmh.Body_FR,
-            		ecmh.ModificationAction,
-            		ecmh.DateAdded
-            	FROM
-            		EmailControlMH ecmh
-            	WHERE
-            		ecmh.LastUpdatedBy = $userSer
-            	ORDER BY
-            		ecmh.DateAdded DESC
-           	";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $emailDetails = array (
-                    'serial'		=> $data[0],
-                    'revision'		=> $data[1],
-                    'sessionid'		=> $data[2],
-                    'subject_EN'	=> $data[3],
-                    'subject_FR'	=> $data[4],
-                    'body_EN'		=> $data[5],
-                    'body_FR'		=> $data[6],
-                    'mod_action'	=> $data[7],
-                    'date_added'	=> $data[8]
-                );
-                array_push($userLogs['email'], $emailDetails);
-                $userLogs['isData'] = 1;
-            }
-
-            /* Trigger */
-            $sql = "
-            	SELECT DISTINCT
-            		fmh.ControlTableSerNum,
-            		fmh.ControlTable,
-            		fmh.SessionId,
-            		fmh.FilterType,
-            		fmh.FilterId,
-            		fmh.ModificationAction,
-            		fmh.DateAdded
-            	FROM
-            		FiltersMH fmh
-            	WHERE
-            		fmh.LastUpdatedBy = $userSer
-            	ORDER BY 
-            		fmh.DateAdded DESC
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $triggerDetails = array(
-                    'control_serial'		=> $data[0],
-                    'control_table'			=> $data[1],
-                    'sessionid'				=> $data[2],
-                    'type'					=> $data[3],
-                    'filterid'				=> $data[4],
-                    'mod_action'			=> $data[5],
-                    'date_added'			=> $data[6]
-                );
-
-                array_push($userLogs['trigger'], $triggerDetails);
-                $userLogs['isData'] = 1;
-            }
-
-            /* Hospital Map */
-            $sql = "
-            	SELECT DISTINCT
-            		hmmh.HospitalMapSerNum,
-            		hmmh.RevSerNum,
-            		hmmh.SessionId,
-            		hmmh.MapUrl,
-            		hmmh.QRMapAlias,
-            		hmmh.MapName_EN,
-            		hmmh.MapName_FR,
-            		hmmh.MapDescription_EN,
-            		hmmh.MapDescription_FR,
-            		hmmh.ModificationAction,
-            		hmmh.DateAdded
-            	FROM
-            		HospitalMapMH hmmh
-            	WHERE
-            		hmmh.LastUpdatedBy = $userSer
-            	ORDER BY
-            		hmmh.DateAdded DESC
-            ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $hospitalMapDetails = array(
-                    'serial'			=> $data[0],
-                    'revision'			=> $data[1],
-                    'sessionid'			=> $data[2],
-                    'url'				=> $data[3],
-                    'qrcode'			=> $data[4],
-                    'name_EN'			=> $data[5],
-                    'name_FR'			=> $data[6],
-                    'description_EN'	=> $data[7],
-                    'description_FR'	=> $data[8],
-                    'mod_action'		=> $data[9],
-                    'date_added'		=> $data[10]
-                );
-                array_push($userLogs['hospitalMap'], $hospitalMapDetails);
-                $userLogs['isData'] = 1;
-            }
-
-            /* Posts */
-            $sql = "
-            	SELECT DISTINCT
-            		pcmh.PostControlSerNum,
-            		pcmh.RevSerNum,
-            		pcmh.SessionId,
-            		pcmh.PostType,
-            		pcmh.PublishFlag,
-            		pcmh.Disabled,
-            		pcmh.PublishDate,
-            		pcmh.PostName_EN,
-            		pcmh.PostName_FR,
-            		pcmh.Body_EN,
-            		pcmh.Body_FR,
-            		pcmh.ModificationAction,
-            		pcmh.DateAdded
-            	FROM
-            		PostControlMH pcmh
-            	WHERE
-            		pcmh.LastUpdatedBy = $userSer
-            	ORDER BY
-            		pcmh.DateAdded DESC
-            ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $postDetails = array(
-                    'control_serial'		=> $data[0],
-                    'revision'				=> $data[1],
-                    'sessionid'				=> $data[2],
-                    'type'					=> $data[3],
-                    'publish'				=> $data[4],
-                    'disabled'				=> $data[5],
-                    'publish_date'			=> $data[6],
-                    'name_EN'				=> $data[7],
-                    'name_FR'				=> $data[8],
-                    'body_EN'				=> $data[9],
-                    'body_FR'				=> $data[10],
-                    'mod_action'			=> $data[11],
-                    'date_added'			=> $data[12]
-                );
-                array_push($userLogs['post'], $postDetails);
-                $userLogs['isData'] = 1;
-
-            }
-
-            /* Notification */
-            $sql = "
-            	SELECT DISTINCT
-            		ncmh.NotificationControlSerNum,
-            		ncmh.RevSerNum,
-            		ncmh.SessionId,
-            		ncmh.NotificationTypeSerNum,
-            		ncmh.Name_EN,
-            		ncmh.Name_FR,
-            		ncmh.Description_EN,
-            		ncmh.Description_FR,
-            		ncmh.ModificationAction,
-            		ncmh.DateAdded
-            	FROM
-            		NotificationControlMH ncmh
-            	WHERE
-            		ncmh.LastUpdatedBy = $userSer
-            	ORDER BY
-            		ncmh.DateAdded DESC
-            ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $notificationDetails = array(
-                    'control_serial'		=> $data[0],
-                    'revision'				=> $data[1],
-                    'sessionid'				=> $data[2],
-                    'type'					=> $data[3],
-                    'name_EN'				=> $data[4],
-                    'name_FR'				=> $data[5],
-                    'description_EN'		=> $data[6],
-                    'description_FR'		=> $data[7],
-                    'mod_action'			=> $data[8],
-                    'date_added'			=> $data[9]
-                );
-                array_push($userLogs['notification'], $notificationDetails);
-                $userLogs['isData'] = 1;
-
-            }
-
-            /* Legacy Questionnaires */
-            $sql = "
-            	SELECT DISTINCT
-            		qcmh.QuestionnaireControlSerNum,
-            		qcmh.RevSerNum,
-            		qcmh.SessionId,
-            		qcmh.QuestionnaireDBSerNum,
-            		qcmh.QuestionnaireName_EN,
-            		qcmh.QuestionnaireName_FR,
-            		qcmh.Intro_EN,
-            		qcmh.Intro_FR,
-            		qcmh.PublishFlag,
-            		qcmh.ModificationAction,
-            		qcmh.DateAdded
-            	FROM
-            		QuestionnaireControlMH qcmh
-            	WHERE
-            		qcmh.LastUpdatedBy = $userSer
-            	ORDER BY 
-            		qcmh.DateAdded DESC
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $legacyQuestionnaireDetails = array (
-                    'control_serial'	=> $data[0],
-                    'revision'			=> $data[1],
-                    'sessionid'			=> $data[2],
-                    'db_serial'			=> $data[3],
-                    'name_EN'			=> $data[4],
-                    'name_FR'			=> $data[5],
-                    'intro_EN'			=> $data[6],
-                    'intro_FR'			=> $data[7],
-                    'publish'			=> $data[8],
-                    'mod_action'		=> $data[9],
-                    'date_added'		=> $data[10]
-                );
-                array_push($userLogs['legacyQuestionnaire'], $legacyQuestionnaireDetails);
-                $userLogs['isData'] = 1;
-            }
-
-            /* Test Result */
-            $sql = "
-            	SELECT DISTINCT
-            		trcmh.TestResultControlSerNum,
-            		trcmh.RevSerNum,
-            		trcmh.SessionId,
-            		trcmh.SourceDatabaseSerNum,
-            		trcmh.EducationalMaterialControlSerNum,
-            		trcmh.Name_EN,
-            		trcmh.Name_FR,
-            		trcmh.Description_EN,
-            		trcmh.Description_FR,
-            		trcmh.Group_EN,
-            		trcmh.Group_FR,
-            		trcmh.PublishFlag,
-            		trcmh.ModificationAction,
-            		trcmh.DateAdded
-            	FROM
-            		TestResultControlMH trcmh 
-            	WHERE
-            		trcmh.LastUpdatedBy = $userSer
-            	ORDER BY 
-            		trcmh.DateAdded DESC
-            ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $testResultDetails = array(
-                    'control_serial'			=> $data[0],
-                    'revision'					=> $data[1],
-                    'sessionid'					=> $data[2],
-                    'source_db'					=> $data[3],
-                    'educational_material'		=> $data[4],
-                    'name_EN'					=> $data[5],
-                    'name_FR'					=> $data[6],
-                    'description_EN'			=> $data[7],
-                    'description_FR'			=> $data[8],
-                    'group_EN'					=> $data[9],
-                    'group_FR'					=> $data[10],
-                    'publish'					=> $data[11],
-                    'mod_action'				=> $data[12],
-                    'date_added'				=> $data[13]
-                );
-                array_push($userLogs['testResult'], $testResultDetails);
-                $userLogs['isData'] = 1;
-            }
-
-            /* Test Result Expressions */
-            $sql = "
-            	SELECT DISTINCT
-            		tremh.TestResultControlSerNum,
-            		tremh.RevSerNum,
-            		tremh.SessionId,
-            		tremh.ExpressionName,
-            		tremh.ModificationAction,
-            		tremh.DateAdded
-            	FROM
-            		TestResultExpressionMH tremh
-            	WHERE
-            		tremh.LastUpdatedBy = $userSer
-            	ORDER BY
-            		tremh.DateAdded DESC
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $testResultExpressionDetails = array (
-                    'control_serial'	=> $data[0],
-                    'revision'			=> $data[1],
-                    'sessionid'			=> $data[2],
-                    'expression'		=> $data[3],
-                    'mod_action'		=> $data[4],
-                    'date_added'		=> $data[5]
-                );
-                array_push($userLogs['testResultExpression'], $testResultExpressionDetails);
-                $userLogs['isData'] = 1;
-            }
-
-            return $userLogs;
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $userLogs;
-        }
-
-
+        $userLogs["isData"] = $dataFound;
+        return $userLogs;
     }
 }
-
-?>

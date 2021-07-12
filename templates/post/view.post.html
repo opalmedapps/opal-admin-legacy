@@ -1,0 +1,58 @@
+<div class="modal-header">
+    <div class="row col-xs-12">
+        <h2 class="modal-title">
+            <span ng-class="!writeAccess ? 'fa fa-eye' : ( post.locked > 0 ? 'text-danger fa fa-lock' : 'glyphicon glyphicon-pencil')"></span>
+            <span ng-if="writeAccess">{{'POSTS.EDIT.TITLE'|translate}}</span><span ng-if="!writeAccess">{{'POSTS.EDIT.TITLE_VIEW'|translate}}</span> - {{name_display}}
+        </h2>
+        <p ng-if="post.locked > 0" class="text-danger">{{'POSTS.EDIT.PUBLISHED'|translate}}</p>
+    </div>
+    <div class="modal-buttons col-xs-12 col-md-6">
+        <span>
+            <form method="post" ng-submit="updatePost()">
+                <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'POSTS.EDIT.CLOSE'|translate}}">
+            </form>
+        </span>
+    </div>
+</div>
+<div class="modal-body">
+    <uib-accordion close-others="false">
+        <!-- SECTION: Titles -->
+        <div uib-accordion-group is-open="titleSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'POSTS.EDIT.TITLES'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'ALIAS.EDIT.ENGLISH_ABRV'|translate}}</strong>: {{post.name_EN}}</p>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'ALIAS.EDIT.FRENCH_ABRV'|translate}}</strong>: {{post.name_FR}}</p>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Body -->
+        <div uib-accordion-group is-open="bodySection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'POSTS.EDIT.BODY_CONTENT'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': bodySection.open, 'glyphicon-chevron-right': !bodySection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <span style="font-size:20px;">{{'POSTS.EDIT.HTML_ENGLISH'|translate}}</span>
+                    </div>
+                    <div ng-bind-html="post.body_EN"></div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <span style="font-size:20px;">{{'POSTS.EDIT.HTML_FRENCH'|translate}}</span>
+                    </div>
+                    <div ng-bind-html="post.body_FR"></div>
+                </div>
+            </div>
+        </div>
+    </uib-accordion>
+</div>

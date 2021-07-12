@@ -150,7 +150,6 @@
                             <strong>{{'CUSTOM_CODE.ADD.TITLE'|translate}}</strong>
                         </div>
                     </div>
-
                     <div class="row mobile-side-panel-menu">
                         <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
                             <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
@@ -165,7 +164,7 @@
                         <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6">
                             <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
                                 <span style="padding: 0 10px;">
-                                    <h2>{{'CUSTOM_CODE.ADD.STEP'|translate}} {{completedSteps}} {{'CUSTOM_CODE.ADD.OF'|translate}} {{stepTotal}} {{'CUSTOM_CODE.ADD.COMPLETED'|translate}}</h2>
+                                    <h2>{{'CUSTOM_CODE.ADD.STEP'|translate}} {{completedSteps}} {{'CUSTOM_CODE.ADD.OF'|translate}} {{totalSteps}} {{'CUSTOM_CODE.ADD.COMPLETED'|translate}}</h2>
                                 </span>
                             </div>
                             <div class="progress progress-striped active">
@@ -181,9 +180,7 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="section-content">
-
                         <!-- SECTION: Module -->
                         <div class="row">
                             <div class="col-xs-12 side-menu-title">
@@ -213,7 +210,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <!-- SECTION: Alias Type -->
                         <div class="row animated" ng-if="validator.moduleId.completed && aliasTypes">
                             <div class="col-xs-12 side-menu-title">
@@ -245,7 +241,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <!-- SECTION: Code & Description -->
                         <div ng-if="(validator.moduleId.completed && !aliasTypes) || (aliasTypes && validator.type.completed)">
                             <div class="row">

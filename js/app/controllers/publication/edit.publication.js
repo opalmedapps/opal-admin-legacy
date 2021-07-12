@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('publication.edit', function ($scope, $state, $filter, $uibModal, $uibModalInstance, $locale, publicationCollectionService, filterCollectionService, FrequencyFilterService, Session) {
+angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('publication.edit', function ($scope, $filter, $uibModal, $uibModalInstance, $locale, publicationCollectionService, FrequencyFilterService, Session, ErrorHandler) {
 
 	// initialize default variables & lists
 	$scope.toSubmit = {
@@ -115,6 +115,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 		appointment: {available:false,open:false, show:false},
 		doctor: {available:false,open:false, show:false},
 		machine: {available:false,open:false, show:false},
+		study: {available:false,open:false, show:false},
 		diagnosis: {available:false,open:false, show:false}
 	};
 
@@ -151,6 +152,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 		diagnosis: {all:false, checked:false},
 		doctor: {all:false, checked:false},
 		machine: {all:false, checked:false},
+		study: {all:false, checked:false},
 		patient: {all:false, checked:false}
 	};
 
@@ -159,6 +161,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 	$scope.dxSearchField = "";
 	$scope.doctorSearchField = "";
 	$scope.machineSearchField = "";
+	$scope.studySearchField = "";
 	$scope.patientSearchField = "";
 
 	// Function to assign search fields when textbox changes
@@ -177,6 +180,10 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 	$scope.searchMachine = function (field) {
 		$scope.machineSearchField = field;
 		$scope.selectAll.machine.all = false;
+	};
+	$scope.searchStudy = function (field) {
+		$scope.studySearchField = field;
+		$scope.selectAll.study.all = false;
 	};
 	$scope.searchPatient = function (field) {
 		$scope.patientSearchField = field;
@@ -200,6 +207,10 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 		var keyword = new RegExp($scope.machineSearchField, 'i');
 		return !$scope.machineSearchField || keyword.test(Filter.name);
 	};
+	$scope.searchStudyFilter = function (Filter) {
+		var keyword = new RegExp($scope.studySearchField, 'i');
+		return !$scope.studySearchField || keyword.test(Filter.name);
+	};
 	$scope.searchPatientFilter = function (Filter) {
 		var keyword = new RegExp($scope.patientSearchField, 'i');
 		return !$scope.patientSearchField || keyword.test(Filter.name);
@@ -209,7 +220,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 	$scope.appointmentTriggerList = [];
 	$scope.dxTriggerList = [];
 	$scope.doctorTriggerList = [];
-	$scope.machineTriggerList = [];
+	$scope.studyTriggerList = [];
 	$scope.patientTriggerList = [];
 	$scope.appointmentStatusList = [];
 
@@ -227,7 +238,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 	$scope.showProcessingModal();
 
 	// Call our API service to get each trigger
-	filterCollectionService.getFilters(Session.retrieveObject('user').id).then(function (response) {
+	publicationCollectionService.getFilters(Session.retrieveObject('user').id).then(function (response) {
 		response.data = angular.copy(response.data);
 		response.data.appointments.forEach(function(entry) {
 			if($scope.language.toUpperCase() === "FR")
@@ -247,6 +258,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 
 		$scope.doctorTriggerList = response.data.doctors;
 		$scope.machineTriggerList = response.data.machines;
+		$scope.studyTriggerList = response.data.studies;
 		$scope.patientTriggerList = response.data.patients;
 		$scope.appointmentStatusList = response.data.appointmentStatuses;
 		$scope.appointmentStatusList.forEach(function(entry) {
@@ -276,7 +288,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 		$scope.getThePublicationDetails();
 		// Assign demographic triggers
 	}).catch(function(err) {
-		alert($filter('translate')('PUBLICATION.EDIT.ERROR_FILTERS') + err.status + " " + err.data);
+		ErrorHandler.onError(err, $filter('translate')('PUBLICATION.EDIT.ERROR_FILTERS'));
 		$uibModalInstance.close();
 	}).finally(function () {
 		processingModal.close(); // hide modal
@@ -360,6 +372,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 			$scope.triggerSection.diagnosis.available = response.data["publicationSettings"].indexOf("6") !== -1 ? true: false;
 			$scope.triggerSection.doctor.available = response.data["publicationSettings"].indexOf("7") !== -1 ? true: false;
 			$scope.triggerSection.machine.available = response.data["publicationSettings"].indexOf("8") !== -1 ? true: false;
+			$scope.triggerSection.study.available = response.data["publicationSettings"].indexOf("10") !== -1 ? true: false;
 			$scope.publishDate.available = (response.data["publicationSettings"].indexOf("9") !== -1) ? true: false;
 			$scope.title.available = response.data["publication"]["unique"] !== "1" ? true: false; // Assign value
 
@@ -367,6 +380,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 			checkAdded($scope.dxTriggerList, $scope.selectAll.diagnosis);
 			checkAdded($scope.doctorTriggerList, $scope.selectAll.doctor);
 			checkAdded($scope.machineTriggerList, $scope.selectAll.machine);
+			checkAdded($scope.studyTriggerList, $scope.selectAll.study);
 			checkAdded($scope.patientTriggerList, $scope.selectAll.patient);
 			checkAdded($scope.appointmentStatusList);
 
@@ -433,7 +447,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 			$scope.changesDetected = false;
 			$scope.oldData = JSON.parse(JSON.stringify($scope.toSubmit));
 		}).catch(function (response) {
-			alert($filter('translate')('PUBLICATION.EDIT.ERROR_DETAILS') + response.status + " " + response.data);
+			ErrorHandler.onError(err, $filter('translate')('PUBLICATION.EDIT.ERROR_DETAILS'));
 			$uibModalInstance.close();
 		});
 	}
@@ -509,6 +523,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 	$scope.$watch('dxTriggerList', function (nv) {$scope.changeTriggers(nv);}, true);
 	$scope.$watch('doctorTriggerList', function (nv) {$scope.changeTriggers(nv);}, true);
 	$scope.$watch('machineTriggerList', function (nv) {$scope.changeTriggers(nv);}, true);
+	$scope.$watch('studyTriggerList', function (nv) {$scope.changeTriggers(nv);}, true);
 
 	$scope.$watch('toSubmit', function() {
 		$scope.changesDetected = JSON.stringify($scope.toSubmit) != JSON.stringify($scope.oldData);
@@ -538,15 +553,15 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 
 	// Watch to restrict the end calendar to not choose an earlier date than the start date
 	$scope.$watch('publication.occurrence.start_date', function(startDate){
-		if (startDate !== undefined) {
+		if (startDate !== undefined && startDate !== "")
 			$scope.dateOptionsEnd.minDate = startDate;
-		}
+		else
+			$scope.dateOptionsEnd.minDate = null;
 	});
 	// Watch to restrict the start calendar to not choose a start after the end date
 	$scope.$watch('publication.occurrence.end_date', function(endDate){
-		if (endDate !== undefined) {
+		if (endDate !== undefined && endDate !== "")
 			$scope.dateOptionsStart.maxDate = endDate;
-		}
 		else
 			$scope.dateOptionsStart.maxDate = null;
 	});
@@ -1408,7 +1423,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 					success: function () {
 					},
 					error: function (err) {
-						alert($filter('translate')('PUBLICATION.EDIT.ERROR_PUBLICATION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+						ErrorHandler.onError(err, $filter('translate')('PUBLICATION.EDIT.ERROR_PUBLICATION'));
 					},
 					complete: function () {
 						$uibModalInstance.close();

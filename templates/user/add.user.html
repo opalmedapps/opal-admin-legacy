@@ -45,6 +45,30 @@
                         </div>
 
                         <uib-accordion class="side-navbar">
+
+                            <!-- SECTION: Type -->
+                            <div uib-accordion-group class="panel-container summary-box animated">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'USERS.ADD.TYPE_USER'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="toSubmit.type.value" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{type_name}}
+                                    </p>
+                                </div>
+                            </div>
+
                             <!-- SECTION: Username -->
                             <div uib-accordion-group is-open="usernameSection.open" class="panel-container summary-box" is-disabled="!newUser.username">
                                 <uib-accordion-heading>
@@ -144,7 +168,6 @@
                             <span><strong>{{'USERS.ADD.TITLE'|translate}}</strong></span>
                         </div>
                     </div>
-
                     <div class="row mobile-side-panel-menu">
                         <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
                             <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
@@ -175,8 +198,35 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="section-content">
+                        <!-- SECTION: Type of user -->
+                        <div class="row">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'USERS.ADD.TYPE_USER'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="color:#d9534f"><strong>{{'USERS.ADD.REQUIRED_2'|translate}}</strong></span>
+                                    {{'USERS.ADD.TYPE_USER_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" style="margin-bottom: 15px;">
+                            <div class="col-xs-12 col-sm-8">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-6">
+                                        <select ng-model="newUser.type" class="form-control" ng-options='option.ID as option.name_display for option in userType'></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- SECTION: Username & Password -->
                         <div class="row">
                             <div class="col-xs-12 side-menu-title">
@@ -218,10 +268,11 @@
                                         </div>
                                         <div class="form-group has-feedback" ng-class="{'has-success': validPassword.status == 'valid', 'has-error': validPassword.status == 'invalid', 'has-warning': validPassword.status == 'warning'}">
                                             <label class="control-label col-xs-12 col-md-2">
-                                                {{'USERS.ADD.PASSWORD'|translate}} <br><em><small>{{'USERS.ADD.MIN'|translate}}</small></em>
+                                                {{'USERS.ADD.PASSWORD'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-md-7">
                                                 <input type="password" class="form-control" required="required" ng-blur="validatePassword(newUser.password)" ng-change="passwordUpdate()" ng-model="newUser.password">
+                                                <p style="margin-bottom: 0;"><em><small>{{'USERS.ADD.PASSWORD_REQUIREMENTS'|translate}}</small></em></p>
                                                 <span ng-show="validPassword.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validPassword.status == 'valid', 'glyphicon-remove': validPassword.status == 'invalid', 'glyphicon-warning-sign': validPassword.status == 'warning'}" aria-hidden="true"></span>
                                             </div>
                                             <em class="control-label col-xs-12 col-md-3" ng-show="validPassword.status == 'invalid' || validPassword.status == 'warning'" ng-class="{'has-success': validPassword.status == 'valid', 'has-error': validPassword.status == 'invalid', 'has-warning': validPassword.status == 'warning'}" style="text-align:left">

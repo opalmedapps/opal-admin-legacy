@@ -4,7 +4,11 @@
  * Post object structure
  * */
 
-class Post extends OpalProject {
+class Post extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_POST, $guestStatus);
+    }
 
     /*
      * This function returns the list of available posts for opalAdmin.
@@ -13,6 +17,7 @@ class Post extends OpalProject {
      * @return  array of posts
      * */
     public function getPosts() {
+        $this->checkReadAccess();
         return $this->opalDB->getPosts();
     }
 
@@ -26,8 +31,8 @@ class Post extends OpalProject {
             "PostName_EN"=>strip_tags($postToSanitize['name_EN']),
             "PostName_FR"=>strip_tags($postToSanitize['name_FR']),
             "PostType"=>strip_tags($postToSanitize['type']),
-            "Body_EN"=>filter_var($_POST['body_EN'], FILTER_SANITIZE_MAGIC_QUOTES),
-            "Body_FR"=>filter_var($_POST['body_FR'], FILTER_SANITIZE_MAGIC_QUOTES),
+            "Body_EN"=>filter_var($_POST['body_EN'], FILTER_SANITIZE_ADD_SLASHES),
+            "Body_FR"=>filter_var($_POST['body_FR'], FILTER_SANITIZE_ADD_SLASHES),
         );
 
         if($postToSanitize["serial"] != "") {
@@ -47,7 +52,8 @@ class Post extends OpalProject {
      * @param integer $postSer : the post serial number
      * @return array $postDetails : the post details
      */
-    public function getPostDetails ($postId) {
+    public function getPostDetails($postId) {
+        $this->checkReadAccess($postId);
         $results = $this->opalDB->getPostDetails($postId);
         $results["body_EN"] = stripslashes($results["body_EN"]);
         $results["body_FR"] = stripslashes($results["body_FR"]);
@@ -61,6 +67,7 @@ class Post extends OpalProject {
      * @return ID of the new entry
      * */
     public function insertPost( $toInsert ) {
+        $this->checkWriteAccess($toInsert);
         $toInsert["PublishDate"]="0000-00-00 00:00:00";
         return $this->opalDB->insertPost($toInsert);
     }
@@ -73,6 +80,7 @@ class Post extends OpalProject {
      * @return  array of chrat log value
      * */
     public function getPostListLogs($serials, $type) {
+        $this->checkReadAccess(array($serials, $type));
         if ($type == 'Announcement')
             return  $this->opalDB->getAnnouncementChartLogsByIds($serials);
         else if ($type == "Treatment Team Message")
@@ -90,15 +98,18 @@ class Post extends OpalProject {
      * @return  $data (array) array of chart log results.
      * */
     public function getPostChartLogs($serial, $type) {
+        $this->checkReadAccess(array($serial, $type));
         $data = array();
         if($serial == "" || $type == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid settings for chart log.");
         $result = $this->opalDB->getPublicationChartLogs(MODULE_POST, $serial);
 
         //The Y value has to be converted to an int, or the chart log will reject it on the front end.
-        foreach ($result as &$item) {
+        $tempArray = array();
+        foreach($result as $item)
             $item["y"] = intval($item["y"]);
-        }
+            array_push($tempArray, $item);
+        $result = $tempArray;
 
         if (count($result) > 0)
             array_push($data, array("name"=>$type, "data"=>$result));
@@ -119,6 +130,7 @@ class Post extends OpalProject {
      * @returns int number of record affected OR false if a problem occurs
      * */
     public function deletePost($postId) {
+        $this->checkDeleteAccess($postId);
         $currentPost = $this->opalDB->getPostDetails($postId);
         if($currentPost["locked"] == 0)
             return $this->opalDB->markPostAsDeleted(OPAL_POST_TABLE, OPAL_POST_PK, $postId);
@@ -132,6 +144,8 @@ class Post extends OpalProject {
      * @returns int number of record affected OR false if a problem occurs
      * */
     public function updatePost($postDetails) {
+        $this->checkWriteAccess($postDetails);
+
         $currentPost = $this->opalDB->getPostDetails($postDetails["PostControlSerNum"]);
         if($currentPost["locked"] == 0)
             return $this->opalDB->updatePost($postDetails);

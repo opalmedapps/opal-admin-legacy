@@ -5,12 +5,12 @@
  * Time: 8:46 AM
  */
 
-class QuestionnaireModule extends OpalProject
+abstract class QuestionnaireModule extends Module
 {
     protected $questionnaireDB;
 
     public function __construct($OAUserId = false, $sessionId = false) {
-        parent::__construct($OAUserId);
+        parent::__construct(MODULE_QUESTIONNAIRE, $OAUserId);
 
         $this->questionnaireDB = new DatabaseQuestionnaire(
             QUESTIONNAIRE_DB_2019_HOST,
@@ -18,8 +18,7 @@ class QuestionnaireModule extends OpalProject
             QUESTIONNAIRE_DB_2019_PORT,
             QUESTIONNAIRE_DB_2019_USERNAME,
             QUESTIONNAIRE_DB_2019_PASSWORD,
-            false,
-            $OAUserId
+            false
         );
 
         $this->questionnaireDB->setUsername($this->opalDB->getUsername());
@@ -43,17 +42,5 @@ class QuestionnaireModule extends OpalProject
             $cpt++;
             $row["order"] = $cpt;
         }
-    }
-    
-    protected function validateSliderForm($sliderOptions) {
-        $sliderOptions["minValue"] = floatval($sliderOptions["minValue"]);
-        $sliderOptions["maxValue"] = floatval($sliderOptions["maxValue"]);
-        $sliderOptions["increment"] = floatval($sliderOptions["increment"]);
-        if($sliderOptions["increment"] <= 0)
-            return false;
-        $sliderOptions["maxValue"] = floatval(floor(($sliderOptions["maxValue"] - $sliderOptions["minValue"]) / $sliderOptions["increment"]) * $sliderOptions["increment"]) + $sliderOptions["minValue"];
-        if ($sliderOptions["minCaption_EN"] == "" || $sliderOptions["minCaption_FR"] == "" || $sliderOptions["maxCaption_EN"] == "" || $sliderOptions["maxCaption_FR"] == "" || $sliderOptions["minValue"] <= 0.0 || $sliderOptions["maxValue"] <= 0.0 || $sliderOptions["minValue"] >= $sliderOptions["maxValue"])
-            return false;
-        return $sliderOptions;
     }
 }

@@ -16,102 +16,13 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
-            <li class="dropdown" ng-class="{active: currentActivePublishingTool()}" ng-if="isAuthorized([userRoles.admin])">
-                <a href="" class="dropdown-toggle"  data-toggle="dropdown">{{'NAVIGATION_MENU.PUBLISHING_TOOLS'|translate}} <b class="caret"></b></a>
+            <li class="dropdown" ng-repeat="category in navMenu" ng-if="category.menu.length > 0">
+                <a href="" class="dropdown-toggle"  data-toggle="dropdown">{{category.name}} <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                    <li ui-sref-active="active">
-                        <a ui-sref="alias" ng-click="closeNav()">
-                            <span class="glyphicon glyphicon-cloud" aria-hidden="true"></span>
-                            {{'NAVIGATION_MENU.TASKS_APPTS_DOCS'|translate}}
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="post" ng-click="closeNav()">
-                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
-                            {{'NAVIGATION_MENU.POSTS'|translate}}
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="educational-material" ng-click="closeNav()">
-                            <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
-                            {{'NAVIGATION_MENU.EDU_MATERIAL'|translate}}
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="hospital-map" ng-click="closeNav()">
-                            <span class="fa fa-map" aria-hidden="true"></span>
-                            {{'NAVIGATION_MENU.HOSPITAL_MAPS'|translate}}
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="notification" ng-click="closeNav()">
-                            <span class="glyphicon glyphicon-bell" aria-hidden="true"></span>
-                            {{'NAVIGATION_MENU.NOTIFICATIONS'|translate}}
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="test-result" ng-click="closeNav()">
-                            <span class="fa fa-heartbeat" aria-hidden="true"></span>
-                            {{'NAVIGATION_MENU.LAB_RESULTS'|translate}}
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="questionnaire-menu" ng-click="closeNav()">
-                            <span class="fa fa-pencil-square-o" aria-hidden="true"></span>
-                            {{'NAVIGATION_MENU.QUESTIONNAIRES'|translate}}
-                        </a>
-                    </li>
-<!--                    <li ui-sref-active="active">
-                        <a ui-sref="email" ng-click="closeNav()">
-                            <span class="fa fa-envelope" aria-hidden="true"></span>
-                            {{'NAVIGATION_MENU.EMAIL'|translate}}
-                        </a>
-                    </li>-->
-                </ul>
-            </li>
-            <li class="dropdown" ng-class="{active: currentActiveAdministration()}" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
-                <a href="" class="dropdown-toggle"  data-toggle="dropdown">{{'NAVIGATION_MENU.ADMINISTRATION'|translate}} <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
-                        <a ui-sref="diagnosis-translation" ng-click="closeNav()">
-                            <span class="fa fa-stethoscope" aria-hidden="true"></span>
-                            {{'NAVIGATION_MENU.DIAGNOSIS_TRANSLATION'|translate}}
-                        </a>
-                    </li>
-                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
-                        <a ui-sref="custom-code" ng-click="closeNav()">
-                            <span class="fa fa-stethoscope" aria-hidden="true"></span>
-                            {{'NAVIGATION_MENU.CUSTOM_CODES'|translate}}
-                        </a>
-                    </li>
-                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
-                        <a ui-sref="cron" ng-click="closeNav()">
-                            <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
-                            {{'NAVIGATION_MENU.CRON_LOGS'|translate}}
-                        </a>
-                    </li>
-                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
-                        <a ui-sref="patients" ng-click="closeNav()">
-                            <span class="fa fa-address-card" aria-hidden="true"></span>
-                            {{'NAVIGATION_MENU.PATIENTS'|translate}}
-                        </a>
-                    </li>
-                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
-                        <a ui-sref="patients-register" ng-click="closeNav()">
-                            <span class="fa fa-user-plus" aria-hidden="true"></span>
-                            {{'NAVIGATION_MENU.PATIENT_REGISTRATION'|translate}}
-                        </a>
-                    </li>
-                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
-                        <a ui-sref="patient-activity" ng-click="closeNav()">
-                            <span class="fa fa-hourglass-half" aria-hidden="true"></span>
-                            {{'NAVIGATION_MENU.PATIENT_ACTIVITY'|translate}}
-                        </a>
-                    </li>
-                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
-                        <a ui-sref="users" ng-click="closeNav()">
-                            <span class="fa fa-users" aria-hidden="true"></span>
-                            {{'NAVIGATION_MENU.USERS'|translate}}
+                    <li ui-sref-active="active" ng-repeat="menu in category.menu">
+                        <a ui-sref="{{menu.url}}" ng-click="closeNav()">
+                            <span class="{{menu.iconClass}}" aria-hidden="true"></span>
+                            {{menu.name}}
                         </a>
                     </li>
                 </ul>

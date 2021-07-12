@@ -22,7 +22,7 @@
                     <div class="row clearfix operations">
                         <!-- Register button -->
                         <div class="save-add col-xs-12 col-sm-6 col-md-8">
-                            <a style="margin-right:20px;" href="" ng-click="goToAddUser()" class="btn btn-md btn-outline item-button">
+                            <a style="margin-right:20px;" ng-if="writeAccess" href="" ng-click="goToAddUser()" class="btn btn-md btn-outline item-button">
                                 <span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
                                 <span style="font-size: 20px;"><strong>{{'USERS.LIST.ADD'|translate}}</strong></span>
                             </a>

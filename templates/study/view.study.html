@@ -1,0 +1,163 @@
+<!-- Modal title -->
+<div class="modal-header">
+    <div class="col-xs-12 col-md-6">
+        <h2 class="modal-title">
+            <span class="fa fa-eye"></span>
+            {{'STUDY.EDIT.TITLE_VIEW'|translate}}
+        </h2>
+    </div>
+    <div class="modal-buttons col-xs-12 col-md-6">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'STUDY.EDIT.CLOSE'|translate}}">
+    </div>
+</div>
+<div class="modal-body">
+    <uib-accordion close-others="false">
+        <!-- SECTION: Code -->
+        <div uib-accordion-group is-open="codeSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'STUDY.EDIT.DETAILS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': codeSection.open, 'glyphicon-chevron-right': !codeSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'STUDY.EDIT.STUDY_ID'|translate}}</span>
+                        <input disabled class="form-control" type="text" ng-model="toSubmit.details.code" required="required" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Titles -->
+        <div uib-accordion-group is-open="titleSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'STUDY.EDIT.TITLES'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'STUDY.EDIT.ENGLISH_ABVR'|translate}}</span>
+                        <textarea disabled class="form-control" rows="1" ng-model="toSubmit.title_desc.title_EN" placeholder="{{'STUDY.EDIT.PLACEHOLDER_ENGLISH_TITLE'|translate}}"></textarea>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'STUDY.EDIT.FRENCH_ABVR'|translate}}</span>
+                        <textarea disabled class="form-control" rows="1" ng-model="toSubmit.title_desc.title_FR" placeholder="{{'STUDY.EDIT.PLACEHOLDER_FRENCH_TITLE'|translate}}"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Description -->
+        <div uib-accordion-group is-open="descriptionSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': descriptionSection.open, 'glyphicon-chevron-right': !descriptionSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <span style="font-size:20px;">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ENGLISH'|translate}}</span>
+                    </div>
+                    <div ng-bind-html="toSubmit.title_desc.description_EN"></div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <span style="font-size:20px;">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.FRENCH'|translate}}</span>
+                    </div>
+                    <div ng-bind-html="toSubmit.title_desc.description_FR"></div>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Principal Investigator -->
+        <div uib-accordion-group is-open="investigatorSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'STUDY.EDIT.INVESTIGATOR'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': investigatorSection.open, 'glyphicon-chevron-right': !investigatorSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'STUDY.EDIT.NAME'|translate}}</strong>: {{toSubmit.investigator.name}}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'STUDY.ADD.EMAIL'|translate}}</strong>: {{toSubmit.investigator.email}}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'STUDY.ADD.PHONE'|translate}}</strong>: {{toSubmit.investigator.phone}}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'STUDY.LIST.PHONE_EXT'|translate}}</strong>: {{toSubmit.investigator.phoneExt}}</p>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Dates -->
+        <div uib-accordion-group is-open="datesSection.open" ng-if="toSubmit.dates.start_date || toSubmit.dates.end_date" >
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'STUDY.EDIT.DATES'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': datesSection.open, 'glyphicon-chevron-right': !datesSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'STUDY.EDIT.START_DATE'|translate}}</strong>: <span ng-bind="toSubmit.dates.start_date | date:'yyyy-MM-dd'"></span></p>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'STUDY.EDIT.END_DATE'|translate}}</strong>: <span ng-bind="toSubmit.dates.end_date | date:'yyyy-MM-dd'"></span></p>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Patients -->
+        <div ng-if="(patientsList|filter:{added:true}).length" uib-accordion-group is-open="patientSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'STUDY.EDIT.PATIENTS'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': patientSection.open, 'glyphicon-chevron-right': !patientSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div>
+                <ul class="list-items" style="border-style: none;" ng-if="(patientsList|filter:{added:true}).length">
+                    <li ng-repeat="patient in patientsList | filter: {added: true} : 1">{{patient.name}}</li>
+                </ul>
+            </div>
+        </div>
+        <!-- SECTION: Questionnaires -->
+        <div ng-if="(questionnaireList|filter:{added:true}).length" uib-accordion-group is-open="questionnaireSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'STUDY.EDIT.QUESTIONNAIRE'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': questionnaireSection.open, 'glyphicon-chevron-right': !questionnaireSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div>
+                <ul class="list-items" style="border-style: none;" ng-if="(questionnaireList|filter:{added:true}).length">
+                    <li ng-repeat="questionnaire in questionnaireList | filter: {added: true} : 1">{{questionnaire.name_display}}</li>
+                </ul>
+            </div>
+        </div>
+        <!-- SECTION: Consent Form -->
+        <div uib-accordion-group is-open="consentSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'STUDY.EDIT.CONSENT_FORM'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': consentSection.open, 'glyphicon-chevron-right': !consentSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'STUDY.EDIT.CONSENT_FORM'|translate}} ]</span>
+                        <input ng-disabled="true" class="form-control" type="text" ng-model="toSubmit.consent_form.id" required="required" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </uib-accordion>
+</div>

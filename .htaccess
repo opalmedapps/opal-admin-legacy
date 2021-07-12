@@ -59,48 +59,62 @@ Options +FollowSymLinks
   # Header always set X-Content-Type-Options nosniff
 </IfModule>
 
-# Disallow script execution
-Options -ExecCGI
-AddHandler cgi-script .php .pl .py .jsp .asp .htm .shtml .sh .cgi
+## Disallow script execution
+#Options -ExecCGI
+#AddHandler cgi-script .php .pl .py .jsp .asp .htm .shtml .sh .cgi
+#
+## Show CGI Source Code
+#RemoveHandler cgi-script .pl .py .cgi
+#AddType text/plain .pl .py .cgi
 
-# Show CGI Source Code
-RemoveHandler cgi-script .pl .py .cgi
-AddType text/plain .pl .py .cgi
+# Disallow script execution
+AddHandler .php .py .jsp .asp .htm .shtml .sh
+
+
+# Force all URL request that are HTTP to be HTTPS
+# Disable for now until testing cann be done.
+# RewriteCond %{HTTPS} !=on
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE] 
+
 
 # Accesses to the OpalAdmin API
 
+# Alerts Section
+RewriteRule ^alert/delete/alert php/alert/delete.alert.php [QSA,L]
+RewriteRule ^alert/get/alert-details php/alert/get.alert.details.php [QSA,L]
+RewriteRule ^alert/get/alerts php/alert/get.alerts.php [QSA,L]
+RewriteRule ^alert/insert/alert php/alert/insert.alert.php [QSA,L]
+RewriteRule ^alert/update/alert php/alert/update.alert.php [QSA,L]
+RewriteRule ^alert/update/activation-flag php/alert/update.activation.flag.php [QSA,L]
+
 # Tasks/Appts/Docs Section (Alias)
-RewriteRule ^alias/delete/alias php/alias/delete.alias.php [QSA,L]
 RewriteRule ^alias/get/alias-chart-logs php/alias/get.alias_chart_logs.php [QSA,L]
 RewriteRule ^alias/get/alias-details php/alias/get.alias_details.php [QSA,L]
 RewriteRule ^alias/get/alias-list-logs php/alias/get.alias_list_logs.php [QSA,L]
 RewriteRule ^alias/get/aliases php/alias/get.aliases.php [QSA,L]
-RewriteRule ^alias/get/color-tags php/alias/get.color_tags.php [QSA,L]
+RewriteRule ^alias/get/educational-materials php/alias/get.educational.materials.php [QSA,L]
 RewriteRule ^alias/get/expressions php/alias/get.expressions.php [QSA,L]
+RewriteRule ^alias/get/hospital-maps php/alias/get.hospital.maps.php [QSA,L]
 RewriteRule ^alias/get/source-databases php/alias/get.source_databases.php [QSA,L]
 RewriteRule ^alias/insert/alias php/alias/insert.alias.php [QSA,L]
 RewriteRule ^alias/update/alias php/alias/update.alias.php [QSA,L]
 RewriteRule ^alias/update/publish-flags php/alias/update.alias_publish_flags.php [QSA,L]
 
 # Application
-RewriteRule ^application/get/application-build api/application/get.application_build.php [QSA,L]
+RewriteRule ^application/get/application-build php/application/get.application_build.php [QSA,L]
 RewriteRule ^application/get/config config.json [QSA,L]
-RewriteRule ^application/get/source-databases api/application/get.source_databases.php [QSA,L]
+RewriteRule ^application/get/source-databases php/application/get.source_databases.php [QSA,L]
 RewriteRule ^application/update/source-databases php/application/update.source_databases.php [QSA,L]
 
-# Cron Logs Section
-RewriteRule ^cron/get/cron-chart-logs api/cron/get.cron_chart_logs.php [QSA,L]
-RewriteRule ^cron/get/cron-details api/cron/get.cron_details.php [QSA,L]
-RewriteRule ^cron/get/cron-list-logs api/cron/get.cron_list_logs.php [QSA,L]
-RewriteRule ^cron/update/cron php/cron/update.cron.php [QSA,L]
+# Audit Section
+RewriteRule ^audit/get/audit-details php/audit/get.audit.details.php [QSA,L]
+RewriteRule ^audit/get/audits php/audit/get.audits.php [QSA,L]
 
-# Diagnosis Translation Section
-RewriteRule ^diagnosis-translation/delete/diagnosis-translation php/diagnosis-translation/delete.diagnosis_translation.php [QSA,L]
-RewriteRule ^diagnosis-translation/get/diagnosis-translation-details api/diagnosis-translation/get.diagnosis_translation_details.php [QSA,L]
-RewriteRule ^diagnosis-translation/get/diagnosis-translations api/diagnosis-translation/get.diagnosis_translations.php [QSA,L]
-RewriteRule ^diagnosis-translation/get/diagnoses api/diagnosis-translation/get.diagnoses.php [QSA,L]
-RewriteRule ^diagnosis-translation/insert/diagnosis-translation php/diagnosis-translation/insert.diagnosis_translation.php [QSA,L]
-RewriteRule ^diagnosis-translation/update/diagnosis-translation php/diagnosis-translation/update.diagnosis_translation.php [QSA,L]
+# Cron Logs Section
+RewriteRule ^cron/get/cron-chart-logs php/cron/get.cron_chart_logs.php [QSA,L]
+RewriteRule ^cron/get/cron-details php/cron/get.cron_details.php [QSA,L]
+RewriteRule ^cron/get/cron-list-logs php/cron/get.cron_list_logs.php [QSA,L]
+RewriteRule ^cron/update/cron php/cron/update.cron.php [QSA,L]
 
 # Custom Codes Section
 RewriteRule ^custom-code/delete/custom-code php/custom-code/delete.custom.code.php [QSA,L]
@@ -110,37 +124,49 @@ RewriteRule ^custom-code/get/custom-codes php/custom-code/get.custom.code.php [Q
 RewriteRule ^custom-code/insert/custom-code php/custom-code/insert.custom.code.php [QSA,L]
 RewriteRule ^custom-code/update/custom-code php/custom-code/update.custom.code.php [QSA,L]
 
+# Diagnosis Section (system 2 system API)
+RewriteRule ^diagnosis/delete/patient-diagnosis php/diagnosis/delete.patient.diagnosis.php [QSA,L]
+RewriteRule ^diagnosis/get/patient-diagnoses php/diagnosis/get.patient.diagnoses.php [QSA,L]
+RewriteRule ^diagnosis/insert/patient-diagnosis php/diagnosis/insert.patient.diagnosis.php [QSA,L]
+RewriteRule ^diagnosis/update/patient-diagnosis php/diagnosis/update.patient.diagnosis.php [QSA,L]
+
+# Diagnosis Translation Section
+RewriteRule ^diagnosis-translation/delete/diagnosis-translation php/diagnosis-translation/delete.diagnosis_translation.php [QSA,L]
+RewriteRule ^diagnosis-translation/get/diagnosis-translation-details php/diagnosis-translation/get.diagnosis_translation_details.php [QSA,L]
+RewriteRule ^diagnosis-translation/get/diagnosis-translations php/diagnosis-translation/get.diagnosis_translations.php [QSA,L]
+RewriteRule ^diagnosis-translation/get/diagnoses php/diagnosis-translation/get.diagnoses.php [QSA,L]
+RewriteRule ^diagnosis-translation/get/educational-materials php/diagnosis-translation/get.educational.materials.php [QSA,L]
+RewriteRule ^diagnosis-translation/insert/diagnosis-translation php/diagnosis-translation/insert.diagnosis_translation.php [QSA,L]
+RewriteRule ^diagnosis-translation/update/diagnosis-translation php/diagnosis-translation/update.diagnosis_translation.php [QSA,L]
+
 # Educational Material Section
 RewriteRule ^educational-material/delete/educational-material php/educational-material/delete.educational_material.php [QSA,L]
-RewriteRule ^educational-material/get/educational-material-chart-logs api/educational-material/get.educational_material_chart_logs.php [QSA,L]
-RewriteRule ^educational-material/get/educational-material-details api/educational-material/get.educational_material_details.php [QSA,L]
-RewriteRule ^educational-material/get/educational-material-list-logs api/educational-material/get.educational_material_list_logs.php [QSA,L]
-RewriteRule ^educational-material/get/educational-material-parents api/educational-material/get.educational_material_parents.php [QSA,L]
-RewriteRule ^educational-material/get/educational-material-types api/educational-material/get.educational_material_types.php [QSA,L]
-RewriteRule ^educational-material/get/educational-materials api/educational-material/get.educational_materials.php [QSA,L]
-RewriteRule ^educational-material/get/phases-in-treatment api/educational-material/get.phases_in_treatment.php [QSA,L]
+RewriteRule ^educational-material/get/educational-material-chart-logs php/educational-material/get.educational_material_chart_logs.php [QSA,L]
+RewriteRule ^educational-material/get/educational-material-details php/educational-material/get.educational_material_details.php [QSA,L]
+RewriteRule ^educational-material/get/educational-material-list-logs php/educational-material/get.educational_material_list_logs.php [QSA,L]
+RewriteRule ^educational-material/get/educational-material-parents php/educational-material/get.educational_material_parents.php [QSA,L]
+RewriteRule ^educational-material/get/educational-material-types php/educational-material/get.educational_material_types.php [QSA,L]
+RewriteRule ^educational-material/get/educational-materials php/educational-material/get.educational_materials.php [QSA,L]
+RewriteRule ^educational-material/get/phases-in-treatment php/educational-material/get.phases_in_treatment.php [QSA,L]
 RewriteRule ^educational-material/insert/educational-material php/educational-material/insert.educational_material.php [QSA,L]
 RewriteRule ^educational-material/update/educational-material-publish-flags php/educational-material/update.educational_material_publish_flags.php [QSA,L]
 RewriteRule ^educational-material/update/educational-material php/educational-material/update.educational_material.php [QSA,L]
 
 # Email Section
 RewriteRule ^email/delete/email php/email/delete.email.php [QSA,L]
-RewriteRule ^email/get/email-chart-logs api/email/get.email_chart_logs.php [QSA,L]
-RewriteRule ^email/get/email-details api/email/get.email_details.php [QSA,L]
-RewriteRule ^email/get/email-list-logs api/email/get.email_list_logs.php [QSA,L]
-RewriteRule ^email/get/email-templates api/email/get.email_templates.php [QSA,L]
-RewriteRule ^email/get/email-types api/email/get.email_types.php [QSA,L]
+RewriteRule ^email/get/email-chart-logs php/email/get.email_chart_logs.php [QSA,L]
+RewriteRule ^email/get/email-details php/email/get.email_details.php [QSA,L]
+RewriteRule ^email/get/email-list-logs php/email/get.email_list_logs.php [QSA,L]
+RewriteRule ^email/get/email-templates php/email/get.email_templates.php [QSA,L]
+RewriteRule ^email/get/email-types php/email/get.email_types.php [QSA,L]
 RewriteRule ^email/insert/email php/email/insert.email.php [QSA,L]
 RewriteRule ^email/update/email php/email/update.email.php [QSA,L]
 
-# Filters
-RewriteRule ^filter/get/filters php/filter/get.filters.php [QSA,L]
-
 # Hospital Map Section
 RewriteRule ^hospital-map/delete/hospital-map php/hospital-map/delete.hospital_map.php [QSA,L]
-RewriteRule ^hospital-map/generate-qr-code api/hospital-map/generate_QR_code.php [QSA,L]
-RewriteRule ^hospital-map/get/hospital-map-details api/hospital-map/get.hospital_map_details.php [QSA,L]
-RewriteRule ^hospital-map/get/hospital-maps api/hospital-map/get.hospital_maps.php [QSA,L]
+RewriteRule ^hospital-map/generate-qr-code php/hospital-map/generate_QR_code.php [QSA,L]
+RewriteRule ^hospital-map/get/hospital-map-details php/hospital-map/get.hospital_map_details.php [QSA,L]
+RewriteRule ^hospital-map/get/hospital-maps php/hospital-map/get.hospital_maps.php [QSA,L]
 RewriteRule ^hospital-map/insert/hospital-map php/hospital-map/insert.hospital_map.php [QSA,L]
 RewriteRule ^hospital-map/update/hospital-map php/hospital-map/update.hospital_map.php [QSA,L]
 
@@ -148,30 +174,68 @@ RewriteRule ^hospital-map/update/hospital-map php/hospital-map/update.hospital_m
 RewriteRule ^install/check-aria-connection php/install/check_aria_connection.php [QSA,L]
 RewriteRule ^install/check-mosaiq-connection php/install/check_mosaiq_connection.php [QSA,L]
 RewriteRule ^install/check-opal-connection php/install/check_opal_connection.php [QSA,L]
-RewriteRule ^install/write-configurations php/install/write_configurations.php [QSA,L]
 RewriteRule ^install/register-admin php/install/register_admin.php [QSA,L]
+RewriteRule ^install/verify-requirements php/install/verify_requirements.php [QSA,L]
+RewriteRule ^install/write-configurations php/install/write_configurations.php [QSA,L]
+
+# Library Section
+RewriteRule ^library/get/libraries php/questionnaire/get.libraries.php [QSA,L]
+RewriteRule ^library/insert/library php/questionnaire/insert.library.php [QSA,L]
+
+#Master Source Section
+#RewriteRule ^master-source/delete/appointments php/master-source/delete.appointments.php [QSA,L]
+#RewriteRule ^master-source/delete/diagnoses php/master-source/delete.diagnoses.php [QSA,L]
+#RewriteRule ^master-source/delete/documents php/master-source/delete.documents.php [QSA,L]
+#RewriteRule ^master-source/delete/tasks php/master-source/delete.tasks.php [QSA,L]
+#RewriteRule ^master-source/delete/test-results php/master-source/delete.test.results.php [QSA,L]
+RewriteRule ^master-source/get/aliases php/master-source/get.source.aliases.php [QSA,L]
+RewriteRule ^master-source/get/diagnoses php/master-source/get.source.diagnoses.php [QSA,L]
+RewriteRule ^master-source/get/test-results php/master-source/get.source.test.results.php [QSA,L]
+RewriteRule ^master-source/get/appointment-details php/master-source/get.source.appointment.details.php [QSA,L]
+RewriteRule ^master-source/get/appointment-exists php/master-source/is.source.appointment.exists.php [QSA,L]
+RewriteRule ^master-source/get/diagnosis-details php/master-source/get.source.diagnosis.details.php [QSA,L]
+RewriteRule ^master-source/get/diagnosis-exists php/master-source/is.source.diagnosis.exists.php [QSA,L]
+RewriteRule ^master-source/get/document-details php/master-source/get.source.document.details.php [QSA,L]
+RewriteRule ^master-source/get/document-exists php/master-source/is.source.document.exists.php [QSA,L]
+RewriteRule ^master-source/get/external-source-db php/master-source/get.external.source.db.php [QSA,L]
+RewriteRule ^master-source/get/task-details php/master-source/get.source.task.details.php [QSA,L]
+RewriteRule ^master-source/get/task-exists php/master-source/is.source.task.exists.php [QSA,L]
+RewriteRule ^master-source/get/test-result-details php/master-source/get.source.test.result.details.php [QSA,L]
+RewriteRule ^master-source/get/test-result-exists php/master-source/is.source.test.result.exists.php [QSA,L]
+RewriteRule ^master-source/insert/appointments php/master-source/insert.source.appointment.php [QSA,L]
+RewriteRule ^master-source/insert/diagnoses php/master-source/insert.source.diagnosis.php [QSA,L]
+RewriteRule ^master-source/insert/documents php/master-source/insert.source.document.php [QSA,L]
+RewriteRule ^master-source/insert/tasks php/master-source/insert.source.task.php [QSA,L]
+RewriteRule ^master-source/insert/test-results php/master-source/insert.source.test.results.php [QSA,L]
+#RewriteRule ^master-source/update/appointments php/master-source/update.source.appointment.php [QSA,L]
+#RewriteRule ^master-source/update/diagnoses php/master-source/update.source.diagnosis.php [QSA,L]
+#RewriteRule ^master-source/update/documents php/master-source/update.source.document.php [QSA,L]
+#RewriteRule ^master-source/update/tasks php/master-source/update.source.task.php [QSA,L]
+#RewriteRule ^master-source/update/test-results php/master-source/update.source.test.results.php [QSA,L]
 
 # Notification Section
 RewriteRule ^notification/delete/notification php/notification/delete.notification.php [QSA,L]
-RewriteRule ^notification/get/notification-chart-logs api/notification/get.notification_chart_logs.php [QSA,L]
-RewriteRule ^notification/get/notification-details api/notification/get.notification_details.php [QSA,L]
-RewriteRule ^notification/get/notification-list-logs api/notification/get.notification_list_logs.php [QSA,L]
-RewriteRule ^notification/get/notification-types api/notification/get.notification_types.php [QSA,L]
-RewriteRule ^notification/get/notifications api/notification/get.notifications.php [QSA,L]
+RewriteRule ^notification/get/notification-chart-logs php/notification/get.notification_chart_logs.php [QSA,L]
+RewriteRule ^notification/get/notification-details php/notification/get.notification_details.php [QSA,L]
+RewriteRule ^notification/get/notification-list-logs php/notification/get.notification_list_logs.php [QSA,L]
+RewriteRule ^notification/get/notification-types php/notification/get.notification_types.php [QSA,L]
+RewriteRule ^notification/get/notifications php/notification/get.notifications.php [QSA,L]
 RewriteRule ^notification/insert/notification php/notification/insert.notification.php [QSA,L]
 RewriteRule ^notification/update/notification php/notification/update.notification.php [QSA,L]
 
 # Patient Section
-RewriteRule ^patient/email-in-use api/patient/email_in_use.php [QSA,L]
-RewriteRule ^patient/find-patient api/patient/find_patient.php [QSA,L]
-RewriteRule ^patient/get/patient-activities api/patient/get.patient_activities.php [QSA,L]
-RewriteRule ^patient/get/patient-details api/patient/get.patient_details.php [QSA,L]
-RewriteRule ^patient/get/patients api/patient/get.patients.php [QSA,L]
-RewriteRule ^patient/get/security-questions api/patient/get.security_questions.php [QSA,L]
-RewriteRule ^patient/insert/patient php/patient/insert.patient.php [QSA,L]
-RewriteRule ^patient/toggle/block php/patient/toggle_block.php [QSA,L]
-RewriteRule ^patient/update/patient-publish-flags php/patient/update.patient_publish_flags.php [QSA,L]
-RewriteRule ^patient/update/patient php/patient/update.patient.php [QSA,L]
+RewriteRule ^patient/get/education-options php/patient/find_educ.php [QSA,L]
+RewriteRule ^patient/get/educ-report php/patient/get.education_report.php [QSA,L]
+RewriteRule ^patient/get/patient-activities php/patient/get.patient_activities.php [QSA,L]
+RewriteRule ^patient/get/patients php/patient/get.patients.php [QSA,L]
+RewriteRule ^patient/get/patient-data php/patient/get.patient_data.php [QSA,L]
+RewriteRule ^patient/get/patient-mrn php/patient/find_mrn.php [QSA,L]
+RewriteRule ^patient/get/patient-name php/patient/find_name.php [QSA,L]
+RewriteRule ^patient/get/patient-ramq php/patient/find_ramq.php [QSA,L]
+RewriteRule ^patient/get/patient-report php/patient/get.patient_report.php [QSA,L]
+RewriteRule ^patient/get/questionnaire-report php/patient/get.questionnaire_report.php [QSA,L]
+RewriteRule ^patient/get/questionnaire-options php/patient/find_qst.php [QSA,L]
+RewriteRule ^patient/update/publish-flags php/patient/update.publish_flags.php [QSA,L]
 
 # Post Section
 RewriteRule ^post/delete/post php/post/delete.post.php [QSA,L]
@@ -180,8 +244,19 @@ RewriteRule ^post/get/post-details php/post/get.post_details.php [QSA,L]
 RewriteRule ^post/get/post-list-logs php/post/get.post_list_logs.php [QSA,L]
 RewriteRule ^post/get/posts php/post/get.posts.php [QSA,L]
 RewriteRule ^post/insert/post php/post/insert.post.php [QSA,L]
-RewriteRule ^post/update/post-publish-flags php/post/update.post_publish_flags.php [QSA,L]
 RewriteRule ^post/update/post php/post/update.post.php [QSA,L]
+
+# Publication Section
+RewriteRule ^publication/update/publish-flag php/publication/update.publish.flag.php [QSA,L]
+RewriteRule ^publication/update/publication php/publication/update.publication.php [QSA,L]
+RewriteRule ^publication/get/filters php/publication/get.publication.filters.php [QSA,L]
+RewriteRule ^publication/get/publication-chart-logs php/publication/get.publication.chart.logs.php [QSA,L]
+RewriteRule ^publication/get/publication-list-logs php/publication/get.publication.list.logs.php [QSA,L]
+RewriteRule ^publication/get/publication-details php/publication/get.publication.details.php [QSA,L]
+RewriteRule ^publication/get/publications-per-module php/publication/get.publications.per.module.php [QSA,L]
+RewriteRule ^publication/get/publications php/publication/get.publications.php [QSA,L]
+RewriteRule ^publication/get/publication-modules php/publication/get.publication.modules.php [QSA,L]
+RewriteRule ^publication/insert/publication php/publication/insert.publication.php [QSA,L]
 
 # Question Section
 RewriteRule ^question/delete/question php/questionnaire/delete.question.php [QSA,L]
@@ -193,25 +268,30 @@ RewriteRule ^question/update/question php/questionnaire/update.question.php [QSA
 # Questionnaire Section
 RewriteRule ^questionnaire/delete/questionnaire php/questionnaire/delete.questionnaire.php [QSA,L]
 RewriteRule ^questionnaire/get/finalized-questions php/questionnaire/get.finalizedQuestions.php [QSA,L]
+RewriteRule ^questionnaire/get/purposes-respondents php/questionnaire/get.purposes.respondents.php [QSA,L]
 RewriteRule ^questionnaire/get/questionnaires php/questionnaire/get.questionnaires.php [QSA,L]
 RewriteRule ^questionnaire/get/questionnaire-details php/questionnaire/get.questionnaire_details.php [QSA,L]
 RewriteRule ^questionnaire/insert/questionnaire php/questionnaire/insert.questionnaire.php [QSA,L]
 RewriteRule ^questionnaire/update/questionnaire php/questionnaire/update.questionnaire.php [QSA,L]
 
-# Publication Section
-RewriteRule ^publication/update/publish-flag php/publication/update.publish.flag.php [QSA,L]
-RewriteRule ^publication/update/publication php/publication/update.publication.php [QSA,L]
-RewriteRule ^publication/get/publication-chart-logs php/publication/get.publication.chart.logs.php [QSA,L]
-RewriteRule ^publication/get/publication-list-logs php/publication/get.publication.list.logs.php [QSA,L]
-RewriteRule ^publication/get/publication-details php/publication/get.publication.details.php [QSA,L]
-RewriteRule ^publication/get/publications-per-module php/publication/get.publications.per.module.php [QSA,L]
-RewriteRule ^publication/get/publications php/publication/get.publications.php [QSA,L]
-RewriteRule ^publication/get/publication-modules php/publication/get.publication.modules.php [QSA,L]
-RewriteRule ^publication/insert/publication php/publication/insert.publication.php [QSA,L]
+# Roles Section
+RewriteRule ^role/delete/role php/role/delete.role.php [QSA,L]
+RewriteRule ^role/get/available-modules php/role/get.available.modules.php [QSA,L]
+RewriteRule ^role/get/role-details php/role/get.role.details.php [QSA,L]
+RewriteRule ^role/get/roles php/role/get.roles.php [QSA,L]
+RewriteRule ^role/insert/role php/role/insert.role.php [QSA,L]
+RewriteRule ^role/update/role php/role/update.role.php [QSA,L]
 
-# Library Section
-RewriteRule ^library/get/libraries php/questionnaire/get.libraries.php [QSA,L]
-RewriteRule ^library/insert/library php/questionnaire/insert.library.php [QSA,L]
+# Studies Section
+RewriteRule ^study/get/patients-list php/study/get.patients.list.php [QSA,L]
+RewriteRule ^study/get/patients-consents php/study/get.patient.consents.php [QSA,L]
+RewriteRule ^study/get/consent-published php/study/get.consent.published.php [QSA,L]
+RewriteRule ^study/get/research-patient php/study/get.research.patient.php [QSA,L]
+RewriteRule ^study/get/study-details php/study/get.study.details.php [QSA,L]
+RewriteRule ^study/get/consent-forms php/study/get.consent.forms.php [QSA,L]
+RewriteRule ^study/get/studies php/study/get.studies.php [QSA,L]
+RewriteRule ^study/insert/study php/study/insert.study.php [QSA,L]
+RewriteRule ^study/update/study php/study/update.study.php [QSA,L]
 
 # Template Question
 RewriteRule ^template-question/delete/template-question php/questionnaire/delete.template.question.php [QSA,L]
@@ -223,26 +303,32 @@ RewriteRule ^template-question/update/template-question php/questionnaire/update
 
 # Test Result Section
 RewriteRule ^test-result/delete/test-result php/test-result/delete.test_result.php [QSA,L]
-RewriteRule ^test-result/get/test-names api/test-result/get.test_names.php [QSA,L]
-RewriteRule ^test-result/get/test-result-chart-logs api/test-result/get.test_result_chart_logs.php [QSA,L]
-RewriteRule ^test-result/get/test-result-details api/test-result/get.test_result_details.php [QSA,L]
-RewriteRule ^test-result/get/test-result-groups api/test-result/get.test_result_groups.php [QSA,L]
-RewriteRule ^test-result/get/test-result-list-logs api/test-result/get.test_result_list_logs.php [QSA,L]
-RewriteRule ^test-result/get/test-results api/test-result/get.test_results.php [QSA,L]
+RewriteRule ^test-result/get/get/educational-materials php/test-result/get.educational.materials.php [QSA,L]
+RewriteRule ^test-result/get/test-names php/test-result/get.test_names.php [QSA,L]
+# RewriteRule ^test-result/get/test-result-chart-logs php/test-result/get.test_result_chart_logs.php [QSA,L]
+RewriteRule ^test-result/get/test-result-details php/test-result/get.test_result_details.php [QSA,L]
+RewriteRule ^test-result/get/test-result-groups php/test-result/get.test_result_groups.php [QSA,L]
+# RewriteRule ^test-result/get/test-result-list-logs php/test-result/get.test_result_list_logs.php [QSA,L]
+RewriteRule ^test-result/get/test-results php/test-result/get.test_results.php [QSA,L]
 RewriteRule ^test-result/insert/test-result php/test-result/insert.test_result.php [QSA,L]
 RewriteRule ^test-result/update/test-result-publish-flags php/test-result/update.test_result_publish_flags.php [QSA,L]
 RewriteRule ^test-result/update/test-result php/test-result/update.test_result.php [QSA,L]
 
+# Trigger Section
+RewriteRule ^trigger/execute/questionnaire-triggers php/trigger/executeQuestionnaireTriggers.php
+
 # User Section
 RewriteRule ^user/delete/user php/user/delete.user.php [QSA,L]
-RewriteRule ^user/get/roles api/user/get.roles.php [QSA,L]
-RewriteRule ^user/get/user-activity-logs api/user/get.user_activity_logs.php [QSA,L]
-RewriteRule ^user/get/user-details api/user/get.user_details.php [QSA,L]
-RewriteRule ^user/get/users api/user/get.users.php [QSA,L]
+RewriteRule ^user/get/roles php/user/get.roles.php [QSA,L]
+RewriteRule ^user/get/user-activity-logs php/user/get.user_activity_logs.php [QSA,L]
+RewriteRule ^user/get/user-details php/user/get.user_details.php [QSA,L]
+RewriteRule ^user/get/users php/user/get.users.php [QSA,L]
 RewriteRule ^user/insert/user php/user/insert.user.php [QSA,L]
+RewriteRule ^user/login-registration php/user/user.login.registration.php [QSA,L]
 RewriteRule ^user/logout php/user/logout.php [QSA,L]
+RewriteRule ^user/system-login php/user/system.user.login.php [QSA,L]
 RewriteRule ^user/update/language php/user/update.language.php [QSA,L]
 RewriteRule ^user/update/password php/user/update.password.php [QSA,L]
 RewriteRule ^user/update/user php/user/update.user.php [QSA,L]
-RewriteRule ^user/username-in-use api/user/username_in_use.php [QSA,L]
-RewriteRule ^user/validate-login php/user/validate_login.php [QSA,L]
+RewriteRule ^user/username-in-use php/user/username_in_use.php [QSA,L]
+RewriteRule ^user/validate-login php/user/user.login.php [QSA,L]

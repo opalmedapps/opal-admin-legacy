@@ -1,9 +1,7 @@
 <?php
+include_once("../config.php");
 
-include_once('questionnaire.inc');
-$OAUserId = strip_tags($_POST['OAUserId']);
-
-$questionnaire = new Questionnaire($OAUserId);
+$questionnaire = new Questionnaire();
 $questionnaireArray = $questionnaire->validateAndSanitize($_POST);
 
 if(!$questionnaireArray)
@@ -12,7 +10,4 @@ if(!$questionnaireArray)
 $questionnaire->insertQuestionnaire($questionnaireArray);
 
 header('Content-Type: application/javascript');
-$response['code'] = HTTP_STATUS_SUCCESS;
-echo json_encode($response);
-
-?>
+http_response_code(HTTP_STATUS_SUCCESS);

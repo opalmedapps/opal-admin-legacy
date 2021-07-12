@@ -1,7 +1,16 @@
 angular.module('opalAdmin.controllers.patientActivity', ['ngAnimate', 'ui.bootstrap']).
 
 
-controller('patientActivity', function ($scope, $uibModal, $filter, patientCollectionService) {
+controller('patientActivity', function ($scope, $uibModal, $filter, patientCollectionService, Session, ErrorHandler, MODULE) {
+	$scope.navMenu = Session.retrieveObject('menu');
+	$scope.navSubMenu = Session.retrieveObject('subMenu')[MODULE.patient];
+	angular.forEach($scope.navSubMenu, function(menu) {
+		menu.name_display = (Session.retrieveObject('user').language === "FR" ? menu.name_FR : menu.name_EN);
+		menu.description_display = (Session.retrieveObject('user').language === "FR" ? menu.description_FR : menu.description_EN);
+	});
+	$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 0)) !== 0);
+	$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 1)) !== 0);
+	$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 2)) !== 0);
 
 	$scope.bannerMessage = "";
 	// Function to show page banner
@@ -12,6 +21,7 @@ controller('patientActivity', function ($scope, $uibModal, $filter, patientColle
 			}, 3000);
 		});
 	};
+
 	// Function to set banner class
 	$scope.setBannerClass = function (classname) {
 		// Remove any classes starting with "alert-"
@@ -27,7 +37,7 @@ controller('patientActivity', function ($scope, $uibModal, $filter, patientColle
 		var matcher = new RegExp($scope.filterValue, 'i');
 		renderableRows.forEach(function (row) {
 			var match = false;
-			['patientid', 'deviceid', 'name'].forEach(function (field) {
+			['patientId', 'deviceId', 'name'].forEach(function (field) {
 				if (row.entity[field].match(matcher)) {
 					match = true;
 				}
@@ -50,11 +60,13 @@ controller('patientActivity', function ($scope, $uibModal, $filter, patientColle
 	$scope.gridOptions = {
 		data: 'patientActivityList',
 		columnDefs: [
-			{ field: 'patientid', displayName: $filter('translate')('PATIENTS.ACTIVITY.PATIENTID'), width: '15%', enableColumnMenu: false },
+			{ field: 'patientId', displayName: $filter('translate')('PATIENTS.ACTIVITY.PATIENTID'), width: '10%', enableColumnMenu: false },
 			{ field: 'name', displayName: $filter('translate')('PATIENTS.ACTIVITY.NAME'), width: '15%', enableColumnMenu: false },
-			{ field: 'deviceid', displayName: $filter('translate')('PATIENTS.ACTIVITY.DEVICEID'), width: '30%', enableColumnMenu: false },
-			{ field: 'login', displayName: $filter('translate')('PATIENTS.ACTIVITY.LOGIN'), width: '20%', enableColumnMenu: false },
-			{ field: 'logout', displayName: $filter('translate')('PATIENTS.ACTIVITY.LOGOUT'), width: '20%', enableColumnMenu: false }
+			{ field: 'deviceId', displayName: $filter('translate')('PATIENTS.ACTIVITY.DEVICEID'), width: '35%', enableColumnMenu: false },
+			{ field: 'login', displayName: $filter('translate')('PATIENTS.ACTIVITY.LOGIN'), width: '15%', enableColumnMenu: false },
+			{ field: 'deviceType', displayName: $filter('translate')('PATIENTS.ACTIVITY.TYPE'), width: '15%', enableColumnMenu: false },
+			{ field: 'appVersion', displayName: $filter('translate')('PATIENTS.ACTIVITY.VERSION'), width: '10%', enableColumnMenu: false },
+			// { field: 'logout', displayName: $filter('translate')('PATIENTS.ACTIVITY.LOGOUT'), width: '20%', enableColumnMenu: false }
 		],
 		//useExternalFiltering: true,
 		enableFiltering: true,
@@ -73,7 +85,7 @@ controller('patientActivity', function ($scope, $uibModal, $filter, patientColle
 	patientCollectionService.getPatientActivities().then(function (response) {
 		// Assign value
 		$scope.patientActivityList = response.data;
-	}).catch(function(response) {
-		console.error('Error occurred getting patient activities:', response.status, response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('PATIENTS.ACTIVITY.ERROR_ACTIVITIES'));
 	}).finally(function () { $scope.loading = false; });
 });

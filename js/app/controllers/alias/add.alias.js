@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 /******************************************************************************
  * Add Alias Page controller
  *******************************************************************************/
-controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionService, $state, educationalMaterialCollectionService, Session, hospitalMapCollectionService) {
+controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, aliasCollectionService, ErrorHandler) {
 
 	// Function to go to previous page
 	$scope.goBack = function () {
@@ -87,6 +87,21 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 		checkin_details: ''
 	};
 
+	var arrValidationInsert = [
+		$filter('translate')('ALIAS.VALIDATION.TYPE'),
+		$filter('translate')('ALIAS.VALIDATION.CHECKIN'),
+		$filter('translate')('ALIAS.VALIDATION.HOSPITAL'),
+		$filter('translate')('ALIAS.VALIDATION.COLOR'),
+		$filter('translate')('ALIAS.VALIDATION.DESCRPIPTION_EN'),
+		$filter('translate')('ALIAS.VALIDATION.DESCRPIPTION_FR'),
+		$filter('translate')('ALIAS.VALIDATION.EDU_MAT'),
+		$filter('translate')('ALIAS.VALIDATION.NAME_EN'),
+		$filter('translate')('ALIAS.VALIDATION.NAME_FR'),
+		$filter('translate')('ALIAS.VALIDATION.SOURCE_DB'),
+		$filter('translate')('ALIAS.VALIDATION.ALIAS_EXP'),
+		$filter('translate')('ALIAS.VALIDATION.ID'),
+	];
+
 	// Initialize list that will hold unassigned terms
 	$scope.termList = [];
 	// Initialize list that will hold educational materials
@@ -96,9 +111,6 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 
 	// Initialize list that will hold source databases
 	$scope.sourceDBList = [];
-
-	// Initialize list that will hold existing color tags
-	$scope.existingColorTags = [];
 
 	// Initialize the termFilter from NULL to single quotes
 	$scope.termFilter = '';
@@ -114,9 +126,8 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 			keyboard: false,
 		});
 	};
-
 	// Call our API service to get the list of educational material
-	educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+	aliasCollectionService.getEducationalMaterials().then(function (response) {
 		response.data.forEach(function(entry) {
 			if($scope.language.toUpperCase() === "FR")
 				entry.name_display = entry.name_FR;
@@ -124,20 +135,21 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 				entry.name_display = entry.name_EN;
 		});
 		$scope.eduMatList = response.data; // Assign value
-	}).catch(function(response) {
-		alert($filter('translate')('ALIAS.ADD.ERROR_EDUCATION') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('ALIAS.ADD.ERROR_EDUCATION'));
+		$state.go('alias');
 	});
 
 	// Call our API service to get the list of source databases
 	aliasCollectionService.getSourceDatabases().then(function (response) {
 		$scope.sourceDBList = response.data; // Assign value
-		console.log(response.data);
-	}).catch(function(response) {
-		alert($filter('translate')('ALIAS.ADD.ERROR_DATABASE') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('ALIAS.ADD.ERROR_DATABASE'));
+		$state.go('alias');
 	});
 
 	// Call our API to get the list of existing hospital maps
-	hospitalMapCollectionService.getHospitalMaps().then(function (response) {
+	aliasCollectionService.getHospitalMaps().then(function (response) {
 		response.data.forEach(function(entry) {
 			if($scope.language.toUpperCase() === "FR")
 				entry.name_display = entry.name_FR;
@@ -145,8 +157,9 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 				entry.name_display = entry.name_EN;
 		});
 		$scope.hospitalMapList = response.data;
-	}).catch(function(response) {
-		alert($filter('translate')('ALIAS.ADD.ERROR_HOSPITAL') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('ALIAS.ADD.ERROR_HOSPITAL'));
+		$state.go('alias');
 	});
 
 	// Function to toggle necessary changes when updating the source database buttons
@@ -183,8 +196,8 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 				$scope.termList = response.data; // Assign value
 
 
-			}).catch(function(response) {
-				alert($filter('translate')('ALIAS.ADD.ERROR_ALIAS') + "\r\n\r\n" + response.status + " - " + response.data);
+			}).catch(function(err) {
+				ErrorHandler.onError(err, $filter('translate')('ALIAS.ADD.ERROR_ALIAS'));
 				$state.go('alias');
 			}).finally(function() {
 				processingModal.close(); // hide modal
@@ -324,8 +337,8 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 				$scope.termList = response.data; // Assign value
 
 
-			}).catch(function(response) {
-				alert($filter('translate')('ALIAS.ADD.ERROR_ALIAS') + "\r\n\r\n" + response.status + " - " + response.data);
+			}).catch(function(err) {
+				ErrorHandler.onError(err, $filter('translate')('ALIAS.ADD.ERROR_ALIAS'));
 				$state.go('alias');
 			}).finally(function() {
 				processingModal.close(); // hide modal
@@ -456,35 +469,34 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 	$scope.submitAlias = function () {
 
 		if ($scope.checkForm()) {
+			var toSubmit = {
+				"checkin_details" : $scope.newAlias.checkin_details,
+				"color" : $scope.newAlias.color,
+				"description_EN" : $scope.newAlias.description_EN.replace(/\u200B/g,''),
+				"description_FR" : $scope.newAlias.description_FR.replace(/\u200B/g,''),
+				"eduMat" : (typeof $scope.newAlias.eduMatSer !== "undefined" ? $scope.newAlias.eduMatSer: null),
+				"hospitalMap" : (typeof $scope.newAlias.hospitalMapSer !== "undefined" ? $scope.newAlias.hospitalMapSer: null),
+				"name_EN" : $scope.newAlias.name_EN,
+				"name_FR" : $scope.newAlias.name_FR,
+				"source_db" : $scope.newAlias.source_db.serial,
+				"type" : $scope.newAlias.type.name,
+				"terms" : []
+			};
 
-			// For some reason the HTML text fields add a zero-width-space
-			// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
-			$scope.newAlias.description_EN = $scope.newAlias.description_EN.replace(/\u200B/g,'');
-			$scope.newAlias.description_FR = $scope.newAlias.description_FR.replace(/\u200B/g,'');
-
-			// Fill it with the added terms from termList
 			angular.forEach($scope.termList, function (term) {
 				if (term.added)
-					$scope.newAlias.terms.push(term);
+					toSubmit.terms.push(term.masterSourceAliasId);
 			});
-
-			if ($scope.newAlias.type == "Appointment") {
-				$scope.newAlias.checkin_details.instruction_EN = $scope.newAlias.checkin_details.instruction_EN.replace(/\u200B/g,'');
-				$scope.newAlias.checkin_details.instruction_FR = $scope.newAlias.checkin_details.instruction_FR.replace(/\u200B/g,'');
-			}
-
-			// Log who created this alias
-			var currentUser = Session.retrieveObject('user');
-			$scope.newAlias.user = currentUser;
 
 			// Submit form
 			$.ajax({
 				type: "POST",
 				url: "alias/insert/alias",
-				data: $scope.newAlias,
+				data: toSubmit,
 				success: function () {},
 				error: function (err) {
-					alert($filter('translate')('ALIAS.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText);
+					err.responseText = JSON.parse(err.responseText);
+					ErrorHandler.onError(err, $filter('translate')('ALIAS.ADD.ERROR_ADD'), arrValidationInsert);
 				},
 				complete: function() {
 					$state.go('alias');

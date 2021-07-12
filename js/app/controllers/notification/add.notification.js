@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.notification.add', ['ngAnimate', 'ngSaniti
 /******************************************************************************
  * Controller for the Add Notification page
  *******************************************************************************/
-controller('notification.add', function ($scope, $uibModal, $state, $filter, $sce, notificationCollectionService, Session) {
+controller('notification.add', function ($scope, $uibModal, $state, $filter, $sce, notificationCollectionService, Session, ErrorHandler) {
 
 	// Function to go to previous page
 	$scope.goBack = function () {
@@ -118,8 +118,8 @@ controller('notification.add', function ($scope, $uibModal, $state, $filter, $sc
 			}
 		});
 		$scope.notificationTypes = response.data;
-	}).catch(function(response) {
-		alert($filter('translate')('NOTIFICATIONS.ADD.ERROR_TYPES') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('NOTIFICATIONS.ADD.ERROR_TYPES'));
 	});
 
 	// Function to toggle necessary changes when updating titles
@@ -179,13 +179,13 @@ controller('notification.add', function ($scope, $uibModal, $state, $filter, $sc
 				type: "POST",
 				url: "notification/insert/notification",
 				data: $scope.newNotification,
-				success: function () {
+				success: function () {},
+				error: function(err) {
+					ErrorHandler.onError(err, $filter('translate')('NOTIFICATIONS.ADD.ERROR_ADD'));
+				},
+				complete: function(err) {
 					$state.go('notification');
 				},
-				error: function(err) {
-					alert($filter('translate')('NOTIFICATIONS.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText);
-					$state.go('notification');
-				}
 			});
 		}
 	};

@@ -5,13 +5,11 @@
  * Time: 7:31 AM
  */
 
-include_once('questionnaire.inc');
+include_once("../config.php");
 
-$callback = strip_tags($_POST['callback']);
 $templateQuestionId = strip_tags($_POST['templateQuestionId']);
-$OAUserId = strip_tags($_POST['OAUserId']);
 
-$templateQuestion = new TemplateQuestion($OAUserId);
+$templateQuestion = new TemplateQuestion();
 $templateQuestionDetails = $templateQuestion->getTemplateQuestionDetails($templateQuestionId);
 
 header('Content-Type: application/javascript');

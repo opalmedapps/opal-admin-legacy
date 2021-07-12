@@ -413,8 +413,9 @@ sub getTestResultCronLogSer
 #======================================================================================
 sub getTestResultsFromSourceDB
 {
-	my ($cronLogSer, @patientList) = @_; # a list of patients and cron log serial from args
-
+	my $cronLogSer = @_[0];
+	my @patientList = @_[1];
+    my $global_patientInfo_sql = @_[2];
     my @TRList = (); # a list for test result objects
 
     # when we retrieve query results
@@ -470,31 +471,24 @@ sub getTestResultsFromSourceDB
 				use VARIAN;
 
                 IF OBJECT_ID('tempdb.dbo.#tempTR', 'U') IS NOT NULL
-                  DROP TABLE #tempTR;
+                	DROP TABLE #tempTR;
 
-				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
+				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
+					DROP TABLE #tempPatient;
+
+				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
-			my $numOfPatients = @patientList;
-			my $counter = 0;
-			foreach my $Patient (@patientList) {
-				my $patientSer 			= $Patient->getPatientSer();
-				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
-				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
-
-				$patientInfo_sql .= "
-					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
-				";
-
-				$counter++;
-				if ( $counter < $numOfPatients ) {
-					$patientInfo_sql .= "UNION";
-				}
-			}
+			$patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
 			$patientInfo_sql .= ")
 			Select c.* into #tempTR
 			from PatientInfo c;
-			Create Index temporaryindexTR1 on #tempTR (SSN);
+			Create Index temporaryindexTR1 on #tempTR (ID);
 			Create Index temporaryindexTR2 on #tempTR (PatientSerNum);
+
+			Select p.PatientSer, p.PatientId into #tempPatient
+			from VARIAN.dbo.Patient p;
+			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
+			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
 			";
 
 			my $trInfo_sql = $patientInfo_sql . "
@@ -511,7 +505,16 @@ sub getTestResultsFromSourceDB
 					tr.max_norm,
 					tr.min_norm,
 					tr.result_appr_ind,
-					tr.test_value,
+					case
+						when RTRIM(tr.comp_name) = 'SARS-2 Coronavirus-2019, NAA' then
+							case
+								when LEFT(LTRIM(tr.test_value_string), 11) = 'Non détecté' then 0
+								when LEFT(LTRIM(tr.test_value_string), 11) = 'Non-détecté' then 0
+								when LEFT(LTRIM(tr.test_value_string), 7) = 'Détecté' then 1
+							end
+						else
+							tr.test_value
+					end as test_value,
 					tr.test_value_string,
 					RTRIM(tr.unit_desc),
 					tr.valid_entry_ind,
@@ -522,7 +525,8 @@ sub getTestResultsFromSourceDB
 					#tempTR as PatientInfo
 				WHERE
 					tr.pt_id                		= pt.pt_id
-				AND pt.patient_ser          		= (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+				AND pt.patient_ser          		= (select pt.PatientSer
+					from #tempPatient pt where pt.PatientId = PatientInfo.ID)
 				AND tr.valid_entry_ind 				= 'Y'
 				AND (
 			";
@@ -533,7 +537,7 @@ sub getTestResultsFromSourceDB
 			foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
 
 				# concatenate query
-				
+
 				# 2020-02-05 YM: removed the filter so that we get all of the lab results as per John's request
 				# $trInfo_sql .= "
 				# (tr.comp_name IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
@@ -542,7 +546,7 @@ sub getTestResultsFromSourceDB
 				$trInfo_sql .= "
 				( tr.trans_log_mtstamp > (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
 				";
-				
+
 				$counter++;
 				# concat "UNION" until we've reached the last query
 				if ($counter < $numOfExpressions) {
@@ -593,7 +597,7 @@ sub getTestResultsFromSourceDB
 				$testresult->setTestResultPatientSer($patientSer);
 				$testresult->setTestResultSourceDatabaseSer($sourceDBSer);
 				$testresult->setTestResultSourceUID($sourceuid);
-				$testresult->setTestResultExpressionSer($expressionDict{$expressionname});
+				$testresult->setTestResultExpressionSer($expressionDict{$expressionname} // 0);
 				$testresult->setTestResultName($expressionname);
 				$testresult->setTestResultFacName($facname);
 				$testresult->setTestResultAbnormalFlag($abnormalflag);
@@ -794,10 +798,10 @@ sub insertTestResultIntoOurDB
 {
 	my ($testresult) = @_; # our object
 
-	my $patientser							= $testresult->getTestResultPatientSer();
-	my $sourceuid								= $testresult->getTestResultSourceUID();
+	my $patientser				= $testresult->getTestResultPatientSer();
+	my $sourceuid				= $testresult->getTestResultSourceUID();
 	my $sourcedbser             = $testresult->getTestResultSourceDatabaseSer();
-	my $expressionser						= $testresult->getTestResultExpressionSer();
+	my $expressionser			= $testresult->getTestResultExpressionSer();
 	my $name                    = $testresult->getTestResultName();
 	my $facname                 = $testresult->getTestResultFacName();
 	my $abnormalflag            = $testresult->getTestResultAbnormalFlag();
@@ -807,6 +811,8 @@ sub insertTestResultIntoOurDB
 	my $apprvflag               = $testresult->getTestResultApprovedFlag();
 	my $testvalue               = $testresult->getTestResultTestValue();
 	my $testvaluestring         = $testresult->getTestResultTestValueString();
+	$testvaluestring			=~ tr/'/`/;
+
 	my $unitdesc                = $testresult->getTestResultUnitDesc();
 	my $validentry              = $testresult->getTestResultValidEntry();
 	my $cronlogser              = $testresult->getTestResultCronLogSer();
@@ -851,7 +857,7 @@ sub insertTestResultIntoOurDB
 		NOW()
 	)
 	";
-	
+
     # prepare query
 	my $query = $SQLDatabase->prepare($insert_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -888,7 +894,7 @@ sub updateDatabase
 
 	my $sourceuid               = $testresult->getTestResultSourceUID();
 	my $sourcedbser             = $testresult->getTestResultSourceDatabaseSer();
-	my $expressionser 					= $testresult->getTestResultExpressionSer();
+	my $expressionser 			= $testresult->getTestResultExpressionSer();
 	my $name                    = $testresult->getTestResultName();
 	my $facname                 = $testresult->getTestResultFacName();
 	my $abnormalflag            = $testresult->getTestResultAbnormalFlag();
@@ -898,6 +904,8 @@ sub updateDatabase
 	my $apprvflag               = $testresult->getTestResultApprovedFlag();
 	my $testvalue               = $testresult->getTestResultTestValue();
 	my $testvaluestring         = $testresult->getTestResultTestValueString();
+	$testvaluestring			=~ tr/'/`/;
+
 	my $unitdesc                = $testresult->getTestResultUnitDesc();
 	my $validentry              = $testresult->getTestResultValidEntry();
 	my $cronlogser              = $testresult->getTestResultCronLogSer();
@@ -907,7 +915,7 @@ sub updateDatabase
 			TestResult
 		SET
 			TestResultExpressionSerNum	= '$expressionser',
-			CronLogSerNum 						= '$cronlogser',
+			CronLogSerNum 				= '$cronlogser',
 			ComponentName           	= \"$name\",
 			FacComponentName        	= \"$facname\",
 			AbnormalFlag            	= '$abnormalflag',
@@ -919,7 +927,7 @@ sub updateDatabase
 			TestValueString         	= '$testvaluestring',
 			UnitDescription         	= '$unitdesc',
 			ValidEntry              	= '$validentry',
-			ReadStatus								= 0
+			ReadStatus					= 0
 		WHERE
 			TestResultAriaSer       	= '$sourceuid'
 			AND SourceDatabaseSerNum	= '$sourcedbser'
@@ -941,7 +949,8 @@ sub updateDatabase
 sub compareWith
 {
     my ($SuspectTR, $OriginalTR) = @_; # our two TR objects
-    my $UpdatedTR = dclone($OriginalTR);
+    my $UpdatedTestResult = dclone($OriginalTR);
+	my $change = 0; # boolean to recognize an actual difference between objects
 
     # retrieve params
     # Suspect TR
@@ -974,74 +983,37 @@ sub compareWith
     my $Ovalidentry         = $OriginalTR->getTestResultValidEntry();
     my $Ocronlogser         = $OriginalTR->getTestResultCronLogSer();
 
-    # go through each param
-    if ($Sexpressionser ne $Oexpressionser) {
-        print "Test Result expression serial has changed from '$Oexpressionser' to '$Sexpressionser'\n";
-        my $updatedExpressionSer = $UpdatedTR->setTestResultExpressionSer($Sexpressionser); # update
-        print "Will updated database entry to '$updatedExpressionSer'.\n";
-    }
-    if ($Sname ne $Oname) {
-        print "Test Result name has changed from '$Oname' to '$Sname'\n";
-        my $updatedName = $UpdatedTR->setTestResultName($Sname); # update
-        print "Will updated database entry to '$updatedName'.\n";
-    }
-    if ($Sfacname ne $Ofacname) {
-        print "Test Result facility name has changed from '$Ofacname' to '$Sfacname'\n";
-        my $updatedFacName = $UpdatedTR->setTestResultFacName($Sfacname); # update
-        print "Will updated database entry to '$updatedFacName'.\n";
-    }
-    if ($Sabnormalflag ne $Oabnormalflag) {
-        print "Test Result abnormal flag has changed from '$Oabnormalflag' to '$Sabnormalflag'\n";
-        my $updatedFlag = $UpdatedTR->setTestResultAbnormalFlag($Sabnormalflag); # update
-        print "Will updated database entry to '$updatedFlag'.\n";
-    }
-    if ($Stestdate ne $Otestdate) {
-        print "Test Result test date has changed from '$Otestdate' to '$Stestdate'\n";
-        my $updatedDate = $UpdatedTR->setTestResultTestDate($Stestdate); # update
-        print "Will updated database entry to '$updatedDate'.\n";
-    }
-    if ($Smaxnorm ne $Omaxnorm) {
-        print "Test Result max norm has changed from '$Omaxnorm' to '$Smaxnorm'\n";
-        my $updatedMaxNorm = $UpdatedTR->setTestResultMaxNorm($Smaxnorm); # update
-        print "Will updated database entry to '$updatedMaxNorm'.\n";
-    }
-    if ($Sminnorm ne $Ominnorm) {
-        print "Test Result min norm has changed from '$Ominnorm' to '$Sminnorm'\n";
-        my $updatedMinNorm = $UpdatedTR->setTestResultMinNorm($Sminnorm); # update
-        print "Will updated database entry to '$updatedMinNorm'.\n";
-    }
-    if ($Sapprvflag ne $Oapprvflag) {
-        print "Test Result approved flag has changed from '$Oapprvflag' to '$Sapprvflag'\n";
-        my $updatedApprvFlag = $UpdatedTR->setTestResultApprovedFlag($Sapprvflag); # update
-        print "Will updated database entry to '$updatedApprvFlag'.\n";
-    }
-    if ($Stestvalue ne $Otestvalue) {
-        print "Test Result test value has changed from '$Otestvalue' to '$Stestvalue'\n";
-        my $updatedTestValue = $UpdatedTR->setTestResultTestValue($Stestvalue); # update
-        print "Will updated database entry to '$updatedTestValue'.\n";
-    }
-    if ($Stestvaluestring ne $Otestvaluestring) {
-        print "Test Result test value string has changed from '$Otestvaluestring' to '$Stestvaluestring'\n";
-        my $updatedTestValue = $UpdatedTR->setTestResultTestValueString($Stestvaluestring); # update
-        print "Will updated database entry to '$updatedTestValue'.\n";
-    }
-    if ($Sunitdesc ne $Ounitdesc) {
-        print "Test Result unit desc has changed from '$Ounitdesc' to '$Sunitdesc'\n";
-        my $updatedUnit = $UpdatedTR->setTestResultUnitDesc($Sunitdesc); # update
-        print "Will updated database entry to '$updatedUnit'.\n";
-    }
-    if ($Svalidentry ne $Ovalidentry) {
-        print "Test Result valid entry has changed from '$Ovalidentry' to '$Svalidentry'\n";
-        my $updatedValidEntry = $UpdatedTR->setTestResultValidEntry($Svalidentry); # update
-        print "Will updated database entry to '$updatedValidEntry'.\n";
-    }
-    if ($Scronlogser ne $Ocronlogser) {
-        print "Test Result cron log serial has changed from '$Ocronlogser' to '$Scronlogser'\n";
-        my $updatedCronLogSer = $UpdatedTR->setTestResultCronLogSer($Scronlogser); # update
-        print "Will updated database entry to '$updatedCronLogSer'.\n";
-    }
+	if(
+		$Sexpressionser ne $Oexpressionser
+		or $Sname ne $Oname
+		or $Sfacname ne $Ofacname
+		or $Sabnormalflag ne $Oabnormalflag
+		or $Stestdate ne $Otestdate
+		or $Smaxnorm != $Omaxnorm
+		or $Sminnorm != $Ominnorm
+		or $Sapprvflag ne $Oapprvflag
+		or $Stestvalue != $Otestvalue
+		or $Stestvaluestring ne $Otestvaluestring
+		or $Sunitdesc ne $Ounitdesc
+		or $Svalidentry ne $Ovalidentry
+	) {
+		$change = 1; # change occurred
+		$UpdatedTestResult->setTestResultExpressionSer($Sexpressionser);
+		$UpdatedTestResult->setTestResultName($Sname);
+		$UpdatedTestResult->setTestResultFacName($Sfacname);
+		$UpdatedTestResult->setTestResultAbnormalFlag($Sabnormalflag);
+		$UpdatedTestResult->setTestResultTestDate($Stestdate);
+		$UpdatedTestResult->setTestResultMaxNorm($Smaxnorm);
+		$UpdatedTestResult->setTestResultMinNorm($Sminnorm);
+		$UpdatedTestResult->setTestResultApprovedFlag($Sapprvflag);
+		$UpdatedTestResult->setTestResultTestValue($Stestvalue);
+		$UpdatedTestResult->setTestResultTestValueString($Stestvaluestring);
+		$UpdatedTestResult->setTestResultUnitDesc($Sunitdesc);
+		$UpdatedTestResult->setTestResultValidEntry($Svalidentry);
+		$UpdatedTestResult->setTestResultCronLogSer($Scronlogser);
+	}
 
-    return $UpdatedTR;
+    return ($UpdatedTestResult, $change);
 }
 
 #======================================================================================

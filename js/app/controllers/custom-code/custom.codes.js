@@ -1,6 +1,10 @@
 angular.module('opalAdmin.controllers.customCode', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular'])
 
-	.controller('customCode', function ($sce, $scope, $state, $filter, $timeout, $uibModal, customCodeCollectionService, filterCollectionService, Session, uiGridConstants) {
+	.controller('customCode', function ($scope, $state, $filter, $uibModal, customCodeCollectionService, uiGridConstants, Session, ErrorHandler, MODULE) {
+		$scope.navMenu = Session.retrieveObject('menu');
+		$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.custom_code]) & (1 << 0)) !== 0);
+		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.custom_code]) & (1 << 1)) !== 0);
+		$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.custom_code]) & (1 << 2)) !== 0);
 
 		// get current user id
 		var user = Session.retrieveObject('user');
@@ -19,6 +23,12 @@ angular.module('opalAdmin.controllers.customCode', ['ngAnimate', 'ngSanitize', '
 					$(".bannerMessage").slideUp();
 				}, 3000);
 			});
+		};
+
+		// Function to filter custom codes
+		$scope.filterCustomCode = function (filterValue) {
+			$scope.filterValue = filterValue;
+			$scope.gridApi.grid.refresh();
 		};
 
 		getCustomCodesList();
@@ -58,15 +68,18 @@ angular.module('opalAdmin.controllers.customCode', ['ngAnimate', 'ngSanitize', '
 
 		};
 
-		// Table
-		// Templates
-		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editCustomCode(row.entity)"<i title="'+$filter('translate')('CUSTOM_CODE.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong>' +
-			'- <strong><a href="" ng-click="grid.appScope.deleteCustomCode(row.entity)"><i title="'+$filter('translate')('CUSTOM_CODE.LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
+		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">';
+		if($scope.writeAccess)
+			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.editCustomCode(row.entity)"<i title="'+$filter('translate')('CUSTOM_CODE.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong>';
+		else
+			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.editCustomCode(row.entity)"<i title="'+$filter('translate')('CUSTOM_CODE.LIST.VIEW')+'" class="fa fa-eye" aria-hidden="true"></i></a></strong>';
+		if($scope.deleteAccess)
+			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.deleteCustomCode(row.entity)"><i title="'+$filter('translate')('CUSTOM_CODE.LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong>';
+		cellTemplateOperations += '</div>';
+
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editCustomCode(row.entity)">' +
 			'<strong><a href="">{{row.entity.description}}</a></strong></div>';
-		var cellTemplatePublication = '<div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==1">'+$filter('translate')('CUSTOM_CODE.LIST.ALIAS')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==6">'+$filter('translate')('CUSTOM_CODE.LIST.DIAGNOSTIC')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==9">'+$filter('translate')('CUSTOM_CODE.LIST.TEST')+'</div>';
 		var cellTemplateLocked = '<div class="ui-grid-cell-contents" ng-show="row.entity.locked > 0"><div class="fa fa-lock text-danger"></div></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 0"><div class="fa fa-unlock text-success"></div></div>';
 
@@ -101,7 +114,7 @@ angular.module('opalAdmin.controllers.customCode', ['ngAnimate', 'ngSanitize', '
 			customCodeCollectionService.getCustomCodes(OAUserId).then(function (response) {
 				$scope.customCodesList = response.data;
 			}).catch(function(err) {
-				alert($filter('translate')('CUSTOM_CODE.LIST.ERROR_PUBLICATION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+				ErrorHandler.onError(err, $filter('translate')('CUSTOM_CODE.LIST.ERROR_PUBLICATION'));
 			});
 		}
 
@@ -109,7 +122,7 @@ angular.module('opalAdmin.controllers.customCode', ['ngAnimate', 'ngSanitize', '
 		$scope.editCustomCode = function (customCode) {
 			$scope.currentCustomCode = customCode;
 			var modalInstance = $uibModal.open({ // open modal
-				templateUrl: 'templates/custom-code/edit.custom.code.html',
+				templateUrl: ($scope.writeAccess  ? 'templates/custom-code/edit.custom.code.html' : 'templates/custom-code/view.custom.code.html'),
 				controller: 'customCode.edit',
 				scope: $scope,
 				windowClass: 'customModal',

@@ -1,0 +1,53 @@
+<div id="main">
+    <div id="top">
+        <div class="clearfix">
+            <div class="row">
+                <!-- Load side menu -->
+                <div id="side-panel-scrollbar" class="col-lg-2">
+                    <div ng-include="'templates/side-panel-menu.html'"></div>
+                </div>
+                <!-- Right detail panel view -->
+                <div class="col-lg-10 animated fadeIn">
+                    <div class="row main-title">
+                        <!-- Page title -->
+                        <div class="col-xs-12 col-md-9 title-content">
+                            <span class="fa fa-pie-chart"></span>
+                            <h1><strong>{{'STUDY.LIST.TITLE'|translate}}</strong></h1>
+                        </div>
+                        <!-- Breadcrumbs -->
+                        <div class="col-md-3 title-breadcrumbs">
+                            <span><a ui-sref="home">{{'BREADCRUMBS.HOME'|translate}}</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>{{'STUDY.LIST.TITLE'|translate}}</strong></span>
+                        </div>
+                    </div>
+                    <div class="row clearfix operations">
+                        <div class="save-add col-xs-12 col-sm-6 col-md-8">
+                            <!-- Add button -->
+                            <a style="margin-right:20px;" ng-if="writeAccess" href="" ng-click="goToAddStudy()" class="btn btn-md btn-outline item-button">
+                                <span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
+                                <span style="font-size: 20px;"><strong>{{'STUDY.LIST.ADD'|translate}}</strong></span>
+                            </a>
+                        </div>
+                        <!-- Search field -->
+                        <div class="search col-xs-12 col-sm-6 col-md-4">
+                            <div class="form-group has-feedback" style="margin-bottom: 0">
+                                <input type="text" class="form-control" ng-model="filterValue" ng-change="filterStudy(filterValue)" placeholder="{{'STUDY.LIST.SEARCH'|translate}}">
+                                <span class="glyphicon glyphicon-search form-control-feedback"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Load main table -->
+                    <div class="panel-container" style="text-align:left;">
+                        <div class="panel-info">
+                            <div class="panel-input">
+                                <div id="data-table">
+                                    <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:75vh"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bannerMessage alert-success">{{bannerMessage}}</div>
+</div>

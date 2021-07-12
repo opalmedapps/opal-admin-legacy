@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.customCode.delete', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('customCode.delete', function ($scope, $filter, $uibModal, $uibModalInstance, diagnosisCollectionService, educationalMaterialCollectionService, uiGridConstants, $state, Session) {
+controller('customCode.delete', function ($scope, $filter, $uibModal, $uibModalInstance, uiGridConstants, $state, Session, ErrorHandler) {
 
 	// Submit delete
 	$scope.deleteCustomCode = function () {
@@ -19,7 +19,7 @@ controller('customCode.delete', function ($scope, $filter, $uibModal, $uibModalI
 				$scope.showBanner();
 			},
 			error: function(err) {
-				alert($filter('translate')('CUSTOM_CODE.DELETE.ERROR') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+				ErrorHandler.onError(err, $filter('translate')('CUSTOM_CODE.DELETE.ERROR'));
 			},
 			complete: function() {
 				$uibModalInstance.close();

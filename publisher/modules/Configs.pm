@@ -17,6 +17,8 @@ use JSON;
 my $path_name = abs_path($0);
 # Strip child directories to get root path
 $path_name =~ s/publisher\/dataControl.pl//g;
+$path_name =~ s/publisher\/dataControl2.pl//g;
+$path_name =~ s/publisher\/modules\/PushNotificationFromPHP.pm//g;
 my $config_file = $path_name . 'config.json';
 
 # Get contents of config file

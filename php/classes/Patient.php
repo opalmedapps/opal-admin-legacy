@@ -5,744 +5,450 @@
  *
  */
 
-class Patient {
+class Patient extends Module {
 
-    /**
-     *
-     * Updates the patient transfer flags in the database
-     *
-     * @param array $patientList : a list of patients
-     * @return array $response : response
-     */
-    public function updatePatientTransferFlags( $patientList ) {
-        $response = array(
-            'value'     => 0,
-            'message'   => ''
-        );
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            foreach ($patientList as $patient) {
-                $patientTransfer = $patient['transfer'];
-                $patientSer = $patient['serial'];
-                $sql = "UPDATE PatientControl SET PatientControl.PatientUpdate = $patientTransfer WHERE PatientControl.PatientSerNum = $patientSer";
-
-                $query = $host_db_link->prepare( $sql );
-                $query->execute();
-            }
-            $response['value'] = 1; // Success
-            return $response;
-
-        } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response; // Fail
-        }
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_PATIENT, $guestStatus);
     }
 
     /**
-     *
-     * Gets a list of existing patients in the database
-     *
-     * @return array $patientList : the list of existing patients
+     * Update the list of patients with their publication
+     * @param $post
+     */
+    public function updatePublishFlags($post){
+        $this->checkWriteAccess($post);
+        HelpSetup::arraySanitization($post);
+        $errCode = $this->_validatePublishFlag($post);
+
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        foreach ($post["data"] as $item)
+            $this->opalDB->updatePatientPublishFlag($item["serial"], $item["transfer"]);
+    }
+
+    /**
+     * Validate a list of publication flags for patient.
+     * @param $post - publish flag to validate
+     * @return string - string to convert in int for error code
+     */
+    protected function _validatePublishFlag(&$post) {
+        $errCode = "";
+        if (is_array($post) && array_key_exists("data", $post) && is_array($post["data"])) {
+            $errFound = false;
+            foreach ($post["data"] as $item) {
+                if (!array_key_exists("serial", $item) || $item["serial"] == ""|| !array_key_exists("transfer", $item) || $item["transfer"] == "") {
+                    $errFound = true;
+                    break;
+                }
+            }
+            if ($errFound)
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+        } else
+            $errCode = "1";
+        return $errCode;
+    }
+
+    /**
+     * return the list of patients available
+     * @return array - list of patients
      */
     public function getPatients() {
-        $patientList = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-        SELECT DISTINCT
-          pc.PatientSerNum,
-          pc.PatientUpdate,
-          pt.FirstName,
-          pt.LastName,
-          pt.PatientId,
-          pc.LastTransferred,
-					pt.BlockedStatus,
-					usr.Username,
-					pt.email
-        FROM
-          PatientControl pc,
-          Patient pt,
-		      Users usr
-        WHERE
-          pt.PatientSerNum = pc.PatientSerNum
-          AND pt.PatientSerNum 	= usr.UserTypeSerNum
-  				AND usr.UserType 		= 'Patient'
-        ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $patientArray = array(
-                    'serial'          => $data[0],
-                    'transfer'        => $data[1],
-                    'name'            => "$data[2] $data[3]",
-                    'patientid'       => $data[4],
-                    'lasttransferred' => $data[5],
-                    'disabled' 			  => intval($data[6]),
-                    'uid'             => $data[7],
-                    'email'           => $data[8]
-                );
-                array_push($patientList, $patientArray);
-            }
-
-            return $patientList;
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $patientList;
-        }
+        $this->checkReadAccess();
+        return $this->opalDB->getPatients();
     }
 
     /**
-     *
-     * Determines the existence of an email
-     *
-     * @param string $email : email to check
-     *
-     * @return array $Response : response
-     */
-    public function emailAlreadyInUse($email) {
-        $Response = null;
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "
-        SELECT DISTINCT
-          Patient.Email
-        FROM
-          Patient
-        WHERE
-          Patient.Email = '$email'
-        LIMIT 1
-      ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            $Response = 0;
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                if ($data[0]) {
-                    $Response = 1;
-                }
-            }
-
-            return $Response;
-
-        } catch (PDOException $e) {
-            return $Response;
-        }
-    }
-
-    /**
-     *
-     * Determines the existence of a patient
-     *
-     * @param string $ssn : patient SSN
-     * @return array $patientResponse : patient information or response
-     */
-    public function findPatient($ssn, $id) {
-        $patientResponse = array(
-            'message'   => '',
-            'status'    => '',
-            'data'      => ''
-        );
-        $databaseObj = new Database();
-        $activeDBSources = $databaseObj->getActiveSourceDatabases();
-
-        try{
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            // First make a lookup in our database
-            $sql = "SELECT DISTINCT Patient.SSN FROM Patient WHERE Patient.SSN         LIKE '$ssn%' AND Patient.PatientId   = '$id' LIMIT 1";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            $lookupSSN = null;
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $lookupSSN = $data[0];
-            }
-
-            if (!is_null($lookupSSN)) { // Found an ssn
-                $patientResponse['status'] = 'PatientAlreadyRegistered';
-                return $patientResponse;
-            }
-
-            // Then lookup in source database if patient DNE in our database
-            // ***********************************
-            // ARIA
-            // ***********************************
-            if(in_array(ARIA_SOURCE_DB, $activeDBSources)) {
-                $source_db_link = $databaseObj->connectToSourceDatabase(ARIA_SOURCE_DB);
-                if ($source_db_link) {
-                    $sql = "
-                      SELECT DISTINCT TOP 1
-                        pt.SSN,
-                        pt.PatientSer,
-                        pt.FirstName,
-                        pt.LastName,
-                        pt.PatientId,
-                        pt.PatientId2,
-                        pt.DateOfBirth,
-                        ph.Picture,
-                        RTRIM(pt.Sex)
-                      FROM
-                        VARIAN.dbo.Patient pt
-                        LEFT JOIN VARIAN.dbo.Photo ph
-                        ON ph.PatientSer = pt.PatientSer
-                      WHERE
-                        pt.SSN          LIKE '$ssn%'
-                        AND pt.PatientId    = '$id'
-                    ";
-                    $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                    $query->execute();
-
-                    $lookupSSN = null;
-                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                        $lookupSSN = $data[0];
-
-                        $patientArray = array(
-                            'SSN'           => $data[0],
-                            'sourceuid'     => $data[1],
-                            'firstname'     => $data[2],
-                            'lastname'      => $data[3],
-                            'id'            => $data[4],
-                            'id2'           => $data[5],
-                            'dob'           => $data[6],
-                            // YM 2018-12-07
-                            // Using base64base64_encode as a temporary patch for now so that the user is able to create an account
-                            // Need to fine a better solution to inserting an image
-                            'picture'       => base64_encode($data[7]),
-                            'sex'           => $data[8]
-                        );
-
-                        $patientResponse['data'] = $patientArray;
-                    }
-
-                    if (is_null($lookupSSN)) { // Could not find the ssn
-                        $patientResponse['status'] = 'PatientNotFound';
-                    }
-
-                    return $patientResponse;
-                }
-            }
-
-            // ***********************************
-            // WaitRoomManagement
-            // ***********************************
-            if(in_array(ORMS_SOURCE_DB, $activeDBSources)) {
-                $source_db_link = $databaseObj->connectToSourceDatabase(ORMS_SOURCE_DB);
-                if ($source_db_link) {
-
-                    $sql = "SELECT 'QUERY_HERE'";
-                    $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                    $query->execute();
-
-                    $lookupSSN = null;
-                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                        //$lookupSSN = $data[0];
-
-                        // Set appropriate patient information here from query
-
-                        //$patientResponse['data'] = $patientArray; // Uncomment for use
-                    }
-
-                    if (is_null($lookupSSN)) { // Could not find the ssn
-                        $patientResponse['status'] = 'PatientNotFound';
-                    }
-
-                    return $patientResponse;
-                }
-            }
-
-            // ***********************************
-            // Mosaiq
-            // ***********************************
-            if(in_array(MOSAIQ_SOURCE_DB, $activeDBSources)) {
-                $source_db_link = $databaseObj->connectToSourceDatabase(MOSAIQ_SOURCE_DB);
-                if ($source_db_link) {
-
-                    $sql = "SELECT 'QUERY_HERE'";
-                    $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                    $query->execute();
-
-                    $lookupSSN = null;
-                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                        //$lookupSSN = $data[0];
-
-                        // Set appropriate patient information here from query
-
-                        //$patientResponse['data'] = $patientArray; // Uncomment for use
-                    }
-
-                    if (is_null($lookupSSN)) { // Could not find the ssn
-                        $patientResponse['status'] = 'PatientNotFound';
-                    }
-
-                    return $patientResponse;
-                }
-            }
-
-            return $patientResponse; // return found data
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patients list. " . $e->getMessage());
-        }
-    }
-
-    /**
-     *
-     * Gets a list of security questions in the database
-     *
-     * @param string $language : site language
-     * @return array $securityQuestions
-     */
-    public function getSecurityQuestions($language) {
-        $securityQuestions = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-              SELECT DISTINCT
-                sq.SecurityQuestionSerNum,
-                sq.QuestionText_$language
-              FROM
-                SecurityQuestion sq
-              WHERE
-                Active = 1
-              ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $questionArray = array(
-                    'serial'    => $data[0],
-                    'question'  => $data[1]
-                );
-                array_push($securityQuestions, $questionArray);
-            }
-            return $securityQuestions;
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $securityQuestions;
-        }
-    }
-
-    /**
-     *
-     * Registers a patient into the database
-     *
-     * @param array $patientDetails : the patient details
-     * @return void
-     */
-    public function registerPatient($patientDetails) {
-        $email              = $patientDetails['email'];
-        $password           = $patientDetails['password'];
-        $language           = $patientDetails['language'];
-        $uid                = $patientDetails['uid'];
-        $securityQuestion1  = $patientDetails['securityQuestion1'];
-        $questionSerial1    = $securityQuestion1['serial'];
-        $answer1            = $securityQuestion1['answer'];
-        $securityQuestion2  = $patientDetails['securityQuestion2'];
-        $questionSerial2    = $securityQuestion2['serial'];
-        $answer2            = $securityQuestion2['answer'];
-        $securityQuestion3  = $patientDetails['securityQuestion3'];
-        $questionSerial3    = $securityQuestion3['serial'];
-        $answer3            = $securityQuestion3['answer'];
-        $cellNum            = $patientDetails['cellNum'];
-        $SSN                = $patientDetails['SSN'];
-        $accessLevel        = $patientDetails['accessLevel'];
-        $sourceuid          = $patientDetails['data']['sourceuid'];
-        $firstname          = $patientDetails['data']['firstname'];
-        $lastname           = $patientDetails['data']['lastname'];
-        $id                 = $patientDetails['data']['id'];
-        $id2                = $patientDetails['data']['id2'];
-        $picture            = $patientDetails['data']['picture'];
-        $sex                = $patientDetails['data']['sex'];
-
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-        INSERT INTO
-          Patient (
-            PatientAriaSer,
-            PatientId,
-            PatientId2,
-            FirstName,
-            LastName,
-            ProfileImage,
-            Sex,
-            TelNum,
-            Email,
-            Language,
-            SSN,
-            AccessLevel,
-            SessionId,
-            ConsentFormExpirationDate,
-            RegistrationDate
-          )
-        VALUES (
-          '$sourceuid',
-          '$id',
-          '$id2',
-          \"$firstname\",
-          \"$lastname\",
-          '$picture',
-          '$sex',
-          '$cellNum',
-          '$email',
-          '$language',
-          '$SSN',
-          '$accessLevel',
-          'opalAdmin',
-          DATE_ADD(NOW(), INTERVAL 1 YEAR),
-          NOW()
-        )
-      ";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-            $patientSer = $host_db_link->lastInsertId();
-            $sql = "
-        INSERT INTO
-          Users (
-            UserType,
-            UserTypeSerNum,
-            Username,
-            Password,
-            SessionId
-          )
-        VALUES (
-        'Patient',
-        '$patientSer',
-        '$uid',
-        '$password',
-        'opalAdmin'
-        )
-      ";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-            $sql = "
-        INSERT INTO
-          PatientControl (
-            PatientSerNum
-          )
-        VALUES (
-          '$patientSer'
-        )
-      ";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-            $sql = "
-        INSERT INTO
-          SecurityAnswer (
-            SecurityQuestionSerNum,
-            PatientSerNum,
-            AnswerText,
-            CreationDate
-          )
-        VALUES (
-          '$questionSerial1',
-          '$patientSer',
-          '$answer1',
-          NOW()
-          ),
-        (
-          '$questionSerial2',
-          '$patientSer',
-          '$answer2',
-          NOW()
-          ),
-        (
-          '$questionSerial3',
-          '$patientSer',
-          '$answer3',
-          NOW()
-        )
-      ";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-      //       $questionnaires_db_link = new PDO( QUESTIONNAIRE_DB_DSN, QUESTIONNAIRE_DB_USERNAME, QUESTIONNAIRE_DB_PASSWORD );
-      //       $questionnaires_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-      //       $sql = "
-      //   INSERT INTO
-      //     Patient (
-      //       PatientName,
-      //       PatientId
-      //     )
-      //   VALUES (
-      //     \"$firstname $lastname\",
-      //     '$id'
-      //   )
-      // ";
-
-      //       $query = $questionnaires_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-      //       $query->execute();
-
-        } catch( PDOException $e) {
-            return $e->getMessage();
-        }
-    }
-
-    /**
-     *
-     * Gets a list of patient activities
-     *
-     * @return array $patientActivityList : the list of patient activities
+     * Get the last 20,000 patient activities entries
+     * @return array
      */
     public function getPatientActivities() {
-        $patientActivityList = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-        SELECT DISTINCT
-          pt.PatientSerNum,
-          pt.PatientId,
-          pt.SSN,
-          pt.FirstName,
-          pt.LastName,
-          pal.SessionId,
-          pal.DateTime AS LoginTime,
-          pal.Request,
-          pal.DeviceId
-        FROM
-          Patient pt,
-          PatientActivityLog pal,
-          Users
-        WHERE
-          pt.PatientSerNum    = Users.UserTypeSerNum
-          AND Users.Username  = pal.Username
-          AND Users.UserType  = 'Patient'
-          AND pal.Request     = 'Login'
-        ORDER BY
-          pal.DateTime DESC LIMIT 20000
-      ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            $tmpPAList = array();
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $deviceid = $data[8];
-
-                if ($deviceid == 'browser') {
-                    // do nothing
-                } else if (strtoupper($deviceid) == $deviceid) {
-                    $deviceid = "iOS/".$deviceid;
-                } else {
-                    $deviceid = "Android/".$deviceid;
-                }
-
-                $patientArray = array(
-                    $data[5] => array(
-                        'serial'    => $data[0],
-                        'patientid' => $data[1],
-                        'ssn'       => $data[2],
-                        'name'      => "$data[3] $data[4]",
-                        'sessionid' => $data[5],
-                        'login'     => $data[6],
-                        'request'   => $data[7],
-                        'deviceid'  => $deviceid
-                    )
-                );
-
-                array_push($tmpPAList, $patientArray);
-            }
-
-            $sql = "
-        SELECT DISTINCT
-          pal.SessionId,
-          pal.DateTime AS LogoutTime
-        FROM
-          PatientActivityLog pal
-        WHERE
-          pal.Request = 'Logout'
-      ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                foreach ($tmpPAList as &$session) {
-                    if($data[0] == key($session)){
-                        $session[$data[0]]['logout'] = $data[1];
-                        break;
-                    }
-                }
-            }
-
-            foreach ($tmpPAList as $session) {
-                foreach ($session as $value) {
-                    array_push($patientActivityList, $value);
-                }
-            }
-
-            return $patientActivityList;
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $patientActivityList;
-        }
+        $this->checkReadAccess();
+        return $this->opalDB->getPatientActivityLog();
     }
 
     /**
-     *
-     * Gets details for one patient
-     *
-     * @param int $serial : the patient serial number
-     * @return array $patientDetails : the patient details
+     * Validate the name search parameter for individual reports
+     * @param $post - patient last name
+     * @return $errCode - 1st bit for pname
      */
-    public function getPatientDetails ($serial) {
-
-        $patientDetails = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "
-        SELECT DISTINCT
-          pt.FirstName,
-          pt.LastName,
-          pt.PatientId,
-          usr.Username,
-          pt.BlockedStatus,
-          pt.email
-        FROM
-          Patient pt,
-          Users usr
-        WHERE
-          pt.PatientSerNum = '$serial'
-          AND pt.PatientSerNum = usr.UserTypeSerNum
-          AND usr.UserType = 'Patient'
-      ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
-
-            $patientDetails = array(
-                'serial'    => $serial,
-                'name'      => "$data[0] $data[1]",
-                'patientid' => $data[2],
-                'uid'       => $data[3],
-                'disabled'  => intval($data[4]),
-                'email'     => $data[5]
-            );
-
-            return $patientDetails;
-
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $patientDetails;
+    protected function _validateName(&$post){
+        $errCode = "";
+        if(is_array($post)){
+            if(!array_key_exists("pname", $post) || $post["pname"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
         }
+        return $errCode;
     }
 
     /**
+     * Search database for patient
      *
-     * Updates the patient
-     *
-     * @param array $patientDetails : the patient details
-     * @return array $response : response
+     * @param $post: patient last name case insensitive
+     * @return array : details for the given patient(s) matching search criteria
+     * @error 422 with array (validation=>integer)
      */
-    public function updatePatient($patientDetails) {
-        $response = array (
-            'value'		=> 0,
-            'error'		=> array(
-                'code'		=> '',
-                'message'	=> ''
-            )
-        );
-
-        $password 	= $patientDetails['password'];
-        $serial 	= $patientDetails['serial'];
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "
-        UPDATE
-          Users
-        SET
-          Users.Password = \"$password\"
-        WHERE
-          Users.UserTypeSerNum = '$serial'
-          AND Users.UserType = 'Patient'
-			";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            $response['value'] = 1; // Success
-            return $response;
-
-        } catch (PDOException $e) {
-            $response['error']['code'] = 'db-catch';
-            $response['error']['message'] = $e->getMessage();
-            return $response;
+    public function findPatientByName( $post ) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validateName($post);
+        $errCode = bindec($errCode);
+        if($errCode != 0){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
         }
+        return $this->opalDB->getPatientName($post['pname']);
     }
 
     /**
-     *
-     * Sets the block status
-     *
-     * @param array $patientDetails : the patient details
-     * @return array $response : response
+     * Validate the mrn search parameter for individual reports
+     * @param post - patient mrn
+     * @return $errCode - 1st bit for mrn
      */
-    public function toggleBlock($patientDetails) {
-        $response = array (
-            'value'		=> 0,
-            'error'		=> array(
-                'code'		=> '',
-                'message'	=> ''
-            )
-        );
+    protected function _validateMRN(&$post){
+        $errCode = "";
+        if(is_array($post)){
+            if(!array_key_exists("pmrn", $post) || $post["pmrn"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+        }
+        return $errCode;
+    }
 
-        $blockedStatus  = $patientDetails['disabled'];
-        $reason         = $patientDetails['reason'];
-        $serial         = $patientDetails['serial'];
-        $firebaseUID    = $patientDetails['uid'];
+    /**
+     * Search database for patient
+     *
+     * @param $post: patient mrn
+     * @return array : details for the given patient(s) matching search criteria
+     *
+     */
+    public function findPatientByMRN( $post ) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validateMRN($post);
+        $errCode = bindec($errCode);
+        if($errCode != 0){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+        }
+        return $this->opalDB->getPatientMRN($post['pmrn']);
+    }
 
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+    /**
+     * Validate the ramq search parameter for individual reports
+     * @param $post - patient ramq
+     * @return $errCode - 1st bit for ramq
+     */
+    protected function _validateRAMQ(&$post){
+        $errCode = "";
+        if(is_array($post)){
+            if(!array_key_exists("pramq", $post) || $post["pramq"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+        }
+        return $errCode;
+    }
 
-            $sql = "
-        UPDATE
-          Patient
-        SET
-          Patient.BlockedStatus 	= '$blockedStatus',
-          Patient.StatusReasonTxt = \"$reason\"
-        WHERE
-          Patient.PatientSerNum = '$serial'
-      ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
+    /**
+     * Search database for patient
+     *
+     * @param $post: patient ramq
+     * @return array : details for the given patient(s) matching search criteria
+     *
+     */
+    public function findPatientByRAMQ( $post ) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validateRAMQ($post);
+        $errCode = bindec($errCode);
+        if($errCode != 0){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+        }
+        return $this->opalDB->getPatientRAMQ($post['pramq']);
 
-            # call our nodejs script to block user on Firebase
-            $command = "/usr/bin/node " . FRONTEND_ABS_PATH . 'js/firebaseSetBlock.js --blocked=' . $blockedStatus . ' --uid=' . $firebaseUID;
-            # uncomment appropriate system call
-            #$command = "/usr/local/bin/node " . FRONTEND_ABS_PATH . 'js/firebaseSetBlock.js --blocked=' . $blockedStatus . ' --uid=' . $firebaseUID;
-            $commandResponse = system($command);
+    }
 
-            if ($commandResponse == 0) {
-                $response['value'] = 1; // Success
-                $response['error']['message'] = $command;
-            } else {
-                $response['error']['message'] = "System command failed";
+    /**
+     * Validate the input parameters for individual patient report
+     *  1st bit psnum
+     *  2nd bit diagnosis
+     *  3rd bit appointments
+     *  4th bit questionnaires
+     *  5th bit educational material
+     *  6th bit test results (legacy)
+     *  7th bit patient test results
+     *  8th bit notifications
+     *  9th bit treatment planning
+     *  10th bit general
+     *  11th bit clinical notes
+     *  12 bit treating team messages
+     *
+     * @param $post array - mrn & featureList
+     * @return $errCode
+     */
+    protected function _validatePatientReport(&$post){
+        $errCode = "";
+
+        if(is_array($post)){
+            //bit 1
+            if(!array_key_exists("psnum", $post) || $post["psnum"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+            //bit 2
+            if(!array_key_exists("diagnosis", $post) || $post["diagnosis"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+            //bit 3
+            if(!array_key_exists("appointments", $post) || $post["appointments"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+            //bit 4
+            if(!array_key_exists("questionnaires", $post) || $post["questionnaires"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+            //bit 5
+            if(!array_key_exists("education", $post) || $post["education"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+            //bit 6
+            if(!array_key_exists("testresults", $post) || $post["testresults"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+            //bit 7
+            if(!array_key_exists("pattestresults", $post) || $post["pattestresults"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+            //bit 8
+            if(!array_key_exists("notes", $post) || $post["notes"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+            //bit 9
+            if(!array_key_exists("treatplan", $post) || $post["treatplan"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+            //bit 10
+            if(!array_key_exists("general", $post) || $post["general"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+            //bit 11
+            if(!array_key_exists("clinicalnotes", $post) || $post["clinicalnotes"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+            //bit 12
+            if(!array_key_exists("treatingteam", $post) || $post["treatingteam"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+        }else{
+            $errCode = "111111111111";
+        }
+        return $errCode;
+    }
+
+    /**
+     *  Generate the patient report given patient serial number & feature list
+     *  @param $post: array contains parameter to find
+     *  @return $resultArray: patient data report JSON object, keyed by report segment name
+     */
+    public function getPatientReport($post){
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validatePatientReport($post);
+        $errCode = bindec($errCode);
+        if($errCode != 0){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+        }
+
+        $resultArray = array();
+        if($post['diagnosis'] === "true"){
+            $resultArray["diagnosis"] = $this->opalDB->getPatientDiagnosisReport($post['psnum']);
+        }
+        if($post["appointments"] === "true"){
+            $resultArray["appointments"] = $this->opalDB->getPatientAppointmentReport($post['psnum']);
+        }
+        if($post["questionnaires"] === "true"){
+            $resultArray["questionnaires"] = $this->opalDB->getPatientQuestionnaireReport($post['psnum']);
+        }
+        if($post["education"] === "true"){
+            $resultArray["education"] = $this->opalDB->getPatientEducMaterialReport($post['psnum']);
+        }
+        if($post["testresults"] === "true"){
+            $resultArray["testresults"] = $this->opalDB->getPatientLegacyTestReport($post['psnum']);
+        }
+        if($post["pattestresults"] === "true"){
+            $resultArray["pattestresults"] = $this->opalDB->getPatientTestReport($post['psnum']);
+        }
+        if($post["notes"] === "true"){
+            $resultArray["notes"] = $this->opalDB->getPatientNotificationsReport($post['psnum']);
+        }
+        if($post["treatplan"] === "true"){
+            $resultArray["treatplan"] = $this->opalDB->getPatientTreatmentPlanReport($post['psnum']);
+        }
+        if($post["clinicalnotes"] === "true"){
+            $resultArray["clinicalnotes"] = $this->opalDB->getPatientClinNoteReport($post['psnum']);
+        }
+        if($post["treatingteam"] === "true"){
+            $resultArray["treatingteam"] = $this->opalDB->getPatientTxTeamReport($post['psnum']);
+        }
+        if($post["general"] === "true"){
+            $resultArray["general"] = $this->opalDB->getPatientGeneralReport($post['psnum']);
+        }
+        return $resultArray;
+    }
+
+    /**
+     * Validate the educational material search parameter for group reports
+     * @param $post - matType
+     * @return $errCode - 1st bit for matType
+     */
+    protected function _validateEducType(&$post){
+        $errCode = "";
+        if(is_array($post)){
+            if(!array_key_exists("matType", $post) || $post["matType"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+        }
+        return $errCode;
+    }
+
+    /**
+     *  Generate list of available educational materials from DB
+     *  @param $post: user selected material type
+     *  @return array of educational materials
+     */
+    public function findEducationalMaterialOptions( $post ){
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validateEducType($post);
+        $errCode = bindec($errCode);
+        if($errCode != 0){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+        }
+        return $this->opalDB->getEducMatOptions($post['matType']);
+    }
+
+    /**
+     * Validate the educational material report parameters
+     * @param $post array - contains type and name
+     * @return $errCode - validation of the data
+     */
+    protected function _validateEducReport(&$post){
+        $errCode = "";
+        if(is_array($post)){
+            if(!array_key_exists("type", $post) || $post["type"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
             }
 
-            return $response;
-
-        } catch (PDOException $e) {
-            $response['error']['code'] = 'db-catch';
-            $response['error']['message'] = $e->getMessage();
-            return $response;
+            if(!array_key_exists("name", $post) || $post["name"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+        }else{
+            $errCode = "11";
         }
+        return $errCode;
+    }
+
+    /**
+     * Generate educational materials group report
+     * @param $post
+     * @return array
+     */
+    public function getEducationalMaterialReport( $post ){
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validateEducReport($post);
+        $errCode = bindec($errCode);
+        if($errCode != 0){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+        }
+        return $this->opalDB->getEducMatReport($post['type'], $post['name']);
+    }
+
+    /**
+     * Generate list of questionnaires available in DB
+     * @return array
+     */
+    public function findQuestionnaireOptions(){
+        $this->checkReadAccess();
+        return $this->opalDB->getQstOptions();
+    }
+
+    /**
+     * Validate the questionnaire name search parameter for group reports
+     * @param $post - qstName questionnaire name
+     * @return $errCode - 1st bit for qstName
+     */
+    protected function _validateQstReport(&$post){
+        $errCode = "";
+        if(is_array($post)){
+            if(!array_key_exists("qstName", $post) || $post["qstName"] == ""){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+        }
+        return $errCode;
+    }
+
+    /**
+     *  Generate questionnaires report given user selected qName
+     *  @param $post: questionnaire name
+     *  @return array: questionnaire report JSON object
+     */
+    public function getQuestionnaireReport( $post ){
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validateQstReport($post);
+        $errCode = bindec($errCode);
+        if($errCode != 0){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+        }
+        return $this->opalDB->getQstReport($post['qstName']);
+    }
+
+    /**
+     *  Generate patient group report
+     *  @return array: patient group report JSON object
+     */
+    public function getPatientGroupReport(){
+        $this->checkReadAccess();
+        return $this->opalDB->getDemoReport();
+
     }
 }

@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular'])
 
-	.controller('questionnaire.edit', function ($sce, $scope, $state, $filter, $timeout, $uibModal, $uibModalInstance, questionnaireCollectionService, filterCollectionService, Session, uiGridConstants) {
+	.controller('questionnaire.edit', function ($sce, $scope, $state, $filter, $timeout, $uibModal, $uibModalInstance, questionnaireCollectionService, Session, uiGridConstants, ErrorHandler) {
 
 		// get current user id
 		var user = Session.retrieveObject('user');
@@ -46,10 +46,10 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 				if(entry.typeId === "2") {
 					var increment = parseFloat(entry.options.increment);
 					var minValue = parseFloat(entry.options.minValue);
-					if (minValue === 0.0) minValue = increment;
+					if (minValue < 0) minValue = 0;
 					var maxValue = parseFloat(entry.options.maxValue);
 
-					var radiostep = new Array();
+					var radiostep = [];
 					for(var i = minValue; i <= maxValue; i += increment) {
 						radiostep.push({"description":" " + i,"description_EN":" " + i,"description_FR":" " + i});
 					}
@@ -65,10 +65,10 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 			return questions;
 		}
 
-		questionnaireCollectionService.getFinalizedQuestions(OAUserId).then(function (response) {
+		questionnaireCollectionService.getFinalizedQuestions().then(function (response) {
 			$scope.groupList = decodeQuestions(response.data);
 		}).catch(function (err) {
-			alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ERROR_QUESTION_lIST') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+			ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ERROR_QUESTION_LIST'));
 			$uibModalInstance.close();
 		});
 
@@ -196,17 +196,43 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 		};
 
 		// Show processing dialog upon first load
-		$scope.showProcessingModal();
+		// $scope.showProcessingModal();
+
+		questionnaireCollectionService.getPurposesRespondents().then(function (response) {
+			response.data.purposes.forEach(function(row) {
+				if(user.language.toUpperCase() === "FR") {
+					row.title_display = row.title_FR;
+					row.description_display = row.description_FR;
+				}
+				else {
+					row.title_display = row.title_EN;
+					row.description_display = row.description_EN;
+				}
+			});
+			response.data.respondents.forEach(function(row) {
+				if(user.language.toUpperCase() === "FR") {
+					row.title_display = row.title_FR;
+					row.description_display = row.description_FR;
+				}
+				else {
+					row.title_display = row.title_EN;
+					row.description_display = row.description_EN;
+				}
+			});
+			$scope.purposeList = response.data.purposes;
+			$scope.respondentList = response.data.respondents;
+		}).catch(function (err) {
+			ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ERROR_PURPOSES_RESPONDENTS'));
+			$state.go('questionnaire');
+		});
 
 		// Call our API service to get questionnaire details
-		questionnaireCollectionService.getQuestionnaireDetails($scope.currentQuestionnaire.ID, OAUserId).then(function (response) {
-
+		questionnaireCollectionService.getQuestionnaireDetails($scope.currentQuestionnaire.ID).then(function (response) {
 			// Assign value
 			$scope.questionnaire = response.data;
 			$scope.questionnaire.questions = decodeQuestions($scope.questionnaire.questions);
-
 		}).catch(function (err) {
-			alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ERROR_QUESTIONNAIRE_DETAILS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+			ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ERROR_QUESTIONNAIRE_DETAILS'));
 			$uibModalInstance.close();
 		}).finally(function () {
 			$timeout(function () {
@@ -220,9 +246,6 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 					});
 				}
 			});
-
-			processingModal.close(); // hide modal
-			processingModal = null; // remove reference
 		});
 
 		// Function to toggle Item in a list on/off
@@ -274,14 +297,14 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 		$scope.updateQuestionnaire = function () {
 
 			if ($scope.checkForm()) {
-				$scope.questionnaire.OAUserId = OAUserId;
+				var formatData = copyQuestionnaireData($scope.questionnaire);
 
 				// ajax POST
 				$.ajax({
 					type: "POST",
 					url: "questionnaire/update/questionnaire",
-					data: $scope.questionnaire,
-					success: function (response) {
+					data: formatData,
+					success: function () {
 						$scope.setBannerClass('success');
 						$scope.$parent.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.SUCCESS_UPDATE');
 						$scope.showBanner();
@@ -295,5 +318,32 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 				});
 			}
 		};
+
+		function copyQuestionnaireData(oldData) {
+			var newFormat = {
+				ID : oldData.ID,
+				OAUserId : oldData.OAUserId,
+				title_EN : oldData.title_EN,
+				title_FR : oldData.title_FR,
+				description_EN : oldData.description_EN,
+				description_FR : oldData.description_FR,
+				purpose : oldData.purpose.ID,
+				respondent : oldData.respondent.ID,
+				private : oldData.private,
+				final : oldData.final,
+				questions : []
+			};
+			var temp;
+			angular.forEach(oldData.questions, function(item) {
+				temp = {
+					ID : item.ID,
+					order : item.order,
+					optional : item.optional,
+					typeId : item.typeId,
+				};
+				newFormat.questions.push(temp);
+			});
+			return newFormat;
+		}
 
 	});

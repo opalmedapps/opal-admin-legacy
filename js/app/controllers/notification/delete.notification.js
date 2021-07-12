@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.notification.delete', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('notification.delete', function ($scope, $uibModal, $uibModalInstance, $filter, $state, $sce, notificationCollectionService, Session) {
+controller('notification.delete', function ($scope, $uibModal, $uibModalInstance, $filter, $state, $sce, notificationCollectionService, Session, ErrorHandler) {
 
 	// Submit delete
 	$scope.deleteNotification = function () {
@@ -11,22 +11,11 @@ controller('notification.delete', function ($scope, $uibModal, $uibModalInstance
 			type: "POST",
 			url: "notification/delete/notification",
 			data: $scope.notificationToDelete,
-			success: function (response) {
-				response = JSON.parse(response);
-				// Show success or failure depending on response
-				if (response.value) {
-					$scope.setBannerClass('success');
-					$scope.$parent.bannerMessage = $filter('translate')('NOTIFICATIONS.DELETE.SUCCESS');
-					$scope.showBanner();
-				}
-				else {
-					alert($filter('translate')('NOTIFICATIONS.DELETE.ERROR') + "\r\n\r\n" + response.message);
-				}
-				$uibModalInstance.close();
-
-			},
+			success: function () {},
 			error: function (err) {
-				alert($filter('translate')('NOTIFICATIONS.DELETE.ERROR') + "\r\n\r\n" + err.status + " - " + err.statusText);
+				ErrorHandler.onError(err, $filter('translate')('NOTIFICATIONS.DELETE.ERROR'));
+			},
+			complete: function () {
 				$uibModalInstance.close();
 			}
 		});

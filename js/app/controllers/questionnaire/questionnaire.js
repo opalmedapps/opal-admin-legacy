@@ -1,6 +1,15 @@
 angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular'])
 
-	.controller('questionnaire', function ($sce, $scope, $state, $filter, $timeout, $uibModal, questionnaireCollectionService, filterCollectionService, Session, uiGridConstants) {
+	.controller('questionnaire', function ($location, $scope, $state, $filter, $uibModal, questionnaireCollectionService, Session, uiGridConstants, ErrorHandler, MODULE) {
+		$scope.navMenu = Session.retrieveObject('menu');
+		$scope.navSubMenu = Session.retrieveObject('subMenu')[MODULE.questionnaire];
+		angular.forEach($scope.navSubMenu, function(menu) {
+			menu.name_display = (Session.retrieveObject('user').language === "FR" ? menu.name_FR : menu.name_EN);
+			menu.description_display = (Session.retrieveObject('user').language === "FR" ? menu.description_FR : menu.description_EN);
+		});
+		$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.questionnaire]) & (1 << 0)) !== 0);
+		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.questionnaire]) & (1 << 1)) !== 0);
+		$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.questionnaire]) & (1 << 2)) !== 0);
 
 		// get current user id
 		var user = Session.retrieveObject('user');
@@ -14,14 +23,14 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 			$state.go('questionnaire-add');
 		};
 		$scope.goToQuestionnaireQuestionBank = function () {
-			$state.go('questionnaire-question');
+			$state.go('questionnaire/question');
 		};
 		$scope.goToQuestionnaireCompleted = function () {
 			$state.go('questionnaire-completed');
 		};
 		// Function to go to question type page
 		$scope.goToTemplateQuestion = function () {
-			$state.go('questionnaire-template-question');
+			$state.go('questionnaire/template-question');
 		};
 
 		// Banner
@@ -70,11 +79,16 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 
 		};
 
-		// Table
-		// Templates
-		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editQuestionnaire(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ' +
-			'- <strong><a href="" ng-click="grid.appScope.deleteQuestionnaire(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
+		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">';
+
+		if($scope.writeAccess)
+			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.editQuestionnaire(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ';
+		else
+			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.editQuestionnaire(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.VIEW')+'" class="fa fa-eye" aria-hidden="true"></i></a></strong> ';
+		if($scope.deleteAccess)
+			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.deleteQuestionnaire(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong>';
+		cellTemplateOperations += '</div>';
+
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editQuestionnaire(row.entity)">' +
 			'<strong><a href="">{{row.entity.name_' + Session.retrieveObject('user').language + '}}</a></strong></div>';
@@ -119,10 +133,10 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 		$scope.questionnaireList = [];
 
 		// Call API to get the list of questionnaires
-		questionnaireCollectionService.getQuestionnaires(OAUserId).then(function (response) {
+		questionnaireCollectionService.getQuestionnaires().then(function (response) {
 			$scope.questionnaireList = response.data;
 		}).catch(function(err) {
-			alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+			ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS'));
 		});
 
 		// Initialize the questionnaire to be deleted
@@ -154,10 +168,10 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 
 			// After delete, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				questionnaireCollectionService.getQuestionnaires(OAUserId).then(function (response) {
+				questionnaireCollectionService.getQuestionnaires().then(function (response) {
 					$scope.questionnaireList = response.data;
 				}).catch(function(err) {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS'));
 				});
 			});
 		};
@@ -170,7 +184,7 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 			$scope.currentQuestionnaire = questionnaire;
 
 			var modalInstance = $uibModal.open({ // open modal
-				templateUrl: 'templates/questionnaire/edit.questionnaire.html',
+				templateUrl: ($scope.writeAccess ? 'templates/questionnaire/edit.questionnaire.html' : 'templates/questionnaire/view.questionnaire.html'),
 				controller: 'questionnaire.edit',
 				scope: $scope,
 				windowClass: 'customModal',
@@ -179,10 +193,10 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 
 			// After update, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				questionnaireCollectionService.getQuestionnaires(OAUserId).then(function (response) {
+				questionnaireCollectionService.getQuestionnaires().then(function (response) {
 					$scope.questionnaireList = response.data;
 				}).catch(function(err) {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS'));
 				});
 			});
 		};

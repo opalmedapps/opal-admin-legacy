@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.template.question.delete', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns'])
 
-	.controller('template.question.delete', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
+	.controller('template.question.delete', function ($scope, $filter, $uibModalInstance, questionnaireCollectionService, Session, ErrorHandler) {
 
 		// Submit delete
 		$scope.deleteQuestion = function () {
@@ -14,7 +14,7 @@ angular.module('opalAdmin.controllers.template.question.delete', ['ngAnimate', '
 					$scope.showBanner();
 				},
 				error: function(err) {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_DELETE.ERROR') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_DELETE.ERROR'));
 				},
 				complete: function () {
 					$uibModalInstance.close();

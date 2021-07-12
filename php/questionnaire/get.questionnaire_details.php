@@ -1,10 +1,9 @@
 <?php
-include_once('questionnaire.inc');
+include_once("../config.php");
 
 $questionnaireId = strip_tags($_POST['questionnaireId']);
-$OAUserId = strip_tags($_POST['OAUserId']);
 
-$questionnaire = new Questionnaire($OAUserId);
+$questionnaire = new Questionnaire();
 $questionnaireDetails = $questionnaire->getQuestionnaireDetails($questionnaireId);
 unset($questionnaireDetails["category"]);
 unset($questionnaireDetails["createdBy"]);

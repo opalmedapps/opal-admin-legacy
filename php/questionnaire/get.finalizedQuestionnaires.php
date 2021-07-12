@@ -1,8 +1,7 @@
 <?php
-include_once('questionnaire.inc');
+include_once("../config.php");
 
-$OAUserId = strip_tags($_POST["OAUserId"]);
-$questionnaire = new Questionnaire($OAUserId);
+$questionnaire = new Questionnaire();
 $questionnaireList = $questionnaire->getFinalizedQuestionnaires();
 
 header('Content-Type: application/javascript');

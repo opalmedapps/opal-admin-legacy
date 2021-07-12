@@ -1,3 +1,141 @@
+Version 2.0.2.0:
+
+
+Version 2.0.1.0:
+
+
+Version 2.0.0.0:
+ - Merge branch 'OPAL-620' into 'staging'
+ - Opal-620 Quick fix for Test Results
+ - opal-609 - changed default visualization from default 1 to 0 if any question is non zero.
+ - opal-609 - changed from cookies to sessionStorage in the frontend or it will be impossible to store more new module in the nav menu.
+ - Merge branch 'opal-559' of https://gitlab.com/akimosupremo/opalAdmin into staging
+ - opal-559 - updated error msgs and codes for diagnosis
+ - Hot Fix Alais Expression and Resource Appointment
+ - Merge branch 'opal-559' of https://gitlab.com/akimosupremo/opalAdmin into staging
+ - opal-559 - updated error msgs and codes for diagnosis
+ - Merge branch 'opal-559' of https://gitlab.com/akimosupremo/opalAdmin into staging
+ - opal-559 - updated diagnosis URL for system 2 system API call
+ - opal-559 - changed validation msg for code when get patient diagnoses
+ - opal-559 - added update and delete diagnosis.
+ - Fix the ignore of this file
+ - Hot fix for the Alias Expression for ORMS
+ - opal-559 - added insert patient diagnosis.
+ - opal-559 trimed questionnaire add/insert post of unecessary data sent.
+ - HOTFIX - add and edit questionnaire limits the amount of data sent
+ - Merge branch 'opal-559' of https://gitlab.com/akimosupremo/opalAdmin into staging
+ - opal-559 - added comments
+ - opal-559 - create API call getPatientDiagnoses
+ - Merge branch 'opal-559' of https://gitlab.com/akimosupremo/opalAdmin into staging
+ - opal-559 - Removed encryption to the username/password since the SSL encryption is now active.
+ - Merge branch 'opal-559' of https://gitlab.com/akimosupremo/opalAdmin into staging
+ - opal-559 - Updated edit user for displaying the type of user and password if user is a system.
+ - opal-559 - Fixed a bug with the LoginModal when user/pass are invalids. Added type of user in user listing.
+ - opal-559 - finished updating adding user to support type of user
+ - Merge branch 'patient_report_serverIP_change' into staging
+ - Changed the username and password for database connection in perl scripts
+ - Merge branch 'OPAL-576' into staging
+ - ---- OPAL-576 OpalAdmin - Cron Job unable to import clinical notes
+ - Change the the preprod server IP in perl scripts.
+ - Merge branch 'opal-559' of https://gitlab.com/akimosupremo/opalAdmin into staging
+ - opal-559 - modification of the user module UI underway
+ - opal-559 - coded system user login access
+ - opal-559 - finished refactor Diagnosis.php
+ - opal-559 - refactored insertDiagnosisTranslation()
+ - opal-559 - refactored getDiagnoses() and getDiagnosisTranslationDetails()
+ - opal-559 - refactoring of diagnosis underway
+ - Merge branch 'opal-530' of https://gitlab.com/akimosupremo/opalAdmin into staging
+ - opal-530 - fixed typo in userLoginRegistration
+ - opal-559 - refactoring underway
+ - Merge branch 'opal-530' of https://gitlab.com/akimosupremo/opalAdmin into staging
+ - opal-530 - make login more robust and secured
+ - Merge branch 'opal-530' of https://gitlab.com/akimosupremo/opalAdmin into staging
+ - opal-530 - added registrationLogin method
+ - Merge branch 'opal-530' of https://gitlab.com/akimosupremo/opalAdmin into staging
+ - opal-530 - added registrationLogin method
+ - opal-530 - adding user login registration underway
+ - Merge branch 'opal-530' of https://gitlab.com/akimosupremo/opalAdmin into staging
+ - opal-530 - updated user audit so we can at least get the decoded informations but not the password or the cypher.
+ - opal-530 - finished view audit code.
+ - opal-530 - user login failed will track username in createdBy field.
+ - opal-530 - finished audit view list
+ - HOTFIX - fixed the edit questionnaire select question.
+ - opal-530 - audit module underway
+ - OPAL-530 - Coding Audit module underway
+ - OPAL-530 - Coding Audit module underway
+ - OPAL-530 - Finished coding the audit to every module.
+ - Merge branch 'opal-469' of https://gitlab.com/akimosupremo/opalAdmin into staging
+ - Merge branch 'opal-261' of https://gitlab.com/akimosupremo/opalAdmin into staging
+ - OPAL-469 - finished delete alert section.
+ - OPAL-469 - finished view alert section.
+ - OPAL-469 - finished edit alert section.
+ - OPAL-469 - finished adding alert section.
+ - Merge branch 'opal-261' of https://gitlab.com/akimosupremo/opalAdmin into opal-469-alert
+ - OPAL-261 - fixed missing texts
+ - OPAL-469 - Working on adding page for alert
+ - OPAL-469 - forgot to add warning texts for alerts list.
+ - OPAL-469 - Finished alert list page.
+ - OPAL-261 - fixed a bug where deletion of study never appeared
+ - OPAL-469 - creating files for alert modules
+ - Quick patch for filtering out Aria from ORMS
+ - OPAL-261 - Hide category menu if no option.
+ - OPAL-385 - Adjust security and PHP session length
+ - OPAL-385 - Prevent user to modify his own permission on the role module
+ - OPAL-385 - finished coding sub-menus. Registration button is now hardcoded
+ - OPAL-385 - coding sub-menus for patients underway
+ - OPAL-385 - Dynamic linking nav and sub nav menus underway
+ - OPAL-385 - Dynamic linking nav and sub nav menus underway
+ - OPAL-385 - Made user module dynamic according the role of the user
+ - OPAL-385 - Made custom codes and studies modules dynamic according the role of the user
+ - OPAL-385 - Made diusers and patients modules dynamic according the role of the user
+ - OPAL-385 - Made diagnosis translation and cron log modules dynamic according the role of the user
+ - OPAL-385 - Made publication tools module dynamic according the role of the user
+ - OPAL-385 - Made questionnaire module dynamic according the role of the user
+ - OPAL-385 - Made notification and test results modules dynamics according the role of the user
+ - OPAL-385 - Made the hospital map module dynamic according the role of the user. Deactivated the QR code usage since it's not in use and not working.
+ - OPAL-385 - Made the Post module dynamic according the role of the user
+ - OPAL-385 - Made the alias module dynamic according the role of the user
+ - OPAL-385 - changed error 403 message modal. Added Error Handler service. Regrouped all php files under php directory.
+ - OPAL-265 - Cron Log displays stats of only active modules user is authorized to see.
+ - OPAL-265 - all modules from table module are now independent of each others.
+ - OPAL-265 - made all modules independent from Educational Material one.
+ - OPAL-265 - making the different modules independent of each others underway.
+ - OPAL-265 - coding roles access restriction on back-end underway.
+ - OPAL-265 - renamed OpalProject to Module. Attached to the construct the module ID. Merged Filter class to Publication.
+ - OPAL-265 - Removed userId from login system and replace it with the userId in the session
+ - OPAL-265 - PHP session underway
+ - OPAL-264 - Finished migrating new roles to the current users.
+ - OPAL-264 - attachments of new roles to current users under way.
+ - OPAL-261 - finished coding delete roles
+ - Merge branch 'staging' of https://gitlab.com/akimosupremo/opalAdmin into opal-261-roles
+ - OPAL-261 - finished coding edit roles
+ - OPAL-261 - Modificationfor edit roles under way.
+ - OPAL-261 - Finished coding adding role.
+ - OPAL-261 - Finished coding roles list.
+ - OPAL-261 - coding of roles listing underway.
+ - OPAL-261 - coding of roles listing underway.
+
+Version 0.21.2.4:
+
+
+Version 0.21.2.3:
+ - In Priority module was using the incorrect temp table name
+
+Version 0.21.2.2:
+ - Missed another upper case P
+
+Version 0.21.2.1:
+ - ---- Corrected the spelling from $patient to $Patient
+
+Version 0.21.2.0:
+
+
+Version 0.21.1.0:
+
+
+Version 0.21.0.0:
+
+
 Version 0.20.1.0:
  - Merge branch 'move_to_Aria15' into staging
  -     --- Additional modification required to make it work with Aria 15 also needed to optimize the query to fetch data from Aria

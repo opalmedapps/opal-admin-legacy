@@ -379,7 +379,9 @@ sub getApptCronLogSer
 #======================================================================================
 sub getApptsFromSourceDB
 {
-	my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
+	my $cronLogSer = @_[0];
+	my @patientList = @_[1];
+    my $global_patientInfo_sql = @_[2];
 
 	my @apptList = (); # initialize a list for appointment objects
 
@@ -400,6 +402,7 @@ sub getApptsFromSourceDB
     ######################################
     my $sourceDBSer = 1;
 	{
+		# print "BEGIN ARIA APPOINTMENT: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
         my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
 
         if ($sourceDatabase) {
@@ -440,31 +443,26 @@ sub getApptsFromSourceDB
 				use VARIAN;
 
                 IF OBJECT_ID('tempdb.dbo.#tempAppt', 'U') IS NOT NULL
-                  DROP TABLE #tempAppt;
+                	DROP TABLE #tempAppt;
 
-				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
+				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
+					DROP TABLE #tempPatient;
+
+				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
-			my $numOfPatients = @patientList;
-			my $counter = 0;
-			foreach my $Patient (@patientList) {
-				my $patientSer 			= $Patient->getPatientSer();
-				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
-				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
 
-				$patientInfo_sql .= "
-					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
-				";
-
-				$counter++;
-				if ( $counter < $numOfPatients ) {
-					$patientInfo_sql .= "UNION";
-				}
-			}
+			$patientInfo_sql .= $global_patientInfo_sql; #global SQL pre-loaded in dataControl.pl to save time
+			
 			$patientInfo_sql .= ")
 			Select c.* into #tempAppt
 			from PatientInfo c;
-			Create Index temporaryindexAppt1 on #tempAppt (SSN);
+			Create Index temporaryindexAppt1 on #tempAppt (ID);
 			Create Index temporaryindexAppt2 on #tempAppt (PatientSerNum);
+
+			Select p.PatientSer, p.PatientId into #tempPatient
+			from VARIAN.dbo.Patient p;
+			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
+			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
 			";
 
 			my $apptInfo_sql = $patientInfo_sql .
@@ -489,7 +487,8 @@ sub getApptsFromSourceDB
 						sa.ActivityInstanceSer 		= ai.ActivityInstanceSer
 					AND ai.ActivitySer 			    = act.ActivitySer
 					AND act.ActivityCode 		    = lt.LookupValue
-					AND sa.PatientSer 				= (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+					AND sa.PatientSer 				= (select pt.PatientSer 
+						from #tempPatient pt where pt.PatientId = PatientInfo.ID)
 					AND (
 
 				";
@@ -565,7 +564,7 @@ sub getApptsFromSourceDB
 
 			$sourceDatabase->disconnect();
 		}
-
+	# print "END ARIA APPOINTMENT: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 	}
 
 	######################################
@@ -573,6 +572,7 @@ sub getApptsFromSourceDB
     ######################################
     my $sourceDBSer = 2;
 	{
+		# print "BEGIN ORMS APPOINTMENT: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
         my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
 
         if ($sourceDatabase) {
@@ -614,20 +614,6 @@ sub getApptsFromSourceDB
 			my $numOfPatients = @patientList;
 			my $counter = 0;
 			my $databaseName = $Configs::OPAL_DB_NAME;
-			# foreach my $Patient (@patientList) {
-				# my $patientSer 			= $Patient->getPatientSer();
-				# my $patientSSN          = $Patient->getPatientSSN(); # get ssn
-				# my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
-
-				# $patientInfo_sql .= "
-					# (SELECT '$patientSSN' as SSN, '$patientLastTransfer' as LastTransfer, '$patientSer' as PatientSerNum)
-				# ";
-
-				# $counter++;
-				# if ( $counter < $numOfPatients ) {
-					# $patientInfo_sql .= "UNION";
-				# }
-			# }
 
 			my $apptInfo_sql = "
 				SELECT DISTINCT
@@ -635,18 +621,19 @@ sub getApptsFromSourceDB
 					mval.ScheduledDateTime,
 					mval.Status,
 					RTRIM(mval.AppointmentCode),
-					RTRIM(mval.ResourceDescription),
+					REPLACE(RTRIM(mval.ResourceDescription), '''', ''),
 					pi.PatientSerNum
 				FROM
 					MediVisitAppointmentList mval,
 					Patient pt,
-					(Select SSN, LastTransferred LastTransfer, P.PatientSerNum
+					(Select PatientId, LastTransferred LastTransfer, P.PatientSerNum
 					from 	$databaseName.Patient P, $databaseName.PatientControl PC
 					where P.PatientSerNum = PC.PatientSerNum
 					and PC.TransferFlag = 1) pi
 				WHERE
-					LEFT(LTRIM(pt.SSN), 12)  = pi.SSN
+					pt.PatientId  = pi.PatientId
 					and mval.PatientSerNum      = pt.PatientSerNum
+					and mval.AppointSys <> 'Aria'
 				AND (
 			";
 
@@ -657,7 +644,7 @@ sub getApptsFromSourceDB
 
 				# concatenate query
 				$apptInfo_sql .= "
-					((mval.AppointmentCode, mval.ResourceDescription) IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
+					((mval.AppointmentCode, REPLACE(RTRIM(mval.ResourceDescription), '''', '')) IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
 					AND mval.LastUpdated	> (SELECT IF ('$lastTransferDate' > pi.LastTransfer, pi.LastTransfer, '$lastTransferDate')))
 				";
 				$counter++;
@@ -711,7 +698,7 @@ sub getApptsFromSourceDB
 
 			$sourceDatabase->disconnect();
 		}
-
+	# print "END ORMS APPOINTMENT: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
     }
 
     ######################################
@@ -1098,6 +1085,7 @@ sub getApptInfoFromSourceDB
                 MediVisitAppointmentList mval
             WHERE
                 mval.AppointmentSerNum  = '$apptSourceUID'
+				and mval.AppointSys <> 'Aria'
         ";
 
         my $query = $sourceDatabase->prepare($apptInfo_sql)
@@ -1396,6 +1384,7 @@ sub compareWith
 {
 	my ($SuspectAppt, $OriginalAppt) = @_; # our two appt objects from arguments
 	my $UpdatedAppt = dclone($OriginalAppt);
+	my $change = 0; # boolean to recognize an actual difference between objects
 	
 	# retrieve parameters
 	# Suspect Appointment...
@@ -1425,11 +1414,13 @@ sub compareWith
 	# go through each parameter
 
 	if ($SAliasExpressionSer ne $OAliasExpressionSer) {
+		$change = 1; # change occurred
 		print "Appointment Alias Expression Serial has changed from '$OAliasExpressionSer' to '$SAliasExpressionSer'\n";
 		my $updatedAESer = $UpdatedAppt->setApptAliasExpressionSer($SAliasExpressionSer); # update serial
 		print "Will update database entry to '$updatedAESer'.\n";
 	}
 	if ($SStartDateTime ne $OStartDateTime) {
+		$change = 1; # change occurred
 		print "Appointment Scheduled Start DateTime has change from '$OStartDateTime' to '$SStartDateTime'\n";
 		my $updatedSDT = $UpdatedAppt->setApptStartDateTime($SStartDateTime); # update start datetime
 		print "Will update database entry to '$updatedSDT'.\n";
@@ -1487,21 +1478,25 @@ sub compareWith
 
 	}
 	if ($SEndDateTime ne $OEndDateTime) {
+		$change = 1; # change occurred
 		print "Appointment Scheduled End DateTime has changed from '$OEndDateTime' to '$SEndDateTime'\n";
 		my $updatedEDT = $UpdatedAppt->setApptEndDateTime($SEndDateTime); # update end datetime
 		print "Will update database entry to '$updatedEDT'.\n";
 	}
     if ($SPrioritySer ne $OPrioritySer) {
+		$change = 1; # change occurred
 		print "Appointment Priority has changed from '$OPrioritySer' to '$SPrioritySer'\n";
 		my $updatedPrioritySer = $UpdatedAppt->setApptPrioritySer($SPrioritySer); # update
 		print "Will update database entry to '$updatedPrioritySer'.\n";
 	}
 	if ($SDiagnosisSer ne $ODiagnosisSer) {
+		$change = 1; # change occurred
 		print "Appointment Diagnosis has changed from '$ODiagnosisSer' to '$SDiagnosisSer'\n";
 		my $updatedDiagnosisSer = $UpdatedAppt->setApptDiagnosisSer($SDiagnosisSer); # update
 		print "Will update database entry to '$updatedDiagnosisSer'.\n";
 	}
 	if ($SStatus ne $OStatus) {
+		$change = 1; # change occurred
 		print "Appointment Status has changed from '$OStatus' to '$SStatus'\n";
 		my $updatedStatus = $UpdatedAppt->setApptStatus($SStatus); # update status
 		print "Will update database entry to '$updatedStatus'.\n";
@@ -1538,27 +1533,31 @@ sub compareWith
 		}
 	}
     if ($SState ne $OState) {
+		$change = 1; # change occurred
 		print "Appointment State has changed from '$OState' to '$SState'\n";
 		my $updatedState = $UpdatedAppt->setApptState($SState); # update state
 		print "Will update database entry to '$updatedState'.\n";
 	}
 	if ($SActualStartDate ne $OActualStartDate) {
+		$change = 1; # change occurred
 		print "Appointment Actual Scheduled Start Date has change from '$OActualStartDate' to '$SActualStartDate'\n";
 		my $updatedSDT = $UpdatedAppt->setApptActualStartDate($SActualStartDate); # update start datetime
 		print "Will update database entry to '$updatedSDT'.\n";
 	}
 	if ($SActualEndDate ne $OActualEndDate) {
+		$change = 1; # change occurred
 		print "Appointment Actual Scheduled End Date has changed from '$OActualEndDate' to '$SActualEndDate'\n";
 		my $updatedEDT = $UpdatedAppt->setApptActualEndDate($SActualEndDate); # update end datetime
 		print "Will update database entry to '$updatedEDT'.\n";
 	}
 	 if ($SCronLogSer ne $OCronLogSer) {
+		$change = 1; # change occurred
 		print "Appointment Cron Log Serial has changed from '$OCronLogSer' to '$SCronLogSer'\n";
 		my $updatedCronLogSer = $UpdatedAppt->setApptCronLogSer($SCronLogSer); # update serial
 		print "Will update database entry to '$updatedCronLogSer'.\n";
 	}
 
-	return $UpdatedAppt;
+	return ($UpdatedAppt, $change);
 }
 
 #======================================================================================

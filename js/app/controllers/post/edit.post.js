@@ -7,7 +7,7 @@ filter('deliberatelyTrustAsHtml', function ($sce) {
 		return $sce.trustAsHtml(text);
 	};
 }).
-controller('post.edit', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, $locale, postCollectionService, uiGridConstants, Session) {
+controller('post.edit', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, $locale, postCollectionService, uiGridConstants, Session, ErrorHandler) {
 
 	// Default Booleans
 	$scope.changesMade = false; // changes have been made?
@@ -56,8 +56,8 @@ controller('post.edit', function ($scope, $filter, $sce, $state, $uibModal, $uib
 		});
 		$scope.post = response.data;
 		$scope.postModal = jQuery.extend(true, {}, $scope.post); // deep copy
-	}).catch(function(response) {
-		alert($filter('translate')('POSTS.EDIT.ERROR_DETAILS') + "\r\n\r\n" +  response.status + " " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('POSTS.EDIT.ERROR_DETAILS'));
 	}).finally(function() {
 		processingModal.close(); // hide modal
 		processingModal = null; // remove reference
@@ -101,7 +101,7 @@ controller('post.edit', function ($scope, $filter, $sce, $state, $uibModal, $uib
 					$scope.showBanner();
 				},
 				error: function(err) {
-					alert($filter('translate')('POSTS.EDIT.ERROR_EDIT') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('POSTS.EDIT.ERROR_EDIT'));
 				},
 				complete: function() {
 					$uibModalInstance.close();

@@ -5,7 +5,16 @@ include(FRONTEND_ABS_PATH.'php' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARA
  * HospitalMap class
  *
  */
-class HospitalMap {
+class HospitalMap extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_HOSPITAL_MAP, $guestStatus);
+    }
+
+    public function generateQRCode($qrid, $oldqrid) {
+        $this->checkWriteAccess(array($qrid, $oldqrid));
+        return $this->_generateQRCode($qrid, $oldqrid);
+    }
 
     /**
      *
@@ -15,8 +24,7 @@ class HospitalMap {
      * @param string $oldqrid : the previous string that was QR'ed
      * @return array : qrcode with path
      */
-    public function generateQRCode($qrid, $oldqrid) {
-
+    protected function _generateQRCode($qrid, $oldqrid) {
         if($oldqrid) {
             $oldQRPath = FRONTEND_ABS_PATH.'images' . DIRECTORY_SEPARATOR . 'hospital-maps' . DIRECTORY_SEPARATOR . 'qrCodes' . DIRECTORY_SEPARATOR .$oldqrid.'.png';
             if(file_exists($oldQRPath)) {
@@ -48,6 +56,7 @@ class HospitalMap {
 	 * @return void
      */
     public function insertHospitalMap ($hosMapDetails) {
+        $this->checkWriteAccess($hosMapDetails);
 
         $name_EN            = $hosMapDetails['name_EN'];
         $name_FR            = $hosMapDetails['name_FR'];
@@ -97,138 +106,30 @@ class HospitalMap {
 		    $query = $host_db_link->prepare( $sql );
 			$query->execute();
         } catch( PDOException $e) {
-			return $e->getMessage();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for hospital map. " . $e->getMessage());
 		}
 
     }
 
     /**
-     *
      * Gets a list of existing hospital maps
-     *
-     * @return array $hosMapList : the list of existing hospital maps
      */
     public function getHospitalMaps() {
-        $hosMapList = array();
- 		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    hm.HospitalMapSerNum,
-                    hm.MapURL_EN,
-                    hm.MapURL_FR,
-                    hm.QRMapAlias,
-                    hm.MapName_EN,
-                    hm.MapDescription_EN,
-                    hm.MapName_FR,
-                    hm.MapDescription_FR
-                FROM
-                    HospitalMap hm
-            ";
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $serial             = $data[0];
-                $url_EN             = $data[1];
-                $url_FR             = $data[2];
-                $qrid               = $data[3];
-                $name_EN            = $data[4];
-                $description_EN     = $data[5];
-                $name_FR            = $data[6];
-                $description_FR     = $data[7];
-                $qr = $this->generateQRCode($qrid, null);
-                $qrcode = $qr['qrcode'];
-                $qrpath = $qr['qrpath'];
-
-                $hosMapArray = array(
-                    'name_EN'           => $name_EN,
-                    'name_FR'           => $name_FR,
-                    'description_EN'    => $description_EN,
-                    'description_FR'    => $description_FR,
-                    'url_EN'            => $url_EN,
-                    'url_FR'            => $url_FR,
-                    'qrid'              => $qrid,
-                    'qrcode'            => $qrcode,
-                    'qrpath'            => $qrpath,
-                    'serial'            => $serial
-                );
-
-                array_push($hosMapList, $hosMapArray);
-            }
-
-            return $hosMapList;
-	    } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $hosMapList;
-		}
+        $this->checkReadAccess();
+        return $this->opalDB->getHospitalMaps();
 	}
 
-    /**
-     *
+    /*
      * Gets details on a particular hospital map
-     *
-     * @param integer $serial : the hospital map serial number
-     * @return array $hosMapDetails : the hospital map details
      */
-    public function getHospitalMapDetails ($serial) {
+    public function getHospitalMapDetails($serial) {
+        $this->checkReadAccess($serial);
+        $hosMapDetails = $this->opalDB->getHospitalMapDetails(intval($serial));
+//        $qr = $this->_generateQRCode($hosMapDetails['qrid'], null);
+//        $hosMapDetails['qrcode'] = $qr['qrcode'];
+//        $hosMapDetails['qrpath'] = $qr['qrpath'];
 
-        $hosMapDetails = array();
-
-	    try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    hm.MapURL_EN,
-                    hm.MapURL_FR,
-                    hm.QRMapAlias,
-                    hm.MapName_EN,
-                    hm.MapDescription_EN,
-                    hm.MapName_FR,
-                    hm.MapDescription_FR
-                FROM
-                    HospitalMap hm
-                WHERE
-                    hm.HospitalMapSerNum = $serial
-            ";
-
-		    $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-
-			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
-
-            $url_EN             = $data[0];
-            $url_FR             = $data[1];
-            $qrid               = $data[2];
-            $name_EN            = $data[3];
-            $description_EN     = $data[4];
-            $name_FR            = $data[5];
-            $description_FR     = $data[6];
-            $qr = $this->generateQRCode($qrid, null);
-            $qrcode = $qr['qrcode'];
-            $qrpath = $qr['qrpath'];
-
-            $hosMapDetails = array(
-                    'name_EN'           => $name_EN,
-                    'name_FR'           => $name_FR,
-                    'description_EN'    => $description_EN,
-                    'description_FR'    => $description_FR,
-                    'url_EN'            => $url_EN,
-                    'url_FR'            => $url_FR,
-                    'qrid'              => $qrid,
-                    'qrcode'            => $qrcode,
-                    'qrpath'            => $qrpath,
-                    'serial'            => $serial
-            );
-
-            return $hosMapDetails;
-        } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $hosMapDetails;
-		}
+        return $hosMapDetails;
 	}
 
     /**
@@ -239,6 +140,7 @@ class HospitalMap {
 	 * @return void
      */
     public function updateHospitalMap ($hosMapDetails) {
+        $this->checkWriteAccess($hosMapDetails);
 
         $name_EN            = $hosMapDetails['name_EN'];
         $name_FR            = $hosMapDetails['name_FR'];
@@ -277,7 +179,7 @@ class HospitalMap {
             $query->execute();
 
 	    } catch( PDOException $e) {
-			return $e->getMessage();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for hospital map. " . $e->getMessage());
 		}
 	}
 
@@ -290,6 +192,7 @@ class HospitalMap {
 	 * @return void
      */
     public function deleteHospitalMap ($serial, $user) {
+        $this->checkDeleteAccess(array($serial, $user));
         $userSer = $user['id'];
         $sessionId = $user['sessionid'];
         try {
@@ -319,7 +222,7 @@ class HospitalMap {
             $query->execute();
 
         } catch( PDOException $e) {
-			return $e->getMessage();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for hospital map. " . $e->getMessage());
 		}
 	}
 }

@@ -22,12 +22,12 @@
                     <div class="row clearfix operations">
                         <div class="save-add col-xs-12 col-sm-6 col-md-8 col-lg-9">
                             <!-- Add button -->
-                            <a style="margin-right:20px;" href="" ng-click="goToAddAlias()" class="btn btn-md btn-outline item-button">
+                            <a ng-if="writeAccess" style="margin-right:20px;" href="" ng-click="goToAddAlias()" class="btn btn-md btn-outline item-button">
                                 <span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
                                 <span style="font-size: 20px;"><strong>{{'ALIAS.LIST.ADD'|translate}}</strong></span>
                             </a>
                             <!-- Save changes button -->
-                            <a href="" ng-click="submitUpdate()" class="btn btn-md item-button-success animated" ng-if="changesMade" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false">
+                            <a href="" ng-click="submitUpdate()" class="btn btn-md item-button-success animated" ng-if="changesMade && writeAccess" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false">
                                 <span style="font-size: 17px;" class="glyphicon glyphicon-ok"></span>
                                 <span style="font-size: 20px;"><strong>{{'ALIAS.LIST.SAVE'|translate}}</strong></span>
                             </a>

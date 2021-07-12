@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 	/******************************************************************************
 	 * Add Publication Page controller
 	 *******************************************************************************/
-	controller('publication.add', function ($scope, $filter, $uibModal, $state, $locale, publicationCollectionService, Session, filterCollectionService, FrequencyFilterService ) {
+	controller('publication.add', function ($scope, $filter, $uibModal, $state, $locale, publicationCollectionService, Session, FrequencyFilterService, ErrorHandler ) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -22,6 +22,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			appointment: {available:false,open:false, show:false},
 			doctor: {available:false,open:false, show:false},
 			machine: {available:false,open:false, show:false},
+			study: {available:false,open:false, show:false},
 			diagnosis: {available:false,open:false, show:false}
 		};
 
@@ -70,6 +71,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		$scope.dxSearchField = "";
 		$scope.doctorSearchField = "";
 		$scope.machineSearchField = "";
+		$scope.studySearchField = "";
 		$scope.patientSearchField = "";
 
 		$scope.patientTriggerList = [];
@@ -78,6 +80,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		$scope.dxTriggerList = [];
 		$scope.doctorTriggerList = [];
 		$scope.machineTriggerList = [];
+		$scope.studyTriggerList = [];
 
 		// Date format for start and end frequency dates
 		$scope.format = 'yyyy-MM-dd';
@@ -167,7 +170,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		};
 
 		// Call our API service to get each trigger
-		filterCollectionService.getFilters(Session.retrieveObject('user').id).then(function (response) {
+		publicationCollectionService.getFilters().then(function (response) {
 			response.data = angular.copy(response.data);
 			response.data.appointments.forEach(function(entry) {
 				if($scope.language.toUpperCase() === "FR")
@@ -187,6 +190,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 
 			$scope.doctorTriggerList = response.data.doctors;
 			$scope.machineTriggerList = response.data.machines;
+			$scope.studyTriggerList = response.data.studies;
 			$scope.patientTriggerList = response.data.patients;
 			$scope.appointmentStatusList = response.data.appointmentStatuses;
 			$scope.appointmentStatusList.forEach(function(entry) {
@@ -213,7 +217,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 					entry.name_display = entry.name;
 			});
 		}).catch(function(err) {
-			alert($filter('translate')('PUBLICATION.ADD.ERROR_FILTERS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+			ErrorHandler.onError(err, $filter('translate')('PUBLICATION.ADD.ERROR_FILTERS'));
 			$state.go('publication');
 		});
 
@@ -227,7 +231,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			});
 			$scope.moduleList = response.data; // Assign value
 		}).catch(function(err) {
-			alert($filter('translate')('PUBLICATION.ADD.ERROR_DATABASE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+			ErrorHandler.onError(err, $filter('translate')('PUBLICATION.ADD.ERROR_DATABASE'));
 			$state.go('publication');
 		});
 
@@ -250,6 +254,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			angular.forEach($scope.dxTriggerList, function(item) {item.added = false;});
 			angular.forEach($scope.doctorTriggerList, function(item) {item.added = false;});
 			angular.forEach($scope.machineTriggerList, function(item) {item.added = false;});
+			angular.forEach($scope.studyTriggerList, function(item) {item.added = false;});
 
 			$scope.unique = false;
 			$scope.apptSelected = null;
@@ -339,8 +344,11 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 					open: false,
 					preview: false,
 				},
-
-
+				study: {
+					display: false,
+					open: false,
+					preview: false,
+				},
 			};
 
 			$scope.subModule = null;
@@ -396,6 +404,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 				diagnosis: {all:false, checked:false},
 				doctor: {all:false, checked:false},
 				machine: {all:false, checked:false},
+				study: {all:false, checked:false},
 				patient: {all:false, checked:false}
 			};
 
@@ -439,9 +448,10 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 					$scope.triggerSection.doctor.available = response.data["triggers"].indexOf("7") !== -1 ? true: false;
 					$scope.triggerSection.machine.available = response.data["triggers"].indexOf("8") !== -1 ? true: false;
 					$scope.publishDate.available = response.data["triggers"].indexOf("9") !== -1 ? true: false;
+					$scope.triggerSection.study.available = response.data["triggers"].indexOf("10") !== -1 ? true: false;
 					$scope.publicationList = response.data["publications"]; // Assign value
 				}).catch(function(err) {
-					alert($filter('translate')('PUBLICATION.ADD.ERROR_MODULE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+					ErrorHandler.onError(err, $filter('translate')('PUBLICATION.ADD.ERROR_MODULE'));
 					$state.go('publication');
 				}).finally(function() {
 					processingModal.close(); // hide modal
@@ -542,7 +552,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		$scope.nameUpdate = function () {
 			$scope.validator.name.completed = ($scope.toSubmit.name.name_EN != null && $scope.toSubmit.name.name_FR != null);
 			$scope.leftMenu.name.open = ($scope.toSubmit.name.name_EN != null || $scope.toSubmit.name.name_FR != null);
-			$scope.leftMenu.name.display = ($scope.toSubmit.name.name_EN != null || $scope.toSubmit.name.name_FR != null);
+			$scope.leftMenu.name.display = $scope.leftMenu.name.open;
 		};
 
 		$scope.publishDateUpdate = function () {
@@ -681,14 +691,14 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 						$scope.toSubmit.publishDateTime = tempDate;
 					}
 				}
+				
 				$.ajax({
 					type: "POST",
 					url: "publication/insert/publication",
 					data: $scope.toSubmit,
-					success: function () {
-					},
+					success: function () {},
 					error: function (err) {
-						alert($filter('translate')('PUBLICATION.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+						ErrorHandler.onError(err, $filter('translate')('PUBLICATION.ADD.ERROR_ADD'));
 					},
 					complete: function () {
 						$state.go('publication');
@@ -724,6 +734,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		$scope.$watch('dxTriggerList',			function (nv) {$scope.changeTriggers(nv);}, true);
 		$scope.$watch('doctorTriggerList',		function (nv) {$scope.changeTriggers(nv);}, true);
 		$scope.$watch('machineTriggerList',		function (nv) {$scope.changeTriggers(nv);}, true);
+		$scope.$watch('studyTriggerList',		function (nv) {$scope.changeTriggers(nv);}, true);
 
 		$scope.changeTriggers = function(triggerList) {
 			triggerList = angular.copy(triggerList);
@@ -904,16 +915,16 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 
 		// Watch to restrict the end calendar to not choose an earlier date than the start date
 		$scope.$watch('toSubmit.occurrence.start_date', function(startDate){
-			if (startDate !== undefined) {
+			if (startDate !== undefined && startDate !== "")
 				$scope.dateOptionsEnd.minDate = startDate;
-			}
+			else
+				$scope.dateOptionsEnd.minDate = Date.now();
 		});
 
 		// Watch to restrict the start calendar to not choose a start after the end date
 		$scope.$watch('toSubmit.occurrence.end_date', function(endDate){
-			if (endDate !== undefined) {
+			if (endDate !== undefined && endDate !== "")
 				$scope.dateOptionsStart.maxDate = endDate;
-			}
 			else
 				$scope.dateOptionsStart.maxDate = null;
 		});

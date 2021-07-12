@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.alias.log', ['ngAnimate', 'ngSanitize', 'u
 /******************************************************************************
  * Controller for the alias logs
  *******************************************************************************/
-controller('alias.log', function ($scope, $uibModal, $filter, aliasCollectionService, Session, $uibModalInstance) {
+controller('alias.log', function ($scope, $uibModal, $filter, aliasCollectionService, Session, $uibModalInstance, ErrorHandler) {
 
 	// Call our API to get alias logs
 	aliasCollectionService.getAliasChartLogs($scope.currentAlias.serial, $scope.currentAlias.type).then(function (response) {
@@ -14,8 +14,8 @@ controller('alias.log', function ($scope, $uibModal, $filter, aliasCollectionSer
 				log.x = new Date(log.x);
 			});
 		});
-	}).catch(function(response) {
-		alert($filter('translate')('ALIAS.LOG.ERROR_LOGS') + "\r\n\r\n" + response.status);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('ALIAS.LOG.ERROR_LOGS'));
 		$uibModalInstance.dismiss('cancel');
 	});
 

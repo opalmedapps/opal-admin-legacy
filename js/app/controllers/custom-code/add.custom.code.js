@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.customCode.add', ['ngAnimate', 'ui.bootstr
 	/******************************************************************************
 	 * Add Diagnosis Translation Page controller
 	 *******************************************************************************/
-	controller('customCode.add', function ($scope, $filter, $uibModal, customCodeCollectionService, $state, Session) {
+	controller('customCode.add', function ($scope, $filter, $uibModal, customCodeCollectionService, $state, Session, ErrorHandler) {
 
 		// get current user id
 		var user = Session.retrieveObject('user');
@@ -17,52 +17,6 @@ angular.module('opalAdmin.controllers.customCode.add', ['ngAnimate', 'ui.bootstr
 		$scope.showAssigned = false;
 		$scope.hideAssigned = false;
 		$scope.language = Session.retrieveObject('user').language;
-
-		// Default toolbar for wysiwyg
-		$scope.toolbar = [
-			['h1', 'h2', 'h3', 'p'],
-			['bold', 'italics', 'underline', 'ul', 'ol'],
-			['justifyLeft', 'justifyCenter', 'indent', 'outdent'],
-			['html', 'insertLink']
-		];
-
-		$scope.diagnosesSection = {open:false, show: true};
-		$scope.titleDescriptionSection = {open:false, show:false};
-		$scope.educationalMaterialSection = {open:false, show:false};
-
-		// completed steps booleans - used for progress bar
-		var steps = {
-			diagnoses: { completed: false },
-			title_description: { completed: false }
-		};
-
-		// Default count of completed steps
-		$scope.numOfCompletedSteps = 0;
-
-		// Default total number of steps
-		$scope.stepTotal = 2;
-
-		// Progress for progress bar on default steps and total
-		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-
-		// Function to calculate / return step progress
-		function trackProgress(value, total) {
-			return Math.round(100 * value / total);
-		}
-
-		// Function to return number of steps completed
-		function stepsCompleted(steps) {
-
-			var numberOfTrues = 0;
-			for (var step in steps) {
-				if (steps[step].completed === true) {
-					numberOfTrues++;
-				}
-			}
-
-			return numberOfTrues;
-		}
-
 
 		$scope.toSubmit = {
 			OAUserId: OAUserId,
@@ -143,7 +97,7 @@ angular.module('opalAdmin.controllers.customCode.add', ['ngAnimate', 'ui.bootstr
 			});
 			$scope.moduleList = response.data; // Assign value
 		}).catch(function(err) {
-			alert($filter('translate')('CUSTOM_CODE.ADD.ERROR_MODULE'));
+			ErrorHandler.onError(err, $filter('translate')('CUSTOM_CODE.ADD.ERROR_MODULE'));
 			$state.go('custom-code');
 		});
 
@@ -226,8 +180,7 @@ angular.module('opalAdmin.controllers.customCode.add', ['ngAnimate', 'ui.bootstr
 				data: $scope.toSubmit,
 				success: function () {},
 				error: function (err) {
-					console.log(err);
-					alert($filter('translate')('CUSTOM_CODE.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('CUSTOM_CODE.ADD.ERROR_ADD'));
 				},
 				complete: function () {
 					$state.go('custom-code');

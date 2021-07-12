@@ -2,604 +2,530 @@
 
 /**
  * Diagnosis class
- *
  */
-class Diagnosis {
+class Diagnosis extends Module {
 
-    /**
-     *
-     * Gets details on a particular diagnosis translation
-     *
-     * @param integer $serial : the serial number of the diagnosis translation
-     * @return array $diagnosisTranslationDetails : the diagnosis translation details
-     */
-    public function getDiagnosisTranslationDetails ($serial) {
-        $diagnosisTranslationDetails = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-				SELECT DISTINCT
-					dxt.Name_EN,
-					dxt.Name_FR,
-					dxt.Description_EN,
-					dxt.Description_FR,
-					dxt.EducationalMaterialControlSerNum
-				FROM
-					DiagnosisTranslation dxt
-				WHERE
-					dxt.DiagnosisTranslationSerNum = $serial
-			";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
-
-            $name_EN        = $data[0];
-            $name_FR        = $data[1];
-            $description_EN = $data[2];
-            $description_FR = $data[3];
-            $eduMatSer 		= $data[4];
-            $diagnoses 		= array();
-
-            $eduMat 		= null;
-
-            $sql = "
-				SELECT DISTINCT
-					dxc.SourceUID,
-					dxc.DiagnosisCode,
-					dxc.Description
-				FROM
-					DiagnosisCode dxc
-				WHERE
-					dxc.DiagnosisTranslationSerNum = $serial 
-			";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $diagnosisCodeDetails = array(
-                    'sourceuid'		=> $data[0],
-                    'code'			=> $data[1],
-                    'description'	=> $data[2],
-                    'name' 			=> "$data[1] ($data[2])",
-                    'added' 		=> 1
-                );
-                array_push($diagnoses, $diagnosisCodeDetails);
-            }
-
-            if ($eduMatSer != 0) {
-                $eduMatObj = new EduMaterial();
-                $eduMat = $eduMatObj->getEducationalMaterialDetails($eduMatSer);
-            }
-
-            $diagnosisTranslationDetails = array(
-                'name_EN'           => $name_EN,
-                'name_FR'           => $name_FR,
-                'description_EN'    => $description_EN,
-                'description_FR'    => $description_FR,
-                'serial'            => $serial,
-                'eduMatSer'         => $eduMatSer,
-                'eduMat'			=> $eduMat,
-                'count'             => count($diagnoses),
-                'diagnoses'         => $diagnoses
-            );
-            return $diagnosisTranslationDetails;
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $diagnosisTranslationDetails;
-        }
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_DIAGNOSIS_TRANSLATION, $guestStatus);
     }
 
-    /**
-     *
-     * Gets a list of diagnosis codes from a source database
-     *
-     * @return array $diagnoses : the list of diagnoses
-     */
+    /*
+     * Get the details of a specific diagnosis translation, including diagnosis codes and educational material if
+     * needed.
+     * @params  $diagnosisId : int - ID of the diagnosis translation to get the details
+     * @return  $result : array - all the details of the diagnosis translation
+     * */
+    public function getDiagnosisTranslationDetails($post) {
+        $post = HelpSetup::arraySanitization($post);
+        $this->checkReadAccess($post);
+        $diagnosisId = $post["serial"];
+        $result = $this->opalDB->getDiagnosisDetails($diagnosisId);
+        $result["diagnoses"] = $this->opalDB->getDiagnosisCodes($diagnosisId);
+        $result["deactivated"] = $this->opalDB->getdeactivatedDiagnosesCodes($diagnosisId);
+        $result["count"] = count($result["diagnoses"]);
+
+        if ($result["eduMatSer"] != 0) {
+            $result["eduMat"] = $this->_getEducationalMaterialDetails($result["eduMatSer"]);
+        }
+
+        return $result;
+    }
+
+    /*
+     * Get the list of current diagnosis with the codes already assigned.
+     * @params  void
+     * @return  $resuts : array - list of current diagnostics with already assigned codes
+     * */
     public function getDiagnoses() {
-        try {
-            $diagnoses = array();
-            $databaseObj = new Database();
-            $activeDBSources = $databaseObj->getActiveSourceDatabases();
-            $assignedDiagnoses = $this->getAssignedDiagnoses();
+        $this->checkReadAccess();
 
-            $sql = "SELECT externalId AS sourceuid, code, description, CONCAT(code, ' (', description, ')') AS name FROM masterSourceDiagnostic WHERE deleted = 0 AND source IN(".implode(",", $activeDBSources).") ORDER BY code";
-
-
-            $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD);
-            $host_db_link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-            $results = $query->fetchAll(PDO::FETCH_ASSOC);
-
-            foreach($results as &$item) {
-                $assignedDiagnosis = $this->assignedSearch($item["sourceuid"], $assignedDiagnoses);
-                $item['added'] = 0;
-                if ($assignedDiagnosis)
-                    $item['assigned'] = $assignedDiagnosis;
-            }
-
-            return $results;
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for diagnostics. " . $e->getMessage());
+        $assignedDB = $this->_getActiveSourceDatabase();
+        $ad = $this->opalDB->getAssignedDiagnoses();
+        $assignedDiagnoses = array();
+        foreach($ad as $item) {
+            $assignedDiagnoses[$item["SourceUID"]] = $item;
         }
+        $results = $this->opalDB->getDiagnoses($assignedDB);
+
+        foreach ($results as &$item) {
+            $item["added"] = 0;
+            if ($assignedDiagnoses[$item["ID"]])
+                $item['assigned'] = $assignedDiagnoses[$item["ID"]];
+        }
+
+        return $results;
     }
 
-    /**
-     *
-     * Gets a list of already assigned diagnoses in our database
-     *
-     * @return array $diagnoses : the list of diagnoses
-     */
-    public function getAssignedDiagnoses () {
-        $diagnoses = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-				SELECT DISTINCT 
-					dxc.SourceUID,
-					dxt.Name_EN,
-					dxt.Name_FR
-				FROM 
-					DiagnosisCode dxc,
-					DiagnosisTranslation dxt
-				WHERE
-					dxt.DiagnosisTranslationSerNum = dxc.DiagnosisTranslationSerNum
-			";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
+    /*
+     * Validate and sanitize the new diagnosis translation received from the user. Names and descriptions in french and
+     * english are mandatory, as well a list of at least one diagnosis code. If an educational material is present,
+     * it must must a valid one.
+     * @params  $post : array - details of the diagnosis translation
+     * @return  $validatedDiagnosis : array - validated and sanitized diagnosis translation
+     * */
+    protected function _validateAndSanitizeDiagnosis($post) {
+        $post = HelpSetup::arraySanitization($post);
+        $listDiagnoses = array();
+        $validatedDiagnosis = array();
+        if(!$post["name_EN"] || !$post["name_FR"] || !$post["description_EN"] || !$post["description_FR"])
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing informations.");
 
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+        $validatedDiagnosis["name_EN"] = strip_tags($post["name_EN"]);
+        $validatedDiagnosis["name_FR"] = strip_tags($post["name_FR"]);
+        $validatedDiagnosis["description_EN"] = $post["description_EN"];
+        $validatedDiagnosis["description_FR"] = $post["description_FR"];
+        $validatedDiagnosis["eduMat"] = null;
+        $validatedDiagnosis["diagnoses"] = array();
 
-                $diagnosisDetails = array(
-                    'sourceuid'		=> $data[0],
-                    'name_EN' 		=> "$data[1]",
-                    'name_FR' 		=> "$data[2]"
-                );
-                array_push($diagnoses, $diagnosisDetails);
-            }
+        if($post["serial"] && $post["serial"] != "")
+            $validatedDiagnosis["serial"] = intval($post["serial"]);
 
-            return $diagnoses;
-
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $diagnoses;
+        if($post['eduMat'] && isset($post["eduMat"])) {
+            $post["eduMat"] = intval($post["eduMat"]);
+            $tempEdu = $this->opalDB->validateEduMaterialId($post["eduMat"]);
+            if($tempEdu["total"] != "1")
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid educational material.");
+            $validatedDiagnosis["eduMat"] = $post["eduMat"];
         }
+
+        if(!$post["diagnoses"] || !is_array($post["diagnoses"]) || count($post["diagnoses"]) <= 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Diagnosis codes are missing.");
+
+        foreach ($post["diagnoses"] as $item)
+            array_push($listDiagnoses, intval($item));
+
+        $diagCode = $this->opalDB->getListDiagnosisCodes($listDiagnoses);
+        if(count($diagCode) != count($post["diagnoses"]))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid diagnosis codes list.");
+
+        $validatedDiagnosis["diagnoses"] = $diagCode;
+
+        return $validatedDiagnosis;
     }
 
-    /**
-     *
-     * Inserts a diagnosis translation into the database
-     *
-     * @param array $diagnosisTranslationDetails : the diagnosis translation details
-     * @return void
-     */
-    public function insertDiagnosisTranslation ($diagnosisTranslationDetails) {
+    /*
+     * Insert a new diagnosis translation after its sanitization and validation. It inserts (or replace) diagnosis
+     * codes.
+     * @params  $post : array - details of the diagnosis translation submitted by the user
+     * @return  int - last Id inserted
+     * */
+    public function insertDiagnosisTranslation($post) {
+        $this->checkWriteAccess($post);
+        $validatedPost = $this->_validateAndSanitizeDiagnosis($post);
 
-        $name_EN 			= $diagnosisTranslationDetails['name_EN'];
-        $name_FR 			= $diagnosisTranslationDetails['name_FR'];
-        $description_EN		= $diagnosisTranslationDetails['description_EN'];
-        $description_FR		= $diagnosisTranslationDetails['description_FR'];
-        $diagnoses 			= $diagnosisTranslationDetails['diagnoses'];
-        $userSer 			= $diagnosisTranslationDetails['user']['id'];
-        $sessionId			= $diagnosisTranslationDetails['user']['sessionid'];
-        $eduMatSer 			= 'NULL';
-        if ( is_array($diagnosisTranslationDetails['edumat']) && isset($diagnosisTranslationDetails['edumat']['serial']) ) {
-            $eduMatSer = $diagnosisTranslationDetails['edumat']['serial'];
-        }
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-				INSERT INTO 
-					DiagnosisTranslation (
-						Name_EN,
-						Name_FR,
-						Description_EN,
-						Description_FR,
-						EducationalMaterialControlSerNum,
-						DateAdded,
-						LastUpdatedBy,
-						SessionId
-					)
-				VALUES (
-					\"$name_EN\",
-					\"$name_FR\",
-					\"$description_EN\",
-					\"$description_FR\",
-					$eduMatSer,
-					NOW(),
-					'$userSer',
-					'$sessionId'
-				)
-			";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-            $diagnosisTranslationSer = $host_db_link->lastInsertId();
-
-            foreach ($diagnoses as $diagnosis) {
-
-                $sourceuid 	= $diagnosis['sourceuid'];
-                $code 		= $diagnosis['code'];
-                $description= $diagnosis['description'];
-
-                $sql = "
-					INSERT INTO 
-						DiagnosisCode (
-							DiagnosisTranslationSerNum,
-							SourceUID,
-							DiagnosisCode,
-							Description,
-							DateAdded,
-							LastUpdatedBy,
-							SessionId
-						)
-					VALUES (
-						'$diagnosisTranslationSer',
-						'$sourceuid',
-						\"$code\",
-						\"$description\",
-						NOW(),
-						'$userSer',
-						'$sessionId'
-					)
-					ON DUPLICATE KEY UPDATE
-						DiagnosisTranslationSerNum = '$diagnosisTranslationSer',
-						LastUpdatedBy = '$userSer',
-						SessionId = '$sessionId'
-				";
-                $query = $host_db_link->prepare( $sql );
-                $query->execute();
-            }
-
-        } catch( PDOException $e) {
-            return $e->getMessage();
-        }
-
-    }
-
-    /**
-     *
-     * Gets a list of existing diagnosis translations in the database
-     *
-     * @return array $diagnosisTranslationList : the list of existing diagnosis translations
-     */
-    public function getExistingDiagnosisTranslations () {
-
-        $diagnosisTranslationList = array();
-
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-				SELECT DISTINCT
-					dxt.DiagnosisTranslationSerNum,
-					dxt.Name_EN,
-					dxt.Name_FR,
-					dxt.Description_EN,
-					dxt.Description_FR,
-					dxt.EducationalMaterialControlSerNum
-				FROM
-					DiagnosisTranslation dxt
-				WHERE
-					dxt.Name_EN != ''
-			";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $diagnosisTranslationSer 			= $data[0];
-                $name_EN 							= $data[1];
-                $name_FR 							= $data[2];
-                $description_EN 					= $data[3];
-                $description_FR						= $data[4];
-                $eduMatSer 						 	= $data[5];
-                $eduMat 							= "";
-                $diagnoses 							= array();
-
-                $sql = "
-					SELECT DISTINCT
-						dxc.SourceUID,
-						dxc.DiagnosisCode,
-						dxc.Description
-					FROM
-						DiagnosisCode dxc
-					WHERE
-						dxc.DiagnosisTranslationSerNum = $diagnosisTranslationSer
-				";
-
-                $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $secondQuery->execute();
-
-                while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $diagnosisDetail = array(
-                        'sourceuid'		=> $secondData[0],
-                        'code' 			=> $secondData[1],
-                        'description'	=> $secondData[2],
-                        'name' 			=> "$secondData[1] ($secondData[2])",
-                        'added' 		=> 1
-                    );
-
-                    array_push($diagnoses, $diagnosisDetail);
-                }
-
-                if ($eduMatSer != 0) {
-                    $eduMatObj = new EduMaterial();
-                    $eduMat = $eduMatObj->getEducationalMaterialDetails($eduMatSer);
-                }
-
-                $diagnosisTranslationDetails = array(
-                    'name_EN'           => $name_EN,
-                    'name_FR'           => $name_FR,
-                    'serial' 			=> $diagnosisTranslationSer,
-                    'description_EN'    => $description_EN,
-                    'description_FR'    => $description_FR,
-                    'eduMatSer'         => $eduMatSer,
-                    'eduMat'			=> $eduMat,
-                    'diagnoses'         => $diagnoses,
-                    'count'             => count($diagnoses)
-                );
-
-                array_push($diagnosisTranslationList, $diagnosisTranslationDetails);
-            }
-            return $diagnosisTranslationList;
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $diagnosisTranslationList;
-        }
-    }
-
-    /**
-     *
-     * Updates diagnosis translation details in the database
-     *
-     * @param array $diagnosisTranslationDetails : the diagnosis translation details
-     * @return array : response
-     */
-
-    public function updateDiagnosisTranslation ($diagnosisTranslationDetails) {
-
-        $serial 			= $diagnosisTranslationDetails['serial'];
-        $name_EN 			= $diagnosisTranslationDetails['name_EN'];
-        $name_FR 			= $diagnosisTranslationDetails['name_FR'];
-        $description_EN		= $diagnosisTranslationDetails['description_EN'];
-        $description_FR		= $diagnosisTranslationDetails['description_FR'];
-        $diagnoses 			= $diagnosisTranslationDetails['diagnoses'];
-        $eduMatSer 			= $diagnosisTranslationDetails['edumatser'] ? $diagnosisTranslationDetails['edumatser'] : 'NULL';
-        $userSer			= $diagnosisTranslationDetails['user']['id'];
-        $sessionId 			= $diagnosisTranslationDetails['user']['sessionid'];
-
-        $existingDiagnoses = array();
-
-        $detailsUpdated 	= $diagnosisTranslationDetails['details_updated'];
-        $codesUpdated 		= $diagnosisTranslationDetails['codes_updated'];
-
-        $response = array(
-            'value'     => 0,
-            'message'   => ''
+        $toInsert = array(
+            "Name_EN"=>$validatedPost["name_EN"],
+            "Name_FR"=>$validatedPost["name_FR"],
+            "Description_EN"=>$validatedPost["description_EN"],
+            "Description_FR"=>$validatedPost["description_FR"],
+            "EducationalMaterialControlSerNum"=>$validatedPost['eduMat'],
         );
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-            if ($detailsUpdated) {
-                $sql = "
-					UPDATE
-						DiagnosisTranslation
-					SET
-						DiagnosisTranslation.Name_EN 		= \"$name_EN\",
-						DiagnosisTranslation.Name_FR 	 	= \"$name_FR\",
-						DiagnosisTranslation.Description_EN = \"$description_EN\",
-						DiagnosisTranslation.Description_FR = \"$description_FR\",
-						DiagnosisTranslation.EducationalMaterialControlSerNum = $eduMatSer,
-						DiagnosisTranslation.LastUpdatedBy 	= '$userSer',
-						DiagnosisTranslation.SessionId 		= '$sessionId'
-					WHERE
-						DiagnosisTranslation.DiagnosisTranslationSerNum = $serial 
-				";
+        $diagnosisId = $this->opalDB->insertDiagnosisTranslation($toInsert);
 
-                $query = $host_db_link->prepare( $sql );
-                $query->execute();
-            }
-
-            if ($codesUpdated) {
-
-                $sql = "
-					SELECT DISTINCT
-						dxc.SourceUID
-					FROM
-						DiagnosisCode dxc
-					WHERE 
-						dxc.DiagnosisTranslationSerNum = $serial 
-				";
-                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
-
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                    array_push($existingDiagnoses, $data[0]);
-                }
-
-                // If old diagnosis codes not in new diagnosis codes, delete from database
-                foreach ($existingDiagnoses as $existingDiagnosis) {
-                    if (!$this->nestedSearch($existingDiagnosis, $diagnoses)) {
-                        $sql = "
-	                        DELETE FROM
-	                            DiagnosisCode
-	                        WHERE
-	                            DiagnosisCode.SourceUID = \"$existingDiagnosis\"
-	                        AND DiagnosisCode.DiagnosisTranslationSerNum = $serial
-	                    ";
-
-                        $query = $host_db_link->prepare( $sql );
-                        $query->execute();
-
-                        $sql = "
-                            UPDATE DiagnosisCodeMH
-                            SET 
-                                DiagnosisCodeMH.LastUpdatedBy = '$userSer',
-                                DiagnosisCodeMH.SessionId = '$sessionId'
-                            WHERE
-                                DiagnosisCodeMH.SourceUID = \"$existingDiagnosis\"
-                            ORDER BY DiagnosisCodeMH.RevSerNum DESC 
-                            LIMIT 1
-                        ";
-                        $query = $host_db_link->prepare( $sql );
-                        $query->execute();
-                    }
-                }
-
-                // If new diagnosis codes, insert into database
-                foreach ($diagnoses as $diagnosis) {
-                    $sourceuid 		= $diagnosis['sourceuid'];
-                    $code 			= $diagnosis['code'];
-                    $description 	= $diagnosis['description'];
-                    if(!in_array($sourceuid, $existingDiagnoses)) {
-                        $sql = "
-	                        INSERT INTO
-	                            DiagnosisCode (
-	                                DiagnosisTranslationSerNum,
-	                                SourceUID,
-	                                DiagnosisCode,
-	                                Description,
-	                                DateAdded,
-	                                LastUpdatedBy,
-	                                SessionId
-	                            )
-	                        VALUES (
-	                            '$serial',
-	                            '$sourceuid',
-	                            \"$code\",
-	                            \"$description\",
-	                            NOW(),
-	                            '$userSer',
-	                            '$sessionId'
-	                        )
-	                        ON DUPLICATE KEY UPDATE
-	                            DiagnosisTranslationSerNum = '$serial',
-	                            LastUpdatedBy = '$userSer',
-	                            SessionId = '$sessionId'
-	                    ";
-
-                        $query = $host_db_link->prepare( $sql );
-                        $query->execute();
-                    }
-                }
-            }
-            $response['value'] = 1; // Success
-            return $response;
-
-        } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response; // Fail
-        }
+        return $this->_insertDiagnosisCodes($validatedPost["diagnoses"], $diagnosisId);
     }
 
-    /**
-     *
-     * Removes a diagnosis translation from the database
-     *
-     * @param integer $diagnosisTranslationSer : the serial number of the diagnosis translation
-     * @param object $user : the session user
-     * @return array $response : response
-     */
-    public function deleteDiagnosisTranslation ($diagnosisTranslationSer, $user) {
+    /*
+     * insert/updates the list of diagnosis codes.
+     * @params  $codes : array - list of codes passed as reference
+     *          $diagnosisId : int - diagnosis translation ID to associate the codes
+     * @return  last id inserted.
+     * */
+    protected function _insertDiagnosisCodes(&$codes, &$diagnosisId) {
+        $toInsert = array();
+        foreach($codes as $item) {
+            array_push($toInsert, array(
+                "DiagnosisTranslationSerNum"=>$diagnosisId,
+                "SourceUID"=>$item['ID'],
+                "DiagnosisCode"=>$item['code'],
+                "Description"=>$item['description'],
+                "Source"=>$item['source'],
+            ));
+        }
 
-        $response = array(
-            'value'     => 0,
-            'message'   => ''
+        return $this->opalDB->insertMultipleDiagnosisCodes($toInsert);
+    }
+
+    /*
+     * get the list of all the diagnosis translations.
+     * @params  void
+     * @return  array - list of diagnosis translations.
+     * */
+    public function getDiagnosisTranslations() {
+        $this->checkReadAccess();
+        return $this->opalDB->getDiagnosisTranslations();
+    }
+
+    /*
+     * Update the diagnosis translation. It validate and sanitize first the data. Then it updates the diagnosis
+     * translation only if it was updated. Then it updates the list of diagnosis codes by first deleting the unused
+     * codes, and the by inserting/replacing the remaining.
+     * @params  $post : array - details of the diagnosis translation to update
+     * @return
+     * */
+    public function updateDiagnosisTranslation($post) {
+        $this->checkWriteAccess($post);
+        $validatedPost = $this->_validateAndSanitizeDiagnosis($post);
+
+        if(!$validatedPost["serial"] || $validatedPost["serial"] <= 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Diagnosis translation ID is missing.");
+
+        $toUpdate = array(
+            "DiagnosisTranslationSerNum"=>$validatedPost["serial"],
+            "Name_EN"=>$validatedPost["name_EN"],
+            "Name_FR"=>$validatedPost["name_FR"],
+            "Description_EN"=>$validatedPost["description_EN"],
+            "Description_FR"=>$validatedPost["description_FR"],
+            "EducationalMaterialControlSerNum"=>$validatedPost["eduMat"],
         );
-        $userSer    = $user['id'];
-        $sessionId  = $user['sessionid'];
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                DELETE FROM
-                    DiagnosisCode
-                WHERE
-                    DiagnosisCode.DiagnosisTranslationSerNum = $diagnosisTranslationSer
-            ";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
 
-            $sql = "
-                DELETE FROM
-                    DiagnosisTranslation
-                WHERE
-                    DiagnosisTranslation.DiagnosisTranslationSerNum = $diagnosisTranslationSer
-            ";
+        $this->opalDB->updateDiagnosisTranslation($toUpdate);
 
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
+        $existingSourceUIDs = array();
+        foreach ($validatedPost["diagnoses"] as $diagnosis)
+            array_push($existingSourceUIDs, $diagnosis["ID"]);
 
-            $sql = "
-                UPDATE DiagnosisTranslationMH
-                SET 
-                    DiagnosisTranslationMH.LastUpdatedBy = '$userSer',
-                    DiagnosisTranslationMH.SessionId = '$sessionId'
-                WHERE
-                    DiagnosisTranslationMH.DiagnosisTranslationSerNum = $diagnosisTranslationSer
-                ORDER BY DiagnosisTranslationMH.RevSerNum DESC 
-                LIMIT 1
-            ";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-            $response['value'] = 1;
-            return $response;
-
-        } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response;
-        }
+        $this->opalDB->deleteDiagnosisCodes($validatedPost["serial"], $existingSourceUIDs);
+        return $this->_insertDiagnosisCodes($validatedPost["diagnoses"], $validatedPost["serial"]);
     }
 
     /**
-     *
-     * Does a nested search for match
-     *
-     * @param string $id    : the needle id
-     * @param array $array  : the key-value haystack
-     * @return boolean
+     * Delete a specific diagnosis translation and the diagnosis codes associated to.
+     * @param $post : array - contains the ID of the diagnosis translation to delete.
      */
-    public function nestedSearch($id, $array) {
-        if(empty($array) || !$id){
-            return 0;
-        }
-        foreach ($array as $key => $val) {
-            if ($val['sourceuid'] === $id) {
-                return 1;
-            }
-        }
-        return 0;
+    public function deleteDiagnosisTranslation($post) {
+        $this->checkDeleteAccess($post);
+        $total = $this->opalDB->deleteAllDiagnosisCodes($post['serial']);
+        $total += $this->opalDB->deleteDiagnosisTranslation($post['serial']);
+        return $total;
     }
 
-    /**
-     *
-     * Checks if a diagnosis has been assigned to a translation
-     *
-     * @param string $id    : the needle id
-     * @param array $array  : the key-value haystack
-     * @return $assignedDiagnosis
-     */
-    public function assignedSearch($id, $array) {
-        $assignedDiagnosis = null;
-        if(empty($array) || !$id){
-            return $assignedDiagnosis;
-        }
-        foreach ($array as $key => $val) {
-            if ($val['sourceuid'] === $id) {
-                $assignedDiagnosis = $val;
-                return $assignedDiagnosis;
-            }
-        }
-        return $assignedDiagnosis;
+    /*
+     * Get the list of educational materials available
+     * @params  void
+     * @return  array - List of educational materials
+     * */
+    public function getEducationalMaterials() {
+        $this->checkReadAccess();
+        return $this->_getListEduMaterial();
     }
 
+    /*
+     * Get the list of diagnosis for a specific patient after validating the data. MRN and site name are mandatory. If
+     * there is no source, ignore it. If there is a source, add it in the SQL as = if include value is 1 or absent, and
+     * != if value is anthing else than 1. Start and end date use the proper value or current date if no value.
+     *
+     * @params  $post : array - contains the MRN of the patient, the site, source, include, start date and end date.
+     * @return  array - contains all the diagnoses of a specific patient.
+     * */
+    public function getPatientDiagnoses($post) {
+        $this->checkReadAccess();
+        $include = $startDate = $endDate = "";
+        $errCode = $this->_validatePatientInfo($post, $include, $startDate, $endDate);
+        if($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>$errCode)));
+
+        return $this->opalDB->getPatientDiagnoses($post["mrn"], $post["site"], $post["source"], $include, $startDate, $endDate);
+    }
+
+    /*
+     * Validate patient info before getting his/her diagnosis.
+     * @params  $post : array - Contains the following information
+     *                          mrn : Medical Record Number of the patient (mandatory)
+     *                          site : Site acronym of the establishment (mandatory)
+     *                          source : Source database of the diagnosis (optional)
+     *                          include : if 0 exclude (!=). If 1, include(=) (optional, default 1)
+     *                          startDate : starting date (optional, default today date)
+     *                          endDate : ending date (optional, default today date)
+     * @return  $errCode : int - error code coded on bitwise operation. If 0, no error.
+     *          $include : string (reference) - include sign (= or !=)
+     *          $startDate : string (reference) - validated starting date
+     *          $endDate : string (reference) - validated ending date
+     * */
+    protected function _validatePatientInfo(&$post, &$include, &$startDate, &$endDate) {
+        $errCode = "";
+        $post = HelpSetup::arraySanitization($post);
+
+        if(!array_key_exists("mrn", $post) || $post["mrn"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+        if(!array_key_exists("site", $post) || $post["site"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+        if(!array_key_exists("source", $post) || $post["source"] == "")
+            $include = null;
+        else
+            $include = ((!array_key_exists("include", $post) || intval($post["include"]) == 1) ? "=" : "!=");
+
+        if(array_key_exists("startDate", $post) && $post["startDate"] != "") {
+            if(!HelpSetup::verifyDate($post["startDate"], false, 'Y-m-d'))
+                $errCode = "1" . $errCode;
+            else {
+                $startDate = date("Y-m-d", strtotime($post["startDate"]));
+                $errCode = "0" . $errCode;
+            }
+        } else {
+            $errCode = "0" . $errCode;
+            $startDate = SQL_CURRENT_DATE;
+        }
+
+        if(array_key_exists("endDate", $post) && $post["endDate"] != "") {
+            if(!HelpSetup::verifyDate($post["endDate"], false, 'Y-m-d'))
+                $errCode = "1" . $errCode;
+            else {
+                $endDate = date("Y-m-d", strtotime($post["endDate"]));
+                $errCode = "0" . $errCode;
+            }
+        } else {
+            $errCode = "0" . $errCode;
+            $endDate = SQL_CURRENT_DATE;
+        }
+        return bindec($errCode);
+    }
+
+    /*
+     * Insert a patient diagnosis.
+     * @params  $post : array - details of the patient diagnosis to insert.
+     * @return  int : last entered diagnosis ID.
+     * */
+    public function insertPatientDiagnosis($post) {
+        return $this->_replacePatientDiagnosis($post);
+    }
+
+    /*
+     * Insert a patient diagnosis.
+     * @params  $post : array - details of the patient diagnosis to update.
+     * @return  int : number of array modified.
+     * */
+    public function updatePatientDiagnosis($post) {
+        return $this->_replacePatientDiagnosis($post);
+    }
+
+    /*
+     * This function insert or update a patient diagnosis after its validation.
+     * @params  $post : array - details of the patient diagnosis to insert/update.
+     * @return  int : number of array modified or ID of last entered diagnosis.
+     * */
+    protected function _replacePatientDiagnosis($post) {
+        $this->checkWriteAccess($post);
+        $patientSite = null;
+        $source = null;
+
+        $errCode = $this->_validatePatientDiagnosis($post, $patientSite, $source);
+        if($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>$errCode)));
+
+        $toInsert = array(
+            "PatientSerNum"=>$patientSite["PatientSerNum"],
+            "SourceDatabaseSerNum"=>$source["SourceDatabaseSerNum"],
+            "DiagnosisAriaSer"=>$post["rowId"],
+            "DiagnosisCode"=>$post["code"],
+            "Description_EN"=>$post["descriptionEn"],
+            "Description_FR"=>$post["descriptionFr"],
+            "Stage"=>$post["stage"],
+            "StageCriteria"=>$post["stageCriteria"],
+        );
+
+        $toInsert["CreationDate"] = $post["creationDate"];
+
+        $currentPatientDiagnosis = $this->opalDB->getPatientDiagnosisId($patientSite["PatientSerNum"], $source["SourceDatabaseSerNum"], $post["rowId"]);
+        if(count($currentPatientDiagnosis) <= 1) {
+            if(count($currentPatientDiagnosis) == 1) {
+                $currentPatientDiagnosis = $currentPatientDiagnosis[0];
+                $toInsert["DiagnosisSerNum"] = $currentPatientDiagnosis["DiagnosisSerNum"];
+            }
+            return $this->opalDB->replacePatientDiagnosis($toInsert);
+        }
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates patient diagnosis found.");
+        return false;
+    }
+
+    /*
+     * Delete a specific patient diagnosis.
+     * @params  $post : array - contains the following info:
+     *                          mrn : Medical Record Number of the patient (mandatory)
+     *                          site : Site acronym of the establishment (mandatory)
+     *                          source : Source database of the diagnosis (mandatory)
+     *                          rowId : External ID of the diagnosis (mandatory)
+     * @return  int - number of records deleted
+     * */
+    public function deletePatientDiagnosis($post) {
+        $patientSite = null;
+        $source = null;
+        $this->checkDeleteAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validateBasicPatientInfo($post, $patientSite, $source);
+        if($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>$errCode)));
+
+        $currentPatientDiagnosis = $this->opalDB->getPatientDiagnosisId($patientSite["PatientSerNum"], $source["SourceDatabaseSerNum"], $post["rowId"]);
+        if(count($currentPatientDiagnosis) > 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates patient diagnosis found.");
+        else if(count($currentPatientDiagnosis) < 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>32)));
+        $currentPatientDiagnosis = $currentPatientDiagnosis[0];
+        $this->opalDB->deletePatientDiagnosis($currentPatientDiagnosis["DiagnosisSerNum"]);
+    }
+
+    /*
+     * Validate basic information of a specific patient and source.
+     * @params  $post : array - Contains the following information
+     *                          mrn : Medical Record Number of the patient (mandatory)
+     *                          site : Site acronym of the establishment (mandatory)
+     *                          source : Source database of the diagnosis (mandatory)
+     *                          rowId : External ID of the diagnosis (mandatory)
+     * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
+     *                      Error validation code is coded as an int of 11 bits (value from 0 to 2047). Bit informations
+     *                      are coded from right to left:
+     *                      1: MRN invalid or missing
+     *                      2: site invalid or missing
+     *                      3: combo of MRN-site-patient does not exists
+     *                      4: source invalid or missing
+     *                      5: rowId invalid or missing
+     * @return  $errCode : int - error code.
+     *          $patientSite : array (reference) - site info
+     *          $source : array (reference) - source database
+     * */
+    protected function _validateBasicPatientInfo(&$post, &$patientSite, &$source) {
+        $errCode = "";
+
+        // 1st bit - MRN
+        if(!array_key_exists("mrn", $post) || $post["mrn"] == "") {
+            $errCode = "1" . $errCode;
+        } else {
+            $errCode = "0" . $errCode;
+        }
+
+        // 2nd bit - Site
+        if(!array_key_exists("site", $post) || $post["site"] == "") {
+            $errCode = "1" . $errCode;
+        } else {
+            $errCode = "0" . $errCode;
+        }
+
+        // 3rd bit - MRN and site combo must exists
+        if(bindec($errCode) != 0) {
+            $patientSite = array();
+            $errCode = "1" . $errCode;
+        } else {
+            $patientSite = $this->opalDB->getPatientSite($post["mrn"], $post["site"]);
+            if(count($patientSite) != 1) {
+                $patientSite = array();
+                $errCode = "1" . $errCode;
+            }
+            else {
+                $patientSite = $patientSite[0];
+                $errCode = "0" . $errCode;
+            }
+        }
+
+        // 4th bit - source
+        if(!array_key_exists("source", $post) || $post["source"] == "") {
+            $errCode = "1" . $errCode;
+        } else {
+            $source = $this->opalDB->getSourceDatabaseDetails($post["source"]);
+            if(count($source) != 1) {
+                $source = array();
+                $errCode = "1" . $errCode;
+            }  else {
+                $source = $source[0];
+                $errCode = "0" . $errCode;
+            }
+        }
+
+        // 5th bit - external ID
+        if(!array_key_exists("rowId", $post) || $post["rowId"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+        return $errCode;
+    }
+
+    /*
+     * Validate a patient diagnosis on each field.
+     * @params  $post : array - Contains the following information
+     *                          mrn : Medical Record Number of the patient (mandatory)
+     *                          site : Site acronym of the establishment (mandatory)
+     *                          source : Source database of the diagnosis (mandatory)
+     *                          externalId : External ID of the diagnosis code (mandatory)
+     *                          rowId : External ID of the diagnosis code (mandatory)
+     *                          code : Diagnosis code (mandatory)
+     *                          creationDate : creation date of the record (mandatory)
+     *                          descriptionEn : english description of the diagnosis (mandatory)
+     *                          descriptionFr : french description of the diagnosis (optional)
+     *                          stage : no idea, but its for Aria (optional)
+     *                          stageCriteria : no idea, but its for Aria (optional)
+     * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
+     *                      Error validation code is coded as an int of 11 bits (value from 0 to 2047). Bit informations
+     *                      are coded from right to left:
+     *                      1: MRN invalid or missing
+     *                      2: site invalid or missing
+     *                      3: combo of MRN-site does not exists
+     *                      4: source invalid or missing
+     *                      5: rowId invalid or missing
+     *                      6: externalId of the diagnosis code invalid or missing
+     *                      7: diagnosis code invalid or missing
+     *                      8: source diagnosis cannot be found
+     *                      9: creationDate invalid or missing
+     *                      10: descriptionEn invalid or missing
+     *                      11: descriptionFr invalid
+     * @return  $errCode : int - error code.
+     *          $patientSite : array (reference) - site info
+     *          $source : array (reference) - source database
+     * */
+    protected function _validatePatientDiagnosis(&$post, &$patientSite, &$source) {
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validateBasicPatientInfo($post, $patientSite, $source);
+
+        // 6th bit - externalId of the diagnosis code
+        if(!array_key_exists("externalId", $post) || $post["externalId"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        // 7th bit - diagnosis code
+        if(!array_key_exists("code", $post) || $post["code"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        // 8th bit - the combo code/source/ExternalId exists as a master source diagnosis
+        if (bindec($errCode) != 0)
+            $errCode = "1" . $errCode;
+        else {
+            $code = $this->opalDB->getDiagnosisCodeDetails($post["code"], $source["SourceDatabaseName"], $post["externalId"]);
+            if(count($code) != 1)
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+        }
+
+        // 9th bit - creation date
+        if(!array_key_exists("creationDate", $post) || $post["creationDate"] == "" || !HelpSetup::verifyDate($post["creationDate"], false, "Y-m-d H:i:s"))
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        // 10th bit - description EN
+        if(!array_key_exists("descriptionEn", $post) || $post["descriptionEn"] == "") {
+            $errCode = "1" . $errCode;
+        } else
+            $errCode = "0" . $errCode;
+
+        // 11th bit - description FR
+        if(!array_key_exists("descriptionFr", $post)) {
+            $errCode = "1" . $errCode;
+        } else
+            $errCode = "0" . $errCode;
+
+        if(!array_key_exists("stage", $post))
+            $post["stage"] = "";
+        if(!array_key_exists("stageCriteria", $post))
+            $post["stageCriteria"] = "";
+        return bindec($errCode);
+    }
 }

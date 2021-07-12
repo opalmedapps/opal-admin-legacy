@@ -1,10 +1,7 @@
 <?php
-include_once('questionnaire.inc');
+include_once("../config.php");
 
-// Retrieve form param
-$OAUserId = strip_tags($_POST["OAUserId"]);
-
-$question = new Question($OAUserId);
+$question = new Question();
 $questionList = $question->getQuestions();
 
 header('Content-Type: application/javascript');

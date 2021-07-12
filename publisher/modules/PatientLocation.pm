@@ -227,8 +227,8 @@ sub getPatientLocationHstryDateTime
 #====================================================================================
 sub getPatientLocationsFromSourceDB
 {
-	my (@patientList) = @_; # a list of patients
-
+	my @patientList = @_[0];
+    my $global_patientInfo_sql = @_[1];
 	my @patientLocationList = (); # initialize a list for PL objects
 
 	if (scalar @patientList == 0) {
@@ -286,30 +286,25 @@ sub getPatientLocationsFromSourceDB
 				use VARIAN;
 
                 IF OBJECT_ID('tempdb.dbo.#tempPL', 'U') IS NOT NULL
-                  DROP TABLE #tempPL;
+                	DROP TABLE #tempPL;
 
-				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
+				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
+					DROP TABLE #tempPatient;
+
+				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
-			my $numOfPatients = @patientList;
-			my $counter = 0;
-			foreach my $Patient (@patientList) {
-				my $patientSer 			= $Patient->getPatientSer();
-				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
-				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
-
-				$patientInfo_sql .= "
-					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
-				";
-
-				$counter++;
-				if ( $counter < $numOfPatients ) {
-					$patientInfo_sql .= "UNION";
-				}
-			}
+			$patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
+			
 			$patientInfo_sql .= ")
 			Select c.* into #tempPL
 			from PatientInfo c;
-			Create Index temporaryindex on #tempPL (SSN);
+			Create Index temporaryindex on #tempPL (ID);
+			Create Index temporaryindex2 on #tempPL (PatientSerNum);
+			
+			Select p.PatientSer, p.PatientId into #tempPatient
+			from VARIAN.dbo.Patient p;
+			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
+			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
 			";
 
 			my $plInfo_sql = $patientInfo_sql .
@@ -324,7 +319,6 @@ sub getPatientLocationsFromSourceDB
 						PatientInfo.PatientSerNum,
 						lt.Expression1
 					FROM
-						Patient pt with(nolock),
 						ScheduledActivity sa with(nolock),
 						PatientLocation pl with(nolock),
 						ActivityInstance ai with(nolock),
@@ -333,8 +327,8 @@ sub getPatientLocationsFromSourceDB
 						#tempPL as PatientInfo
 					WHERE
 						sa.ActivityInstanceSer 			= ai.ActivityInstanceSer
-					AND	sa.PatientSer 					= pt.PatientSer
-					AND	LEFT(LTRIM(pt.SSN), 12)			= PatientInfo.SSN
+					AND	sa.PatientSer 					= (select pt.PatientSer 
+						from #tempPatient pt where pt.PatientId = PatientInfo.ID)
 					AND	ai.ActivitySer					= act.ActivitySer
 					AND	act.ActivityCode 				= lt.LookupValue
 					AND	sa.ScheduledActivitySer 		= pl.ScheduledActivitySer
@@ -484,15 +478,16 @@ sub getPatientLocationsFromSourceDB
 					PatientLocation pl,
 					Venue,
 					Patient pt,
-					(Select SSN, LastTransferred LastTransfer, P.PatientSerNum
+					(Select PatientId, LastTransferred LastTransfer, P.PatientSerNum
 					from 	$databaseName.Patient P, $databaseName.PatientControl PC
 					where P.PatientSerNum = PC.PatientSerNum
 					and PC.TransferFlag = 1) pi
 				WHERE
-					LEFT(LTRIM(pt.SSN), 12)  = pi.SSN
-					AND mval.PatientSerNum 			= pt.PatientSerNum
-					AND mval.AppointmentSerNum		= pl.AppointmentSerNum
-					AND Venue.VenueId 				= pl.CheckinVenueName
+					pt.PatientId 				= pi.PatientId
+					AND mval.PatientSerNum 		= pt.PatientSerNum
+					AND mval.AppointmentSerNum	= pl.AppointmentSerNum
+					AND Venue.VenueId 			= pl.CheckinVenueName
+					and mval.AppointSys <> 'Aria'
 					AND (
 			";
 
@@ -631,7 +626,7 @@ sub getPatientLocationsMHFromSourceDB
 	foreach my $Patient (@$patientList) {
 
 		my $patientSer 				= $Patient->getPatientSer();
-		my $patientSSN 				= $Patient->getPatientSSN();
+		my $id      		 		= $Patient->getPatientId(); # get patient ID
 		my $patientLastTransfer		= $Patient->getPatientLastTransfer();
 
 		# reformat patient last transfer date
@@ -660,14 +655,13 @@ sub getPatientLocationsMHFromSourceDB
 						plmh.ResourceSer,
 						CONVERT(VARCHAR, plmh.HstryDateTime, 120)
 					FROM
-						VARIAN.dbo.Patient pt,
 						VARIAN.dbo.ScheduledActivity sa,
 						VARIAN.dbo.PatientLocationMH plmh
 					WHERE
-						sa.PatientSer 					= pt.PatientSer
-					AND	LEFT(LTRIM(pt.SSN), 12)			= '$patientSSN'
-					AND	sa.ScheduledActivitySer 		= plmh.ScheduledActivitySer
-					AND plmh.PatientLocationSer 		= '$sourceuid'
+						sa.PatientSer 			= (select pt.PatientSer 
+						from VARIAN.dbo.Patient pt where pt.PatientId = '$id')
+					AND	sa.ScheduledActivitySer = plmh.ScheduledActivitySer
+					AND plmh.PatientLocationSer = '$sourceuid'
 				";
 
 				# print "$plInfo_sql\n";
@@ -722,16 +716,16 @@ sub getPatientLocationsMHFromSourceDB
 						Venue.ResourceSer,
 						plmh.DichargeThisLocationDateTime
 					FROM
-						Patient pt,
 						MediVisitAppointmentList mval,
 						PatientLocationMH plmh,
 						Venue
 					WHERE
-						mval.PatientSerNum 			= pt.PatientSerNum
-					AND	LEFT(LTRIM(pt.SSN), 12)		= '$patientSSN'
+						mval.PatientSerNum 			=  (select pt.PatientSerNum 
+						from Patient pt where pt.PatientId = '$id')
 					AND mval.AppointmentSerNum		= plmh.AppointmentSerNum
 					AND plmh.CheckinVenueName  		= Venue.VenueId
 					AND plmh.PatientLocationSerNum 	= '$sourceuid'
+					and mval.AppointSys <> 'Aria'
 					
 					UNION
 					
@@ -743,16 +737,16 @@ sub getPatientLocationsMHFromSourceDB
 						Venue.ResourceSer,
 						null as DichargeThisLocationDateTime
 					FROM
-						Patient pt,
 						MediVisitAppointmentList mval,
 						PatientLocation pl,
 						Venue
 					WHERE
-						mval.PatientSerNum 			= pt.PatientSerNum
-					AND	LEFT(LTRIM(pt.SSN), 12)		= '$patientSSN'
+						mval.PatientSerNum 			= (select pt.PatientSerNum 
+						from Patient pt where pt.PatientId = '$id')
 					AND mval.AppointmentSerNum		= pl.AppointmentSerNum
 					AND pl.CheckinVenueName  		= Venue.VenueId
-					AND pl.PatientLocationSerNum 	= '$sourceuid'					
+					AND pl.PatientLocationSerNum 	= '$sourceuid'
+					and mval.AppointSys <> 'Aria'
 					";
 
                 # print "$plInfo_sql\n";

@@ -2,9 +2,10 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 
 
 	/******************************************************************************
-	* Controller for navigating the site
-	*******************************************************************************/
-	controller('navigation', function ($scope, $location, $state, LogoutService) {
+	 * Controller for navigating the site
+	 *******************************************************************************/
+	controller('navigation', function ($scope, $location, $state, LogoutService, Session) {
+		$scope.navMenu = Session.retrieveObject('menu');
 
 		// Get the current page from url
 		$scope.currentPage = $location.path().replace('/', ''); // and remove leading slash
@@ -37,6 +38,10 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		$scope.goToPatient = function () {
 			$state.go('patients');
 		};
+		// Function to go to patient page
+		$scope.goToPatientMenu = function () {
+			$state.go('patients/menu');
+		};
 		// Function to go to patient registration page
 		$scope.goToPatientRegistration = function () {
 			$state.go('patients-register');
@@ -59,7 +64,10 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		};
 		// Function to go to account page
 		$scope.goToAccount = function () {
-			$state.go('account');
+			if ($scope.configs.login.activeDirectory.enabled === 1)
+				$state.go('ad-account');
+			else
+				$state.go('account');
 		};
 		// Function to go to users page
 		$scope.goToUsers = function () {
@@ -71,7 +79,7 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		};
 		// Function to go to questionnaire main menu page
 		$scope.goToQuestionnaireMainMenu = function () {
-			$state.go('questionnaire-menu');
+			$state.go('questionnaire/menu');
 		};
 		// Function to go to publications page
 		$scope.goToPublication = function () {
@@ -83,7 +91,7 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		};
 		// Function to go to questionnaire question bank
 		$scope.goToQuestionnaireQuestionBank = function () {
-			$state.go('questionnaire-question');
+			$state.go('questionnaire/question');
 		};
 		// Function to go to completed questionnaires page
 		$scope.goToQuestionnaireCompleted = function () {
@@ -91,15 +99,23 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		};
 		// Function to go to question type page
 		$scope.goToTemplateQuestion = function () {
-			$state.go('questionnaire-template-question');
+			$state.go('questionnaire/template-question');
 		};
 		// Function to go to diagnosis translation page
 		$scope.goToDiagnosisTranslation = function () {
 			$state.go('diagnosis-translation');
 		};
-		// Function to go to diagnosis translation page
+		// Function to go to custom code page
 		$scope.goToCustomCodes = function () {
 			$state.go('custom-code');
+		};
+		// Function to go to study page
+		$scope.goToStudies = function () {
+			$state.go('study');
+		};
+		// Function to go to study page
+		$scope.goToRoles = function () {
+			$state.go('role');
 		};
 		// Function to go to user activity page
 		$scope.goToUserActivity = function () {
@@ -114,7 +130,7 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		// Function to set dropdown active for publishing tools
 		$scope.currentActivePublishingTool = function () {
 			var publishingToolPages = ['alias','post','educational-material','hospital-map','notification',
-			'test-result','questionnaire-menu','email','custom-code'];
+				'test-result','questionnaire/menu','email','custom-code','study'];
 			if (publishingToolPages.indexOf($state.current.name) !== -1) {
 				return true;
 			}
@@ -123,7 +139,7 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		// Function to set dropdown active for administration menu
 		$scope.currentActiveAdministration = function () {
 			var adminstrationPages = ['diagnosis-translation','cron','patients','patients-register',
-			'patient-activity','users','user-activity'];
+				'patient-activity','users','user-activity'];
 			if (adminstrationPages.indexOf($state.current.name) !== -1) {
 				return true;
 			}
@@ -138,7 +154,18 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 			else return false;
 		}
 
-		
+		// Function to go to report page
+		$scope.goToReport = function () {
+			$state.go('patients/report');
+		};
+
+		$scope.goToIndividual = function(){
+			$state.go('patients/report/individual');
+		};
+
+		$scope.goToGroup = function(){
+			$state.go('patient/report/group');
+		};
 
 	});
 

@@ -63,10 +63,14 @@ class DatabaseQuestionnaire extends DatabaseAccess
                 "updatedBy"=>$this->username,
             );
         }
+
+        $newEntries = HelpSetup::arraySanitization($newEntries);
         foreach($newEntries as $key=>$value) {
             $toInsert[$key]["content"] = $value;
         }
-        $this->_insertMultipleRecordsIntoTable(DICTIONARY_TABLE, $toInsert);
+        $result = $this->_insertMultipleRecordsIntoDictionary($toInsert, $contentId);
+        if(intval($result) == 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot insert entry in dictionary, content ID already exists.");
         return $contentId;
     }
 
@@ -95,7 +99,9 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
         }
 
-        $this->_insertMultipleRecordsIntoTable(DICTIONARY_TABLE, $toInsert);
+        $result = $this->_insertMultipleRecordsIntoDictionary($toInsert, $newContentId);
+        if(intval($result) == 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot insert entry in dictionary, content ID already exists.");
         return $newContentId;
     }
 
@@ -118,6 +124,8 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  total of lines modified (int)
      * */
     function updateDictionary($updatedEntries, $tableName) {
+        $updatedEntries = HelpSetup::arraySanitization($updatedEntries);
+
         $total = 0;
         $tableId = $this->getTableId($tableName);
         foreach($updatedEntries as $data) {
@@ -341,7 +349,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $newTemplateQuestion["creationDate"] = date("Y-m-d H:i:s");
         $newTemplateQuestion["createdBy"] = $this->username;
         $newTemplateQuestion["updatedBy"] = $this->username;
-        return $this->_insertRecordIntoTable(TEMPLATE_QUESTION_TABLE, $newTemplateQuestion);
+        return $this->_replaceRecordIntoTable(TEMPLATE_QUESTION_TABLE, $newTemplateQuestion);
     }
 
     /*
@@ -353,7 +361,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @returns ID of the record
      * */
     function addToTypeTemplateTableType($tableName, $optionToInsert) {
-        $result = $this->_insertRecordIntoTable($tableName, $optionToInsert);
+        $result = $this->_replaceRecordIntoTable($tableName, $optionToInsert);
         return $result;
     }
 
@@ -371,7 +379,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
         $toInsert["createdBy"] = $this->username;
         $toInsert["updatedBy"] = $this->username;
-        return $this->_insertRecordIntoTable(LIBRARY_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(LIBRARY_TABLE, $toInsert);
     }
 
     /*
@@ -383,7 +391,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @returns ID of the record
      * */
     function addToTypeTemplateTableTypeOptions($tableName, $optionToInsert) {
-        $result = $this->_insertMultipleRecordsIntoTable($tableName, $optionToInsert);
+        $result = $this->_replaceMultipleRecordsIntoTable($tableName, $optionToInsert);
         return $result;
     }
 
@@ -479,7 +487,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $toInsert["createdBy"] = $this->username;
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
         $toInsert["updatedBy"] = $this->username;
-        return $this->_insertRecordIntoTable(QUESTION_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(QUESTION_TABLE, $toInsert);
     }
 
     /*
@@ -492,7 +500,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
         $toInsert["createdBy"] = $this->username;
         $toInsert["updatedBy"] = $this->username;
-        return $this->_insertRecordIntoTable(QUESTIONNAIRE_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(QUESTIONNAIRE_TABLE, $toInsert);
     }
 
     /*
@@ -504,7 +512,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
         $toInsert["createdBy"] = $this->username;
         $toInsert["updatedBy"] = $this->username;
-        return $this->_insertRecordIntoTable(SECTION_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(SECTION_TABLE, $toInsert);
     }
 
     /*
@@ -514,7 +522,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @returns ID of the record.
      * */
     function insertQuestionOptions($tableName, $toInsert) {
-        return $this->_insertRecordIntoTable($tableName, $toInsert);
+        return $this->_replaceRecordIntoTable($tableName, $toInsert);
     }
 
     /*
@@ -523,7 +531,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @returns void
      * */
     function insertCheckboxOption($toInsert) {
-        $this->_insertMultipleRecordsIntoTable(CHECKBOX_OPTION_TABLE, $toInsert);
+        $this->_replaceMultipleRecordsIntoTable(CHECKBOX_OPTION_TABLE, $toInsert);
     }
 
     /*
@@ -532,7 +540,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @returns void
      * */
     function insertRadioButtonOption($toInsert) {
-        $this->_insertMultipleRecordsIntoTable(RADIO_BUTTON_OPTION_TABLE, $toInsert);
+        $this->_replaceMultipleRecordsIntoTable(RADIO_BUTTON_OPTION_TABLE, $toInsert);
     }
 
     /*
@@ -870,7 +878,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @returns void
      * */
     function insertLibrariesForQuestion($records) {
-        return $this->_insertMultipleRecordsIntoTableConditional(LIBRARY_QUESTION_TABLE, $records);
+        return $this->_replaceMultipleRecordsIntoTableConditional(LIBRARY_QUESTION_TABLE, $records);
     }
 
     /*
@@ -879,7 +887,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return number of records created
      * */
     function insertOptionsQuestion($tableName, $records) {
-        return $this->_insertMultipleRecordsIntoTableConditional($tableName, $records);
+        return $this->_replaceMultipleRecordsIntoTableConditional($tableName, $records);
     }
 
     /*
@@ -888,7 +896,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return number of records created
      * */
     function insertOptionsTemplateQuestion($tableName, $records) {
-        return $this->_insertMultipleRecordsIntoTableConditional($tableName, $records);
+        return $this->_replaceMultipleRecordsIntoTableConditional($tableName, $records);
     }
 
     /*
@@ -897,7 +905,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  number of records created
      * */
     function insertQuestionsIntoSection($records) {
-        return $this->_insertMultipleRecordsIntoTableConditional(QUESTION_SECTION_TABLE, $records);
+        return $this->_replaceMultipleRecordsIntoTableConditional(QUESTION_SECTION_TABLE, $records);
     }
 
     /*
@@ -1116,5 +1124,130 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * This function replace the regular insert by a special one for the dictionary. To avoid duplicates in the contentId
+     * that may cause a cardinality violation and break down the questionnaire and thus all the system, we have to
+     * add a condition to the insert.
+     * */
+    protected function _insertMultipleRecordsIntoDictionary($records, $controlContentId) {
+        $sqlInsert = str_replace("%%TABLENAME%%", DICTIONARY_TABLE, SQL_GENERAL_REPLACE_INTERSECTION_TABLE);
+        $sqlConditional = array();
+        $multiples = array();
+        $cpt = 0;
+        $ready = array();
+        foreach ($records as $data) {
+            $cpt++;
+            $fields = array();
+            $params = array();
+            foreach($data as $key=>$value) {
+                array_push($fields, $key);
+                array_push($params, ":".$key.$cpt);
+                array_push($ready, array("parameter"=>":".$key.$cpt,"variable"=>$value));
+            }
+            array_push($sqlConditional, str_replace("%%VALUES%%", implode(", ", $params), SQL_QUESTIONNAIRE_CONDITIONAL_INSERT));
+            $sqlFieldNames = "`".implode("`, `", $fields)."`";
+            array_push($multiples, implode(", ", $params));
+        }
+        array_push($ready, array("parameter"=>":controlContentId","variable"=>$controlContentId));
 
+        $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . implode(" UNION ALL ", $sqlConditional);
+        return $this->_queryInsertReplace($sqlInsert, $ready);
+    }
+
+    /*
+     * Returns questionnaire info (including answers) from a questionnaire
+     * @params  int : $patientQuestionnaireSer - serial number of the particular questionnaire-patient relation 
+     * @return  questionnaire results (array)
+     * */
+    function getQuestionnaireResults($patientQuestionnaireSer, $language) {
+        return $this->_fetchAllStoredProcedure(SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_INFO, array(
+            array("parameter"=>":pqser","variable"=>$patientQuestionnaireSer,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":language","variable"=>$language,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Returns questionnaire info (including answers) from a questionnaire
+     * @params  int : $questionnaireId - id of the particular questionnaire 
+     * @params  int : $patientSerNum - serial of the patient 
+     * @return  questionnaire details (array)
+     * */
+    function getLastAnsweredQuestionnaire($questionnaireId, $patientSerNum) {
+        return $this->_fetchAllStoredProcedure(SQL_QUESTIONNAIRE_GET_PREV_QUESTIONNAIRE, array(
+            array("parameter"=>":questionnaireid","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":ptser","variable"=>$patientSerNum,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * List all available purposes.
+     * @params  void
+     * @return array - list of purposes
+     * */
+    function getPurposes() {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_PURPOSES, array());
+    }
+
+    /*
+     * List all available respondents.
+     * @params  void
+     * @return array - list of respondents
+     * */
+    function getRespondents() {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_RESPONDENTS, array());
+    }
+
+    /*
+     * Get a purpose details
+     * @params  $id - int : purpose ID
+     * @return  array - details of the purpose
+     * */
+    function getPurposeDetails($id) {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_PURPOSE_DETAILS, array(
+            array("parameter"=>":ID","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get a respondent details
+     * @params  $id - int : respondent ID
+     * @return  array - details of the respondent
+     * */
+    function getRespondentDetails($id) {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_RESPONDENT_DETAILS, array(
+            array("parameter"=>":ID","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get the list of questionnaires associated to research and patient
+     * */
+    function getResearchPatient() {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_RESEARCH_PATIENT, array(
+        ));
+    }
+
+    /**
+     *  Get the title of a consent form questionnaire given the consentQuestionnaireId
+     */
+    function getStudyConsentFormTitle($consentId){
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_CONSENT_FORM_TITLE, array(
+            array("parameter"=>":consentId","variable"=>$consentId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the list of questionnaire found based on an array of IDs
+     * @param $list - list of questionnaire ID to verify
+     * @return array - list of the questionnaires found
+     */
+    function getQuestionnairesListByIds($list) {
+        $sql = str_replace("%%LISTIDS%%", implode(", ", $list), SQL_QUESTIONNAIRE_GET_QUESTIONNAIRES_BY_ID);
+        return $this->_fetchAll($sql, array());
+    }
+
+    function getConsentForms(){
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_CONSENT_FORMS, array(
+        ));
+    }
 }

@@ -167,7 +167,9 @@ sub getPriorityCode
 #======================================================================================
 sub getPrioritiesFromSourceDB
 {
-	my (@patientList) = @_; # args
+	my @patientList = @_[0];
+    my $global_patientInfo_sql = @_[1];
+	
 	my @priorityList = (); # initialize a list of priority objects
 
 	my ($patientser, $sourceuid, $datestamp, $code); # when we retrieve query results
@@ -182,25 +184,28 @@ sub getPrioritiesFromSourceDB
         if ($sourceDatabase) {
 
 			my $patientInfo_sql = "
-				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
+				use VARIAN;
+
+                IF OBJECT_ID('tempdb.dbo.#tempPriority', 'U') IS NOT NULL
+                	DROP TABLE #tempPriority;
+				
+				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
+					DROP TABLE #tempPatient;
+
+				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
-			my $numOfPatients = @patientList;
-			my $counter = 0;
-			foreach my $Patient (@patientList) {
-				my $patientSer 			= $Patient->getPatientSer();
-				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
-				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
-
-				$patientInfo_sql .= "
-					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
-				";
-
-				$counter++;
-				if ( $counter < $numOfPatients ) {
-					$patientInfo_sql .= "UNION";
-				}
-			}
-			$patientInfo_sql .= ")";
+			$patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
+			$patientInfo_sql .= ")
+			Select c.* into #tempPriority
+			from PatientInfo c;
+			Create Index temporaryindexPriority1 on #tempPriority (ID);
+			Create Index temporaryindexPriority2 on #tempPriority (PatientSerNum);
+			
+			Select p.PatientSer, p.PatientId into #tempPatient
+			from VARIAN.dbo.Patient p;
+			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
+			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
+			";
 
         	my $priorInfo_sql = $patientInfo_sql . "
 	    		SELECT DISTINCT
@@ -213,12 +218,13 @@ sub getPrioritiesFromSourceDB
 			    	VARIAN.dbo.ActivityInstance ai,
 				    VARIAN.dbo.Activity act,
     				VARIAN.dbo.LookupTable lt,
-					PatientInfo
+					#tempPriority as PatientInfo
 	    		WHERE
 		    	    nsa.ActivityInstanceSer 	= ai.ActivityInstanceSer
 	            AND ai.ActivitySer 			    = act.ActivitySer
     	        AND act.ActivityCode 			= lt.LookupValue
-	    	   	AND nsa.PatientSer 				= (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+	    	   	AND nsa.PatientSer 				= (select pt.PatientSer 
+					from #tempPatient pt where pt.PatientId = PatientInfo.ID)
 			    AND nsa.ObjectStatus 		    != 'Deleted'
     			AND lt.Expression1			    IN ('SGAS_P1','SGAS_P2','SGAS_P3','SGAS_P4')
 	    		AND	nsa.HstryDateTime		    > PatientInfo.LastTransfer

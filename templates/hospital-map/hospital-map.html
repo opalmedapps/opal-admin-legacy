@@ -22,7 +22,7 @@
                     <div class="row clearfix operations">
                         <!-- Add button -->
                         <div class="save-add col-xs-12 col-sm-6 col-md-8">
-                            <a style="margin-right:20px;" href="" ng-click="goToAddHospitalMap()" class="btn btn-md btn-outline item-button">
+                            <a ng-if="writeAccess" style="margin-right:20px;" href="" ng-click="goToAddHospitalMap()" class="btn btn-md btn-outline item-button">
                                 <span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
                                 <span style="font-size: 20px;"><strong>{{'HOSPITAL_MAPS.LIST.ADD'|translate}}</strong></span>
                             </a>

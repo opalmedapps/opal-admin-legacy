@@ -9,8 +9,8 @@
 	$emailArray	= array(
 		'subject_EN'	=> $_POST['subject_EN'],
 		'subject_FR'	=> $_POST['subject_FR'],
-		'body_EN'			=> filter_var($_POST['body_EN'], FILTER_SANITIZE_MAGIC_QUOTES),
-		'body_FR'			=> filter_var($_POST['body_FR'], FILTER_SANITIZE_MAGIC_QUOTES),
+		'body_EN'			=> filter_var($_POST['body_EN'], FILTER_SANITIZE_ADD_SLASHES),
+		'body_FR'			=> filter_var($_POST['body_FR'], FILTER_SANITIZE_ADD_SLASHES),
 		'serial'			=> $_POST['serial'],
 		'type'				=> $_POST['type'],
 		'user'				=> $_POST['user']

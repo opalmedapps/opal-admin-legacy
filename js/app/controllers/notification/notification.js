@@ -4,7 +4,11 @@ angular.module('opalAdmin.controllers.notification', ['ngAnimate', 'ngSanitize',
 /******************************************************************************
  * Controller for the notification page
  *******************************************************************************/
-controller('notification', function ($scope, $uibModal, $filter, $state, $sce, notificationCollectionService, Session) {
+controller('notification', function ($scope, $uibModal, $filter, $state, notificationCollectionService, Session, ErrorHandler, MODULE) {
+	$scope.navMenu = Session.retrieveObject('menu');
+	$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.notification]) & (1 << 0)) !== 0);
+	$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.notification]) & (1 << 1)) !== 0);
+	$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.notification]) & (1 << 2)) !== 0);
 
 	// Function to go to add notification page
 	$scope.goToAddNotification = function () {
@@ -24,10 +28,21 @@ controller('notification', function ($scope, $uibModal, $filter, $state, $sce, n
 	var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents"' +
 		'ng-click="grid.appScope.editNotification(row.entity)">' +
 		'<strong><a href="">{{row.entity.name_'+Session.retrieveObject('user').language.toUpperCase()+'}}</a></strong></div>';
-	var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-		'<strong><a href="" ng-click="grid.appScope.showNotificationLog(row.entity)"><i title="' + $filter('translate')('NOTIFICATIONS.LIST.LOGS') + '" class="fa fa-area-chart" aria-hidden="true"></i></a></strong> ' +
-		'- <strong><a href="" ng-click="grid.appScope.editNotification(row.entity)"><i title="' + $filter('translate')('NOTIFICATIONS.LIST.EDIT') + '" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ' +
-		'- <strong><a href="" ng-click="grid.appScope.deleteNotification(row.entity)"><i title="' + $filter('translate')('NOTIFICATIONS.LIST.DELETE') + '" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
+
+	var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">';
+
+	if($scope.readAccess)
+		cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.showNotificationLog(row.entity)"><i title="' + $filter('translate')('NOTIFICATIONS.LIST.LOGS') + '" class="fa fa-area-chart" aria-hidden="true"></i></a></strong> ';
+
+	if($scope.writeAccess)
+		cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.editNotification(row.entity)"><i title="' + $filter('translate')('NOTIFICATIONS.LIST.EDIT') + '" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ';
+	else
+		cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.editNotification(row.entity)"><i title="' + $filter('translate')('NOTIFICATIONS.LIST.VIEW') + '" class="fa fa-eye" aria-hidden="true"></i></a></strong> ';
+
+	if($scope.deleteAccess)
+		cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.deleteNotification(row.entity)"><i title="' + $filter('translate')('NOTIFICATIONS.LIST.DELETE') + '" class="fa fa-trash" aria-hidden="true"></i></a></strong>';
+
+	cellTemplateOperations += '</div>';
 
 	// Search engine for table
 	$scope.filterOptions = function (renderableRows) {
@@ -156,8 +171,8 @@ controller('notification', function ($scope, $uibModal, $filter, $state, $sce, n
 
 			// Assign the retrieved response
 			$scope.notificationList = response.data;
-		}).catch(function(response) {
-			alert($filter('translate')('NOTIFICATIONS.LIST.ERROR_LIST') + "\r\n\r\n" + response.status + " - " + response.data);
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('NOTIFICATIONS.LIST.ERROR_LIST'));
 		});
 	}
 
@@ -178,8 +193,8 @@ controller('notification', function ($scope, $uibModal, $filter, $state, $sce, n
 						log.x = new Date(log.x);
 					});
 				});
-			}).catch(function(response) {
-				alert($filter('translate')('NOTIFICATIONS.LIST.ERROR_LOGS') + "\r\n\r\n" + response.status + " - " + response.data);
+			}).catch(function(err) {
+				ErrorHandler.onError(err, $filter('translate')('NOTIFICATIONS.LIST.ERROR_LOGS'));
 			});
 		}
 	}, true);
@@ -323,7 +338,7 @@ controller('notification', function ($scope, $uibModal, $filter, $state, $sce, n
 
 		$scope.currentNotification = notification;
 		var modalInstance = $uibModal.open({
-			templateUrl: 'templates/notification/edit.notification.html',
+			templateUrl: ($scope.writeAccess ? 'templates/notification/edit.notification.html' : 'templates/notification/view.notification.html'),
 			controller: 'notification.edit',
 			scope: $scope,
 			windowClass: 'customModal',

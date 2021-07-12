@@ -1,12 +1,11 @@
 angular.module('opalAdmin.controllers.alias.edit', [])
 
-	.controller('alias.edit', function ($scope, $uibModal, $uibModalInstance, $filter, aliasCollectionService, educationalMaterialCollectionService, Session, hospitalMapCollectionService) {
+	.controller('alias.edit', function ($scope, $uibModal, $uibModalInstance, $filter, aliasCollectionService, Session, ErrorHandler) {
 
 		// Default Booleans
 		$scope.changesMade = false; // changes have been made? 
 		$scope.emptyTitle = false; // alias title field empty? 
-		$scope.emptyDescription = false; // alias description field empty? 
-		$scope.emptyTerms = false; // alias terms field empty? 
+		$scope.emptyDescription = false; // alias description field empty?
 		$scope.nameMod = false; // name modified?
 		$scope.termsMod = false; // terms modified? 
 		$scope.selectAll = false;
@@ -22,11 +21,25 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			['html', 'insertLink']
 		];
 
+		var arrValidationInsert = [
+			$filter('translate')('ALIAS.VALIDATION.TYPE'),
+			$filter('translate')('ALIAS.VALIDATION.CHECKIN'),
+			$filter('translate')('ALIAS.VALIDATION.HOSPITAL'),
+			$filter('translate')('ALIAS.VALIDATION.COLOR'),
+			$filter('translate')('ALIAS.VALIDATION.DESCRPIPTION_EN'),
+			$filter('translate')('ALIAS.VALIDATION.DESCRPIPTION_FR'),
+			$filter('translate')('ALIAS.VALIDATION.EDU_MAT'),
+			$filter('translate')('ALIAS.VALIDATION.NAME_EN'),
+			$filter('translate')('ALIAS.VALIDATION.NAME_FR'),
+			$filter('translate')('ALIAS.VALIDATION.SOURCE_DB'),
+			$filter('translate')('ALIAS.VALIDATION.ALIAS_EXP'),
+			$filter('translate')('ALIAS.VALIDATION.ID'),
+		];
+
 		$scope.alias = {}; // initialize alias object
 		$scope.aliasModal = {}; // for deep copy
 		$scope.termList = []; // initialize list for unassigned expressions in our DB
 		$scope.eduMatList = [];
-		$scope.existingColorTags = [];
 		$scope.hospitalMapList = [];
 
 		$scope.termFilter = null;
@@ -59,7 +72,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		};
 
 		// Call our API service to get the list of educational material
-		educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+		aliasCollectionService.getEducationalMaterials().then(function (response) {
 			response.data.forEach(function(entry) {
 				if($scope.language.toUpperCase() === "FR") {
 					entry.name_display = entry.name_FR;
@@ -81,13 +94,13 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 				});
 			});
 			$scope.eduMatList = response.data; // Assign value
-		}).catch(function(response) {
-			alert($filter('translate')('ALIAS.EDIT.ERROR_EDUCATION') + "\r\n\r\n" + response.status + " - " + response.data);
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_EDUCATION'));
 			$scope.cancel();
 		});
 
 		// Call our API to get the list of existing hospital maps
-		hospitalMapCollectionService.getHospitalMaps().then(function (response) {
+		aliasCollectionService.getHospitalMaps().then(function (response) {
 			response.data.forEach(function(entry) {
 				if($scope.language.toUpperCase() === "FR")
 					entry.name_display = entry.name_FR;
@@ -95,8 +108,8 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 					entry.name_display = entry.name_EN;
 			});
 			$scope.hospitalMapList = response.data;
-		}).catch(function(response) {
-			alert($filter('translate')('ALIAS.EDIT.ERROR_HOSPITAL') + "\r\n\r\n" + response.status + " - " + response.data);
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_HOSPITAL'));
 			$scope.cancel();
 		});
 
@@ -217,26 +230,16 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 					});
 
 				});
-			}).catch(function(response) {
-				alert($filter('translate')('ALIAS.EDIT.ERROR_ALIAS') + "\r\n\r\n" + response.status + " - " +  response.data);
+			}).catch(function(err) {
+				ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_ALIAS'));
 				$scope.cancel();
 			}).finally(function() {
 				processingModal.close(); // hide modal
 				processingModal = null; // remove reference
 			});
-
-			// Call our API service to get the list of existing color tags
-			aliasCollectionService.getExistingColorTags($scope.alias.type).then(function (response) {
-				$scope.existingColorTags = response.data; // Assign response
-
-			}).catch(function(response) {
-				alert($filter('translate')('ALIAS.EDIT.ERROR_COLOR') + "\r\n\r\n" + response.status + " - " + response.data);
-				$scope.cancel
-			});
-
-		}).catch(function(response) {
-			alert($filter('translate')('ALIAS.EDIT.ERROR_DETAILS') + "\r\n\r\n" + response.status + " - " + response.data);
-			$scope.cancel
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_DETAILS'));
+			$scope.cancel;
 		});
 
 		// Function to add / remove a term to alias
@@ -247,28 +250,11 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			$scope.termsMod = true;
 			$scope.alias.expressions_updated = 1;
 
-			// Toggle boolean 
-			$scope.emptyTerms = false;
-
-			// If originally added, remove it
-			if (term.added) {
-
+			if (term.added)
 				term.added = 0;
-
-				// Check if there are still terms added, if not, flag
-				if (!$scope.checkTermsAdded($scope.termList)) {
-					$scope.emptyTerms = true;
-				}
-
-			} else { // Originally not added, add it
-
+			else
 				term.added = 1; // added parameter
 
-				// Just in case it was originally true
-				// For sure we have a term
-				$scope.emptyTerms = false;
-
-			}
 
 		};
 
@@ -279,16 +265,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			$scope.changesMade = true;
 			$scope.alias.details_updated = 1;
 
-			if ($scope.alias.name_EN && $scope.alias.name_FR) { // if textbox field is not empty
-
-				// Toggle boolean
-				$scope.emptyTitle = false;
-			}
-			else { // textbox is empty
-
-				// Toggle boolean
-				$scope.emptyTitle = true;
-			}
+			$scope.emptyTitle = !($scope.alias.name_EN && $scope.alias.name_FR);
 
 		};
 		// Function that triggers when the description is updated
@@ -298,16 +275,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			$scope.changesMade = true;
 			$scope.alias.details_updated = 1;
 
-			if ($scope.alias.description_EN && $scope.alias.description_FR) { // if textbox field is not empty
-
-				// Toggle boolean
-				$scope.emptyDescription = false;
-			}
-			else { // textbox is empty
-
-				// Toggle boolean
-				$scope.emptyDescription = true;
-			}
+			$scope.emptyDescription = !($scope.alias.description_EN && $scope.alias.description_FR);
 
 		};
 
@@ -383,62 +351,45 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 				$scope.alias.color = color;
 		};
 
-
-		$scope.toggleAlertText = function () {
-			if ($scope.emptyTitle || $scope.emptyDescription || $scope.emptyTerms) {
-				return true; // boolean
-			}
-			else {
-				return false;
-			}
-		};
-
 		// Submit changes
 		$scope.updateAlias = function () {
-
 			if ($scope.checkForm()) {
+				var toSubmit = {
+					"id": $scope.currentAlias.serial,
+					"checkin_details" : $scope.alias.checkin_details,
+					"color" : $scope.alias.color,
+					"description_EN" : $scope.alias.description_EN.replace(/\u200B/g,''),
+					"description_FR" : $scope.alias.description_FR.replace(/\u200B/g,''),
+					"eduMat" : (typeof $scope.alias.eduMatSer !== "undefined" ? $scope.alias.eduMatSer: null),
+					"hospitalMap" : (typeof $scope.alias.hospitalMapSer !== "undefined" ? $scope.alias.hospitalMapSer: null),
+					"name_EN" : $scope.alias.name_EN,
+					"name_FR" : $scope.alias.name_FR,
+					"source_db" : $scope.alias.source_db.serial,
+					"type" : $scope.alias.type,
+					"terms" : []
+				};
 
-				// For some reason the HTML text fields add a zero-width-space
-				// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
-				$scope.alias.description_EN = $scope.alias.description_EN.replace(/\u200B/g,'');
-				$scope.alias.description_FR = $scope.alias.description_FR.replace(/\u200B/g,'');
-
-				if ($scope.alias.checkin_details_updated) {
-					$scope.alias.checkin_details.instruction_EN = $scope.alias.checkin_details.instruction_EN.replace(/\u200B/g,'');
-					$scope.alias.checkin_details.instruction_FR = $scope.alias.checkin_details.instruction_FR.replace(/\u200B/g,'');
-				}
-
-				// Empty alias terms list
-				$scope.alias.terms = [];
-
-				// Fill it with the added terms from termList
 				angular.forEach($scope.termList, function (term) {
 					if (term.added)
-						$scope.alias.terms.push(term);
+						toSubmit.terms.push(term.masterSourceAliasId);
 				});
 
-				// Log who updated alias
-				$scope.alias.user = Session.retrieveObject('user');
+				console.log(toSubmit);
 
 				$.ajax({
 					type: "POST",
 					url: "alias/update/alias",
-					data: $scope.alias,
-					success: function (response) {
-						response = JSON.parse(response);
-						// Show success or failure depending on response
-						if (response.value) {
-							$scope.setBannerClass('success');
-							$scope.$parent.bannerMessage = $filter('translate')('ALIAS.EDIT.SUCCESS_EDIT');
-							$scope.showBanner();
-						}
-						else {
-							alert($filter('translate')('ALIAS.EDIT.ERROR_EDIT'));
-						}
-						$uibModalInstance.close();
+					data: toSubmit,
+					success: function () {
+						$scope.setBannerClass('success');
+						$scope.$parent.bannerMessage = $filter('translate')('ALIAS.EDIT.SUCCESS_EDIT');
+						$scope.showBanner();
 					},
-					error: function(err) {
-						alert($filter('translate')('ALIAS.EDIT.ERROR_EDIT') + "\r\n\r\n" + err.status + " - " + err.statusText);
+					error: function (err) {
+						err.responseText = JSON.parse(err.responseText);
+						ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_EDIT'), arrValidationInsert);
+					},
+					complete: function () {
 						$uibModalInstance.close();
 					}
 				});
@@ -453,10 +404,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 				if (term.added)
 					addedParam = true;
 			});
-			if (addedParam)
-				return true;
-			else
-				return false;
+			return addedParam;
 		};
 
 		// Function for selecting all terms in the term list
@@ -492,14 +440,14 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 		// Function to return boolean for form completion
 		$scope.checkForm = function () {
+			var total = 0;
+			angular.forEach($scope.termList, function (term) {
+				if (term.added) total++;
+			});
 
-			if (($scope.alias.name_EN && $scope.alias.name_FR && $scope.alias.description_EN
-				&& $scope.alias.description_FR && $scope.alias.type && $scope.checkTermsAdded($scope.termList)
+			return !!(($scope.alias.name_EN && $scope.alias.name_FR && $scope.alias.description_EN
+				&& $scope.alias.description_FR && $scope.alias.type && (total + $scope.alias.deleted.length + $scope.alias.published.length > 0)
 				&& $scope.changesMade) && ($scope.alias.type != 'Appointment' || ($scope.alias.type == 'Appointment' &&
-				$scope.alias.checkin_details.instruction_EN && $scope.alias.checkin_details.instruction_FR ))) {
-				return true;
-			}
-			else
-				return false;
+				$scope.alias.checkin_details.instruction_EN && $scope.alias.checkin_details.instruction_FR)));
 		};
 	});

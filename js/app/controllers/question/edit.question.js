@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns'])
 
-	.controller('question.edit', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
+	.controller('question.edit', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, uiGridConstants, Session, ErrorHandler) {
 		// get current user id
 		var user = Session.retrieveObject('user');
 		var OAUserId = user.id;
@@ -43,15 +43,15 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		};
 
 		$scope.updateSlider = function () {
-			var radiostep = new Array();
-			var increment = parseFloat($scope.question.options.increment);
-			var minValue = parseFloat($scope.question.options.minValue);
-			var maxValue = parseFloat($scope.question.options.maxValue);
+			var radiostep = [];
+			var increment = 1;
+			var minValue = parseInt($scope.question.options.minValue);
+			var maxValue = parseInt($scope.question.options.maxValue);
 
-			if (minValue <= 0.0 || maxValue <= 0.0 || increment <= 0 || minValue >= maxValue)
+			if (minValue < 0.0 || maxValue < 0.0 || increment != 1 || minValue >= maxValue)
 				$scope.validSlider = false;
 			else {
-				maxValue = (Math.floor((maxValue - minValue) / increment) * increment) + minValue;
+				// maxValue = (Math.floor((maxValue - minValue) / increment) * increment) + minValue;
 				$scope.validSlider = true;
 				for(var i = minValue; i <= maxValue; i += increment) {
 					radiostep.push({"description":" " + i,"description_EN":" " + i,"description_FR":" " + i});
@@ -78,7 +78,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		$scope.checkForm = function () {
 			if ($scope.question.question_EN && $scope.question.question_FR && $scope.question.display_EN && $scope.question.display_FR && $scope.changesMade) {
 				if($scope.question.typeId === "2") {
-					if ($scope.question.options.increment <= 0 || $scope.question.options.minValue <= 0 || $scope.question.options.maxValue <= 0 || $scope.question.options.minValue > $scope.question.options.maxValue || $scope.question.options.minCaption_EN === "" || $scope.question.options.minCaption_FR === "" || $scope.question.options.maxCaption_EN === "" || $scope.question.options.maxCaption_FR === "" )
+					if ($scope.question.options.increment != 1 || $scope.question.options.minValue < 0 || $scope.question.options.maxValue < 0 || $scope.question.options.minValue > $scope.question.options.maxValue || $scope.question.options.minCaption_EN === "" || $scope.question.options.minCaption_FR === "" || $scope.question.options.maxCaption_EN === "" || $scope.question.options.maxCaption_FR === "" )
 						return false;
 					else
 						return true;
@@ -101,7 +101,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		$scope.showProcessingModal();
 
 		// Call our API service to get the questionnaire details
-		questionnaireCollectionService.getQuestionDetails($scope.currentQuestion.serNum, OAUserId).then(function (response) {
+		questionnaireCollectionService.getQuestionDetails($scope.currentQuestion.serNum).then(function (response) {
 			getLibrariesList();
 			$scope.question = response.data;
 			if($scope.language.toUpperCase() === "FR")
@@ -128,16 +128,14 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			$scope.question.isOwner = parseInt($scope.question.isOwner);
 
 			$scope.question.OAUserId = OAUserId;
-
 			$scope.selectedLibrary = response.data.libraries;
 
-			processingModal.close(); // hide modal
-			processingModal = null; // remove reference
 		}).catch(function (err) {
-			alert('Error occurred getting question details.' + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+			ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_GET_QUESTION'));
+			$uibModalInstance.close();
+		}).finally(function () {
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
-			$uibModalInstance.close();
 		});
 
 		// Function to close modal dialog
@@ -187,7 +185,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		};
 
 		function getLibrariesList() {
-			questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
+			questionnaireCollectionService.getLibraries().then(function (response) {
 				$scope.libraryFilterList = response.data;
 				$scope.libraryFilterList.forEach(function(entry) {
 					if($scope.language.toUpperCase() === "FR")
@@ -196,7 +194,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 						entry.name_display = entry.name_EN;
 				});
 			}).catch(function (err) {
-				alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_GET_LIBRARY') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+				ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_GET_LIBRARY'));
 				$uibModalInstance.close();
 			});
 		};
@@ -215,7 +213,8 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 						getLibrariesList();
 					},
 					error: function (err) {
-						alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_SET_LIBRARY') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+						ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_SET_LIBRARY'));
+						$uibModalInstance.close();
 					}
 				});
 			}
@@ -237,7 +236,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 					$scope.showBanner();
 				},
 				error: function(err) {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_UPDATE_QUESTION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_UPDATE_QUESTION'));
 				},
 				complete: function() {
 					$uibModalInstance.close();

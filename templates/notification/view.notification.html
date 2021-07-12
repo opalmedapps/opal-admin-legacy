@@ -1,0 +1,56 @@
+<!-- Modal title -->
+<div class="modal-header">
+    <div class="col-xs-12 col-md-6">
+        <h2 class="modal-title">
+            <span class="fa fa-eye"></span>
+            {{'NOTIFICATIONS.EDIT.TITLE_VIEW'|translate}}
+        </h2>
+    </div>
+    <div class="modal-buttons col-xs-12 col-md-6">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'NOTIFICATIONS.EDIT.CLOSE'|translate}}">
+    </div>
+</div>
+<div class="modal-body">
+    <uib-accordion close-others="false">
+        <!-- SECTION: Titles -->
+        <div uib-accordion-group is-open="titleSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'NOTIFICATIONS.EDIT.TITLES'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'NOTIFICATIONS.EDIT.ENGLISH_ABRV'|translate}}</strong>: {{notification.name_EN}}</p>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'NOTIFICATIONS.EDIT.FRENCH_ABRV'|translate}}</strong>: {{notification.name_FR}}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: Message -->
+        <div uib-accordion-group is-open="messageSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'NOTIFICATIONS.EDIT.MESSAGES'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': messageSection.open, 'glyphicon-chevron-right': !messageSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <span style="font-size:20px;">{{'NOTIFICATIONS.EDIT.ENGLISH_MESSAGE'|translate}}</span>
+                    </div>
+                    <div ng-bind-html="notification.description_EN"></div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <span style="font-size:20px;">{{'NOTIFICATIONS.EDIT.FRENCH_MESSAGE'|translate}}</span>
+                    </div>
+                    <div ng-bind-html="notification.description_FR"></div>
+                </div>
+            </div>
+        </div>
+    </uib-accordion>
+</div>

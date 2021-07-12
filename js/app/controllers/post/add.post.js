@@ -10,7 +10,7 @@ filter('deliberatelyTrustAsHtml', function ($sce) {
 /******************************************************************************
  * Add Post Page controller
  *******************************************************************************/
-controller('post.add', function ($scope, $filter, $state, $sce, $uibModal, $locale, Session) {
+controller('post.add', function ($scope, $filter, $state, $sce, $uibModal, $locale, Session, ErrorHandler) {
 
 	// Function to go to previous page
 	$scope.goBack = function () {
@@ -140,7 +140,7 @@ controller('post.add', function ($scope, $filter, $state, $sce, $uibModal, $loca
 				data: $scope.newPost,
 				success: function () {},
 				error: function(err) {
-					alert($filter('translate')('POSTS.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('POSTS.ADD.ERROR_ADD'));
 				},
 				complete: function () {
 					$state.go('post');

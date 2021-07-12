@@ -7,7 +7,7 @@
     <div class="row col-xs-12" ng-if="questionnaire.readOnly == 1">
         <h2 class="modal-title col-xs-12">
             <span class="text-danger fa fa-lock"></span>
-            {{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.TITLE'|translate}}
+            {{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.VIEW'|translate}}
         </h2>
         <p class="text-danger">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PUBLISHED'|translate}}</p>
     </div>
@@ -89,6 +89,26 @@
                         <span style="font-size:20px;">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.HTML_FRENCH'|translate}}</span>
                     </div>
                     <div ng-bind-html="questionnaire.description_FR"></div>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Purpose & Respondent -->
+        <div uib-accordion-group is-open="purposeRespondentSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.RESPONDENT_PURPOSE'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': purposeRespondentSection.open, 'glyphicon-chevron-right': !purposeRespondentSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6">
+                    <h2 style="margin-top: 0">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PURPOSE'|translate}}</h2>
+                    <select ng-model="questionnaire.purpose.ID" ng-change="setChangesMade()" ng-disabled="questionnaire.readOnly || questionnaire.final" ng-options="purpose.ID as purpose.title_display for purpose in purposeList" class="form-control">
+                    </select>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <h2 style="margin-top: 0">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.RESPONDENT'|translate}}</h2>
+                    <select ng-model="questionnaire.respondent.ID" ng-change="setChangesMade()" ng-disabled="questionnaire.readOnly || questionnaire.final" ng-options="respondent.ID as respondent.title_display for respondent in respondentList" class="form-control">
+                    </select>
                 </div>
             </div>
         </div>

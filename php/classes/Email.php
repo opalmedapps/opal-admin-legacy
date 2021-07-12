@@ -2,23 +2,28 @@
 
 /**
  * Email API class
- * 
+ *
  */
- class Email {
+class Email extends Module {
 
-	/**
-	*
-	* Gets a list of existing email templates
-	*
-	* @return array $emailList : list of existing email templates
-	*/
-	public function getEmailTemplates() {
-		$emailList = array();
-		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_EMAIL, $guestStatus);
+    }
 
-			$sql = "
+    /**
+     *
+     * Gets a list of existing email templates
+     *
+     * @return array $emailList : list of existing email templates
+     */
+    public function getEmailTemplates() {
+        $this->checkReadAccess();
+        $emailList = array();
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            $sql = "
 				SELECT DISTINCT
 					ec.EmailControlSerNum,
 					ec.Subject_EN,
@@ -32,50 +37,50 @@
 				WHERE
 					ec.EmailTypeSerNum = et.EmailTypeSerNum
 			";
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
 
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-				$serial 		= $data[0];
-				$subject_EN 	= $data[1];
-				$subject_FR 	= $data[2];
-				$body_EN 		= $data[3];
-				$body_FR 		= $data[4];
-				$type 			= $data[5];
+                $serial 		= $data[0];
+                $subject_EN 	= $data[1];
+                $subject_FR 	= $data[2];
+                $body_EN 		= $data[3];
+                $body_FR 		= $data[4];
+                $type 			= $data[5];
 
-				$emailArray = array(
-					'serial'		=> $serial,
-					'subject_EN'	=> $subject_EN,
-					'subject_FR' 	=> $subject_FR,
-					'body_EN'		=> $body_EN,
-					'body_FR'		=> $body_FR,
-					'type'			=> $type
-				);
+                $emailArray = array(
+                    'serial'		=> $serial,
+                    'subject_EN'	=> $subject_EN,
+                    'subject_FR' 	=> $subject_FR,
+                    'body_EN'		=> $body_EN,
+                    'body_FR'		=> $body_FR,
+                    'type'			=> $type
+                );
 
-				array_push($emailList, $emailArray);
-			}
+                array_push($emailList, $emailArray);
+            }
 
-			return $emailList;
-		} catch (PDOException $e) {
-			echo $e->getMessage();
-			return $notificationList;
-		}
-	}
+            return $emailList;
+        } catch (PDOException $e) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for email. " . $e->getMessage());
+        }
+    }
 
-	/**
-	*
-	* Get details of a particular email template
-	*
-	* @param integer $serial : the email control serial number
-	* @return array $emailDetails : details of an email
-	*/
-	public function getEmailDetails ($serial) {
-		$emailDetails = array();
-		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			$sql = "
+    /**
+     *
+     * Get details of a particular email template
+     *
+     * @param integer $serial : the email control serial number
+     * @return array $emailDetails : details of an email
+     */
+    public function getEmailDetails ($serial) {
+        $this->checkReadAccess($serial);
+        $emailDetails = array();
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
 				SELECT DISTINCT
 					ec.Subject_EN,
 					ec.Subject_FR,
@@ -87,45 +92,45 @@
 				WHERE
 					ec.EmailControlSerNum = $serial
 			";
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
 
-			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
+            $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
 
-			$subject_EN 	= $data[0];
-			$subject_FR 	= $data[1];
-			$body_EN 		= $data[2];
-			$body_FR 		= $data[3];
-			$type 			= $data[4];
+            $subject_EN 	= $data[0];
+            $subject_FR 	= $data[1];
+            $body_EN 		= $data[2];
+            $body_FR 		= $data[3];
+            $type 			= $data[4];
 
-			$emailDetails = array(
-				'serial' 		=> $serial,
-				'subject_EN'	=> $subject_EN,
-				'subject_FR'	=> $subject_FR,
-				'body_EN'		=> $body_EN,
-				'body_FR'		=> $body_FR,
-				'type'			=> $type
-			);
+            $emailDetails = array(
+                'serial' 		=> $serial,
+                'subject_EN'	=> $subject_EN,
+                'subject_FR'	=> $subject_FR,
+                'body_EN'		=> $body_EN,
+                'body_FR'		=> $body_FR,
+                'type'			=> $type
+            );
 
-			return $emailDetails;
-		} catch (PDOException $e) {
-			echo $e->getMessage();
-			return $notificationDetails;
-		}
-	}
+            return $emailDetails;
+        } catch (PDOException $e) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for email. " . $e->getMessage());
+        }
+    }
 
-	/**
-	*
-	* Gets the types of email templates from the database
-	*
-	* @return array $types : the types of email
-	*/ 
-	public function getEmailTypes () {
-		$types = array();
-		try {
-		$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-		$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-		$sql = "
+    /**
+     *
+     * Gets the types of email templates from the database
+     *
+     * @return array $types : the types of email
+     */
+    public function getEmailTypes () {
+        $this->checkReadAccess();
+        $types = array();
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
 			SELECT DISTINCT 
 				et.EmailTypeSerNum,
 				et.EmailTypeName,
@@ -137,46 +142,46 @@
 			WHERE
 				ec.EmailTypeSerNum IS NOT NULL
 		";
-		$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-		$query->execute();
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
 
-		while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-			$typeArray = array(
-				'serial'	=> $data[0],
-				'name'		=> $data[1],
-				'id'		=> $data[2]
-			);
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                $typeArray = array(
+                    'serial'	=> $data[0],
+                    'name'		=> $data[1],
+                    'id'		=> $data[2]
+                );
 
-			array_push($types, $typeArray);
-		}
+                array_push($types, $typeArray);
+            }
 
-		return $types;
-		} catch (PDOException $e) {
-			echo $e->getMessage();
-			return $types;
-		}
-	}
+            return $types;
+        } catch (PDOException $e) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for email. " . $e->getMessage());
+        }
+    }
 
-	/**
-	*
-	* Inserts an email template into the database
-	*
-	* @param array $emailDetails : the email details
-	*/
-	public function insertEmail($emailDetails){
+    /**
+     *
+     * Inserts an email template into the database
+     *
+     * @param array $emailDetails : the email details
+     */
+    public function insertEmail($emailDetails){
+        $this->checkWriteAccess($emailDetails);
 
-		$subject_EN 	= $emailDetails['subject_EN'];
-		$subject_FR 	= $emailDetails['subject_FR'];
-		$body_EN 		= $emailDetails['body_EN'];
-		$body_FR 		= $emailDetails['body_FR'];
-		$type 			= $emailDetails['type'];
-		$userSer 		= $emailDetails['user']['id'];
-		$sessionId 		= $emailDetails['user']['sessionid'];
+        $subject_EN 	= $emailDetails['subject_EN'];
+        $subject_FR 	= $emailDetails['subject_FR'];
+        $body_EN 		= $emailDetails['body_EN'];
+        $body_FR 		= $emailDetails['body_FR'];
+        $type 			= $emailDetails['type'];
+        $userSer 		= $emailDetails['user']['id'];
+        $sessionId 		= $emailDetails['user']['sessionid'];
 
-		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			$sql = "
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
 				INSERT INTO 
 					EmailControl (
 						Subject_EN,
@@ -199,38 +204,40 @@
 					'$sessionId'
 				)
 			";
-			$query = $host_db_link->prepare( $sql );
-			$query->execute();
-		} catch( PDOException $e) {
-			return $e->getMessage();
-		}
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
+        } catch( PDOException $e) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for email. " . $e->getMessage());
 
-	}
+        }
 
-	/**
-	*
-	* Updates the email template in the database
-	*
-	* @param array $emailDetails : the email template details
-	* @return array $response : response
-	*/
-	public function updateEmail ($emailDetails) {
+    }
 
-		$subject_EN 	= $emailDetails['subject_EN'];
-		$subject_FR 	= $emailDetails['subject_FR'];
-		$body_EN 		= $emailDetails['body_EN'];
-		$body_FR 		= $emailDetails['body_FR'];
-		$serial 		= $emailDetails['serial'];
-		$userSer 		= $emailDetails['user']['id'];
-		$sessionId 		= $emailDetails['user']['sessionid'];
+    /**
+     *
+     * Updates the email template in the database
+     *
+     * @param array $emailDetails : the email template details
+     * @return array $response : response
+     */
+    public function updateEmail ($emailDetails) {
+        $this->checkWriteAccess($emailDetails);
 
-		$response = array(
+        $subject_EN 	= $emailDetails['subject_EN'];
+        $subject_FR 	= $emailDetails['subject_FR'];
+        $body_EN 		= $emailDetails['body_EN'];
+        $body_FR 		= $emailDetails['body_FR'];
+        $serial 		= $emailDetails['serial'];
+        $userSer 		= $emailDetails['user']['id'];
+        $sessionId 		= $emailDetails['user']['sessionid'];
+
+        $response = array(
             'value'     => 0,
             'message'   => ''
         );
 
         try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
 				UPDATE
@@ -245,51 +252,52 @@
 				WHERE
 					EmailControl.EmailControlSerNum = $serial
 			";
-			$query = $host_db_link->prepare( $sql );
+            $query = $host_db_link->prepare( $sql );
             $query->execute();
 
             $response['value'] = 1;
             return $response;
 
-	    } catch( PDOException $e) {
-		    $response['message'] = $e->getMessage();
-			return $response;
-		}
+        } catch( PDOException $e) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for email. " . $e->getMessage());
+
+        }
 
 
-	}
+    }
 
-	/**
-	*
-	* Deletes an email template from the database 
-	*
-	* @param integer $serial : the email control serial number
-	* @param object $user : the current user in session
-	* @return array $response : response
-	*/
-	public function deleteEmail ($serial, $user) {
+    /**
+     *
+     * Deletes an email template from the database
+     *
+     * @param integer $serial : the email control serial number
+     * @param object $user : the current user in session
+     * @return array $response : response
+     */
+    public function deleteEmail ($serial, $user) {
+        $this->checkDeleteAccess(array($serial, $user));
 
-		$response = array(
+        $response = array(
             'value'     => 0,
             'message'   => ''
-		);
-		
-		$userSer = $user['id'];
-		$sessionId = $user['sessionid'];
+        );
+
+        $userSer = $user['id'];
+        $sessionId = $user['sessionid'];
 
         try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
 				DELETE FROM
 					EmailControl
 				WHERE
 					EmailControl.EmailControlSerNum = $serial 
 			";
-			$query = $host_db_link->prepare( $sql );
-			$query->execute();
-			
-			$sql = "
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
+
+            $sql = "
                 UPDATE EmailControlMH
                 SET 
                     EmailControlMH.LastUpdatedBy = '$userSer',
@@ -306,14 +314,14 @@
             return $response;
 
         } catch( PDOException $e) {
-		    $response['message'] = $e->getMessage();
-			return $response;
-		}
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for email. " . $e->getMessage());
+
+        }
 
 
-	}
+    }
 
-	/**
+    /**
      *
      * Gets chart logs of a email or emails
      *
@@ -321,6 +329,7 @@
      * @return array $emailLogs : the email logs for highcharts
      */
     public function getEmailChartLogs ($serial) {
+        $this->checkReadAccess($serial);
         $emailLogs = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -328,7 +337,7 @@
 
             $sql = null;
             if (!$serial) {
-            	 $sql = "
+                $sql = "
                     SELECT DISTINCT 
                         emmh.CronLogSerNum,
                         COUNT(emmh.CronLogSerNum),
@@ -408,21 +417,23 @@
             return $emailLogs;
 
         } catch( PDOException $e) {
-            echo $e->getMessage();
-            return $emailLogs;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for email. " . $e->getMessage());
+
         }
     }
 
     /**
-     *
      * Gets list logs of emails during one or many cron sessions
-     *
-     * @param array $serials : a list of cron log serial numbers
-     * @return array $emailLogs : the email logs for table view
      */
-    public function getEmailListLogs ($serials) {
-        $emailLogs = array();
-        $serials = implode(',', $serials);
+    public function getEmailListLogs($emailIds) {
+        $this->checkReadAccess($emailIds);
+        foreach ($emailIds as &$id) {
+            $id = intval($id);
+        }
+
+        return $this->opalDB->getEmailsLogs($emailIds);
+
+        $serials = implode(',', $emailIds);
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -466,11 +477,7 @@
             return $emailLogs;
 
         } catch( PDOException $e) {
-            echo $e->getMessage();
-            return $emailLogs;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for email. " . $e->getMessage());
         }
     }
-
-
-
 }

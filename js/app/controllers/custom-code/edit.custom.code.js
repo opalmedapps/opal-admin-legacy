@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.customCode.edit', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('customCode.edit', function ($scope, $filter, $uibModal, $uibModalInstance, customCodeCollectionService, uiGridConstants, $state, Session) {
+controller('customCode.edit', function ($scope, $filter, $uibModal, $uibModalInstance, customCodeCollectionService, Session, ErrorHandler) {
 	$scope.toSubmit = {
 		OAUserId: Session.retrieveObject('user').id,
 		sessionid: Session.retrieveObject('user').sessionid,
@@ -68,8 +68,8 @@ controller('customCode.edit', function ($scope, $filter, $uibModal, $uibModalIns
 
 		$scope.changesDetected = false;
 		$scope.oldData = JSON.parse(JSON.stringify($scope.toSubmit));
-	}).catch(function(response) {
-		alert($filter('translate')('CUSTOM_CODE.EDIT.ERROR_DETAILS') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('CUSTOM_CODE.EDIT.ERROR_DETAILS'));
 	}).finally(function() {
 		processingModal.close(); // hide modal
 		processingModal = null; // remove reference
@@ -108,10 +108,9 @@ controller('customCode.edit', function ($scope, $filter, $uibModal, $uibModalIns
 				type: "POST",
 				url: "custom-code/update/custom-code",
 				data: $scope.toSubmit,
-				success: function () {
-				},
+				success: function () {},
 				error: function (err) {
-					alert($filter('translate')('CUSTOM_CODE.EDIT.ERROR_UPDATE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('CUSTOM_CODE.EDIT.ERROR_UPDATE'));
 				},
 				complete: function () {
 					$uibModalInstance.close();

@@ -1,17 +1,22 @@
 <?php
 
 
-class CustomCode extends OpalProject {
+class CustomCode extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_CUSTOM_CODE, $guestStatus);
+    }
 
     /*
      * Get the list of all custom codes
      * */
     function getCustomCodes() {
+        $this->checkReadAccess();
         $results = $this->opalDB->getCustomCodes();
         return $results;
     }
 
-    public function isCodeExists($tableName, $code, $description) {
+    protected function _isCodeExists($tableName, $code, $description) {
         $result = $this->opalDB->getCountCustomCodes($tableName, $code, $description);
 
         if(intval($result["locked"]) == 0)
@@ -26,6 +31,7 @@ class CustomCode extends OpalProject {
      * @return  array of modules
      * */
     public function getAvailableModules() {
+        $this->checkReadAccess();
         return $this->opalDB->getAvailableModules();
     }
 
@@ -35,7 +41,8 @@ class CustomCode extends OpalProject {
      * @return  number of record inserted (should be one) or a code 500
      * */
     public function insertCustomCode($customCode) {
-        $customCode = $this->arraySanitization($customCode);
+        $this->checkWriteAccess($customCode);
+        $customCode = HelpSetup::arraySanitization($customCode);
         $moduleDetails = $this->opalDB->getModuleSettings($customCode["moduleId"]["value"]);
 
         $result = $this->_validateCustomCode($customCode, $moduleDetails);
@@ -59,16 +66,17 @@ class CustomCode extends OpalProject {
      * @return  number of record inserted (should be one) or a code 500
      * */
     public function updateCustomCode($customCode) {
-        $customCode = $this->arraySanitization($customCode);
+        $this->checkWriteAccess($customCode);
+        $customCode = HelpSetup::arraySanitization($customCode);
         if(!array_key_exists("ID", $customCode) || $customCode["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot identify the custom code");
 
-        $details = $this->getCustomCodeDetails($customCode["ID"], $customCode["moduleId"]["value"]);
+        $details = $this->_getCustomCodeDetails($customCode["ID"], $customCode["moduleId"]["value"]);
 
-        if($detais["locked"] > 0)
+        if($details["locked"] > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Custom code is in use and cannot be modified.");
 
-        if($detais["source"] > LOCAL_SOURCE_ONLY)
+        if($details["source"] > LOCAL_SOURCE_ONLY)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot modify a code from an outside source.");
 
         if($details["code"] == $customCode["details"]["code"] && $details["description"] == $customCode["details"]["description"])
@@ -91,7 +99,7 @@ class CustomCode extends OpalProject {
 
     /*
      * Validate a custom code.
-     * @params  $customCode(array in ref) custom code to validate
+     * @params  $customCode (array in ref) custom code to validate
      *          $moduleDetails (array in ref) details of the module to which the custom code is associated
      * @return  $errMsgs (array) the list of errors found in the validation.
      * */
@@ -118,18 +126,32 @@ class CustomCode extends OpalProject {
                 array_push($errMsgs, "Type should not be there.");
         }
 
-        if($this->isCodeExists($moduleDetails["masterSource"], $customCode["details"]["code"], $customCode["details"]["description"]))
+        if($this->_isCodeExists($moduleDetails["masterSource"], $customCode["details"]["code"], $customCode["details"]["description"]))
             array_push($errMsgs, "Code already exists.");
 
         return $errMsgs;
     }
 
-    function getCustomCodeDetails($customCodeId, $moduleId) {
+    /*
+     * Return the custom code details base on its ID and which module it is attached.
+     *
+     * @param   $customCodeId (int) ID of the custom code
+     *          $moduleId (int) ID of the module to which is associated the custom code
+     * @return  array : details of the custom code
+     * */
+    protected function _getCustomCodeDetails($customCodeId, $moduleId) {
+        $customCodeId = intval($customCodeId);
+        $moduleId = intval($moduleId);
         $results = $this->opalDB->getCustomCodeDetails($customCodeId, $moduleId);
         if($results["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid custom code.");
         unset($results["masterSource"]);
         return $results;
+    }
+
+    function getCustomCodeDetailsAPI($customCodeId, $moduleId) {
+        $this->checkReadAccess(array($customCodeId, $moduleId));
+        return $this->_getCustomCodeDetails($customCodeId, $moduleId);
     }
 
     /**
@@ -147,6 +169,13 @@ class CustomCode extends OpalProject {
      * @return  boolean : response
      */
     function deleteCustomCode($customCodeId, $moduleId) {
-        return $this->opalDB->markCustomCodeAsDeleted($customCodeId, $moduleId);
+        $this->checkDeleteAccess(array($customCodeId, $moduleId));
+        $details = $this->opalDB->getCustomCodeDetails($customCodeId, $moduleId);
+        if($details["ID"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid custom code.");
+        if($details["locked"] != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Custom code is locked.");
+
+        return $this->opalDB->markCustomCodeAsDeleted($customCodeId, $details["masterSource"]);
     }
 }

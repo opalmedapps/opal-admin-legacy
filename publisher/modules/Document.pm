@@ -411,7 +411,9 @@ sub getDocCronLogSer
 #======================================================================================
 sub getDocsFromSourceDB
 {
-	my ($cronLogSer, @patientList) = @_; # a list of patients and cron log serial from args
+	my $cronLogSer = @_[0];
+	my @patientList = @_[1];
+    my $global_patientInfo_sql = @_[2];
 
 	my @docList = (); # initialize a list for document objects
 
@@ -473,35 +475,31 @@ sub getDocsFromSourceDB
 			my $defaultLastTransferred = '2019-01-01 00:00:00';
 
 			my $patientInfo_sql = "
-				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
+				use VARIAN;
+
+                IF OBJECT_ID('tempdb.dbo.#tempClinic', 'U') IS NOT NULL
+                	DROP TABLE #tempClinic;
+
+				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
+					DROP TABLE #tempPatient;
+
+				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
-			my $numOfPatients = @patientList;
-			my $counter = 0;
-			foreach my $Patient (@patientList) {
-				my $patientSer 			= $Patient->getPatientSer();
-				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
-				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
-
-				$patientInfo_sql .= "
-					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
-				";
-
-				$counter++;
-				if ( $counter < $numOfPatients ) {
-					$patientInfo_sql .= "UNION";
-				}
-			}
-			$patientInfo_sql .= "),";
-
+			$patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
+			$patientInfo_sql .= ")
+			Select c.* into #tempClinic
+			from PatientInfo c;
+			Create Index temporaryindexClinic1 on #tempClinic (ID);
+			Create Index temporaryindexClinic2 on #tempClinic (PatientSerNum);
+			
+			Select p.PatientSer, p.PatientId into #tempPatient
+			from VARIAN.dbo.Patient p;
+			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
+			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
+			";
 
 			my $docInfo_sql = $patientInfo_sql . "
-				note_typ AS (
-					SELECT DISTINCT
-						Expression.note_typ,
-						Expression.note_typ_desc
-					FROM
-						VARIAN.dbo.note_typ Expression
-				)
+
 				SELECT DISTINCT
 					visit_note.pt_id,
 					visit_note.pt_visit_id,
@@ -509,7 +507,10 @@ sub getDocsFromSourceDB
 					visit_note.revised_ind,
 					visit_note.valid_entry_ind,
 					visit_note.err_rsn_txt,
-					visit_note.doc_file_loc,
+					case 
+						when CHARINDEX('\\DOCUMENTS\\20', upper(FolderName1)) = 0 then FL.[FileName]
+						when CHARINDEX('\\DOCUMENTS\\20', upper(FolderName1)) > 0 then concat(Right(FolderName1, 6), '/', FL.[FileName])
+					end AS doc_file_loc,
 					visit_note.appr_stkh_id,
 					CONVERT(VARCHAR, visit_note.appr_tstamp, 120),
 					visit_note.author_stkh_id,
@@ -522,12 +523,15 @@ sub getDocsFromSourceDB
 					VARIAN.dbo.visit_note visit_note,
 					VARIAN.dbo.note_typ,
 					VARIAN.dbo.pt pt,
-					PatientInfo
+					VARIAN.dbo.FileLocation FL,
+					#tempClinic PatientInfo
 				WHERE
 					pt.pt_id 			            = visit_note.pt_id
-				AND pt.patient_ser			        = (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+				AND pt.patient_ser			        = (select pt.PatientSer 
+					from #tempPatient pt where pt.PatientId = PatientInfo.ID)
 				AND visit_note.note_typ		        = note_typ.note_typ
 				AND visit_note.appr_flag		    = 'A'
+				AND visit_note.doc_file_loc = FL.[FileName]
 				AND (
 			";
 
@@ -566,6 +570,10 @@ sub getDocsFromSourceDB
 				}
 			}
 			
+			# open(my $fh, '>>', 'ym.txt');
+			# print $fh $docInfo_sql;
+			# close $fh;
+
 			# prepare query
 			my $query = $sourceDatabase->prepare($docInfo_sql)
 				or die "Could not prepare query: " . $sourceDatabase->errstr;
@@ -851,6 +859,8 @@ sub transferPatientDocuments
         	next;
         }
 
+		my $OnlyFileName = '';
+
 		# check if document log exists in our database
 		my $DocExists = $Document->inOurDatabase();
 
@@ -865,8 +875,11 @@ sub transferPatientDocuments
 		my $finalfilenum = $filefields[0]; # remove extension of file
 		my $finalextension = $filefields[1]; # get the extension
 
-		my $clinicalDir = $ftpObject->getFTPClinicalDir(); # get local directory of documents
+		# get only the filename without the extension and subdirectory
+		my $Errorfilename = (split '/', $finalfilenum)[-1];
 
+		my $clinicalDir = $ftpObject->getFTPClinicalDir(); # get local directory of documents
+		
 		my $sourcefile = "$clinicalDir/$finalfileloc"; # concatenate directory and file
 
         print "Source file: $sourcefile\n" if $verbose;
@@ -907,7 +920,10 @@ sub transferPatientDocuments
 	            			FROM
 				            	VARIAN.dbo.visit_note visit_note
 	            			WHERE
-				            	visit_note.doc_file_loc = '$finalfileloc'
+				            	visit_note.doc_file_loc = 
+									case when CHARINDEX('/', '$finalfileloc') = 0 then '$finalfileloc'
+									else substring('$finalfileloc', CHARINDEX('/', '$finalfileloc') + 1, len('$finalfileloc'))
+									end
 	            		";
 
 	            		# prepare query
@@ -966,7 +982,7 @@ sub transferPatientDocuments
 				    }
 
                     # create an error file
-                    my $sourceErrorFile = "$localDir/$finalfilenum.err";
+                    my $sourceErrorFile = "$localDir/$Errorfilename.err";
 
                     #####################################
 					# Write error file information
@@ -1001,13 +1017,18 @@ END
                 if ($validentry eq "Y") {
 
     				# Convert .doc to .pdf if .doc
-	    			if ($finalextension eq "doc") {
+	    			if ($finalextension eq "doc" or $finalextension eq "docx") {
 		    			system("$lowriter --headless --convert-to pdf --nologo --outdir $localDir $sourcefile");
                     	$Document->setDocFileLoc("$finalfilenum.pdf"); # record that it has been changed
     				}
 	    			# if already pdf, just copy
 		    		if ($finalextension eq "pdf") {
-			    		system("cp $sourcefile $localDir/$finalfileloc");
+						if (index($finalfileloc, '/') eq -1) {
+			    			system("cp $sourcefile $localDir/$finalfileloc");
+						} else {
+							$OnlyFileName = substr($finalfileloc, 7);
+							system("cp $sourcefile $localDir/$OnlyFileName");
+						}
 				    }
 
                 }
@@ -1060,7 +1081,10 @@ END
 	            			FROM
 				            	VARIAN.dbo.visit_note visit_note
 	            			WHERE
-				            	visit_note.doc_file_loc = '$finalfileloc'
+				            	visit_note.doc_file_loc = 
+									case when CHARINDEX('/', '$finalfileloc') = 0 then '$finalfileloc'
+									else substring('$finalfileloc', CHARINDEX('/', '$finalfileloc') + 1, len('$finalfileloc'))
+									end
 	            		";
 
 	            		# prepare query
@@ -1119,7 +1143,7 @@ END
 				    }
 
                     # create an error file
-                    my $sourceErrorFile = "$localDir/$finalfilenum.err";
+                    my $sourceErrorFile = "$localDir/$Errorfilename.err";
 
                     #####################################
 					# Write error file information
@@ -1152,14 +1176,19 @@ END
                 if ($validentry eq "Y") { # not errored out
 
                     # Convert .doc to .pdf if .doc
-    				if ($finalextension eq "doc") {
+    				if ($finalextension eq "doc" or $finalextension eq "docx") {
 	    				system("$lowriter --headless --convert-to pdf --nologo --outdir $localDir $sourcefile");
             			$Document->setDocFileLoc("$finalfilenum.pdf"); # change extension for database
     				}
     				# if already pdf, just copy
-		    		if ($finalextension eq "pdf") {
-			    		system("cp $sourcefile $localDir/$finalfileloc");
-			    	}
+					if ($finalextension eq "pdf") {
+						if (index($finalfileloc, '/') eq -1) {
+							system("cp $sourcefile $localDir/$finalfileloc");
+						} else {
+							$OnlyFileName = substr($finalfileloc, 7);
+							system("cp $sourcefile $localDir/$OnlyFileName");
+						}
+					}
                 }
 
 				# set transfer status to true

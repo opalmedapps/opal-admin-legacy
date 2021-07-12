@@ -1,0 +1,360 @@
+<div id="main">
+    <div id="top">
+        <div class="clearfix">
+            <div class="row">
+                <!-- Left side detail view -->
+                <div class="col-lg-2">
+                    <!-- Logo -->
+                    <div class="side-navbar" ng-controller="navigation">
+                        <div class="row side-logo" ng-click="goToHome()">
+                            <div class="col-md-12">
+                                <div class="logo">
+                                    <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+                                </div>
+                                <h1 class="animated fadeIn">opal
+                                    <strong>ADMIN</strong>
+                                    <span style="font-size: 20px;" ng-if="devMode">DEV</span>
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="summary-fix">
+                        <!-- Back button -->
+                        <div class="row side-panel-menu">
+                            <div class="col-xs-12 col-sm-5 col-lg-12">
+                                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false"
+                                     style="cursor:pointer;" ng-click="goBack()">
+                                    <div class="side-panel-info-sm">
+                                        <div class="panel-content">
+                                            <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                                            <h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;">
+                                                <strong>{{'ALERT.ADD.BACK'|translate}}</strong>
+                                            </h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Summary -->
+                            <div class="side-menu-title col-lg-12">
+                                <div class="horz-line" style="height: 16px; text-align: center">
+									<span style="background-color:#e6edfa; padding: 0 10px;">
+										<h2>{{'ALERT.ADD.SUMMARY'|translate}}</h2>
+									</span>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="progress progress-striped active">
+                                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}"
+                                         aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <uib-accordion class="side-navbar">
+                            <!-- SECTION: Message -->
+                            <div uib-accordion-group is-open="leftMenu.message.open" class="panel-container summary-box" is-disabled="!validator.message.completed" ng-if="(toSubmit.message.subject || toSubmit.message.body)">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="validator.message.completed" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'ALERT.ADD.MESSAGE'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i ng-if="validator.message.completed" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.message.open, 'glyphicon-chevron-right': !leftMenu.message.open}"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="toSubmit.message.subject || toSubmit.message.body" class="description">
+                                    <p style="margin-bottom:0;" ng-show="toSubmit.message.subject">
+                                        <b>{{'ALERT.ADD.SUBJECT'|translate}}:</b> {{toSubmit.message.subject}}
+                                    </p>
+                                    <p style="margin-bottom:0;" ng-show="toSubmit.message.body">
+                                        <b>{{'ALERT.ADD.BODY'|translate}}:</b> {{toSubmit.message.body}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Triggers -->
+                            <div uib-accordion-group is-open="leftMenu.trigger.open" class="panel-container summary-box" is-disabled="!validator.trigger.completed" ng-if="toSubmit.trigger">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="validator.trigger.completed" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'ALERT.ADD.TRIGGERS'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i ng-if="validator.trigger.completed" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.trigger.open, 'glyphicon-chevron-right': !leftMenu.trigger.open}"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="toSubmit.trigger" class="description">
+                                    <p style="margin-bottom:0;" ng-show="toSubmit.trigger">
+                                        <b>{{'ALERT.ADD.SEE_TRIGGERS'|translate}}</b>
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Contact -->
+                            <div uib-accordion-group is-open="leftMenu.contact.open" class="panel-container summary-box" is-disabled="!validator.contact.completed" ng-if="toSubmit.contact.phone.length > 0 || toSubmit.contact.email.length > 0">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="validator.contact.completed" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'ALERT.ADD.CONTACTS'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i ng-if="validator.contact.completed" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.contact.open, 'glyphicon-chevron-right': !leftMenu.contact.open}"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="toSubmit.contact.phone.length > 0" class="description">
+                                    <p style="margin-bottom:0;" ng-show="toSubmit.contact.phone.length > 0">
+                                        <b>{{'ALERT.ADD.PHONE'|translate}}</b>
+                                    </p>
+                                    <ul><li ng-repeat="phone in toSubmit.contact.phone track by $index">{{phone.num}}</li></ul>
+                                </div>
+                                <div ng-if="toSubmit.contact.email.length > 0" class="description">
+                                    <p style="margin-bottom:0;" ng-show="toSubmit.contact.phone.length > 0">
+                                        <b>{{'ALERT.ADD.EMAIL'|translate}}</b>
+                                    </p>
+                                    <ul><li ng-repeat="email in toSubmit.contact.email track by $index">{{email.adr}}</li></ul>
+                                </div>
+                            </div>
+                        </uib-accordion>
+                        <!-- Submit button -->
+                        <div class="panel-container" ng-if="formReady">
+                            <a href="" ng-click="submitAlert()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}"
+                               ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" style="width: 100%;">
+								<span style="font-size: 20px;">
+									<strong>{{'ALERT.ADD.SUBMIT'|translate}}</strong>
+								</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right side view -->
+                <div class="col-xs-12 col-lg-10 animated fadeInRight">
+                    <div class="row main-title">
+                        <!-- Page title -->
+                        <div class="col-xs-12 col-md-8 title-content">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            <h1>
+                                <strong>{{'ALERT.ADD.TITLE'|translate}}</strong>
+                            </h1>
+                        </div>
+                        <!-- Breadcrumbs -->
+                        <div class="col-md-4 title-breadcrumbs">
+                            <a ui-sref="home">{{'BREADCRUMBS.HOME'|translate}}</a>
+                            <span class="teflon glyphicon glyphicon-menu-right"></span>
+                            <a ui-sref="alert">{{'ALERT.LIST.TITLE'|translate}}</a>
+                            <span class="teflon glyphicon glyphicon-menu-right"></span>
+                            <strong>{{'ALERT.ADD.TITLE'|translate}}</strong>
+                        </div>
+                    </div>
+
+                    <div class="row mobile-side-panel-menu">
+                        <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
+                            <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                                <div class="side-panel-info-sm">
+                                    <div class="panel-content">
+                                        <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                                        <h6 class="side-panel-title"><strong>{{'ALERT.ADD.BACK'|translate}}</strong></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6">
+                            <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
+                                <span style="padding: 0 10px;">
+                                    <h2>{{'ALERT.ADD.STEP'|translate}} {{completedSteps}} {{'ALERT.ADD.OF'|translate}} {{totalSteps}} {{'ALERT.ADD.COMPLETED'|translate}}</h2>
+                                </span>
+                            </div>
+                            <div class="progress progress-striped active">
+                                <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="formReady">
+                            <div class="panel-container">
+                                <a href="" ng-click="submitAlert()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" style="width: 100%;">
+                                    <span style="font-size: 20px;"><strong>{{'ALERT.ADD.SUBMIT'|translate}}</strong></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-content">
+                        <!-- SECTION: Message -->
+                        <div class="row">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span><h2>{{'ALERT.ADD.MESSAGE'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 5px;">
+                                    <span style="color:#d9534f"><strong>{{'ALERT.ADD.REQUIRED'|translate}}</strong></span>
+                                    {{'ALERT.ADD.MESSAGE_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="panel" ng-class="(toSubmit.message.subject && toSubmit.message.body) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'ALERT.ADD.MESSAGE_TITLE'|translate}}</strong>
+                                        <span ng-hide="toSubmit.message.subject && toSubmit.message.body" style="float:right"><em>{{'ALERT.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="toSubmit.message.subject && toSubmit.message.body" style="float:right"><em>{{'ALERT.ADD.COMPLETE'|translate}}</em></span>
+                                    </div>
+                                    <div class="panel-body form-horizontal">
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                {{'ALERT.ADD.SUBJECT'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-lg-10">
+                                                <textarea class="form-control" rows="2" ng-model="toSubmit.message.subject" ng-change="messageUpdate()"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                {{'ALERT.ADD.BODY'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-lg-10">
+                                                <textarea class="form-control" rows="2" ng-model="toSubmit.message.body" ng-change="messageUpdate()"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Triggers -->
+                        <div class="row" ng-if="validator.message.completed">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span><h2>{{'ALERT.ADD.TRIGGERS'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" ng-if="validator.message.completed">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 5px;">
+                                    <span style="color:#d9534f"><strong>{{'ALERT.ADD.REQUIRED'|translate}}</strong></span>
+                                    {{'ALERT.ADD.TRIGGERS_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row" ng-if="validator.message.completed">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="panel" ng-class="(toSubmit.trigger) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'ALERT.ADD.TRIGGERS'|translate}}</strong>
+                                        <span ng-hide="toSubmit.trigger" style="float:right"><em>{{'ALERT.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="toSubmit.trigger" style="float:right"><em>{{'ALERT.ADD.COMPLETE'|translate}}</em></span>
+                                    </div>
+                                    <div class="panel-body form-horizontal">
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                {{'ALERT.ADD.TRIGGERS_LIST'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-lg-10">
+                                                <textarea class="form-control" rows="2" ng-model="toSubmit.trigger" ng-change="triggerUpdate()"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- END SECTION -->
+                        <!-- SECTION: contacts -->
+                        <div class="row" ng-if="validator.trigger.completed">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span><h2>{{'ALERT.ADD.CONTACTS'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 5px;">
+                                    <span style="color:#d9534f"><strong>{{'ALERT.ADD.REQUIRED'|translate}}</strong></span>
+                                    {{'ALERT.ADD.CONTACTS_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                <div class="panel" ng-if="validator.trigger.completed && toSubmit.contact.phone.length > 0" ng-class="(validator.contact.phone.completed) ? 'panel-success' : 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'ALERT.ADD.PHONE'|translate}} {{phone.num}}</strong>
+                                        <span ng-hide="validator.contact.phone.completed" style="float:right;"><em>{{'ALERT.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="validator.contact.phone.completed" style="float:right;"><em>{{'ALERT.ADD.COMPLETE'|translate}}</em></span>
+                                    </div>
+                                    <div class="panel-body form-horizontal">
+                                        <div class="form-group">
+                                            <div class="col-xs-12 "  >
+                                                <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="phone in toSubmit.contact.phone track by $index">
+                                                    <input class="form-control" type="text" ng-model="phone.num" placeholder="{{'ALERT.ADD.PHONE_EX'|translate}}" required="required">
+                                                    <span class="input-group-btn">
+                                                    <button class="btn btn-default" ng-click="removePhone($index)"><span class="fa fa-minus"></span> {{'ALERT.ADD.REMOVE'|translate}}</button>
+                                                    </span>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row animated">
+                                    <div class="col-xs-3">
+                                        <div style="display: table;"><button type="button" class="btn btn-default" style="float: left; margin-top:5px;" ng-click="addPhone();"><span class="fa fa-plus"></span> {{'ALERT.ADD.ADD_PHONE'|translate}}</button></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                <div class="panel" ng-if="validator.trigger.completed && toSubmit.contact.email.length > 0" ng-class="(validator.contact.email.completed) ? 'panel-success' : 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'ALERT.ADD.EMAIL'|translate}} {{email.adr}}</strong>
+                                        <span ng-hide="validator.contact.email.completed" style="float:right;"><em>{{'ALERT.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="validator.contact.email.completed" style="float:right;"><em>{{'ALERT.ADD.COMPLETE'|translate}}</em></span>
+                                    </div>
+                                    <div class="panel-body form-horizontal">
+                                        <div class="form-group">
+                                            <div class="col-xs-12 "  >
+                                                <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="email in toSubmit.contact.email track by $index">
+                                                    <input class="form-control" type="email" ng-model="email.adr" placeholder="{{'ALERT.ADD.EMAIL_EX'|translate}}" required="required">
+                                                    <span class="input-group-btn">
+                                                    <button class="btn btn-default" ng-click="removeEmail($index)"><span class="fa fa-minus"></span> {{'ALERT.ADD.REMOVE'|translate}}</button>
+                                                    </span>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row animated">
+                                    <div class="col-xs-3">
+                                        <div style="display: table;"><button type="button" class="btn btn-default" style="float: left; margin-top:5px;" ng-click="addEmail();"><span class="fa fa-plus"></span> {{'ALERT.ADD.ADD_EMAIL'|translate}}</button></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- END SECTION -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/ng-template" id="processingModal.htm">
+    <div class="modal-header">
+        <h1>{{'ALERT.ADD.PROCESSING'|translate}}</h1>
+    </div>
+    <div class="modal-body">
+        <div class="progress progress-striped active">
+            <div class="progress-bar" style="width: 100%"></div>
+        </div>
+    </div>
+</script>

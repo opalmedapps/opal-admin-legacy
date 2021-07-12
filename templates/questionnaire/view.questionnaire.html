@@ -1,0 +1,229 @@
+<!-- Modal title -->
+<div class="modal-header">
+    <div class="row col-xs-12">
+        <h2 class="modal-title col-xs-12">
+            <span class="fa fa-eye"></span>
+            {{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.VIEW'|translate}}
+        </h2>
+        <p class="text-danger" ng-if="questionnaire.readOnly == 1">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PUBLISHED'|translate}}</p>
+    </div>
+    <div class="modal-buttons col-xs-12">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.CLOSE'|translate}}">
+    </div>
+</div>
+<div class="modal-body">
+    <uib-accordion close-others="false">
+        <!-- SECTION: Titles -->
+        <div uib-accordion-group is-open="titleSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.TITLES'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ENGLISH_TITLE'|translate}}</strong>: {{questionnaire.title_EN}}</p>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.FRENCH_TITLE'|translate}}</strong>: {{questionnaire.title_FR}}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 col-md-6" style="margin-bottom: 20px;">
+                </div>
+                <div class="col-xs-6 col-md-6" style="margin-bottom: 20px;">
+                    <label style="font-size: 20px;">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.FINALIZE'|translate}} <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="questionnaire.final" disabled></label>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Description -->
+        <div uib-accordion-group is-open="descriptionSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': descriptionSection.open, 'glyphicon-chevron-right': !descriptionSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <span style="font-size:20px;">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.HTML_ENGLISH'|translate}}</span>
+                    </div>
+                    <div ng-bind-html="questionnaire.description_EN"></div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <span style="font-size:20px;">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.HTML_FRENCH'|translate}}</span>
+                    </div>
+                    <div ng-bind-html="questionnaire.description_FR"></div>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Purpose and Respondent -->
+        <div uib-accordion-group is-open="purposeRespondentSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.RESPONDENT_PURPOSE'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': purposeRespondentSection.open, 'glyphicon-chevron-right': !purposeRespondentSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6">
+                    <h2 style="margin-top: 0">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PURPOSE'|translate}}</h2>
+                    <select disabled ng-model="questionnaire.purpose.ID" ng-change="setChangesMade()" ng-options="purpose.ID as purpose.title_display for purpose in purposeList" class="form-control">
+                    </select>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <h2 style="margin-top: 0">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.RESPONDENT'|translate}}</h2>
+                    <select disabled ng-model="questionnaire.respondent.ID" ng-change="setChangesMade()" ng-options="respondent.ID as respondent.title_display for respondent in respondentList" class="form-control">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Privacy -->
+        <div uib-accordion-group is-open="privacySection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PRIVACY'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': privacySection.open, 'glyphicon-chevron-right': !privacySection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-3">
+                    <div class="panel-container animated disabled" style="cursor:pointer;" ng-class="{active: questionnaire.private == 1}" ng-mouseenter="hoverB=true" ng-mouseleave="hoverB=false">
+                        <div class="panel-info" ng-class="{active: questionnaire.private == 1}">
+                            <div class="panel-content" style="text-align:center">
+                                <span style="font-size:30px;" class="fa fa-user-secret"></span>
+                                <div class="option-panel-title">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PRIVATE'|translate}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-3">
+                    <div id="btn-public" class="panel-container disabled" style="cursor:pointer;" ng-mouseenter="hoverC=true" ng-mouseleave="hoverC=false">
+                        <div class="panel-info" ng-class="{active: questionnaire.private == 0}">
+                            <div class="panel-content" style="text-align:center">
+                                <span style="font-size:30px;" class="fa fa-users"></span>
+                                <div class="option-panel-title">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PUBLIC'|translate}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Question group -->
+        <div uib-accordion-group is-open="questionGroupSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>Questions</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': questionGroupSection.open, 'glyphicon-chevron-right': !questionGroupSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <h4 style="text-align:left; margin-left:20px" >{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.EDIT_QUESTIONS_SELECTION'|translate}} </h4>
+                <!-- Selected groups: change position -->
+                <div class="col-md-12" ng-show="newgroups.length" >
+                    <div class="panel-container" style="margin:10px;">
+                        <div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
+                            <span style="background-color: #fff; padding: 0 10px; font-size:16px;"> {{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.EDIT_SELECTED_QUESTION'|translate}} </span>
+                        </div>
+                        <div class="panel-info">
+                            <table style="width:100%;">
+                                <tr style="font-size:16px;">
+                                    <td>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.CURRENT_POSITION'|translate}}</td>
+                                    <td>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.CHANGE_POSITION'|translate}}</td>
+                                    <td>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.QUESTION'|translate}}</td>
+                                    <td>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.REQUIRED_OPTIONAL'|translate}}</td>
+                                </tr>
+                                <tr>
+                                </tr>
+                                <tr ng-repeat="newgroup in newgroups">
+                                    <td>
+                                        {{newgroup.order}}
+                                    </td>
+                                    <td>
+                                        <label><input type="number" min="1" ng-model="newgroup.position"></label>
+                                    </td>
+                                    <td>
+                                        {{newgroup.question_EN}} / {{newgroup.question_FR}}
+                                    </td>
+                                    <td>
+                                        <select name="groupOption" ng-model="newgroup.optional" required>
+                                            <option value=0 selected>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.REQUIRED'|translate}}</option>
+                                            <option value=1>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.OPTIONAL'|translate}}</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <!-- Preview -->
+                    <div class="col-lg-12" style="text-align:right">
+                        <div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
+                            <span style="background-color: #fff; padding: 0 10px; font-size:16px;">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.QUESTIONS_PREVIEW'|translate}}</span>
+                        </div>
+                        <div class="previewContainer">
+                            <div class="col-lg-6">
+                                <div class="previewContent">
+                                    <h3>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ENGLISH'|translate}}</h3>
+                                    <div ng-repeat="selectedGroupObj in questionnaire.questions">
+                                        <h4>{{selectedGroupObj.type_EN}}:</h4>
+                                        <p>{{selectedGroupObj.question_EN}} <span style="color:#d9534f;;">({{selectedGroupObj.optional == 1 ? 'optional' : 'required'}})</span></p>
+                                        <!-- Answer type preview -->
+                                        <div ng-if="selectedGroupObj.typeId == '4'">
+                                            <div ng-repeat="option in selectedGroupObj.subOptions">
+                                                <label><input type="radio" disabled> {{option.description_EN}}</label>
+                                            </div>
+                                        </div>
+                                        <div ng-if="selectedGroupObj.typeId == '2'">
+                                            <div ng-repeat="option in selectedGroupObj.subOptions">
+                                                <label><input type="radio" disabled>
+                                                    {{option.description_EN}}</label>
+                                            </div>
+                                        </div>
+                                        <div ng-if="selectedGroupObj.typeId == '1'">
+                                            <div ng-repeat="option in selectedGroupObj.subOptions">
+                                                <label><input type="checkbox" disabled>
+                                                    {{option.description_EN}}</label>
+                                            </div>
+                                        </div>
+                                        <div ng-if="selectedGroupObj.typeId == '3'">
+                                            <textarea rows="3" cols="40" disabled>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.TYPE_ANSWER_EN'|translate}}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="previewContent">
+                                    <h3>Français</h3>
+                                    <div ng-repeat="selectedGroupObj in questionnaire.questions">
+                                        <h4>{{selectedGroupObj.type_FR}}:</h4>
+                                        <p>{{selectedGroupObj.question_FR}} <span style="color:#d9534f;;">({{selectedGroupObj.optional == 1 ? 'optionnel' : 'requis'}})</span></p>
+                                        <!-- Answer type preview -->
+                                        <div ng-if="selectedGroupObj.typeId == '1'">
+                                            <div ng-repeat="option in selectedGroupObj.subOptions">
+                                                <label><input type="checkbox" disabled>
+                                                    {{option.description_FR}}</label>
+                                            </div>
+                                        </div>
+                                        <div ng-if="selectedGroupObj.typeId == '2'">
+                                            <div ng-repeat="option in selectedGroupObj.subOptions">
+                                                <label><input type="radio" disabled>
+                                                    {{option.description_FR}}</label>
+                                            </div>
+                                        </div>
+                                        <div ng-if="selectedGroupObj.typeId == '3'">
+                                            <textarea rows="3" cols="40" disabled>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.TYPE_ANSWER_FR'|translate}}</textarea>
+                                        </div>
+                                        <div ng-if="selectedGroupObj.typeId == '4'">
+                                            <div ng-repeat="option in selectedGroupObj.subOptions">
+                                                <label><input type="radio" disabled> {{option.description_FR}}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </uib-accordion>
+</div>

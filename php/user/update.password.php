@@ -1,22 +1,8 @@
 <?php
-	header('Content-Type: application/javascript');
+include_once("../config.php");
 
-	/* To update a user's password */
-	include_once('user.inc');
+$userObject = new User();
+$response = $userObject->updatePassword($_POST);
 
-	$userObject = new Users;  // Object
-
-	// Construct array from FORM params
-	$userArray = array(
-		'oldPassword'			=> $_POST['oldPassword'],
-		'password'				=> $_POST['password'],
-		'confirmPassword'	=> $_POST['confirmPassword'],
-		'user'						=> $_POST['user'],
-		'cypher'					=> $_POST['cypher']
-	);
-
-	// Call function
-	$response = $userObject->updatePassword($userArray);
-	print json_encode($response); // Return response
-
-?>
+header('Content-Type: application/javascript');
+http_response_code(HTTP_STATUS_SUCCESS);

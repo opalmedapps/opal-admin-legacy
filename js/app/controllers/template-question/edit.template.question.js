@@ -1,10 +1,9 @@
 angular.module('opalAdmin.controllers.template.question.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns'])
 
-	.controller('template.question.edit', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
+	.controller('template.question.edit', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, uiGridConstants, Session, ErrorHandler) {
 		// get current user id
 		var user = Session.retrieveObject('user');
 		var OAUserId = user.id;
-
 
 		// initialize default variables & lists
 		$scope.templateQuestion = {};
@@ -38,15 +37,16 @@ angular.module('opalAdmin.controllers.template.question.edit', ['ngAnimate', 'ng
 		};
 
 		$scope.updateSlider = function () {
-			var radiostep = new Array();
-			var increment = parseFloat($scope.templateQuestion.options.increment);
-			var minValue = parseFloat($scope.templateQuestion.options.minValue);
-			var maxValue = parseFloat($scope.templateQuestion.options.maxValue);
+			var radiostep = [];
+			var increment = 1;
+			// var increment = parseFloat($scope.templateQuestion.options.increment);
+			var minValue = parseInt($scope.templateQuestion.options.minValue);
+			var maxValue = parseInt($scope.templateQuestion.options.maxValue);
 
-			if (minValue <= 0.0 || maxValue <= 0.0 || increment <= 0 || minValue >= maxValue)
+			if (minValue < 0 || maxValue < 0 || increment != 1 || minValue >= maxValue)
 				$scope.validSlider = false;
 			else {
-				maxValue = (Math.floor((maxValue - minValue) / increment) * increment) + minValue;
+				// maxValue = (Math.floor((maxValue - minValue) / increment) * increment) + minValue;
 				$scope.validSlider = true;
 				for(var i = minValue; i <= maxValue; i += increment) {
 					radiostep.push({"description":" " + i,"description_EN":" " + i,"description_FR":" " + i});
@@ -73,7 +73,7 @@ angular.module('opalAdmin.controllers.template.question.edit', ['ngAnimate', 'ng
 		$scope.checkForm = function () {
 			if ($scope.templateQuestion.name_EN && $scope.templateQuestion.name_FR && $scope.changesMade) {
 				if($scope.templateQuestion.typeId === "2") {
-					if ($scope.templateQuestion.options.increment <= 0 || $scope.templateQuestion.options.minValue <= 0 || $scope.templateQuestion.options.maxValue <= 0 || $scope.templateQuestion.options.minValue > $scope.templateQuestion.options.maxValue || $scope.templateQuestion.options.minCaption_EN === "" || $scope.templateQuestion.options.minCaption_FR === "" || $scope.templateQuestion.options.maxCaption_EN === "" || $scope.templateQuestion.options.maxCaption_FR === "" )
+					if ($scope.templateQuestion.options.increment != 1 || $scope.templateQuestion.options.minValue < 0 || $scope.templateQuestion.options.maxValue < 0 || $scope.templateQuestion.options.minValue > $scope.templateQuestion.options.maxValue || $scope.templateQuestion.options.minCaption_EN === "" || $scope.templateQuestion.options.minCaption_FR === "" || $scope.templateQuestion.options.maxCaption_EN === "" || $scope.templateQuestion.options.maxCaption_FR === "" )
 						return false;
 					else
 						return true;
@@ -96,7 +96,7 @@ angular.module('opalAdmin.controllers.template.question.edit', ['ngAnimate', 'ng
 		$scope.showProcessingModal();
 
 		// Call our API service to get the questionnaire details
-		questionnaireCollectionService.getTemplateQuestionDetails($scope.currentTemplateQuestion.ID, OAUserId).then(function (response) {
+		questionnaireCollectionService.getTemplateQuestionDetails($scope.currentTemplateQuestion.ID).then(function (response) {
 			// Assign value
 			$scope.templateQuestion = response.data;
 
@@ -125,7 +125,7 @@ angular.module('opalAdmin.controllers.template.question.edit', ['ngAnimate', 'ng
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
 		}).catch(function (err) {
-			alert($filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.ERROR_GET_TEMPLATE_DETAILS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+			ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.ERROR_GET_TEMPLATE_DETAILS'));
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
 			$uibModalInstance.close();
@@ -169,7 +169,7 @@ angular.module('opalAdmin.controllers.template.question.edit', ['ngAnimate', 'ng
 					$scope.showBanner();
 				},
 				error: function(err) {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.ERROR_SET_TEMPLATE_QUESTION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.ERROR_SET_TEMPLATE_QUESTION'));
 				},
 				complete: function () {
 					$uibModalInstance.close();

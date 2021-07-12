@@ -13,6 +13,8 @@ define( "WRM_DB_PASSWORD", $config['databaseConfig']['wrm']['password'] );
 define("ORMS_MEDIVISIT_APPOINTMENT_LIST_TABLE", "MediVisitAppointmentList");
 
 define("ORMS_SQL_GET_APPOINTMENT_FOR_ALIAS","
-    SELECT DISTINCT mval.AppointmentCode AS code, mval.ResourceDescription AS expression FROM ".ORMS_MEDIVISIT_APPOINTMENT_LIST_TABLE." mval
+    SELECT DISTINCT mval.AppointmentCode AS code, mval.ResourceDescription AS expression 
+    FROM ".ORMS_MEDIVISIT_APPOINTMENT_LIST_TABLE." mval
+    WHERE mval.AppointSys in ('Medivisit','Impromptu','ImpromptuOrtho','InstantAddOn')
     ORDER BY mval.AppointmentCode, mval.ResourceDescription
 ");

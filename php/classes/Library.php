@@ -8,10 +8,12 @@
 class Library extends QuestionnaireModule {
 
     public function getLibraries() {
+        $this->checkReadAccess();
         return $this->questionnaireDB->fetchAllLibraries();
     }
 
     public function insertLibrary($newLibrary) {
+        $this->checkWriteAccess($newLibrary);
         $nameEn = strip_tags($newLibrary["name_EN"]);
         $nameFr = strip_tags($newLibrary["name_FR"]);
         $private = strip_tags($newLibrary["private"]);

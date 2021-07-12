@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.notification.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-	controller('notification.edit', function ($scope, $uibModal, $uibModalInstance, $filter, $state, $sce, notificationCollectionService, Session) {
+	controller('notification.edit', function ($scope, $uibModal, $uibModalInstance, $filter, $state, $sce, notificationCollectionService, Session, ErrorHandler) {
 
 		// Default Booleans
 		$scope.changesMade = false; // changes have been made? 
@@ -24,8 +24,8 @@ angular.module('opalAdmin.controllers.notification.edit', ['ngAnimate', 'ngSanit
 			$scope.notification = response.data;
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
-		}).catch(function(response) {
-			alert($filter('translate')('NOTIFICATIONS.EDIT.ERROR_DETAILS') + "\r\n\r\n" + response.status + " - " + response.data);
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('NOTIFICATIONS.EDIT.ERROR_DETAILS'));
 		});
 
 		// Function to check necessary form fields are complete
@@ -54,21 +54,11 @@ angular.module('opalAdmin.controllers.notification.edit', ['ngAnimate', 'ngSanit
 					type: "POST",
 					url: "notification/update/notification",
 					data: $scope.notification,
-					success: function (response) {
-						response = JSON.parse(response);
-						// Show success or failure depending on response
-						if (response.value) {
-							$scope.setBannerClass('success');
-							$scope.$parent.bannerMessage = $filter('translate')('NOTIFICATIONS.EDIT.SUCCESS_EDIT');
-							$scope.showBanner();
-						}
-						else {
-							alert($filter('translate')('NOTIFICATIONS.EDIT.ERROR_EDIT') + "\r\n\r\n" + response.status + " - " + response.data);
-						}
-						$uibModalInstance.close();
-					},
+					success: function () {},
 					error: function (err) {
-						alert($filter('translate')('NOTIFICATIONS.EDIT.ERROR_EDIT') + "\r\n\r\n" + err.status + " - " + err.statusText);
+						ErrorHandler.onError(err, $filter('translate')('NOTIFICATIONS.EDIT.ERROR_EDIT'));
+					},
+					complete: function () {
 						$uibModalInstance.close();
 					}
 				});

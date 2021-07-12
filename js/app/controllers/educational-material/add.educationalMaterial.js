@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 /******************************************************************************
  * New Educational Material Page controller
  *******************************************************************************/
-controller('educationalMaterial.add', function ($scope, $filter, $state, $sce, $uibModal, educationalMaterialCollectionService, filterCollectionService, Session) {
+controller('educationalMaterial.add', function ($scope, $filter, $state, $sce, $uibModal, educationalMaterialCollectionService, Session, ErrorHandler) {
 
 	// Function to go to previous page
 	$scope.goBack = function () {
@@ -130,8 +130,8 @@ controller('educationalMaterial.add', function ($scope, $filter, $state, $sce, $
 	// Call our API to get the list of edu material types
 	educationalMaterialCollectionService.getEducationalMaterialTypes().then(function (response) {
 		$scope.EduMatTypes = response.data;
-	}).catch(function(response) {
-		alert($filter('translate')('EDUCATION.ADD.ERROR_TYPES') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('EDUCATION.ADD.ERROR_TYPES'));
 	});
 
 	// Call our API to get the list of phase-in-treatments
@@ -143,8 +143,8 @@ controller('educationalMaterial.add', function ($scope, $filter, $state, $sce, $
 			else
 				entry.name_display = entry.name_EN;
 		});
-	}).catch(function(response) {
-		alert($filter('translate')('EDUCATION.ADD.ERROR_PHASES') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('EDUCATION.ADD.ERROR_PHASES'));
 	});
 
 	// Function to toggle necessary changes when updating titles
@@ -369,10 +369,10 @@ controller('educationalMaterial.add', function ($scope, $filter, $state, $sce, $
 				success: function (response) {
 					response = JSON.parse(response);
 					if (!response.value)
-						alert($filter('translate')('EDUCATION.ADD.ERROR_INSERT') + "\r\n\r\n" + response.message);
+						ErrorHandler.onError(response, $filter('translate')('EDUCATION.ADD.ERROR_INSERT'));
 				},
 				error: function (err) {
-					alert($filter('translate')('EDUCATION.ADD.ERROR_INSERT') + "\r\n\r\n" + err.status + " - " + err.statusText);
+					ErrorHandler.onError(err, $filter('translate')('EDUCATION.ADD.ERROR_INSERT'));
 				},
 				complete: function () {
 					$state.go('educational-material');

@@ -1,14 +1,12 @@
 <?php
-header('Content-Type: application/javascript');
-/* To delete a question */
-include_once('questionnaire.inc');
+include_once("../config.php");
 
 // Retrieve FORM param
 $serNum = strip_tags($_POST['ID']);
-$OAUserId = strip_tags($_POST['OAUserId']);
 
 // Call function
-$questionObj = new Question($OAUserId); // Object
+$questionObj = new Question(); // Object
 $response = $questionObj->deleteQuestion($serNum);
 
-print json_encode($response); // Return response
+header('Content-Type: application/javascript');
+http_response_code(HTTP_STATUS_SUCCESS);

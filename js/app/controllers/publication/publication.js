@@ -1,6 +1,10 @@
 angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular'])
 
-	.controller('publication', function ($sce, $scope, $state, $filter, $timeout, $uibModal, publicationCollectionService, filterCollectionService, Session, uiGridConstants) {
+	.controller('publication', function ($scope, $state, $filter, $uibModal, publicationCollectionService, Session, uiGridConstants, ErrorHandler, MODULE) {
+		$scope.navMenu = Session.retrieveObject('menu');
+		$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.publication]) & (1 << 0)) !== 0);
+		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.publication]) & (1 << 1)) !== 0);
+		$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.publication]) & (1 << 2)) !== 0);
 
 		// get current user id
 		var user = Session.retrieveObject('user');
@@ -60,17 +64,28 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 
 		// Table
 		// Templates
-		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.showPublicationLog(row.entity)"><i title="'+$filter('translate')('PUBLICATION.LIST.LOGS')+'" class="fa fa-area-chart" aria-hidden="true"></i></a></strong> ' +
-			'- <strong><a href="" ng-click="grid.appScope.editPublication(row.entity)"<i title="'+$filter('translate')('PUBLICATION.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong></div>';
+		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">';
+		if($scope.readAccess)
+			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.showPublicationLog(row.entity)"><i title="'+$filter('translate')('PUBLICATION.LIST.LOGS')+'" class="fa fa-area-chart" aria-hidden="true"></i></a></strong> ';
+		if($scope.writeAccess)
+			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.editPublication(row.entity)"<i title="'+$filter('translate')('PUBLICATION.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong></div>';
+		else
+			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.editPublication(row.entity)"<i title="'+$filter('translate')('PUBLICATION.LIST.VIEW')+'" class="fa fa-eye" aria-hidden="true"></i></a></strong></div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editPublication(row.entity)">' +
 			'<strong><a href="">{{row.entity.name_'+ Session.retrieveObject('user').language +'}}</a></strong></div>';
-		var cellTemplatePublish = '<div style="text-align: center; cursor: pointer;" ' +
-			'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
-			'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
-			'ng-checked="grid.appScope.updatePublishFlag(row.entity.publishFlag)" ng-model="row.entity.publishFlag"></div>';
-		var cellTemplatePublication = '<div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==2">'+$filter('translate')('PUBLICATION.LIST.PUBLICATION')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==3">'+$filter('translate')('PUBLICATION.LIST.EDUCATION')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==7">'+$filter('translate')('PUBLICATION.LIST.QUESTIONNAIRE')+'</div>';
+
+
+		var cellTemplatePublish
+		if($scope.writeAccess)
+			cellTemplatePublish = '<div style="text-align: center; cursor: pointer;" ' +
+				'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
+				'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
+				'ng-checked="grid.appScope.updatePublishFlag(row.entity.publishFlag)" ng-model="row.entity.publishFlag"></div>';
+		else
+			cellTemplatePublish = '<div style="text-align: center;" class="ui-grid-cell-contents">'+
+				'<i ng-class="row.entity.publishFlag == 1 ? \'fa-check text-success\' : \'fa-times text-danger\'" class="fa"></i>' +
+				+'</div>';
 
 		// Data binding for main table
 		$scope.gridOptions = {
@@ -183,19 +198,15 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 					url: "publication/update/publish-flag",
 					data: $scope.publicationFlags,
 					success: function (response) {
-						getPublicationsList();
-						response = JSON.parse(response);
-						if (response.code === 200) {
-							$scope.setBannerClass('success');
-							$scope.bannerMessage = $filter('translate')('PUBLICATION.LIST.SUCCESS_FLAGS');
-						}
-
+						$scope.setBannerClass('success');
+						$scope.bannerMessage = $filter('translate')('PUBLICATION.LIST.SUCCESS_FLAGS');
 						$scope.showBanner();
+						getPublicationsList();
 						$scope.changesMade = false;
 						$scope.publicationFlags.flagList = [];
 					},
 					error: function (err) {
-						alert($filter('translate')('PUBLICATION.LIST.ERROR_FLAGS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+						ErrorHandler.onError(err, $filter('translate')('PUBLICATION.LIST.ERROR_FLAGS'));
 					}
 				});
 			}
@@ -205,7 +216,7 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 			publicationCollectionService.getPublications(OAUserId).then(function (response) {
 				$scope.publicationList = response.data;
 			}).catch(function(err) {
-				alert($filter('translate')('PUBLICATION.LIST.ERROR_PUBLICATION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+				ErrorHandler.onError(err, $filter('translate')('PUBLICATION.LIST.ERROR_PUBLICATION'));
 			});
 		}
 
@@ -213,7 +224,7 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 		$scope.editPublication = function (publication) {
 			$scope.currentPublication = publication;
 			var modalInstance = $uibModal.open({ // open modal
-				templateUrl: 'templates/publication/edit.publication.html',
+				templateUrl: ($scope.writeAccess ? 'templates/publication/edit.publication.html' : 'templates/publication/view.publication.html'),
 				controller: 'publication.edit',
 				scope: $scope,
 				windowClass: 'customModal',
@@ -237,5 +248,4 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 				backdrop: 'static',
 			});
 		};
-
 	});

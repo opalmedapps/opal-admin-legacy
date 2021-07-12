@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.log', ['ngAnimate', 'n
 /******************************************************************************
  * Controller for the educational material logs
  *******************************************************************************/
-controller('educationalMaterial.log', function ($scope, $uibModal, $filter, educationalMaterialCollectionService, Session, $uibModalInstance) {
+controller('educationalMaterial.log', function ($scope, $uibModal, $filter, educationalMaterialCollectionService, Session, $uibModalInstance, ErrorHandler) {
 	// Call our API to get educational material logs
 	educationalMaterialCollectionService.getEducationalMaterialChartLogs($scope.currentEduMat.serial).then(function (response) {
 		$scope.educationalMaterialChartLogs = $scope.chartConfig.series = response.data;
@@ -13,8 +13,8 @@ controller('educationalMaterial.log', function ($scope, $uibModal, $filter, educ
 				log.x = new Date(log.x);
 			});
 		});
-	}).catch(function(response) {
-		alert($filter('translate')('EDUCATION.LOG.ERROR') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('EDUCATION.LOG.ERROR'));
 	});
 
 	var chartConfig = $scope.chartConfig = {

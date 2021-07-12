@@ -1,0 +1,73 @@
+<!-- Modal title -->
+<div class="modal-header">
+    <div class="col-xs-12 col-md-6">
+        <h2 class="modal-title">
+            <span class="glyphicon glyphicon-pencil"></span>
+            {{'ROLE.EDIT.TITLE_VIEW'|translate}}
+        </h2>
+    </div>
+    <div class="modal-buttons col-xs-12 col-md-6">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'ROLE.EDIT.CLOSE'|translate}}">
+    </div>
+</div>
+<div class="modal-body">
+    <uib-accordion close-others="false">
+        <!-- SECTION: Name -->
+        <div uib-accordion-group is-open="nameSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'ROLE.EDIT.NAME'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nameSection.open, 'glyphicon-chevron-right': !nameSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'ROLE.EDIT.ENGLISH'|translate}}</strong>: {{toSubmit.name.name_EN}}</p>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'ROLE.EDIT.FRENCH'|translate}}</strong>: {{toSubmit.name.name_FR}}</p>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Operations section -->
+        <div uib-accordion-group is-open="operationsSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'ROLE.EDIT.OPERATIONS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': operationsSection.open, 'glyphicon-chevron-right': !operationsSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="panel-body form-horizontal">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <strong>{{'ROLE.EDIT.MODULE'|translate}}</strong>
+                    </div>
+                    <div class="col-xs-2 text-center">
+                        <strong>{{'ROLE.EDIT.READ'|translate}}</strong>
+                    </div>
+                    <div class="col-xs-2 text-center">
+                        <strong>{{'ROLE.EDIT.WRITE'|translate}}</strong>
+                    </div>
+                    <div class="col-xs-2 text-center">
+                        <strong>{{'ROLE.EDIT.DELETE'|translate}}</strong>
+                    </div>
+                </div>
+
+                <div ng-repeat="opModule in toSubmit.operations" class="row">
+                    <div ng-if="opModule.canRead || opModule.canWrite || opModule.canDelete">
+                        <div class="col-xs-6">
+                            <p>{{opModule.name_display}}</p>
+                        </div>
+                        <div class="col-xs-2 text-center">
+                            <i ng-class="opModule.read == 1 ? 'fa-check text-success' : 'fa-times text-danger'" class="fa"></i>
+                        </div>
+                        <div class="col-xs-2 text-center">
+                            <i ng-class="opModule.write == 1 ? 'fa-check text-success' : 'fa-times text-danger'" class="fa"></i>
+                        </div>
+                        <div class="col-xs-2 text-center">
+                            <i ng-class="opModule.delete == 1 ? 'fa-check text-success' : 'fa-times text-danger'" class="fa"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </uib-accordion>
+</div>

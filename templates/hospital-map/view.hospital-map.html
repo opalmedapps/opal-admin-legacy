@@ -1,0 +1,108 @@
+<!-- Modal title -->
+<div class="modal-header">
+    <div class="col-xs-12 col-md-6">
+        <h2 class="modal-title">
+            <span class="fa fa-eye"></span>
+            {{'HOSPITAL_MAPS.EDIT.TITLE_VIEW'|translate}}
+        </h2>
+    </div>
+    <div class="modal-buttons col-xs-12 col-md-6">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'HOSPITAL_MAPS.EDIT.CLOSE'|translate}}">
+    </div>
+</div>
+<div class="modal-body">
+    <uib-accordion close-others="false">
+        <!-- SECTION: Title -->
+        <div uib-accordion-group is-open="titleSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'HOSPITAL_MAPS.EDIT.TITLES'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'HOSPITAL_MAPS.EDIT.ENGLISH_ABRV'|translate}}</strong>: {{hosMap.name_EN}}</p>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'HOSPITAL_MAPS.EDIT.FRENCH_ABRV'|translate}}</strong>: {{hosMap.name_FR}}</p>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Description -->
+        <div uib-accordion-group is-open="descriptionSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'HOSPITAL_MAPS.EDIT.DESCRIPTIONS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': descriptionSection.open, 'glyphicon-chevron-right': !descriptionSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <span style="font-size:20px;">{{'HOSPITAL_MAPS.EDIT.ENGLISH_HTML'|translate}}</span>
+                    <div style="text-align:center; margin-bottom: 10px;">
+                    </div>
+                    <div ng-bind-html="hosMap.description_EN"></div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <span style="font-size:20px;">{{'HOSPITAL_MAPS.EDIT.FRENCH_HTML'|translate}}</span>
+                    <div style="text-align:center; margin-bottom: 10px;">
+                    </div>
+                    <div ng-bind-html="hosMap.description_FR"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: Map URLs -->
+        <div uib-accordion-group is-open="urlSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'HOSPITAL_MAPS.EDIT.MAP_URLS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': urlSection.open, 'glyphicon-chevron-right': !urlSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-md-6">
+                    <div class="input-group"  style="margin-bottom: 10px;">
+                        <p><strong>{{'HOSPITAL_MAPS.EDIT.ENGLISH_ABRV'|translate}}</strong>: {{hosMap.url_EN}}</p>
+                    </div>
+                    <div ng-show="hosMap.url_EN" style="text-align:center">
+                        <img ng-src="{{mapURL_EN}}" style="width:200px;height:200px;">
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-6">
+                    <div class="input-group"  style="margin-bottom: 10px;">
+                        <p><strong>{{'HOSPITAL_MAPS.EDIT.FRENCH_ABRV'|translate}}</strong>: {{hosMap.url_FR}}</p>
+                    </div>
+                    <div ng-show="hosMap.url_FR" style="text-align:center">
+                        <img ng-src="{{mapURL_FR}}" style="width:200px;height:200px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: QR Code -->
+<!--        <div uib-accordion-group is-open="qrCodeSection.open">-->
+<!--            <uib-accordion-heading>-->
+<!--                <div>-->
+<!--                    <strong>{{'HOSPITAL_MAPS.EDIT.QR_IDENTIFIER'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': qrCodeSection.open, 'glyphicon-chevron-right': !qrCodeSection.open}"></i>-->
+<!--                </div>-->
+<!--            </uib-accordion-heading>-->
+<!--            <div class="alert alert-info" role="alert">-->
+<!--                <strong>{{'HOSPITAL_MAPS.EDIT.QR_IDENTIFIER'|translate}}</strong><br>-->
+<!--                <p>-->
+<!--                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>-->
+<!--                    <span>{{hosMap.qrid}}</span>-->
+<!--                </p>-->
+<!--            </div>-->
+<!--            <div class="row">-->
+<!--                <div class="col-xs-12 col-md-6">-->
+<!--                    <div class="input-group">-->
+<!--                        <input class="form-control" type="text" ng-model="hosMap.qrid" ng-change="setChangesMade()" placeholder="{{'HOSPITAL_MAPS.EDIT.QR_IDENTIFIER'|translate}}" required="required">-->
+<!--                    </div>-->
+<!--                    <div ng-show="hosMap.qrcode" style="text-align:center">-->
+<!--                        <img ng-src="{{hosMap.qrcode}}" style="width:200px;height:200px;">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+    </uib-accordion>
+</div>

@@ -1,0 +1,61 @@
+<!-- Modal title -->
+<div class="modal-header">
+    <div class="col-xs-12 col-md-6">
+        <h2 class="modal-title">
+            <span class="glyphicon glyphicon-pencil"></span>
+            {{'AUDIT.VIEW.TITLE'|translate}}
+        </h2>
+    </div>
+    <div class="modal-buttons col-xs-12 col-md-6">
+        <form method="post" ng-submit="updateAlert()">
+            <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'AUDIT.VIEW.CLOSE'|translate}}">
+        </form>
+    </div>
+</div>
+<div class="modal-body">
+    <uib-accordion close-others="false">
+        <!-- SECTION: User -->
+        <div uib-accordion-group is-open="titleMessage.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'AUDIT.VIEW.DETAILS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleMessage.open, 'glyphicon-chevron-right': !titleMessage.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <p><strong>{{'AUDIT.VIEW.USER'|translate}}</strong>: {{auditDetails.createdBy}}</p>
+                    </div>
+                    <div class="input-group">
+                        <p><strong>{{'AUDIT.VIEW.IP'|translate}}</strong>: {{auditDetails.ipAddress}}</p>
+                    </div>
+                    <div class="input-group">
+                        <p><strong>{{'AUDIT.VIEW.ACCESS'|translate}}</strong>: {{auditDetails.access}}</p>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <p><strong>{{'AUDIT.VIEW.MODULE'|translate}}</strong>: {{auditDetails.module}}</p>
+                    </div>
+                    <div class="input-group">
+                        <p><strong>{{'AUDIT.VIEW.METHOD'|translate}}</strong>: {{auditDetails.method}}</p>
+                    </div>
+                    <div class="input-group">
+                        <p><strong>{{'AUDIT.VIEW.DATE'|translate}}</strong>: {{auditDetails.creationDate}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Trigger -->
+        <div uib-accordion-group is-open="triggerSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'AUDIT.VIEW.ARGUMENTS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.open, 'glyphicon-chevron-right': !triggerSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12" style="margin-bottom: 10px;"><pre>{{auditDetails.argument | json}}</pre></div>
+            </div>
+        </div>
+    </uib-accordion>
+</div>

@@ -1,0 +1,26 @@
+<div class="modal-header">
+    <div class="col-xs-12">
+        <h2 class="modal-title">
+            <span class="glyphicon glyphicon-trash"></span>
+            {{'ALERT.DELETE.TITLE'|translate}}
+        </h2>
+    </div>
+</div>
+<div class="modal-body">
+    <div class="alert alert-danger" role="alert">
+        <p><b>{{'ALERT.DELETE.WARNING'|translate}}</b> {{'ALERT.DELETE.WARNING_TEXT'|translate}}</p>
+    </div>
+    <div class="alert row">
+        <div class="col-xs-12">
+            <p ng-bind-html="alertToDelete.subject"></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="modal-buttons col-xs-12">
+            <form method="post" ng-submit="deleteAlert()">
+                <input class="btn btn-primary submit" type="submit" value="{{'ALERT.DELETE.DELETE'|translate}}">
+                <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'ALERT.DELETE.CANCEL'|translate}}">
+            </form>
+        </div>
+    </div>
+</div>

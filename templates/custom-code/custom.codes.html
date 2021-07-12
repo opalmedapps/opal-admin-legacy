@@ -11,7 +11,7 @@
                     <div class="row main-title">
                         <!-- Page title -->
                         <div class="col-xs-12 col-md-9 title-content">
-                            <span class="glyphicon glyphicon-cloud"></span>
+                            <span class="fa fa-exchange"></span>
                             <h1><strong>{{'CUSTOM_CODE.LIST.TITLE'|translate}}</strong></h1>
                         </div>
                         <!-- Breadcrumbs -->
@@ -22,7 +22,7 @@
                     <div class="row clearfix operations">
                         <div class="save-add col-xs-12 col-sm-6 col-md-8">
                             <!-- Add button -->
-                            <a style="margin-right:20px;" href="" ng-click="goToAddCustomCode()" class="btn btn-md btn-outline item-button">
+                            <a style="margin-right:20px;" href="" ng-if="writeAccess" ng-click="goToAddCustomCode()" class="btn btn-md btn-outline item-button">
                                 <span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
                                 <span style="font-size: 20px;"><strong>{{'CUSTOM_CODE.LIST.ADD'|translate}}</strong></span>
                             </a>

@@ -4,22 +4,73 @@
 angular.module('opalAdmin.services', [])
 
 	.service('Session', function ($cookies) {
-		this.create = function (user) {
-			$cookies.putObject('user', user);
-		};
-		this.retrieve = function (data) {
-			return $cookies.get(data);
+		this.create = function (data) {
+			angular.forEach(data.menu, function(category) {
+				category.name = (data.user.language == "EN" ? category.name_EN : category.name_FR);
+				angular.forEach(category.menu, function(menu) {
+					menu.name = (data.user.language == "EN" ? menu.name_EN : menu.name_FR);
+					menu.sub = (data.user.language == "EN" ? menu.description_EN : menu.description_FR);
+				});
+			});
+			sessionStorage.setItem("user", JSON.stringify(data.user));
+			sessionStorage.setItem("access", JSON.stringify(data.access));
+			sessionStorage.setItem("menu", JSON.stringify(data.menu));
+			sessionStorage.setItem("subMenu", JSON.stringify(data.subMenu));
 		};
 		this.retrieveObject = function (data) {
-			return $cookies.getObject(data);
+			return JSON.parse(sessionStorage.getItem(data));
 		};
-		this.update = function (user) {
-			this.destroy();
-			this.create(user);
+		this.updateUser = function (user) {
+			navMenu = JSON.parse(sessionStorage.getItem("menu"));
+			angular.forEach(navMenu, function(category) {
+				category.name = (user.language == "EN" ? category.name_EN : category.name_FR);
+				angular.forEach(category.menu, function(menu) {
+					menu.name = (user.language == "EN" ? menu.name_EN : menu.name_FR);
+					menu.sub = (user.language == "EN" ? menu.description_EN : menu.description_FR);
+				});
+			});
+			sessionStorage.removeItem("user");
+			sessionStorage.setItem("user", JSON.stringify(user));
+			sessionStorage.removeItem("menu");
+			sessionStorage.setItem("menu", JSON.stringify(navMenu));
 		};
 		this.destroy = function () {
-			$cookies.remove('user');
+			sessionStorage.removeItem("user");
+			sessionStorage.removeItem("access");
+			sessionStorage.removeItem("menu");
+			sessionStorage.removeItem("subMenu");
+
 		};
+	})
+
+	.service('ErrorHandler', function($filter, $rootScope, HTTP_CODE, AUTH_EVENTS) {
+		this.onError = function(response, clientErrMsg, arrValidation) {
+			var tempText;
+			if(response.status === HTTP_CODE.notFoundError)
+				alert(clientErrMsg + " " + $filter('translate')('ERROR_HANDLER.404.MESSAGE'));
+			else if(response.status === HTTP_CODE.internalServerError) {
+				if (response.responseText)
+					tempText = JSON.parse(response.responseText);
+				else
+					tempText = $filter('translate')('ERROR_HANDLER.500.UNKNOWN');
+				alert(clientErrMsg + " " + $filter('translate')('ERROR_HANDLER.500.MESSAGE') + "\r\n" + tempText);
+			}
+			else if(response.status === HTTP_CODE.badRequestError) {
+				var errMsg = $filter('translate')('ERROR_HANDLER.400.MESSAGE');
+				if (typeof (arrValidation) != "undefined") {
+					for (var i = 0; i < arrValidation.length; i++) {
+						if ((parseInt(response.responseText.validation) & (1 << i)) !== 0) {
+							errMsg += " " + arrValidation[i];
+						}
+					}
+				}
+				alert(errMsg);
+			}
+			else if(response.status === HTTP_CODE.forbiddenAccessError)
+				$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
+			// else if(response.status === HTTP_CODE.notAuthenticatedError)
+			// 	$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+		}
 	})
 
 	.service('loginModal', function ($uibModal) {
@@ -32,36 +83,22 @@ angular.module('opalAdmin.services', [])
 
 			return modalInstance.result.then(function() {});
 		};
-
 	})
 
 	.service('LogoutService', function (Session, $state, $http) {
 		this.logLogout = function () {
 			var user = Session.retrieveObject('user');
-			$http.post('user/logout', user );
+			$http.post(
+				"user/logout",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 		this.logout = function () {
 			this.logLogout();
 			Session.destroy();
 			$state.go('login');
-		};
-	})
-
-	.service('Encrypt', function () {
-		this.encode = function (s, k) {
-			var enc = "";
-			var str = "";
-			// make sure that input is string
-			str = s.toString();
-			for (var i = 0; i < s.length; i++) {
-				// create block
-				var a = s.charCodeAt(i);
-				// bitwise XOR
-				var b = a ^ k;
-				enc = enc + String.fromCharCode(b);
-			}
-			// base 64 encode
-			return btoa(enc);
 		};
 	})
 

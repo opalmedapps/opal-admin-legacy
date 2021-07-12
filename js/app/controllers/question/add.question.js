@@ -1,5 +1,5 @@
 angular.module('opalAdmin.controllers.question.add', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.bootstrap.materialPicker']).
-controller('question.add', function ($scope, $state, $filter, $uibModal, Session, filterCollectionService, questionnaireCollectionService) {
+controller('question.add', function ($scope, $state, $filter, $uibModal, Session, questionnaireCollectionService, ErrorHandler) {
 	// navigation function
 	$scope.goBack = function () {
 		$state.go('questionnaire');
@@ -139,12 +139,13 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 			steps.answerType.completed = true;
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			if (selectedAt.typeId === "2") {
-				var increment = parseFloat($scope.selectedAt.increment);
-				var minValue = parseFloat($scope.selectedAt.minValue);
-				if (minValue === 0.0) minValue = increment;
-				var maxValue = parseFloat($scope.selectedAt.maxValue);
+				var increment = 1;
+				var minValue = parseInt($scope.selectedAt.minValue);
+				if (minValue < 0) minValue = 0;
+				var maxValue = (parseInt($scope.selectedAt.maxValue));
+				if(maxValue <= minValue) maxValue = minValue + 1;
 
-				$scope.radiostep = new Array();
+				$scope.radiostep = [];
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 				for (var i = minValue; i <= maxValue; i += increment) {
 					$scope.radiostep.push({"name": i});
@@ -230,11 +231,11 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	getLibrariesList();
 
-	questionnaireCollectionService.getTemplateQuestionCategory(OAUserId).then(function (response) {
+	questionnaireCollectionService.getTemplateQuestionCategory().then(function (response) {
 		$scope.atCatList = response.data;
 	}).catch(function(err) {
-		alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_CATEGORY') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
-		$state.go('questionnaire-question');
+		ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_CATEGORY'));
+		$state.go('questionnaire/question');
 	});
 
 	// add new types & write into DB
@@ -257,8 +258,9 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		var toSend = $scope.newTemplateQuestion;
 		// Prompt to confirm user's action
 		var confirmation = confirm($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.CONFIRM_RESPONSE_TYPE') + "\r\n\r\n" + $scope.newTemplateQuestion.name_EN + " / " + $scope.newTemplateQuestion.name_FR);
+		if(toSend.typeId == 2)
+			toSend.options.increment = 1;
 		if (confirmation) {
-			console.log(toSend);
 			$.ajax({
 				type: "POST",
 				url: "template-question/insert/template-question",
@@ -268,15 +270,15 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 					getTemplatesQuestionsList();
 				},
 				error: function (err) {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_RESPONSE_TYPE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
-					$state.go('questionnaire-question');
+					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_RESPONSE_TYPE'));
+					$state.go('questionnaire/question');
 				}
 			});
 		}
 	};
 
 	function getTemplatesQuestionsList() {
-		questionnaireCollectionService.getTemplatesQuestions(OAUserId).then(function (response) {
+		questionnaireCollectionService.getTemplatesQuestions().then(function (response) {
 			$scope.atFilterList = response.data;
 			$scope.atFilterList.forEach(function(entry) {
 				if($scope.language.toUpperCase() === "FR") {
@@ -288,8 +290,8 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 				}
 			});
 		}).catch(function (err) {
-			alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_RESPONSE_TYPE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
-			$state.go('questionnaire-question');
+			ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_RESPONSE_TYPE'));
+			$state.go('questionnaire/question');
 		});
 	};
 
@@ -332,15 +334,15 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 					getLibrariesList();
 				},
 				error: function (err) {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_LIBRARY') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
-					$state.go('questionnaire-question');
+					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_LIBRARY'));
+					$state.go('questionnaire/question');
 				}
 			});
 		}
 	};
 
 	function getLibrariesList() {
-		questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
+		questionnaireCollectionService.getLibraries().then(function (response) {
 			$scope.libraries = [];
 			$scope.groupFilterList = response.data;
 			$scope.groupFilterList.forEach(function(entry) {
@@ -350,8 +352,8 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 					entry.name_display = entry.name_EN;
 			});
 		}).catch(function (err) {
-			alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_LIBRARY') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
-			$state.go('questionnaire-question');
+			ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_LIBRARY'));
+			$state.go('questionnaire/question');
 		});
 	}
 
@@ -373,10 +375,10 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 				data: $scope.newQuestion,
 				success: function () {},
 				error: function (err) {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_QUESTION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_QUESTION'));
 				},
 				complete: function() {
-					$state.go('questionnaire-question');
+					$state.go('questionnaire/question');
 				}
 			});
 		}

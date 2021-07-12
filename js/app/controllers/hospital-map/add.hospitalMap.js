@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.hospitalMap.add', ['ngAnimate', 'ngSanitiz
 /******************************************************************************
  * New Hospital Map Page controller
  *******************************************************************************/
-controller('hospitalMap.add', function ($scope, $filter, $state, $sce, $uibModal, hospitalMapCollectionService, Session) {
+controller('hospitalMap.add', function ($scope, $filter, $state, $sce, $uibModal, hospitalMapCollectionService, Session, ErrorHandler) {
 
 	// Function to go to previous page
 	$scope.goBack = function () {
@@ -28,14 +28,14 @@ controller('hospitalMap.add', function ($scope, $filter, $state, $sce, $uibModal
 	var steps = {
 		title_description: { completed: false },
 		url: { completed: false },
-		qrid: { completed: false }
+		// qrid: { completed: false }
 	};
 
 	// Default count of completed steps
 	$scope.numOfCompletedSteps = 0;
 
 	// Default total number of steps
-	$scope.stepTotal = 3;
+	$scope.stepTotal = 2;
 
 	// Progress for progress bar on default steps and total
 	$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -65,8 +65,8 @@ controller('hospitalMap.add', function ($scope, $filter, $state, $sce, $uibModal
 		description_EN: "",
 		description_FR: "",
 		qrid: "",
-		qrcode: "",
-		qrpath: "",
+		// qrcode: "",
+		// qrpath: "",
 		url_EN: "",
 		url_FR: ""
 	};
@@ -154,25 +154,25 @@ controller('hospitalMap.add', function ($scope, $filter, $state, $sce, $uibModal
 	};
 
 	// Function to call api to generate qr code
-	$scope.generateQRCode = function (qrid) {
-
-		if (qrid) {
-			hospitalMapCollectionService.generateQRCode(qrid, $scope.oldqrid).then(function (response) {
-				$scope.newHosMap.qrcode = response.data.qrcode;
-				$scope.newHosMap.qrpath = response.data.qrpath;
-
-				$scope.oldqrid = qrid;
-				$scope.qridUpdate();
-			}).catch(function(response) {
-				alert($filter('translate')('HOSPITAL_MAPS.ADD.ERROR_QR') + "\r\n\r\n" + response.status + " - " + response.data);
-			});
-		}
-		else {
-			$scope.hosMap.qrcode = "";
-			$scope.hosMap.qrpath = "";
-		}
-
-	};
+	// $scope.generateQRCode = function (qrid) {
+	//
+	// 	if (qrid) {
+	// 		hospitalMapCollectionService.generateQRCode(qrid, $scope.oldqrid).then(function (response) {
+	// 			$scope.newHosMap.qrcode = response.data.qrcode;
+	// 			$scope.newHosMap.qrpath = response.data.qrpath;
+	//
+	// 			$scope.oldqrid = qrid;
+	// 			$scope.qridUpdate();
+	// 		}).catch(function(err) {
+	// 			ErrorHandler.onError(err, $filter('translate')('HOSPITAL_MAPS.ADD.ERROR_QR'));
+	// 		});
+	// 	}
+	// 	else {
+	// 		$scope.hosMap.qrcode = "";
+	// 		$scope.hosMap.qrpath = "";
+	// 	}
+	//
+	// };
 
 	// Function to show map
 	$scope.showMapDisplay_EN = false;
@@ -211,7 +211,7 @@ controller('hospitalMap.add', function ($scope, $filter, $state, $sce, $uibModal
 					$state.go('hospital-map');
 				},
 				error: function (err) {
-					alert($filter('translate')('HOSPITAL_MAPS.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText);
+					ErrorHandler.onError(err, $filter('translate')('HOSPITAL_MAPS.ADD.ERROR_ADD'));
 					$state.go('hospital-map');
 				}
 			});

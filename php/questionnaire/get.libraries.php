@@ -5,10 +5,9 @@
  * Time: 1:45 PM
  */
 
-include_once('questionnaire.inc');
+include_once("../config.php");
 
-$OAUserId = strip_tags($_POST['OAUserId']);
-$questionLibrary = new Library($OAUserId);
+$questionLibrary = new Library();
 $result = $questionLibrary->getLibraries();
 
 header('Content-Type: application/javascript');

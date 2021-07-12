@@ -1,5 +1,4 @@
 <?php
-
 $pathname 	= __DIR__;
 $abspath 	= str_replace('dbv', '', $pathname);
 

@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('questionnaire.add', function ($scope, $state, $filter, $uibModal, questionnaireCollectionService, filterCollectionService, Session, uiGridConstants) {
+angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('questionnaire.add', function ($scope, $state, $filter, $uibModal, questionnaireCollectionService, Session, uiGridConstants, ErrorHandler) {
 
 	// navigation function
 	$scope.goBack = function () {
@@ -7,6 +7,7 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 
 	// Default booleans
 	$scope.titleDescriptionSection = {open: false, show: true};
+	$scope.purposeRespondentSection = {open: false, show: false};
 	$scope.privacySection = {open: false, show: false};
 	$scope.questionsSection = {open: false, show: false};
 	$scope.demoSection = {open: false, show: false};
@@ -15,12 +16,13 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 
 	// get current user id
 	var user = Session.retrieveObject('user');
-	var OAUserId = user.id;
 
 	var publicPrivateWarning = true;
 
 	// initialize variables
 	$scope.groupList = [];
+	$scope.purposeList = [];
+	$scope.respondentList = [];
 	$scope.selectedGroups;
 
 	// Default toolbar for wysiwyg
@@ -34,12 +36,13 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	// step bar
 	var steps = {
 		titleDescriptionSection: {completed: false},
+		purposeRespondentSection: {completed: false},
 		privacy: {completed: false},
 		questions: {completed: false},
 	};
 
 	$scope.numOfCompletedSteps = 0;
-	$scope.stepTotal = 3;
+	$scope.stepTotal = 4;
 	$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
 	// Function to calculate / return step progress
@@ -67,8 +70,9 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		title_FR: "",
 		description_EN: "",
 		description_FR: "",
+		purpose: undefined,
+		respondent: undefined,
 		private: undefined,
-		OAUserId: OAUserId,
 		questions: [],
 	};
 
@@ -76,7 +80,7 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		questions.forEach(function(entry) {
 			entry.question_EN = entry.question_EN.replace(/(<([^>]+)>)/ig,"");
 			entry.question_FR = entry.question_FR.replace(/(<([^>]+)>)/ig,"");
-			if (Session.retrieveObject('user').language.toUpperCase() === "FR") {
+			if (user.language.toUpperCase() === "FR") {
 				entry.questionDisplay = entry.question_FR;
 				entry.libraryDisplay = entry.library_name_FR;
 			}
@@ -86,12 +90,12 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 			}
 
 			if(entry.typeId === "2") {
-				var increment = parseFloat(entry.options.increment);
-				var minValue = parseFloat(entry.options.minValue);
-				if (minValue === 0.0) minValue = increment;
-				var maxValue = parseFloat(entry.options.maxValue);
+				var increment = parseInt(entry.options.increment);
+				var minValue = parseInt(entry.options.minValue);
+				if (minValue < 0) minValue = 0;
+				var maxValue = parseInt(entry.options.maxValue);
 
-				var radiostep = new Array();
+				var radiostep = [];
 				for(var i = minValue; i <= maxValue; i += increment) {
 					radiostep.push({"description":" " + i,"description_EN":" " + i,"description_FR":" " + i});
 				}
@@ -116,9 +120,21 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		if ($scope.newQuestionnaire.title_EN && $scope.newQuestionnaire.title_FR &&
 			$scope.newQuestionnaire.description_EN && $scope.newQuestionnaire.description_FR) {
 			steps.titleDescriptionSection.completed = true;
-			$scope.privacySection.show = true;
+			$scope.purposeRespondentSection.show = true;
 		} else {
 			steps.titleDescriptionSection.completed = false;
+		}
+		$scope.numOfCompletedSteps = stepsCompleted(steps);
+		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+	};
+
+	$scope.purposeRespondentUpdate = function () {
+		$scope.purposeRespondentSection.open = true;
+		if ($scope.newQuestionnaire.purpose && $scope.newQuestionnaire.respondent ) {
+			steps.purposeRespondentSection.completed = true;
+			$scope.privacySection.show = true;
+		} else {
+			steps.purposeRespondentSection.completed = false;
 		}
 		$scope.numOfCompletedSteps = stepsCompleted(steps);
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -262,33 +278,58 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		});
 	};
 
-	questionnaireCollectionService.getFinalizedQuestions(OAUserId).then(function (response) {
+	questionnaireCollectionService.getFinalizedQuestions().then(function (response) {
 		$scope.groupList = decodeQuestions(response.data);
 	}).catch(function (err) {
-		alert('Error occurred getting group list:' + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+		ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.ERROR_QUESTION_LIST'));
+		$state.go('questionnaire');
+	});
+
+	questionnaireCollectionService.getPurposesRespondents().then(function (response) {
+		response.data.purposes.forEach(function(row) {
+			if(user.language.toUpperCase() === "FR") {
+				row.title_display = row.title_FR;
+				row.description_display = row.description_FR;
+			}
+			else {
+				row.title_display = row.title_EN;
+				row.description_display = row.description_EN;
+			}
+		});
+		response.data.respondents.forEach(function(row) {
+			if(user.language.toUpperCase() === "FR") {
+				row.title_display = row.title_FR;
+				row.description_display = row.description_FR;
+			}
+			else {
+				row.title_display = row.title_EN;
+				row.description_display = row.description_EN;
+			}
+		});
+		$scope.purposeList = response.data.purposes;
+		$scope.respondentList = response.data.respondents;
+	}).catch(function (err) {
+		ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.ERROR_PURPOSES_RESPONDENTS'));
 		$state.go('questionnaire');
 	});
 
 	// Function to return boolean for form completion
 	$scope.checkForm = function () {
-		if (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) == 100)
-			return true;
-		else
-			return false;
+		return trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) === 100;
 	};
 
 	// submit
 	$scope.submitQuestionnaire = function () {
 		if ($scope.checkForm()) {
-			// Submit
+
+			var formatData = copyQuestionnaireData($scope.newQuestionnaire);
 			$.ajax({
-				type: "POST",
+				method: "POST",
 				url: "questionnaire/insert/questionnaire",
-				data: $scope.newQuestionnaire,
-				success: function () {
-				},
+				data: formatData,
+				success: function () {},
 				error: function (err) {
-					alert("Something went wrong." + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.ERROR_CREATION_QUESTIONNAIRE'));
 				},
 				complete: function() {
 					$state.go('questionnaire');
@@ -296,6 +337,30 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 			});
 		}
 	};
+
+	function copyQuestionnaireData(oldData) {
+		var newFormat = {
+			title_EN : oldData.title_EN,
+			title_FR : oldData.title_FR,
+			description_EN : oldData.description_EN,
+			description_FR : oldData.description_FR,
+			purpose : oldData.purpose.ID,
+			respondent : oldData.respondent.ID,
+			private : oldData.private,
+			questions : []
+		};
+		var temp;
+		angular.forEach(oldData.questions, function(item) {
+			temp = {
+				ID : item.ID,
+				order : item.order,
+				optional : item.optional,
+				typeId : item.typeId,
+			};
+			newFormat.questions.push(temp);
+		});
+		return newFormat;
+	}
 
 	var fixmeTop = $('.summary-fix').offset().top;
 	$(window).scroll(function () {

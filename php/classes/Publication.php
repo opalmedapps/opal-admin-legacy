@@ -1,23 +1,26 @@
 <?php
 
-class Publication extends OpalProject
+class Publication extends Module
 {
     protected $questionnaireDB;
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_PUBLICATION, $guestStatus);
+    }
 
     /*
      * This function connects to the questionnaire database if needed
      * @params  $OAUserId (ID of the user)
      * @returns None
      * */
-    protected function _connectQuestionnaireDB($OAUserId) {
+    protected function _connectQuestionnaireDB() {
         $this->questionnaireDB = new DatabaseQuestionnaire(
             QUESTIONNAIRE_DB_2019_HOST,
             QUESTIONNAIRE_DB_2019_NAME,
             QUESTIONNAIRE_DB_2019_PORT,
             QUESTIONNAIRE_DB_2019_USERNAME,
             QUESTIONNAIRE_DB_2019_PASSWORD,
-            false,
-            $OAUserId
+            false
         );
 
         $this->questionnaireDB->setUsername($this->opalDB->getUsername());
@@ -31,6 +34,7 @@ class Publication extends OpalProject
      * returns  array of data
      * */
     public function getPublications() {
+        $this->checkReadAccess();
         return $this->opalDB->getPublications();
     }
 
@@ -40,6 +44,7 @@ class Publication extends OpalProject
      * @return  $results (array) array that contains all the details
      * */
     public function getPublicationDetails($publicationId, $moduleId) {
+        $this->checkReadAccess(array($publicationId, $moduleId));
         if($publicationId == "" || $moduleId == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publication settings.");
 
@@ -150,6 +155,7 @@ class Publication extends OpalProject
      * returns  array of data
      * */
     public function getPublicationsPerModule($moduleId) {
+        $this->checkReadAccess($moduleId);
         if($moduleId == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Module cannot be found. Access denied.");
         $results = $this->opalDB->getPublicationsPerModule($moduleId);
@@ -168,6 +174,7 @@ class Publication extends OpalProject
      * @return  (array) list of the chart logs found
      * */
     public function getPublicationChartLogs($moduleId, $publicationId) {
+        $this->checkReadAccess(array($moduleId, $publicationId));
         $data = array();
         $result = $this->opalDB->getPublicationChartLogs($moduleId, $publicationId);
         //The Y value has to be converted to an int, or the chart log will reject it on the front end.
@@ -176,7 +183,7 @@ class Publication extends OpalProject
         }
 
         if (is_array($result) && count($result) > 0)
-            array_push($data, array("name"=>$type, "data"=>$result));
+            array_push($data, array("name"=>"", "data"=>$result));
 
         return $data;
     }
@@ -188,6 +195,7 @@ class Publication extends OpalProject
      * @return  (array) list of the chart logs found
      * */
     public function getPublicationListLogs($moduleId, $publicationId, $cronIds) {
+        $this->checkReadAccess(array($moduleId, $publicationId, $cronIds));
         if($moduleId == "" || $publicationId == "" || count($cronIds) <= 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "List Logs error. Invalid data.");
         return $this->opalDB->getPublicationListLogs($moduleId, $publicationId, $cronIds);
@@ -200,12 +208,12 @@ class Publication extends OpalProject
      * */
     function validateAndSanitizePublicationList($toValidate) {
         $validatedList = array();
-        $toValidate = $this->arraySanitization($toValidate);
+        $toValidate = HelpSetup::arraySanitization($toValidate);
         foreach($toValidate as $item) {
             $id = trim(strip_tags($item["ID"]));
             $publication = trim(strip_tags($item["moduleId"]));
             $publishFlag = intval(trim(strip_tags($item["publishFlag"])));
-            if (publishFlag != 0 && publishFlag != 1)
+            if ($publishFlag != 0 && $publishFlag != 1)
                 $publishFlag = 0;
             array_push($validatedList, array("ID"=>$id, "moduleId"=>$publication, "publishFlag"=>$publishFlag));
         }
@@ -224,8 +232,10 @@ class Publication extends OpalProject
      * @return  void
      * */
     function updatePublicationFlags($list) {
+        $this->checkWriteAccess($list);
+        $clearedPublishList = $this->validateAndSanitizePublicationList($list);
         $publicationModules = $this->opalDB->getPublicationModules();
-        foreach($list as $row) {
+        foreach($clearedPublishList as $row) {
             foreach($publicationModules as $module) {
                 if ($module["ID"] == $row["moduleId"]) {
                     $this->opalDB->updatePublicationFlag($module["tableName"], $module["primaryKey"], $row["publishFlag"], $row["ID"]);
@@ -240,10 +250,10 @@ class Publication extends OpalProject
      * because it was decided to add it manually to the status list by hard-coding it while using incorrect values.
      * Once it will be fixed (if it is), this function will be totally useless. See ticket OPAL-74 for more details
      * */
-    protected function _reassignData($data, $id)  {
+    protected function _reassignData($data, $id, $key)  {
         $results = array();
         foreach($data as $item) {
-            if($item[$id] == "1")
+            if($item[$id] == "1" && $key == "AppointmentStatus")
                 $results["Checked In"] = $item;
             else
                 $results[strval($item[$id])] = $item;
@@ -346,7 +356,7 @@ class Publication extends OpalProject
                 //Standard process of the checkup by getting data from OpalDB
                 else {
                     if ($trigger["opalDB"] != "") {
-                        $opalData = $this->_reassignData($this->opalDB->fetchTriggersData($trigger["opalDB"]), $trigger["opalPK"]);
+                        $opalData = $this->_reassignData($this->opalDB->fetchTriggersData($trigger["opalDB"]), $trigger["opalPK"], $key);
                     }
 
                     $uniqueIdList = array();
@@ -736,9 +746,8 @@ class Publication extends OpalProject
      * @return  void
      * */
     protected function _insertPublicationQuestionnaire(&$publication) {
-        $this->_connectQuestionnaireDB($this->opalDB->getOAUserId());
+        $this->_connectQuestionnaireDB();
         $currentQuestionnaire = $this->questionnaireDB->getQuestionnaireDetails($publication["materialId"]["value"]);
-
         if(is_array($currentQuestionnaire) && count($currentQuestionnaire) != 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire.");
         $currentQuestionnaire = $currentQuestionnaire[0];
@@ -758,6 +767,23 @@ class Publication extends OpalProject
         $toInsert = array();
         if(!empty($publication['triggers'])) {
             foreach($publication['triggers'] as $trigger) {
+                if(($trigger['type'] == "Study") && ($currentQuestionnaire['purpose'] == 4)){ // we are publishing consent forms to patients of this study
+                    //fetch patient consents
+                    $patConsents = $this->opalDB->getPatientsStudyConsents($trigger['id']);
+                    foreach($patConsents as $patient){
+                        if($patient['consent'] == 'invited'){
+                            array_push($toInsert, array(
+                                "ControlTable"=>"LegacyQuestionnaireControl",
+                                "ControlTableSerNum"=>$publicationControlId,
+                                "FilterType"=>"Patient",
+                                "FilterId"=>$patient['pid'],
+                                "DateAdded"=>date("Y-m-d H:i:s"),
+                                "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
+                                "SessionId"=>$this->opalDB->getSessionId(),
+                            ));
+                        }
+                    }
+                }
                 array_push($toInsert, array(
                     "ControlTable"=>"LegacyQuestionnaireControl",
                     "ControlTableSerNum"=>$publicationControlId,
@@ -767,6 +793,7 @@ class Publication extends OpalProject
                     "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
                     "SessionId"=>$this->opalDB->getSessionId(),
                 ));
+                
             }
             $this->opalDB->insertMultipleFilters($toInsert);
         }
@@ -861,6 +888,7 @@ class Publication extends OpalProject
      * @return  void
      * */
     protected function _updateTriggers($publication, $controlTableName) {
+        $total = 0;
         //Delete and update triggers
         if(!empty($publication["triggers_updated"])) {
             $existingTriggers = $this->opalDB->getFiltersByControlTableSerNum($publication["materialId"]["value"], $controlTableName);
@@ -960,7 +988,8 @@ class Publication extends OpalProject
      * @return  false
      * */
     function insertPublication($publication) {
-        $publication = $this->arraySanitization($publication);
+        $this->checkWriteAccess($publication);
+        $publication = HelpSetup::arraySanitization($publication);
 
         $moduleDetails = $this->opalDB->getModuleSettings($publication["moduleId"]["value"]);
 
@@ -994,7 +1023,8 @@ class Publication extends OpalProject
      * @return  false
      * */
     function updatePublication($publication) {
-        $publication = $this->arraySanitization($publication);
+        $this->checkWriteAccess($publication);
+        $publication = HelpSetup::arraySanitization($publication);
 
         $moduleDetails = $this->opalDB->getModuleSettings($publication["moduleId"]["value"]);
 
@@ -1020,5 +1050,30 @@ class Publication extends OpalProject
 
 
         return false;
+    }
+
+    /*
+     * Returns all the filters/triggers for publications
+     * @params  void
+     * @return  $results (array) filter/triggers found
+     * */
+    function getFilters() {
+        $this->checkReadAccess();
+        $results = array();
+
+        $results["patients"] = $this->opalDB->getPatientsTriggers();
+        $results["dx"] = $this->opalDB->getDiagnosisTriggers();
+        $results["appointments"] = $this->opalDB->getAppointmentsTriggers();
+        $results["appointmentStatuses"] = $this->opalDB->getAppointmentsStatusTriggers();
+        $results["doctors"] = $this->opalDB->getDoctorsTriggers();
+        $results["machines"] = $this->opalDB->getTreatmentMachinesTriggers();
+        $results["studies"] = $this->opalDB->getStudiesTriggers();
+
+        foreach($results["doctors"] as &$doctor) {
+            $doctor["name"] = ucwords(strtolower($doctor["LastName"] . ", " . preg_replace("/^[Dd][Rr]([.]?[ ]?){1}/", "", $doctor["FirstName"]) . " " . " (" . $doctor["id"] . ")"));
+            unset($doctor["FirstName"]);
+            unset($doctor["LastName"]);
+        }
+        return $results;
     }
 }

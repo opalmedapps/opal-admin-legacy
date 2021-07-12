@@ -1,0 +1,384 @@
+<div id="main">
+    <div id="top">
+        <div class="clearfix">
+            <div class="row">
+                <!-- Left side detail view -->
+                <div class="col-lg-2">
+                    <!-- Logo -->
+                    <div class="side-navbar" ng-controller="navigation">
+                        <div class="row side-logo" ng-click="goToHome()">
+                            <div class="col-md-12">
+                                <div class="logo">
+                                    <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+                                </div>
+                                <h1 class="animated fadeIn">opal <strong>ADMIN</strong></h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="summary-fix">
+                        <!-- Back button -->
+                        <div class="row side-panel-menu">
+                            <div class="col-xs-12 col-sm-5 col-lg-12">
+                                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                                    <div class="side-panel-info-sm">
+                                        <div class="panel-content">
+                                            <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                                            <h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;"><strong>{{'USERS.ADD.BACK'|translate}}</strong></h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Summary -->
+                            <div class="side-menu-title col-lg-12">
+                                <div class="horz-line" style="height: 16px; text-align: center">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <h2>{{'USERS.ADD.SUMMARY'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="progress progress-striped active">
+                                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <uib-accordion class="side-navbar">
+                            <!-- SECTION: Type -->
+                            <div uib-accordion-group is-open="leftMenu.type.open" class="panel-container summary-box animated" is-disabled="!toSubmit.type.value">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="toSubmit.type.value" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'USERS.ADD.TYPE_USER'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.type.open, 'glyphicon-chevron-right': !leftMenu.type.open}" ng-if="toSubmit.type.value"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="toSubmit.type.value" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{leftMenu.name}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Username -->
+                            <div uib-accordion-group is-open="leftMenu.username.open" class="panel-container summary-box" is-disabled="!validator.username.completed || ! validator.username.valid">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="validator.username.completed && validator.username.valid" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'USERS.ADD.USERNAME'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.username.open, 'glyphicon-chevron-right': !leftMenu.username.open}" ng-if="toSubmit.username.value"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="toSubmit.username.value" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{toSubmit.username.value}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Password -->
+                            <div uib-accordion-group is-open="leftMenu.password.open" class="panel-container summary-box animated" >
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="validator.password.completed && validator.password.valid" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'USERS.ADD.PASSWORD'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.password.open, 'glyphicon-chevron-right': !leftMenu.password.open}" ng-if="toSubmit.password.value"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="toSubmit.password.value" class="description">
+                                    <p><span class="fa fa-angle-double-right" style="padding-right: 7px;"></span> {{'USERS.ADD.CONFIDENTIAL'|translate}}</p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Role -->
+                            <div uib-accordion-group is-open="leftMenu.role.open" class="panel-container summary-box animated" is-disabled="!toSubmit.role.value">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="toSubmit.role.value" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'USERS.ADD.ROLE'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.role.open, 'glyphicon-chevron-right': !leftMenu.role.open}" ng-if="toSubmit.role.value"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="toSubmit.role.value" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{toSubmit.role.value.name_display}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Language -->
+                            <div uib-accordion-group is-open="leftMenu.language.open" class="panel-container summary-box animated" is-disabled="!toSubmit.language.value">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="toSubmit.language.value" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'USERS.ADD.LANGUAGE'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.language.open, 'glyphicon-chevron-right': !leftMenu.language.open}" ng-if="toSubmit.language.value"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="toSubmit.language.value" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{leftMenu.language.name}}
+                                    </p>
+                                </div>
+                            </div>
+                        </uib-accordion>
+                        <!-- Submit button -->
+                        <div class="panel-container">
+                            <a href="" ng-click="registerUser()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="formReady" style="width: 100%;">
+                                <span style="font-size: 20px;"><strong>{{'USERS.ADD.REGISTER'|translate}}</strong></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right side detail view -->
+                <div class="col-xs-12 col-lg-10 animated fadeIn">
+                    <div class="row main-title">
+                        <!-- Page title -->
+                        <div class="col-xs-12 col-md-6 title-content">
+                            <span class="glyphicon glyphicon-list-alt"></span>
+                            <h1><strong>{{'USERS.ADD.TITLE'|translate}}</strong></h1>
+                        </div>
+                        <!-- Breadcrumbs -->
+                        <div class="col-md-6 title-breadcrumbs">
+                            <span><a ui-sref="home">{{'BREADCRUMBS.HOME'|translate}}</a></span>
+                            <span class="glyphicon glyphicon-menu-right teflon"></span>
+                            <span><a ui-sref="users">{{'USERS.LIST.TITLE'|translate}}</a></span>
+                            <span class="glyphicon glyphicon-menu-right teflon"></span>
+                            <span><strong>{{'USERS.ADD.TITLE'|translate}}</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="row mobile-side-panel-menu">
+                        <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
+                            <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                                <div class="side-panel-info-sm">
+                                    <div class="panel-content">
+                                        <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                                        <h6 class="side-panel-title"><strong>{{'USERS.ADD.BACK'|translate}}</strong></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkRegistrationForm()">
+                            <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
+                                <span style="padding: 0 10px;">
+                                    <h2>{{'USERS.ADD.STEP'|translate}} {{numOfCompletedSteps}} {{'USERS.ADD.OF'|translate}} {{stepTotal}} {{'USERS.ADD.COMPLETED'|translate}}</h2>
+                                </span>
+                            </div>
+                            <div class="progress progress-striped active">
+                                <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="formReady">
+                            <div class="panel-container">
+                                <a href="" ng-click="registerUser()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkRegistrationForm()" style="width: 100%;">
+                                    <span style="font-size: 20px;"><strong>{{'USERS.ADD.REGISTER'|translate}}</strong></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <!-- SECTION: Type of user -->
+                        <div class="row">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'USERS.ADD.TYPE_USER'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="color:#d9534f"><strong>{{'USERS.ADD.REQUIRED_2'|translate}}</strong></span>
+                                    {{'USERS.ADD.TYPE_USER_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" style="margin-bottom: 15px;">
+                            <div class="col-xs-12 col-sm-8">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-6">
+                                        <select ng-model="toSubmit.type.value" class="form-control" ng-options='option.ID as option.name_display for option in userType'></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Basic info -->
+                        <div class="row">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'USERS.ADD.BASIC_INFO'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="color:#d9534f"><strong>{{'USERS.ADD.REQUIRED_2'|translate}}</strong></span>
+                                    {{'USERS.ADD.BASIC_INFO_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-9">
+                                <div class="panel" ng-class="(validator.username.completed && validator.username.valid) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'USERS.ADD.USERNAME'|translate}}</strong>
+                                        <span ng-hide="validator.username.completed && validator.username.valid" style="float:right"><em>{{'USERS.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="validator.username.completed && validator.username.valid" style="float:right"><em>{{'USERS.ADD.COMPLETE'|translate}}</em></span>
+                                    </div>
+                                    <div class="panel-body form-horizontal">
+                                        <div class="form-group has-feedback" ng-class="{'has-success': validator.username.completed && validator.username.valid, 'has-error': validator.username.completed && !validator.username.valid}">
+                                            <label class="control-label col-md-2">
+                                                {{'USERS.ADD.USERNAME'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-md-7">
+                                                <input type="text" class="form-control" required="required" ng-blur="validateUsername()" ng-model="toSubmit.username.value">
+                                            </div>
+                                            <em class="control-label col-xs-12 col-md-3" ng-hide="(validator.username.valid) || toSubmit.username.value == undefined || toSubmit.username.value == ''" ng-class="{'has-success': validator.username.completed && validator.username.valid, 'has-error':  !validator.username.completed || !validator.username.valid}" style="text-align:left;">
+                                                {{'USERS.ADD.ERROR_USERNAME_USED'|translate}}
+                                            </em>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-9" ng-show="toSubmit.type.value == '2'">
+                                <div class="panel" ng-class="(validator.password.completed && validator.password.valid) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'USERS.ADD.PASSWORD'|translate}}</strong>
+                                        <span ng-hide="validator.password.completed && validator.password.valid" style="float:right"><em>{{'USERS.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="validator.password.completed && validator.password.valid" style="float:right"><em>{{'USERS.ADD.COMPLETE'|translate}}</em></span>
+                                    </div>
+                                    <div class="panel-body form-horizontal">
+                                        <div class="form-group has-feedback" ng-class="{'has-success': validator.password.valid, 'has-error': !validator.password.valid}">
+                                            <label class="control-label col-xs-12 col-md-2">
+                                                {{'USERS.ADD.PASSWORD'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-md-7">
+                                                <input type="password" class="form-control" required="required" ng-model="toSubmit.password.value">
+                                                <p style="margin-bottom: 0;"><em><small>{{'USERS.ADD.PASSWORD_REQUIREMENTS'|translate}}</small></em></p>
+                                                <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validator.password.valid, 'glyphicon-remove': !validator.password.valid}" aria-hidden="true"></span>
+                                            </div>
+                                            <em class="control-label col-xs-12 col-md-3" ng-show="!validator.password.valid" ng-class="{'has-success': validator.password.valid, 'has-error': !validator.password.valid}" style="text-align:left">
+                                                {{'USERS.ADD.ERROR_PASSWORD_FORMAT'|translate}}
+                                            </em>
+                                        </div>
+                                        <div class="form-group has-feedback" ng-class="{'has-success': validator.password.valid && validator.password.completed, 'has-error': !validator.password.valid || !validator.password.completed}">
+                                            <label class="control-label col-xs-12 col-md-2">
+                                                {{'USERS.ADD.RETYPE'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-md-7">
+                                                <input type="password" class="form-control" required="required" ng-model="toSubmit.password.confirm">
+                                                <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validator.password.valid && validator.password.completed, 'glyphicon-remove': !validator.password.valid || !validator.password.completed}" aria-hidden="true"></span>
+                                            </div>
+                                            <em class="control-label col-xs-12 col-md-3 has-error" ng-show="!validator.password.valid || !validator.password.completed" style="text-align:left">
+                                                {{'USERS.ADD.ERROR_PASSWORD_INVALID'|translate}}
+                                            </em>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Role -->
+                        <div class="row animated">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'USERS.ADD.ROLE'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="color:#d9534f"><strong>{{'USERS.ADD.REQUIRED'|translate}}</strong></span>
+                                    {{'USERS.ADD.ROLE_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" style="margin-bottom: 15px;">
+                            <div class="col-xs-12 col-sm-8">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-6">
+                                        <select ng-model="toSubmit.role.value" ng-options="role as role.name_display for role in roles" class="form-control">
+                                            <option ng-hide="toSubmit.role.value" value="">{{'USERS.ADD.SELECT_ROLE'|translate}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Language -->
+                        <div class="row animated">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'USERS.ADD.LANGUAGE'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="color:#d9534f"><strong>{{'USERS.ADD.REQUIRED'|translate}}</strong></span>
+                                    {{'USERS.ADD.LANGUAGE_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" style="margin-bottom: 15px;">
+                            <div class="col-xs-12 col-sm-8">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-6">
+                                        <select ng-model="toSubmit.language.value" ng-options="language.id as language.name for language in languages" class="form-control">
+                                            <option ng-hide="toSubmit.language.value" value="">{{'USERS.ADD.SELECT_LANGUAGE'|translate}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- END SECTION -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

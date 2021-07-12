@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.diagnosisTranslation.edit', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $uibModalInstance, diagnosisCollectionService, educationalMaterialCollectionService, uiGridConstants, $state, Session) {
+controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $uibModalInstance, diagnosisCollectionService, Session, ErrorHandler) {
 
 
 	// Default booleans
@@ -32,7 +32,7 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 	$scope.eduMatFilter = null;
 
 	// Call our API service to get the list of educational material
-	educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+	diagnosisCollectionService.getEducationalMaterials().then(function (response) {
 		response.data.forEach(function(entry) {
 			if($scope.language.toUpperCase() === "FR") {
 				entry.name_display = entry.name_FR;
@@ -54,8 +54,8 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 			});
 		});
 		$scope.eduMatList = response.data; // Assign value
-	}).catch(function(response) {
-		alert($filter('translate')('DIAGNOSIS.EDIT.ERROR_EDUCATION') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('DIAGNOSIS.EDIT.ERROR_EDUCATION'));
 	});
 
 	// Function to assign search field when textbox changes
@@ -143,16 +143,16 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 			});
 			$scope.diagnosisList = checkAdded(response.data);
 
-		}).catch(function(response) {
-			alert($filter('translate')('DIAGNOSIS.EDIT.ERROR_DIAGNOSIS') + "\r\n\r\n" + response.status + " - " + response.data);
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('DIAGNOSIS.EDIT.ERROR_DIAGNOSIS'));
 			$uibModalInstance.close();
 		}).finally(function() {
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
 		});
 
-	}).catch(function(response) {
-		alert($filter('translate')('DIAGNOSIS.EDIT.ERROR_DETAILS') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('DIAGNOSIS.EDIT.ERROR_DETAILS'));
 	});
 
 	// Function to toggle Item in a list on/off
@@ -167,10 +167,8 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 	// Function to assign '1' to existing diagnosis
 	function checkAdded(diagnosisList) {
 		angular.forEach($scope.diagnosisTranslation.diagnoses, function (selectedDiagnosis) {
-			var selectedDiagnosisSourceUID = selectedDiagnosis.sourceuid;
 			angular.forEach(diagnosisList, function (diagnosis) {
-				var sourceuid = diagnosis.sourceuid;
-				if (sourceuid == selectedDiagnosisSourceUID) {
+				if (diagnosis.code === selectedDiagnosis.code && diagnosis.description === selectedDiagnosis.description) {
 					diagnosis.added = 1;
 					diagnosis.assigned = null; // remove self assigned diagnoses
 				}
@@ -278,38 +276,34 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 
 			// For some reason the HTML text fields add a zero-width-space
 			// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
-			$scope.diagnosisTranslation.description_EN = $scope.diagnosisTranslation.description_EN.replace(/\u200B/g,'');
-			$scope.diagnosisTranslation.description_FR = $scope.diagnosisTranslation.description_FR.replace(/\u200B/g,'');
 
-			$scope.diagnosisTranslation.diagnoses = [];
-			// Fill in the diagnoses from diagnosisList
+			var toSubmit = {
+				serial: $scope.currentDiagnosisTranslation.serial,
+				description_EN: $scope.diagnosisTranslation.description_EN.replace(/\u200B/g,''),
+				description_FR: $scope.diagnosisTranslation.description_FR.replace(/\u200B/g,''),
+				name_EN: $scope.diagnosisTranslation.name_EN,
+				name_FR: $scope.diagnosisTranslation.name_FR,
+				eduMat: ($scope.diagnosisTranslation.eduMat != null ? $scope.diagnosisTranslation.eduMat.serial : null),
+				diagnoses: []
+			};
+
 			angular.forEach($scope.diagnosisList, function (diagnosis) {
-				if(diagnosis.added) {
-					$scope.diagnosisTranslation.diagnoses.push(diagnosis);
-				}
+				if (diagnosis.added)
+					toSubmit.diagnoses.push(diagnosis.ID);
 			});
-			// Log who updated diagnosis translation
-			var currentUser = Session.retrieveObject('user');
-			$scope.diagnosisTranslation.user = currentUser;
+
 			// Submit form
 			$.ajax({
 				type: "POST",
 				url: "diagnosis-translation/update/diagnosis-translation",
-				data: $scope.diagnosisTranslation,
-				success: function (response) {
-					response = JSON.parse(response);
-					// Show success or failure depending on response
-					if (response.value) {
-						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = $filter('translate')('DIAGNOSIS.EDIT.SUCCESS_UPDATE');
-						$scope.showBanner();
-					}
-					else {
-						alert($filter('translate')('DIAGNOSIS.EDIT.ERROR_UPDATE'));
-					}
+				data: toSubmit,
+				success: function () {
+					$scope.setBannerClass('success');
+					$scope.$parent.bannerMessage = $filter('translate')('DIAGNOSIS.EDIT.SUCCESS_UPDATE');
+					$scope.showBanner();
 				},
 				error: function(err) {
-					alert($filter('translate')('DIAGNOSIS.EDIT.ERROR_UPDATE') + "\r\n\r\n" + err.status + " - " + err.statusText);
+					ErrorHandler.onError(err, $filter('translate')('DIAGNOSIS.EDIT.ERROR_UPDATE'));
 				},
 				complete: function () {
 					$uibModalInstance.close();
