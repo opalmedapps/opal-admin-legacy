@@ -409,20 +409,6 @@ sub getTestResultCronLogSer
 }
 
 #======================================================================================
-# Subroutine to get test results from the ARIA db for automatic cron
-#======================================================================================
-sub getTestResultsFromSourceDB
-{
-	my $cronLogSer = @_[0];
-	my @patientList = @_[1];
-    my $global_patientInfo_sql = @_[2];
-    my @TRList = (); # a list for test result objects
-
-    return @TRList;
-
-}
-
-#======================================================================================
 # Subroutine to check if a particular test result exists in our MySQL db
 #	@return: test result object (if exists) .. NULL otherwise
 #======================================================================================

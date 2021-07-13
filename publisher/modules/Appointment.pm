@@ -374,18 +374,7 @@ sub getApptCronLogSer
 	return $appointment->{_cronlogser};
 }
 
-#======================================================================================
-# Subroutine to get our appointment info from the ARIA db for automatic cron
-#======================================================================================
-sub getApptsFromSourceDB
-{
-	my $cronLogSer = @_[0];
-	my @patientList = @_[1];
-    my $global_patientInfo_sql = @_[2];
 
-	my @apptList = (); # initialize a list for appointment objects
-	return @apptList;
-}
 
 #======================================================================================
 # Subroutine to get patient appointment(s) from our db given a patient serial and date
