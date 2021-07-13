@@ -451,4 +451,147 @@ class Patient extends Module {
         return $this->opalDB->getDemoReport();
 
     }
+
+    /**
+     *
+     * Determines the existence of a patient
+     *
+     * @param string $site : Hospital Identifier Type
+     * @param string $mrn : Hospital Identifier Value
+     * @return array $response : 0 / 1
+     */
+    public function checkPatientExist ($post )
+    {
+        $response = array(
+            'status' => '',
+        );
+
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+
+        $pattern = "/^[0-9]*$/i";
+
+        if (preg_match($pattern,  $post["mrn"] )) {
+            $mrn = str_pad( $post["mrn"] ,7,"0",STR_PAD_LEFT);
+            $response['status']  = "Success";
+            $errCode = 0;
+            $patientSite = $this->opalDB->getPatientSite($mrn, $post["site"]);
+            $response['data']  = boolval(count($patientSite));
+
+        } else {
+            $errCode = 1;
+            $response['status']  = "Error";
+            $response['message'] = "Invalid MRN";
+        }
+
+        $errCode = bindec($errCode);
+        if($errCode != 0){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+        }
+
+
+        return $response;
+    }
+
+    /**
+     * Validate patient info
+     *
+     * @params  $post : array - Contains the following information
+     *                          mrns : List of patient identifiers
+     *                              mrn : Medical Record Number of the patient (mandatory)
+     *                              site : Site acronym of the establishment (mandatory)
+     *                          ramq: Quebec Health Medical Number
+     *                          birthdate : Date of birth
+     *                          name : LastName and Firstname
+     *
+     *  1st bit invalid mrn / site
+     *  2nd bit invalid ramq
+     *  3rd bit date of birth
+     *  4th bit name
+     *
+     * @return $errCode
+     */
+    protected function _validatePatientParams($post)
+    {
+        $pattern = "/^[0-9]*$/i";
+        $errCode = "";
+
+        if(!array_key_exists("mrns", $post) || $post["mrns"] == "" || count($post["mrns"]) <= 0)
+            $errCode = "1" . $errCode;
+        else {
+            $invalidValue = false;
+            foreach ($post["mrns"] as $identifier) {
+
+                $invalidValue = !preg_match($pattern, $identifier["mrn"]);
+            }
+            if ($invalidValue) {
+                $errCode = "1" . $errCode;
+            } else {
+                $errCode = "0" . $errCode;
+            }
+        }
+
+        if(!array_key_exists("ramq", $post) || $post["ramq"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+
+        if(!array_key_exists("birthdate", $post) || $post["birthdate"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        if(!array_key_exists("name", $post) || $post["name"] == "" || count($post["name"]) <= 0)
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        return bindec($errCode);
+    }
+
+    /**
+     * Update Patient information
+     *
+     * @params  $post : array - Contains the following information
+     *                          mrns : List of patient identifiers
+     *                              mrn : Medical Record Number of the patient (mandatory)
+     *                              site : Site acronym of the establishment (mandatory)
+     *                          ramq: Quebec Health Medical Number
+     *                          birthdate : Date of birth
+     *                          name : LastName and Firstname
+     *
+     * @return  $errCode : int - error code coded on bitwise operation. If 0, no error.
+     */
+    public function updatePatient($post){
+
+        $response = array(
+            'status' => 'Error',
+        );
+
+        $errCode = "";
+        $this->checkWriteAccess($post);
+        HelpSetup::arraySanitization($post);
+
+        $errCode = $this->_validatePatientParams($post) . $errCode;
+
+        $invalidValue = true;
+        foreach ($post["mrns"] as $identifier) {
+
+            $patientSite = $this->opalDB->getPatientSite($identifier["mrn"], $identifier["site"]);
+            $invalidValue = !boolVal(count($patientSite)) && $invalidValue;
+        }
+
+        if ($invalidValue){
+            $errCode = "1" . $errCode;
+        } else {
+            $response['status']  = "Success";
+            $response['data']  = json_encode($patientSite);
+        }
+        // Update patient
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        return $response;
+    }
 }
