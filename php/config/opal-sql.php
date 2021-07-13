@@ -737,19 +737,19 @@ define("OPAL_GET_USER_ACCESS_REGISTRATION","
 ");
 
 define("OPAL_GET_EDUCATIONAL_MATERIAL","
-    SELECT DISTINCT em.EducationalMaterialControlSerNum AS serial, em.EducationalMaterialType_EN AS type_EN, em.EducationalMaterialType_FR AS type_FR, em.Name_EN AS name_EN, em.Name_FR AS name_FR, em.URL_EN AS url_EN, em.URL_FR AS url_FR, phase.PhaseInTreatmentSerNum AS phase_serial, phase.Name_EN AS phase_EN, phase.Name_FR AS phase_FR, em.PublishFlag AS publish, em.ParentFlag AS parentFlag, em.ShareURL_EN AS share_url_EN, em.ShareURL_FR AS share_url_FR, em.LastUpdated AS lastupdated, (SELECT COUNT(*) AS locked FROM ".OPAL_FILTERS_TABLE." f WHERE f.ControlTableSerNum = em.EducationalMaterialControlSerNum and ControlTable = '".OPAL_EDUCATION_MATERIAL_TABLE."') AS locked, (case WHEN em.ParentFlag = 1 then (SELECT COALESCE(round(AVG(emr.RatingValue)), 0) FROM EducationalMaterialRating emr WHERE emr.EducationalMaterialControlSerNum = em.EducationalMaterialControlSerNum) ELSE 0 END) AS rating FROM ".OPAL_EDUCATION_MATERIAL_TABLE." em, ".OPAL_PHASE_IN_TREATMENT_TABLE." phase WHERE phase.PhaseInTreatmentSerNum = em.PhaseInTreatmentSerNum AND em.deleted = 0;
+    SELECT DISTINCT em.EducationalMaterialControlSerNum AS serial, em.EducationalMaterialType_EN AS type_EN, em.EducationalMaterialType_FR AS type_FR, em.Name_EN AS name_EN, em.Name_FR AS name_FR, em.URL_EN AS url_EN, em.URL_FR AS url_FR, phase.PhaseInTreatmentSerNum AS phase_serial, phase.Name_EN AS phase_EN, phase.Name_FR AS phase_FR, em.PublishFlag AS publish, em.ParentFlag AS parentFlag, em.ShareURL_EN AS share_url_EN, em.ShareURL_FR AS share_url_FR, em.LastUpdated AS lastupdated, (SELECT COUNT(*) AS locked FROM ".OPAL_FILTERS_TABLE." f WHERE f.ControlTableSerNum = em.EducationalMaterialControlSerNum and ControlTable = '".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE."') AS locked, (case WHEN em.ParentFlag = 1 then (SELECT COALESCE(round(AVG(emr.RatingValue)), 0) FROM EducationalMaterialRating emr WHERE emr.EducationalMaterialControlSerNum = em.EducationalMaterialControlSerNum) ELSE 0 END) AS rating FROM ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." em, ".OPAL_PHASE_IN_TREATMENT_TABLE." phase WHERE phase.PhaseInTreatmentSerNum = em.PhaseInTreatmentSerNum AND em.deleted = 0;
 ");
 
 define("OPAL_GET_TOCS_EDU_MATERIAL","
-    SELECT DISTINCT em.EducationalMaterialControlSerNum AS serial, em.Name_EN AS name_EN, em.Name_FR AS name_FR, toc.OrderNum AS `order`, em.EducationalMaterialType_EN AS type_EN, em.EducationalMaterialType_FR AS type_FR, em.URL_EN AS url_EN, em.URL_FR AS url_FR FROM ".OPAL_EDUCATION_MATERIAL_TOC_TABLE." toc, ".OPAL_EDUCATION_MATERIAL_TABLE." em WHERE toc.EducationalMaterialControlSerNum= em.EducationalMaterialControlSerNum AND toc.ParentSerNum = :ParentSerNum ORDER BY toc.OrderNum
+    SELECT DISTINCT em.EducationalMaterialControlSerNum AS serial, em.Name_EN AS name_EN, em.Name_FR AS name_FR, toc.OrderNum AS `order`, em.EducationalMaterialType_EN AS type_EN, em.EducationalMaterialType_FR AS type_FR, em.URL_EN AS url_EN, em.URL_FR AS url_FR FROM ".OPAL_EDUCATION_MATERIAL_TOC_TABLE." toc, ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." em WHERE toc.EducationalMaterialControlSerNum= em.EducationalMaterialControlSerNum AND toc.ParentSerNum = :ParentSerNum ORDER BY toc.OrderNum
 ");
 
 define("OPAL_GET_EDU_MATERIAL_DETAILS","
-    SELECT DISTINCT em.EducationalMaterialType_EN AS type_EN, em.EducationalMaterialType_FR AS type_FR, em.Name_EN AS name_EN, em.Name_FR AS name_FR, em.EducationalMaterialControlSerNum AS serial, em.PublishFlag AS publish, em.URL_EN AS url_EN, em.URL_FR AS url_FR, phase.PhaseInTreatmentSerNum AS phase_serial, phase.Name_EN AS phase_EN, phase.Name_FR AS phase_FR, em.ShareURL_EN AS share_url_EN, em.ShareURL_FR AS share_url_FR FROM ".OPAL_EDUCATION_MATERIAL_TABLE." em, ".OPAL_PHASE_IN_TREATMENT_TABLE." phase WHERE em.EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum AND phase.PhaseInTreatmentSerNum = em.PhaseInTreatmentSerNum;
+    SELECT DISTINCT em.EducationalMaterialType_EN AS type_EN, em.EducationalMaterialType_FR AS type_FR, em.Name_EN AS name_EN, em.Name_FR AS name_FR, em.EducationalMaterialControlSerNum AS serial, em.PublishFlag AS publish, em.URL_EN AS url_EN, em.URL_FR AS url_FR, phase.PhaseInTreatmentSerNum AS phase_serial, phase.Name_EN AS phase_EN, phase.Name_FR AS phase_FR, em.ShareURL_EN AS share_url_EN, em.ShareURL_FR AS share_url_FR FROM ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." em, ".OPAL_PHASE_IN_TREATMENT_TABLE." phase WHERE em.EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum AND phase.PhaseInTreatmentSerNum = em.PhaseInTreatmentSerNum;
 ");
 
 define("OPAL_GET_EDU_MATERIAL_MH","
-    SELECT DISTINCT emc.Name_EN AS material_name, emmh.EducationalMaterialRevSerNum AS revision, emmh.CronLogSerNum AS cron_serial, emmh.PatientSerNum AS patient_serial, emmh.DateAdded AS date_added, emmh.ReadStatus AS read_status, emmh.ModificationAction AS mod_action FROM ".OPAL_EDUCATION_MATERIAL_MH_TABLE." emmh, ".OPAL_EDUCATION_MATERIAL_TABLE." emc WHERE emc.EducationalMaterialControlSerNum = emmh.EducationalMaterialControlSerNum AND emmh.CronLogSerNum IN (%%LIST_IDS%%);
+    SELECT DISTINCT emc.Name_EN AS material_name, emmh.EducationalMaterialRevSerNum AS revision, emmh.CronLogSerNum AS cron_serial, emmh.PatientSerNum AS patient_serial, emmh.DateAdded AS date_added, emmh.ReadStatus AS read_status, emmh.ModificationAction AS mod_action FROM ".OPAL_EDUCATION_MATERIAL_MH_TABLE." emmh, ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." emc WHERE emc.EducationalMaterialControlSerNum = emmh.EducationalMaterialControlSerNum AND emmh.CronLogSerNum IN (%%LIST_IDS%%);
 ");
 
 define("OPAL_GET_TASK_MH","
@@ -907,7 +907,7 @@ define("OPAL_GET_DIAGNOSIS_TRANSLATIONS","
 ");
 
 define("OPAL_VALIDATE_EDU_MATERIAL_ID","
-    SELECT COUNT(*) AS total FROM ".OPAL_EDUCATION_MATERIAL_TABLE."
+    SELECT COUNT(*) AS total FROM ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE."
     WHERE EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum;
 ");
 
@@ -1052,7 +1052,7 @@ define("OPAL_GET_QUESTIONNAIRE_REPORT", "
 define("OPAL_GET_EDUCATIONAL_MATERIAL_REPORT", "
     SELECT em.DateAdded AS dateadded, em.ReadStatus AS readstatus, emc.EducationalMaterialType_EN AS materialtype,
     emc.Name_EN AS name
-    FROM ".OPAL_EDUCATIONAL_MATERIAL_TABLE." AS em, ".OPAL_EDUCATION_MATERIAL_TABLE." AS emc
+    FROM ".OPAL_EDUCATIONAL_MATERIAL_TABLE." AS em, ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." AS emc
     WHERE em.EducationalMaterialControlSerNum = emc.EducationalMaterialControlSerNum
     AND PatientSerNum = :pnum;
 ");
@@ -1132,14 +1132,14 @@ define("OPAL_GET_GENERAL_REPORT", "
 
 define("OPAL_GET_EDUCATIONAL_MATERIAL_OPTIONS", "
     SELECT Name_EN AS name, PublishFlag AS pflag
-    FROM ".OPAL_EDUCATION_MATERIAL_TABLE."
+    FROM ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE."
     WHERE EducationalMaterialType_EN = :matType;
 ");
 
 define("OPAL_GET_EDUCATIONAL_MATERIAL_GROUP", "
     SELECT p.FirstName AS pname, p.LastName AS plname, p.PatientSerNum AS pser, p.Sex AS psex,
     p.Age AS page, p.DateOfBirth AS pdob, em.DateAdded AS edate, em.ReadStatus AS eread, em.LastUpdated AS eupdate
-    FROM ".OPAL_PATIENT_TABLE." p, ".OPAL_EDUCATIONAL_MATERIAL_TABLE." em, ".OPAL_EDUCATION_MATERIAL_TABLE." emc
+    FROM ".OPAL_PATIENT_TABLE." p, ".OPAL_EDUCATIONAL_MATERIAL_TABLE." em, ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." emc
     WHERE em.PatientSerNum = p.PatientSerNum AND em.EducationalMaterialControlSerNum = emc.EducationalMaterialControlSerNum
     AND emc.EducationalMaterialType_EN = :matType
     AND emc.Name_EN = :matName
@@ -1200,7 +1200,7 @@ define("OPAL_GET_TEST_RESULT_GROUPS","
 ");
 
 define("OPAL_DOES_EDU_MATERIAL_EXISTS","
-    SELECT EducationalMaterialControlSerNum FROM ".OPAL_EDUCATION_MATERIAL_TABLE."
+    SELECT EducationalMaterialControlSerNum FROM ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE."
     WHERE EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum;
 ");
 
