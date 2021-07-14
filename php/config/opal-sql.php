@@ -1009,11 +1009,6 @@ define("OPAL_GET_PATIENT_RAMQ", "
     SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :SSN;
 ");
 
-define("OPAL_GET_MRN_PATIENT_SERNUM","
-    SELECT MRN, Hospital_Identifier_Type_Code AS hospital FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE."
-    WHERE PatientSerNum = :PatientSerNum;
-");
-
 define("OPAL_GET_DIAGNOSIS_REPORT", "
     SELECT DiagnosisSerNum AS sernum, CreationDate AS creationdate, Description_EN AS description
     FROM ".OPAL_DIAGNOSIS_TABLE." WHERE PatientSerNum = :pnum;
