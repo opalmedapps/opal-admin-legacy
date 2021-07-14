@@ -468,8 +468,12 @@ define("OPAL_UPDATE_EXTERNAL_ID_MASTER_SOURCE", "
 ");
 
 define("OPAL_GET_PATIENTS_TRIGGERS","
-    SELECT DISTINCT PatientId AS id, 'Patient' AS type, 0 AS added, CONCAT(CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))), ' (', PatientId, ')') AS name
-    FROM ".OPAL_PATIENT_TABLE." ORDER BY PatientSerNum;
+    SELECT DISTINCT PatientSerNum AS id, 'Patient' AS type, 0 AS added, CONCAT(CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2)))) AS name
+    FROM ".OPAL_PATIENT_TABLE." ORDER BY LastName;
+");
+
+define("OPAL_GET_MRN_PATIENT_SERNUM","
+    SELECT MRN, Hospital_Identifier_Type_Code AS hospital FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." WHERE PatientSerNum = :PatientSerNum;
 ");
 
 define("OPAL_GET_DIAGNOSIS_TRIGGERS","
@@ -986,21 +990,28 @@ define("OPAL_DELETE_PATIENT_DIAGNOSIS","
 ");
 
 define("OPAL_GET_PATIENT_NAME", "
-    SELECT PatientSerNum AS psnum, PatientId AS pid, FirstName AS pname, LastName AS plname,
-    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang
-    FROM ".OPAL_PATIENT_TABLE." WHERE LastName LIKE :name;
+    SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
+    CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
+    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang FROM ".OPAL_PATIENT_TABLE." WHERE LastName LIKE :name;
 ");
 
 define("OPAL_GET_PATIENT_MRN", "
-    SELECT PatientSerNum AS psnum, PatientId AS pid, FirstName AS pname, LastName AS plname,
-    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang
-    FROM ".OPAL_PATIENT_TABLE." WHERE PatientId LIKE :mrn;
+    SELECT p.PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(p.FirstName, 1, 1)), LOWER(SUBSTRING(p.FirstName, 2))) AS pname,
+    CONCAT(UCASE(SUBSTRING(p.LastName, 1, 1)), LOWER(SUBSTRING(p.LastName, 2))) AS plname,
+    p.SSN AS pramq, p.Sex AS psex, p.Email AS pemail, p.Language AS plang FROM ".OPAL_PATIENT_TABLE." p
+    WHERE (SELECT COUNT(*) FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi WHERE phi.MRN LIKE :MRN
+    AND phi.PatientSerNum = p.PatientSerNum) > 0;
 ");
 
 define("OPAL_GET_PATIENT_RAMQ", "
-    SELECT PatientSerNum AS psnum, PatientId AS pid, FirstName AS pname, LastName AS plname,
-    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang
-    FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :ramq;
+    SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
+    CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
+    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :SSN;
+");
+
+define("OPAL_GET_MRN_PATIENT_SERNUM","
+    SELECT MRN, Hospital_Identifier_Type_Code AS hospital FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE."
+    WHERE PatientSerNum = :PatientSerNum;
 ");
 
 define("OPAL_GET_DIAGNOSIS_REPORT", "
@@ -1300,7 +1311,7 @@ define("OPAL_UPDATE_TEST_EXPRESSION","
 ");
 
 define("OPAL_GET_PATIENTS_LIST","
-    SELECT DISTINCT PatientSerNum AS id, 0 AS added, CONCAT(CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))), ' (', PatientId, ')') AS name
+    SELECT DISTINCT PatientSerNum AS id, 0 AS added, CONCAT(CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2)))) AS name
     FROM ".OPAL_PATIENT_TABLE." ORDER BY PatientSerNum;
 ");
 
@@ -1313,7 +1324,7 @@ define("OPAL_GET_PATIENTS_STUDY","
 ");
 
 define("OPAL_GET_PATIENTS_STUDY_CONSENTS","
-    SELECT ps.patientId AS id, ps.consentStatus AS consent, CONCAT(CONCAT(UCASE(SUBSTRING(p.LastName, 1, 1)), LOWER(SUBSTRING(p.LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(p.FirstName, 1, 1)), LOWER(SUBSTRING(p.FirstName, 2))), ' (', p.PatientId, ')') AS name, p.PatientId as pid
+    SELECT ps.patientId AS id, ps.consentStatus AS consent, CONCAT(CONCAT(UCASE(SUBSTRING(p.LastName, 1, 1)), LOWER(SUBSTRING(p.LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(p.FirstName, 1, 1)), LOWER(SUBSTRING(p.FirstName, 2)))) AS name
     FROM ".OPAL_PATIENT_STUDY_TABLE." ps, ".OPAL_PATIENT_TABLE." p
     WHERE p.PatientSerNum = ps.patientId AND ps.studyId = :studyId;
 ");
@@ -1349,16 +1360,16 @@ define("OPAL_UPDATE_PATIENT_PUBLISH_FLAG","
 ");
 
 define("OPAL_GET_PATIENTS","
-    SELECT DISTINCT pc.PatientSerNum AS serial, pc.PatientUpdate AS transfer, CONCAT(UCASE(LEFT(pt.FirstName, 1)), LCASE(SUBSTRING(pt.FirstName, 2)),
-    ' ', UCASE(LEFT(pt.LastName, 1)), LCASE(SUBSTRING(pt.LastName, 2))) AS name, pt.PatientId AS
-    patientid, pc.LastTransferred AS lasttransferred, pt.email AS email FROM ".OPAL_PATIENT_TABLE." pt RIGHT JOIN
+    SELECT DISTINCT pc.PatientSerNum AS serial, pt.SSN AS RAMQ, pc.PatientUpdate AS transfer, CONCAT(UCASE(LEFT(pt.FirstName, 1)), LCASE(SUBSTRING(pt.FirstName, 2)),
+    ' ', UCASE(LEFT(pt.LastName, 1)), LCASE(SUBSTRING(pt.LastName, 2))) AS name, pc.LastTransferred AS lasttransferred, pt.email AS email FROM ".OPAL_PATIENT_TABLE." pt RIGHT JOIN
     ".OPAL_PATIENT_CONTROL_TABLE." pc ON pt.PatientSerNum = pc.PatientSerNum LEFT JOIN ".OPAL_USERS_TABLE." usr ON
     pt.PatientSerNum = usr.UserTypeSerNum WHERE usr.UserType = 'Patient';
 ");
 
 define("OPAL_GET_PATIENT_ACTIVITY","
-SELECT DISTINCT 
-p.PatientId AS patientId,
+SELECT DISTINCT
+p.PatientSerNum AS serial,
+p.SSN AS RAMQ,
 CONCAT(UCASE(LEFT(p.FirstName, 1)), LCASE(SUBSTRING(p.FirstName, 2)),
 ' ', UCASE(LEFT(p.LastName, 1)), LCASE(SUBSTRING(p.LastName, 2))) AS name,
 pdi.DeviceId AS deviceId,

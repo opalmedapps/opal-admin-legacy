@@ -789,7 +789,16 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  patient triggers found (array)
      * */
     function getPatientsTriggers() {
-        return $this->_fetchAll(OPAL_GET_PATIENTS_TRIGGERS, array());
+        $results = $this->_fetchAll(OPAL_GET_PATIENTS_TRIGGERS, array());
+        foreach($results as &$item) {
+            $temp = $this->_fetchAll(OPAL_GET_MRN_PATIENT_SERNUM, array(array("parameter"=>":PatientSerNum","variable"=>$item["id"],"data_type"=>PDO::PARAM_INT)));
+            $mrnList = array();
+            foreach ($temp as $mrn)
+                array_push($mrnList, $mrn["MRN"] . " (".$mrn["hospital"].")");
+            if(count($mrnList) > 0)
+                $item["name"] .= " (MRN: " . implode(", ", $mrnList) . ")";
+        }
+        return $results;
     }
 
     /*
@@ -2088,7 +2097,7 @@ class DatabaseOpal extends DatabaseAccess {
      * */
     function getPatientMRN($pmrn) {
         return $this->_fetchAll(OPAL_GET_PATIENT_MRN, array(
-            array("parameter"=>":mrn","variable"=>'%'.$pmrn.'%',"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":MRN","variable"=>'%'.$pmrn.'%',"data_type"=>PDO::PARAM_STR),
         ));
     }
 
@@ -2097,9 +2106,9 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  $mrn : string - target patient ramq
      * @return  array - list of patient(s) matching search
      * */
-    function getPatientRAMQ($pramq) {
+    function getPatientRAMQ($ssn) {
         return $this->_fetchAll(OPAL_GET_PATIENT_RAMQ, array(
-            array("parameter"=>":ramq","variable"=>'%'.$pramq.'%',"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":SSN","variable"=>'%'.$ssn.'%',"data_type"=>PDO::PARAM_STR),
         ));
     }
 
@@ -2594,7 +2603,16 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  array - List of patients
      * */
     function getPatientsList() {
-        return $this->_fetchAll(OPAL_GET_PATIENTS_LIST, array());
+        $results = $this->_fetchAll(OPAL_GET_PATIENTS_LIST, array());
+        foreach($results as &$item) {
+            $temp = $this->_fetchAll(OPAL_GET_MRN_PATIENT_SERNUM, array(array("parameter"=>":PatientSerNum","variable"=>$item["id"],"data_type"=>PDO::PARAM_INT)));
+            $mrnList = array();
+            foreach ($temp as $mrn)
+                array_push($mrnList, $mrn["MRN"] . " (".$mrn["hospital"].")");
+            if(count($mrnList) > 0)
+                $item["name"] .= " (MRN: " . implode(", ", $mrnList) . ")";
+        }
+        return $results;
     }
 
     /*
@@ -2642,9 +2660,18 @@ class DatabaseOpal extends DatabaseAccess {
      * @return array list of patients found
      */
     function getPatientsStudyConsents($studyId) {
-        return $this->_fetchAll(OPAL_GET_PATIENTS_STUDY_CONSENTS, array(
+        $results = $this->_fetchAll(OPAL_GET_PATIENTS_STUDY_CONSENTS, array(
             array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
         ));
+        foreach($results as &$item) {
+            $temp = $this->_fetchAll(OPAL_GET_MRN_PATIENT_SERNUM, array(array("parameter"=>":PatientSerNum","variable"=>$item["id"],"data_type"=>PDO::PARAM_INT)));
+            $mrnList = array();
+            foreach ($temp as $mrn)
+                array_push($mrnList, $mrn["MRN"] . " (".$mrn["hospital"].")");
+            if(count($mrnList) > 0)
+                $item["name"] .= " (MRN: " . implode(", ", $mrnList) . ")";
+        }
+        return $results;
     }
 
     /**
@@ -2735,7 +2762,10 @@ class DatabaseOpal extends DatabaseAccess {
      * @return array
      */
     function getPatients() {
-        return $this->_fetchAll(OPAL_GET_PATIENTS, array());
+        $results = $this->_fetchAll(OPAL_GET_PATIENTS, array());
+        foreach ($results as &$item)
+            $item["MRN"] = $this->getMrnPatientSerNum($item["serial"]);
+        return $results;
     }
 
     /**
@@ -2743,7 +2773,12 @@ class DatabaseOpal extends DatabaseAccess {
      * @return array
      */
     function getPatientActivityLog() {
-        return $this->_fetchAll(OPAL_GET_PATIENT_ACTIVITY, array());
+        $results = $this->_fetchAll(OPAL_GET_PATIENT_ACTIVITY, array());
+        foreach ($results as &$item) {
+            $item["MRN"] = $this->getMrnPatientSerNum($item["serial"]);
+            unset($item["serial"]);
+        }
+        return $results;
     }
 
 
@@ -3388,4 +3423,8 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    function getMrnPatientSerNum($patientSerNum) {
+        return $this->_fetchAll(OPAL_GET_MRN_PATIENT_SERNUM, array(
+            array("parameter"=>":PatientSerNum","variable"=>$patientSerNum,"data_type"=>PDO::PARAM_INT)));
+    }
 }

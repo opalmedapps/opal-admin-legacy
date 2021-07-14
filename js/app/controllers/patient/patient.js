@@ -58,7 +58,7 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 			var matcher = new RegExp($scope.filterValue, 'i');
 			renderableRows.forEach(function (row) {
 				var match = false;
-				['name', 'patientid', 'email'].forEach(function (field) {
+				['name', 'RAMQ', 'email', 'MRN'].forEach(function (field) {
 					if (row.entity[field].match(matcher)) {
 						match = true;
 					}
@@ -81,9 +81,10 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 		$scope.gridOptions = {
 			data: 'patientList',
 			columnDefs: [
-				{ field: 'patientid', displayName: $filter('translate')('PATIENTS.LIST.PATIENTID'), width: '15%', enableColumnMenu: false },
-				{ field: 'name', displayName: $filter('translate')('PATIENTS.LIST.NAME'), width: '30%', enableColumnMenu: false },
-				{ field: 'email', displayName: $filter('translate')('PATIENTS.LIST.EMAIL'), width: '30%', enableColumnMenu: false },
+				{ field: 'RAMQ', displayName: $filter('translate')('PATIENTS.LIST.RAMQ'), width: '15%', enableColumnMenu: false },
+				{ field: 'name', displayName: $filter('translate')('PATIENTS.LIST.NAME'), width: '20%', enableColumnMenu: false },
+				{ field: 'email', displayName: $filter('translate')('PATIENTS.LIST.EMAIL'), width: '20%', enableColumnMenu: false },
+				{ field: 'MRN', displayName: $filter('translate')('PATIENTS.LIST.MRN'), width: '20%', enableColumnMenu: false },
 				{ field: 'transfer', displayName: $filter('translate')('PATIENTS.LIST.PUBLISH_FLAG'), width: '10%', cellTemplate: checkboxCellTemplate, enableFiltering: false, enableColumnMenu: false },
 				{ field: 'lasttransferred', displayName: $filter('translate')('PATIENTS.LIST.LAST'), width:'15%', enableColumnMenu: false },
 
@@ -160,6 +161,17 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 		function getPatientsList() {
 			patientCollectionService.getPatients().then(function (response) {
 				$scope.patientList = response.data;
+				var temp;
+
+				for (var i = 0; i < $scope.patientList.length; i++) {
+					temp = "";
+					if($scope.patientList[i].MRN.length > 0)
+						for (var j = 0; j < $scope.patientList[i].MRN.length; j++)
+							temp += $scope.patientList[i].MRN[j].MRN + " (" + $scope.patientList[i].MRN[j].hospital + "), ";
+
+					$scope.patientList[i].MRN = temp.slice(0, -2);
+				}
+
 			}).catch(function(err) {
 				ErrorHandler.onError(err, $filter('translate')('PATIENTS.LIST.ERROR_PATIENTS'));
 			});
