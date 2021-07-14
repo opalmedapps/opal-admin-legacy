@@ -1,123 +1,4 @@
 <?php
-
-// DEFINE OPAL SERVER/DATABASE CREDENTIALS HERE
-// NOTE: This works for a MySQL setup.
-define( "OPAL_DB_HOST", $config['databaseConfig']['opal']['host'] );
-define( "OPAL_DB_PORT", $config['databaseConfig']['opal']['port'] );
-define( "OPAL_DB_NAME", $config['databaseConfig']['opal']['name'] );
-define( "OPAL_DB_DSN", "mysql:host=" . OPAL_DB_HOST . ";port=" . OPAL_DB_PORT . ";dbname=" . OPAL_DB_NAME . ";charset=utf8" );
-define( "OPAL_DB_USERNAME", $config['databaseConfig']['opal']['username'] );
-define( "OPAL_DB_PASSWORD", $config['databaseConfig']['opal']['password'] );
-
-// DEFINE OPAL SERVER/DATABASE CREDENTIALS FOR GUEST ACCOUNT HERE
-// NOTE: This works for a MySQL setup.
-define( "OPAL_DB_HOST_GUEST", $config['databaseConfig']['opalGuest']['host'] );
-define( "OPAL_DB_PORT_GUEST", $config['databaseConfig']['opalGuest']['port'] );
-define( "OPAL_DB_NAME_GUEST", $config['databaseConfig']['opalGuest']['name'] );
-define( "OPAL_DB_DSN_GUEST", "mysql:host=" . OPAL_DB_HOST_GUEST . ";port=" . OPAL_DB_PORT_GUEST . ";dbname=" . OPAL_DB_NAME_GUEST . ";charset=utf8" );
-define( "OPAL_DB_USERNAME_GUEST", $config['databaseConfig']['opalGuest']['username'] );
-define( "OPAL_DB_PASSWORD_GUEST", $config['databaseConfig']['opalGuest']['password'] );
-
-//Definition of all the tables from the opalDB database
-define("OPAL_OAUSER_TABLE","OAUser");
-define("OPAL_OAUSER_ROLE_TABLE","OAUserRole");
-define("OPAL_OAUSER_ACTIVITY_LOG_TABLE","OAActivityLog");
-define("OPAL_ALIAS_EXPRESSION_MH_TABLE","AliasExpressionMH");
-define("OPAL_DIAGNOSIS_TRANSLATION_MH_TABLE","DiagnosisTranslationMH");
-define("OPAL_DIAGNOSIS_CODE_MH_TABLE","DiagnosisCodeMH");
-define("OPAL_QUESTIONNAIRE_CONTROL_TABLE","QuestionnaireControl");
-define("OPAL_QUESTIONNAIRE_TABLE","Questionnaire");
-define("OPAL_QUESTIONNAIRE_MH_TABLE","QuestionnaireMH");
-define("OPAL_EMAIL_CONTROL_MH_TABLE","EmailControlMH");
-define("OPAL_HOSPITAL_MAP_MH_TABLE","HospitalMapMH");
-define("OPAL_POST_CONTROL_MH_TABLE","PostControlMH");
-define("OPAL_NOTIFICATION_CONTROL_MH_TABLE","NotificationControlMH");
-define("OPAL_QUESTIONNAIRE_CONTROL_MH_TABLE","QuestionnaireControlMH");
-define("OPAL_TEST_RESULT_CONTROL_MH_TABLE","TestResultControlMH");
-define("OPAL_TEST_RESULT_EXP_MH_TABLE","TestResultExpressionMH");
-define("OPAL_FILTERS_TABLE","Filters");
-define("OPAL_FILTERS_MH_TABLE","FiltersMH");
-define("OPAL_FREQUENCY_EVENTS_TABLE","FrequencyEvents");
-define("OPAL_MODULE_TABLE","module");
-define("OPAL_AUDIT_TABLE","audit");
-define("OPAL_CATEGORY_MODULE_TABLE","categoryModule");
-define("OPAL_MODULE_PUBLICATION_SETTING_TABLE","modulePublicationSetting");
-define("OPAL_PUBLICATION_SETTING_TABLE","publicationSetting");
-define("OPAL_POST_TABLE","PostControl");
-define("OPAL_TX_TEAM_MESSAGE_TABLE","TxTeamMessage");
-define("OPAL_ANNOUNCEMENT_TABLE","Announcement");
-define("OPAL_PATIENTS_FOR_PATIENTS_TABLE","PatientsForPatients");
-define("OPAL_EDUCATION_MATERIAL_TABLE","EducationalMaterial");
-define("OPAL_EDUCATION_MATERIAL_CONTROL_TABLE","EducationalMaterialControl");
-define("OPAL_EDUCATION_MATERIAL_TOC_TABLE","EducationalMaterialTOC");
-define("OPAL_PHASE_IN_TREATMENT_TABLE","PhaseInTreatment");
-define("OPAL_ANNOUNCEMENT_MH_TABLE","AnnouncementMH");
-define("OPAL_TXT_TEAM_MSG_MH_TABLE","TxTeamMessageMH");
-define("OPAL_PATIENTS_FOR_PATIENTS_MH_TABLE","PatientsForPatientsMH");
-define("OPAL_EDUCATION_MATERIAL_MH_TABLE","EducationalMaterialMH");
-define("OPAL_TASK_MH_TABLE","TaskMH");
-define("OPAL_DOCUMENT_MH_TABLE","DocumentMH");
-define("OPAL_APPOINTMENT_MH_TABLE","AppointmentMH");
-define("OPAL_TEST_RESULT_MH_TABLE","TestResultMH");
-define("OPAL_EMAIL_LOG_MH_TABLE","EmailLogMH");
-define("OPAL_NOTIFICATION_MH_TABLE","NotificationMH");
-define("OPAL_NOTIFICATION_CONTROL_TABLE","NotificationControl");
-define("OPAL_NOTIFICATION_TYPES_TABLE","NotificationTypes");
-define("OPAL_EMAIL_CONTROL","EmailControl");
-define("OPAL_EMAIL_TYPE","EmailType");
-define("OPAL_CRON_LOG_TABLE","CronLog");
-define("OPAL_SETTING_TABLE","setting");
-define("OPAL_MASTER_SOURCE_ALIAS_TABLE","masterSourceAlias");
-define("OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE","masterSourceDiagnosis");
-define("OPAL_MASTER_SOURCE_TEST_RESULT_TABLE","v_masterSourceTestResult");
-define("OPAL_ALIAS_EXPRESSION_TABLE","AliasExpression");
-define("OPAL_DOCTOR_TABLE","Doctor");
-define("OPAL_STATUS_ALIAS_TABLE","StatusAlias");
-define("OPAL_ALIAS_TABLE","Alias");
-define("OPAL_DIAGNOSIS_TRANSLATION_TABLE","DiagnosisTranslation");
-define("OPAL_PATIENT_TABLE","Patient");
-define("OPAL_PATIENT_STUDY_TABLE","patientStudy");
-define("OPAL_QUESTIONNAIRE_STUDY_TABLE","questionnaireStudy");
-define("OPAL_TEST_RESULT_EXPRESSION_TABLE","TestResultExpression");
-//define("OPAL_TEST_RESULT_ADD_LINKS_TABLE","TestResultAdditionalLinks");
-define("OPAL_DIAGNOSIS_CODE_TABLE","DiagnosisCode");
-define("OPAL_LOGIN_VIEW","v_login");
-define("OPAL_USER_ACTIVITY_LOG_TABLE","OAActivityLog");
-define("OPAL_ROLE_TABLE","Role");
-define("OPAL_ALIAS_MH_TABLE","AliasMH");
-define("OPAL_STUDY_TABLE","study");
-define("OPAL_OA_ROLE_TABLE","oaRole");
-define("OPAL_OA_ROLE_MODULE_TABLE","oaRoleModule");
-define("OPAL_SOURCE_DATABASE_TABLE","SourceDatabase");
-define("OPAL_HOSPITAL_MAP_TABLE","HospitalMap");
-define("OPAL_ALERT_TABLE","alert");
-define("OPAL_TRIGGER_TABLE","jsonTrigger");
-define("OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE","Patient_Hospital_Identifier");
-define("OPAL_DIAGNOSIS_TABLE","Diagnosis");
-define("OPAL_APPOINTMENTS_TABLE", "Appointment");
-define("OPAL_APPOINTMENT_CHECKIN_TABLE","AppointmentCheckin");
-define("OPAL_RESOURCE_TABLE", "Resource");
-define("OPAL_RESOURCE_APPOINTMENT_TABLE", "ResourceAppointment");
-define("OPAL_PATIENT_CONTROL_TABLE", "PatientControl");
-define("OPAL_EDUCATIONAL_MATERIAL_TABLE", "EducationalMaterial");
-define("OPAL_LEGACY_TEST_RESULT_TABLE", "TestResult");
-define("OPAL_PATIENT_TEST_RESULT_TABLE", "PatientTestResult");
-define("OPAL_TEST_EXPRESSION_TABLE", "TestExpression");
-define("OPAL_TEST_GROUP_EXPRESSION_TABLE", "TestGroupExpression");
-define("OPAL_TEST_CONTROL_TABLE", "TestControl");
-define("OPAL_NOTIFICATION_TABLE", "Notification");
-define("OPAL_TASK_TABLE", "Task");
-define("OPAL_PRIORITY_TABLE", "Priority");
-define("OPAL_DOCUMENT_TABLE", "Document");
-define("OPAL_USERS_TABLE", "Users");
-define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
-define("OPAL_PATIENT_ACTIVITY_LOG_TABLE","PatientActivityLog");
-define("OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE", "PatientDeviceIdentifier");
-define("OPAL_APPOINTMENT_CHECK_IN_TABLE", "AppointmentCheckin");
-
-//Definition of the primary keys of the opalDB database
-define("OPAL_POST_PK","PostControlSerNum");
-
 /*
  * Listing of all SQL queries for the Opal database
  * */
@@ -463,12 +344,8 @@ define("OPAL_UPDATE_EXTERNAL_ID_MASTER_SOURCE", "
 ");
 
 define("OPAL_GET_PATIENTS_TRIGGERS","
-    SELECT DISTINCT PatientSerNum AS id, 'Patient' AS type, 0 AS added, CONCAT(CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2)))) AS name
-    FROM ".OPAL_PATIENT_TABLE." ORDER BY LastName;
-");
-
-define("OPAL_GET_MRN_PATIENT_SERNUM","
-    SELECT MRN, Hospital_Identifier_Type_Code AS hospital FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." WHERE PatientSerNum = :PatientSerNum;
+    SELECT DISTINCT PatientId AS id, 'Patient' AS type, 0 AS added, CONCAT(CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))), ' (', PatientId, ')') AS name
+    FROM ".OPAL_PATIENT_TABLE." ORDER BY PatientSerNum;
 ");
 
 define("OPAL_GET_DIAGNOSIS_TRIGGERS","
@@ -742,19 +619,19 @@ define("OPAL_GET_USER_ACCESS_REGISTRATION","
 ");
 
 define("OPAL_GET_EDUCATIONAL_MATERIAL","
-    SELECT DISTINCT em.EducationalMaterialControlSerNum AS serial, em.EducationalMaterialType_EN AS type_EN, em.EducationalMaterialType_FR AS type_FR, em.Name_EN AS name_EN, em.Name_FR AS name_FR, em.URL_EN AS url_EN, em.URL_FR AS url_FR, phase.PhaseInTreatmentSerNum AS phase_serial, phase.Name_EN AS phase_EN, phase.Name_FR AS phase_FR, em.PublishFlag AS publish, em.ParentFlag AS parentFlag, em.ShareURL_EN AS share_url_EN, em.ShareURL_FR AS share_url_FR, em.LastUpdated AS lastupdated, (SELECT COUNT(*) AS locked FROM ".OPAL_FILTERS_TABLE." f WHERE f.ControlTableSerNum = em.EducationalMaterialControlSerNum and ControlTable = '".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE."') AS locked, (case WHEN em.ParentFlag = 1 then (SELECT COALESCE(round(AVG(emr.RatingValue)), 0) FROM EducationalMaterialRating emr WHERE emr.EducationalMaterialControlSerNum = em.EducationalMaterialControlSerNum) ELSE 0 END) AS rating FROM ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." em, ".OPAL_PHASE_IN_TREATMENT_TABLE." phase WHERE phase.PhaseInTreatmentSerNum = em.PhaseInTreatmentSerNum AND em.deleted = 0;
+    SELECT DISTINCT em.EducationalMaterialControlSerNum AS serial, em.EducationalMaterialType_EN AS type_EN, em.EducationalMaterialType_FR AS type_FR, em.Name_EN AS name_EN, em.Name_FR AS name_FR, em.URL_EN AS url_EN, em.URL_FR AS url_FR, phase.PhaseInTreatmentSerNum AS phase_serial, phase.Name_EN AS phase_EN, phase.Name_FR AS phase_FR, em.PublishFlag AS publish, em.ParentFlag AS parentFlag, em.ShareURL_EN AS share_url_EN, em.ShareURL_FR AS share_url_FR, em.LastUpdated AS lastupdated, (SELECT COUNT(*) AS locked FROM ".OPAL_FILTERS_TABLE." f WHERE f.ControlTableSerNum = em.EducationalMaterialControlSerNum and ControlTable = '".OPAL_EDUCATION_MATERIAL_TABLE."') AS locked, (case WHEN em.ParentFlag = 1 then (SELECT COALESCE(round(AVG(emr.RatingValue)), 0) FROM EducationalMaterialRating emr WHERE emr.EducationalMaterialControlSerNum = em.EducationalMaterialControlSerNum) ELSE 0 END) AS rating FROM ".OPAL_EDUCATION_MATERIAL_TABLE." em, ".OPAL_PHASE_IN_TREATMENT_TABLE." phase WHERE phase.PhaseInTreatmentSerNum = em.PhaseInTreatmentSerNum AND em.deleted = 0;
 ");
 
 define("OPAL_GET_TOCS_EDU_MATERIAL","
-    SELECT DISTINCT em.EducationalMaterialControlSerNum AS serial, em.Name_EN AS name_EN, em.Name_FR AS name_FR, toc.OrderNum AS `order`, em.EducationalMaterialType_EN AS type_EN, em.EducationalMaterialType_FR AS type_FR, em.URL_EN AS url_EN, em.URL_FR AS url_FR FROM ".OPAL_EDUCATION_MATERIAL_TOC_TABLE." toc, ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." em WHERE toc.EducationalMaterialControlSerNum= em.EducationalMaterialControlSerNum AND toc.ParentSerNum = :ParentSerNum ORDER BY toc.OrderNum
+    SELECT DISTINCT em.EducationalMaterialControlSerNum AS serial, em.Name_EN AS name_EN, em.Name_FR AS name_FR, toc.OrderNum AS `order`, em.EducationalMaterialType_EN AS type_EN, em.EducationalMaterialType_FR AS type_FR, em.URL_EN AS url_EN, em.URL_FR AS url_FR FROM ".OPAL_EDUCATION_MATERIAL_TOC_TABLE." toc, ".OPAL_EDUCATION_MATERIAL_TABLE." em WHERE toc.EducationalMaterialControlSerNum= em.EducationalMaterialControlSerNum AND toc.ParentSerNum = :ParentSerNum ORDER BY toc.OrderNum
 ");
 
 define("OPAL_GET_EDU_MATERIAL_DETAILS","
-    SELECT DISTINCT em.EducationalMaterialType_EN AS type_EN, em.EducationalMaterialType_FR AS type_FR, em.Name_EN AS name_EN, em.Name_FR AS name_FR, em.EducationalMaterialControlSerNum AS serial, em.PublishFlag AS publish, em.URL_EN AS url_EN, em.URL_FR AS url_FR, phase.PhaseInTreatmentSerNum AS phase_serial, phase.Name_EN AS phase_EN, phase.Name_FR AS phase_FR, em.ShareURL_EN AS share_url_EN, em.ShareURL_FR AS share_url_FR FROM ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." em, ".OPAL_PHASE_IN_TREATMENT_TABLE." phase WHERE em.EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum AND phase.PhaseInTreatmentSerNum = em.PhaseInTreatmentSerNum;
+    SELECT DISTINCT em.EducationalMaterialType_EN AS type_EN, em.EducationalMaterialType_FR AS type_FR, em.Name_EN AS name_EN, em.Name_FR AS name_FR, em.EducationalMaterialControlSerNum AS serial, em.PublishFlag AS publish, em.URL_EN AS url_EN, em.URL_FR AS url_FR, phase.PhaseInTreatmentSerNum AS phase_serial, phase.Name_EN AS phase_EN, phase.Name_FR AS phase_FR, em.ShareURL_EN AS share_url_EN, em.ShareURL_FR AS share_url_FR FROM ".OPAL_EDUCATION_MATERIAL_TABLE." em, ".OPAL_PHASE_IN_TREATMENT_TABLE." phase WHERE em.EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum AND phase.PhaseInTreatmentSerNum = em.PhaseInTreatmentSerNum;
 ");
 
 define("OPAL_GET_EDU_MATERIAL_MH","
-    SELECT DISTINCT emc.Name_EN AS material_name, emmh.EducationalMaterialRevSerNum AS revision, emmh.CronLogSerNum AS cron_serial, emmh.PatientSerNum AS patient_serial, emmh.DateAdded AS date_added, emmh.ReadStatus AS read_status, emmh.ModificationAction AS mod_action FROM ".OPAL_EDUCATION_MATERIAL_MH_TABLE." emmh, ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." emc WHERE emc.EducationalMaterialControlSerNum = emmh.EducationalMaterialControlSerNum AND emmh.CronLogSerNum IN (%%LIST_IDS%%);
+    SELECT DISTINCT emc.Name_EN AS material_name, emmh.EducationalMaterialRevSerNum AS revision, emmh.CronLogSerNum AS cron_serial, emmh.PatientSerNum AS patient_serial, emmh.DateAdded AS date_added, emmh.ReadStatus AS read_status, emmh.ModificationAction AS mod_action FROM ".OPAL_EDUCATION_MATERIAL_MH_TABLE." emmh, ".OPAL_EDUCATION_MATERIAL_TABLE." emc WHERE emc.EducationalMaterialControlSerNum = emmh.EducationalMaterialControlSerNum AND emmh.CronLogSerNum IN (%%LIST_IDS%%);
 ");
 
 define("OPAL_GET_TASK_MH","
@@ -913,7 +790,7 @@ define("OPAL_GET_DIAGNOSIS_TRANSLATIONS","
 ");
 
 define("OPAL_VALIDATE_EDU_MATERIAL_ID","
-    SELECT COUNT(*) AS total FROM ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE."
+    SELECT COUNT(*) AS total FROM ".OPAL_EDUCATION_MATERIAL_TABLE."
     WHERE EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum;
 ");
 
@@ -961,7 +838,7 @@ define("OPAL_SOURCE_DATABASE","AND s.SourceDatabaseName %%OPERATOR%% :SourceData
 
 define("OPAL_GET_PATIENT_SITE","
     SELECT * FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." WHERE Hospital_Identifier_Type_Code = :Hospital_Identifier_Type_Code
-    AND MRN = :MRN; 
+    AND MRN = :MRN AND Is_Active = ".ACTIVE_RECORD."; 
 ");
 
 define("OPAL_GET_SOURCE_DB_DETAILS","
@@ -985,63 +862,26 @@ define("OPAL_DELETE_PATIENT_DIAGNOSIS","
 ");
 
 define("OPAL_GET_PATIENT_NAME", "
-    SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
-    CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
-    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang FROM ".OPAL_PATIENT_TABLE." WHERE LastName LIKE :name;
+    SELECT PatientSerNum AS psnum, PatientId AS pid, FirstName AS pname, LastName AS plname,
+    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang
+    FROM ".OPAL_PATIENT_TABLE." WHERE LastName LIKE :name;
 ");
 
 define("OPAL_GET_PATIENT_MRN", "
-    SELECT p.PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(p.FirstName, 1, 1)), LOWER(SUBSTRING(p.FirstName, 2))) AS pname,
-    CONCAT(UCASE(SUBSTRING(p.LastName, 1, 1)), LOWER(SUBSTRING(p.LastName, 2))) AS plname,
-    p.SSN AS pramq, p.Sex AS psex, p.Email AS pemail, p.Language AS plang FROM ".OPAL_PATIENT_TABLE." p
-    WHERE (SELECT COUNT(*) FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi WHERE phi.MRN LIKE :MRN
-    AND phi.PatientSerNum = p.PatientSerNum) > 0;
+    SELECT PatientSerNum AS psnum, PatientId AS pid, FirstName AS pname, LastName AS plname,
+    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang
+    FROM ".OPAL_PATIENT_TABLE." WHERE PatientId LIKE :mrn;
 ");
 
 define("OPAL_GET_PATIENT_RAMQ", "
-    SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
-    CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
-    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :SSN;
+    SELECT PatientSerNum AS psnum, PatientId AS pid, FirstName AS pname, LastName AS plname,
+    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang
+    FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :ramq;
 ");
 
 define("OPAL_GET_DIAGNOSIS_REPORT", "
     SELECT DiagnosisSerNum AS sernum, CreationDate AS creationdate, Description_EN AS description
     FROM ".OPAL_DIAGNOSIS_TABLE." WHERE PatientSerNum = :pnum;
-");
-
-define("OPAL_GET_APPOINTMENT", "
-    SELECT DISTINCT phi.PatientSerNum,
-    hm.MapUrl,hm.MapURL_EN,hm.MapURL_FR,hm.MapName_EN,hm.MapName_FR,hm.MapDescription_EN,hm.MapDescription_FR,
-    a.ScheduledStartTime AS starttime, a.ScheduledEndTime AS endtime,
-    a.checkin,a.SourceDatabaseSerNum,a.AppointmentAriaSer,em.ReadStatus,
-    r.ResourceName,r.ResourceType,a.Status , 
-    a.RoomLocation_EN,a.RoomLocation_FR,    
-    ac.CheckinPossible,ac.CheckinInstruction_EN,ac.CheckinInstruction_FR,
-    hm.HospitalMapSerNum,
-    a.ScheduledStartTime AS starttime, a.Status AS status, a.DateAdded AS dateadded,    
-    als.AliasName_EN AS aliasname, als.AliasType AS aliastype, r.ResourceName AS resourcename
-    FROM ".OPAL_APPOINTMENTS_TABLE." a,
-     ".OPAL_HOSPITAL_MAP_TABLE." hm,
-    ".OPAL_ALIAS_TABLE." als, 
-    ".OPAL_APPOINTMENT_CHECK_IN_TABLE." ac, 
-     ".OPAL_ALIAS_EXPRESSION_TABLE." ae,      
-    ".OPAL_RESOURCE_TABLE." r, ".OPAL_RESOURCE_APPOINTMENT_TABLE." ra,
-    ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE ." phi,   
-    ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." emc ,
-    ".OPAL_EDUCATION_MATERIAL_TABLE." em
-    WHERE phi.Hospital_Identifier_Type_Code = :site
-    AND phi.mrn = :mrn 
-    AND phi.PatientSerNum = a.PatientSerNum 
-    AND em.PatientSerNum = a.PatientSerNum 
-    AND em.EducationalMaterialControlSerNum=emc.EducationalMaterialControlSerNum 
-    AND a.AliasExpressionSerNum = ae.AliasExpressionSerNum
-    AND ae.AliasSerNum = als.AliasSerNum
-    AND als.AliasSerNum = ac.AliasSerNum 
-    AND als.HospitalMapSerNum = hm.HospitalMapSerNum
-    AND r.ResourceSerNum = ra.ResourceSerNum    
-    AND ra.AppointmentSerNum = a.AppointmentSerNum
-    AND (:startDate IS NULL OR ScheduledStartTime >=  CAST(:startDate AS DATE))
-    AND (:endDate IS NULL OR ScheduledStartTime <= CAST(:endDate AS DATE));
 ");
 
 define("OPAL_GET_APPOINTMENT_REPORT", "
@@ -1063,7 +903,7 @@ define("OPAL_GET_QUESTIONNAIRE_REPORT", "
 define("OPAL_GET_EDUCATIONAL_MATERIAL_REPORT", "
     SELECT em.DateAdded AS dateadded, em.ReadStatus AS readstatus, emc.EducationalMaterialType_EN AS materialtype,
     emc.Name_EN AS name
-    FROM ".OPAL_EDUCATIONAL_MATERIAL_TABLE." AS em, ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." AS emc
+    FROM ".OPAL_EDUCATIONAL_MATERIAL_TABLE." AS em, ".OPAL_EDUCATION_MATERIAL_TABLE." AS emc
     WHERE em.EducationalMaterialControlSerNum = emc.EducationalMaterialControlSerNum
     AND PatientSerNum = :pnum;
 ");
@@ -1143,14 +983,14 @@ define("OPAL_GET_GENERAL_REPORT", "
 
 define("OPAL_GET_EDUCATIONAL_MATERIAL_OPTIONS", "
     SELECT Name_EN AS name, PublishFlag AS pflag
-    FROM ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE."
+    FROM ".OPAL_EDUCATION_MATERIAL_TABLE."
     WHERE EducationalMaterialType_EN = :matType;
 ");
 
 define("OPAL_GET_EDUCATIONAL_MATERIAL_GROUP", "
     SELECT p.FirstName AS pname, p.LastName AS plname, p.PatientSerNum AS pser, p.Sex AS psex,
     p.Age AS page, p.DateOfBirth AS pdob, em.DateAdded AS edate, em.ReadStatus AS eread, em.LastUpdated AS eupdate
-    FROM ".OPAL_PATIENT_TABLE." p, ".OPAL_EDUCATIONAL_MATERIAL_TABLE." em, ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." emc
+    FROM ".OPAL_PATIENT_TABLE." p, ".OPAL_EDUCATIONAL_MATERIAL_TABLE." em, ".OPAL_EDUCATION_MATERIAL_TABLE." emc
     WHERE em.PatientSerNum = p.PatientSerNum AND em.EducationalMaterialControlSerNum = emc.EducationalMaterialControlSerNum
     AND emc.EducationalMaterialType_EN = :matType
     AND emc.Name_EN = :matName
@@ -1211,7 +1051,7 @@ define("OPAL_GET_TEST_RESULT_GROUPS","
 ");
 
 define("OPAL_DOES_EDU_MATERIAL_EXISTS","
-    SELECT EducationalMaterialControlSerNum FROM ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE."
+    SELECT EducationalMaterialControlSerNum FROM ".OPAL_EDUCATION_MATERIAL_TABLE."
     WHERE EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum;
 ");
 
@@ -1301,7 +1141,7 @@ define("OPAL_UPDATE_TEST_EXPRESSION","
 ");
 
 define("OPAL_GET_PATIENTS_LIST","
-    SELECT DISTINCT PatientSerNum AS id, 0 AS added, CONCAT(CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2)))) AS name
+    SELECT DISTINCT PatientSerNum AS id, 0 AS added, CONCAT(CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))), ' (', PatientId, ')') AS name
     FROM ".OPAL_PATIENT_TABLE." ORDER BY PatientSerNum;
 ");
 
@@ -1314,7 +1154,7 @@ define("OPAL_GET_PATIENTS_STUDY","
 ");
 
 define("OPAL_GET_PATIENTS_STUDY_CONSENTS","
-    SELECT ps.patientId AS id, ps.consentStatus AS consent, CONCAT(CONCAT(UCASE(SUBSTRING(p.LastName, 1, 1)), LOWER(SUBSTRING(p.LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(p.FirstName, 1, 1)), LOWER(SUBSTRING(p.FirstName, 2)))) AS name
+    SELECT ps.patientId AS id, ps.consentStatus AS consent, CONCAT(CONCAT(UCASE(SUBSTRING(p.LastName, 1, 1)), LOWER(SUBSTRING(p.LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(p.FirstName, 1, 1)), LOWER(SUBSTRING(p.FirstName, 2))), ' (', p.PatientId, ')') AS name, p.PatientId as pid
     FROM ".OPAL_PATIENT_STUDY_TABLE." ps, ".OPAL_PATIENT_TABLE." p
     WHERE p.PatientSerNum = ps.patientId AND ps.studyId = :studyId;
 ");
@@ -1349,36 +1189,17 @@ define("OPAL_UPDATE_PATIENT_PUBLISH_FLAG","
     UPDATE ".OPAL_PATIENT_CONTROL_TABLE." SET PatientUpdate = :PatientUpdate WHERE PatientSerNum = :PatientSerNum
 ");
 
-define("OPAL_UPDATE_PATIENT","
-    UPDATE ".OPAL_PATIENT_TABLE." SET PatientAriaSer = :PatientAriaSer, PatientId = :PatientId,	PatientId2 = :PatientId2, 
-	FirstName = :FirstName, LastName = :LastName, Alias = :Alias, ProfileImage = :ProfileImage, Sex = :Sex, 
-	DateOfBirth = :DateOfBirth, Age = :Age, TelNum = :TelNum, EnableSMS = :EnableSMS, Email = :Email, 
-	Language = :Language, SSN = :SSN, AccessLevel = :AccessLevel, RegistrationDate = :RegistrationDate, 
-	ConsentFormExpirationDate = :ConsentFormExpirationDate, BlockedStatus = :BlockedStatus, StatusReasonTxt = :StatusReasonTxt, 
-	DeathDate = :DeathDate, SessionId = :SessionId, TestUser = :TestUser, TermsAndAgreementSign = :TermsAndAgreementSign, 
-	TermsAndAgreementSignDateTime = :TermsAndAgreementSignDateTime WHERE PatientSerNum = :PatientSerNum
-");
-
-define("OPAL_UPDATE_PATIENT_HOSPITAL_IDENTIFIER","
-    UPDATE " . OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE . " SET 
-    PatientSerNum = :PatientSerNum,
-    Hospital_Identifier_Type_Code = :Hospital_Identifier_Type_Code,
-    MRN = :MRN,
-    Is_Active = :Is_Active 
-    WHERE Patient_Hospital_Identifier_Id = :Patient_Hospital_Identifier_Id
-");
-
 define("OPAL_GET_PATIENTS","
-    SELECT DISTINCT pc.PatientSerNum AS serial, pt.SSN AS RAMQ, pc.PatientUpdate AS transfer, CONCAT(UCASE(LEFT(pt.FirstName, 1)), LCASE(SUBSTRING(pt.FirstName, 2)),
-    ' ', UCASE(LEFT(pt.LastName, 1)), LCASE(SUBSTRING(pt.LastName, 2))) AS name, pc.LastTransferred AS lasttransferred, pt.email AS email FROM ".OPAL_PATIENT_TABLE." pt RIGHT JOIN
+    SELECT DISTINCT pc.PatientSerNum AS serial, pc.PatientUpdate AS transfer, CONCAT(UCASE(LEFT(pt.FirstName, 1)), LCASE(SUBSTRING(pt.FirstName, 2)),
+    ' ', UCASE(LEFT(pt.LastName, 1)), LCASE(SUBSTRING(pt.LastName, 2))) AS name, pt.PatientId AS
+    patientid, pc.LastTransferred AS lasttransferred, pt.email AS email FROM ".OPAL_PATIENT_TABLE." pt RIGHT JOIN
     ".OPAL_PATIENT_CONTROL_TABLE." pc ON pt.PatientSerNum = pc.PatientSerNum LEFT JOIN ".OPAL_USERS_TABLE." usr ON
     pt.PatientSerNum = usr.UserTypeSerNum WHERE usr.UserType = 'Patient';
 ");
 
 define("OPAL_GET_PATIENT_ACTIVITY","
-SELECT DISTINCT
-p.PatientSerNum AS serial,
-p.SSN AS RAMQ,
+SELECT DISTINCT 
+p.PatientId AS patientId,
 CONCAT(UCASE(LEFT(p.FirstName, 1)), LCASE(SUBSTRING(p.FirstName, 2)),
 ' ', UCASE(LEFT(p.LastName, 1)), LCASE(SUBSTRING(p.LastName, 2))) AS name,
 pdi.DeviceId AS deviceId,
@@ -1757,3 +1578,31 @@ define("OPAL_UPDATE_ALIAS_EXPRESSION_WITH_LAST_TRANSFERRED", "
 define("OPAL_GET_COUNT_ALIASES", "
     SELECT COUNT(*) AS total from ".OPAL_ALIAS_TABLE." WHERE AliasSerNum IN (%%LISTIDS%%);
 ");
+
+const OPAL_GET_LAST_COMPLETED_QUESTIONNAIRE = "
+    SELECT QuestionnaireControlSerNum AS questionnaireControlId, CompletionDate AS completionDate, LastUpdated AS lastUpdated
+    FROM ".OPAL_QUESTIONNAIRE_TABLE." WHERE CompletedFlag = " . OPAL_QUESTIONNAIRE_COMPLETED_FLAG . "
+    AND PatientSerNum = :PatientSerNum ORDER BY LastUpdated DESC;
+";
+
+const OPAL_GET_PATIENTS_COMPLETED_QUESTIONNAIRES = "
+    SELECT DISTINCT PHI.MRN AS mrn, PHI.Hospital_Identifier_Type_Code AS site, MAX(Q.CompletionDate) AS completionDate,
+    QC.QuestionnaireName_EN AS name_EN, QC.QuestionnaireName_FR AS name_FR, QC.QuestionnaireControlSerNum AS questionnaireControlId,
+    Q.LastUpdated AS lastUpdated FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." PHI INNER JOIN ".OPAL_QUESTIONNAIRE_TABLE." Q
+    ON Q.PatientSerNum = PHI.PatientSerNum AND Q.CompletedFlag = 1 INNER JOIN ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." QC ON
+    QC.QuestionnaireControlSerNum = Q.QuestionnaireControlSerNum %%CONDTION_OPTINAL%% GROUP BY PHI.MRN ORDER BY
+    PHI.Hospital_Identifier_Type_Code ASC, PHI.MRN ASC, Q.CompletionDate DESC
+";
+
+const OPAL_CONDITION_QUESTIONNAIRES_OPTIONAL = " WHERE QC.QuestionnaireControlSerNum IN (%%QUESTIONNAIRES_LIST%%) ";
+
+const OPAL_GET_STUDIES_QUESTIONNAIRE = "
+    SELECT studyId FROM " . OPAL_QUESTIONNAIRE_STUDY_TABLE . " WHERE questionnaireId = :questionnaireId;
+";
+
+const OPAL_GET_STUDIES_PATIENT_CONSENTED = "
+SELECT s.ID as studyId, s.code, s.title_EN, s.title_FR FROM ".OPAL_STUDY_TABLE." s LEFT JOIN ".OPAL_PATIENT_STUDY_TABLE." ps
+ON Ps.studyId = s.ID LEFT JOIN ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi ON phi.PatientSerNum = ps.patientId
+WHERE ps.consentStatus IN (".CONSENT_STATUS_OPAL_CONSENTED.", ".CONSENT_STATUS_OTHER_CONSENTED.")
+AND phi.MRN = :MRN AND phi.Hospital_Identifier_Type_Code = :Hospital_Identifier_Type_Code ORDER BY s.ID;
+";

@@ -3430,12 +3430,66 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /**
+     * Count the total of existing alises from a list of alias ID
+     * @param $listIDs - list of alias IDs
+     * @return array
+     */
     function getCountAliases($listIDs) {
         $sql = str_replace("%%LISTIDS%%",implode(", ", $listIDs), OPAL_GET_COUNT_ALIASES);
         return $this->_fetch($sql, array());
     }
 
     /**
+     * Get the last completed questionnaire from a specific patient on a site.
+     * @param $patientId - internal patient ID found
+     * @return array - last answered questionnaire found (if any)
+     */
+    function getLastCompletedQuestionnaire($patientId) {
+        return $this->_fetch(OPAL_GET_LAST_COMPLETED_QUESTIONNAIRE, array(
+            array("parameter"=>":PatientSerNum","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the lis of completed questionnaires of patient, grouped by MRN.
+     * @param array $questionnaireList - list of questionnaire ID (optional)
+     * @return array - results found
+     */
+    function getPatientsCompletedQuestionnaires($questionnaireList = array()) {
+        $sql = str_replace(
+            "%%CONDTION_OPTINAL%%",
+            count($questionnaireList) > 0 ? str_replace("%%QUESTIONNAIRES_LIST%%", implode(", ", $questionnaireList), OPAL_CONDITION_QUESTIONNAIRES_OPTIONAL) : "",
+            OPAL_GET_PATIENTS_COMPLETED_QUESTIONNAIRES
+        );
+        return $this->_fetchAll($sql, array());
+    }
+
+    /**
+     * Find the list of studies associated to one questionnaire
+     * @param $questionnaireId - ID of the questionnaire
+     * @return array - studies found
+     */
+    function getStudiesQuestionnaire($questionnaireId) {
+        return $this->_fetch(OPAL_GET_STUDIES_QUESTIONNAIRE, array(
+            array("parameter"=>":questionnaireId","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * List the studies a patient consented for.
+     * @param $mrn string - Medical Record Number
+     * @param $site string - Code of the site
+     * @return array - studies found
+     */
+    function getStudiesPatientConsented($mrn, $site) {
+        return $this->_fetchAll(OPAL_GET_STUDIES_PATIENT_CONSENTED, array(
+            array("parameter"=>":MRN","variable"=>$mrn,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Hospital_Identifier_Type_Code","variable"=>$site,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+/**
      * Get patient appointment
      * @params $site : String - Patient identifier site
      * @params $mrn  : int - Patient identifier mrn
@@ -3454,4 +3508,5 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(OPAL_GET_MRN_PATIENT_SERNUM, array(
             array("parameter"=>":PatientSerNum","variable"=>$patientSerNum,"data_type"=>PDO::PARAM_INT)));
     }
+
 }
