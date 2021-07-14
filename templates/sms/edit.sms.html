@@ -30,7 +30,7 @@
                     <label><strong>{{'SMS.EDIT.APPOINTMENT_CODE'|translate}}</strong></label> : {{currentAppointment.appcode}}
                 </div>
                 <div class="col-xs-12">
-                    <label><strong>{{'SMS.EDIT.SPECIALITY'|translate}}</strong></label> : {{'SMS.EDIT.'+currentAppointment.spec|translate}}
+                    <label><strong>{{'SMS.EDIT.SPECIALITY'|translate}}</strong></label> : {{currentAppointment.spec}}
                 </div>
             </div>
         </div>
@@ -44,7 +44,7 @@
             <div class="alert alert-info" role="alert">
                 <strong>{{'SMS.EDIT.CURRENT_TYPE'|translate}}</strong><br>
                 <p>
-                    {{'SMS.EDIT.'+typeSelected|translate}}
+                    {{currentAppType}}
                 </p>
             </div>
             <div>
@@ -55,7 +55,7 @@
                 <ul class="list-items">
                     <li ng-repeat="type in TypeList | filter: typeSearchField">
                         <label>
-                            <input type="radio" ng-checked="type.type===typeSelected" ng-click="updateType(type)"> {{'SMS.EDIT.'+type.type|translate}}
+                            <input type="radio" ng-checked="type.type===typeSelected" ng-click="updateType(type)"> {{type.type}}
                         </label>
                     </li>
                 </ul>
