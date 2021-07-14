@@ -25,8 +25,6 @@ class Patient extends Module {
 
         foreach ($post["data"] as $item){
             $this->opalDB->updatePatientPublishFlag($item["serial"], $item["transfer"]);
-            // Also update the cronControlPatient table for our modular cron refactor, 2021-05-31
-            $this->opalDB->updateCronControlPatientPublishFlag($item["serial"], $item["transfer"]);
         }
            
     }

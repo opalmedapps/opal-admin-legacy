@@ -50,8 +50,6 @@ class EduMaterial extends Module {
 				$query = $host_db_link->prepare( $sql );
 				$query->execute();
 
-                // 2021-05-31 Cron refactor: We will also update the cronControlEducationalMaterial table with this publishFlag info
-                $this->opalDB->updateCronControlEducationalMaterialPublicationFlag($eduMatPublish, $eduMatSer);
             }
 
             $response['value'] = 1; // Success
@@ -305,41 +303,6 @@ class EduMaterial extends Module {
 
 			$eduMatSer = $host_db_link->lastInsertId();
 
-            // 2021-05-31 Cron refactor: We will also update the cronControlEducationalMaterial table with this insert
-            $this->opalDB->updateCronControlEducationalMaterialInsert($eduMatSer);
-
-/*            if ($triggers) {
-                foreach ($triggers as $trigger) {
-    
-                    $triggerType = $trigger['type'];
-                    $triggerId   = $trigger['id'];
-    
-	    			$sql = "
-                        INSERT INTO 
-                            Filters (
-                                ControlTable,
-                                ControlTableSerNum,
-                                FilterType,
-                                FilterId,
-                                DateAdded,
-                                LastUpdatedBy,
-                                SessionId
-                            )
-                        VALUES (
-                            'EducationalMaterialControl',
-                            '$eduMatSer',
-                            '$triggerType',
-                            \"$triggerId\",
-                            NOW(),
-                            '$userSer',
-                            '$sessionId'
-                        )
-		    		";
-			    	$query = $host_db_link->prepare( $sql );
-				    $query->execute();
-                }
-            }*/
-
             if($tocs) {
                 foreach ($tocs as $toc) {
 
@@ -401,8 +364,6 @@ class EduMaterial extends Module {
 	    			$query->execute();
     
 	    		    $tocSer = $host_db_link->lastInsertId();
-                    // 2021-05-31 Cron refactor: We will also update the cronControlEducationalMaterial with this insert
-                    $this->opalDB->updateCronControlEducationalMaterialInsert($tocSer);
 
                     $sql = "
                         INSERT INTO
@@ -708,8 +669,6 @@ class EduMaterial extends Module {
                     ";         
                     $secondQuery = $host_db_link->prepare( $sql );
                     $secondQuery->execute();
-                    // 2021-05-31 Cron refactor: We will also update the cronControlEducationalMaterial table with this deletion
-                    $this->opalDB->updateCronControlEducationalMaterialDelete($data[0]);
                 }
 
                 $sql = "
@@ -780,8 +739,7 @@ class EduMaterial extends Module {
     	    			$query->execute();
         
     	    		    $tocSer = $host_db_link->lastInsertId();
-                        // 2021-05-31 Cron refactor: We will also update the cronControlEducationalMaterial table with this insert
-                        $this->opalDB->updateCronControlEducationalMaterialInsert($tocSer);
+                        
                         $sql = "
                             INSERT INTO
                                 EducationalMaterialTOC (
@@ -837,9 +795,6 @@ class EduMaterial extends Module {
                     EducationalMaterialControl.EducationalMaterialControlSerNum = $eduMatSer
             ";
 
-             // 2021-05-31 Cron refactor: We will also update the cronControlEducationalMaterial table with this deletion
-             $this->opalDB->updateCronControlEducationalMaterialDelete($eduMatSer);
-
 	        $query = $host_db_link->prepare( $sql );
             $query->execute();
 
@@ -876,8 +831,6 @@ class EduMaterial extends Module {
                 ";         
                 $secondQuery = $host_db_link->prepare( $sql );
                 $secondQuery->execute();
-                // 2021-05-31 Cron refactor: We will also update the cronControlEducationalMaterial table with this deletion
-                $this->opalDB->updateCronControlEducationalMaterialDelete($data[0]);
             }
 
             $sql = "
@@ -888,19 +841,6 @@ class EduMaterial extends Module {
             ";
             $query = $host_db_link->prepare( $sql );
 			$query->execute();
-			
-			// $sql = "
-   //              UPDATE EducationalMaterialControlMH
-   //              SET 
-   //                  EducationalMaterialControlMH.LastUpdatedBy = '$userSer',
-   //                  EducationalMaterialControlMH.SessionId = '$sessionId'
-   //              WHERE
-   //                  EducationalMaterialControlMH.EducationalMaterialControlSerNum = $eduMatSer
-   //              ORDER BY EducationalMaterialControlMH.RevSerNum DESC 
-   //              LIMIT 1
-   //          ";
-   //          $query = $host_db_link->prepare( $sql );
-   //          $query->execute();
 
             $response['value'] = 1;
             return $response;
