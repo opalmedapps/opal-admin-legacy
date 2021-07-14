@@ -2353,11 +2353,11 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  $id : int - primary key in test result control table
      * @return  array - list of IDs of additional links
      * */
-/*    function getTestResultAdditionalLinks($id) {
-        return $this->_fetchAll(OPAL_GET_TEST_RESULT_ADD_LINK, array(
-            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
-        ));
-    }*/
+    /*    function getTestResultAdditionalLinks($id) {
+            return $this->_fetchAll(OPAL_GET_TEST_RESULT_ADD_LINK, array(
+                array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+            ));
+        }*/
 
     /*
      * Get list of test results groups in french and english
@@ -2400,12 +2400,12 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  $toInsert : array - list of test expression
      * @return  int - last ID entered
      * */
-/*    function insertTestResultAdditionalLinks($toInsert) {
-        foreach ($toInsert as &$item) {
-            $item["DateAdded"] = date("Y-m-d H:i:s");
-        }
-        return $this->_replaceMultipleRecordsIntoTable(OPAL_TEST_RESULT_ADD_LINKS_TABLE, $toInsert);
-    }*/
+    /*    function insertTestResultAdditionalLinks($toInsert) {
+            foreach ($toInsert as &$item) {
+                $item["DateAdded"] = date("Y-m-d H:i:s");
+            }
+            return $this->_replaceMultipleRecordsIntoTable(OPAL_TEST_RESULT_ADD_LINKS_TABLE, $toInsert);
+        }*/
 
     /*
      * Get if the educational material exists
@@ -2459,10 +2459,10 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  $ids - array : list of ids
      * @return  array: total count found
      * */
-/*    function countTestResultsAdditionalLinks($ids) {
-        $sqlCount = str_replace("%%LISTIDS%%", implode(", ", $ids), OPAL_COUNT_TR_ADDITIONAL_LINKS);
-        return $this->_fetch($sqlCount, array());
-    }*/
+    /*    function countTestResultsAdditionalLinks($ids) {
+            $sqlCount = str_replace("%%LISTIDS%%", implode(", ", $ids), OPAL_COUNT_TR_ADDITIONAL_LINKS);
+            return $this->_fetch($sqlCount, array());
+        }*/
 
     /*
      * Delete unused additionalk links that are not a list of IDS for a specific test result
@@ -2470,21 +2470,21 @@ class DatabaseOpal extends DatabaseAccess {
      *          $list - array : list of IDs not to delete
      * @return  int - number of records affected
      */
-/*    function deleteUnusedAddLinks($id, $list) {
-        $sqlDelete = str_replace("%%LISTIDS%%", implode(", ", $list), OPAL_DELETE_UNUSED_ADD_LINKS);
-        return $this->_execute($sqlDelete, array(
-            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
-        ));
-    }*/
+    /*    function deleteUnusedAddLinks($id, $list) {
+            $sqlDelete = str_replace("%%LISTIDS%%", implode(", ", $list), OPAL_DELETE_UNUSED_ADD_LINKS);
+            return $this->_execute($sqlDelete, array(
+                array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+            ));
+        }*/
 
     /*
      * Update a specific test restul additionnal link
      * @params  $toUpdate - array : contains all the additional links details
      * @return  int - number of records affected
      * */
-/*    function updateTestResultAdditionalLink($toUpdate) {
-        return $this->_updateRecordIntoTable(OPAL_UPDATE_ADDITIONAL_LINKS, $toUpdate);
-    }*/
+    /*    function updateTestResultAdditionalLink($toUpdate) {
+            return $this->_updateRecordIntoTable(OPAL_UPDATE_ADDITIONAL_LINKS, $toUpdate);
+        }*/
 
     /*
      * Get the test result chart log
@@ -2522,11 +2522,11 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  $id - int : ID of the test result
      * @return  int : number of records deleted.
      * */
-/*    function deleteTestResultAdditionalLinks($id) {
-        return $this->_execute(OPAL_DELETE_TEST_RESULT_ADDITIONAL_LINKS, array(
-            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
-        ));
-    }*/
+    /*    function deleteTestResultAdditionalLinks($id) {
+            return $this->_execute(OPAL_DELETE_TEST_RESULT_ADDITIONAL_LINKS, array(
+                array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+            ));
+        }*/
 
     /*
      * Delete a test result
@@ -2649,7 +2649,7 @@ class DatabaseOpal extends DatabaseAccess {
 
     /**
      * Check if a consent form is published
-     * @param $consentId - consent form Id 
+     * @param $consentId - consent form Id
      * @return array list of forms found
      */
     function checkConsentFormPublished($consentId){
@@ -3062,5 +3062,18 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":deletedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
         ));
+    }
+
+    function insertResourcePendingError($sourceName, $sourceId, $description, $error) {
+        $toInsert = array(
+            "sourceName"=>$sourceName,
+            "sourceId"=>$sourceId,
+            "description"=>$description,
+            "error"=>$error,
+            "creationDate"=>date("Y-m-d H:i:s"),
+            "createdBy"=>$this->username,
+            "updatedBy"=>$this->username,
+        );
+        return $this->_insertRecordIntoTable(OPAL_RESOURCE_PENDING_ERROR_TABLE, $toInsert);
     }
 }
