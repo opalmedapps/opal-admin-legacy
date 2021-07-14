@@ -2259,7 +2259,7 @@ class DatabaseOpal extends DatabaseAccess {
 
     /**
      * Get questionnaire options
-     * @param none
+     * @param void
      * @return array - questionnaire names (EN)
      */
     function getQstOptions(){
@@ -2279,7 +2279,7 @@ class DatabaseOpal extends DatabaseAccess {
 
     /**
      * Get demographics group report
-     * @param none
+     * @param void
      * @return array - demographics report
      */
     function getDemoReport(){
@@ -2783,7 +2783,34 @@ class DatabaseOpal extends DatabaseAccess {
 
 
 
+    /**
+     * Update specific patient demographic information
+     * @params $toUpdate - array of demographics fields to be update
+     *
+     * @return void
+     */
 
+    function updatePatient($toUpdate) {
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT, $toUpdate);
+    }
+
+    /**
+     * Update patient identifiers list
+     * @params $toUpdate - array of identifier information
+     *
+     * @return void
+     */
+    function updatePatientLink($toUpdate) {
+
+        while (($identifier = array_shift($toUpdate)) !== NULL) {
+            if (!empty($identifier["Patient_Hospital_Identifier_Id"])){
+                $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT_HOSPITAL_IDENTIFIER,$identifier);
+            } else {
+                $this->_insertRecordIntoTable(OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE,$identifier);
+            }
+        }
+        return ;
+    }
 
 
     /*

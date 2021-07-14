@@ -966,7 +966,7 @@ define("OPAL_SOURCE_DATABASE","AND s.SourceDatabaseName %%OPERATOR%% :SourceData
 
 define("OPAL_GET_PATIENT_SITE","
     SELECT * FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." WHERE Hospital_Identifier_Type_Code = :Hospital_Identifier_Type_Code
-    AND MRN = :MRN AND Is_Active = ".ACTIVE_RECORD."; 
+    AND MRN = :MRN; 
 ");
 
 define("OPAL_GET_SOURCE_DB_DETAILS","
@@ -1352,6 +1352,25 @@ define("OPAL_DELETE_QUESTIONNAIRE_FROM_STUDIES", "
 
 define("OPAL_UPDATE_PATIENT_PUBLISH_FLAG","
     UPDATE ".OPAL_PATIENT_CONTROL_TABLE." SET PatientUpdate = :PatientUpdate WHERE PatientSerNum = :PatientSerNum
+");
+
+define("OPAL_UPDATE_PATIENT","
+    UPDATE ".OPAL_PATIENT_TABLE." SET PatientAriaSer = :PatientAriaSer, PatientId = :PatientId,	PatientId2 = :PatientId2, 
+	FirstName = :FirstName, LastName = :LastName, Alias = :Alias, ProfileImage = :ProfileImage, Sex = :Sex, 
+	DateOfBirth = :DateOfBirth, Age = :Age, TelNum = :TelNum, EnableSMS = :EnableSMS, Email = :Email, 
+	Language = :Language, SSN = :SSN, AccessLevel = :AccessLevel, RegistrationDate = :RegistrationDate, 
+	ConsentFormExpirationDate = :ConsentFormExpirationDate, BlockedStatus = :BlockedStatus, StatusReasonTxt = :StatusReasonTxt, 
+	DeathDate = :DeathDate, SessionId = :SessionId, TestUser = :TestUser, TermsAndAgreementSign = :TermsAndAgreementSign, 
+	TermsAndAgreementSignDateTime = :TermsAndAgreementSignDateTime WHERE PatientSerNum = :PatientSerNum
+");
+
+define("OPAL_UPDATE_PATIENT_HOSPITAL_IDENTIFIER","
+    UPDATE " . OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE . " SET 
+    PatientSerNum = :PatientSerNum,
+    Hospital_Identifier_Type_Code = :Hospital_Identifier_Type_Code,
+    MRN = :MRN,
+    Is_Active = :Is_Active 
+    WHERE Patient_Hospital_Identifier_Id = :Patient_Hospital_Identifier_Id
 ");
 
 define("OPAL_GET_PATIENTS","
