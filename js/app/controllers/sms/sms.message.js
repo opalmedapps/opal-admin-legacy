@@ -5,17 +5,18 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
      * SMS Page controller
      *******************************************************************************/
     controller('sms.message', function ($scope, $uibModal, $filter, $state, smsCollectionService, uiGridConstants, Session, ErrorHandler, MODULE) {
-
         // Function to go to previous page
         $scope.goBack = function () {
             window.history.back();
         };
 
-        $scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.sms]) & (1 << 1)) !== 0);
+        getSmsSpecialityList();
+
         $scope.SpecialityList = null;
         $scope.TypeList = null;
         $scope.EventList = null;
         $scope.smsAppointments = null;
+        $scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.sms]) & (1 << 1)) !== 0);
 
         $scope.UpdateInformation = {
             message: {English : "", French : "",},
@@ -46,49 +47,6 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         // Progress for progress bar on default steps and total
         $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
-        getSmsSpecialityList();
-
-        //Functions to update the information selected
-        $scope.SpecialityUpdate = function(element){
-            $scope.UpdateInformation.speciality = element.speciality;
-            steps.speciality.completed = true;
-            $scope.specialitySection.open = true;
-            $scope.typeSection.show = true;
-            $scope.numOfCompletedSteps = stepsCompleted(steps);
-            $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-            getSmsTypeList();
-        }
-
-        $scope.TypeUpdate = function(element){
-            $scope.UpdateInformation.type = element.type;
-            steps.type.completed = true;
-            $scope.typeSection.open = true;
-            $scope.eventSection.show = true;
-            $scope.numOfCompletedSteps = stepsCompleted(steps);
-            $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-            getSmsEventList();
-        }
-
-        $scope.EventUpdate = function(element){
-            $scope.UpdateInformation.event = element.event;
-            steps.event.completed = true;
-            $scope.eventSection.open = true;
-            $scope.messageSection.show = true;
-            $scope.numOfCompletedSteps = stepsCompleted(steps);
-            $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-            getSmsMessage();
-            getSmsAppointmentList();
-        }
-
-        $scope.CheckMessage = function(){
-            if($scope.UpdateInformation.message.English && $scope.UpdateInformation.message.French) {
-                $scope.messageSection.open = true;
-                steps.message.completed = true;
-                $scope.numOfCompletedSteps = stepsCompleted(steps);
-                $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-            }
-        }
-
         var arrValidationInsert = [
             $filter('translate')('SMS.VALIDATION.TYPE'),
             $filter('translate')('SMS.VALIDATION.SPECIALITY'),
@@ -96,49 +54,6 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             $filter('translate')('SMS.VALIDATION.MESSAGE_EN'),
             $filter('translate')('SMS.VALIDATION.MESSAGE_FR')
         ];
-        //Update Message information
-        $scope.UpdateMessage = function(){
-            if ($scope.checkForm() && $scope.writeAccess) {
-                $.ajax({
-                    type: "POST",
-                    url: "sms/update/sms-message",
-                    data:$scope.UpdateInformation,
-                    success: function () {},
-                    error: function(err) {
-                        err.responseText = JSON.parse(err.responseText);
-                        ErrorHandler.onError(err,$filter('translate')('SMS.MESSAGE.ERROR'),arrValidationInsert);
-                    },
-                    complete: function () {
-                        $state.go('sms');
-                    }
-                });
-            }
-        }
-
-        // Function to return boolean for form completion
-        $scope.checkForm = function () {
-            return (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) === 100);
-        };
-
-        //Banner
-        $scope.bannerMessage = "";
-
-        $scope.setBannerClass = function (classname) {
-            // Remove any classes starting with "alert-"
-            $(".bannerMessage").removeClass(function (index, css) {
-                return (css.match(/(^|\s)alert-\S+/g) || []).join(' ');
-            });
-            // Add class
-            $(".bannerMessage").addClass('alert-' + classname);
-        };
-
-        $scope.showBanner = function () {
-            $(".bannerMessage").slideDown(function () {
-                setTimeout(function () {
-                    $(".bannerMessage").slideUp();
-                }, 3000);
-            });
-        };
 
         // Function to calculate / return step progress
         function trackProgress(value, total) {
@@ -210,6 +125,72 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
                 ErrorHandler.onError(err, $filter('translate')('SMS.MESSAGE.ERROR_DETAILS'));
             });
 
+        }
+
+        //Functions to update the information selected
+        $scope.SpecialityUpdate = function(element){
+            $scope.UpdateInformation.specialityId = element.Id;
+            $scope.UpdateInformation.speciality = element.speciality;
+            steps.speciality.completed = true;
+            $scope.specialitySection.open = true;
+            $scope.typeSection.show = true;
+            $scope.numOfCompletedSteps = stepsCompleted(steps);
+            $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+            getSmsTypeList();
+        }
+
+        $scope.TypeUpdate = function(element){
+            $scope.UpdateInformation.type = element.type;
+            steps.type.completed = true;
+            $scope.typeSection.open = true;
+            $scope.eventSection.show = true;
+            $scope.numOfCompletedSteps = stepsCompleted(steps);
+            $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+            getSmsEventList();
+        }
+
+        $scope.EventUpdate = function(element){
+            $scope.UpdateInformation.event = element.event;
+            steps.event.completed = true;
+            $scope.eventSection.open = true;
+            $scope.messageSection.show = true;
+            $scope.numOfCompletedSteps = stepsCompleted(steps);
+            $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+            getSmsMessage();
+            getSmsAppointmentList();
+        }
+
+        $scope.CheckMessage = function(){
+            if($scope.UpdateInformation.message.English && $scope.UpdateInformation.message.French) {
+                $scope.messageSection.open = true;
+                steps.message.completed = true;
+                $scope.numOfCompletedSteps = stepsCompleted(steps);
+                $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+            }
+        }
+
+        // Function to return boolean for form completion
+        $scope.checkForm = function () {
+            return (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) === 100);
+        };
+
+        //Update Message information
+        $scope.UpdateMessage = function(){
+            if ($scope.checkForm() && $scope.writeAccess) {
+                $.ajax({
+                    type: "POST",
+                    url: "sms/update/sms-message",
+                    data:$scope.UpdateInformation,
+                    success: function () {},
+                    error: function(err) {
+                        err.responseText = JSON.parse(err.responseText);
+                        ErrorHandler.onError(err,$filter('translate')('SMS.MESSAGE.ERROR'),arrValidationInsert);
+                    },
+                    complete: function () {
+                        $state.go('sms');
+                    }
+                });
+            }
         }
 
     });

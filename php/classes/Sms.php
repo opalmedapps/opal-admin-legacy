@@ -149,7 +149,7 @@ class Sms extends Module {
         }else
             $errCode = "11";
 
-        bindec($errCode);
+        $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
@@ -215,7 +215,7 @@ class Sms extends Module {
                 $errCode = "1" . $errCode;
             else
                 $errCode = "0" . $errCode;
-            if (!array_key_exists("speciality", $post) || $post["speciality"] == "")
+            if (!array_key_exists("specialityId", $post) || $post["specialityId"] == "")
                 $errCode = "1" . $errCode;
             else
                 $errCode = "0" . $errCode;
@@ -223,7 +223,7 @@ class Sms extends Module {
                 $errCode = "1" . $errCode;
             else
                 $errCode = "0" . $errCode;
-            if(array_key_exists("message", $post) || is_array($post["message"])) {
+            if(array_key_exists("message", $post) && is_array($post["message"])) {
                 if (!array_key_exists("English", $post["message"]) || $post["message"]["English"] == "")
                     $errCode = "1" . $errCode;
                 else
@@ -241,9 +241,9 @@ class Sms extends Module {
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        $response =  $this->ormsDB->updateSmsMessage($post['message']['English'],$post['speciality'],
+        $response =  $this->ormsDB->updateSmsMessage($post['message']['English'],$post['specialityId'],
             $post['type'],$post['event'],'English');
-        $response += $this->ormsDB->updateSmsMessage($post['message']['French'],$post['speciality'],
+        $response += $this->ormsDB->updateSmsMessage($post['message']['French'],$post['specialityId'],
             $post['type'],$post['event'],'French');
         return $response;
     }
