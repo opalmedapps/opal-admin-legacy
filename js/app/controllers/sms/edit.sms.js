@@ -8,12 +8,22 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
 
     $scope.changesDetected = false;
     if($scope.currentAppointment.apptype=='-')
-        $scope.typeSelected = "UNDEFINED";
-    else
-        $scope.typeSelected = $scope.currentAppointment.apptype;
+        $scope.currentAppType = "UNDEFINED";
+    else $scope.currentAppType = $scope.currentAppointment.apptype;
+    $scope.typeSelected = $scope.currentAppType;
 
     getSmsTypeList();
     $scope.typeSearchField = "";
+
+    //Function to get appointment type list.
+    function getSmsTypeList(){
+        smsCollectionService.getSmsType($scope.currentAppointment.spec).then(function (response) {
+            $scope.TypeList = response.data;
+            $scope.TypeList.push({type:'UNDEFINED'})
+        }).catch(function(err) {
+            ErrorHandler.onError(err, $filter('translate')('SMS.EDIT.ERROR_DETAILS'));
+        });
+    }
 
     //Function for searchbar
     $scope.searchType = function (field) {
@@ -25,7 +35,7 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
     };
     $scope.updateType = function(type){
         $scope.typeSelected = null;
-        $scope.changesDetected = (type.type != $scope.currentAppointment.apptype);
+        $scope.changesDetected = (type.type != $scope.currentAppType);
         $scope.typeSelected = type.type;
     }
 
@@ -57,13 +67,4 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
         }
     };
 
-    //Function to get appointment type list.
-    function getSmsTypeList(){
-        smsCollectionService.getSmsType($scope.currentAppointment.spec).then(function (response) {
-            $scope.TypeList = response.data;
-            $scope.TypeList.push({type:'UNDEFINED'})
-        }).catch(function(err) {
-            ErrorHandler.onError(err, $filter('translate')('SMS.EDIT.ERROR_DETAILS'));
-        });
-    }
 });
