@@ -116,6 +116,9 @@ define("OPAL_USERS_TABLE", "Users");
 define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
 define("OPAL_PATIENT_ACTIVITY_LOG_TABLE","PatientActivityLog");
 define("OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE", "PatientDeviceIdentifier");
+define("OPAL_RESOURCE_PENDING_TABLE", "resourcePending");
+define("OPAL_RESOURCE_PENDING_ERROR_TABLE", "resourcePendingError");
+define("OPAL_RESOURCE_PENDING_MH_TABLE", "resourcePendingMH");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");

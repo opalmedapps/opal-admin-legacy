@@ -277,6 +277,9 @@ RewriteRule ^questionnaire/get/questionnaire-details php/questionnaire/get.quest
 RewriteRule ^questionnaire/insert/questionnaire php/questionnaire/insert.questionnaire.php [QSA,L]
 RewriteRule ^questionnaire/update/questionnaire php/questionnaire/update.questionnaire.php [QSA,L]
 
+#Resources Section
+RewriteRule ^resource/insert/resource php/resource/insert.resource.php [QSA,L]
+
 # Roles Section
 RewriteRule ^role/delete/role php/role/delete.role.php [QSA,L]
 RewriteRule ^role/get/available-modules php/role/get.available.modules.php [QSA,L]
