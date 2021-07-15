@@ -3067,13 +3067,17 @@ class DatabaseOpal extends DatabaseAccess {
     function insertResourcePendingError($sourceName, $sourceId, $description, $error) {
         $toInsert = array(
             "sourceName"=>$sourceName,
-            "sourceId"=>$sourceId,
-            "description"=>$description,
+            "appointmentId"=>$sourceId,
+            "resources"=>$description,
             "error"=>$error,
             "creationDate"=>date("Y-m-d H:i:s"),
             "createdBy"=>$this->username,
             "updatedBy"=>$this->username,
         );
         return $this->_insertRecordIntoTable(OPAL_RESOURCE_PENDING_ERROR_TABLE, $toInsert);
+    }
+
+    function getAppointmentResources($appointmentId) {
+
     }
 }
