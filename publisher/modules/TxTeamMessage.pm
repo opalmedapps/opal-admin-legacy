@@ -155,16 +155,11 @@ sub publishTxTeamMessages
 
     #my $today_date = strftime("%Y-%m-%d", localtime(time));
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
+    
+    # Check for any new updates from the main cron control
+	PostControl::CheckPostControlsMarkedForPublishModularCron('Treatment Team Message');
 
-    # Date object of today at 8AM
-    #my $today_at_eightAM = Time::Piece->strptime($today_date . " 08:00:00", "%Y-%m-%d %H:%M:%S");
-    # Date object of today at 8PM
-    #my $today_at_eightPM = Time::Piece->strptime($today_date . " 20:00:00", "%Y-%m-%d %H:%M:%S");
-
-    # If we are not within the window to publish the messages then return
-    #if ( (($now - $today_at_eightAM) < 0) or (($now - $today_at_eightPM) > 0) ) {return;}
-
-    my @txTeamMessageControls = PostControl::getPostControlsMarkedForPublish('Treatment Team Message');
+    my @txTeamMessageControls = PostControl::getPostControlsMarkedForPublishModularCron('Treatment Team Message');
 
     foreach my $Patient (@patientList) {
 

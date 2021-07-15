@@ -1246,8 +1246,128 @@ class DatabaseQuestionnaire extends DatabaseAccess
         return $this->_fetchAll($sql, array());
     }
 
+    /**
+     * Get the list of questionnaires consent form
+     * @return array - results
+     */
     function getConsentForms(){
         return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_CONSENT_FORMS, array(
+        ));
+    }
+
+    /**
+     * Get the list of questionnaires status, visualization form, and completion date for a specific patient on a site
+     * @param $mrn - patient identification
+     * @param $site - code of the site
+     * @return array - results found
+     */
+    function getQuestionnaireListOrms($mrn, $site){
+        return $this->_fetchAll(SQL_GET_QUESTIONNAIRE_LIST_ORMS, array(
+            array("parameter"=>":Hospital_Identifier_Type_Code","variable"=>$site,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":MRN","variable"=>$mrn,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get the list of questions name and their respective answer from a specific patient to a specific question in a
+     * specific questionnaire for a chart view. Using the $questionSectionId and $questionText does not seems to be the
+     * right thing to do but because of a lack of time and man power, we cannot test it more and simplify the SQL query.
+     * See ticket OPAL-1026.
+     * @param $patientId - internal patient ID
+     * @param $questionnaireId - questionnaire Id
+     * @param $questionSectionId - question section ID
+     * @param $questionText - text of the question
+     * @param int $languageId - Primary key language - default english (2)
+     * @return array - results found
+     */
+    function getAnswersChartType($patientId, $questionnaireId, $questionSectionId, $questionText, $languageId = 2) {
+        return $this->_fetchAll(GET_ANSWERS_CHART_TYPE, array(
+            array("parameter"=>":languageId","variable"=>$languageId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":patientId","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":questionnaireId","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":questionSectionId","variable"=>$questionSectionId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":questionText","variable"=>$questionText,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get the list of questions name and their respective answer from a specific patient to a specific question in a
+     * specific questionnaire for a non chart view.
+     * @param $answerQuestionnaireId - Primary key of answerQuestionnaire table
+     * @param $sectionId - Primary key of the section
+     * @param $questionId - Primary key of the question
+     * @param int $languageId - Primary key language - default english (2)
+     * @return false
+     */
+    function getAnswersNonChartType($answerQuestionnaireId, $sectionId, $questionId, $languageId = 2) {
+        return $this->_fetchAll(GET_ANSWERS_NON_CHART_TYPE, array(
+            array("parameter"=>":languageId","variable"=>$languageId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":sectionId","variable"=>$sectionId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":answerQuestionnaireId","variable"=>$answerQuestionnaireId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get patient info based on the external ID
+     * @param $externalId - external ID of the patient
+     * @return array - data on patient found
+     */
+    function getPatientPerExternalId($externalId) {
+        return $this->_fetchAll(GET_PATIENT_PER_EXTERNALID, array(
+            array("parameter"=>":externalId","variable"=>$externalId,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    function getPublishedQuestionnaires() {
+        return $this->_fetchAll(SQL_GET_PUBLISHED_QUESTIONNAIRES, array());
+    }
+
+    /**
+     * Get the list of answered questions from a specific patient
+     * @param $mrn - Patient MRN
+     * @param $hospitalCode - Code of the Hospital
+     * @return array - results found
+     */
+    function getAnsweredQuestionnairesPatient($mrn, $hospitalCode) {
+        return $this->_fetchAll(SQL_GET_ANSWERED_QUESTIONNAIRES_PATIENT, array(
+            array("parameter"=>":MRN","variable"=>$mrn,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Hospital_Identifier_Type_Code","variable"=>$hospitalCode,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get the list of questions from a specific questionnaire
+     * @param $questionnaireId - ID of the questionnaire
+     * @return array - list of questions
+     */
+    function getQuestionsByQuestionnaireId($questionnaireId) {
+        return $this->_fetchAll(SQL_GET_QUESTIONS_BY_QUESTIONNAIRE_ID, array(
+            array("parameter"=>":ID","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the list of completed questionnaires and the questions associated.
+     * @param $patientId - ID of the patient
+     * @param $questionnaireId - ID of the questionnaire
+     * @return array - results found
+     */
+    function getCompletedQuestionnaireInfo($patientId, $questionnaireId) {
+        return $this->_fetchAll(SQL_GET_COMPLETED_QUESTIONNAIRE_INFO, array(
+            array("parameter"=>":patientId","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":ID","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the list of available options for a specific question
+     * @param $questionId - ID of the question
+     * @return array - list of the options of the question
+     */
+    function getQuestionOptions($questionId) {
+        return $this->_fetchAll(SQL_GET_QUESTION_OPTIONS, array(
+            array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 }
