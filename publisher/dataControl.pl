@@ -521,41 +521,41 @@ print "Finished task list\n" if $verbose;
 # Data Retrieval APPOINTMENTS - get list of patients with appointments updated since last update
 #
 ##########################################################################################
-print "\n--- Start getApptsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@ApptList = Appointment::getApptsFromSourceDB($cronLogSer, \@patientList, $global_patientInfo_sql);
-print "--- End getApptsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Got appointment list\n" if $verbose;
-#=========================================================================================
-# Loop over each appointment. Various functions are done.
-#=========================================================================================
-print "-- Start Loop over each Appointment: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-foreach my $Appointment (@ApptList) {
+# print "\n--- Start getApptsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# @ApptList = Appointment::getApptsFromSourceDB($cronLogSer, \@patientList, $global_patientInfo_sql);
+# print "--- End getApptsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Got appointment list\n" if $verbose;
+# #=========================================================================================
+# # Loop over each appointment. Various functions are done.
+# #=========================================================================================
+# print "-- Start Loop over each Appointment: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# foreach my $Appointment (@ApptList) {
 
-	# check if appointment exists in our database
-	my $AppointmentExists = $Appointment->inOurDatabase();
+# 	# check if appointment exists in our database
+# 	my $AppointmentExists = $Appointment->inOurDatabase();
 
-	if ($AppointmentExists) { # appointment exists
+# 	if ($AppointmentExists) { # appointment exists
 
-		my $ExistingAppointment = dclone($AppointmentExists); # reassign variable
+# 		my $ExistingAppointment = dclone($AppointmentExists); # reassign variable
 
-		# compare our retrieve Appointment with existing Appointment
-		# update is done on the original (existing) Appointment
-		my ($UpdatedAppointment, $change)  = $Appointment->compareWith($ExistingAppointment);
+# 		# compare our retrieve Appointment with existing Appointment
+# 		# update is done on the original (existing) Appointment
+# 		my ($UpdatedAppointment, $change)  = $Appointment->compareWith($ExistingAppointment);
 
-		# after updating our Appointment object, update the database
-        # if there was an actual change in comparison
-        if ($change) {
-			$UpdatedAppointment->updateDatabase();
-		};
+# 		# after updating our Appointment object, update the database
+#         # if there was an actual change in comparison
+#         if ($change) {
+# 			$UpdatedAppointment->updateDatabase();
+# 		};
 
-	} else { # appointment DNE
+# 	} else { # appointment DNE
 
-		# insert Appointment into our database
-		$Appointment = $Appointment->insertApptIntoOurDB();
-	}
-}
-print "-- End Loop over each task: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished appointment list\n" if $verbose;
+# 		# insert Appointment into our database
+# 		$Appointment = $Appointment->insertApptIntoOurDB();
+# 	}
+# }
+# print "-- End Loop over each task: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Finished appointment list\n" if $verbose;
 
 ##########################################################################################
 #
@@ -680,100 +680,100 @@ print "Finished patient location MH list\n" if $verbose;
 # Data Retrieval DOCUMENTS - get list of patients with documents updated since last update
 #
 ##########################################################################################
-print "\n--- Start getDocsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@DocList = Document::getDocsFromSourceDB($cronLogSer, \@patientList, $global_patientInfo_sql);
-print "--- End getDocsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Got document list\n" if $verbose;
+# print "\n--- Start getDocsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# @DocList = Document::getDocsFromSourceDB($cronLogSer, \@patientList, $global_patientInfo_sql);
+# print "--- End getDocsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Got document list\n" if $verbose;
 
-# Transfer and log patient documents
-print "\n--- Start transferPatientDocuments: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-Document::transferPatientDocuments(@DocList);
-print "--- End transferPatientDocuments: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# # Transfer and log patient documents
+# print "\n--- Start transferPatientDocuments: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# Document::transferPatientDocuments(@DocList);
+# print "--- End transferPatientDocuments: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 
-print "Finished document list\n" if $verbose;
+# print "Finished document list\n" if $verbose;
 
 ##########################################################################################
 #
 # Data Retrieval TESTRESULTS - get list of patients with test results updated since last update
 #
 ##########################################################################################
-print "\n--- Start getTestResultsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@TRList = TestResult::getTestResultsFromSourceDB($cronLogSer, \@patientList, $global_patientInfo_sql);
-print "--- End getTestResultsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Got test result list\n" if $verbose;
+# print "\n--- Start getTestResultsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# @TRList = TestResult::getTestResultsFromSourceDB($cronLogSer, \@patientList, $global_patientInfo_sql);
+# print "--- End getTestResultsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Got test result list\n" if $verbose;
 
-#=========================================================================================
-# Loop over each test result. Various functions are done.
-#=========================================================================================
-print "-- Start Loop over each test result: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-foreach my $TestResult (@TRList) {
+# #=========================================================================================
+# # Loop over each test result. Various functions are done.
+# #=========================================================================================
+# print "-- Start Loop over each test result: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# foreach my $TestResult (@TRList) {
 
-	# check if TR exists in our database
-	my $TRExists = $TestResult->inOurDatabase();
+# 	# check if TR exists in our database
+# 	my $TRExists = $TestResult->inOurDatabase();
 
-	if ($TRExists) { # TR exists
+# 	if ($TRExists) { # TR exists
 
-		my $ExistingTR = dclone($TRExists); # reassign variable
+# 		my $ExistingTR = dclone($TRExists); # reassign variable
 
-		# compare our retrieve TR with existing TR
-		# update is done on the original (existing) TR
-		my ($UpdatedTR, $change) = $TestResult->compareWith($ExistingTR);
+# 		# compare our retrieve TR with existing TR
+# 		# update is done on the original (existing) TR
+# 		my ($UpdatedTR, $change) = $TestResult->compareWith($ExistingTR);
 
-		# after updating our TR object, update the database
-        # if there was an actual change in comparison
-        if ($change) {
-    		$UpdatedTR->updateDatabase();
-        };
+# 		# after updating our TR object, update the database
+#         # if there was an actual change in comparison
+#         if ($change) {
+#     		$UpdatedTR->updateDatabase();
+#         };
 
-	} else { # TR DNE
+# 	} else { # TR DNE
 
-		# insert TR into our database
-		$TestResult->insertTestResultIntoOurDB();
-	}
+# 		# insert TR into our database
+# 		$TestResult->insertTestResultIntoOurDB();
+# 	}
 
-}
-print "-- End Loop over each test result: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished test result list\n" if $verbose;
+# }
+# print "-- End Loop over each test result: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Finished test result list\n" if $verbose;
 
 ##########################################################################################
 #
 # Publishing ANNOUNCEMENTS
 #
 ##########################################################################################
-print "\n--- Start publishAnnouncements: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-Announcement::publishAnnouncements($cronLogSer, @patientList);
-print "--- End publishAnnouncements: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished announcements\n" if $verbose;
+# print "\n--- Start publishAnnouncements: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# Announcement::publishAnnouncements($cronLogSer, @patientList);
+# print "--- End publishAnnouncements: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Finished announcements\n" if $verbose;
 
 ##########################################################################################
 #
 # Publishing TREATMENT TEAM MESSAGES
 #
 ##########################################################################################
-print "\n--- Start publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-TxTeamMessage::publishTxTeamMessages($cronLogSer, @patientList);
-print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished treatment team messages\n" if $verbose;
+# print "\n--- Start publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# TxTeamMessage::publishTxTeamMessages($cronLogSer, @patientList);
+# print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Finished treatment team messages\n" if $verbose;
 
 ##########################################################################################
 #
 # Publishing PATIENTS FOR PATIENTS
 #
 ##########################################################################################
-print "\n--- Start publishPatientsForPatients: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-PatientsForPatients::publishPatientsForPatients($cronLogSer, @patientList);
-print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished patients for patients\n";
+# print "\n--- Start publishPatientsForPatients: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# PatientsForPatients::publishPatientsForPatients($cronLogSer, @patientList);
+# print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Finished patients for patients\n";
 
 ##########################################################################################
 #
 # Publishing EDUCATIONAL MATERIALS
 #
 ##########################################################################################
-print "\n--- Start publishEducationalMaterials: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-EducationalMaterial::publishEducationalMaterials($cronLogSer, @patientList);
-print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished Educational materials\n" if $verbose;
+# print "\n--- Start publishEducationalMaterials: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# EducationalMaterial::publishEducationalMaterials($cronLogSer, @patientList);
+# print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Finished Educational materials\n" if $verbose;
 
 ##########################################################################################
 #
@@ -789,22 +789,22 @@ print "Finished Educational materials\n" if $verbose;
 # Publishing LEGACY QUESTIONNAIRES
 #
 ##########################################################################################
-print "\n--- Start publishLegacyQuestionnaires: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-LegacyQuestionnaire::publishLegacyQuestionnaires($cronLogSer, @patientList);
-print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished Legacy Questionnaires\n" if $verbose;
+#print "\n--- Start publishLegacyQuestionnaires: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+#LegacyQuestionnaire::publishLegacyQuestionnaires($cronLogSer, @patientList);
+# print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+#print "Finished Legacy Questionnaires\n" if $verbose;
 
 # Once everything is complete, we update the "last transferred" field for all controls
 # Patient control
 Patient::setPatientLastTransferredIntoOurDB($start_datetime);
 
 # Alias control
-Alias::setAliasLastTransferIntoOurDB($start_datetime);
+# Alias::setAliasLastTransferIntoOurDB($start_datetime);
 
 # Post control
-PostControl::setPostControlLastPublishedIntoOurDB($start_datetime);
+# PostControl::setPostControlLastPublishedIntoOurDB($start_datetime);
 # Educational material control
-EducationalMaterialControl::setEduMatControlLastPublishedIntoOurDB($start_datetime);
+# EducationalMaterialControl::setEduMatControlLastPublishedIntoOurDB($start_datetime);
 
 ##########################################################################################
 #
