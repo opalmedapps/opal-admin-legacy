@@ -28,16 +28,17 @@ class Resource extends Module {
             }
 
             // 2nd bit
-            if (!array_key_exists("sourceId", $post) || $post["sourceId"] == "") {
-                if(!array_key_exists("sourceId", $post)) $post["sourceId"] = "";
+            if (!array_key_exists("appointmentId", $post) || $post["appointmentId"] == "") {
+                if(!array_key_exists("appointmentId", $post)) $post["appointmentId"] = "";
                 $errCode = "1" . $errCode;
             }
             else
                 $errCode = "0" . $errCode;
 
             // 3rd bit
-            if (!array_key_exists("description", $post) || $post["description"] == "") {
-                if(!array_key_exists("description", $post)) $post["description"] = "";
+            if (!array_key_exists("resources", $post) || !is_array($post["resources"]) || !HelpSetup::hasStringKeys($post["resources"])) {
+                if (!array_key_exists("resources", $post)) $post["resources"] = array();
+                if(!is_array($post["resources"])) $post["resources"] = array($post["resources"]);
                 $errCode = "1" . $errCode;
             }
             else
@@ -45,8 +46,8 @@ class Resource extends Module {
         } else {
             $post = array(
                 "sourceName"=>"",
-                "sourceId"=>"",
-                "description"=>"",
+                "appointmentId"=>"",
+                "resources"=>array(),
             );
             $errCode .= "111";
         }
@@ -61,8 +62,10 @@ class Resource extends Module {
         $errCode = $this->_validateResource($post, $source);
         $errCode = bindec($errCode);
 
+
+
         if ($errCode != 0) {
-            $this->opalDB->insertResourcePendingError($post["sourceName"], $post["sourceId"], $post["description"], json_encode(array("validation" => $errCode)));
+            $this->opalDB->insertResourcePendingError($post["sourceName"], $post["appointmentId"], json_encode($post["resources"]), json_encode(array("validation" => $errCode)));
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
         }
     }
