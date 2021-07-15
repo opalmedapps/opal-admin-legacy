@@ -694,6 +694,62 @@ sub getPatientsMarkedForUpdate
 	return @patientList;
 }
 
+sub getPatientsMarkedForUpdateModularCron {
+	
+	my ($cronLogSer, $cronType) = @_; # cron log serial in args
+	
+	my @patientList = (); # initialize list of patient objects
+	my ($lasttransfer, $id, $registrationdate);
+	
+	# Check if the list of patient is up to date.
+	CheckPatientForUpdateModularCron($cronType);
+
+	# Tag all patient that are to be part of the patient list
+	MarkPatientForUpdateModularCron($cronType);
+
+	# Query
+	my $patients_sql = "
+		SELECT DISTINCT
+			cronControlPatient.lastTransferred,
+            Patient.PatientId,
+            Patient.RegistrationDate
+		FROM
+			cronControlPatient,
+            Patient
+		WHERE
+            cronControlPatient.transferFlag        = 1
+		AND cronControlPatient.cronType			   = '$cronType'
+        AND Patient.PatientSerNum                  = cronControlPatient.cronControlPatientSerNum
+	";
+
+	# prepare query
+	my $query = $SQLDatabase->prepare($patients_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+	while (my @data = $query->fetchrow_array()) {
+
+		my $Patient = new Patient(); # patient object
+
+		$lasttransfer		= $data[0];
+        $id            		= $data[1];
+        $registrationdate 	= $data[2];
+
+		# set patient information
+		$Patient->setPatientLastTransfer($lasttransfer);
+        $Patient->setPatientId($id);
+        $Patient->setPatientRegistrationDate($registrationdate);
+		$Patient->setPatientCronLogSer($cronLogSer);
+
+		push(@patientList, $Patient);
+	}
+
+	return @patientList;
+}
+
 #======================================================================================
 # Subroutine to block a patient
 #======================================================================================
@@ -764,7 +820,7 @@ sub unsetPatientControl
 }
 
 #======================================================================================
-# Subroutine to set/update the "last transferred" field to current time  and reset the transfer flag back from 1 to 0
+# Subroutine to set/update the "last transferred" field to current time  and reset the transfer flag back from 1 to 0 (dataControl only)
 #======================================================================================
 sub setPatientLastTransferredIntoOurDB
 {
@@ -780,6 +836,35 @@ sub setPatientLastTransferredIntoOurDB
 			TransferFlag 		= 0
 		WHERE
 			TransferFlag		= 1
+	";
+
+	# prepare query
+	my $query = $SQLDatabase->prepare($update_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+}
+
+
+#======================================================================================
+# Subroutine to set/update the "last transferred" field to current time  and reset the transfer flag back from 1 to 0 (all other control modules)
+#======================================================================================
+sub setPatientLastTransferredModularCron
+{
+	my ($current_datetime, $module) = @_; # current datetime, cron module type, 
+
+	my $update_sql = "
+		UPDATE 
+			cronControlPatient
+		SET
+			lastTransferred	= '$current_datetime',
+            lastUpdated 		= lastUpdated,
+			transferFlag 		= 0
+		WHERE
+			transferFlag		= 1
+		AND cronType 			= '$module'
 	";
 
 	# prepare query
@@ -1217,6 +1302,55 @@ sub MarkPatientForUpdate
 		or die "Could not execute query: " . $query->errstr;
 
 }
+
+#======================================================================================
+# Subroutine to make sure that the cronControlPatient have the same records as in the
+# PatientControl. Reason is that the cronControlPatient handles the last update for
+# specific cron type 
+#======================================================================================
+sub CheckPatientForUpdateModularCron
+{	
+	my ($module) = @_; #args cronType module name
+
+	my $patients_sql = "
+		INSERT INTO cronControlPatient (cronControlPatientSerNum, cronType, LastTransferred, LastUpdated, TransferFlag)
+		SELECT PatientSerNum, '$module',  LastTransferred, LastUpdated, 0 TransferFlag  FROM PatientControl PC
+		WHERE PC.PatientSerNum NOT IN 
+			(SELECT cronControlPatientSerNum FROM cronControlPatient WHERE cronType = '$module');
+";
+	# prepare query
+	my $query = $SQLDatabase->prepare($patients_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+}
+
+#======================================================================================
+# Subroutine the transfer flag to 1 where patient control is active (PatientUpdate = 1)
+# This subroutine is for a specific cron type when getting the list of patient 
+#======================================================================================
+sub MarkPatientForUpdateModularCron
+{	
+	my ($module) = @_; #args cronType module name
+
+	my $patients_sql = "
+	UPDATE 
+		cronControlPatient,
+		PatientControl
+	SET 
+		cronControlPatient.transferFlag = 1 
+	WHERE 
+		PatientControl.PatientUpdate 	= 1
+	AND cronControlPatient.cronType 	= '$module'";
+	# prepare query
+	my $query = $SQLDatabase->prepare($patients_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+ }
 #exit module 
 1;
 
