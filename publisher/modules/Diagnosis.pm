@@ -291,6 +291,8 @@ sub getDiagnosesFromSourceDB
 					from #tempPatient pt where pt.PatientId = PatientInfo.ID)
 		    ";
 
+			print "Diagnosis query: $diagInfo_sql\n";
+
     		# prepare query
 	    	my $query = $sourceDatabase->prepare($diagInfo_sql)
 		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
