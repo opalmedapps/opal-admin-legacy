@@ -520,4 +520,25 @@ class Study extends Module {
         return $this->opalDB->getConsentFormByStudyId($studyId);
     }
 
+    /**
+     * Returns the list of consented studies of a specific patient
+     * @param $post - contains MRN and site code, both mandatory
+     * @return array - studies found (if any)
+     */
+    public function getStudiesPatientConsented($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = "";
+        if (is_array($post))
+            $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
+        else
+            $errCode = "111";
+
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        return $this->opalDB->getStudiesPatientConsented($post["mrn"], $post["site"]);
+    }
+
 }

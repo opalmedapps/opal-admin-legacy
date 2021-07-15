@@ -429,8 +429,11 @@ sub getDocsFromSourceDB
 	my ($apprvby, $apprvts, $authoredby, $dos, $createdby, $createdts);
     my $lasttransfer;
 
+	# Check for any new updates from the main cron control
+	CheckAliasesMarkedForUpdateModularCron('Document');
+
     # retrieve all aliases that are marked for update
-    my @aliasList = Alias::getAliasesMarkedForUpdate('Document');
+    my @aliasList = Alias::getAliasesMarkedForUpdateModularCron('Document');
 
 	######################################
     # ARIA
@@ -569,11 +572,6 @@ sub getDocsFromSourceDB
 					$docInfo_sql .= ")";
 				}
 			}
-			
-			# open(my $fh, '>>', 'ym.txt');
-			# print $fh $docInfo_sql;
-			# close $fh;
-
 			# prepare query
 			my $query = $sourceDatabase->prepare($docInfo_sql)
 				or die "Could not prepare query: " . $sourceDatabase->errstr;
@@ -1525,6 +1523,72 @@ sub compareWith
 	}
 
 	return $UpdatedDoc;
+}
+
+#======================================================================================
+# Subroutine to sync the master table to the slave table and then set the publish flag 
+# from 1 to 2. This will identify what is currently being process by the cron job vs what
+# have just been activated during the cron running
+#======================================================================================
+sub CheckAliasesMarkedForUpdateModularCron
+{
+	my ($module) = @_; # current datetime, cron module type, 
+
+	# --------------------------------------------------
+	# First step is to make sure that the two tables have the same amount of records
+	my $insert_sql = "
+	INSERT INTO cronControlAlias (cronControlAliasSerNum, cronType, aliasUpdate, lastTransferred, lastUpdated, sessionId)
+	SELECT A.AliasSerNum, '$module' cronType, A.AliasUpdate, A.LastTransferred, A.LastUpdated, A.SessionId
+	FROM Alias A
+	WHERE A.AliasType = '$module'
+		AND A.AliasSerNum NOT IN (SELECT cronControlAliasSerNum FROM cronControlAlias CCP
+		WHERE CCP.cronType = '$module');
+    	";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($insert_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+	# --------------------------------------------------
+    # Second step is to sync the publish flag between the two tables
+    # Alias is the master and cronControlAlias is the slave
+	my $update_sql = "
+		UPDATE Alias A, cronControlAlias CCA
+		SET CCA.aliasUpdate = A.AliasUpdate
+		WHERE A.AliasSerNum = CCA.cronControlAliasSerNum
+			AND CCA.aliasUpdate <> A.AliasUpdate
+			AND CCA.cronType = '$module';
+    	";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($update_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+	# --------------------------------------------------
+	# Third step update the publish flag from 1 to 2
+	my $update2_sql = "
+		UPDATE cronControlAlias
+		SET aliasUpdate = 2
+		WHERE aliasUpdate = 1
+			AND cronType = '$module';
+    	";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($update2_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
 }
 
 # To exit/return always true (for the module itself)
