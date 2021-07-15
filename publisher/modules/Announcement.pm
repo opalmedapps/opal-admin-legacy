@@ -197,7 +197,7 @@ sub publishAnnouncements
 
 				# Fetch patient filters (if any)
 				my @patientFilters = $postFilters->getPatientFilters();
-				print "PatientFilters(Announcement) array: @patientFilters \n";
+				print "PatientFilters(Announcement) array: @patientFilters\n";
 				# We will flag whether there are patient filters or other (non-patient) filters
 				# The reason is that the patient filter will combine as an OR with the non-patient filters
 				# If any of the non-patient filters exist, all non-patient filters combine in an AND (i.e. intersection)
