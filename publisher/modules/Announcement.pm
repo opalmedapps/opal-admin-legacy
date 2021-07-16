@@ -167,9 +167,8 @@ sub publishAnnouncements
     foreach my $Patient (@patientList) {
 
         my $patientSer          = $Patient->getPatientSer(); # get patient serial
-		my $patientId 			= $Patient->getPatientId(); # get patient id 
 
-		print "Patient ID: $patientId\n" if $verbose;
+		print "Patient Ser: $patientSer\n" if $verbose;
 
         foreach my $PostControl (@announcementControls) {
 
@@ -368,7 +367,7 @@ sub publishAnnouncements
 						# Finding the existence of the patient in the patient-specific filters
 						# If the patient exists, or all patients were selected as triggers, 
 	                    # then patient passes else move on to next patient
-                        if ($patientId ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
+                        if ($patientSer  ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
                         	$patientPassed = 1;
 							print "Patient is in patient filters\n" if $verbose;
 						}

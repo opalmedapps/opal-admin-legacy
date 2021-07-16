@@ -173,7 +173,6 @@ sub publishEducationalMaterials
     foreach my $Patient (@patientList) {
 
         my $patientSer          = $Patient->getPatientSer(); # get patient serial
-        my $patientId           = $Patient->getPatientId(); # get patient id
 
         foreach my $EduMatControl (@eduMatControls) {
 
@@ -182,7 +181,6 @@ sub publishEducationalMaterials
 
 			# Fetch patient filters (if any)
             my @patientFilters = $eduMatFilters->getPatientFilters();
-            print "@patientFilters \n";
 			# We will flag whether there are patient filters or other (non-patient) filters
 			# The reason is that the patient filter will combine as an OR with the non-patient filters
 			# If any of the non-patient filters exist, all non-patient filters combine in an AND (i.e. intersection)
@@ -370,7 +368,7 @@ sub publishEducationalMaterials
     				# Finding the existence of the patient in the patient-specific filters
     				# If the patient exists, or all patients were selected as triggers, 
                     # then patient passes else move on to next patient
-                    if ($patientId ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
+                    if ($patientSer  ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
                         $patientPassed = 1;
                     }
                     else {next;}
