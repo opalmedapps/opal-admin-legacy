@@ -96,9 +96,42 @@ define("RESPONDENT_PATIENT", 1);
 
 define("TRIGGER_EVENT_PUBLISH", 1);
 
+define("OPAL_QUESTIONNAIRE_COMPLETED_FLAG",1);
+define("OPAL_ANSWER_QUESTIONNAIRE_COMPLETED_FLAG",2);
+
+/*
+ * Question type definition for the legacy questionnaire and the new questionnaire 2019
+ * */
+define("CHECKBOXES", 1);
+define("SLIDERS", 2);
+define("TEXT_BOX", 3);
+define("RADIO_BUTTON", 4);
+define("LABEL", 5);
+define("TIME", 6);
+define("DATE", 7);
+define("LEGACY_MC", 1);
+define("LEGACY_MINMAX", 2);
+define("LEGACY_SA", 3);
+define("LEGACY_CHECKBOX", 4);
+define("LEGACY_YESNO", 9);
+define("DEFAULT_TYPE", TEXT_BOX);
+
+define("ARIA_SOURCE_DB", 1);
+define("ORMS_SOURCE_DB", 2);
+define("MOSAIQ_SOURCE_DB", 3);
+define("LOCAL_SOURCE_DB", -1);
+
+// Definition of patient consent status for studies
+const CONSENT_STATUS_INVITED = 1;
+const CONSENT_STATUS_OPAL_CONSENTED = 2;
+const CONSENT_STATUS_OTHER_CONSENTED = 3;
+const CONSENT_STATUS_DECLINED = 4;
+
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql.php");
+require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql-queries.php");
+require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql-queries.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."aria-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."orms-sql.php");
 
@@ -144,6 +177,7 @@ include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseOrms.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseDisconnected.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Trigger.php" );
+include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Appointment.php" );
 
 // Push Notification FCM and APN credientials.
 define( "API_KEY" , $config['pushNotificationConfig']['android']['apiKey'] );
@@ -153,28 +187,6 @@ define( "CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'c
 define( "APNS_TOPIC" , $config['pushNotificationConfig']['apple']['certificate']['topic'] );
 define( "CERTIFICATE_KEY" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['key'] );
 define( "IOS_URL" , $config['pushNotificationConfig']['apple']['appleURL'] );
-
-/*
- * Question type definition for the legacy questionnaire and the new questionnaire 2019
- * */
-define("CHECKBOXES", 1);
-define("SLIDERS", 2);
-define("TEXT_BOX", 3);
-define("RADIO_BUTTON", 4);
-define("LABEL", 5);
-define("TIME", 6);
-define("DATE", 7);
-define("LEGACY_MC", 1);
-define("LEGACY_MINMAX", 2);
-define("LEGACY_SA", 3);
-define("LEGACY_CHECKBOX", 4);
-define("LEGACY_YESNO", 9);
-define("DEFAULT_TYPE", TEXT_BOX);
-
-define("ARIA_SOURCE_DB", 1);
-define("ORMS_SOURCE_DB", 2);
-define("MOSAIQ_SOURCE_DB", 3);
-define("LOCAL_SOURCE_DB", -1);
 
 define("USER_SALT", $config["login"]["salt"]);
 define("ACTIVE_DIRECTORY", $config["login"]["activeDirectory"]);
@@ -194,7 +206,6 @@ define("ENCRYPTED_DATA", "ENCRYPTED DATA");
 define("UNKNOWN_USER", "UNKNOWN USER");
 
 define("MAXIMUM_RECORDS_BATCH", 500);
-
 
 /*
  * List of HTTP status codes

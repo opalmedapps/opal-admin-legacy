@@ -767,7 +767,7 @@ class Publication extends Module
         $toInsert = array();
         if(!empty($publication['triggers'])) {
             foreach($publication['triggers'] as $trigger) {
-                if(($trigger['type'] == "Study") && ($currentQuestionnaire['purpose'] == 4)){ // we are publishing consent forms to patients of this study
+                if(($trigger['type'] == "Study") && ($currentQuestionnaire['purpose'] == PURPOSE_CONSENT)){ // we are publishing consent forms to patients of this study
                     //fetch patient consents
                     $patConsents = $this->opalDB->getPatientsStudyConsents($trigger['id']);
                     foreach($patConsents as $patient){
@@ -776,7 +776,7 @@ class Publication extends Module
                                 "ControlTable"=>"LegacyQuestionnaireControl",
                                 "ControlTableSerNum"=>$publicationControlId,
                                 "FilterType"=>"Patient",
-                                "FilterId"=>$patient['pid'],
+                                "FilterId"=>$patient['id'],
                                 "DateAdded"=>date("Y-m-d H:i:s"),
                                 "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
                                 "SessionId"=>$this->opalDB->getSessionId(),

@@ -92,7 +92,7 @@ class DatabaseOpal extends DatabaseAccess {
         $sqlModule = str_replace("%%QUESTIONNAIRECONTROL%%", OPAL_QUESTIONNAIRE_CONTROL_TABLE, $sqlModule);
         $sqlModule = str_replace("%%POSTCONTROL%%", OPAL_POST_TABLE, $sqlModule);
         $sqlModule = str_replace("%%MODULE%%", OPAL_MODULE_TABLE, $sqlModule);
-        $sqlModule = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_CONTROL_TABLE, $sqlModule);
         $sqlModule = str_replace("%%PHASEINTREATMENT%%", OPAL_PHASE_IN_TREATMENT_TABLE, $sqlModule);
 
         return $this->_fetchAll($sqlModule, array());
@@ -189,10 +189,11 @@ class DatabaseOpal extends DatabaseAccess {
         $sqlFetchPerModule = str_replace("%%TXTEAMMESSAGE%%", OPAL_TX_TEAM_MESSAGE_TABLE, $sqlFetchPerModule);
         $sqlFetchPerModule = str_replace("%%ANNOUNCEMENT%%", OPAL_ANNOUNCEMENT_TABLE, $sqlFetchPerModule);
         $sqlFetchPerModule = str_replace("%%PATIENTSFORPATIENTS%%", OPAL_PATIENTS_FOR_PATIENTS_TABLE, $sqlFetchPerModule);
-        $sqlFetchPerModule = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_TABLE, $sqlFetchPerModule);
+        $sqlFetchPerModule = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_CONTROL_TABLE, $sqlFetchPerModule);
         $sqlFetchPerModule = str_replace("%%PHASEINTREATMENT%%", OPAL_PHASE_IN_TREATMENT_TABLE, $sqlFetchPerModule);
+        $sqlFetchPerModule = str_replace(":OAUserId", intval($this->getOAUserId()), $sqlFetchPerModule);
 
-        $result["publications"] = $this->_fetchAll($sqlFetchPerModule,  array(array("parameter"=>":OAUserId","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT)));
+        $result["publications"] = $this->_fetchAll($sqlFetchPerModule, array());
         $result["triggers"] = $this->getPublicationSettingsPerModule($moduleId);
         $result["unique"] = $module["unique"];
         $result["subModule"] = $module["subModule"];
@@ -223,7 +224,7 @@ class DatabaseOpal extends DatabaseAccess {
         $sqlFetchDetails = str_replace("%%TXTEAMMESSAGE%%", OPAL_TX_TEAM_MESSAGE_TABLE, $sqlFetchDetails);
         $sqlFetchDetails = str_replace("%%ANNOUNCEMENT%%", OPAL_ANNOUNCEMENT_TABLE, $sqlFetchDetails);
         $sqlFetchDetails = str_replace("%%PATIENTSFORPATIENTS%%", OPAL_PATIENTS_FOR_PATIENTS_TABLE, $sqlFetchDetails);
-        $sqlFetchDetails = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_TABLE, $sqlFetchDetails);
+        $sqlFetchDetails = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_CONTROL_TABLE, $sqlFetchDetails);
         $sqlFetchDetails = str_replace("%%PHASEINTREATMENT%%", OPAL_PHASE_IN_TREATMENT_TABLE, $sqlFetchDetails);
 
         return $this->_fetch($sqlFetchDetails,  array(array("parameter"=>":ID","variable"=>$publicationId,"data_type"=>PDO::PARAM_INT)));
@@ -337,7 +338,7 @@ class DatabaseOpal extends DatabaseAccess {
         $sqlPublicationListLog = str_replace("%%TXT_TEAM_MSG_MH_TABLE%%", OPAL_TXT_TEAM_MSG_MH_TABLE, $sqlPublicationListLog);
         $sqlPublicationListLog = str_replace("%%PATIENTS_FOR_PATIENTS_MH_TABLE%%", OPAL_PATIENTS_FOR_PATIENTS_MH_TABLE, $sqlPublicationListLog);
         $sqlPublicationListLog = str_replace("%%EDUCATION_MATERIAL_MH_TABLE%%", OPAL_EDUCATION_MATERIAL_MH_TABLE, $sqlPublicationListLog);
-        $sqlPublicationListLog = str_replace("%%EDUCATION_MATERIAL_CONTROL_TABLE%%", OPAL_EDUCATION_MATERIAL_TABLE, $sqlPublicationListLog);
+        $sqlPublicationListLog = str_replace("%%EDUCATION_MATERIAL_CONTROL_TABLE%%", OPAL_EDUCATION_MATERIAL_CONTROL_TABLE, $sqlPublicationListLog);
         $sqlPublicationListLog = str_replace("%%QUESTIONNAIRE_MH_TABLE%%", OPAL_QUESTIONNAIRE_MH_TABLE, $sqlPublicationListLog);
         $sqlPublicationListLog = str_replace("%%QUESTIONNAIRE_CONTROL_TABLE%%", OPAL_QUESTIONNAIRE_CONTROL_TABLE, $sqlPublicationListLog);
         $sqlPublicationListLog = str_replace("%%CRON_LOG_IDS%%", implode(", ", $cronIds), $sqlPublicationListLog);
@@ -789,7 +790,16 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  patient triggers found (array)
      * */
     function getPatientsTriggers() {
-        return $this->_fetchAll(OPAL_GET_PATIENTS_TRIGGERS, array());
+        $results = $this->_fetchAll(OPAL_GET_PATIENTS_TRIGGERS, array());
+        foreach($results as &$item) {
+            $temp = $this->_fetchAll(OPAL_GET_MRN_PATIENT_SERNUM, array(array("parameter"=>":PatientSerNum","variable"=>$item["id"],"data_type"=>PDO::PARAM_INT)));
+            $mrnList = array();
+            foreach ($temp as $mrn)
+                array_push($mrnList, $mrn["MRN"] . " (".$mrn["hospital"].")");
+            if(count($mrnList) > 0)
+                $item["name"] .= " (MRN: " . implode(", ", $mrnList) . ")";
+        }
+        return $results;
     }
 
     /*
@@ -2088,7 +2098,7 @@ class DatabaseOpal extends DatabaseAccess {
      * */
     function getPatientMRN($pmrn) {
         return $this->_fetchAll(OPAL_GET_PATIENT_MRN, array(
-            array("parameter"=>":mrn","variable"=>'%'.$pmrn.'%',"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":MRN","variable"=>'%'.$pmrn.'%',"data_type"=>PDO::PARAM_STR),
         ));
     }
 
@@ -2097,9 +2107,9 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  $mrn : string - target patient ramq
      * @return  array - list of patient(s) matching search
      * */
-    function getPatientRAMQ($pramq) {
+    function getPatientRAMQ($ssn) {
         return $this->_fetchAll(OPAL_GET_PATIENT_RAMQ, array(
-            array("parameter"=>":ramq","variable"=>'%'.$pramq.'%',"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":SSN","variable"=>'%'.$ssn.'%',"data_type"=>PDO::PARAM_STR),
         ));
     }
 
@@ -2250,7 +2260,7 @@ class DatabaseOpal extends DatabaseAccess {
 
     /**
      * Get questionnaire options
-     * @param none
+     * @param void
      * @return array - questionnaire names (EN)
      */
     function getQstOptions(){
@@ -2270,7 +2280,7 @@ class DatabaseOpal extends DatabaseAccess {
 
     /**
      * Get demographics group report
-     * @param none
+     * @param void
      * @return array - demographics report
      */
     function getDemoReport(){
@@ -2594,7 +2604,16 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  array - List of patients
      * */
     function getPatientsList() {
-        return $this->_fetchAll(OPAL_GET_PATIENTS_LIST, array());
+        $results = $this->_fetchAll(OPAL_GET_PATIENTS_LIST, array());
+        foreach($results as &$item) {
+            $temp = $this->_fetchAll(OPAL_GET_MRN_PATIENT_SERNUM, array(array("parameter"=>":PatientSerNum","variable"=>$item["id"],"data_type"=>PDO::PARAM_INT)));
+            $mrnList = array();
+            foreach ($temp as $mrn)
+                array_push($mrnList, $mrn["MRN"] . " (".$mrn["hospital"].")");
+            if(count($mrnList) > 0)
+                $item["name"] .= " (MRN: " . implode(", ", $mrnList) . ")";
+        }
+        return $results;
     }
 
     /*
@@ -2642,9 +2661,18 @@ class DatabaseOpal extends DatabaseAccess {
      * @return array list of patients found
      */
     function getPatientsStudyConsents($studyId) {
-        return $this->_fetchAll(OPAL_GET_PATIENTS_STUDY_CONSENTS, array(
+        $results = $this->_fetchAll(OPAL_GET_PATIENTS_STUDY_CONSENTS, array(
             array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
         ));
+        foreach($results as &$item) {
+            $temp = $this->_fetchAll(OPAL_GET_MRN_PATIENT_SERNUM, array(array("parameter"=>":PatientSerNum","variable"=>$item["id"],"data_type"=>PDO::PARAM_INT)));
+            $mrnList = array();
+            foreach ($temp as $mrn)
+                array_push($mrnList, $mrn["MRN"] . " (".$mrn["hospital"].")");
+            if(count($mrnList) > 0)
+                $item["name"] .= " (MRN: " . implode(", ", $mrnList) . ")";
+        }
+        return $results;
     }
 
     /**
@@ -2735,7 +2763,10 @@ class DatabaseOpal extends DatabaseAccess {
      * @return array
      */
     function getPatients() {
-        return $this->_fetchAll(OPAL_GET_PATIENTS, array());
+        $results = $this->_fetchAll(OPAL_GET_PATIENTS, array());
+        foreach ($results as &$item)
+            $item["MRN"] = $this->getMrnPatientSerNum($item["serial"]);
+        return $results;
     }
 
     /**
@@ -2743,12 +2774,44 @@ class DatabaseOpal extends DatabaseAccess {
      * @return array
      */
     function getPatientActivityLog() {
-        return $this->_fetchAll(OPAL_GET_PATIENT_ACTIVITY, array());
+        $results = $this->_fetchAll(OPAL_GET_PATIENT_ACTIVITY, array());
+        foreach ($results as &$item) {
+            $item["MRN"] = $this->getMrnPatientSerNum($item["serial"]);
+            unset($item["serial"]);
+        }
+        return $results;
     }
 
 
 
+    /**
+     * Update specific patient demographic information
+     * @params $toUpdate - array of demographics fields to be update
+     *
+     * @return void
+     */
 
+    function updatePatient($toUpdate) {
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT, $toUpdate);
+    }
+
+    /**
+     * Update patient identifiers list
+     * @params $toUpdate - array of identifier information
+     *
+     * @return void
+     */
+    function updatePatientLink($toUpdate) {
+
+        while (($identifier = array_shift($toUpdate)) !== NULL) {
+            if (!empty($identifier["Patient_Hospital_Identifier_Id"])){
+                $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT_HOSPITAL_IDENTIFIER,$identifier);
+            } else {
+                $this->_insertRecordIntoTable(OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE,$identifier);
+            }
+        }
+        return ;
+    }
 
 
     /*
@@ -3368,8 +3431,83 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /**
+     * Count the total of existing alises from a list of alias ID
+     * @param $listIDs - list of alias IDs
+     * @return array
+     */
     function getCountAliases($listIDs) {
         $sql = str_replace("%%LISTIDS%%",implode(", ", $listIDs), OPAL_GET_COUNT_ALIASES);
         return $this->_fetch($sql, array());
     }
+
+    /**
+     * Get the last completed questionnaire from a specific patient on a site.
+     * @param $patientId - internal patient ID found
+     * @return array - last answered questionnaire found (if any)
+     */
+    function getLastCompletedQuestionnaire($patientId) {
+        return $this->_fetch(OPAL_GET_LAST_COMPLETED_QUESTIONNAIRE, array(
+            array("parameter"=>":PatientSerNum","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the lis of completed questionnaires of patient, grouped by MRN.
+     * @param array $questionnaireList - list of questionnaire ID (optional)
+     * @return array - results found
+     */
+    function getPatientsCompletedQuestionnaires($questionnaireList = array()) {
+        $sql = str_replace(
+            "%%CONDTION_OPTINAL%%",
+            count($questionnaireList) > 0 ? str_replace("%%QUESTIONNAIRES_LIST%%", implode(", ", $questionnaireList), OPAL_CONDITION_QUESTIONNAIRES_OPTIONAL) : "",
+            OPAL_GET_PATIENTS_COMPLETED_QUESTIONNAIRES
+        );
+        return $this->_fetchAll($sql, array());
+    }
+
+    /**
+     * Find the list of studies associated to one questionnaire
+     * @param $questionnaireId - ID of the questionnaire
+     * @return array - studies found
+     */
+    function getStudiesQuestionnaire($questionnaireId) {
+        return $this->_fetch(OPAL_GET_STUDIES_QUESTIONNAIRE, array(
+            array("parameter"=>":questionnaireId","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * List the studies a patient consented for.
+     * @param $mrn string - Medical Record Number
+     * @param $site string - Code of the site
+     * @return array - studies found
+     */
+    function getStudiesPatientConsented($mrn, $site) {
+        return $this->_fetchAll(OPAL_GET_STUDIES_PATIENT_CONSENTED, array(
+            array("parameter"=>":MRN","variable"=>$mrn,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Hospital_Identifier_Type_Code","variable"=>$site,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+/**
+     * Get patient appointment
+     * @params $site : String - Patient identifier site
+     * @params $mrn  : int - Patient identifier mrn
+     * @return array - patient appointment details
+     */
+    function getAppointment($site,$mrn,$startDate,$endDate){
+        return $this->_fetchAll(OPAL_GET_APPOINTMENT, array(
+            array("parameter"=>":site","variable"=>$site,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":mrn","variable"=>$mrn,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":startDate","variable"=>$startDate,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":endDate","variable"=>$endDate,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    function getMrnPatientSerNum($patientSerNum) {
+        return $this->_fetchAll(OPAL_GET_MRN_PATIENT_SERNUM, array(
+            array("parameter"=>":PatientSerNum","variable"=>$patientSerNum,"data_type"=>PDO::PARAM_INT)));
+    }
+
 }
