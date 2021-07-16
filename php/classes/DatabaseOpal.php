@@ -3409,7 +3409,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return array - studies found
      */
     function getStudiesQuestionnaire($questionnaireId) {
-        return $this->_fetch(OPAL_GET_STUDIES_QUESTIONNAIRE, array(
+        return $this->_fetchAll(OPAL_GET_STUDIES_QUESTIONNAIRE, array(
             array("parameter"=>":questionnaireId","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
         ));
     }
