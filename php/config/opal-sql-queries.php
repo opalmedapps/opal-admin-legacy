@@ -1662,7 +1662,7 @@ const OPAL_GET_STUDIES_QUESTIONNAIRE = "
 
 const OPAL_GET_STUDIES_PATIENT_CONSENTED = "
 SELECT s.ID as studyId, s.code, s.title_EN, s.title_FR FROM ".OPAL_STUDY_TABLE." s LEFT JOIN ".OPAL_PATIENT_STUDY_TABLE." ps
-ON Ps.studyId = s.ID LEFT JOIN ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi ON phi.PatientSerNum = ps.patientId
+ON ps.studyId = s.ID LEFT JOIN ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi ON phi.PatientSerNum = ps.patientId
 WHERE ps.consentStatus IN (".CONSENT_STATUS_OPAL_CONSENTED.", ".CONSENT_STATUS_OTHER_CONSENTED.")
 AND phi.MRN = :MRN AND phi.Hospital_Identifier_Type_Code = :Hospital_Identifier_Type_Code ORDER BY s.ID;
 ";
