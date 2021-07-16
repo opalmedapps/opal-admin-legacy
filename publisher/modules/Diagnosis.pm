@@ -289,8 +289,6 @@ sub getDiagnosesFromSourceDB
 				AND dx.PatientSer 			= PatientInfo.PatientAriaSer
 		    ";
 
-			print "Diagnosis query: $diagInfo_sql\n";
-
     		# prepare query
 	    	my $query = $sourceDatabase->prepare($diagInfo_sql)
 		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
