@@ -365,20 +365,6 @@ sub getResourceAppointmentsFromSourceDB
 			my $numOfPatients = @patientList;
 			my $counter = 0;
 			my $databaseName = $Configs::OPAL_DB_NAME;
-			# foreach my $Patient (@patientList) {
-				# my $patientSer 			= $Patient->getPatientSer();
-				# my $patientSSN          = $Patient->getPatientSSN(); # get ssn
-				# my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
-
-				# $patientInfo_sql .= "
-					# SELECT '$patientSSN' as SSN, '$patientLastTransfer' as LastTransfer, '$patientSer' as PatientSerNum
-				# ";
-
-				# $counter++;
-				# if ( $counter < $numOfPatients ) {
-					# $patientInfo_sql .= "UNION";
-				# }
-			# }
 
 			my $raInfo_sql = "
 				SELECT DISTINCT
