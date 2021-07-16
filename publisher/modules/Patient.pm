@@ -415,6 +415,8 @@ sub getPatientInfoFromSourceDBs
 
     my @patientList = (); # initialize a list 
 
+	my $patientAriaSer		= $Patient->getPatientSourceUID(); #patientAriaSer
+	my $patientSer 			= $Patient->getPatientSer();
     my $id      		 = $Patient->getPatientId(); # retrieve the patient ID
     my $lastTransfer     = $Patient->getPatientLastTransfer();
     my $registrationDate = $Patient->getPatientRegistrationDate();
@@ -455,7 +457,7 @@ sub getPatientInfoFromSourceDBs
 	        LEFT JOIN VARIAN.dbo.PatientParticular ppt 
 	        ON ppt.PatientSer 		= pt.PatientSer
 	        WHERE
-	            pt.PatientId   = '$id'
+	            pt.PatientSer   = '$patientAriaSer'
 	    ";
 
 		# prepare query
@@ -917,7 +919,7 @@ sub inOurDatabase
 {
     my ($patient) = @_; # our patient object
 
-    my $id             	 = $patient->getPatientId();
+	my $patientSer 		 = $patient->getPatientSer();
     my $lastTransfer     = $patient->getPatientLastTransfer();
     my $registrationDate = $patient->getPatientRegistrationDate();
 
@@ -948,7 +950,7 @@ sub inOurDatabase
             Patient,
 			Users
         WHERE
-            Patient.PatientId  		= '$id'
+            Patient.PatientSerNum  		= '$patientSer'
 		AND Patient.PatientSerNum 	= Users.UserTypeSerNum
 		AND Users.UserType 			= 'Patient'
     ";
@@ -1077,6 +1079,7 @@ sub updateDatabase
     my ($patient) = @_; # our patient object to update
 
     my $patientSourceUID    = $patient->getPatientSourceUID();
+	my $patientSer 			= $patient->getPatientSer();
     my $patientId           = $patient->getPatientId();
     my $patientId2          = $patient->getPatientId2();
     my $patientFirstName    = $patient->getPatientFirstName();
@@ -1103,7 +1106,7 @@ sub updateDatabase
             ProfileImage            = '$patientPicture',
             DeathDate 				= '$patientDeathDate'
         WHERE
-            PatientId               = '$patientId'
+            PatientSerNum               = '$patientSer'
     ";
 
     #print "$update_sql\n";
