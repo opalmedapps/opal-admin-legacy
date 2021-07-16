@@ -214,18 +214,17 @@ sub getResourceAppointmentsFromSourceDB
 				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
 					DROP TABLE #tempPatient;
 
-				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
+				WITH PatientInfo (PatientAriaSer, LastTransfer, PatientSerNum) AS (
 			";
 			$patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
 			$patientInfo_sql .= ")
 			Select c.* into #tempRA
 			from PatientInfo c;
-			Create Index temporaryindexRA1 on #tempRA (ID);
+			Create Index temporaryindexRA1 on #tempRA (PatientAriaSer);
 			Create Index temporaryindexRA2 on #tempRA (PatientSerNum);
 			
 			Select p.PatientSer, p.PatientId into #tempPatient
 			from VARIAN.dbo.Patient p;
-			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
 			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
 			";
 
@@ -247,8 +246,7 @@ sub getResourceAppointmentsFromSourceDB
 						#tempRA as PatientInfo
 					WHERE
 						sa.ActivityInstanceSer		= ai.ActivityInstanceSer
-					AND sa.PatientSer = (select pt.PatientSer 
-						from #tempPatient pt where pt.PatientId = PatientInfo.ID)
+					AND sa.PatientSer 				= PatientInfo.PatientAriaSer
 					AND ai.ActivitySer			    = Activity.ActivitySer
 					AND	Activity.ActivityCode		= lt.LookupValue
 					AND	ai.ActivityInstanceSer		= att.ActivityInstanceSer
