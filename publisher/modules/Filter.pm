@@ -341,7 +341,7 @@ sub getAgeFilterFromOurDB
 
 
 #======================================================================================
-# Subroutine to get patient filters from DB given a control serial number and table name
+# Subroutine to get patient filters from DB given a control serial number and table name - returns list of patientSerNum
 #======================================================================================
 sub getPatientFiltersFromOurDB
 {
@@ -350,14 +350,12 @@ sub getPatientFiltersFromOurDB
     my @patientFilters = (); # initialize list
     my $select_sql = "
         SELECT DISTINCT
-            Patient.PatientSerNum
+            Filters.FilterId
         FROM
-            Filters,
-            Patient
+            Filters
         WHERE
             Filters.ControlTable         = '$controlTable'
         AND Filters.ControlTableSerNum   = '$controlSer'
-        AND Filters.FilterId             = Patient.PatientId
         AND Filters.FilterType           = 'Patient'
     ";
 
