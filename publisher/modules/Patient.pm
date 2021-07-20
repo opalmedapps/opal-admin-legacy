@@ -824,8 +824,6 @@ sub getPatientAccessLevelFromSer
 sub inOurDatabase
 {
     my ($patient) = @_; # our patient object
-	print "inOurDatabase function. Input sourcePatient: \n";
-	print Dumper($patient);
 	my $patientAriaSer 	 = $patient->getPatientSourceUID();
     my $lastTransfer     = $patient->getPatientLastTransfer();
     my $registrationDate = $patient->getPatientRegistrationDate();
@@ -891,6 +889,7 @@ sub inOurDatabase
     ";
 	}else{
 		print "Insufficient information retrieved from varian to identify this patient\n";
+		return;
 	}
 
 	# prepare query

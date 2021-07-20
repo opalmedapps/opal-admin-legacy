@@ -299,7 +299,7 @@ foreach my $Patient (@registeredPatients) {
     foreach my $SourcePatient (@sourcePatients) {
         # check if patient exists in our database (it should by default)
         my $patientExists = $SourcePatient->inOurDatabase();
-		print "Patient exists?: $patientExists \n";
+		
         if ($patientExists) { # patient exists
 
             my $ExistingPatient = dclone($patientExists); # reassign variable
