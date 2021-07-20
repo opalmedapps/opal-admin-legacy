@@ -826,7 +826,8 @@ sub getPatientAccessLevelFromSer
 sub inOurDatabase
 {
     my ($patient) = @_; # our patient object
-
+	print "inOurDatabase function. Input sourcePatient: \n";
+	print Dumper($patient);
 	my $patientSer 		 = $patient->getPatientSer();
     my $lastTransfer     = $patient->getPatientLastTransfer();
     my $registrationDate = $patient->getPatientRegistrationDate();
