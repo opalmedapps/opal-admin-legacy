@@ -509,7 +509,7 @@ sub getPatientInfoFromSourceDBs
 		foreach my $row (@$data) {
 	   # while (my @data = $query->fetchrow_array()) {
 	        $sourcePatient  = new Patient();
-
+			print Dumper($row);
 	        my $sourceuid       = $row->[0];
 	        my $firstname       = $row->[1];
 	        my $lastname        = $row->[2];
