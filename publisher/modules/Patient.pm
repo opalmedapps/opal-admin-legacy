@@ -468,7 +468,7 @@ sub getPatientInfoFromSourceDBs
 	    $query->execute()
 	        or die "Could not execute query: " . $query->errstr;
 
-	    # print "$patientInfo_sql\n";
+		print "$patientInfo_sql\n";
 
 	    my $data = $query->fetchall_arrayref();
 
