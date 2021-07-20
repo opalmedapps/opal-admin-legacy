@@ -535,6 +535,8 @@ sub getPatientInfoFromSourceDBs
 	        $sourcePatient->setPatientPicture($picture);
 	        $sourcePatient->setPatientSex($sex);
 	        $sourcePatient->setPatientDeathDate($deathdate);
+
+			print Dumper($sourcePatient);
 	    }
 
 	    if ($sourcePatient) {push(@patientList, $sourcePatient);}
