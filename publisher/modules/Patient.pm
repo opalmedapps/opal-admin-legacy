@@ -566,7 +566,8 @@ sub getPatientsMarkedForUpdate
 		SELECT DISTINCT
 			PatientControl.LastTransferred,
             Patient.PatientId,
-            Patient.RegistrationDate
+            Patient.RegistrationDate,
+			Patient.PatientAriaSer
 		FROM
 			PatientControl,
             Patient
@@ -590,12 +591,13 @@ sub getPatientsMarkedForUpdate
 		$lasttransfer		= $data[0];
         $id            		= $data[1];
         $registrationdate 	= $data[2];
-
+		$sourceuid 			= $data[3];
 		# set patient information
 		$Patient->setPatientLastTransfer($lasttransfer);
         $Patient->setPatientId($id);
         $Patient->setPatientRegistrationDate($registrationdate);
 		$Patient->setPatientCronLogSer($cronLogSer);
+		$Patient->setPatientSourceUID($sourceuid);
 
 		push(@patientList, $Patient);
 	}
@@ -621,7 +623,8 @@ sub getPatientsMarkedForUpdateModularCron {
 		SELECT DISTINCT
 			cronControlPatient.lastTransferred,
             Patient.PatientId,
-            Patient.RegistrationDate
+            Patient.RegistrationDate,
+			Patient.PatientAriaSer
 		FROM
 			cronControlPatient,
             Patient
@@ -646,13 +649,13 @@ sub getPatientsMarkedForUpdateModularCron {
 		$lasttransfer		= $data[0];
         $id            		= $data[1];
         $registrationdate 	= $data[2];
-
+		$sourceuid			= $data[3];
 		# set patient information
 		$Patient->setPatientLastTransfer($lasttransfer);
         $Patient->setPatientId($id);
         $Patient->setPatientRegistrationDate($registrationdate);
 		$Patient->setPatientCronLogSer($cronLogSer);
-
+		$Patient->setPatientSourceUID($sourceuid);
 		push(@patientList, $Patient);
 	}
 
