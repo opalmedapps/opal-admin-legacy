@@ -839,7 +839,7 @@ sub inOurDatabase
     my ($ser, $sourceuid, $ssn, $id2, $firstname, $lastname, $sex, $dob, $age, $picture, $deathdate, $email, $firebaseuid);
 	my $inDB_sql = "";
 	if($patientAriaSer){ #patient was retrieved from Varian, use patient Aria ser (patientSer will be null for these patients)
-		my $inDB_sql = "
+		$inDB_sql = "
         SELECT DISTINCT
             Patient.PatientSerNum,
             Patient.PatientAriaSer,
@@ -864,7 +864,7 @@ sub inOurDatabase
 		AND Users.UserType 			= 'Patient'
     ";
 	}elsif ($patientFirstName && $patientLastName){ #patientAriaSer is not defined, we dont have PatientSerNum and cant use id because of multisite:
-		my $inDB_sql = "
+		$inDB_sql = "
         SELECT DISTINCT
             Patient.PatientSerNum,
             Patient.PatientAriaSer,
