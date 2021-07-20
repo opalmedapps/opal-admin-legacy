@@ -412,7 +412,7 @@ sub getPatientCronLogSer
 sub getPatientInfoFromSourceDBs 
 {
     my ($Patient) = @_; # our patient object
-
+	print Dumper($Patient);
     my @patientList = (); # initialize a list 
 
 	my $patientAriaSer		= $Patient->getPatientSourceUID(); #patientAriaSer
