@@ -111,7 +111,7 @@ This project comes with pre-configured ARIA database queries to fetch the necess
 * [Perl](http://perldoc.perl.org) 
 * [JavaScript](https://www.javascript.com) 
 
-### Troubleshooting Installation Errors
+## Troubleshooting Installation Errors
 
  * First verify the integrity of your databases. It is a common issue with importing MySQL databases that capital letters get converted to lowercase. Table names in OpalDB and QuestionnaireDB should usually be capitalized. To fix this issue, drop your current copies of opaldb and questionnairedb, then go into your MySQL my.ini file (accesible through the XAMPP control panel if you can't find it). Scroll down to the [mysqld] code block and add 
 ```
