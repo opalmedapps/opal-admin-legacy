@@ -1455,3 +1455,7 @@ define("OPAL_MARKED_AS_DELETED_SOURCE_ALIAS", "
     UPDATE ".OPAL_MASTER_SOURCE_ALIAS_TABLE." SET deleted = ".DELETED_RECORD.", updatedBy = :updatedBy, deletedBy = :deletedBy WHERE externalId = :externalId
     AND source = :source AND type = :type AND code = :code;
 ");
+
+const OPAL_GET_APPOINTMENT = "
+    SELECT * FROM " . OPAL_APPOINTMENTS_TABLE . " WHERE AppointmentAriaSer = :AppointmentAriaSer AND SourceDatabaseSerNum = :SourceDatabaseSerNum;
+";

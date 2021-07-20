@@ -241,13 +241,4 @@ class HelpSetup {
     public static function validatePhoneExt($phoneExt){
         return preg_match('/^\d{0,6}$/', $phoneExt);
     }
-
-    /**
-     * Determined if the $array has string keys (associative array) or not (sequential array)
-     * @param array $array - value to test
-     * @return bool
-     */
-    public static function hasStringKeys(array $array) {
-        return count(array_filter(array_keys($array), 'is_string')) > 0;
-    }
 }

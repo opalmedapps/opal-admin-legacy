@@ -3065,11 +3065,19 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-    function insertResourcePendingError($sourceName, $sourceId, $description, $error) {
+    /**
+     * Insert failed resource info into resourcePendingError table
+     * @param $sourceName string - name of the source (e.g. Aria)
+     * @param $appointmentId int - external Appointment Id
+     * @param $resources string - list of resources
+     * @param $error string - error found
+     * @return int - last record ID
+     */
+    function insertResourcePendingError($sourceName, $appointmentId, $resources, $error) {
         $toInsert = array(
             "sourceName"=>$sourceName,
-            "appointmentId"=>$sourceId,
-            "resources"=>$description,
+            "appointmentId"=>$appointmentId,
+            "resources"=>$resources,
             "error"=>$error,
             "creationDate"=>date("Y-m-d H:i:s"),
             "createdBy"=>$this->username,
@@ -3078,7 +3086,16 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_insertRecordIntoTable(OPAL_RESOURCE_PENDING_ERROR_TABLE, $toInsert);
     }
 
-    function getAppointmentResources($appointmentId) {
-
+    /**
+     * Get an appointment by the externalId and sourceId if it exists
+     * @param $appointmentAriaId - external ID
+     * @param $sourceId - Source ID
+     * @return array - data found if any
+     */
+    function getAppointment($appointmentAriaId, $sourceId) {
+        return $this->_fetchAll(OPAL_GET_APPOINTMENT, array(
+            array("parameter"=>":AppointmentAriaSer","variable"=>$appointmentAriaId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
+        ));
     }
 }
