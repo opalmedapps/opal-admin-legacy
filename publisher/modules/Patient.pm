@@ -412,8 +412,6 @@ sub getPatientCronLogSer
 sub getPatientInfoFromSourceDBs 
 {
     my ($Patient) = @_; # our patient object
-	print "Input patient\n";
-	print Dumper($Patient);
     my @patientList = (); # initialize a list 
 
 	my $patientAriaSer		= $Patient->getPatientSourceUID(); #patientAriaSer
@@ -469,8 +467,6 @@ sub getPatientInfoFromSourceDBs
 	    $query->execute()
 	        or die "Could not execute query: " . $query->errstr;
 
-		print "$patientInfo_sql\n";
-
 	    my $data = $query->fetchall_arrayref();
 
 		# Patient Does not exist in Aria so default to our database
@@ -509,7 +505,6 @@ sub getPatientInfoFromSourceDBs
 		foreach my $row (@$data) {
 	   # while (my @data = $query->fetchrow_array()) {
 	        $sourcePatient  = new Patient();
-			print Dumper($row);
 	        my $sourceuid       = $row->[0];
 	        my $firstname       = $row->[1];
 	        my $lastname        = $row->[2];
@@ -536,11 +531,11 @@ sub getPatientInfoFromSourceDBs
 	        $sourcePatient->setPatientPicture($picture);
 	        $sourcePatient->setPatientSex($sex);
 	        $sourcePatient->setPatientDeathDate($deathdate);
-			print "Found sourcePatient: \n";
-			print Dumper($sourcePatient);
 	    }
 
-	    if ($sourcePatient) {push(@patientList, $sourcePatient);}
+	    if ($sourcePatient) {
+			print "Yes source patient \n";
+			push(@patientList, $sourcePatient);}
 
 	    # db disconnect
 	    $sourceDatabase->disconnect();

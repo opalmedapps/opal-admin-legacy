@@ -297,10 +297,11 @@ foreach my $Patient (@registeredPatients) {
     my @sourcePatients = $Patient->getPatientInfoFromSourceDBs();
 
     foreach my $SourcePatient (@sourcePatients) {
-
+		print "For source patient: \n";
+		print Dumper($sourcePatient);
         # check if patient exists in our database (it should by default)
         my $patientExists = $SourcePatient->inOurDatabase();
-
+		print "Patient exists?: $patientExists \n";
         if ($patientExists) { # patient exists
 
             my $ExistingPatient = dclone($patientExists); # reassign variable
