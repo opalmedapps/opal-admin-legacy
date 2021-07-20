@@ -863,7 +863,7 @@ sub inOurDatabase
 		AND Patient.PatientSerNum 	= Users.UserTypeSerNum
 		AND Users.UserType 			= 'Patient'
     ";
-	}else if ($patientFirstName && $patientLastName){ #patientAriaSer is not defined, we dont have PatientSerNum and cant use id because of multisite:
+	}elsif ($patientFirstName && $patientLastName){ #patientAriaSer is not defined, we dont have PatientSerNum and cant use id because of multisite:
 		my $inDB_sql = "
         SELECT DISTINCT
             Patient.PatientSerNum,
