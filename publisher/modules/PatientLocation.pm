@@ -612,6 +612,7 @@ sub getPatientLocationsMHFromSourceDB
 
 		my $patientSer 				= $Patient->getPatientSer();
 		my $id      		 		= $Patient->getPatientId(); # get patient ID
+		my $patientAriaSer			= $Patient->getPatientSourceUID(); #patientAriaSer
 		my $patientLastTransfer		= $Patient->getPatientLastTransfer();
 
 		# reformat patient last transfer date
@@ -643,8 +644,7 @@ sub getPatientLocationsMHFromSourceDB
 						VARIAN.dbo.ScheduledActivity sa,
 						VARIAN.dbo.PatientLocationMH plmh
 					WHERE
-						sa.PatientSer 			= (select pt.PatientSer 
-						from VARIAN.dbo.Patient pt where pt.PatientId = '$id')
+						sa.PatientSer 			= '$patientAriaSerW'
 					AND	sa.ScheduledActivitySer = plmh.ScheduledActivitySer
 					AND plmh.PatientLocationSer = '$sourceuid'
 				";
