@@ -412,6 +412,7 @@ sub getPatientCronLogSer
 sub getPatientInfoFromSourceDBs 
 {
     my ($Patient) = @_; # our patient object
+	print "Input patient\n";
 	print Dumper($Patient);
     my @patientList = (); # initialize a list 
 
@@ -535,7 +536,7 @@ sub getPatientInfoFromSourceDBs
 	        $sourcePatient->setPatientPicture($picture);
 	        $sourcePatient->setPatientSex($sex);
 	        $sourcePatient->setPatientDeathDate($deathdate);
-
+			print "Found sourcePatient: \n";
 			print Dumper($sourcePatient);
 	    }
 
