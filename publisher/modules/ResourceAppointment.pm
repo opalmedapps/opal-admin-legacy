@@ -407,7 +407,7 @@ sub getResourceAppointmentsFromSourceDB
 					$raInfo_sql .= ")";
 				}
 			}
-			print "Resource Appointment medivisit 1: $raInfo_sql\n";
+
 			# prepare query
 			my $query = $sourceDatabase->prepare($raInfo_sql)
 				or die "Could not prepare query: " . $sourceDatabase->errstr;
