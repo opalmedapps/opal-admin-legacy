@@ -298,7 +298,7 @@ foreach my $Patient (@registeredPatients) {
 
     foreach my $SourcePatient (@sourcePatients) {
 		print "For source patient: \n";
-		print Dumper($sourcePatient);
+		print Dumper($SourcePatient);
         # check if patient exists in our database (it should by default)
         my $patientExists = $SourcePatient->inOurDatabase();
 		print "Patient exists?: $patientExists \n";
