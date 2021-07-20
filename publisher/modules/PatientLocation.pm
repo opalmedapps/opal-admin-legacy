@@ -497,7 +497,7 @@ sub getPatientLocationsFromSourceDB
 				}
 			}
 
-			#print "$plInfo_sql\n";
+			print "PatientLocation Medivisit 1:  $plInfo_sql\n";
 			# prepare query
 			
 			my $query = $sourceDatabase->prepare($plInfo_sql)
@@ -733,7 +733,7 @@ sub getPatientLocationsMHFromSourceDB
 					AND pl.PatientLocationSerNum 	= '$sourceuid'
 					and mval.AppointSys <> 'Aria'
 					";
-
+				print "PatientLocation Medivisit 2:  $plInfo_sql\n";
                 # print "$plInfo_sql\n";
 		        # prepare query
     		    my $query = $sourceDatabase->prepare($plInfo_sql)
