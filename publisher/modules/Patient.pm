@@ -533,9 +533,7 @@ sub getPatientInfoFromSourceDBs
 	        $sourcePatient->setPatientDeathDate($deathdate);
 	    }
 
-	    if ($sourcePatient) {
-			print "Yes source patient \n";
-			push(@patientList, $sourcePatient);}
+	    if ($sourcePatient) {push(@patientList, $sourcePatient);}
 
 	    # db disconnect
 	    $sourceDatabase->disconnect();
@@ -828,18 +826,20 @@ sub inOurDatabase
     my ($patient) = @_; # our patient object
 	print "inOurDatabase function. Input sourcePatient: \n";
 	print Dumper($patient);
-	my $patientSer 		 = $patient->getPatientSer();
+	my $patientAriaSer 	 = $patient->getPatientSourceUID();
     my $lastTransfer     = $patient->getPatientLastTransfer();
     my $registrationDate = $patient->getPatientRegistrationDate();
-
+	my $patientFirstName = $patient->getPatientFirstName();
+	my $patientLastName  = $patient->getPatientLastName();
 
     my $PatientIdInDB = 0; # false by default. Will be true if patient exists
 	my $ExistingPatient = (); # data to be entered if patient exists
 
 	# for query results
     my ($ser, $sourceuid, $ssn, $id2, $firstname, $lastname, $sex, $dob, $age, $picture, $deathdate, $email, $firebaseuid);
- 
-    my $inDB_sql = "
+	my $inDB_sql = "";
+	if($patientAriaSer){ #patient was retrieved from Varian, use patient Aria ser (patientSer will be null for these patients)
+		my $inDB_sql = "
         SELECT DISTINCT
             Patient.PatientSerNum,
             Patient.PatientAriaSer,
@@ -859,10 +859,40 @@ sub inOurDatabase
             Patient,
 			Users
         WHERE
-            Patient.PatientSerNum  		= '$patientSer'
+            Patient.PatientAriaSer  		= '$patientAriaSer'
 		AND Patient.PatientSerNum 	= Users.UserTypeSerNum
 		AND Users.UserType 			= 'Patient'
     ";
+	}else if ($patientFirstName && $patientLastName){ #patientAriaSer is not defined, we dont have PatientSerNum and cant use id because of multisite:
+		my $inDB_sql = "
+        SELECT DISTINCT
+            Patient.PatientSerNum,
+            Patient.PatientAriaSer,
+            Patient.PatientId,
+            Patient.PatientId2,
+            Patient.FirstName,
+            Patient.LastName,
+            Patient.Sex,
+            Patient.DateOfBirth,
+			Patient.Age,
+            Patient.ProfileImage,
+            Patient.SSN,
+            Patient.DeathDate,
+			Patient.Email,
+			Users.Username
+        FROM
+            Patient,
+			Users
+        WHERE
+            Patient.FirstName  		= '$patientFirstName'
+		AND Patient.LastName		= '$patientLastName'
+		AND Patient.PatientSerNum 	= Users.UserTypeSerNum
+		AND Users.UserType 			= 'Patient'
+    ";
+	}else{
+		print "Insufficient information retrieved from varian to identify this patient\n";
+	}
+
 	# prepare query
 	my $query = $SQLDatabase->prepare($inDB_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
