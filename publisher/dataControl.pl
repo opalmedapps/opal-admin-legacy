@@ -561,11 +561,11 @@ print "Finished task list\n" if $verbose;
 # Data Retrieval RESOURCEAPPOINTMENT - get list of resourceappt info updated since last update
 #
 ##########################################################################################
-print "\n--- Start getResourceAppointmentsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@RAList = ResourceAppointment::getResourceAppointmentsFromSourceDB(\@patientList, $global_patientInfo_sql);
-print "--- End getResourceAppointmentsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "\n--- Start getResourceAppointmentsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# @RAList = ResourceAppointment::getResourceAppointmentsFromSourceDB(\@patientList, $global_patientInfo_sql);
+# print "--- End getResourceAppointmentsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 
-print "Got resource appointment list\n" if $verbose;
+# print "Got resource appointment list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each RA. Various functions are done.
@@ -601,10 +601,10 @@ print "Finished resource appointment list\n" if $verbose;
 # Data Retrieval PATIENTLOCATION - get list of PL info updated since last update
 #
 ##########################################################################################
-print "\n--- Start getPatientLocationsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@PLList = PatientLocation::getPatientLocationsFromSourceDB(\@patientList, $global_patientInfo_sql);
-print "--- End getPatientLocationsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Got patient location list\n" if $verbose;
+# print "\n--- Start getPatientLocationsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# @PLList = PatientLocation::getPatientLocationsFromSourceDB(\@patientList, $global_patientInfo_sql);
+# print "--- End getPatientLocationsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Got patient location list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each PL. Various functions are done.
