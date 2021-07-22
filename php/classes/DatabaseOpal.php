@@ -3098,4 +3098,65 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    function getResourcePending($source, $appointmentId) {
+        return $this->_fetchAll(OPAL_GET_RESOURCE_PENDING, array(
+            array("parameter"=>":sourceName","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":appointmentId","variable"=>$appointmentId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function insertPendingResource($toInsert) {
+        $toInsert["createdBy"] = $this->getUsername();
+        $toInsert["creationDate"] = date("Y-m-d H:i:s");
+        $toInsert["updatedBy"] = $this->getUsername();
+        return $this->_insertRecordIntoTableConditional(OPAL_RESOURCE_PENDING_TABLE, $toInsert);
+    }
+
+    function updatePendingResource($toUpdate) {
+        $toUpdate["updatedBy"] = $this->getUsername();
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_RESOURCE_PENDING, $toUpdate);
+    }
+
+    function updateResource($toUpdate) {
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_RESOURCE, $toUpdate);
+    }
+
+    function insertResource($toInsert) {
+        return $this->_insertRecordIntoTableConditional(OPAL_RESOURCE_TABLE, $toInsert);
+    }
+
+    function getResourceIds($resources, $sourceId, $appointmentId) {
+        $cpt = 0;
+        $dataSQL = "SourceDatabaseSerNum = :source AND (";
+        $dataToList = array(
+            array("parameter"=>":source","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":AppointmentSerNum","variable"=>$appointmentId,"data_type"=>PDO::PARAM_INT),
+        );
+        foreach ($resources as $resource) {
+            $dataSQL .= "ResourceCode = :code$cpt OR ";
+            array_push($dataToList,
+                array("parameter"=>":code$cpt","variable"=>$resource["code"],"data_type"=>PDO::PARAM_STR),
+            );
+            $cpt++;
+        }
+        $dataSQL = substr($dataSQL, 0, -4);
+        $dataSQL .= ")";
+        $sql = str_replace("%%SOURCE_CODE_LIST%%", $dataSQL, OPAL_GET_RESOURCES_FOR_RESOURCE_APPOINTMENT);
+
+        return $this->_fetchAll($sql, $dataToList);
+    }
+
+    function deleteResourcesForAppointment($appointmentId, $resourceIdList) {
+        $sql = str_replace("%%RESOURCE_ID_LIST%%", implode(", ", $resourceIdList), DELETE_FROM_RESOURCE_APPOINTMENT);
+        return $this->_execute($sql, array(
+            array("parameter"=>":AppointmentSerNum","variable"=>$appointmentId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function insertResourcesForAppointment($records) {
+        return $this->_replaceMultipleRecordsIntoTableConditional(OPAL_RESOURCE_APPOINTMENT_TABLE, $records,
+            array("ResourceSerNum", "AppointmentSerNum")
+        );
+    }
 }

@@ -873,7 +873,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     /*
-     * Insert into the library question intersection table. It will associate a question with a list of libraries
+     * Insert into the library question pivot table. It will associate a question with a list of libraries
      * @params  array of options to insert in the table mentioned above
      * @returns void
      * */

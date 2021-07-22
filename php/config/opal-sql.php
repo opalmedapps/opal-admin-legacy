@@ -1459,3 +1459,27 @@ define("OPAL_MARKED_AS_DELETED_SOURCE_ALIAS", "
 const OPAL_GET_APPOINTMENT = "
     SELECT * FROM " . OPAL_APPOINTMENTS_TABLE . " WHERE AppointmentAriaSer = :AppointmentAriaSer AND SourceDatabaseSerNum = :SourceDatabaseSerNum;
 ";
+
+const OPAL_GET_RESOURCE_PENDING = "
+    SELECT * FROM ".OPAL_RESOURCE_PENDING_TABLE." WHERE sourceName = :sourceName AND appointmentId = :appointmentId;
+";
+
+const OPAL_UPDATE_RESOURCE_PENDING = "
+    UPDATE ".OPAL_RESOURCE_PENDING_TABLE." SET resources = :resources, updatedBy = :updatedBy WHERE
+    sourceName = :sourceName AND appointmentId = :appointmentId AND level = 1;
+";
+
+const OPAL_UPDATE_RESOURCE = "
+    UPDATE ".OPAL_RESOURCE_TABLE." SET ResourceName = :ResourceName, ResourceType = :ResourceType WHERE
+    SourceDatabaseSerNum = :SourceDatabaseSerNum AND ResourceCode = :ResourceCode;
+";
+
+const OPAL_GET_RESOURCES_FOR_RESOURCE_APPOINTMENT = "
+    SELECT :AppointmentSerNum AS AppointmentSerNum, NOW() AS DateAdded, '1' AS ExclusiveFlag, '0' AS PrimaryFlag, 
+    ResourceSerNum FROM ".OPAL_RESOURCE_TABLE." WHERE %%SOURCE_CODE_LIST%%;
+";
+
+const DELETE_FROM_RESOURCE_APPOINTMENT = "
+    DELETE FROM ".OPAL_RESOURCE_APPOINTMENT_TABLE." WHERE AppointmentSerNum = :AppointmentSerNum AND ResourceSerNum
+    NOT IN (%%RESOURCE_ID_LIST%%);
+";
