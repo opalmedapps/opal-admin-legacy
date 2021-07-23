@@ -301,13 +301,12 @@ my $numPats = @patientList;
 my $c = 0;
 foreach my $Patient (@patientList) {
 	my $patientSer 			= $Patient->getPatientSer();
-	my $id		   			= $Patient->getPatientId(); #patient ID
+	my $patientAriaSer		= $Patient->getPatientSourceUID(); #patient ID
 	my $patientLastTransfer = $Patient->getPatientLastTransfer(); # last updated
 
 	$global_patientInfo_sql .= "
-		SELECT '$id', '$patientLastTransfer', '$patientSer'
+		SELECT '$patientAriaSer', '$patientLastTransfer', '$patientSer'
 	";
-
 	$c++;
 	if($c < $numPats ){
 		$global_patientInfo_sql .= "UNION";
