@@ -297,10 +297,9 @@ foreach my $Patient (@registeredPatients) {
     my @sourcePatients = $Patient->getPatientInfoFromSourceDBs();
 
     foreach my $SourcePatient (@sourcePatients) {
-
         # check if patient exists in our database (it should by default)
         my $patientExists = $SourcePatient->inOurDatabase();
-
+		
         if ($patientExists) { # patient exists
 
             my $ExistingPatient = dclone($patientExists); # reassign variable
@@ -343,11 +342,11 @@ my $numPats = @patientList;
 my $c = 0;
 foreach my $Patient (@patientList) {
 	my $patientSer 			= $Patient->getPatientSer();
-	my $id		   			= $Patient->getPatientId(); #patient ID
+	my $patientAriaSer		= $Patient->getPatientSourceUID(); #patientAriaSer
 	my $patientLastTransfer = $Patient->getPatientLastTransfer(); # last updated
 
 	$global_patientInfo_sql .= "
-		SELECT '$id', '$patientLastTransfer', '$patientSer'
+		SELECT '$patientAriaSer', '$patientLastTransfer', '$patientSer'
 	";
 
 	$c++;
@@ -562,11 +561,11 @@ print "Finished task list\n" if $verbose;
 # Data Retrieval RESOURCEAPPOINTMENT - get list of resourceappt info updated since last update
 #
 ##########################################################################################
-print "\n--- Start getResourceAppointmentsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@RAList = ResourceAppointment::getResourceAppointmentsFromSourceDB(\@patientList, $global_patientInfo_sql);
-print "--- End getResourceAppointmentsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "\n--- Start getResourceAppointmentsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# @RAList = ResourceAppointment::getResourceAppointmentsFromSourceDB(\@patientList, $global_patientInfo_sql);
+# print "--- End getResourceAppointmentsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 
-print "Got resource appointment list\n" if $verbose;
+# print "Got resource appointment list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each RA. Various functions are done.
@@ -602,10 +601,10 @@ print "Finished resource appointment list\n" if $verbose;
 # Data Retrieval PATIENTLOCATION - get list of PL info updated since last update
 #
 ##########################################################################################
-print "\n--- Start getPatientLocationsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@PLList = PatientLocation::getPatientLocationsFromSourceDB(\@patientList, $global_patientInfo_sql);
-print "--- End getPatientLocationsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Got patient location list\n" if $verbose;
+# print "\n--- Start getPatientLocationsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# @PLList = PatientLocation::getPatientLocationsFromSourceDB(\@patientList, $global_patientInfo_sql);
+# print "--- End getPatientLocationsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Got patient location list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each PL. Various functions are done.
@@ -798,22 +797,6 @@ print "Finished patient location MH list\n" if $verbose;
 # Patient control
 Patient::setPatientLastTransferredIntoOurDB($start_datetime);
 
-# Alias control
-# Alias::setAliasLastTransferIntoOurDB($start_datetime);
-
-# Post control
-# PostControl::setPostControlLastPublishedIntoOurDB($start_datetime);
-# Educational material control
-# EducationalMaterialControl::setEduMatControlLastPublishedIntoOurDB($start_datetime);
-
-##########################################################################################
-#
-# Y.Mo 03-Apr-2020
-# Updating the TestResultControl is no longer require because the system is fetching from Oacis
-#
-##########################################################################################
-# # Test result control
-# TestResultControl::setTestResultLastPublishedIntoOurDB($start_datetime);
 
 # Get the current time
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));

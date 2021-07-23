@@ -486,18 +486,17 @@ sub getDocsFromSourceDB
 				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
 					DROP TABLE #tempPatient;
 
-				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
+				WITH PatientInfo (PatientAriaSer, LastTransfer, PatientSerNum) AS (
 			";
 			$patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
 			$patientInfo_sql .= ")
 			Select c.* into #tempClinic
 			from PatientInfo c;
-			Create Index temporaryindexClinic1 on #tempClinic (ID);
+			Create Index temporaryindexClinic1 on #tempClinic (PatientAriaSer);
 			Create Index temporaryindexClinic2 on #tempClinic (PatientSerNum);
 			
 			Select p.PatientSer, p.PatientId into #tempPatient
 			from VARIAN.dbo.Patient p;
-			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
 			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
 			";
 
@@ -530,8 +529,7 @@ sub getDocsFromSourceDB
 					#tempClinic PatientInfo
 				WHERE
 					pt.pt_id 			            = visit_note.pt_id
-				AND pt.patient_ser			        = (select pt.PatientSer 
-					from #tempPatient pt where pt.PatientId = PatientInfo.ID)
+				AND pt.patient_ser			        = PatientInfo.PatientAriaSer
 				AND visit_note.note_typ		        = note_typ.note_typ
 				AND visit_note.appr_flag		    = 'A'
 				AND visit_note.doc_file_loc = FL.[FileName]
@@ -829,7 +827,7 @@ sub inOurDatabase
 }
 
 #======================================================================================
-# Subroutine to copy/transfer our patient documents into a target director
+# Subroutine to copy/transfer our patient documents into a target directory
 #======================================================================================
 sub transferPatientDocuments
 {
