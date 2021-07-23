@@ -53,7 +53,7 @@ class Resource extends Module {
 
             // 3rd bit
             if(bindec($errCode) == 0) {
-                $appointment = $this->opalDB->getAppointment($post["appointment"], $source["SourceDatabaseSerNum"]);
+                $appointment = $this->opalDB->getAppointmentForResource($post["appointment"], $source["SourceDatabaseSerNum"]);
                 if(count($appointment) > 1)
                     $errCode = "1" . $errCode;
                 else {
