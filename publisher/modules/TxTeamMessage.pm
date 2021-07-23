@@ -164,7 +164,6 @@ sub publishTxTeamMessages
     foreach my $Patient (@patientList) {
 
         my $patientSer          = $Patient->getPatientSer(); # get patient serial
-		my $patientId 			= $Patient->getPatientId(); # get patient id
 
         foreach my $PostControl (@txTeamMessageControls) {
 
@@ -315,7 +314,7 @@ sub publishTxTeamMessages
     				# Finding the existence of the patient in the patient-specific filters
     				# If the patient exists, or all patients were selected as triggers,
                     # then patient passes else move on to next patient
-                    if ($patientId ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
+                    if ($patientSer ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
                         $patientPassed = 1;
                     }
                     else {next;}

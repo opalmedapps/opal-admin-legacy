@@ -412,9 +412,10 @@ sub getPatientCronLogSer
 sub getPatientInfoFromSourceDBs 
 {
     my ($Patient) = @_; # our patient object
-
     my @patientList = (); # initialize a list 
 
+	my $patientAriaSer		= $Patient->getPatientSourceUID(); #patientAriaSer
+	my $patientSer 			= $Patient->getPatientSer();
     my $id      		 = $Patient->getPatientId(); # retrieve the patient ID
     my $lastTransfer     = $Patient->getPatientLastTransfer();
     my $registrationDate = $Patient->getPatientRegistrationDate();
@@ -455,7 +456,7 @@ sub getPatientInfoFromSourceDBs
 	        LEFT JOIN VARIAN.dbo.PatientParticular ppt 
 	        ON ppt.PatientSer 		= pt.PatientSer
 	        WHERE
-	            pt.PatientId   = '$id'
+	            pt.PatientSer   = '$patientAriaSer'
 	    ";
 
 		# prepare query
@@ -465,8 +466,6 @@ sub getPatientInfoFromSourceDBs
 	    # execute query
 	    $query->execute()
 	        or die "Could not execute query: " . $query->errstr;
-
-	    # print "$patientInfo_sql\n";
 
 	    my $data = $query->fetchall_arrayref();
 
@@ -506,7 +505,6 @@ sub getPatientInfoFromSourceDBs
 		foreach my $row (@$data) {
 	   # while (my @data = $query->fetchrow_array()) {
 	        $sourcePatient  = new Patient();
-
 	        my $sourceuid       = $row->[0];
 	        my $firstname       = $row->[1];
 	        my $lastname        = $row->[2];
@@ -541,99 +539,6 @@ sub getPatientInfoFromSourceDBs
 	    $sourceDatabase->disconnect();
 	}
 
-	# MediVisit section commented out as to only use one source for updating patient information
-	# Hopefully in the future there will be one central source for patient info
-=pod
-    ######################################
-    # MediVisit
-    ######################################
-
-    my $sourceDBSer = 2; # WaitRoomManagement
-    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-    if ($sourceDatabase) {
-
-	    my $sourcePatient  = undef;
-
-	    my $patientInfo_sql = "
-	        SELECT DISTINCT 
-	            pt.PatientSerNum,
-	            pt.FirstName,
-	            pt.LastName,
-	            pt.PatientId
-	        FROM
-	            Patient pt
-	        WHERE
-	            pt.SSN      LIKE '$patientSSN%'
-	    ";  
-
-		# prepare query
-		my $query = $sourceDatabase->prepare($patientInfo_sql)
-		    or die "Could not prepare query: " . $sourceDatabase->errstr;
-
-	    # execute query
-	    $query->execute()
-	        or die "Could not execute query: " . $query->errstr;
-
-	    while (my @data = $query->fetchrow_array()) {
-
-	        $sourcePatient  = new Patient();
-
-	        my $sourceuid      = $data[0];
-	        my $firstname      = $data[1];
-	        my $lastname       = $data[2];
-	        my $id             = $data[3];
-
-	        $sourcePatient->setPatientSSN($patientSSN);
-	        $sourcePatient->setPatientLastTransfer($lastTransfer);
-	        $sourcePatient->setPatientUserSer($patientUserSer);
-
-	        $sourcePatient->setPatientSourceUID($sourceuid);
-	        $sourcePatient->setPatientSourceDatabaseSer($sourceDBSer);
-	        $sourcePatient->setPatientFirstName($firstname);
-	        $sourcePatient->setPatientLastName($lastname);
-	        $sourcePatient->setPatientId($id);
-	    }
-
-	    if ($sourcePatient) {push(@patientList, $sourcePatient);}
-
-	    # db disconnect
-	    $sourceDatabase->disconnect();
-	}
-=cut
-
-	######################################
-    # MOSAIQ
-    ######################################
-    my $sourceDBSer = 3; # MOSAIQ
-    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-    if ($sourceDatabase) {
-
-	    my $sourcePatient  = undef;
-
-	    my $patientInfo_sql = "SELECT 'QUERY_HERE'";
-
-		# prepare query
-		my $query = $sourceDatabase->prepare($patientInfo_sql)
-		    or die "Could not prepare query: " . $sourceDatabase->errstr;
-
-	    # execute query
-	    $query->execute()
-	        or die "Could not execute query: " . $query->errstr;
-
-	    while (my @data = $query->fetchrow_array()) {
-	    
-	        #$sourcePatient  = new Patient(); # uncomment for use
-
-	        # use setters to set appropriate information from query
-	       	
-	    }
-
-	    if ($sourcePatient) {push(@patientList, $sourcePatient);}
-
-	    # db disconnect
-	    $sourceDatabase->disconnect();
-	}
-
     return @patientList;
 
 }
@@ -657,7 +562,8 @@ sub getPatientsMarkedForUpdate
 		SELECT DISTINCT
 			PatientControl.LastTransferred,
             Patient.PatientId,
-            Patient.RegistrationDate
+            Patient.RegistrationDate,
+			Patient.PatientAriaSer
 		FROM
 			PatientControl,
             Patient
@@ -681,12 +587,13 @@ sub getPatientsMarkedForUpdate
 		$lasttransfer		= $data[0];
         $id            		= $data[1];
         $registrationdate 	= $data[2];
-
+		$sourceuid 			= $data[3];
 		# set patient information
 		$Patient->setPatientLastTransfer($lasttransfer);
         $Patient->setPatientId($id);
         $Patient->setPatientRegistrationDate($registrationdate);
 		$Patient->setPatientCronLogSer($cronLogSer);
+		$Patient->setPatientSourceUID($sourceuid);
 
 		push(@patientList, $Patient);
 	}
@@ -712,7 +619,8 @@ sub getPatientsMarkedForUpdateModularCron {
 		SELECT DISTINCT
 			cronControlPatient.lastTransferred,
             Patient.PatientId,
-            Patient.RegistrationDate
+            Patient.RegistrationDate,
+			Patient.PatientAriaSer
 		FROM
 			cronControlPatient,
             Patient
@@ -737,13 +645,13 @@ sub getPatientsMarkedForUpdateModularCron {
 		$lasttransfer		= $data[0];
         $id            		= $data[1];
         $registrationdate 	= $data[2];
-
+		$sourceuid			= $data[3];
 		# set patient information
 		$Patient->setPatientLastTransfer($lasttransfer);
         $Patient->setPatientId($id);
         $Patient->setPatientRegistrationDate($registrationdate);
 		$Patient->setPatientCronLogSer($cronLogSer);
-
+		$Patient->setPatientSourceUID($sourceuid);
 		push(@patientList, $Patient);
 	}
 
@@ -916,19 +824,20 @@ sub getPatientAccessLevelFromSer
 sub inOurDatabase
 {
     my ($patient) = @_; # our patient object
-
-    my $id             	 = $patient->getPatientId();
+	my $patientAriaSer 	 = $patient->getPatientSourceUID();
     my $lastTransfer     = $patient->getPatientLastTransfer();
     my $registrationDate = $patient->getPatientRegistrationDate();
-
+	my $patientFirstName = $patient->getPatientFirstName();
+	my $patientLastName  = $patient->getPatientLastName();
 
     my $PatientIdInDB = 0; # false by default. Will be true if patient exists
 	my $ExistingPatient = (); # data to be entered if patient exists
 
 	# for query results
     my ($ser, $sourceuid, $ssn, $id2, $firstname, $lastname, $sex, $dob, $age, $picture, $deathdate, $email, $firebaseuid);
- 
-    my $inDB_sql = "
+	my $inDB_sql = "";
+	if($patientAriaSer){ #patient was retrieved from Varian, use patient Aria ser (patientSer will be null for these patients)
+		$inDB_sql = "
         SELECT DISTINCT
             Patient.PatientSerNum,
             Patient.PatientAriaSer,
@@ -948,10 +857,41 @@ sub inOurDatabase
             Patient,
 			Users
         WHERE
-            Patient.PatientId  		= '$id'
+            Patient.PatientAriaSer  		= '$patientAriaSer'
 		AND Patient.PatientSerNum 	= Users.UserTypeSerNum
 		AND Users.UserType 			= 'Patient'
     ";
+	}elsif ($patientFirstName && $patientLastName){ #patientAriaSer is not defined, we dont have PatientSerNum and cant use id because of multisite:
+		$inDB_sql = "
+        SELECT DISTINCT
+            Patient.PatientSerNum,
+            Patient.PatientAriaSer,
+            Patient.PatientId,
+            Patient.PatientId2,
+            Patient.FirstName,
+            Patient.LastName,
+            Patient.Sex,
+            Patient.DateOfBirth,
+			Patient.Age,
+            Patient.ProfileImage,
+            Patient.SSN,
+            Patient.DeathDate,
+			Patient.Email,
+			Users.Username
+        FROM
+            Patient,
+			Users
+        WHERE
+            Patient.FirstName  		= '$patientFirstName'
+		AND Patient.LastName		= '$patientLastName'
+		AND Patient.PatientSerNum 	= Users.UserTypeSerNum
+		AND Users.UserType 			= 'Patient'
+    ";
+	}else{
+		print "Insufficient information retrieved from varian to identify this patient\n";
+		return;
+	}
+
 	# prepare query
 	my $query = $SQLDatabase->prepare($inDB_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -1077,6 +1017,7 @@ sub updateDatabase
     my ($patient) = @_; # our patient object to update
 
     my $patientSourceUID    = $patient->getPatientSourceUID();
+	my $patientSer 			= $patient->getPatientSer();
     my $patientId           = $patient->getPatientId();
     my $patientId2          = $patient->getPatientId2();
     my $patientFirstName    = $patient->getPatientFirstName();
@@ -1103,7 +1044,7 @@ sub updateDatabase
             ProfileImage            = '$patientPicture',
             DeathDate 				= '$patientDeathDate'
         WHERE
-            PatientId               = '$patientId'
+            PatientSerNum               = '$patientSer'
     ";
 
     #print "$update_sql\n";
