@@ -118,6 +118,12 @@ class Resource extends Module {
             $this->_insertResources($appointment, $post, $source);
     }
 
+    /**
+     * Insert and update resources before updating the pivot table for the current resources needed.
+     * @param $appointment array - appointment details
+     * @param $post array - post info containing the resources requested by the user
+     * @param $source array - source database details
+     */
     protected function _insertResources(&$appointment, &$post, &$source) {
         foreach ($post["resources"] as $resource) {
             $data = array(

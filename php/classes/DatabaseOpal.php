@@ -3099,6 +3099,12 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /**
+     * Get a specific resource pending from the resource pending table
+     * @param $source string - source database name
+     * @param $appointmentId int - appointment ID of the future appointment
+     * @return array - data found if any
+     */
     function getResourcePending($source, $appointmentId) {
         return $this->_fetchAll(OPAL_GET_RESOURCE_PENDING, array(
             array("parameter"=>":sourceName","variable"=>$source,"data_type"=>PDO::PARAM_INT),
@@ -3106,6 +3112,11 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /**
+     * Insert Insert pending resource only if they don't exist.
+     * @param $toInsert array - pending resource details
+     * @return int - last inserted ID
+     */
     function insertPendingResource($toInsert) {
         $toInsert["createdBy"] = $this->getUsername();
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
@@ -3113,19 +3124,42 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_insertRecordIntoTableConditional(OPAL_RESOURCE_PENDING_TABLE, $toInsert);
     }
 
+    /**
+     * Update pending resource
+     * @param $toUpdate - pending resource details
+     * @return int - number of row modified
+     */
     function updatePendingResource($toUpdate) {
         $toUpdate["updatedBy"] = $this->getUsername();
         return $this->_updateRecordIntoTable(OPAL_UPDATE_RESOURCE_PENDING, $toUpdate);
     }
 
+    /**
+     * Update a resource
+     * @param $toUpdate - resource details
+     * @return int - number of row modified
+     */
     function updateResource($toUpdate) {
         return $this->_updateRecordIntoTable(OPAL_UPDATE_RESOURCE, $toUpdate);
     }
 
+    /**
+     * Insert a resource only if it does not exists already.
+     * @param $toInsert
+     * @return int - number of row modified
+     */
     function insertResource($toInsert) {
         return $this->_insertRecordIntoTableConditional(OPAL_RESOURCE_TABLE, $toInsert);
     }
 
+    /**
+     * Get a list of resources based on the list of resource code and source and add the appointmentId to the result.
+     * This result is used to update the pivot table.
+     * @param $resources array - list of resources with code.
+     * @param $sourceId int - source database ID
+     * @param $appointmentId int - ID of the appointment to which is associated the resources
+     * @return array - contains the list of internal resource ID with the appointment ID and other data to update pivot table
+     */
     function getResourceIds($resources, $sourceId, $appointmentId) {
         $cpt = 0;
         $dataSQL = "SourceDatabaseSerNum = :source AND (";
@@ -3147,6 +3181,12 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll($sql, $dataToList);
     }
 
+    /**
+     * Delete from pivot table resourceAppointment ressource not attached to specific appointment
+     * @param $appointmentId int - appointment ID
+     * @param $resourceIdList array - list of resource IDs
+     * @return int - number of rows affected
+     */
     function deleteResourcesForAppointment($appointmentId, $resourceIdList) {
         $sql = str_replace("%%RESOURCE_ID_LIST%%", implode(", ", $resourceIdList), DELETE_FROM_RESOURCE_APPOINTMENT);
         return $this->_execute($sql, array(
@@ -3154,6 +3194,12 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /**
+     * Insert into pivot table resourceAppointment missing links. This is a conditional insert on the fields
+     * ResourceSerNum and AppointmentSerNum if they do not exist.
+     * @param $records array - records to add
+     * @return int - number of records affected
+     */
     function insertResourcesForAppointment($records) {
         return $this->_replaceMultipleRecordsIntoTableConditional(OPAL_RESOURCE_APPOINTMENT_TABLE, $records,
             array("ResourceSerNum", "AppointmentSerNum")
