@@ -10,7 +10,7 @@
                 <div class="row main-title">
                     <div class="col-xs-12 col-md-8 title-content">
                         <span class="fa fa-address-card"></span>
-                        <h1><strong>{{'PATIENTREPORT.INDIVIDUAL.TITLE'|translate}}</strong></h1>
+                        <h1><strong>{{'PATIENTS.REPORT.INDIVIDUAL.TITLE'|translate}}</strong></h1>
                     </div>
                     <!-- breadcrumbs -->
                     <div class="col-md-4 title-breadcrumbs">
@@ -25,7 +25,7 @@
                             <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                 <span style="background-color:#e6edfa; padding: 0 10px;">
                                     <!-- <span class="fas fa-dot-circle"></span> -->
-                                    <h2>{{'PATIENTREPORT.INDIVIDUAL.PSEARCH'|translate}}</h2>
+                                    <h2>{{'PATIENTS.REPORT.INDIVIDUAL.PSEARCH'|translate}}</h2>
                                 </span>
                             </div>
                         </div>
@@ -37,7 +37,7 @@
                                 <form class="panel-body form-horizontal" ng-submit="findPat()">
                                     <div class="form-group">
                                         <label class="control-label col-xs-12 col-lg-4">
-                                            {{'PATIENTREPORT.INDIVIDUAL.PNAME'|translate}}
+                                            {{'PATIENTS.REPORT.INDIVIDUAL.PNAME'|translate}}
                                         </label>
                                         <div class=" col-xs-12 col-lg-10">
                                             <input class="form-control" type="text" ng-model="searchName" ng-disabled="searchMRN || searchRAMQ" placeholder="">
@@ -45,7 +45,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-xs-12 col-lg-4">
-                                            {{'PATIENTREPORT.INDIVIDUAL.PRAMQ'|translate}}
+                                            {{'PATIENTS.REPORT.INDIVIDUAL.PRAMQ'|translate}}
                                         </label>
                                         <div class=" col-xs-12 col-lg-10">
                                             <input class="form-control" type="text" ng-model="searchRAMQ" ng-disabled="searchMRN || searchName" placeholder="">
@@ -53,7 +53,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-xs-12 col-lg-4">
-                                            {{'PATIENTREPORT.INDIVIDUAL.PMRN'|translate}}
+                                            {{'PATIENTS.REPORT.INDIVIDUAL.PMRN'|translate}}
                                         </label>
                                         <div class=" col-xs-12 col-lg-10">
                                             <input class="form-control" type="text" ng-model="searchMRN" ng-disabled="searchName || searchRAMQ" placeholder="">
@@ -61,19 +61,19 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="save-add col-xs-12 col-sm-6 col-md-8">
-                                            <strong><input class="btn btn-md btn-outline item-button" value={{'PATIENTREPORT.INDIVIDUAL.SUBMIT'|translate}} type="submit" ng-disabled="!searchMRN && !searchRAMQ && !searchName"></strong>
-                                            <strong><input class="btn btn-md btn-outline item-button" value={{'PATIENTREPORT.INDIVIDUAL.RESET'|translate}} type="reset" ng-click="resetFieldValues()"></strong>
+                                            <strong><input class="btn btn-md btn-outline item-button" value={{'PATIENTS.REPORT.INDIVIDUAL.SUBMIT'|translate}} type="submit" ng-disabled="!searchMRN && !searchRAMQ && !searchName"></strong>
+                                            <strong><input class="btn btn-md btn-outline item-button" value={{'PATIENTS.REPORT.INDIVIDUAL.RESET'|translate}} type="reset" ng-click="resetFieldValues()"></strong>
                                         </div>
                                         <!-- multiple or no patients found -->
                                     </div>
                                     <div class="form-group">
-                                        <div ng-show="selectPatient">
-                                            <label class="control-label col-xs-12 col-lg-8">{{'PATIENTREPORT.INDIVIDUAL.MULTIPLE'|translate}}</label>
-                                            <select class="control-label col-xs-12 col-lg-3" ng-model="selectedName" ng-options="x for x in patOptions"
-                                                    ng-change="displaySelection()"></select>
+                                        <div ng-show="searchResult.length > 1">
+                                            <div class="col-xs-12"><p>{{'PATIENTS.REPORT.INDIVIDUAL.MULTIPLE'|translate}}</p></div>
+                                            <div class="col-xs-12">
+                                                <select class="control-label col-xs-12" ng-model="selectedName" ng-options="x as x.name_display for x in searchResult" ng-change="displaySelection()"></select></div>
                                         </div>
                                         <div ng-show="noPatientFound">
-                                            <label class="control-label col-xs-12 col-lg-10">{{'PATIENTREPORT.INDIVIDUAL.NONE'|translate}}</label>
+                                            <label class="control-label col-xs-12 col-lg-10">{{'PATIENTS.REPORT.INDIVIDUAL.NONE'|translate}}</label>
                                         </div>
                                     </div>
                                 </form>
@@ -85,36 +85,44 @@
                                 <div class="panel-body form-horizontal">
                                     <div class="form-group">
                                         <div class="col-xs-6 col-lg-4">
-                                            <label class="control-label">{{'PATIENTREPORT.INDIVIDUAL.LAST'|translate}}</label>
+                                            <label class="control-label">{{'PATIENTS.REPORT.INDIVIDUAL.LAST'|translate}}</label>
                                         </div>
                                         <div class="col-xs-6 col-lg-4">{{plname}}</div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENTREPORT.INDIVIDUAL.FIRST'|translate}}</label>
+                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENTS.REPORT.INDIVIDUAL.FIRST'|translate}}</label>
                                         <div class="col-xs-6 col-lg-4">{{pname}}</div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENTREPORT.INDIVIDUAL.SEX'|translate}}</label>
+                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENTS.REPORT.INDIVIDUAL.SEX'|translate}}</label>
                                         <div class="col-xs-4 col-lg-2">{{psex}}</div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENTREPORT.INDIVIDUAL.SERIAL'|translate}}</label>
+                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENTS.REPORT.INDIVIDUAL.SERIAL'|translate}}</label>
                                         <div class="col-xs-4 col-lg-2">{{psnum}}</div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENTREPORT.INDIVIDUAL.EMAIL'|translate}}</label>
+                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENTS.REPORT.INDIVIDUAL.EMAIL'|translate}}</label>
                                         <div class="col-xs-4 col-lg-2">{{pemail}}</div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-xs-6 col-lg-4">RAMQ</label>
-                                        <div class="col-xs-4 col-lg-2">{{pramq}}</div>
+                                        <div ng-show="pramq" class="col-xs-4 col-lg-8">{{pramq}}</div>
+                                        <div ng-show="!pramq" class="col-xs-4 col-lg-8">{{'PATIENTS.REPORT.INDIVIDUAL.NO_RAMQ'|translate}}</div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-xs-6 col-lg-4">MRN</label>
-                                        <div class="col-xs-4 col-lg-2">{{pid}}</div>
+                                        <div ng-if="MRN.length > 0" class="col-xs-4 col-lg-8">
+                                            <div ng-repeat="result in MRN">
+                                                {{result.hospital}} - {{result.MRN}}
+                                            </div>
+                                        </div>
+                                        <div ng-if="MRN.length <= 0" class="col-xs-4 col-lg-8">
+                                            {{'PATIENTS.REPORT.INDIVIDUAL.NO_MRN'|translate}}
+                                        </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENTREPORT.INDIVIDUAL.LANG'|translate}}</label>
+                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENTS.REPORT.INDIVIDUAL.LANG'|translate}}</label>
                                         <div class="col-xs-4 col-lg-2">{{plang}}</div>
                                     </div>
                                 </div>
@@ -126,7 +134,7 @@
                         <div class="col-xs-12 side-menu-title" >
                             <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                 <span style="background-color:#e6edfa; padding: 0 10px;">
-                                    <h2>{{'PATIENTREPORT.INDIVIDUAL.ISELECT'|translate}}</h2>
+                                    <h2>{{'PATIENTS.REPORT.INDIVIDUAL.ISELECT'|translate}}</h2>
                                 </span>
                             </div>
                         </div>
@@ -137,25 +145,25 @@
                             <div class="panel">
                                 <form class="panel-body form-horizontal" ng-submit="fetchData()">
                                     <div class="form-group">
-                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.diagnosis"> {{'PATIENTREPORT.COLUMNS.DIAGNOSIS.TITLE'|translate}}</label>
-                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.appointments"> {{'PATIENTREPORT.COLUMNS.APPOINTMENT.TITLE'|translate}}</label>
-                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.questionnaires"> {{'PATIENTREPORT.COLUMNS.QUESTIONNAIRE.TITLE'|translate}}</label>
-                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.education"> {{'PATIENTREPORT.COLUMNS.EDUCATIONAL_MATERIAL.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.diagnosis"> {{'PATIENTS.REPORT.COLUMNS.DIAGNOSIS.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.appointments"> {{'PATIENTS.REPORT.COLUMNS.APPOINTMENT.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.questionnaires"> {{'PATIENTS.REPORT.COLUMNS.QUESTIONNAIRE.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.education"> {{'PATIENTS.REPORT.COLUMNS.EDUCATIONAL_MATERIAL.TITLE'|translate}}</label>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.testresults"> {{'PATIENTREPORT.COLUMNS.LEGACY_LAB_TESTS.TITLE'|translate}}</label>
-                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.pattestresults"> {{'PATIENTREPORT.COLUMNS.LAB_TESTS.TITLE'|translate}}</label>
-                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.notifications"> {{'PATIENTREPORT.COLUMNS.NOTES.TITLE'|translate}}</label>
-                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.treatplan"> {{'PATIENTREPORT.COLUMNS.TREATMENT_PLAN.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.testresults"> {{'PATIENTS.REPORT.COLUMNS.LEGACY_LAB_TESTS.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.pattestresults"> {{'PATIENTS.REPORT.COLUMNS.LAB_TESTS.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.notifications"> {{'PATIENTS.REPORT.COLUMNS.NOTES.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.treatplan"> {{'PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.TITLE'|translate}}</label>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.clinicalnotes"> {{'PATIENTREPORT.COLUMNS.CLINICAL_NOTES.TITLE'|translate}}</label>
-                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.treatingteam"> {{'PATIENTREPORT.COLUMNS.TREATMENT_TEAM.TITLE'|translate}}</label>
-                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.general"> {{'PATIENTREPORT.COLUMNS.GENERAL.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.clinicalnotes"> {{'PATIENTS.REPORT.COLUMNS.CLINICAL_NOTES.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.treatingteam"> {{'PATIENTS.REPORT.COLUMNS.TREATMENT_TEAM.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.general"> {{'PATIENTS.REPORT.COLUMNS.GENERAL.TITLE'|translate}}</label>
                                     </div>
                                     <div class="form-group">
                                         <div class="save-add col-xs-12 col-sm-6 col-md-8">
-                                            <strong><input class="btn btn-md btn-outline item-button" value={{'PATIENTREPORT.INDIVIDUAL.GEN'|translate}} type="submit"></strong>
+                                            <strong><input class="btn btn-md btn-outline item-button" value={{'PATIENTS.REPORT.INDIVIDUAL.GEN'|translate}} type="submit"></strong>
                                         </div>
                                     </div>
                                 </form>
@@ -165,67 +173,67 @@
                     </div>
                     <div class="row" ng-if="featureList.diagnosis && generateFinished">
                         <div class="col-xs-12">
-                            <h2 style="text-align: center;">{{'PATIENTREPORT.COLUMNS.DIAGNOSIS.TITLE'|translate}}</h2>
+                            <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.DIAGNOSIS.TITLE'|translate}}</h2>
                             <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="diagGridOptions" ui-grid-resize-columns ng-style="{'height':{{diagReport.length * 30 + 90}}}"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.appointments && generateFinished">
                         <div class="col-xs-12">
-                            <h2 style="text-align: center;">{{'PATIENTREPORT.COLUMNS.APPOINTMENT.TITLE'|translate}}</h2>
+                            <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.APPOINTMENT.TITLE'|translate}}</h2>
                             <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="apptGridOptions" ui-grid-resize-columns ng-style="{'height':{{apptReport.length * 30 + 90}}}"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.questionnaires && generateFinished">
                         <div class="col-xs-12">
-                            <h2 style="text-align: center;">{{'PATIENTREPORT.COLUMNS.QUESTIONNAIRE.TITLE'|translate}}</h2>
+                            <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.QUESTIONNAIRE.TITLE'|translate}}</h2>
                             <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="qstGridOptions" ui-grid-resize-columns ng-style="{'height':{{qstReport.length * 30 + 90}}}"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.education && generateFinished">
                         <div class="col-xs-12">
-                            <h2 style="text-align: center;">{{'PATIENTREPORT.COLUMNS.EDUCATIONAL_MATERIAL.TITLE'|translate}}</h2>
+                            <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.EDUCATIONAL_MATERIAL.TITLE'|translate}}</h2>
                             <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="educGridOptions" ui-grid-resize-columns ng-style="{'height':{{educReport.length * 30 + 90}}}"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.testresults && generateFinished">
                         <div class="col-xs-12">
-                            <h2 style="text-align: center;">{{'PATIENTREPORT.COLUMNS.LEGACY_LAB_TESTS.TITLE'|translate}}</h2>
+                            <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.LEGACY_LAB_TESTS.TITLE'|translate}}</h2>
                             <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="testGridOptions" ui-grid-resize-columns ng-style="{'height':{{testReport.length * 30 + 90}}}"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.pattestresults && generateFinished">
                         <div class="col-xs-12">
-                            <h2 style="text-align: center;">{{'PATIENTREPORT.COLUMNS.LAB_TESTS.TITLE'|translate}}</h2>
+                            <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.LAB_TESTS.TITLE'|translate}}</h2>
                             <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="pattestGridOptions" ui-grid-resize-columns ng-style="{'height':{{pattestReport.length * 30 + 90}}}"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.notifications && generateFinished">
                         <div class="col-xs-12">
-                            <h2 style="text-align: center;">{{'PATIENTREPORT.COLUMNS.NOTES.TITLE'|translate}}</h2>
+                            <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.NOTES.TITLE'|translate}}</h2>
                             <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="noteGridOptions" ui-grid-resize-columns ng-style="{'height':{{noteReport.length * 30 + 90}}}"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.treatplan && generateFinished">
                         <div class="col-xs-12">
-                            <h2 style="text-align: center;">{{'PATIENTREPORT.COLUMNS.TREATMENT_PLAN.TITLE'|translate}}</h2>
+                            <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.TITLE'|translate}}</h2>
                             <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="txplanGridOptions" ui-grid-resize-columns ng-style="{'height':{{txplanReport.length * 30 + 90}}}"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.clinicalnotes && generateFinished">
                         <div class="col-xs-12">
-                            <h2 style="text-align: center;">{{'PATIENTREPORT.COLUMNS.CLINICAL_NOTES.TITLE'|translate}}</h2>
+                            <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.CLINICAL_NOTES.TITLE'|translate}}</h2>
                             <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="clinnoteGridOptions" ui-grid-resize-columns ng-style="{'height':{{clinnoteReport.length * 30 + 90}}}"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.treatingteam && generateFinished">
                         <div class="col-xs-12">
-                            <h2 style="text-align: center;">{{'PATIENTREPORT.COLUMNS.TREATMENT_TEAM.TITLE'|translate}}</h2>
+                            <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.TREATMENT_TEAM.TITLE'|translate}}</h2>
                             <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="txteamGridOptions" ui-grid-resize-columns ng-style="{'height':{{txteamReport.length * 30 + 90}}}"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.general && generateFinished">
                         <div class="col-xs-12">
-                            <h2 style="text-align: center;">{{'PATIENTREPORT.COLUMNS.GENERAL.TITLE'|translate}}</h2>
+                            <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.GENERAL.TITLE'|translate}}</h2>
                             <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="generalGridOptions" ui-grid-resize-columns ng-style="{'height':{{generalReport.length * 30 + 90}}}"></div>
                         </div>
                     </div>

@@ -2,8 +2,8 @@
 # Apache/PHP settings:
 #
 php_value max_input_vars 1000000
-php_value post_max_size 1024M
-php_value upload_max_filesize 1024M
+php_value post_max_size 2048M
+php_value upload_max_filesize 2048M
 
 # Protect files and directories from prying eyes.
 <FilesMatch "\.(engine|inc|info|install|make|module|profile|test|po|sh|.*sql|theme|tpl(\.php)?|xtmpl)(~|\.sw[op]|\.bak|\.orig|\.save)?$|^(\..*|Entries.*|Repository|Root|Tag|Template|composer\.(json|lock))$|^#.*#$|\.php(~|\.sw[op]|\.bak|\.orig\.save)$">
@@ -228,6 +228,7 @@ RewriteRule ^patient/get/education-options php/patient/find_educ.php [QSA,L]
 RewriteRule ^patient/get/educ-report php/patient/get.education_report.php [QSA,L]
 RewriteRule ^patient/get/patient-activities php/patient/get.patient_activities.php [QSA,L]
 RewriteRule ^patient/get/patients php/patient/get.patients.php [QSA,L]
+RewriteRule ^patient/get/patient-exist php/patient/get.patient_exist.php [QSA,L]
 RewriteRule ^patient/get/patient-data php/patient/get.patient_data.php [QSA,L]
 RewriteRule ^patient/get/patient-mrn php/patient/find_mrn.php [QSA,L]
 RewriteRule ^patient/get/patient-name php/patient/find_name.php [QSA,L]
@@ -235,7 +236,12 @@ RewriteRule ^patient/get/patient-ramq php/patient/find_ramq.php [QSA,L]
 RewriteRule ^patient/get/patient-report php/patient/get.patient_report.php [QSA,L]
 RewriteRule ^patient/get/questionnaire-report php/patient/get.questionnaire_report.php [QSA,L]
 RewriteRule ^patient/get/questionnaire-options php/patient/find_qst.php [QSA,L]
+RewriteRule ^patient/update/patient-data php/patient/update.patient_data.php [QSA,L]
 RewriteRule ^patient/update/publish-flags php/patient/update.publish_flags.php [QSA,L]
+
+# Appointment Section
+RewriteRule ^appointment/get/appointments php/appointment/get.appointments.php [QSA,L]
+RewriteRule ^api/public/v1/appointment php/appointment/get.appointments.php [QSA,L]
 
 # Post Section
 RewriteRule ^post/delete/post php/post/delete.post.php [QSA,L]
@@ -267,12 +273,23 @@ RewriteRule ^question/update/question php/questionnaire/update.question.php [QSA
 
 # Questionnaire Section
 RewriteRule ^questionnaire/delete/questionnaire php/questionnaire/delete.questionnaire.php [QSA,L]
+RewriteRule ^questionnaire/get/answered-questionnaires-patient php/questionnaire/get.answered.questionnaires.patient.php [QSA,L]
 RewriteRule ^questionnaire/get/finalized-questions php/questionnaire/get.finalizedQuestions.php [QSA,L]
+RewriteRule ^questionnaire/get/published-questionnaires php/questionnaire/get.published.questionnaires.php [QSA,L]
 RewriteRule ^questionnaire/get/purposes-respondents php/questionnaire/get.purposes.respondents.php [QSA,L]
+RewriteRule ^questionnaire/get/purposes php/questionnaire/get.purposes.php [QSA,L]
+RewriteRule ^questionnaire/get/chart-answers-patient php/questionnaire/get.chart.answers.questionnaire.patient.php [QSA,L]
+RewriteRule ^questionnaire/get/last-completed-quesitonnaire php/questionnaire/get.last.completed.questionnaire.php [QSA,L]
+RewriteRule ^questionnaire/get/non-chart-answers-patient php/questionnaire/get.non.chart.answers.questionnaire.patient.php [QSA,L]
+RewriteRule ^questionnaire/get/patients-completed-questionaires php/questionnaire/get.patients.completed.questionnaires.php [QSA,L]
+RewriteRule ^questionnaire/get/questionnaires-list-orms php/questionnaire/get.questionnaire.list.orms.php [QSA,L]
 RewriteRule ^questionnaire/get/questionnaires php/questionnaire/get.questionnaires.php [QSA,L]
 RewriteRule ^questionnaire/get/questionnaire-details php/questionnaire/get.questionnaire_details.php [QSA,L]
 RewriteRule ^questionnaire/insert/questionnaire php/questionnaire/insert.questionnaire.php [QSA,L]
 RewriteRule ^questionnaire/update/questionnaire php/questionnaire/update.questionnaire.php [QSA,L]
+
+#Resources Section
+RewriteRule ^resource/insert/resource php/resource/insert.resource.php [QSA,L]
 
 # Roles Section
 RewriteRule ^role/delete/role php/role/delete.role.php [QSA,L]
@@ -300,6 +317,7 @@ RewriteRule ^study/get/consent-published php/study/get.consent.published.php [QS
 RewriteRule ^study/get/research-patient php/study/get.research.patient.php [QSA,L]
 RewriteRule ^study/get/study-details php/study/get.study.details.php [QSA,L]
 RewriteRule ^study/get/consent-forms php/study/get.consent.forms.php [QSA,L]
+RewriteRule ^study/get/studies-patient-consented php/study/get.studies.patient.consented.php [QSA,L]
 RewriteRule ^study/get/studies php/study/get.studies.php [QSA,L]
 RewriteRule ^study/insert/study php/study/insert.study.php [QSA,L]
 RewriteRule ^study/update/study php/study/update.study.php [QSA,L]

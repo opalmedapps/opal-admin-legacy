@@ -164,12 +164,14 @@ sub publishPatientsForPatients
     # If we are not within the window to publish patsforpats then return
     #if ( (($now - $today_at_eightAM) < 0) or (($now - $today_at_eightPM) > 0) ) {return;}
 
-    my @patsForPatsControls = PostControl::getPostControlsMarkedForPublish('Patients For Patients');
+    # Check for any new updates from the main cron control
+	PostControl::CheckPostControlsMarkedForPublishModularCron('Patients for Patients');
+
+    my @patsForPatsControls = PostControl::getPostControlsMarkedForPublishModularCron('Patients for Patients');
 
     foreach my $Patient (@patientList) {
 
         my $patientSer          = $Patient->getPatientSer(); # get patient serial
-		my $patientId 			= $Patient->getPatientId(); # get patient id 
 
         foreach my $PostControl (@patsForPatsControls) {
 
@@ -322,7 +324,7 @@ sub publishPatientsForPatients
                     # Finding the existence of the patient in the patient-specific filters
                     # If the patient exists, or all patients were selected as triggers, 
                     # then patient passes else move on to next patient
-                    if ($patientId ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
+                    if ($patientSer ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
                         $patientPassed = 1;
                     }
                     else {next;}
