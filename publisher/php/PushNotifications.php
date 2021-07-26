@@ -32,15 +32,15 @@ class PushNotifications {
 
 		// Flag to identify when to use the utf8_encode because message coming
 		// from PERL alters the French characters
-		$wsFlag = (isset($data['encode'])? $data['encode'] :'Yes' );
+		// $wsFlag = (isset($data['encode'])? $data['encode'] :'Yes' );
 
-		if ($wsFlag == 'Yes') {
+		// if ($wsFlag == 'Yes') {
 			$wsTitle = utf8_encode($data['mtitle']);
 			$wsBody = utf8_encode($data['mdesc']);
-		} else {
-			$wsTitle = $data['mtitle'];
-			$wsBody = $data['mdesc'];
-		}
+		// } else {
+		// 	$wsTitle = $data['mtitle'];
+		// 	$wsBody = $data['mdesc'];
+		// }
 
 		// Create a unique Post ID so that the push notification
 		// will not override the previous push notification by using
@@ -99,15 +99,16 @@ class PushNotifications {
 	*   @return $response - success/failure array, success requires 200 response http code from APN service
 	**/
 	public static function iOS($data, $devicetoken) {
+
 		//validation and message prep
 		if(is_array($data)){
-			if(isset($data['encode']) && ($data['encode'] == 'Yes')){
+			// if(isset($data['encode']) && ($data['encode'] == 'Yes')){
 				$wsTitle = utf8_encode($data['mtitle']);
 				$wsBody = utf8_encode($data['mdesc']);
-			}else{ // caller did not set encode property
-				$wsTitle = $data['mtitle'];
-				$wsBody = $data['mdesc'];
-			}
+			// }else{ // caller did not set encode property
+			// 	$wsTitle = $data['mtitle'];
+			// 	$wsBody = $data['mdesc'];
+			// }
         }else{ //data not array error
 			$response =  array("success"=>0,"failure"=>1,"error"=>"Request data invalid, unable to send push notification.");
 			return $response;
@@ -133,10 +134,14 @@ class PushNotifications {
 		//curl_setopt($ch, CURLOPT_SSLKEYPASSWD, ); if we add a password to the key file we'll specify that here
 		curl_setopt($ch, CURLOPT_SSLCERT, self::$certificate_file); //cert file
 		//curl_setopt($ch, CURLOPT_SSLCERTPASSWD, self::$passphrase); same story as with the cert key password
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+		// curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$response = curl_exec($ch);
 		$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($httpcode != 200) {
+			$myfile = fopen("/var/www/html/opalAdmin/publisher/PushNotificationError.txt", "a");
+			fwrite($myfile, print_r([$response,$body],true)."\n");
+			fclose($myfile);
 			$err = curl_error($ch);
 			$response =  array("success"=>0,"failure"=>1,"error"=>"$err\n");
 		} else {
