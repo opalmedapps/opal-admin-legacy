@@ -60,11 +60,11 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 		['html', 'insertLink']
 	];
 
-	$scope.consentChoices = 
-	[$filter('translate')('STUDY.EDIT.INVITED'), 
-	$filter('translate')('STUDY.EDIT.OPAL_CONSENTED'),
-	$filter('translate')('STUDY.EDIT.OTHER_CONSENTED'),
-	$filter('translate')('STUDY.EDIT.DECLINED')];
+	$scope.consentChoices =
+		[$filter('translate')('STUDY.EDIT.INVITED'),
+			$filter('translate')('STUDY.EDIT.OPAL_CONSENTED'),
+			$filter('translate')('STUDY.EDIT.OTHER_CONSENTED'),
+			$filter('translate')('STUDY.EDIT.DECLINED')];
 
 	$scope.phoneVal = true;
 	$scope.emVal = true;
@@ -197,13 +197,13 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	$scope.showProcessingModal();
 
 	/**
-		 * Validate the investigator personal info fields before allowing user to continue
-		 * phone regex checks for standard 10 digit number with options for deliniation by space, hyphen, or period
-		 * 		User can optionally enter country code eg +1 or +44
-		 * email regex checks for standard RFC2822 email format
-		 * phoneExt regex checks for any number of digits 0-9 up to a maximum length of 6
-		 */
-	 $scope.validateInvestigatorInfo = function () {
+	 * Validate the investigator personal info fields before allowing user to continue
+	 * phone regex checks for standard 10 digit number with options for deliniation by space, hyphen, or period
+	 * 		User can optionally enter country code eg +1 or +44
+	 * email regex checks for standard RFC2822 email format
+	 * phoneExt regex checks for any number of digits 0-9 up to a maximum length of 6
+	 */
+	$scope.validateInvestigatorInfo = function () {
 		$scope.phoneVal = false;
 		$scope.emVal = false;
 		$scope.extVal = false;
@@ -249,7 +249,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 				entry.name_display = entry.name_FR;
 			}else{
 				entry.name_display = entry.name_EN;
-			}	
+			}
 		});
 		$scope.consentFormList = response.data;
 	}).catch(function(err){
@@ -265,24 +265,24 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 
 	studyCollectionService.getPatientConsentList($scope.currentStudy.ID).then(function(response){
 		$scope.patientConsentList = response.data;
-	
+
 		angular.forEach($scope.patientConsentList, function(value){
 			value.changed = null;
 			switch (parseInt(value.consent)){
-				default:
-					value.consent_display = $filter('translate')('STUDY.EDIT.INVITED'); //default value in DB should always be invited
-					break;
-				case 1:
-					value.consent_display = $filter('translate')('STUDY.EDIT.INVITED');
-					break;
-				case 2:
-					value.consent_display = $filter('translate')('STUDY.EDIT.OPAL_CONSENTED');
-					break;
-				case 3:
-					value.consent_display = $filter('translate')('STUDY.EDIT.OTHER_CONSENTED');
-					break;
-				case 4:
-					value.consent_display = $filter('translate')('STUDY.EDIT.DECLINED');
+			case 1:
+				value.consent_display = $filter('translate')('STUDY.EDIT.INVITED');
+				break;
+			case 2:
+				value.consent_display = $filter('translate')('STUDY.EDIT.OPAL_CONSENTED');
+				break;
+			case 3:
+				value.consent_display = $filter('translate')('STUDY.EDIT.OTHER_CONSENTED');
+				break;
+			case 4:
+				value.consent_display = $filter('translate')('STUDY.EDIT.DECLINED');
+				break;
+			default:
+				value.consent_display = $filter('translate')('STUDY.EDIT.INVITED'); //default value in DB should always be invited
 			}
 		});
 		$scope.ready[1] = true;
@@ -298,7 +298,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 				$scope.validator.patients.completed = true;
 			if($scope.questionnaireList.length > 0)
 				$scope.validator.questionnaire.completed = true;
-		 
+
 			angular.forEach($scope.patientsList, function(value) {
 				value.added = $scope.backupStudy.patients.includes(value.id);
 			});
@@ -306,13 +306,13 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			angular.forEach($scope.questionnaireList, function(value) {
 				value.added = $scope.backupStudy.questionnaire.includes(value.ID);
 			});
-			
+
 			if($scope.language === "FR"){
 				$scope.consentTitle = $scope.backupStudy.consentQuestionnaireTitle[0].name_FR;
 			}else{
 				$scope.consentTitle = $scope.backupStudy.consentQuestionnaireTitle[0].name_EN;
 			}
-		
+
 
 			$scope.toSubmit.ID = $scope.backupStudy.ID;
 			$scope.toSubmit.details.code = $scope.backupStudy.code;
@@ -321,7 +321,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			$scope.toSubmit.title_desc.description_EN = $scope.backupStudy.description_EN;
 			$scope.toSubmit.title_desc.description_FR = $scope.backupStudy.description_FR;
 			$scope.toSubmit.investigator.name = $scope.backupStudy.investigator;
-			$scope.toSubmit.investigator.email = $scope.backupStudy.email; 
+			$scope.toSubmit.investigator.email = $scope.backupStudy.email;
 			$scope.toSubmit.investigator.phone = $scope.backupStudy.phone;
 			$scope.toSubmit.investigator.phoneExt = $scope.backupStudy.phoneExt;
 
