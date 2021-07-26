@@ -117,3 +117,6 @@ define("OPAL_APPOINTMENT_CHECK_IN_TABLE", "AppointmentCheckin");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
+define("OPAL_RESOURCE_PENDING_TABLE", "resourcePending");
+define("OPAL_RESOURCE_PENDING_ERROR_TABLE", "resourcePendingError");
+define("OPAL_RESOURCE_PENDING_MH_TABLE", "resourcePendingMH");
