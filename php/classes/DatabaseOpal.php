@@ -3093,7 +3093,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return array - data found if any
      */
     function getAppointmentForResource($appointmentAriaId, $sourceId) {
-        return $this->_fetchAll(OPAL_GET_APPOINTMENT, array(
+        return $this->_fetchAll(OPAL_GET_APPOINTMENT_FOR_RESOURCE, array(
             array("parameter"=>":AppointmentAriaSer","variable"=>$appointmentAriaId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
         ));
