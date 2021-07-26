@@ -1456,7 +1456,7 @@ define("OPAL_MARKED_AS_DELETED_SOURCE_ALIAS", "
     AND source = :source AND type = :type AND code = :code;
 ");
 
-const OPAL_GET_APPOINTMENT = "
+const OPAL_GET_APPOINTMENT_FOR_RESOURCE = "
     SELECT * FROM " . OPAL_APPOINTMENTS_TABLE . " WHERE AppointmentAriaSer = :AppointmentAriaSer AND SourceDatabaseSerNum = :SourceDatabaseSerNum;
 ";
 
