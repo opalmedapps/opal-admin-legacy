@@ -869,6 +869,7 @@ define("OPAL_GET_PATIENT_NAME", "
     SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
     CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
     SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang FROM ".OPAL_PATIENT_TABLE." WHERE LastName LIKE :name;
+														  
 ");
 
 define("OPAL_GET_PATIENT_MRN", "
@@ -883,6 +884,7 @@ define("OPAL_GET_PATIENT_RAMQ", "
     SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
     CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
     SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :SSN;
+													 
 ");
 
 define("OPAL_GET_DIAGNOSIS_REPORT", "
@@ -1251,6 +1253,7 @@ define("OPAL_UPDATE_PATIENT_HOSPITAL_IDENTIFIER","
 
 define("OPAL_GET_PATIENTS","
     SELECT DISTINCT pc.PatientSerNum AS serial, pt.SSN AS RAMQ, pc.PatientUpdate AS transfer, CONCAT(UCASE(LEFT(pt.FirstName, 1)), LCASE(SUBSTRING(pt.FirstName, 2)),
+																								
     ' ', UCASE(LEFT(pt.LastName, 1)), LCASE(SUBSTRING(pt.LastName, 2))) AS name, pc.LastTransferred AS lasttransferred, pt.email AS email FROM ".OPAL_PATIENT_TABLE." pt RIGHT JOIN
     ".OPAL_PATIENT_CONTROL_TABLE." pc ON pt.PatientSerNum = pc.PatientSerNum LEFT JOIN ".OPAL_USERS_TABLE." usr ON
     pt.PatientSerNum = usr.UserTypeSerNum WHERE usr.UserType = 'Patient';
@@ -1665,4 +1668,32 @@ SELECT s.ID as studyId, s.code, s.title_EN, s.title_FR FROM ".OPAL_STUDY_TABLE."
 ON ps.studyId = s.ID LEFT JOIN ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi ON phi.PatientSerNum = ps.patientId
 WHERE ps.consentStatus IN (".CONSENT_STATUS_OPAL_CONSENTED.", ".CONSENT_STATUS_OTHER_CONSENTED.")
 AND phi.MRN = :MRN AND phi.Hospital_Identifier_Type_Code = :Hospital_Identifier_Type_Code ORDER BY s.ID;
+";
+
+const OPAL_GET_APPOINTMENT_FOR_RESOURCE = "
+    SELECT * FROM " . OPAL_APPOINTMENTS_TABLE . " WHERE AppointmentAriaSer = :AppointmentAriaSer AND SourceDatabaseSerNum = :SourceDatabaseSerNum;
+";
+
+const OPAL_GET_RESOURCE_PENDING = "
+    SELECT * FROM ".OPAL_RESOURCE_PENDING_TABLE." WHERE sourceName = :sourceName AND appointmentId = :appointmentId;
+";
+
+const OPAL_UPDATE_RESOURCE_PENDING = "
+    UPDATE ".OPAL_RESOURCE_PENDING_TABLE." SET resources = :resources, updatedBy = :updatedBy WHERE
+    sourceName = :sourceName AND appointmentId = :appointmentId AND level = 1;
+";
+
+const OPAL_UPDATE_RESOURCE = "
+    UPDATE ".OPAL_RESOURCE_TABLE." SET ResourceName = :ResourceName, ResourceType = :ResourceType WHERE
+    SourceDatabaseSerNum = :SourceDatabaseSerNum AND ResourceCode = :ResourceCode;
+";
+
+const OPAL_GET_RESOURCES_FOR_RESOURCE_APPOINTMENT = "
+    SELECT :AppointmentSerNum AS AppointmentSerNum, NOW() AS DateAdded, '1' AS ExclusiveFlag, '0' AS PrimaryFlag, 
+    ResourceSerNum FROM ".OPAL_RESOURCE_TABLE." WHERE %%SOURCE_CODE_LIST%%;
+";
+
+const DELETE_FROM_RESOURCE_APPOINTMENT = "
+    DELETE FROM ".OPAL_RESOURCE_APPOINTMENT_TABLE." WHERE AppointmentSerNum = :AppointmentSerNum AND ResourceSerNum
+    NOT IN (%%RESOURCE_ID_LIST%%);
 ";
