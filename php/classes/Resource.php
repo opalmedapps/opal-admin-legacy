@@ -157,7 +157,7 @@ class Resource extends Module {
     protected function _insertResourcePending(&$post) {
         $data = array(
             "sourceName"=>$post["source"],
-            "appointment"=>$post["appointment"],
+            "appointmentId"=>$post["appointment"],
             "resources"=>json_encode($post["resources"])
         );
 
