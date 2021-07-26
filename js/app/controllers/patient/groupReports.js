@@ -93,14 +93,14 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
     $scope.educGridOptions = {
         data: 'educReport',
         columnDefs: [
-            { field: 'pname', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.NAME'), width: '15%', enableColumnMenu: false },
-            { field: 'plname', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.NAME_FAMILY'), width: '15%', enableColumnMenu: false },
-            { field: 'pser', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.SERIAL'), width: '10%', enableColumnMenu: false },
-            { field: 'page', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.AGE'), width: '10%', enableColumnMenu: false },
-            { field: 'pdob', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.BIRTH'), width:'10%', enableColumnMenu: false },
-            { field: 'psex', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.SEX'), width:'10%', enableColumnMenu: false },
-            { field: 'edate', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.DATE_SENT'), width:'15%', enableColumnMenu: false },
-            { field: 'eupdate', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.DATE_READ'), width:'15%', enableColumnMenu: false },
+            { field: 'pname', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.NAME'), width: '15%', enableColumnMenu: false },
+            { field: 'plname', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.NAME_FAMILY'), width: '15%', enableColumnMenu: false },
+            { field: 'pser', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.SERIAL'), width: '10%', enableColumnMenu: false },
+            { field: 'page', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.AGE'), width: '10%', enableColumnMenu: false },
+            { field: 'pdob', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.BIRTH'), width:'10%', enableColumnMenu: false },
+            { field: 'psex', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.SEX'), width:'10%', enableColumnMenu: false },
+            { field: 'edate', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.DATE_SENT'), width:'15%', enableColumnMenu: false },
+            { field: 'eupdate', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.DATE_READ'), width:'15%', enableColumnMenu: false },
         ],
         enableFiltering: true,
         enableColumnResizing: true,
@@ -109,13 +109,13 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
     $scope.qstGridOptions = {
         data: 'qstReport',
         columnDefs: [
-            { field: 'pname', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.NAME'), width: '15%', enableColumnMenu: false },
-            { field: 'plname', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.NAME_FAMILY'), width: '15%', enableColumnMenu: false },
-            { field: 'pser', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.SERIAL'), width: '15%', enableColumnMenu: false },
-            { field: 'psex', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.SEX'), width: '10%', enableColumnMenu: false },
-            { field: 'pdob', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.BIRTH'), width:'15%', enableColumnMenu: false },
-            { field: 'qdate', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.DATE_SENT'), width:'15%', enableColumnMenu: false },
-            { field: 'qcomplete', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.DATE_COMPLETE'), width:'15%', enableColumnMenu: false },
+            { field: 'pname', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.NAME'), width: '15%', enableColumnMenu: false },
+            { field: 'plname', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.NAME_FAMILY'), width: '15%', enableColumnMenu: false },
+            { field: 'pser', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.SERIAL'), width: '15%', enableColumnMenu: false },
+            { field: 'psex', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.SEX'), width: '10%', enableColumnMenu: false },
+            { field: 'pdob', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.BIRTH'), width:'15%', enableColumnMenu: false },
+            { field: 'qdate', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.DATE_SENT'), width:'15%', enableColumnMenu: false },
+            { field: 'qcomplete', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.DATE_COMPLETE'), width:'15%', enableColumnMenu: false },
         ],
         enableFiltering: true,
         enableColumnResizing: true,
@@ -125,17 +125,17 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
     $scope.demoGridOptions = {
         data: 'patientReport',
         columnDefs: [
-            { field: 'pname', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.NAME'), width: '10%', enableColumnMenu: false },
-            { field: 'plname', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.NAME_FAMILY'), width: '10%', enableColumnMenu: false },
-            { field: 'pser', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.SERIAL'), width: '8%', enableColumnMenu: false },
-            { field: 'page', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.AGE'), width: '5%', enableColumnMenu: false },
-            { field: 'pdob', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.BIRTH'), width:'10%', enableColumnMenu: false },
-            { field: 'psex', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.SEX'), width:'5%', enableColumnMenu: false },
-            { field: 'pemail', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.EMAIL'), width:'10%', enableColumnMenu: false },
-            { field: 'plang', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.LANG'), width:'10%', enableColumnMenu: false },
-            { field: 'preg', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.REG'), width:'13%', enableColumnMenu: false },
-            { field: 'diagdesc', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.DIAGNOSIS'), width:'9%', enableColumnMenu: false },
-            { field: 'diagdate', displayName: $filter('translate')('PATIENTREPORT.COLUMNS.GROUP_REPORTS.DATE_DIAG'), width:'10%', enableColumnMenu: false },
+            { field: 'pname', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.NAME'), width: '10%', enableColumnMenu: false },
+            { field: 'plname', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.NAME_FAMILY'), width: '10%', enableColumnMenu: false },
+            { field: 'pser', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.SERIAL'), width: '8%', enableColumnMenu: false },
+            { field: 'page', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.AGE'), width: '5%', enableColumnMenu: false },
+            { field: 'pdob', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.BIRTH'), width:'10%', enableColumnMenu: false },
+            { field: 'psex', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.SEX'), width:'5%', enableColumnMenu: false },
+            { field: 'pemail', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.EMAIL'), width:'10%', enableColumnMenu: false },
+            { field: 'plang', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.LANG'), width:'10%', enableColumnMenu: false },
+            { field: 'preg', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.REG'), width:'13%', enableColumnMenu: false },
+            { field: 'diagdesc', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.DIAGNOSIS'), width:'9%', enableColumnMenu: false },
+            { field: 'diagdate', displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.GROUP_REPORTS.DATE_DIAG'), width:'10%', enableColumnMenu: false },
         ],
         enableFiltering: true,
         enableColumnResizing: true,
@@ -196,7 +196,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                 prepareEducList(JSON.parse(response));
             },
             error: function(err){
-                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.DB_ERROR'));
+                ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
             }
         });
     
@@ -216,7 +216,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                 prepareEducReport(JSON.parse(response));
             },
             error: function(err){
-                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.DB_ERROR'));
+                ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
             }       
          });
     }
@@ -236,7 +236,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                 }
                 $scope.displayMaterialList = true;
             }else{
-                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
+                ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.SEARCH_FAIL'));
             }
 
         });
@@ -296,7 +296,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
     
     
             }else{ //error, no result returned
-                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
+                ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.SEARCH_FAIL'));
             }
 
         });
@@ -365,7 +365,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                 prepareQstList(JSON.parse(response));
             },
             error: function(err){
-                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.DB_ERROR'));
+                ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
             }
 
         });
@@ -384,7 +384,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                 prepareQstReport(JSON.parse(response));
             },
             error: function(err){
-                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
+                ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.SEARCH_FAIL'));
             }
         });
     }
@@ -401,7 +401,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                 tmp ="";
                 }
             }else{ // no questionnaires returned
-                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
+                ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.SEARCH_FAIL'));
             }
     
         });
@@ -449,7 +449,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                 $scope.qstReportLength = $scope.qstReport.length;
                 refresh();
             }else{
-                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
+                ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.SEARCH_FAIL'));
             }
     
             prepareQstStats();
@@ -553,7 +553,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                 preparePatientReport(JSON.parse(response));
             },
             error: function(err){
-                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.DB_ERROR'));
+                ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
             }
         });
     }
@@ -628,7 +628,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
     
     
             }else{
-                ErrorHandler.onError(err, $filter('translate')('PATIENTREPORT.SEARCH.SEARCH_FAIL'));
+                ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.SEARCH_FAIL'));
             }
         });
 
@@ -706,17 +706,17 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                 type: 'spline'
             },
             title:{
-                text: $filter('translate')('PATIENTREPORT.GROUP.REGS')
+                text: $filter('translate')('PATIENTS.REPORT.GROUP.REGS')
             },
             yAxis: {
                 title: {
-                    text: $filter('translate')('PATIENTREPORT.GROUP.TOT_REG')
+                    text: $filter('translate')('PATIENTS.REPORT.GROUP.TOT_REG')
                 }
             },
             xAxis: {
                 type: 'datetime',
                 title: {
-                    text:  $filter('translate')('PATIENTREPORT.GROUP.TIME')
+                    text:  $filter('translate')('PATIENTS.REPORT.GROUP.TIME')
                 },
             },
             legend: {
@@ -742,13 +742,13 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                 }
             },
             series: [{
-                name:  $filter('translate')('PATIENTREPORT.GROUP.PAT_ALL'),
+                name:  $filter('translate')('PATIENTS.REPORT.GROUP.PAT_ALL'),
                 data: $scope.regPlotData
             },{
-                name:  $filter('translate')('PATIENTREPORT.GROUP.PAT_FEM'),
+                name:  $filter('translate')('PATIENTS.REPORT.GROUP.PAT_FEM'),
                 data: $scope.femalePlotData
             },{
-                name:  $filter('translate')('PATIENTREPORT.GROUP.PAT_MAL'),
+                name:  $filter('translate')('PATIENTS.REPORT.GROUP.PAT_MAL'),
                 data: $scope.malePlotData
             }]
         });
