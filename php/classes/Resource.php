@@ -144,9 +144,10 @@ class Resource extends Module {
                 break;
             }
             else if(count($resourcePending) == 1) {
-                $rowCount = $this->opalDB->updatePendingResource($data);
-                if($rowCount > 0)
+                if($resourcePending[0]["level"] == RESOURCE_LEVEL_READY) {
+                    $this->opalDB->updatePendingResource($data);
                     break;
+                }
                 else
                     sleep(5);
             }

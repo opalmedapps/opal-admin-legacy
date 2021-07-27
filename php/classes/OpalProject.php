@@ -118,6 +118,7 @@ abstract class OpalProject
      * @param $sourceDatabaseId - ID of the requested source database
      */
     protected function _insertResources($appointmentId, $resources, $sourceDatabaseId) {
+
         foreach ($resources as $resource) {
             $data = array(
                 "SourceDatabaseSerNum"=>$sourceDatabaseId,
@@ -125,6 +126,7 @@ abstract class OpalProject
                 "ResourceName"=>$resource["name"],
                 "ResourceType"=>$resource["type"],
             );
+
             $rowCount = $this->opalDB->updateResource($data);
             if (intval($rowCount) <= 0)
                 $this->opalDB->insertResource($data);
