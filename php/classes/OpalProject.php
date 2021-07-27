@@ -22,11 +22,11 @@ abstract class OpalProject
     }
 
     /*
- * Get the list of educational materials. Protected function so any module can call it the same way when needed
- * without having to call the module educational materials itself, but cannot be called from outside.
- * @params  void
- * @return  $result - array - list of educational materials
- * */
+    * Get the list of educational materials. Protected function so any module can call it the same way when needed
+    * without having to call the module educational materials itself, but cannot be called from outside.
+    * @params  void
+    * @return  $result - array - list of educational materials
+    * */
     protected function _getListEduMaterial() {
         $results = $this->opalDB->getEducationalMaterial();
         foreach($results as &$row) {
@@ -108,5 +108,34 @@ abstract class OpalProject
             }
         }
         return $errCode;
+    }
+
+
+    /**
+     * Insert and update resources before updating the pivot table for the current resources needed.
+     * @param $appointmentId int - ID of the appointment
+     * @param $resources array - list of resources to insert and associate with the appointment
+     * @param $sourceDatabaseId - ID of the requested source database
+     */
+    protected function _insertResources($appointmentId, $resources, $sourceDatabaseId) {
+        foreach ($resources as $resource) {
+            $data = array(
+                "SourceDatabaseSerNum"=>$sourceDatabaseId,
+                "ResourceCode"=>$resource["code"],
+                "ResourceName"=>$resource["name"],
+                "ResourceType"=>$resource["type"],
+            );
+            $rowCount = $this->opalDB->updateResource($data);
+            if (intval($rowCount) <= 0)
+                $this->opalDB->insertResource($data);
+        }
+
+        $resourceAppointmentList = $this->opalDB->getResourceIds($resources, $sourceDatabaseId, $appointmentId);
+        $resourceIdList = array();
+        foreach ($resourceAppointmentList as $id)
+            array_push($resourceIdList, intval($id["ResourceSerNum"]));
+
+        $this->opalDB->deleteResourcesForAppointment($appointmentId, $resourceIdList);
+        $this->opalDB->insertResourcesForAppointment($resourceAppointmentList);
     }
 }
