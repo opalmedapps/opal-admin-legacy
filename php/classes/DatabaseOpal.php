@@ -3663,7 +3663,23 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_updateRecordIntoTable(UPDATE_RESOURCE_PENDING_LEVEL_IN_PROCESS, array("updatedBy"=>$this->getUsername()));
     }
 
+    /**
+     * Return the oldest resource pending marked as a level 2 (processing)
+     * @return array - data found
+     */
     function getOldestResourcePendingInProcess() {
         return $this->_fetchAll(GET_OLDEST_RESOURCE_PENDING_IN_PROCESS, array());
+    }
+
+    /**
+     * Delete a specific resourcePending record
+     * @param $id - primary key of the record in resourcePending to delete
+     * @return int - number of records affected
+     */
+    function deleteResourcePendingInProcess($id) {
+        $toDelete = array(
+            array("parameter"=>":ID","variable"=>$id),
+        );
+        return $this->_execute(OPAL_DELETE_RESOURCE_PENDING, $toDelete);
     }
 }
