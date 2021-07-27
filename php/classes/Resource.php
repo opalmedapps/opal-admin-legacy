@@ -115,35 +115,7 @@ class Resource extends Module {
         if (empty($appointment))
             $this->_insertResourcePending($post);
         else
-            $this->_insertResources($appointment, $post, $source);
-    }
-
-    /**
-     * Insert and update resources before updating the pivot table for the current resources needed.
-     * @param $appointment array - appointment details
-     * @param $post array - post info containing the resources requested by the user
-     * @param $source array - source database details
-     */
-    protected function _insertResources(&$appointment, &$post, &$source) {
-        foreach ($post["resources"] as $resource) {
-            $data = array(
-                "SourceDatabaseSerNum"=>$source["SourceDatabaseSerNum"],
-                "ResourceCode"=>$resource["code"],
-                "ResourceName"=>$resource["name"],
-                "ResourceType"=>$resource["type"],
-            );
-            $rowCount = $this->opalDB->updateResource($data);
-            if (intval($rowCount) <= 0)
-                $this->opalDB->insertResource($data);
-        }
-
-        $resourceAppointmentList = $this->opalDB->getResourceIds($post["resources"], $source["SourceDatabaseSerNum"], $appointment["AppointmentSerNum"]);
-        $resourceIdList = array();
-        foreach ($resourceAppointmentList as $id)
-            array_push($resourceIdList, intval($id["ResourceSerNum"]));
-
-        $this->opalDB->deleteResourcesForAppointment($appointment["AppointmentSerNum"], $resourceIdList);
-        $this->opalDB->insertResourcesForAppointment($resourceAppointmentList);
+            $this->_insertResources($appointment["AppointmentSerNum"], $post["resources"], $source["SourceDatabaseSerNum"]);
     }
 
     /**
