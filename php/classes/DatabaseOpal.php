@@ -23,6 +23,10 @@ class DatabaseOpal extends DatabaseAccess {
             }
             else {
                 $userInfo = $this->_getUserInfoFromDB($newOAUserId);
+                if(count($userInfo) == 1)
+                    $userInfo = $userInfo[0];
+                else
+                    HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "User not authenticated.");
                 $this->OAUserId = $userInfo["OAUserId"];
                 $this->username = $userInfo["username"];
                 $this->userRole = $userInfo["userRole"];
@@ -3651,4 +3655,15 @@ class DatabaseOpal extends DatabaseAccess {
         );
     }
 
+    /**
+     * Update ever resource pending of level 1 with appointment ready to level 2.
+     * @return int - number or records affected
+     */
+    function updateResourcePendingLevelInProcess() {
+        return $this->_updateRecordIntoTable(UPDATE_RESOURCE_PENDING_LEVEL_IN_PROCESS, array("updatedBy"=>$this->getUsername()));
+    }
+
+    function getOldestResourcePendingInProcess() {
+        return $this->_fetchAll(GET_OLDEST_RESOURCE_PENDING_IN_PROCESS, array());
+    }
 }

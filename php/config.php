@@ -25,6 +25,7 @@ $json = file_get_contents($abspath . 'config.json');
 $config = json_decode($json, true);
 
 const LOCALHOST_ADDRESS = array('127.0.0.1','localhost','::1');
+const DEFAULT_CRON_OAUSERID = 23;
 
 // DEFINE MOSAIQ SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MicrosoftSQL (MSSQL) setup.
@@ -51,6 +52,9 @@ define("ALIAS_TYPE_TASK_TEXT", 'Task');
 define("ALIAS_TYPE_TASK", 1);
 define("ALIAS_TYPE_APPOINTMENT", 2);
 define("ALIAS_TYPE_DOCUMENT", 3);
+
+const RESOURCE_LEVEL_READY = 1;
+const RESOURCE_LEVEL_IN_PROCESS = 2;
 
 /*
  * Module ID of each module in the opalAdmin
