@@ -49,7 +49,7 @@ angular.module('opalAdmin', [
 		role: 16,
 		alert: 17,
 		audit: 18,
-		sms: 21,
+		sms: 22,
 	})
 
 	.constant('HTTP_CODE', {
