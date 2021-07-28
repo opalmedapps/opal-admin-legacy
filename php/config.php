@@ -25,6 +25,14 @@ $json = file_get_contents($abspath . 'config.json');
 $config = json_decode($json, true);
 
 const LOCALHOST_ADDRESS = array('127.0.0.1','localhost','::1');
+const DEFAULT_API_CONFIG = array(
+    CURLOPT_COOKIESESSION=>true,
+    CURLOPT_RETURNTRANSFER=>true,
+    CURLOPT_FOLLOWLOCATION=>true,
+    CURLOPT_POST=>true,
+    CURLOPT_SSL_VERIFYPEER=>false,
+    CURLOPT_HEADER=>true,
+);
 const DEFAULT_CRON_OAUSERID = 23;
 
 // DEFINE MOSAIQ SERVER/DATABASE CREDENTIALS HERE
@@ -187,6 +195,7 @@ include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseDisconnected.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Trigger.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Appointment.php" );
+include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "ApiCall.php" );
 
 // Push Notification FCM and APN credientials.
 define( "API_KEY" , $config['pushNotificationConfig']['android']['apiKey'] );
