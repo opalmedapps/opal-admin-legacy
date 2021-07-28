@@ -1680,7 +1680,7 @@ const OPAL_GET_RESOURCE_PENDING = "
 
 const OPAL_UPDATE_RESOURCE_PENDING = "
     UPDATE ".OPAL_RESOURCE_PENDING_TABLE." SET resources = :resources, updatedBy = :updatedBy WHERE
-    sourceName = :sourceName AND appointmentId = :appointmentId AND level = 1;
+    sourceName = :sourceName AND appointmentId = :appointmentId AND `level` = ".RESOURCE_LEVEL_READY.";
 ";
 
 const OPAL_UPDATE_RESOURCE = "
@@ -1697,3 +1697,20 @@ const DELETE_FROM_RESOURCE_APPOINTMENT = "
     DELETE FROM ".OPAL_RESOURCE_APPOINTMENT_TABLE." WHERE AppointmentSerNum = :AppointmentSerNum AND ResourceSerNum
     NOT IN (%%RESOURCE_ID_LIST%%);
 ";
+
+const UPDATE_RESOURCE_PENDING_LEVEL_IN_PROCESS = "
+    UPDATE ".OPAL_RESOURCE_PENDING_TABLE." rp SET rp.`level` = ".RESOURCE_LEVEL_IN_PROCESS.", updatedBy = :updatedBy
+    WHERE ( SELECT COUNT(*) AS total FROM ".OPAL_APPOINTMENTS_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s
+    ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum WHERE s.SourceDatabaseName = rp.sourceName AND
+    s.Enabled = ".ACTIVE_RECORD." AND a.AppointmentAriaSer = rp.appointmentId AND rp.`level` = ".RESOURCE_LEVEL_READY.") = 1
+";
+
+const GET_OLDEST_RESOURCE_PENDING_IN_PROCESS = "
+    SELECT rp.*, (SELECT a.AppointmentSerNum FROM ".OPAL_APPOINTMENTS_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s
+    ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum WHERE s.SourceDatabaseName = rp.sourceName AND s.Enabled = 1 AND
+    a.AppointmentAriaSer = rp.appointmentId) AS AppointmentSerNum, (SELECT s1.SourceDatabaseSerNum FROM
+    ".OPAL_SOURCE_DATABASE_TABLE." s1 WHERE s1.SourceDatabaseName = rp.sourceName AND s1.Enabled = 1) AS SourceDatabaseSerNum
+    FROM ".OPAL_RESOURCE_PENDING_TABLE." rp WHERE rp.`level` = 2 ORDER BY creationDate ASC LIMIT 1;
+";
+
+const OPAL_DELETE_RESOURCE_PENDING = "DELETE FROM " . OPAL_RESOURCE_PENDING_TABLE . " WHERE ID = :ID;";
