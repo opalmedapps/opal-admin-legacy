@@ -76,4 +76,83 @@ class CronJob extends OpalProject {
             $resourcePending = $this->opalDB->getOldestResourcePendingInProcess();
         }
     }
+
+    /**
+     * Validate and sanitize appointment check-in info.
+     * @param $post - data for the resource to validate
+     * @param $source - contains source details
+     * @param $appointment - contains appointment details (if exists)
+     * Validation code :    Error validation code is coded as an int of 3 bits (value from 0 to 7). Bit information
+     *                      are coded from right to left:
+     *                      1: source name missing or invalid
+     *                      2: appointment missing
+     *                      3: Duplicate appointments have being found. Contact the administrator ASAP.
+     * @return string - error code
+     */
+    protected function _validateAppointmentCheckIn(&$post, &$source, &$appointment) {
+        $errCode = "";
+
+        if (is_array($post)) {
+            // 1st bit
+            if (!array_key_exists("source", $post) || $post["source"] == "") {
+                if(!array_key_exists("source", $post)) $post["source"] = "";
+                $errCode = "1" . $errCode;
+            }
+            else {
+                $source = $this->opalDB->getSourceDatabaseDetails($post["source"]);
+                if(count($source) < 1) {
+                    $errCode = "1" . $errCode;
+                    $source = array();
+                }
+                else if(count($source) == 1) {
+                    $source = $source[0];
+                    $errCode = "0" . $errCode;
+                }
+                else
+                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates sources found. Contact your administrator.");
+            }
+
+            // 2nd bit
+            if (!array_key_exists("appointment", $post) || $post["appointment"] == "") {
+                if(!array_key_exists("appointment", $post)) $post["appointment"] = "";
+                $errCode = "1" . $errCode;
+            }
+            else
+                $errCode = "0" . $errCode;
+
+            // 3rd bit
+            if(bindec($errCode) == 0) {
+                $appointment = $this->opalDB->getAppointmentForResource($post["appointment"], $source["SourceDatabaseSerNum"]);
+                if(count($appointment) > 1)
+                    $errCode = "1" . $errCode;
+                else {
+                    if(count($appointment) == 1)
+                        $appointment = $appointment[0];
+                    $errCode = "0" . $errCode;
+                }
+            }
+
+        } else {
+            $post = array(
+                "source"=>"",
+                "appointment"=>"",
+            );
+            $errCode .= "111";
+        }
+
+        return $errCode;
+    }
+
+    public function updateAppointmentCheckIn($post) {
+        $this->_checkCronAccess();
+        $errCode = $this->_validateAppointmentCheckIn($post, $source, $appointment);
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+
+        echo "ok the test starts here\r\n";
+
+        die("\r\ndone");
+    }
 }
