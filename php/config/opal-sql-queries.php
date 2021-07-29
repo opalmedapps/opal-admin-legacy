@@ -1714,3 +1714,15 @@ const GET_OLDEST_RESOURCE_PENDING_IN_PROCESS = "
 ";
 
 const OPAL_DELETE_RESOURCE_PENDING = "DELETE FROM " . OPAL_RESOURCE_PENDING_TABLE . " WHERE ID = :ID;";
+
+const UPDATE_APPOINTMENT_CHECKIN = "
+    UPDATE ".OPAL_APPOINTMENTS_TABLE." SET Checkin = ".CHECKED_IN." WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum
+    AND AppointmentAriaSer = :AppointmentAriaSer AND Checkin = ".NOT_CHECKED_IN.";
+";
+
+const OPAL_GET_FIRST_MRN_SITE_BY_SOURCE_APPOINTMENT = "
+    SELECT phi.Hospital_Identifier_Type_Code AS site, phi.MRN AS mrn FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi
+    LEFT JOIN ".OPAL_APPOINTMENTS_TABLE." a ON a.PatientSerNum = phi.PatientSerNum WHERE
+    a.SourceDatabaseSerNum = :SourceDatabaseSerNum AND a.AppointmentAriaSer = :AppointmentAriaSer AND
+    Is_Active = ".ACTIVE_RECORD." LIMIT 1;
+";
