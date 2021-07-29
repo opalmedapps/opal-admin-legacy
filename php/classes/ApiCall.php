@@ -195,8 +195,8 @@ class ApiCall {
      */
     public function setPostFields($fields): void {
         $this->activatePost();
-        $this->_httpBuildQueryForCurl($fields, $results);
-        $this->setOption(CURLOPT_POSTFIELDS, $results);
+//        $this->_httpBuildQueryForCurl($fields, $results);
+        $this->setOption(CURLOPT_POSTFIELDS, $fields);
     }
 
     /**
