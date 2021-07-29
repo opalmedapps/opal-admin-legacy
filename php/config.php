@@ -24,6 +24,11 @@ $json = file_get_contents($abspath . 'config.json');
 // Decode json to variable
 $config = json_decode($json, true);
 
+define("USER_SALT", $config["login"]["salt"]);
+define("ACTIVE_DIRECTORY", $config["login"]["activeDirectory"]);
+define("ACTIVE_DIRECTORY_SETTINGS", $config["login"]["activeDirectory"]["settings"]);
+define("AD_LOGIN_ACTIVE", ACTIVE_DIRECTORY["enabled"]);
+
 const LOCALHOST_ADDRESS = array('127.0.0.1','localhost','::1');
 const DEFAULT_API_CONFIG = array(
     CURLOPT_COOKIESESSION=>true,
@@ -32,6 +37,10 @@ const DEFAULT_API_CONFIG = array(
     CURLOPT_POST=>true,
     CURLOPT_SSL_VERIFYPEER=>false,
     CURLOPT_HEADER=>true,
+);
+const MSSS_ACTIVE_DIRECTORY_CONFIG = array(
+    CURLOPT_URL=>ACTIVE_DIRECTORY["url"],
+    CURLOPT_RETURNTRANSFER=>true,
 );
 const DEFAULT_CRON_OAUSERID = 23;
 
@@ -205,11 +214,6 @@ define( "CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'c
 define( "APNS_TOPIC" , $config['pushNotificationConfig']['apple']['certificate']['topic'] );
 define( "CERTIFICATE_KEY" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['key'] );
 define( "IOS_URL" , $config['pushNotificationConfig']['apple']['appleURL'] );
-
-define("USER_SALT", $config["login"]["salt"]);
-define("ACTIVE_DIRECTORY", $config["login"]["activeDirectory"]);
-define("ACTIVE_DIRECTORY_SETTINGS", $config["login"]["activeDirectory"]["settings"]);
-define("AD_LOGIN_ACTIVE", ACTIVE_DIRECTORY["enabled"]);
 
 define("ACCESS_READ", 1);
 define("ACCESS_READ_WRITE", 3);

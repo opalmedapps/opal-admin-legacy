@@ -54,12 +54,10 @@ class User extends Module {
         }
         $fieldString = substr($fieldString, 0, -1);
 
-        $ch = curl_init();
-        curl_setopt($ch,CURLOPT_URL, ACTIVE_DIRECTORY["url"]);
-        curl_setopt($ch,CURLOPT_POSTFIELDS,$fieldString);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        $requestResult = json_decode(curl_exec($ch),TRUE);
-        curl_close($ch);
+        $api = new ApiCall(MSSS_ACTIVE_DIRECTORY_CONFIG);
+        $api->setPostFields($fieldString);
+        $api->execute();
+        $requestResult = json_decode($api->getAnswer(), true);
 
         if(!$requestResult["authenticate"]) {
             HelpSetup::getModuleMethodName($moduleName, $methodeName);
