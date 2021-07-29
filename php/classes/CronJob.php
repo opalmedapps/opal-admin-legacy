@@ -89,7 +89,7 @@ class CronJob extends OpalProject {
      *                      3: Duplicate appointments have being found. Contact the administrator ASAP.
      * @return string - error code
      */
-    protected function _validateAppointmentCheckIn(&$post, &$source, &$appointment) {
+    protected function _validateAppointmentCheckIn(&$post, &$source, &$appointment, &$patientInfo) {
         $errCode = "";
 
         if (is_array($post)) {
@@ -130,14 +130,23 @@ class CronJob extends OpalProject {
                         $appointment = $appointment[0];
                     $errCode = "0" . $errCode;
                 }
-            }
+
+                // 4th bit
+                $patientInfo = $this->opalDB->getFirstMrnSiteBySourceAppointment($post["source"], $post["appointment"]);
+                if(count($patientInfo) < 1)
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
+
+            } else
+                $errCode = "1" . $errCode;
 
         } else {
             $post = array(
                 "source"=>"",
                 "appointment"=>"",
             );
-            $errCode .= "111";
+            $errCode .= "1111";
         }
 
         return $errCode;
@@ -145,14 +154,20 @@ class CronJob extends OpalProject {
 
     public function updateAppointmentCheckIn($post) {
         $this->_checkCronAccess();
-        $errCode = $this->_validateAppointmentCheckIn($post, $source, $appointment);
+        $errCode = $this->_validateAppointmentCheckIn($post, $source, $appointment, $patientInfo);
         $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
+        $rowCount = $this->opalDB->updateCheckInForAppointment($post["source"], $post["appointment"]);
+        if($rowCount > 0) {
+            $api = new ApiCall();
+            $api->setUrl("");
+            $api->setPostFields(array(
+                "mrn"=>$patientInfo["mrn"],
+                "site"=>$patientInfo["site"],
+            ));
 
-        echo "ok the test starts here\r\n";
-
-        die("\r\ndone");
+        }
     }
 }

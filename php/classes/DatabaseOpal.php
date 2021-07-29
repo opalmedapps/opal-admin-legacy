@@ -3682,4 +3682,18 @@ class DatabaseOpal extends DatabaseAccess {
         );
         return $this->_execute(OPAL_DELETE_RESOURCE_PENDING, $toDelete);
     }
+
+    function updateCheckInForAppointment($source, $appointment) {
+        return $this->_updateRecordIntoTable(UPDATE_APPOINTMENT_CHECKIN, array(
+            "SourceDatabaseSerNum"=>$source,
+            "AppointmentAriaSer"=>$appointment,
+        ));
+    }
+
+    function getFirstMrnSiteBySourceAppointment($source, $appointment) {
+        return $this->_fetchAll(OPAL_GET_FIRST_MRN_SITE_BY_SOURCE_APPOINTMENT, array(
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":AppointmentAriaSer","variable"=>$appointment,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }

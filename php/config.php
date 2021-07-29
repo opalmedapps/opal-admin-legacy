@@ -44,6 +44,9 @@ const MSSS_ACTIVE_DIRECTORY_CONFIG = array(
 );
 const DEFAULT_CRON_OAUSERID = 23;
 
+const CHECKED_IN = 1;
+const NOT_CHECKED_IN = 0;
+
 // DEFINE MOSAIQ SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MicrosoftSQL (MSSQL) setup.
 define( "MOSAIQ_DB_HOST", $config['databaseConfig']['mosaiq']['host'] );
