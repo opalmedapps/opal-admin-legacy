@@ -3,7 +3,7 @@
 
 class ApiCall {
 
-    private $options = array();
+    private $options;
     private $answer;
     private $answerInfo;
     private $body;
@@ -207,11 +207,17 @@ class ApiCall {
     }
 
     /**
-     * Activate the url option for cURL if no yet active
+     * Activate the url option for cURL if no yet active. IF there is any param to attach to the url (like for a GET)
+     * it will be added.
      * @param $url string - url of the API call to do
+     * @param $params array - by default empty. Attach associative array to the url as for a GET message
      */
-    public function setUrl($url): void {
-        $this->setOption(CURLOPT_URL, $url);
+    public function setUrl($url, $params = array()): void {
+        $encoded = null;
+        foreach($params as $name => $value)
+            $encoded .= urlencode($name).'='.urlencode($value).'&';
+
+        $this->setOption(CURLOPT_URL, $url . (!is_null($encoded) ? "?$encoded" : ""));
     }
 
     /**
