@@ -82,11 +82,13 @@ class CronJob extends OpalProject {
      * @param $post - data for the resource to validate
      * @param $source - contains source details
      * @param $appointment - contains appointment details (if exists)
-     * Validation code :    Error validation code is coded as an int of 3 bits (value from 0 to 7). Bit information
+     * @param $patientInfo - contains patient info (if exists)
+     * Validation code :    Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit information
      *                      are coded from right to left:
      *                      1: source name missing or invalid
      *                      2: appointment missing
      *                      3: Duplicate appointments have being found. Contact the administrator ASAP.
+     *                      4: MRN and site not found.
      * @return string - error code
      */
     protected function _validateAppointmentCheckIn(&$post, &$source, &$appointment, &$patientInfo) {
@@ -135,23 +137,26 @@ class CronJob extends OpalProject {
                 $patientInfo = $this->opalDB->getFirstMrnSiteBySourceAppointment($post["source"], $post["appointment"]);
                 if(count($patientInfo) < 1)
                     $errCode = "1" . $errCode;
-                else
+                else {
+                    $patientInfo = $patientInfo[0];
                     $errCode = "0" . $errCode;
+                }
 
             } else
                 $errCode = "1" . $errCode;
 
-        } else {
-            $post = array(
-                "source"=>"",
-                "appointment"=>"",
-            );
+        } else
             $errCode .= "1111";
-        }
 
         return $errCode;
     }
 
+    /**
+     * Updates the check-in for a particular appointment to checked and send the info to the push notification API. If
+     * the call returns an error, a code 502 (bad gateway) is returned to the caller to inform there's a problem with
+     * the push notification. Otherwise, a code 200 (all clear) is returned.
+     * @param $post array - contains the source name and the external appointment ID
+     */
     public function updateAppointmentCheckIn($post) {
         $this->_checkCronAccess();
         $errCode = $this->_validateAppointmentCheckIn($post, $source, $appointment, $patientInfo);
@@ -159,15 +164,19 @@ class CronJob extends OpalProject {
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        $rowCount = $this->opalDB->updateCheckInForAppointment($post["source"], $post["appointment"]);
-        if($rowCount > 0) {
-            $api = new ApiCall();
-            $api->setUrl("");
-            $api->setPostFields(array(
+        $rowCount = $this->opalDB->updateCheckInForAppointment($source["SourceDatabaseSerNum"], $post["appointment"]);
+        if($rowCount >= 1) {
+            $api = new ApiCall(PUSH_NOTIFICATION_CONFIG);
+            $api->setUrl(OPAL_CHECKIN_CALL, array(
                 "mrn"=>$patientInfo["mrn"],
                 "site"=>$patientInfo["site"],
             ));
+            $api->execute();
 
+            if($api->getError())
+                HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY, "Error from the Opal push notification server => ".$api->getError());
+            if($api->getHttpCode() != HTTP_STATUS_SUCCESS || strpos(strtolower($api->getBody()), 'error:') !== false)
+                HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY, "Error from the Opal push notification server => ".$api->getBody());
         }
     }
 }

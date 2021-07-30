@@ -1722,7 +1722,8 @@ const UPDATE_APPOINTMENT_CHECKIN = "
 
 const OPAL_GET_FIRST_MRN_SITE_BY_SOURCE_APPOINTMENT = "
     SELECT phi.Hospital_Identifier_Type_Code AS site, phi.MRN AS mrn FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi
-    LEFT JOIN ".OPAL_APPOINTMENTS_TABLE." a ON a.PatientSerNum = phi.PatientSerNum WHERE
-    a.SourceDatabaseSerNum = :SourceDatabaseSerNum AND a.AppointmentAriaSer = :AppointmentAriaSer AND
+    LEFT JOIN ".OPAL_APPOINTMENTS_TABLE." a ON a.PatientSerNum = phi.PatientSerNum
+    LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum
+    WHERE s.SourceDatabaseName = :SourceDatabaseName AND a.AppointmentAriaSer = :AppointmentAriaSer AND
     Is_Active = ".ACTIVE_RECORD." LIMIT 1;
 ";
