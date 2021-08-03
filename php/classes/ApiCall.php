@@ -195,8 +195,12 @@ class ApiCall {
      */
     public function setPostFields($fields): void {
         $this->activatePost();
-//        $this->_httpBuildQueryForCurl($fields, $results);
-        $this->setOption(CURLOPT_POSTFIELDS, $fields);
+        if(is_array($fields))
+            $this->_httpBuildQueryForCurl($fields, $results);
+        else
+            $results = $fields;
+
+        $this->setOption(CURLOPT_POSTFIELDS, $results);
     }
 
     /**
@@ -315,7 +319,7 @@ class ApiCall {
         foreach ( $arrays AS $key => $value ) {
             $k = isset( $prefix ) ? $prefix . '[' . $key . ']' : $key;
             if ( is_array( $value ) OR is_object( $value )  ) {
-                http_build_query_for_curl( $value, $new, $k );
+                $this->_httpBuildQueryForCurl( $value, $new, $k );
             } else {
                 $new[$k] = $value;
             }
