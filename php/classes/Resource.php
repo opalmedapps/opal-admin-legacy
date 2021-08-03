@@ -12,7 +12,7 @@ class Resource extends Module {
      * @param $post - data for the resource to validate
      * @param $source - contains source details
      * @param $appointment - contains appointment details (if exists)
-     * Validation code :    Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit informations
+     * Validation code :    Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit information
      *                      are coded from right to left:
      *                      1: source name missing or invalid
      *                      2: appointment missing

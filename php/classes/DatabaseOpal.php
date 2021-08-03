@@ -3682,4 +3682,30 @@ class DatabaseOpal extends DatabaseAccess {
         );
         return $this->_execute(OPAL_DELETE_RESOURCE_PENDING, $toDelete);
     }
+
+    /**
+     * Update the check-in of an appointment to checked if it was not checked and returned the number of affected rows
+     * @param $source int - source database ID
+     * @param $appointment - external appointment ID
+     * @return int - number of row affected
+     */
+    function updateCheckInForAppointment($source, $appointment) {
+        return $this->_updateRecordIntoTable(UPDATE_APPOINTMENT_CHECKIN, array(
+            "SourceDatabaseSerNum"=>$source,
+            "AppointmentAriaSer"=>$appointment,
+        ));
+    }
+
+    /**
+     * Get the first site and mrn found based on its source and appointment ID. Used to send push notification.
+     * @param $source int - source database ID
+     * @param $appointment - external appointment ID
+     * @return array - list of records found. Must be one since a LIMIT 1 is set up in the SQL
+     */
+    function getFirstMrnSiteBySourceAppointment($source, $appointment) {
+        return $this->_fetchAll(OPAL_GET_FIRST_MRN_SITE_BY_SOURCE_APPOINTMENT, array(
+            array("parameter"=>":SourceDatabaseName","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":AppointmentAriaSer","variable"=>$appointment,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }
