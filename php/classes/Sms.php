@@ -29,7 +29,7 @@ class Sms extends Module {
      * */
     public function getAppointments() {
         $this->checkReadAccess();
-        return $this->ormsDB->getAppointmentForSms();
+        return $this->postRequest("http://192.168.146.3//php/api/public/v1/sms/smsAppointment/getSmsAppointments.php");
     }
 
     /*
@@ -190,7 +190,7 @@ class Sms extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         if($post['type'] == 0)
-            return $this->ormsDB->setAppointmentTypeNull($post['id']);
+            return $this->ormsDB->updateAppointmentType(NULL,$post['id']);
         else
             return $this->ormsDB->updateAppointmentType($post['type'],$post['id']);
     }
@@ -294,4 +294,18 @@ class Sms extends Module {
         return $this->ormsDB->getAllTypeForMessage();
     }
 
+    private function postRequest($url, $postParameters = []) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Connection: Keep-Alive'
+        ));
+        curl_setopt($ch,CURLOPT_URL, $url);
+        curl_setopt($ch,CURLOPT_POSTFIELDS, http_build_query($postParameters));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        $requestResult = json_decode(curl_exec($ch),TRUE);
+        curl_close($ch);
+        return $requestResult;
+    }
 }
