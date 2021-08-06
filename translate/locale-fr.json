@@ -3339,7 +3339,7 @@
       "MESSAGE_EN": "Message anglais manquant",
       "MESSAGE_FR": "Message français manquant",
       "SPECIALITY": "Spécialité manquant",
-      "STATE": "Drapeau d'état manquant",
+      "ACTIVE": "Drapeau d'activation manquant",
       "TYPE": "Type manquant"
     }
   },

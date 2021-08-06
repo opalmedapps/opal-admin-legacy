@@ -45,24 +45,24 @@
                         </div>
                         <uib-accordion class="side-navbar">
                             <!-- SECTION: Speciality -->
-                            <div uib-accordion-group is-open="specialitySection.open" class="panel-container summary-box" is-disabled="!UpdateInformation.speciality">
+                            <div uib-accordion-group is-open="specialitySection.open" class="panel-container summary-box" is-disabled="!UpdateInformation.specialityName">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items:center">
                                         <div class="col-md-2">
-                                            <span ng-if="UpdateInformation.speciality" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                            <span ng-if="UpdateInformation.specialityName" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
                                             <strong>{{'SMS.MESSAGE.SPECIALITY'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i ng-if="UpdateInformation.speciality" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':specialitySection.open, 'glyphicon-chevron-right':!specialitySection.open}"></i>
+                                            <i ng-if="UpdateInformation.specialityName" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':specialitySection.open, 'glyphicon-chevron-right':!specialitySection.open}"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
-                                <div ng-if="UpdateInformation.speciality" class="description">
+                                <div ng-if="UpdateInformation.specialityName" class="description">
                                     <p>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{UpdateInformation.speciality}}
+                                        {{UpdateInformation.specialityName}}
                                     </p>
                                 </div>
                             </div>
@@ -205,11 +205,11 @@
                         </div>
                         <div class="row">
                             <div ng-repeat="element in SpecialityList" class="col-xs-4 col-lg-3 item-panel-select">
-                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: UpdateInformation.speciality == element.speciality}" ng-click="SpecialityUpdate(element)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                                    <div class="panel-info" ng-class="{active: UpdateInformation.speciality == element.speciality}">
+                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: UpdateInformation.specialityName == element.specialityName}" ng-click="SpecialityUpdate(element)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                    <div class="panel-info" ng-class="{active: UpdateInformation.specialityName == element.specialityName}">
                                         <div class="panel-content" style="text-align:center">
                                             <span style="font-size:30px;" class="fa fa-database"></span>
-                                            <div class="option-panel-title">{{element.speciality}}</div>
+                                            <div class="option-panel-title">{{element.specialityName}}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -236,11 +236,11 @@
                         </div>
                         <div class="row animated" ng-class="{fadeInUp:typeSection.show}" ng-if="typeSection.show">
                             <div ng-repeat="element in TypeList" class="col-xs-4 col-lg-3 item-panel-select">
-                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: UpdateInformation.type == element.type}" ng-click="TypeUpdate(element)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                                    <div class="panel-info" ng-class="{active: UpdateInformation.type == element.type}">
+                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: UpdateInformation.type == element}" ng-click="TypeUpdate(element)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                    <div class="panel-info" ng-class="{active: UpdateInformation.type == element}">
                                         <div class="panel-content" style="text-align:center">
                                             <span style="font-size:30px;" class="fa fa-sticky-note"></span>
-                                            <div class="option-panel-title">{{element.type}}</div>
+                                            <div class="option-panel-title">{{element}}</div>
                                         </div>
                                     </div>
                                 </div>
