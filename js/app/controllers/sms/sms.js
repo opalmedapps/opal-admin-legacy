@@ -50,7 +50,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             var matcher = new RegExp($scope.filterValue, 'i');
             renderableRows.forEach(function (row) {
                 var match = false;
-                ['appcode','resname','apptype',"spec"].forEach(function (field) {
+                ['appointmentCode','resourceDescription','type',"speciality"].forEach(function (field) {
                     if (row.entity[field].match(matcher)) {
                         match = true;
                     }
@@ -64,38 +64,38 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
 
         //Cell Templates
         var cellTemplateResourceName = '<div style="cursor:pointer;" class="ui-grid-cell-contents">' +
-            '<a href=""  ng-click="grid.appScope.editAppointment(row.entity)"><strong>{{row.entity.resname}}</strong>&nbsp&nbsp&nbsp({{row.entity.rescode}})</a></div>';
+            '<a href=""  ng-click="grid.appScope.editAppointment(row.entity)"><strong>{{row.entity.resourceDescription}}</strong>&nbsp&nbsp&nbsp({{row.entity.resourceCode}})</a></div>';
         var cellTemplateAppointmentCode = '<div style="cursor:pointer;" class="ui-grid-cell-contents">' +
-            '<strong><a href=""  ng-click="grid.appScope.editAppointment(row.entity)">{{row.entity.appcode}}</a></strong></div>';
+            '<strong><a href=""  ng-click="grid.appScope.editAppointment(row.entity)">{{row.entity.appointmentCode}}</a></strong></div>';
 
         var checkboxCellTemplate;
         if($scope.writeAccess)
             checkboxCellTemplate = '<div style="text-align: center;" class="ui-grid-cell-contents" ' +
-                'ng-style = "(row.entity.apptype != \'-\') ? {cursor:\'pointer\'}:{cursor:\'not-allowed\'}" >' +
-                '<input style="margin: 4px;" type="checkbox" ng-checked="grid.appScope.updateVal(row.entity.state)" ' +
-                'ng-disabled="!(row.entity.apptype != \'-\')" ng-click="grid.appScope.checkSmsUpdate(row.entity)" ' +
-                'ng-model="row.entity.state"></div>';
+                'ng-style = "(row.entity.type != \'-\') ? {cursor:\'pointer\'}:{cursor:\'not-allowed\'}" >' +
+                '<input style="margin: 4px;" type="checkbox" ng-checked="grid.appScope.updateVal(row.entity.active)" ' +
+                'ng-disabled="!(row.entity.type != \'-\')" ng-click="grid.appScope.checkSmsUpdate(row.entity)" ' +
+                'ng-model="row.entity.active"></div>';
         else
-            checkboxCellTemplate = '<div style="text-align: center;" class="ui-grid-cell-contents"><i ng-class="row.entity.state == 1 ? \'Active\' : \'Disabled\'" class="fa"></i></div>';
+            checkboxCellTemplate = '<div style="text-align: center;" class="ui-grid-cell-contents"><i ng-class="row.entity.active == 1 ? \'Active\' : \'Disabled\'" class="fa"></i></div>';
 
         $scope.gridOptions = {
             data: 'smsAppointments',
             columnDefs: [
-                {field:'appcode', displayName: $filter('translate')('SMS.LIST.APPOINTMENT_CODE'),width: '25%',enableColumnMenu: false, cellTemplate: cellTemplateAppointmentCode},
-                {field:'resname', displayName:  $filter('translate')('SMS.LIST.RESOURCE_NAME'), width:'30%', enableColumnMenu: false,cellTemplate: cellTemplateResourceName},
+                {field:'appointmentCode', displayName: $filter('translate')('SMS.LIST.APPOINTMENT_CODE'),width: '25%',enableColumnMenu: false, cellTemplate: cellTemplateAppointmentCode},
+                {field:'resourceDescription', displayName:  $filter('translate')('SMS.LIST.RESOURCE_NAME'), width:'30%', enableColumnMenu: false,cellTemplate: cellTemplateResourceName},
                 {
-                    field: 'apptype', displayName: $filter('translate')('SMS.LIST.TYPE'), width: '15%', enableColumnMenu: false, filter: {
+                    field: 'type', displayName: $filter('translate')('SMS.LIST.TYPE'), width: '15%', enableColumnMenu: false, filter: {
                         type: uiGridConstants.filter.SELECT,
                         selectOptions: []
                     }
                 },
                 {
-                    field: 'spec', displayName:  $filter('translate')('SMS.LIST.SPECIALITY'), width: '15%', enableColumnMenu: false, filter: {
+                    field: 'speciality', displayName:  $filter('translate')('SMS.LIST.SPECIALITY'), width: '15%', enableColumnMenu: false, filter: {
                         type: uiGridConstants.filter.SELECT,
                         selectOptions: []
                     }
                 },
-                { field: 'state', displayName: $filter('translate')('SMS.LIST.DISABLE/ENABLE'), enableColumnMenu: false, width: '15%',
+                { field: 'active', displayName: $filter('translate')('SMS.LIST.DISABLE/ENABLE'), enableColumnMenu: false, width: '15%',
                     cellTemplate: checkboxCellTemplate, enableFiltering: false },
             ],
             enableFiltering: true,
@@ -113,16 +113,17 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
         };
 
         var arrValidationInsert = [
-            $filter('translate')('SMS.VALIDATION.STATE'),
             $filter('translate')('SMS.VALIDATION.APPOINTMENT_ID'),
+            $filter('translate')('SMS.VALIDATION.ACTIVE'),
+            $filter('translate')('SMS.VALIDATION.TYPE'),
         ];
 
         //Functions to get information from database.
         function getSmsTypeList(){
-            smsCollectionService.getAllSmsType().then(function (response) {
+            smsCollectionService.getSmsType().then(function (response) {
                 var TypeList = []
                 response.data.forEach(function (row){
-                    TypeList.push({value:row.type,label:row.type})
+                    TypeList.push({value:row,label:row})
                 });
                 TypeList.push({value:'-',label:'UNDEFINED'});
                 $scope.gridOptions.columnDefs[2].filter.selectOptions = TypeList;
@@ -135,7 +136,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             smsCollectionService.getSmsSpeciality().then(function (response) {
                 var Speciality = []
                 response.data.forEach(function (row){
-                    Speciality.push({value:row.speciality,label:row.speciality})
+                    Speciality.push({value:row.specialityName,label:row.specialityName})
                 });
                 $scope.gridOptions.columnDefs[3].filter.selectOptions = Speciality;
             }).catch(function(err) {
@@ -146,9 +147,9 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
         function getSmsAppointmentList() {
             smsCollectionService.getSmsAppointments().then(function (response) {
                 response.data.forEach(function (row){
-                    switch (row.apptype){
+                    switch (row.type){
                         case null:
-                            row.apptype = '-';
+                            row.type = '-';
                     }
                     row.modified = 0;
 
@@ -166,15 +167,15 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
         $scope.checkSmsUpdate = function (sms) {
 
             $scope.changesMade = true;
-            sms.state = parseInt(sms.state);
+            sms.active = parseInt(sms.active);
             // If the "Update" column has been checked
-            if (sms.state) {
-                sms.state = 0; // set update to "true"
+            if (sms.active) {
+                sms.active = 0; // set update to "true"
             }
 
             // Else the "Update" column was unchecked
             else {
-                sms.state = 1; // set update to "false"
+                sms.active = 1; // set update to "false"
             }
             // flag parameter that changed
             sms.modified = 1;
@@ -185,9 +186,12 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             if ($scope.changesMade && $scope.writeAccess) {
                 angular.forEach($scope.smsAppointments, function (sms) {
                     if (sms.modified) {
+                        var type = sms.type;
+                        if(sms.type == "-") type = 0;
                         $scope.smsUpdates.updateList.push({
                             id: sms.id,
-                            state: sms.state
+                            active: sms.active,
+                            type: type
                         });
                     }
                 });
@@ -198,14 +202,12 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
                     url: "sms/update/activation",
                     data: $scope.smsUpdates,
                     success: function (response) {
+                        console.log(response);
                         getSmsAppointmentList();
-                        response = JSON.parse(response);
                         // Show success or failure depending on response
-                        if (response) {
-                            $scope.setBannerClass('success');
-                            $scope.bannerMessage = $filter('translate')('SMS.LIST.SUCCESS');
-                            $scope.showBanner();
-                        }
+                        $scope.setBannerClass('success');
+                        $scope.bannerMessage = $filter('translate')('SMS.LIST.SUCCESS');
+                        $scope.showBanner();
                         $scope.changesMade = false;
                         $scope.smsUpdates.updateList = [];
                     },

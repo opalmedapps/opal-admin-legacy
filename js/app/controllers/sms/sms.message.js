@@ -81,7 +81,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
 
         //Function to get information from database
         function getSmsTypeList(){
-            smsCollectionService.getSmsType($scope.UpdateInformation.speciality).then(function (response) {
+            smsCollectionService.getSmsType($scope.UpdateInformation.specialityCode).then(function (response) {
                 $scope.TypeList = response.data;
             });
         }
@@ -102,7 +102,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         }
 
         function getSmsEventList(){
-            smsCollectionService.getSmsEvents($scope.UpdateInformation.type,$scope.UpdateInformation.speciality).
+            smsCollectionService.getSmsEvents($scope.UpdateInformation.type,$scope.UpdateInformation.specialityName).
             then(function (response) {
                 $scope.EventList = response.data;
             }).catch(function(err) {
@@ -111,14 +111,14 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         }
 
         function getSmsMessage() {
-            smsCollectionService.getSmsMessge($scope.UpdateInformation.speciality,
+            smsCollectionService.getSmsMessge($scope.UpdateInformation.specialityName,
                 $scope.UpdateInformation.type, $scope.UpdateInformation.event, 2).then(function (response) {
                 $scope.UpdateInformation.message.English = response.data[0].smsmessage;
             }).catch(function (err) {
                 ErrorHandler.onError(err, $filter('translate')('SMS.MESSAGE.ERROR_DETAILS'));
             });
 
-            smsCollectionService.getSmsMessge($scope.UpdateInformation.speciality,
+            smsCollectionService.getSmsMessge($scope.UpdateInformation.specialityName,
                 $scope.UpdateInformation.type, $scope.UpdateInformation.event, 1).then(function (response) {
                 $scope.UpdateInformation.message.French = response.data[0].smsmessage;
             }).catch(function (err) {
@@ -129,8 +129,8 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
 
         //Functions to update the information selected
         $scope.SpecialityUpdate = function(element){
-            $scope.UpdateInformation.specialityId = element.Id;
-            $scope.UpdateInformation.speciality = element.speciality;
+            $scope.UpdateInformation.specialityCode = element.specialityCode;
+            $scope.UpdateInformation.specialityName = element.specialityName;
             steps.speciality.completed = true;
             $scope.specialitySection.open = true;
             $scope.typeSection.show = true;
@@ -140,7 +140,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         }
 
         $scope.TypeUpdate = function(element){
-            $scope.UpdateInformation.type = element.type;
+            $scope.UpdateInformation.type = element;
             steps.type.completed = true;
             $scope.typeSection.open = true;
             $scope.eventSection.show = true;

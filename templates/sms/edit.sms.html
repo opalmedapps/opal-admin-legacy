@@ -24,13 +24,13 @@
             </uib-accordion-heading>
             <div class="row">
                 <div class="col-xs-12">
-                    <label><strong>{{'SMS.EDIT.RESOURCE_NAME'|translate}}</strong></label> : {{currentAppointment.resname}}&nbsp&nbsp&nbsp({{currentAppointment.rescode}})
+                    <label><strong>{{'SMS.EDIT.RESOURCE_NAME'|translate}}</strong></label> : {{currentAppointment.resourceDescription}}&nbsp&nbsp&nbsp({{currentAppointment.resourceCode}})
                 </div>
                 <div class="col-xs-12">
-                    <label><strong>{{'SMS.EDIT.APPOINTMENT_CODE'|translate}}</strong></label> : {{currentAppointment.appcode}}
+                    <label><strong>{{'SMS.EDIT.APPOINTMENT_CODE'|translate}}</strong></label> : {{currentAppointment.appointmentCode}}
                 </div>
                 <div class="col-xs-12">
-                    <label><strong>{{'SMS.EDIT.SPECIALITY'|translate}}</strong></label> : {{currentAppointment.spec}}
+                    <label><strong>{{'SMS.EDIT.SPECIALITY'|translate}}</strong></label> : {{currentAppointment.speciality}}
                 </div>
             </div>
         </div>
@@ -44,7 +44,7 @@
             <div class="alert alert-info" role="alert">
                 <strong>{{'SMS.EDIT.CURRENT_TYPE'|translate}}</strong><br>
                 <p>
-                    {{currentAppType}}
+                    {{currentAppointmentType}}
                 </p>
             </div>
             <div>
@@ -55,7 +55,7 @@
                 <ul class="list-items">
                     <li ng-repeat="type in TypeList | filter: typeSearchField">
                         <label>
-                            <input type="radio" ng-checked="type.type===typeSelected" ng-click="updateType(type)"> {{type.type}}
+                            <input type="radio" ng-checked="type===typeSelected" ng-click="updateType(type)"> {{type}}
                         </label>
                     </li>
                 </ul>

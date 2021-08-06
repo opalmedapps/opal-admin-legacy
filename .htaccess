@@ -300,7 +300,6 @@ RewriteRule ^role/insert/role php/role/insert.role.php [QSA,L]
 RewriteRule ^role/update/role php/role/update.role.php [QSA,L]
 
 # SMS Section
-RewriteRule ^sms/get/all-sms-type php/sms/get.allSmsTypes.php [QSA,L]
 RewriteRule ^sms/get/appointment php/sms/get.smsAppointment.php [QSA,L]
 RewriteRule ^sms/get/events php/sms/get.events.php [QSA,L]
 RewriteRule ^sms/get/sms-message php/sms/get.message.php [QSA,L]

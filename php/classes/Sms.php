@@ -7,6 +7,7 @@
 class Sms extends Module {
 
     protected $ormsDB;
+    protected $baseUrl = "http://192.168.146.3//php/api/public/v1";
 
     public function __construct($guestStatus = false) {
         parent::__construct(MODULE_SMS, $guestStatus);
@@ -29,7 +30,7 @@ class Sms extends Module {
      * */
     public function getAppointments() {
         $this->checkReadAccess();
-        return $this->postRequest("http://192.168.146.3//php/api/public/v1/sms/smsAppointment/getSmsAppointments.php");
+        return $this->postRequest($this->baseUrl."/sms/smsAppointment/getSmsAppointments");
     }
 
     /*
@@ -113,9 +114,9 @@ class Sms extends Module {
      * Sanitize, validate and update the activation status for a list of appointments
      * Validation code :    Error validation code is coded as an int of 3 bits. Bit information
      *                      are coded from right to left:
-     *                      1: appointment activation state missing
-     *                      2: appointment code id missing
-     *                      3: resource series number missing
+     *                      1: appointment id missing
+     *                      2: appointment activation state missing
+     *                      3: appointment type missing
      * @params  $post (array) data received from the front end.
      * @return  Number records updated in database
      * */
@@ -125,36 +126,44 @@ class Sms extends Module {
         $errCode = "";
         $response = 0;
         $idCount = 0;
-        $stateCount = 0;
+        $activeCount = 0;
+        $typeCount = 0;
         if (is_array($post)) {
             if(array_key_exists("updateList", $post) || is_array($post["updateList"])) {
                 foreach ($post["updateList"] as $information) {
                     if (is_array($information)){
-                        if (array_key_exists("state", $information) && $information["state"] != "")
-                            $stateCount++;
                         if (array_key_exists("id", $information) && $information["id"] != "")
                             $idCount++;
+                        if (array_key_exists("active", $information) && $information["active"] != "")
+                            $activeCount++;
+                        if (array_key_exists("type", $information) && $information["type"] != "")
+                            $typeCount++;
                     }
                 }
-                if ($stateCount != count($post["updateList"]))
-                    $errCode = "1" . $errCode;
-                else
-                    $errCode = "0" . $errCode;
                 if ($idCount != count($post["updateList"]))
                     $errCode = "1" . $errCode;
                 else
                     $errCode = "0" . $errCode;
+                if ($activeCount != count($post["updateList"]))
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
+                if ($typeCount != count($post["updateList"]))
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
             } else
-                $errCode = "11";
+                $errCode = "111";
         }else
-            $errCode = "11";
+            $errCode = "111";
 
         $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         foreach ($post["updateList"] as $information) {
-            $response += $this->ormsDB->updateActivationState($information['state'], $information['id']);
+            if($information["type"] == 0) $information["type"] = NULL;
+            $this->postRequest($this->baseUrl."/sms/smsAppointment/updateSmsAppointment", $information);
         }
         return $response;
     }
@@ -255,7 +264,7 @@ class Sms extends Module {
     public function getSpecialityMessage(){
         $this->checkReadAccess();
 
-        return $this->ormsDB->getSpecialityForMessage();
+        return $this->postRequest($this->baseUrl."/hospital/getSpecialityGroups");
     }
 
     /*
@@ -268,44 +277,28 @@ class Sms extends Module {
     public function getTypeMessage($post){
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
-        $errCode = "";
         if (is_array($post)) {
-            if (!array_key_exists("speciality", $post) || $post["speciality"] == "")
-                $errCode = "1" . $errCode;
+            if (array_key_exists("specialityCode", $post) && is_string($post["specialityCode"]) && $post["specialityCode"] != "")
+                return $this->postRequest($this->baseUrl."/sms/smsMessage/getTypes.php",$post);
             else
-                $errCode = "0" . $errCode;
-        } else
-            $errCode .= "1";
-
-        $errCode = bindec($errCode);
-        if ($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
-
-        return $this->ormsDB->getTypeForMessage($post["speciality"]);
-    }
-
-    /*
-     * Sanitize, validate and get a list of all type
-     * @return  list of type in database
-     * */
-    public function getAllTypeMessage(){
-        $this->checkReadAccess();
-
-        return $this->ormsDB->getAllTypeForMessage();
+                return $this->postRequest($this->baseUrl."/sms/smsMessage/getTypes");
+        }
     }
 
     private function postRequest($url, $postParameters = []) {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Content-Type: application/json',
             'Connection: Keep-Alive'
         ));
         curl_setopt($ch,CURLOPT_URL, $url);
-        curl_setopt($ch,CURLOPT_POSTFIELDS, http_build_query($postParameters));
+        curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($postParameters,JSON_NUMERIC_CHECK));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
         $requestResult = json_decode(curl_exec($ch),TRUE);
         curl_close($ch);
-        return $requestResult;
+        if($requestResult["status"] != "Success"){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR,$requestResult["error"]);
+        }
+        return $requestResult["data"];
     }
 }
