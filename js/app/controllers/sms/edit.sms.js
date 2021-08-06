@@ -7,19 +7,19 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
     };
 
     $scope.changesDetected = false;
-    if($scope.currentAppointment.apptype=='-')
-        $scope.currentAppType = "UNDEFINED";
-    else $scope.currentAppType = $scope.currentAppointment.apptype;
-    $scope.typeSelected = $scope.currentAppType;
+    if($scope.currentAppointment.type=='-')
+        $scope.currentAppointmentType = "UNDEFINED";
+    else $scope.currentAppintmentType = $scope.currentAppointment.type;
+    $scope.typeSelected = $scope.currentAppointmentType;
 
     getSmsTypeList();
     $scope.typeSearchField = "";
 
     //Function to get appointment type list.
     function getSmsTypeList(){
-        smsCollectionService.getSmsType($scope.currentAppointment.spec).then(function (response) {
+        smsCollectionService.getSmsType().then(function (response) {
             $scope.TypeList = response.data;
-            $scope.TypeList.push({type:'UNDEFINED'})
+            $scope.TypeList.push('UNDEFINED')
         }).catch(function(err) {
             ErrorHandler.onError(err, $filter('translate')('SMS.EDIT.ERROR_DETAILS'));
         });
@@ -35,8 +35,8 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
     };
     $scope.updateType = function(type){
         $scope.typeSelected = null;
-        $scope.changesDetected = (type.type != $scope.currentAppType);
-        $scope.typeSelected = type.type;
+        $scope.changesDetected = (type != $scope.currentAppointmentType);
+        $scope.typeSelected = type
     }
 
     var arrValidationInsert = [

@@ -3,6 +3,9 @@
 /*
 * PHP global settings:
 */
+session_save_path(__DIR__."/../tmp/");
+
+ini_set("error_log", __DIR__."/../php-error.log");
 session_start();
 
 // Set the time ze for the Eastern Time Zone (ET)

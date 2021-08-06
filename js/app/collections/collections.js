@@ -98,6 +98,19 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
+		// Function to get existing color tags
+		aliasAPI.getExistingColorTags = function (type) {
+			return $http.post(
+				"alias/get/color-tags",
+				$.param({
+					type: type,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
 		// Function to get alias chart logs given a serial
 		aliasAPI.getAliasChartLogs = function (serial, type) {
 			return $http.post(
@@ -1265,21 +1278,12 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		smsAPI.getSmsType = function(speciality){
+		smsAPI.getSmsType = function(specialityCode){
 			return $http.post(
 				"sms/get/sms-type",
 				$.param({
-					speciality: speciality,
+					specialityCode: specialityCode,
 				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		smsAPI.getAllSmsType = function(){
-			return $http.post(
-				"sms/get/all-sms-type",
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
