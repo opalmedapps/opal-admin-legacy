@@ -208,7 +208,7 @@ class Diagnosis extends Module {
      * */
     public function getEducationalMaterials() {
         $this->checkReadAccess();
-        return $this->_getListEduMaterial();
+        return $this->_getListPublishedEduMaterial();
     }
 
     /*
