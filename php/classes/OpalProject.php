@@ -27,8 +27,8 @@ abstract class OpalProject
     * @params  void
     * @return  $result - array - list of educational materials
     * */
-    protected function _getListEduMaterial() {
-        $results = $this->opalDB->getEducationalMaterial();
+    protected function _getListPublishedEduMaterial() {
+        $results = $this->opalDB->getPublishedEducationalMaterial();
         foreach($results as &$row) {
             $row["tocs"] = $this->opalDB->getTocsContent($row["serial"]);
         }
