@@ -10,16 +10,7 @@ class CronJob extends OpalProject {
      * DEFAULT_CRON_OAUSERID.
      */
     public function __construct() {
-        $this->opalDB = new DatabaseOpal(
-            OPAL_DB_HOST,
-            OPAL_DB_NAME,
-            OPAL_DB_PORT,
-            OPAL_DB_USERNAME,
-            OPAL_DB_PASSWORD,
-            false,
-            DEFAULT_CRON_OAUSERID,
-            false
-        );
+        parent::__construct(DEFAULT_CRON_OAUSERID, false);
 
         $this->questionnaireDB = new DatabaseQuestionnaire(
             QUESTIONNAIRE_DB_2019_HOST,

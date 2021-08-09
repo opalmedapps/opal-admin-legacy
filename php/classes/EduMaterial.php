@@ -157,12 +157,7 @@ class EduMaterial extends Module {
       */
     public function getEducationalMaterials() {
         $this->checkReadAccess();
-        $results = $this->opalDB->getEducationalMaterial();
-        foreach($results as &$row) {
-            $row["tocs"] = $this->opalDB->getTocsContent($row["serial"]);
-        }
-
-        return $results;
+        return $this->_getListEduMaterial();
 	}
 
     /**

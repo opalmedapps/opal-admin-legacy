@@ -14,16 +14,7 @@ abstract class Module extends OpalProject
      * constructor of the class
      * */
     public function __construct($moduleId, $guestStatus = false) {
-        $this->opalDB = new DatabaseOpal(
-            OPAL_DB_HOST,
-            OPAL_DB_NAME,
-            OPAL_DB_PORT,
-            OPAL_DB_USERNAME,
-            OPAL_DB_PASSWORD,
-            false,
-            $_SESSION["ID"],
-            $guestStatus
-        );
+        parent::__construct($_SESSION["ID"], $guestStatus);
         $this->opalDB->setSessionId($_SESSION["sessionId"]);
         $this->moduleId = $moduleId;
 

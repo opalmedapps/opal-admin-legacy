@@ -5,6 +5,19 @@ abstract class OpalProject
 {
     protected $opalDB;
 
+    public function __construct($sessionInfo, $guestStatus) {
+        $this->opalDB = new DatabaseOpal(
+            OPAL_DB_HOST,
+            OPAL_DB_NAME,
+            OPAL_DB_PORT,
+            OPAL_DB_USERNAME,
+            OPAL_DB_PASSWORD,
+            false,
+            $sessionInfo,
+            $guestStatus
+        );
+    }
+
     protected function _insertAudit($module, $method, $arguments, $access, $username = false) {
         $toInsert = array(
             "module"=>$module,
@@ -27,12 +40,10 @@ abstract class OpalProject
     * @params  void
     * @return  $result - array - list of educational materials
     * */
-    protected function _getListPublishedEduMaterial() {
+    protected function _getListEduMaterial() {
         $results = $this->opalDB->getPublishedEducationalMaterial();
-        foreach($results as &$row) {
+        foreach($results as &$row)
             $row["tocs"] = $this->opalDB->getTocsContent($row["serial"]);
-        }
-
         return $results;
     }
 
