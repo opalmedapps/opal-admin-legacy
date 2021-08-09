@@ -520,7 +520,8 @@
                                                 {{'EDUCATION.ADD.TYPE'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
-                                                <input class="form-control" type="text" ng-model="toc.type_EN" ng-change="tocUpdate()" typeahead-on-select="tocUpdate()" uib-typeahead="type for type in EduMatTypes_EN | filter:$viewValue" typeahead-min-length="0" placeholder="{{'EDUCATION.ADD.ENGLISH_TYPE'|translate}}" required="required">
+                                                 <input class="form-control" type="text" ng-model="toc.type_EN" ng-change="typeTocUpdate(toc, 'EN')" typeahead-on-select="typeTocUpdate(toc, 'EN')" uib-typeahead="type.EN as type.EN for type in EduMatTypes | filter:{EN:$viewValue}" typeahead-min-length="0" placeholder="{{'EDUCATION.ADD.ENGLISH_TYPE'|translate}}" required="required">
+
                                             </div>
                                         </div>
                                     </div>
@@ -555,7 +556,7 @@
                                                 {{'EDUCATION.ADD.TYPE'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
-                                                <input class="form-control" type="text" ng-model="toc.type_FR" ng-change="tocUpdate()" typeahead-on-select="tocUpdate()" uib-typeahead="type for type in EduMatTypes_FR | filter:$viewValue" typeahead-min-length="0" placeholder="{{'EDUCATION.ADD.FRENCH_TYPE'|translate}}" required="required">
+                                                <input class="form-control" type="text" ng-model="toc.type_FR" ng-change="typeTocUpdate(toc, 'FR')" typeahead-on-select="typeTocUpdate(toc, 'FR')" uib-typeahead="type.FR as type.FR for type in EduMatTypes | filter:{FR:$viewValue}" typeahead-min-length="0" placeholder="{{'EDUCATION.ADD.FRENCH_TYPE'|translate}}" required="required">
                                             </div>
                                         </div>
                                     </div>
