@@ -581,7 +581,7 @@ class Alias extends Module {
      */
     public function getEducationalMaterials() {
         $this->checkReadAccess();
-        return $this->_getListPublishedEduMaterial();
+        return $this->_getListEduMaterial();
     }
 
     /**

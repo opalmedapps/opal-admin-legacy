@@ -1552,7 +1552,7 @@ define("OPAL_TASK_LOGS","
 ");
 
 define("OPAL_COUNT_EDU_MATERIAL","
-    SELECT COUNT(*) AS total FROM ".OPAL_EDUCATION_MATERIAL_TABLE." WHERE EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum;
+    SELECT COUNT(*) AS total FROM ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." WHERE EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum;
 ");
 
 define("OPAL_COUNT_HOSPITAL_MAP","
