@@ -626,6 +626,10 @@ define("OPAL_GET_EDUCATIONAL_MATERIAL","
     SELECT DISTINCT em.EducationalMaterialControlSerNum AS serial, em.EducationalMaterialType_EN AS type_EN, em.EducationalMaterialType_FR AS type_FR, em.Name_EN AS name_EN, em.Name_FR AS name_FR, em.URL_EN AS url_EN, em.URL_FR AS url_FR, phase.PhaseInTreatmentSerNum AS phase_serial, phase.Name_EN AS phase_EN, phase.Name_FR AS phase_FR, em.PublishFlag AS publish, em.ParentFlag AS parentFlag, em.ShareURL_EN AS share_url_EN, em.ShareURL_FR AS share_url_FR, em.LastUpdated AS lastupdated, (SELECT COUNT(*) AS locked FROM ".OPAL_FILTERS_TABLE." f WHERE f.ControlTableSerNum = em.EducationalMaterialControlSerNum and ControlTable = '".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE."') AS locked, (case WHEN em.ParentFlag = 1 then (SELECT COALESCE(round(AVG(emr.RatingValue)), 0) FROM EducationalMaterialRating emr WHERE emr.EducationalMaterialControlSerNum = em.EducationalMaterialControlSerNum) ELSE 0 END) AS rating FROM ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." em, ".OPAL_PHASE_IN_TREATMENT_TABLE." phase WHERE phase.PhaseInTreatmentSerNum = em.PhaseInTreatmentSerNum AND em.deleted = 0;
 ");
 
+define("OPAL_GET_PUBLISHED_EDUCATIONAL_MATERIAL","
+    SELECT DISTINCT em.EducationalMaterialControlSerNum AS serial, em.EducationalMaterialType_EN AS type_EN, em.EducationalMaterialType_FR AS type_FR, em.Name_EN AS name_EN, em.Name_FR AS name_FR, em.URL_EN AS url_EN, em.URL_FR AS url_FR, phase.PhaseInTreatmentSerNum AS phase_serial, phase.Name_EN AS phase_EN, phase.Name_FR AS phase_FR, em.PublishFlag AS publish, em.ParentFlag AS parentFlag, em.ShareURL_EN AS share_url_EN, em.ShareURL_FR AS share_url_FR, em.LastUpdated AS lastupdated, (SELECT COUNT(*) AS locked FROM ".OPAL_FILTERS_TABLE." f WHERE f.ControlTableSerNum = em.EducationalMaterialControlSerNum and ControlTable = '".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE."') AS locked, (case WHEN em.ParentFlag = 1 then (SELECT COALESCE(round(AVG(emr.RatingValue)), 0) FROM EducationalMaterialRating emr WHERE emr.EducationalMaterialControlSerNum = em.EducationalMaterialControlSerNum) ELSE 0 END) AS rating FROM ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." em, ".OPAL_PHASE_IN_TREATMENT_TABLE." phase WHERE phase.PhaseInTreatmentSerNum = em.PhaseInTreatmentSerNum AND em.deleted = 0;
+");
+
 define("OPAL_GET_TOCS_EDU_MATERIAL","
     SELECT DISTINCT em.EducationalMaterialControlSerNum AS serial, em.Name_EN AS name_EN, em.Name_FR AS name_FR, toc.OrderNum AS `order`, em.EducationalMaterialType_EN AS type_EN, em.EducationalMaterialType_FR AS type_FR, em.URL_EN AS url_EN, em.URL_FR AS url_FR FROM ".OPAL_EDUCATION_MATERIAL_TOC_TABLE." toc, ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." em WHERE toc.EducationalMaterialControlSerNum= em.EducationalMaterialControlSerNum AND toc.ParentSerNum = :ParentSerNum ORDER BY toc.OrderNum
 ");
@@ -1548,7 +1552,7 @@ define("OPAL_TASK_LOGS","
 ");
 
 define("OPAL_COUNT_EDU_MATERIAL","
-    SELECT COUNT(*) AS total FROM ".OPAL_EDUCATION_MATERIAL_TABLE." WHERE EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum;
+    SELECT COUNT(*) AS total FROM ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." WHERE EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum;
 ");
 
 define("OPAL_COUNT_HOSPITAL_MAP","
@@ -1680,7 +1684,7 @@ const OPAL_GET_RESOURCE_PENDING = "
 
 const OPAL_UPDATE_RESOURCE_PENDING = "
     UPDATE ".OPAL_RESOURCE_PENDING_TABLE." SET resources = :resources, updatedBy = :updatedBy WHERE
-    sourceName = :sourceName AND appointmentId = :appointmentId AND level = 1;
+    sourceName = :sourceName AND appointmentId = :appointmentId AND `level` = ".RESOURCE_LEVEL_READY.";
 ";
 
 const OPAL_UPDATE_RESOURCE = "
@@ -1696,4 +1700,34 @@ const OPAL_GET_RESOURCES_FOR_RESOURCE_APPOINTMENT = "
 const DELETE_FROM_RESOURCE_APPOINTMENT = "
     DELETE FROM ".OPAL_RESOURCE_APPOINTMENT_TABLE." WHERE AppointmentSerNum = :AppointmentSerNum AND ResourceSerNum
     NOT IN (%%RESOURCE_ID_LIST%%);
+";
+
+const UPDATE_RESOURCE_PENDING_LEVEL_IN_PROCESS = "
+    UPDATE ".OPAL_RESOURCE_PENDING_TABLE." rp SET rp.`level` = ".RESOURCE_LEVEL_IN_PROCESS.", updatedBy = :updatedBy
+    WHERE ( SELECT COUNT(*) AS total FROM ".OPAL_APPOINTMENTS_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s
+    ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum WHERE s.SourceDatabaseName = rp.sourceName AND
+    s.Enabled = ".ACTIVE_RECORD." AND a.AppointmentAriaSer = rp.appointmentId AND rp.`level` = ".RESOURCE_LEVEL_READY.") = 1
+";
+
+const GET_OLDEST_RESOURCE_PENDING_IN_PROCESS = "
+    SELECT rp.*, (SELECT a.AppointmentSerNum FROM ".OPAL_APPOINTMENTS_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s
+    ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum WHERE s.SourceDatabaseName = rp.sourceName AND s.Enabled = 1 AND
+    a.AppointmentAriaSer = rp.appointmentId) AS AppointmentSerNum, (SELECT s1.SourceDatabaseSerNum FROM
+    ".OPAL_SOURCE_DATABASE_TABLE." s1 WHERE s1.SourceDatabaseName = rp.sourceName AND s1.Enabled = 1) AS SourceDatabaseSerNum
+    FROM ".OPAL_RESOURCE_PENDING_TABLE." rp WHERE rp.`level` = 2 ORDER BY creationDate ASC LIMIT 1;
+";
+
+const OPAL_DELETE_RESOURCE_PENDING = "DELETE FROM " . OPAL_RESOURCE_PENDING_TABLE . " WHERE ID = :ID;";
+
+const UPDATE_APPOINTMENT_CHECKIN = "
+    UPDATE ".OPAL_APPOINTMENTS_TABLE." SET Checkin = ".CHECKED_IN." WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum
+    AND AppointmentAriaSer = :AppointmentAriaSer AND Checkin = ".NOT_CHECKED_IN.";
+";
+
+const OPAL_GET_FIRST_MRN_SITE_BY_SOURCE_APPOINTMENT = "
+    SELECT phi.Hospital_Identifier_Type_Code AS site, phi.MRN AS mrn FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi
+    LEFT JOIN ".OPAL_APPOINTMENTS_TABLE." a ON a.PatientSerNum = phi.PatientSerNum
+    LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum
+    WHERE s.SourceDatabaseName = :SourceDatabaseName AND a.AppointmentAriaSer = :AppointmentAriaSer AND
+    Is_Active = ".ACTIVE_RECORD." LIMIT 1;
 ";
