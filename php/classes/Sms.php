@@ -6,22 +6,10 @@
 
 class Sms extends Module {
 
-    protected $ormsDB;
-    protected $baseUrl = "http://192.168.146.3//php/api/public/v1";
+    protected $baseUrl = ORMS_API_BASE_URL;
 
     public function __construct($guestStatus = false) {
         parent::__construct(MODULE_SMS, $guestStatus);
-        if($_SESSION["userAccess"][MODULE_SMS]) {
-            $this->ormsDB = new DatabaseOrms(
-                WRM_DB_HOST,
-                WRM_DB_NAME,
-                WRM_DB_PORT,
-                WRM_DB_USERNAME,
-                WRM_DB_PASSWORD,
-                false,
-                $_SESSION["ID"]
-            );
-        }
     }
 
     /*
@@ -40,7 +28,7 @@ class Sms extends Module {
      *                      1: appointment type missing
      *                      2: speciality Code missing
      * @params  $post (array) data received from the front end.
-     * @return  List of events for the given type and speciality
+     * @return  List of sms messages for the given type and speciality
      * */
     public function getMessages($post) {
         $this->checkReadAccess($post);
@@ -73,7 +61,6 @@ class Sms extends Module {
      *                      2: appointment activation state missing
      *                      3: appointment type missing
      * @params  $post (array) data received from the front end.
-     * @return  Number records updated in database
      * */
     public function updateActivationState($post){
         $this->checkWriteAccess($post);
@@ -128,7 +115,6 @@ class Sms extends Module {
      *                      1: message id missing
      *                      2: message missing
      * @params  $post (array) data received from the front end.
-     * @return  0 for fail, success otherwise
      * */
     public function updateSmsMessage($post){
         $this->checkWriteAccess($post);
@@ -169,7 +155,7 @@ class Sms extends Module {
 
     /*
      * Get a list of speciality for appointment message
-     * @return  list of speciality updated in database
+     * @return  list of speciality group information in database
      * */
     public function getSpecialityMessage(){
         $this->checkReadAccess();
@@ -178,15 +164,14 @@ class Sms extends Module {
     }
 
     /*
-     * Sanitize, validate and get a list of type for the given speciality
-     * * Validation code :    Error validation code is coded as an int of 1 bits. Bit information
-     *                      are coded from right to left:
-     *                      1: appointment type missing
+     * Sanitize, validate and get a list of appointment type for the given speciality code
+     * If speciality code is not provided, return all existing sms appointment type.
      * @return  list of type in database
      * */
     public function getTypeMessage($post){
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
+
         if (is_array($post)) {
             if (array_key_exists("specialityCode", $post) && is_string($post["specialityCode"]) && $post["specialityCode"] != "")
                 return $this->postRequest($this->baseUrl."/sms/smsMessage/getTypes.php",$post);
@@ -195,6 +180,12 @@ class Sms extends Module {
         }
     }
 
+    /*
+     * Send the post request to ORMS and get response data. Throw error 400 when get invalid inputs
+     * @params  $url            (string) the url link for post request.
+     *          $postParameters (array) post parameters received from the front end.
+     * @return The response data, null if there's none
+     */
     private function postRequest($url, $postParameters = []) {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(

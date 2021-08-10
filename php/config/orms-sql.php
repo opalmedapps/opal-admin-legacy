@@ -9,14 +9,9 @@ define( "WRM_DB_NAME_FED", $config['databaseConfig']['wrm']['nameFED'] );
 define( "WRM_DB_DSN", "mysql:host=" . WRM_DB_HOST . ";port=" . WRM_DB_PORT . ";dbname=" . WRM_DB_NAME . ";charset=utf8" );
 define( "WRM_DB_USERNAME", $config['databaseConfig']['wrm']['username'] );
 define( "WRM_DB_PASSWORD", $config['databaseConfig']['wrm']['password'] );
+define( "ORMS_API_BASE_URL", $config['databaseConfig']['wrm']['apiurl'] );
 
 define("ORMS_MEDIVISIT_APPOINTMENT_LIST_TABLE", "MediVisitAppointmentList");
-define("ORMS_SMS_APPOINTMENT_LIST_TABLE", "SmsAppointment");
-define("ORMS_SMS_MESSAGE_LIST_TABLE", "SmsMessage");
-define("ORMS_CLINIC_RESOURCE_LIST_TABLE", "ClinicResources");
-define("ORMS_APPOINTMENT_CODE_LIST_TABLE", "AppointmentCode");
-define("ORMS_SPECIALITY_GROUP_LIST_TABLE", "SpecialityGroup");
-
 
 define("ORMS_SQL_GET_APPOINTMENT_FOR_ALIAS","
     SELECT DISTINCT mval.AppointmentCode AS code, 
@@ -24,82 +19,5 @@ define("ORMS_SQL_GET_APPOINTMENT_FOR_ALIAS","
     FROM ".ORMS_MEDIVISIT_APPOINTMENT_LIST_TABLE." mval
     WHERE mval.AppointSys in ('Medivisit','Impromptu','ImpromptuOrtho','InstantAddOn')
     ORDER BY mval.AppointmentCode, mval.ResourceDescription
-");
-
-define("ORMS_SQL_GET_APPOINTMENT_FOR_SMS","
-    SELECT appc.AppointmentCode AS appcode, 
-           clir.ResourceCode AS rescode, 
-           smsa.Active AS state,
-           sg.SpecialityGroupName AS spec, 
-           smsa.Type AS apptype, 
-           smsa.SmsAppointmentId AS id, 
-           clir.ResourceName AS resname
-    FROM ".ORMS_SMS_APPOINTMENT_LIST_TABLE." smsa 
-    INNER JOIN ".ORMS_APPOINTMENT_CODE_LIST_TABLE." appc 
-    ON appc.AppointmentCodeId = smsa.AppointmentCodeId
-    INNER JOIN ".ORMS_CLINIC_RESOURCE_LIST_TABLE." clir
-    ON clir.ClinicResourcesSerNum = smsa.ClinicResourcesSerNum
-    INNER JOIN ".ORMS_SPECIALITY_GROUP_LIST_TABLE." sg
-    ON sg.SpecialityGroupId = appc.SpecialityGroupId
-");
-
-define("ORMS_SQL_GET_EVENTS_FOR_APPOINTMENT","
-    SELECT DISTINCT sm.`Event` AS event, 2 AS source
-    FROM ".ORMS_SMS_MESSAGE_LIST_TABLE." sm
-    INNER JOIN ".ORMS_SPECIALITY_GROUP_LIST_TABLE." sg 
-    ON sg.SpecialityGroupId = sm.SpecialityGroupId
-    AND sm.`Type` = :Type 
-    AND sg.SpecialityGroupName = :Speciality
-    ORDER BY sm.`Event`
-");
-
-define("ORMS_SQL_GET_MESSAGE_FOR_APPOINTMENT","
-    SELECT sm.Message AS smsmessage, 2 AS source
-    FROM ".ORMS_SMS_MESSAGE_LIST_TABLE." sm
-    INNER JOIN ".ORMS_SPECIALITY_GROUP_LIST_TABLE." sg 
-    ON sg.SpecialityGroupId = sm.SpecialityGroupId
-    AND sg.SpecialityGroupName = :Speciality
-    AND `Type` = :Type 
-    AND Event = :Event 
-    AND `Language` = :Language
-");
-
-define("ORMS_SQL_UPDATE_APPOINTMENT_ACTIVE_STATE","
-    UPDATE ".ORMS_SMS_APPOINTMENT_LIST_TABLE." SET Active = :Active
-    WHERE SmsAppointmentId = :id
-");
-
-define("ORMS_SQL_UPDATE_APPOINTMENT_TYPE","
-    UPDATE ".ORMS_SMS_APPOINTMENT_LIST_TABLE." SET `Type` = :Type
-    WHERE SmsAppointmentId = :id
-");
-
-define("ORMS_SQL_SET_APPOINTMENT_TYPE_TO_NULL","
-    UPDATE ".ORMS_SMS_APPOINTMENT_LIST_TABLE." SET `Type` = NULL
-    WHERE SmsAppointmentId = :id
-");
-
-define("ORMS_SQL_UPDATE_MESSAGE_FOR_APPOINTMENT","
-    UPDATE ".ORMS_SMS_MESSAGE_LIST_TABLE." SET Message = :Message
-    WHERE SpecialityGroupId = :Speciality AND `Type` = :Type AND Event = :Event AND `Language` = :Language
-");
-
-define("ORMS_SQL_GET_SPECIALITY_FOR_MESSAGE","
-    SELECT DISTINCT SpecialityGroupId AS Id,
-                    SpecialityGroupName AS speciality,
-                    2 AS source 
-    FROM ".ORMS_SPECIALITY_GROUP_LIST_TABLE
-);
-
-define("ORMS_SQL_GET_TYPE_FOR_MESSAGE","
-    SELECT DISTINCT `Type` AS `type`,2 AS source 
-    FROM ".ORMS_SMS_MESSAGE_LIST_TABLE." sm
-    INNER JOIN ".ORMS_SPECIALITY_GROUP_LIST_TABLE." sg 
-    ON sg.SpecialityGroupId = sm.SpecialityGroupId
-    AND sg.SpecialityGroupName = :Speciality
-");
-
-define("ORMS_SQL_GET_ALL_TYPE__FOR_MESSAGE","
-    SELECT DISTINCT `Type` AS `type`,2 AS source FROM ".ORMS_SMS_MESSAGE_LIST_TABLE."
 ");
 
