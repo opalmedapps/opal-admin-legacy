@@ -67,6 +67,26 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             }
             return numberOfTrues;
         }
+        console.log($scope.writeAccess);
+        //Function to get reset selected information
+        function resetType(){
+            $scope.UpdateInformation.type = "";
+            steps.type.completed = false;
+            $scope.typeSection.open = false;
+            $scope.eventSection.show = false;
+        }
+
+        function resetEvent(){
+            $scope.UpdateInformation.event = "";
+            steps.event.completed = false;
+            $scope.eventSection.open = false;
+            $scope.messageSection.show = false;
+        }
+
+        function resetMessage(){
+            $scope.messageSection.open = false;
+            steps.message.completed = false;
+        }
 
         //Function to get Specialities from database
         function getSmsSpecialityList(){
@@ -97,6 +117,11 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
 
         //Functions to update the information selected
         $scope.SpecialityUpdate = function(element){
+            if (element.specialityCode != $scope.UpdateInformation.specialityCode){
+                resetType();
+                resetEvent();
+                resetMessage();
+            }
             $scope.UpdateInformation.specialityCode = element.specialityCode;
             $scope.UpdateInformation.specialityName = element.specialityName;
             steps.speciality.completed = true;
@@ -108,6 +133,10 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         }
 
         $scope.TypeUpdate = function(element){
+            if (element != $scope.UpdateInformation.type){
+                resetEvent();
+                resetMessage();
+            }
             $scope.UpdateInformation.type = element;
             steps.type.completed = true;
             $scope.typeSection.open = true;
@@ -118,6 +147,9 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         }
 
         $scope.EventUpdate = function(element){
+            if (element != $scope.UpdateInformation.event){
+                resetMessage();
+            }
             $scope.UpdateInformation.event = element;
             steps.event.completed = true;
             $scope.eventSection.open = true;
