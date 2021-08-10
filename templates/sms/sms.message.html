@@ -267,11 +267,11 @@
                         </div>
                         <div class="row animated" ng-class="{fadeInUp:eventSection.show}" ng-if="eventSection.show">
                             <div ng-repeat="element in EventList" class="col-xs-4 col-lg-3 item-panel-select">
-                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: UpdateInformation.event == element.event}" ng-click="EventUpdate(element)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                                    <div class="panel-info" ng-class="{active: UpdateInformation.event == element.event}">
+                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: UpdateInformation.event == element}" ng-click="EventUpdate(element)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                    <div class="panel-info" ng-class="{active: UpdateInformation.event == element}">
                                         <div class="panel-content" style="text-align:center">
                                             <span style="font-size:30px;" class="fa fa-paper-plane"></span>
-                                            <div class="option-panel-title">{{'SMS.MESSAGE.'+element.event|translate}}</div>
+                                            <div class="option-panel-title">{{'SMS.MESSAGE.'+element|translate}}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -306,7 +306,7 @@
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-xs-12 col-lg-12">
-                                                <textarea class="form-control" rows="5" ng-model="UpdateInformation.message.English" ng-change="CheckMessage()"></textarea>
+                                                <textarea class="form-control" rows="5" ng-model="UpdateInformation.message.English.smsMessage" ng-change="CheckMessage()"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -321,7 +321,7 @@
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-xs-12 col-lg-12">
-                                                <textarea class="form-control" rows="5" ng-model="UpdateInformation.message.French" ng-change="CheckMessage()"></textarea>
+                                                <textarea class="form-control" rows="5" ng-model="UpdateInformation.message.French.smsMessage" ng-change="CheckMessage()"></textarea>
                                             </div>
                                         </div>
                                     </div>

@@ -9,9 +9,8 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
     $scope.changesDetected = false;
     if($scope.currentAppointment.type=='-')
         $scope.currentAppointmentType = "UNDEFINED";
-    else $scope.currentAppintmentType = $scope.currentAppointment.type;
+    else $scope.currentAppointmentType = $scope.currentAppointment.type;
     $scope.typeSelected = $scope.currentAppointmentType;
-
     getSmsTypeList();
     $scope.typeSearchField = "";
 
@@ -34,27 +33,29 @@ controller('sms.edit', function ($scope, $filter, $uibModal, $uibModalInstance, 
         return !$scope.typeSearchField || keyword.test(Filter);
     };
     $scope.updateType = function(type){
-        $scope.typeSelected = null;
         $scope.changesDetected = (type != $scope.currentAppointmentType);
         $scope.typeSelected = type
     }
 
     var arrValidationInsert = [
-        $filter('translate')('SMS.VALIDATION.TYPE'),
         $filter('translate')('SMS.VALIDATION.APPOINTMENT_ID'),
+        $filter('translate')('SMS.VALIDATION.ACTIVE'),
+        $filter('translate')('SMS.VALIDATION.TYPE'),
     ];
 
     // Submit changes
     $scope.updateAppointment = function() {
         if($scope.changesDetected) {
             var update = {
-                type:$scope.typeSelected, id:$scope.currentAppointment.id
+                id: $scope.currentAppointment.id,
+                active: $scope.currentAppointment.active,
+                type: $scope.typeSelected,
             }
             if(update.type == "UNDEFINED") update.type = 0;
             $.ajax({
                 type: "POST",
-                url: "sms/update/sms-type",
-                data: update,
+                url: "sms/update/activation",
+                data: {updateList: {update}},
                 success: function () {},
                 error: function (err) {
                     err.responseText = JSON.parse(err.responseText);
