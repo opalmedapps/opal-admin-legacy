@@ -23,6 +23,10 @@ class DatabaseOpal extends DatabaseAccess {
             }
             else {
                 $userInfo = $this->_getUserInfoFromDB($newOAUserId);
+                if(count($userInfo) == 1)
+                    $userInfo = $userInfo[0];
+                else
+                    HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "User not authenticated.");
                 $this->OAUserId = $userInfo["OAUserId"];
                 $this->username = $userInfo["username"];
                 $this->userRole = $userInfo["userRole"];
@@ -1455,6 +1459,10 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  array - list of educational material
      * */
     function getEducationalMaterial() {
+        return $this->_fetchAll(OPAL_GET_EDUCATIONAL_MATERIAL, array());
+    }
+
+    function getPublishedEducationalMaterial() {
         return $this->_fetchAll(OPAL_GET_EDUCATIONAL_MATERIAL, array());
     }
 
@@ -3651,4 +3659,57 @@ class DatabaseOpal extends DatabaseAccess {
         );
     }
 
+    /**
+     * Update ever resource pending of level 1 with appointment ready to level 2.
+     * @return int - number or records affected
+     */
+    function updateResourcePendingLevelInProcess() {
+        return $this->_updateRecordIntoTable(UPDATE_RESOURCE_PENDING_LEVEL_IN_PROCESS, array("updatedBy"=>$this->getUsername()));
+    }
+
+    /**
+     * Return the oldest resource pending marked as a level 2 (processing)
+     * @return array - data found
+     */
+    function getOldestResourcePendingInProcess() {
+        return $this->_fetchAll(GET_OLDEST_RESOURCE_PENDING_IN_PROCESS, array());
+    }
+
+    /**
+     * Delete a specific resourcePending record
+     * @param $id - primary key of the record in resourcePending to delete
+     * @return int - number of records affected
+     */
+    function deleteResourcePendingInProcess($id) {
+        $toDelete = array(
+            array("parameter"=>":ID","variable"=>$id),
+        );
+        return $this->_execute(OPAL_DELETE_RESOURCE_PENDING, $toDelete);
+    }
+
+    /**
+     * Update the check-in of an appointment to checked if it was not checked and returned the number of affected rows
+     * @param $source int - source database ID
+     * @param $appointment - external appointment ID
+     * @return int - number of row affected
+     */
+    function updateCheckInForAppointment($source, $appointment) {
+        return $this->_updateRecordIntoTable(UPDATE_APPOINTMENT_CHECKIN, array(
+            "SourceDatabaseSerNum"=>$source,
+            "AppointmentAriaSer"=>$appointment,
+        ));
+    }
+
+    /**
+     * Get the first site and mrn found based on its source and appointment ID. Used to send push notification.
+     * @param $source int - source database ID
+     * @param $appointment - external appointment ID
+     * @return array - list of records found. Must be one since a LIMIT 1 is set up in the SQL
+     */
+    function getFirstMrnSiteBySourceAppointment($source, $appointment) {
+        return $this->_fetchAll(OPAL_GET_FIRST_MRN_SITE_BY_SOURCE_APPOINTMENT, array(
+            array("parameter"=>":SourceDatabaseName","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":AppointmentAriaSer","variable"=>$appointment,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }
