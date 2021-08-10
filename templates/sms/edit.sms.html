@@ -5,10 +5,11 @@
             {{'SMS.EDIT.TITLE'|translate}}
         </h2>
         <p class="text-info">{{'SMS.EDIT.INFO_MESSAGE'|translate}}</p>
+        <p class="text-info"><b>{{'SMS.EDIT.NOTE_MESSAGE'|translate}}</b></p>
     </div>
     <div class="modal-buttons col-xs-12 col-md-6">
         <form method="post" ng-submit="updateAppointment()">
-            <input ng-if="!locked" class="btn btn-primary submit" ng-class="{'disabled': (!changesDetected)}" type="submit" value="{{'SMS.EDIT.SAVE'|translate}}">
+            <input class="btn btn-primary submit" ng-class="{'disabled': (!changesDetected) || (currentAppointment.active == 1 && typeSelected=='UNDEFINED')}" type="submit" value="{{'SMS.EDIT.SAVE'|translate}}">
             <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'SMS.EDIT.CANCEL'|translate}}">
         </form>
     </div>
@@ -55,7 +56,7 @@
                 <ul class="list-items">
                     <li ng-repeat="type in TypeList | filter: typeSearchField">
                         <label>
-                            <input type="radio" ng-checked="type===typeSelected" ng-click="updateType(type)"> {{type}}
+                            <input type="radio" ng-checked="type==typeSelected" ng-click="updateType(type)"> {{type}}
                         </label>
                     </li>
                 </ul>

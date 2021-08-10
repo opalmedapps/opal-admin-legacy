@@ -3297,6 +3297,7 @@
     "EDIT": {
       "TITLE" : "Edit Appointment",
       "INFO_MESSAGE" : "You are now editing an appointment, click \"Save\" button to Save the changes. ",
+      "NOTE_MESSAGE" : "Note: An appointment type can't be UNDEFINED if the appointment is active. ",
       "SEARCH": "Search",
       "SAVE": "Save",
       "CANCEL": "Cancel",
@@ -3318,10 +3319,9 @@
     },
     "VALIDATION": {
       "APPOINTMENT_ID": "Appointment Id missing",
-      "EVENT": "Event missing",
-      "MESSAGE_EN": "English message missing",
-      "MESSAGE_FR": "French message missing",
-      "SPECIALITY": "Speciality missing",
+      "MESSAGE": "Message missing",
+      "MESSAGE_ID": "Message id missing",
+      "SPECIALITY": "Speciality code missing",
       "ACTIVE": "Activation flag missing",
       "TYPE": "Type missing"
     }

@@ -3,6 +3,6 @@ header('Content-Type: application/javascript');
 include_once("../config.php");
 
 $sms = new Sms(); // Object
-$smsMessage = $sms->getMessage($_POST);
+$smsEventList = $sms->getMessages($_POST);
 
-echo json_encode($smsMessage);
+echo json_encode($smsEventList);
