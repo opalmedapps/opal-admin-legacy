@@ -1462,6 +1462,10 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(OPAL_GET_EDUCATIONAL_MATERIAL, array());
     }
 
+    function getPublishedEducationalMaterial() {
+        return $this->_fetchAll(OPAL_GET_EDUCATIONAL_MATERIAL, array());
+    }
+
     /*
      * Get the list of table of contents for educational materials
      * @params  void
