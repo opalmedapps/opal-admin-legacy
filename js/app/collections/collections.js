@@ -1241,12 +1241,12 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		smsAPI.getSmsEvents = function (type, speciality) {
+		smsAPI.getSmsMessages = function (type, specialityCode) {
 			return $http.post(
-				"sms/get/events",
+				"sms/get/sms-messages",
 				$.param({
 					type: type,
-					speciality: speciality,
+					specialityCode: specialityCode,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},

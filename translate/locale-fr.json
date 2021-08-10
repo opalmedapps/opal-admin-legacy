@@ -3314,6 +3314,7 @@
     "EDIT": {
       "TITLE" : "Modifier le rendez-vous",
       "INFO_MESSAGE" : "Vous êtes en train de modifier un rendez-vous, cliquez sur le bouton \"Enregistrer\" pour enregistrer les modifications. ",
+      "NOTE_MESSAGE" : "Remarque : Un type de rendez-vous ne peut pas être NON DÉFINI si le rendez-vous est actif. ",
       "SEARCH": "Recherche",
       "SAVE": "Enregistrer",
       "CANCEL": "Annuler",
@@ -3335,10 +3336,9 @@
     },
     "VALIDATION": {
       "APPOINTMENT_ID": "Id de Rendez-vous manquante",
-      "EVENT": "Événement manquant",
-      "MESSAGE_EN": "Message anglais manquant",
-      "MESSAGE_FR": "Message français manquant",
-      "SPECIALITY": "Spécialité manquant",
+      "MESSAGE": "Message manquant",
+      "MESSAGE_ID": "Id de message manquant",
+      "SPECIALITY": "Code de pécialité manquant",
       "ACTIVE": "Drapeau d'activation manquant",
       "TYPE": "Type manquant"
     }

@@ -15,7 +15,6 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         $scope.SpecialityList = null;
         $scope.TypeList = null;
         $scope.EventList = null;
-        $scope.smsAppointments = null;
         $scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.sms]) & (1 << 1)) !== 0);
 
         $scope.UpdateInformation = {
@@ -48,11 +47,8 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
         var arrValidationInsert = [
-            $filter('translate')('SMS.VALIDATION.TYPE'),
-            $filter('translate')('SMS.VALIDATION.SPECIALITY'),
-            $filter('translate')('SMS.VALIDATION.EVENT'),
-            $filter('translate')('SMS.VALIDATION.MESSAGE_EN'),
-            $filter('translate')('SMS.VALIDATION.MESSAGE_FR')
+            $filter('translate')('SMS.VALIDATION.MESSAGE_ID'),
+            $filter('translate')('SMS.VALIDATION.MESSAGE')
         ];
 
         // Function to calculate / return step progress
@@ -86,45 +82,17 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             });
         }
 
-        function getSmsAppointmentList() {
-            smsCollectionService.getSmsAppointments().then(function (response) {
-                response.data.forEach(function (row){
-                    switch (row.apptype){
-                        case null:
-                            row.apptype = 'UNDEFINED';
-                    }
-                    row.modified = 0;
-                })
-                $scope.smsAppointments = response.data;
-            }).catch(function(err) {
-                ErrorHandler.onError(err, $filter('translate')('SMS.MESSAGE.ERROR_DETAILS'));
-            });
-        }
-
         function getSmsEventList(){
-            smsCollectionService.getSmsEvents($scope.UpdateInformation.type,$scope.UpdateInformation.specialityName).
+            smsCollectionService.getSmsMessages($scope.UpdateInformation.type,$scope.UpdateInformation.specialityCode).
             then(function (response) {
-                $scope.EventList = response.data;
+                $scope.EventList = [];
+                response.data.forEach(function (row){
+                    if(!$scope.EventList.includes(row.event)) $scope.EventList.push(row.event);
+                });
+                $scope.MessageList = response.data;
             }).catch(function(err) {
                 ErrorHandler.onError(err, $filter('translate')('SMS.MESSAGE.ERROR_DETAILS'));
             });
-        }
-
-        function getSmsMessage() {
-            smsCollectionService.getSmsMessge($scope.UpdateInformation.specialityName,
-                $scope.UpdateInformation.type, $scope.UpdateInformation.event, 2).then(function (response) {
-                $scope.UpdateInformation.message.English = response.data[0].smsmessage;
-            }).catch(function (err) {
-                ErrorHandler.onError(err, $filter('translate')('SMS.MESSAGE.ERROR_DETAILS'));
-            });
-
-            smsCollectionService.getSmsMessge($scope.UpdateInformation.specialityName,
-                $scope.UpdateInformation.type, $scope.UpdateInformation.event, 1).then(function (response) {
-                $scope.UpdateInformation.message.French = response.data[0].smsmessage;
-            }).catch(function (err) {
-                ErrorHandler.onError(err, $filter('translate')('SMS.MESSAGE.ERROR_DETAILS'));
-            });
-
         }
 
         //Functions to update the information selected
@@ -150,14 +118,14 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
         }
 
         $scope.EventUpdate = function(element){
-            $scope.UpdateInformation.event = element.event;
+            $scope.UpdateInformation.event = element;
             steps.event.completed = true;
             $scope.eventSection.open = true;
             $scope.messageSection.show = true;
             $scope.numOfCompletedSteps = stepsCompleted(steps);
             $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-            getSmsMessage();
-            getSmsAppointmentList();
+            $scope.UpdateInformation.message.French = $scope.MessageList.filter(x => x.event == $scope.UpdateInformation.event && x.language == "French")[0];
+            $scope.UpdateInformation.message.English = $scope.MessageList.filter(x => x.event == $scope.UpdateInformation.event && x.language == "English")[0];
         }
 
         $scope.CheckMessage = function(){
@@ -176,11 +144,21 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
 
         //Update Message information
         $scope.UpdateMessage = function(){
+            var update = [
+                {
+                    messageId: $scope.UpdateInformation.message.English.messageId,
+                    smsMessage: $scope.UpdateInformation.message.English.smsMessage
+                },
+                {
+                    messageId: $scope.UpdateInformation.message.French.messageId,
+                    smsMessage: $scope.UpdateInformation.message.French.smsMessage
+                },
+                ]
             if ($scope.checkForm() && $scope.writeAccess) {
                 $.ajax({
                     type: "POST",
                     url: "sms/update/sms-message",
-                    data:$scope.UpdateInformation,
+                    data: {updateList: update},
                     success: function () {},
                     error: function(err) {
                         err.responseText = JSON.parse(err.responseText);
