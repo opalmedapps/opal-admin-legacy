@@ -2416,7 +2416,7 @@
       "INVESTIGATOR_EXPLANATION": "Veuillez entrer le nom complet de la personne responsable, ainsi que leur téléphone principal, leur adresse e-mail et leur numéro de poste facultatif.",
       "PATIENTS": "List des patients",
       "PATIENTS_EXPLANATION": "Si certains patients sont déjà affectés à cette étude, veuillez les ajouter.",
-      "QUESTIONNAIRE": "Liste des questionnaires de rechercher",
+      "QUESTIONNAIRE": "Liste des questionnaires de recherche",
       "QUESTIONNAIRE_EXPLANATION": "Si un questionnaire de recherche pour les patients doit être affecté à cette étude, veuillez l'ajouter maintenant.",
       "SEARCH": "Rechercher",
       "SELECT_ALL": "Tout sélectionner",
