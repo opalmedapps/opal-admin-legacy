@@ -14,10 +14,8 @@ define( "ORMS_API_BASE_URL", $config['databaseConfig']['wrm']['apiurl'] );
 define("ORMS_MEDIVISIT_APPOINTMENT_LIST_TABLE", "MediVisitAppointmentList");
 
 define("ORMS_SQL_GET_APPOINTMENT_FOR_ALIAS","
-    SELECT DISTINCT mval.AppointmentCode AS code, 
-                    mval.ResourceDescription AS expression 
+    SELECT DISTINCT mval.AppointmentCode AS code, mval.ResourceDescription AS expression 
     FROM ".ORMS_MEDIVISIT_APPOINTMENT_LIST_TABLE." mval
     WHERE mval.AppointSys in ('Medivisit','Impromptu','ImpromptuOrtho','InstantAddOn')
     ORDER BY mval.AppointmentCode, mval.ResourceDescription
 ");
-
