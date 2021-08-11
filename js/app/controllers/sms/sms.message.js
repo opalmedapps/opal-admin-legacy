@@ -67,8 +67,8 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             }
             return numberOfTrues;
         }
-        console.log($scope.writeAccess);
-        //Function to get reset selected information
+
+        //Function to get reset type section
         function resetType(){
             $scope.UpdateInformation.type = "";
             steps.type.completed = false;
@@ -76,6 +76,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             $scope.eventSection.show = false;
         }
 
+        //Function to get reset event section
         function resetEvent(){
             $scope.UpdateInformation.event = "";
             steps.event.completed = false;
@@ -83,6 +84,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             $scope.messageSection.show = false;
         }
 
+        //Function to get reset message section
         function resetMessage(){
             $scope.messageSection.open = false;
             steps.message.completed = false;
@@ -102,6 +104,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             });
         }
 
+        //Function to get event and message list from database
         function getSmsEventList(){
             smsCollectionService.getSmsMessages($scope.UpdateInformation.type,$scope.UpdateInformation.specialityCode).
             then(function (response) {
@@ -115,7 +118,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             });
         }
 
-        //Functions to update the information selected
+        //Function to update the speciality selected
         $scope.SpecialityUpdate = function(element){
             if (element.specialityCode != $scope.UpdateInformation.specialityCode){
                 resetType();
@@ -132,6 +135,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             getSmsTypeList();
         }
 
+        //Function to update the type selected
         $scope.TypeUpdate = function(element){
             if (element != $scope.UpdateInformation.type){
                 resetEvent();
@@ -146,6 +150,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             getSmsEventList();
         }
 
+        //Function to update the event selected
         $scope.EventUpdate = function(element){
             if (element != $scope.UpdateInformation.event){
                 resetMessage();
@@ -160,6 +165,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
             $scope.UpdateInformation.message.English = $scope.MessageList.filter(x => x.event == $scope.UpdateInformation.event && x.language == "English")[0];
         }
 
+        //Function to check the changes on message
         $scope.CheckMessage = function(){
             if($scope.UpdateInformation.message.English && $scope.UpdateInformation.message.French) {
                 $scope.messageSection.open = true;

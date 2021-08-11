@@ -25,6 +25,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             });
         };
 
+        // Function to filter custom codes
         $scope.filterSms = function (filterValue) {
             $scope.filterValue = filterValue;
             $scope.gridApi.grid.refresh();
@@ -78,6 +79,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
         else
             checkboxCellTemplate = '<div style="text-align: center;" class="ui-grid-cell-contents"><i ng-class="row.entity.active == 1 ? \'Active\' : \'Disabled\'" class="fa"></i></div>';
 
+        // Data binding for main table
         $scope.gridOptions = {
             data: 'smsAppointments',
             columnDefs: [
@@ -118,7 +120,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             $filter('translate')('SMS.VALIDATION.TYPE'),
         ];
 
-        //Functions to get information from database.
+        //Functions to get type information from database.
         function getSmsTypeList(){
             smsCollectionService.getSmsType().then(function (response) {
                 var TypeList = []
@@ -132,6 +134,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             });
         }
 
+        //Functions to get speciality information from database.
         function getSmsSpecialityList(){
             smsCollectionService.getSmsSpeciality().then(function (response) {
                 var Speciality = []
@@ -144,6 +147,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             });
         }
 
+        //Functions to get sms appointment list from database.
         function getSmsAppointmentList() {
             smsCollectionService.getSmsAppointments().then(function (response) {
                 response.data.forEach(function (row){
@@ -160,10 +164,12 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             });
         }
 
+        //Function to update checkbox value
         $scope.updateVal = function(value){
             return (parseInt(value) === 1);
         }
 
+        //Function to change activation state of an sms appointment
         $scope.checkSmsUpdate = function (sms) {
 
             $scope.changesMade = true;
@@ -181,7 +187,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             sms.modified = 1;
         };
 
-        // Submit changes
+        // Function to submit changes
         $scope.submitUpdate = function () {
             if ($scope.changesMade && $scope.writeAccess) {
                 angular.forEach($scope.smsAppointments, function (sms) {
@@ -219,7 +225,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
             }
         };
 
-        //Open editor modal
+        //Function to edit appointment
         $scope.editAppointment = function(appointment){
             if($scope.writeAccess){
                 $scope.currentAppointment = appointment;
