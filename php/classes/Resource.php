@@ -63,31 +63,35 @@ class Resource extends Module {
                 }
             }
 
-            // 4rd bit
-            if (!array_key_exists("resources", $post) || !is_array($post["resources"])) {
-                if (!array_key_exists("resources", $post)) $post["resources"] = array();
-                if(!is_array($post["resources"])) $post["resources"] = array($post["resources"]);
+            // 4th bit
+            if (!array_key_exists("resources", $post)) {
+                if (!array_key_exists("resources", $post)) $post["resources"] = "[]";
                 $errCode = "1" . $errCode;
             }
             else {
                 $errorFound = false;
-                foreach ($post["resources"] as $resource) {
-                    if (!array_key_exists("code", $resource) || !array_key_exists("name", $resource) || !array_key_exists("type", $resource)
-                        || $resource["code"] == "" || $resource["name"] == "" || $resource["type"] == "") {
-                        $errorFound = true;
-                        break;
-                    }
-                }
-                if($errorFound)
+                $post["resources"] = json_decode($post["resources"], true);
+                if(!is_array($post["resources"]) || count($post["resources"]) <= 0)
                     $errCode = "1" . $errCode;
-                else
-                    $errCode = "0" . $errCode;
+                else {
+                    foreach ($post["resources"] as $resource) {
+                        if (!array_key_exists("code", $resource) || !array_key_exists("name", $resource) || !array_key_exists("type", $resource)
+                            || $resource["code"] == "" || $resource["name"] == "" || $resource["type"] == "") {
+                            $errorFound = true;
+                            break;
+                        }
+                    }
+                    if ($errorFound)
+                        $errCode = "1" . $errCode;
+                    else
+                        $errCode = "0" . $errCode;
+                }
             }
         } else {
             $post = array(
                 "source"=>"",
                 "appointment"=>"",
-                "resources"=>array(),
+                "resources"=>"[]",
             );
             $errCode .= "1111";
         }
@@ -107,7 +111,6 @@ class Resource extends Module {
         $appointment = array();
         $errCode = $this->_validateResources($post, $source, $appointment);
         $errCode = bindec($errCode);
-
         if ($errCode != 0) {
             $this->opalDB->insertResourcePendingError($post["source"], $post["appointment"], json_encode($post["resources"]), json_encode(array("validation" => $errCode)));
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
