@@ -183,20 +183,19 @@ class Sms extends Module {
     /*
      * Send the post request to ORMS and get response data. Throw error 400 when get invalid inputs
      * @params  $url            (string) the url link for post request.
-     *          $postParameters (array) post parameters received from the front end.
+     * @params  $postParameters (array) by default empty, post parameters received from the front end.
      * @return The response data, null if there's none
      */
-    private function postRequest($url, $postParameters = []) {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    private function postRequest($url, $postParameters = array()) {
+        $api = new ApiCall(ORMS_API_CONFIG);
+        $api->setOption(CURLOPT_HTTPHEADER,array(
             'Content-Type: application/json',
             'Connection: Keep-Alive'
         ));
-        curl_setopt($ch,CURLOPT_URL, $url);
-        curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($postParameters,JSON_NUMERIC_CHECK));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        $requestResult = json_decode(curl_exec($ch),TRUE);
-        curl_close($ch);
+        $api->setUrl($url);
+        $api->setPostFields( json_encode($postParameters,JSON_NUMERIC_CHECK));
+        $api->execute();
+        $requestResult = json_decode($api->getAnswer(),TRUE);
         if($requestResult["status"] != "Success"){
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR,$requestResult["error"]);
         }

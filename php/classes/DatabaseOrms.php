@@ -9,7 +9,6 @@
 
 class DatabaseOrms extends DatabaseAccess {
 
-
     function getAppointmentForAlias() {
         $result = $this->_fetchAll(ORMS_SQL_GET_APPOINTMENT_FOR_ALIAS, array());
         $toInsert = array();
@@ -26,5 +25,4 @@ class DatabaseOrms extends DatabaseAccess {
         }
         return $toInsert;
     }
-
 }
