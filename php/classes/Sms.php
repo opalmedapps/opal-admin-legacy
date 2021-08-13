@@ -5,10 +5,9 @@
  * */
 
 class Sms extends Module {
-
-    protected $baseUrl = ORMS_API_BASE_URL;
-
     public function __construct($guestStatus = false) {
+        if(!WRM_DB_ENABLED)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_FOUND);
         parent::__construct(MODULE_SMS, $guestStatus);
     }
 
@@ -18,7 +17,7 @@ class Sms extends Module {
      * */
     public function getAppointments() {
         $this->checkReadAccess();
-        return $this->postRequest($this->baseUrl."/sms/smsAppointment/getSmsAppointments");
+        return $this->_postRequest(WRM_API_URL."/sms/smsAppointment/getSmsAppointments");
     }
 
     /*
@@ -50,7 +49,7 @@ class Sms extends Module {
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        return $this->postRequest($this->baseUrl."/sms/smsMessage/getMessages", $post);
+        return $this->_postRequest(WRM_API_URL.WRM_API_METHOD["getMessages"], $post);
     }
 
     /*
@@ -104,7 +103,7 @@ class Sms extends Module {
 
         foreach ($post["updateList"] as $information) {
             if($information["type"] == 0) $information["type"] = NULL;
-            $this->postRequest($this->baseUrl."/sms/smsAppointment/updateSmsAppointment", $information);
+            $this->_postRequest(WRM_API_URL."/sms/smsAppointment/updateSmsAppointment", $information);
         }
     }
 
@@ -149,7 +148,7 @@ class Sms extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         foreach ($post["updateList"] as $information) {
-            $this->postRequest($this->baseUrl."/sms/smsMessage/updateMessage", $information);
+            $this->_postRequest(WRM_API_URL.WRM_API_METHOD["updateMessage"], $information);
         }
     }
 
@@ -160,7 +159,7 @@ class Sms extends Module {
     public function getSpecialityMessage(){
         $this->checkReadAccess();
 
-        return $this->postRequest($this->baseUrl."/hospital/getSpecialityGroups");
+        return $this->_postRequest(WRM_API_URL.WRM_API_METHOD["getSpecialityGroups"]);
     }
 
     /*
@@ -174,31 +173,32 @@ class Sms extends Module {
 
         if (is_array($post)) {
             if (array_key_exists("specialityCode", $post) && is_string($post["specialityCode"]) && $post["specialityCode"] != "")
-                return $this->postRequest($this->baseUrl."/sms/smsMessage/getTypes.php",$post);
+                return $this->_postRequest(WRM_API_URL.WRM_API_METHOD["getTypes"],$post);
             else
-                return $this->postRequest($this->baseUrl."/sms/smsMessage/getTypes");
+                return $this->_postRequest(WRM_API_URL.WRM_API_METHOD["getTypes"]);
         }
     }
 
-    /*
-     * Send the post request to ORMS and get response data. Throw error 400 when get invalid inputs
-     * @params  $url            (string) the url link for post request.
-     * @params  $postParameters (array) by default empty, post parameters received from the front end.
-     * @return The response data, null if there's none
+    /**
+     * Make a post request to a specified url with a list of post parameters if available. If an error occurs, returns
+     * a 502 error.
+     * @param $url string - contains the url
+     * @param array $postParameters - Contains the parameters for the post. Default empty array
+     * @return mixed - data received from OPMS
      */
-    private function postRequest($url, $postParameters = array()) {
-        $api = new ApiCall(ORMS_API_CONFIG);
-        $api->setOption(CURLOPT_HTTPHEADER,array(
-            'Content-Type: application/json',
-            'Connection: Keep-Alive'
-        ));
+    protected function _postRequest($url, $postParameters = array()) {
+        $api = new ApiCall(WRM_API_CONFIG);
         $api->setUrl($url);
         $api->setPostFields( json_encode($postParameters,JSON_NUMERIC_CHECK));
         $api->execute();
-        $requestResult = json_decode($api->getAnswer(),TRUE);
-        if($requestResult["status"] != "Success"){
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR,$requestResult["error"]);
-        }
+
+        $requestResult = json_decode($api->getAnswer(),true);
+
+        if($api->getError())
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to ORMS: " . $api->getError());
+        else if($api->getHttpCode() != HTTP_STATUS_SUCCESS)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Error " . $api->getHttpCode() . " from ORMS: " . $requestResult["error"]);
+
         return $requestResult["data"];
     }
 }

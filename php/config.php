@@ -27,6 +27,7 @@ $config = json_decode($json, true);
 define("USER_SALT", $config["login"]["salt"]);
 define("ACTIVE_DIRECTORY", $config["login"]["activeDirectory"]);
 define("ACTIVE_DIRECTORY_SETTINGS", $config["login"]["activeDirectory"]["settings"]);
+define("MSSS_ACTIVE_DIRECTORY_CONFIG", $config["login"]["activeDirectory"]["config"]);
 define("AD_LOGIN_ACTIVE", ACTIVE_DIRECTORY["enabled"]);
 
 const LOCALHOST_ADDRESS = array('127.0.0.1','localhost','::1');
@@ -38,19 +39,13 @@ const DEFAULT_API_CONFIG = array(
     CURLOPT_SSL_VERIFYPEER=>false,
     CURLOPT_HEADER=>true,
 );
-const MSSS_ACTIVE_DIRECTORY_CONFIG = array(
-    CURLOPT_URL=>ACTIVE_DIRECTORY["url"],
-    CURLOPT_RETURNTRANSFER=>true,
-);
+
 const PUSH_NOTIFICATION_CONFIG = array(
     CURLOPT_RETURNTRANSFER=>true,
     CURLOPT_FOLLOWLOCATION=>true,
     CURLOPT_HEADER=>true
 );
-const ORMS_API_CONFIG = array(
-    CURLOPT_RETURNTRANSFER=>true,
-    CURLOPT_POST=>true,
-);
+
 const DEFAULT_CRON_OAUSERID = 23;
 
 const CHECKED_IN = 1;
@@ -254,6 +249,7 @@ define("HTTP_STATUS_BAD_GATEWAY",502);
 define("HTTP_STATUS_BAD_REQUEST_ERROR",400);
 define("HTTP_STATUS_NOT_AUTHENTICATED_ERROR",401);
 define("HTTP_STATUS_FORBIDDEN_ERROR",403);
+define("HTTP_STATUS_NOT_FOUND",404);
 define("HTTP_STATUS_SESSION_TIMEOUT_ERROR",419);
 define("HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR",422);
 define("HTTP_STATUS_LOGIN_TIMEOUT_ERROR",440);
