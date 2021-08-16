@@ -1,7 +1,7 @@
 <?php
 include_once("../config.php");
 
-$sms = new Sms(); // Object
+$sms = new Sms();
 $sms->updateSmsMessage($_POST);
 
 header('Content-Type: application/javascript');
