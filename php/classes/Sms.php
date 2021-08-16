@@ -107,6 +107,37 @@ class Sms extends Module {
         }
     }
 
+    /**
+     * Validate a SMS message.
+     * @param $post array - data to validate
+     * Validation code :    Error validation code is coded as an int of 1 bit (value from 0 to 1). Bit information
+     *                      are coded from right to left:
+     *                      1: Update list missing or invalid
+     * @return string - error code
+     */
+    protected function _validateSmsMessage(&$post) {
+        $errCode = "";
+        if (is_array($post)) {
+            if (!array_key_exists("updateList", $post) || !is_array($post["updateList"]))
+                $errCode = "1" . $errCode;
+            else {
+                $errorFound = false;
+                foreach ($post["updateList"] as $item) {
+                    if (!array_key_exists("messageId", $item) || !array_key_exists("smsMessage", $item) || $item["messageId"] == "" || $item["smsMessage"] == "") {
+                        $errorFound = true;
+                        break;
+                    }
+                }
+                if($errorFound)
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
+            }
+        }  else
+            $errCode = "1";
+        return $errCode;
+    }
+
     /*
      * Sanitize, validate and update the sms message the given type, speciality, event and language
      * Validation code :    Error validation code is coded as an int of 4 bits. Bit information
@@ -118,31 +149,7 @@ class Sms extends Module {
     public function updateSmsMessage($post){
         $this->checkWriteAccess($post);
         $post = HelpSetup::arraySanitization($post);
-        $errCode = "";
-        $idCount = 0;
-        $messageCount = 0;
-        if (is_array($post)) {
-            if (array_key_exists("updateList", $post) || is_array($post["updateList"])) {
-                foreach ($post["updateList"] as $information) {
-                    if (is_array($information)) {
-                        if (array_key_exists("messageId", $information) && $information["messageId"] != "")
-                            $idCount++;
-                        if (array_key_exists("smsMessage", $information) && $information["smsMessage"] != "")
-                            $messageCount++;
-                    }
-                }
-
-                if ($idCount != count($post["updateList"]))
-                    $errCode = "1" . $errCode;
-                else
-                    $errCode = "0" . $errCode;
-                if ($messageCount != count($post["updateList"]))
-                    $errCode = "1" . $errCode;
-                else
-                    $errCode = "0" . $errCode;
-            }
-        }
-
+        $errCode = $this->_validateSmsMessage($post);
         $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
@@ -152,52 +159,72 @@ class Sms extends Module {
         }
     }
 
-    /*
+    /**
      * Get a list of speciality for appointment message
-     * @return  list of speciality group information in database
-     * */
+     * @return mixed - list of speciality group information in database
+     */
     public function getSpecialityMessage(){
         $this->checkReadAccess();
-
         return $this->_postRequest(WRM_API_URL.WRM_API_METHOD["getSpecialityGroups"]);
     }
 
-    /*
-     * Sanitize, validate and get a list of appointment type for the given speciality code
-     * If speciality code is not provided, return all existing sms appointment type.
-     * @return  list of type in database
-     * */
-    public function getTypeMessage($post){
-        $this->checkReadAccess($post);
-        $post = HelpSetup::arraySanitization($post);
+    /**
+     * Validate and sanitize appointment SMS type info.
+     * @param $post - data to validate
+     * @param array $dataReady - data ready to be sent to the ORMS API
+     * Validation code :    Error validation code is coded as an int of 1 bit (value from 0 to 1). Bit information
+     *                      are coded from right to left:
+     *                      1: post is not an array
+     * @return string - error code
+     */
+    protected function _validateSmsType(&$post, &$dataReady) {
+        $errCode = "";
+        $dataReady = array();
 
         if (is_array($post)) {
-            if (array_key_exists("specialityCode", $post) && is_string($post["specialityCode"]) && $post["specialityCode"] != "")
-                return $this->_postRequest(WRM_API_URL.WRM_API_METHOD["getTypes"],$post);
-            else
-                return $this->_postRequest(WRM_API_URL.WRM_API_METHOD["getTypes"]);
+            if (array_key_exists("specialtyCode", $post) && $post["specialtyCode"] != "")
+                $dataReady = array("specialtyCode"=>$post["specialtyCode"]);
         }
+        else
+            $errCode = "1";
+
+        return $errCode;
+    }
+
+    /**
+     * get a list of appointment type for a given speciality code.
+     * @param $post - contains the specialty code.
+     * @return mixed - answer from the ORMS API
+     */
+    public function getSmsType($post){
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validateSmsType($post, $dataReady);
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        return $this->_postRequest(WRM_API_URL.WRM_API_METHOD["getTypes"], $dataReady);
     }
 
     /**
      * Make a post request to a specified url with a list of post parameters if available. If an error occurs, returns
      * a 502 error.
      * @param $url string - contains the url
-     * @param array $postParameters - Contains the parameters for the post. Default empty array
+     * @param $postParameters array - Contains the parameters for the post. Default empty array
      * @return mixed - data received from OPMS
      */
-    protected function _postRequest($url, $postParameters = array()) {
+    protected function _postRequest($url, array $postParameters = array()) {
         $api = new ApiCall(WRM_API_CONFIG);
         $api->setUrl($url);
         $api->setPostFields( json_encode($postParameters,JSON_NUMERIC_CHECK));
         $api->execute();
-
         $requestResult = json_decode($api->getAnswer(),true);
 
         if($api->getError())
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to ORMS: " . $api->getError());
         else if($api->getHttpCode() != HTTP_STATUS_SUCCESS)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Error " . $api->getHttpCode() . " from ORMS: " . $requestResult["error"]);
+            HelpSetup::returnErrorMessage($api->getHttpCode(),"Error from ORMS: " . $requestResult["error"]);
 
         return $requestResult["data"];
     }
