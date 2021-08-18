@@ -3092,6 +3092,7 @@
   "SMS": {
     "SMS": "SMS",
     "LIST": {
+      "TITLE": "SMS - Code de rendez-vous ORMS",
       "EDIT": "Modifier/Ajouter un Message",
       "SAVE": "Enregistrer",
       "APPOINTMENT_CODE": "Code de Rendez-vous",
@@ -3102,9 +3103,9 @@
       "TEST_CENTRE": "TEST_CENTRE",
       "UNDEFINED": " ",
       "SPECIALITY": "Spécialité",
-      "Oncology": "Oncologie",
-      "RESOURCE_NAME": "Code de la clinique",
-      "DISABLE/ENABLE": "Activer le Rendez-vous",
+      "ONCOLOGY": "Oncologie",
+      "RESOURCE_NAME": "Code clinique",
+      "ENABLE": "Activer SMS ORMS",
       "SEARCH": "Rechercher",
       "SUCCESS": "Changements sauvegardés avec succès",
       "ERROR": "Une erreur s'est produite lors de l'enregistrement des modifications.",
@@ -3112,7 +3113,7 @@
       "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails du rendez-vous.",
       "DISABLE": "Désactivé"
     },
-    "MESSAGE": {
+    "ADD": {
       "TITLE": "Message de SMS",
       "BACK": "Retour au SMS",
       "SUMMARY": "Sommaire",

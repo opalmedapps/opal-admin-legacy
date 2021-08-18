@@ -12,6 +12,8 @@ define( "WRM_DB_PASSWORD", $config['databaseConfig']['wrm']['password'] );
 define( "WRM_API_URL", $config['databaseConfig']['wrm']['api']['url'] );
 define( "WRM_API_METHOD", $config['databaseConfig']['wrm']['api']['method'] );
 define( "WRM_API_CONFIG", $config['databaseConfig']['wrm']['api']['config'] );
+define( "ORMS_API_BASE_URL", $config['databaseConfig']['wrm']['api']['url'] );
+define( "ORMS_API_CONFIG", $config['databaseConfig']['wrm']['api']['config'] );
 
 define("ORMS_MEDIVISIT_APPOINTMENT_LIST_TABLE", "MediVisitAppointmentList");
 
