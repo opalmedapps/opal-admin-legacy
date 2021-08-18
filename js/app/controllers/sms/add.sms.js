@@ -1,10 +1,10 @@
-angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.bootstrap.materialPicker']).
+angular.module('opalAdmin.controllers.add.sms', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.bootstrap.materialPicker']).
 
 
 	/******************************************************************************
 	 * SMS Page controller
 	 *******************************************************************************/
-	controller('sms.message', function ($scope, $uibModal, $filter, $state, smsCollectionService, uiGridConstants, Session, ErrorHandler, MODULE) {
+	controller('add.sms', function ($scope, $uibModal, $filter, $state, smsCollectionService, uiGridConstants, Session, ErrorHandler, MODULE) {
 		// Function to go to previous page
 		$scope.goBack = function () {
 			window.history.back();
@@ -113,7 +113,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
 				});
 				$scope.MessageList = response.data;
 			}).catch(function (err) {
-				ErrorHandler.onError(err, $filter('translate')('SMS.MESSAGE.ERROR_DETAILS'));
+				ErrorHandler.onError(err, $filter('translate')('SMS.ADD.ERROR_DETAILS'));
 			});
 		}
 
@@ -200,7 +200,7 @@ angular.module('opalAdmin.controllers.sms.message', ['ngAnimate', 'ui.bootstrap'
 					},
 					error: function (err) {
 						err.responseText = JSON.parse(err.responseText);
-						ErrorHandler.onError(err, $filter('translate')('SMS.MESSAGE.ERROR'), arrValidationInsert);
+						ErrorHandler.onError(err, $filter('translate')('SMS.ADD.ERROR'), arrValidationInsert);
 					},
 					complete: function () {
 						$state.go('sms');

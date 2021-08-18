@@ -64,18 +64,12 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
 	};
 
         //Cell Templates
-	var cellTemplateResourceName = '<div style="cursor:pointer;" class="ui-grid-cell-contents">' +
-            '<a href=""  ng-click="grid.appScope.editAppointment(row.entity)"><strong>{{row.entity.resourceDescription}}</strong>&nbsp&nbsp&nbsp({{row.entity.resourceCode}})</a></div>';
-	var cellTemplateAppointmentCode = '<div style="cursor:pointer;" class="ui-grid-cell-contents">' +
-            '<strong><a href=""  ng-click="grid.appScope.editAppointment(row.entity)">{{row.entity.appointmentCode}}</a></strong></div>';
+	var cellTemplateResourceName = '<div style="cursor:pointer;" class="ui-grid-cell-contents">' + '<a href=""  ng-click="grid.appScope.editAppointment(row.entity)"><strong>{{row.entity.resourceDescription}}</strong>&nbsp&nbsp&nbsp({{row.entity.resourceCode}})</a></div>';
+	var cellTemplateAppointmentCode = '<div style="cursor:pointer;" class="ui-grid-cell-contents">' +  '<strong><a href=""  ng-click="grid.appScope.editAppointment(row.entity)">{{row.entity.appointmentCode}}</a></strong></div>';
 
 	var checkboxCellTemplate;
 	if($scope.writeAccess)
-		checkboxCellTemplate = '<div style="text-align: center;" class="ui-grid-cell-contents" ' +
-                'ng-style = "(row.entity.type != \'-\') ? {cursor:\'pointer\'}:{cursor:\'not-allowed\'}" >' +
-                '<input style="margin: 4px;" type="checkbox" ng-checked="grid.appScope.updateVal(row.entity.active)" ' +
-                'ng-disabled="!(row.entity.type != \'-\')" ng-click="grid.appScope.checkSmsUpdate(row.entity)" ' +
-                'ng-model="row.entity.active"></div>';
+		checkboxCellTemplate = '<div style="text-align: center;" class="ui-grid-cell-contents" ' +  'ng-style = "(row.entity.type != \'-\') ? {cursor:\'pointer\'}:{cursor:\'not-allowed\'}" >' + '<input style="margin: 4px;" type="checkbox" ng-checked="grid.appScope.updateVal(row.entity.active)" ' + 'ng-disabled="!(row.entity.type != \'-\')" ng-click="grid.appScope.checkSmsUpdate(row.entity)" ' + 'ng-model="row.entity.active"></div>';
 	else
             checkboxCellTemplate = '<div style="text-align: center;" class="ui-grid-cell-contents"><i ng-class="row.entity.active == 1 ? \'Active\' : \'Disabled\'" class="fa"></i></div>';
 
@@ -97,7 +91,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
 					selectOptions: []
 				}
 			},
-			{ field: 'active', displayName: $filter('translate')('SMS.LIST.DISABLE/ENABLE'), enableColumnMenu: false, width: '15%',
+			{ field: 'active', displayName: $filter('translate')('SMS.LIST.ENABLE'), enableColumnMenu: false, width: '15%',
 				cellTemplate: checkboxCellTemplate, enableFiltering: false },
 		],
 		enableFiltering: true,

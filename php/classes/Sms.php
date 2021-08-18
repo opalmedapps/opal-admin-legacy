@@ -52,59 +52,57 @@ class Sms extends Module {
         return $this->_postRequest(WRM_API_URL.WRM_API_METHOD["getMessages"], $post);
     }
 
-    /*
-     * Sanitize, validate and update the activation status for a list of appointments
-     * Validation code :    Error validation code is coded as an int of 3 bits. Bit information
-     *                      are coded from right to left:
-     *                      1: appointment id missing
-     *                      2: appointment activation state missing
-     *                      3: appointment type missing
-     * @params  $post (array) data received from the front end.
-     * */
+    protected function _validateActivationState(&$post, &$dataReady) {
+        $validType = $this->_postRequest(WRM_API_URL.WRM_API_METHOD["getTypes"]);
+        $dataReady = array();
+        $errCode = "";
+        if (is_array($post)) {
+            if (!array_key_exists("updateList", $post) || !is_array($post["updateList"]))
+                $errCode = "1" . $errCode;
+            else {
+                $errorFound = false;
+                foreach ($post["updateList"] as $item) {
+                    if (!array_key_exists("id", $item) || !array_key_exists("active", $item) || !array_key_exists("type", $item) || $item["id"] == "" || $item["active"] == "" ||  !in_array($item["type"], $validType)) {
+                        $errorFound = true;
+                        break;
+                    }
+                    else
+                        array_push($dataReady, array("id"=>$item["id"], "active"=>$item["active"], "type"=>$item["type"]));
+                }
+                if($errorFound) {
+                    $errCode = "1" . $errCode;
+                    $dataReady = array();
+                }
+                else
+                    $errCode = "0" . $errCode;
+            }
+        }  else
+            $errCode = "1";
+        return $errCode;
+    }
+
     public function updateActivationState($post){
         $this->checkWriteAccess($post);
         $post = HelpSetup::arraySanitization($post);
-        $errCode = "";
-        $idCount = 0;
-        $activeCount = 0;
-        $typeCount = 0;
-        if (is_array($post)) {
-            if(array_key_exists("updateList", $post) || is_array($post["updateList"])) {
-                foreach ($post["updateList"] as $information) {
-                    if (is_array($information)){
-                        if (array_key_exists("id", $information) && $information["id"] != "")
-                            $idCount++;
-                        if (array_key_exists("active", $information) && $information["active"] != "")
-                            $activeCount++;
-                        if (array_key_exists("type", $information) && $information["type"] != "")
-                            $typeCount++;
-                    }
-                }
-                if ($idCount != count($post["updateList"]))
-                    $errCode = "1" . $errCode;
-                else
-                    $errCode = "0" . $errCode;
-                if ($activeCount != count($post["updateList"]))
-                    $errCode = "1" . $errCode;
-                else
-                    $errCode = "0" . $errCode;
-                if ($typeCount != count($post["updateList"]))
-                    $errCode = "1" . $errCode;
-                else
-                    $errCode = "0" . $errCode;
-            } else
-                $errCode = "111";
-        }else
-            $errCode = "111";
-
+        $errCode = $this->_validateActivationState($post, $dataReady);
         $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        foreach ($post["updateList"] as $information) {
-            if($information["type"] == 0) $information["type"] = NULL;
-            $this->_postRequest(WRM_API_URL."/sms/smsAppointment/updateSmsAppointment", $information);
-        }
+        foreach ($dataReady as $item)
+            $this->_postRequest(WRM_API_URL."/sms/smsAppointment/updateSmsAppointment", $item);
+    }
+
+    public function updateAppointmentCode($post){
+        $this->checkWriteAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validateActivationState($post, $dataReady);
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        foreach ($dataReady as $item)
+            $this->_postRequest(WRM_API_URL."/sms/smsAppointment/updateSmsAppointment", $item);
     }
 
     /**
@@ -115,7 +113,8 @@ class Sms extends Module {
      *                      1: Update list missing or invalid
      * @return string - error code
      */
-    protected function _validateSmsMessage(&$post) {
+    protected function _validateSmsMessage(&$post, &$dataReady) {
+        $dataReady = array();
         $errCode = "";
         if (is_array($post)) {
             if (!array_key_exists("updateList", $post) || !is_array($post["updateList"]))
@@ -127,9 +126,13 @@ class Sms extends Module {
                         $errorFound = true;
                         break;
                     }
+                    else
+                        array_push($dataReady, array("messageId" => $item["messageId"], "smsMessage" => $item["smsMessage"]));
                 }
-                if($errorFound)
+                if($errorFound) {
                     $errCode = "1" . $errCode;
+                    $dataReady = array();
+                }
                 else
                     $errCode = "0" . $errCode;
             }
@@ -149,14 +152,12 @@ class Sms extends Module {
     public function updateSmsMessage($post){
         $this->checkWriteAccess($post);
         $post = HelpSetup::arraySanitization($post);
-        $errCode = $this->_validateSmsMessage($post);
-        $errCode = bindec($errCode);
+        $errCode = bindec($this->_validateSmsMessage($post, $dataReady));
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        foreach ($post["updateList"] as $information) {
-            $this->_postRequest(WRM_API_URL.WRM_API_METHOD["updateMessage"], $information);
-        }
+        foreach ($dataReady as $item)
+            $this->_postRequest(WRM_API_URL.WRM_API_METHOD["updateMessage"], $item);
     }
 
     /**
