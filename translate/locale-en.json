@@ -3072,9 +3072,9 @@
     "SERVER_ERROR": "An error occurred. Answer from the server: "
   },
   "SMS": {
-    "SMS": "Orms Appointment Code",
     "LIST": {
-      "EDIT": "Edit/Add Message",
+      "TITLE": "SMS - ORMS Appointment Code",
+      "EDIT": "Edit SMS Message",
       "SAVE": "Save",
       "APPOINTMENT_CODE": "Appointment Code",
       "TYPE": "Appointment Type",
@@ -3083,10 +3083,10 @@
       "TELEMED": "TELEMED",
       "TEST_CENTRE": "TEST_CENTRE",
       "UNDEFINED": "-",
-      "SPECIALITY": "Speciality",
-      "Oncology": "Oncology",
+      "SPECIALITY": "Specialty Group",
+      "ONCOLOGY": "Oncology",
       "RESOURCE_NAME": "Clinic Code",
-      "DISABLE/ENABLE": "Enable Appointment",
+      "ENABLE": "Enable ORMS SMS",
       "SEARCH": "Search",
       "SUCCESS": "Changes Saved Successfully!",
       "ERROR": "An error occurred when saving changes.",
@@ -3094,7 +3094,7 @@
       "ERROR_DETAILS": "An error occurred while getting the details of the sms appointment.",
       "DISABLE": "Disable"
     },
-    "MESSAGE": {
+    "ADD": {
       "TITLE": "SMS Message",
       "BACK": "Back to SMS",
       "SUMMARY": "Summary",
