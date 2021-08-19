@@ -102,6 +102,29 @@ You should be able to access data. Visit Tasks/Appts/Docs page and click on the 
 
 This project comes with pre-configured ARIA database queries to fetch the necessary clinical information. MosaiQ, however, is not set up. Thus, there are several manual configurations involved to fully set up another clinical database other than ARIA. 
 
+## Troubleshooting Installation Errors
+
+ * First verify the integrity of your databases. It is a common issue with importing MySQL databases that capital letters get converted to lowercase. Table names in OpalDB and QuestionnaireDB should usually be capitalized. To fix this issue, drop your current copies of opaldb and questionnairedb, then go into your MySQL my.ini file (accesible through the XAMPP control panel if you can't find it). Scroll down to the [mysqld] code block and add 
+```
+lower_case_table_names = 2
+```
+then re-import your databases and verify that they are correctly capitalized. Database names and Table names should be Capitalized. Refresh your server and try again.
+
+* Check what branch you are on. When you first clone the repo, you will be in master by default. If so...
+
+```
+git fetch
+
+git pull
+
+git checkout staging
+```
+
+* Check what ports your server is listening on, and verify the ports you want to use are free using the Netstat tool.
+
+* Connect to your localhost using https, even if your web browser throws exceptions. There are security settings within opalAdmin that will require you to attempt a connection using https. Connect to https://localhost/opalAdmin/#/ instead of localhost/opalAdmin/#/ . Your browser might throw a security exception. Just click advanced > proceed anyway. 
+
+* If you are getting a 401 error from opalAdmin, then your database does not have the standard admin / 123456 login credentials. Try '1234' as the password, or ask a member of opal for help. They might try sending you their copy of OpalDB and let you use their login credentials for now.
 
 ## Troubleshooting Installation Errors
 

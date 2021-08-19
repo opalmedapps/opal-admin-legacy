@@ -468,5 +468,237 @@ class Questionnaire extends QuestionnaireModule {
         if ($questionnaireUpdated == 0 && $total > 0)
             $this->questionnaireDB->forceUpdate($updatedQuestionnaire["ID"], QUESTIONNAIRE_TABLE);
     }
+
+    /**
+     * Get the list of questionnaires status, visualization form, studies list and completion date for a specific
+     * patient on a site.
+     * Validation code :    Error validation code is coded as an int of 3 bits (value from 0 to 7). Bit information
+     *                      are coded from right to left:
+     *                      1: mrn is missing
+     *                      2: site is missing
+     *                      3: combo mrn site does not exists
+     * @param $post array - $_POST content
+     * @return array
+     */
+    public function getQuestionnaireListOrms($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = "";
+        if (is_array($post))
+            $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
+        else
+            $errCode = "111";
+
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        $results = $this->questionnaireDB->getQuestionnaireListOrms($post["mrn"], $post["site"]);
+        foreach ($results as &$item) {
+            $tempData = $this->opalDB->getStudiesQuestionnaire($item["questionnaireDBId"]);
+            $tempArray = array();
+            foreach ($tempData as $data)
+                array_push($tempArray, $data["studyId"]);
+            $item["studies"] = $tempArray;
+        }
+        return $results;
+    }
+
+    /**
+     * Get the list of chart answer from a specific questionnaire for a specific patient.
+     *
+     * Note: Using questionSectionId and questionText does not seems to be the right thing to do but because of a lack
+     * of time and man power, we cannot test it more and simplify the SQL query. See ticket OPAL-1026 for more details.
+     *
+     * @param $post array - $_POST content. Contains mrn, site code and questionnaireId
+     * @return array - answers found (if any)
+     */
+    public function getChartAnswersFromQuestionnairePatient($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $patientSite = array();
+        $errCode = $this->_validateQuestionnaireAndPatient($post, $patientSite);
+
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        $patientInfo = $this->questionnaireDB->getPatientPerExternalId($patientSite["PatientSerNum"]);
+
+        if(count($patientInfo) != 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Patients info invalid in DB. Please contact your admin.");
+        $patientInfo = $patientInfo[0];
+
+        $results = $this->questionnaireDB->getQuestionsByQuestionnaireId($post["questionnaireId"]);
+        foreach ($results as &$result) {
+            $result["answers"] = $this->questionnaireDB->getAnswersChartType(
+                $patientInfo["ID"],
+                $result["questionnaireId"],
+                $result["questionSectionId"],
+                $result["question_EN"]
+            );
+        }
+        
+        return $results;
+    }
+
+    /**
+     * Get the list of non chart answer from a specific questionnaire for a specific patient.
+     * @param $post array - $_POST content. Contains mrn, site code and questionnaireId
+     * @return array - answers found (if any)
+     */
+    public function getNonChartAnswersFromQuestionnairePatient($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $patientSite = array();
+        $errCode = $this->_validateQuestionnaireAndPatient($post, $patientSite);
+
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        $patientInfo = $this->questionnaireDB->getPatientPerExternalId($patientSite["PatientSerNum"]);
+
+        if(count($patientInfo) != 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Patients info invalid in DB. Please contact your admin.");
+        $patientInfo = $patientInfo[0];
+
+        $results = $this->questionnaireDB->getCompletedQuestionnaireInfo($patientInfo["ID"], $post["questionnaireId"]);
+
+        foreach ($results as &$item) {
+            $item["options"] = $this->questionnaireDB->getQuestionOptions($item["questionId"]);
+            $item["answers"] = $this->questionnaireDB->getAnswersNonChartType(
+                $item["answerQuestionnaireId"],
+                $item["sectionId"],
+                $item["questionId"]
+            );
+        }
+
+        return $results;
+    }
+
+    /**
+     * Validate questionnaire and patient information.
+     * @param $post array - data to validate
+     * @param $patientSite array - patient info from specific site found
+     * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
+     *                      Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit information
+     *                      are coded from right to left:
+     *                      1: MRN invalid or missing
+     *                      2: site invalid or missing
+     *                      3: combo of MRN-site-patient does not exists
+     *                      4: questionnaire ID does not exists
+     * @return string - validation code in binary
+     */
+    protected function _validateQuestionnaireAndPatient(&$post, &$patientSite) {
+        if (is_array($post)) {
+            $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
+
+            // 4th bit - Questionnaire ID
+            if(!array_key_exists("questionnaireId", $post) || $post["questionnaireId"] == "") {
+                $errCode = "1" . $errCode;
+            } else {
+                $errCode = "0" . $errCode;
+            }
+        } else
+            $errCode = "1111";
+        return $errCode;
+    }
+
+    /**
+     * Return the list of published questionnaires found.
+     * @return array - published questionnaires found
+     */
+    public function getPublishedQuestionnaires() {
+        $this->checkReadAccess();
+        return $this->questionnaireDB->getPublishedQuestionnaires();
+    }
+
+    /**
+     * Get the list of questionnaires a specific patient answered.
+     * @param $post - contains the MRN of the patient and the site of the hospital
+     * @return array - list of questionnaires found
+     */
+    public function getAnsweredQuestionnairesPatient($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $patientSite = array();
+        if (is_array($post))
+            $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
+        else
+            $errCode = "111";
+
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        return $this->questionnaireDB->getAnsweredQuestionnairesPatient($post["mrn"], $post["site"]);
+    }
+
+    /**
+     * Get the last completed questionnaire from a specific patient on a site.
+     * @param $post array - contains mrn and site
+     * @return array - last answered questionnaire found (if any)
+     */
+    public function getLastCompletedQuestionnaire($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $patientSite = array();
+        if (is_array($post))
+            $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
+        else
+            $errCode = "111";
+
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        return $this->opalDB->getLastCompletedQuestionnaire($patientSite["PatientSerNum"]);
+    }
+
+    /**
+     * Get the lis of completed questionnaires of patient, grouped by MRN.
+     * @param $post - list of questionnaire ID (optional)
+     * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
+     *                      Error validation code is coded as an int of 1 bit (value from 0 to 1). Bit information
+     *                      are coded from right to left:
+     *                      1: questionnaire ID list invalid if present
+     * @return array - results found
+     */
+    public function getPatientsCompletedQuestionnaires($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        if (is_array($post)) {
+            if (!array_key_exists("questionnaires", $post) || (!is_array($post["questionnaires"])))
+                $post["questionnaires"] = array();
+            $listIds = array();
+
+            foreach ($post["questionnaires"]as $item) {
+                $item = intval($item);
+                if(!in_array($item, $listIds))
+                    array_push($listIds, $item);
+            }
+            if (count($listIds) != count($post["questionnaires"]))
+                $errCode = "1";
+            else {
+                $errCode = "0";
+                $post["questionnaires"] = $listIds;
+            }
+        }
+        else
+            $errCode = "1";
+
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        return $this->opalDB->getPatientsCompletedQuestionnaires($post["questionnaires"]);
+    }
+
+    /**
+     * Get the list of possible purposes for a questionnaire
+     * @return array - list of purposes, french and english
+     */
+    public function getPurposes() {
+        $this->checkReadAccess();
+        return $this->questionnaireDB->getPurposes();
+    }
 }
-?>

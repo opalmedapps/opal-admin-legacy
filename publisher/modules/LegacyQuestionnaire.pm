@@ -160,7 +160,6 @@ sub publishLegacyQuestionnaires
 	foreach my $Patient (@patientList) {
 
 		my $patientSer 	= $Patient->getPatientSer();
-		my $patientId  	= $Patient->getPatientId();
 
 		foreach my $QuestionnaireControl (@legacyQuestionnaireControls) {
 
@@ -416,7 +415,7 @@ sub publishLegacyQuestionnaires
     				# Finding the existence of the patient in the patient-specific filters
     				# If the patient exists, or all patients were selected as triggers, 
                     # then patient passes else move on to next patient
-    				if ($patientId ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
+    				if ($patientSer ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
                         $patientPassed = 1;
                         if ($frequencyFilter) {
                             $recurringFlag = 1;

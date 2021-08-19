@@ -192,18 +192,17 @@ sub getPrioritiesFromSourceDB
 				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
 					DROP TABLE #tempPatient;
 
-				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
+				WITH PatientInfo (PatientAriaSer, LastTransfer, PatientSerNum) AS (
 			";
 			$patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
 			$patientInfo_sql .= ")
 			Select c.* into #tempPriority
 			from PatientInfo c;
-			Create Index temporaryindexPriority1 on #tempPriority (ID);
+			Create Index temporaryindexPriority1 on #tempPriority (PatientAriaSer);
 			Create Index temporaryindexPriority2 on #tempPriority (PatientSerNum);
 			
 			Select p.PatientSer, p.PatientId into #tempPatient
 			from VARIAN.dbo.Patient p;
-			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
 			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
 			";
 
@@ -223,8 +222,7 @@ sub getPrioritiesFromSourceDB
 		    	    nsa.ActivityInstanceSer 	= ai.ActivityInstanceSer
 	            AND ai.ActivitySer 			    = act.ActivitySer
     	        AND act.ActivityCode 			= lt.LookupValue
-	    	   	AND nsa.PatientSer 				= (select pt.PatientSer 
-					from #tempPatient pt where pt.PatientId = PatientInfo.ID)
+	    	   	AND nsa.PatientSer 				= PatientInfo.PatientAriaSer
 			    AND nsa.ObjectStatus 		    != 'Deleted'
     			AND lt.Expression1			    IN ('SGAS_P1','SGAS_P2','SGAS_P3','SGAS_P4')
 	    		AND	nsa.HstryDateTime		    > PatientInfo.LastTransfer
