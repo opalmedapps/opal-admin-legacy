@@ -164,13 +164,15 @@ sub publishEducationalMaterials
     # If we are not within the window to publish the messages then return
     #if ( (($now - $today_at_eightAM) < 0) or (($now - $today_at_eightPM) > 0) ) {return;}
 
+	# Check for any new updates from the main cron control
+	CheckEduMatControlsMarkedForPublishModularCron();
+
     # Retrieve all the controls
-    my @eduMatControls = EducationalMaterialControl::getEduMatControlsMarkedForPublish();
+    my @eduMatControls = EducationalMaterialControl::getEduMatControlsMarkedForPublishModularCron();
 
     foreach my $Patient (@patientList) {
 
         my $patientSer          = $Patient->getPatientSer(); # get patient serial
-        my $patientId           = $Patient->getPatientId(); # get patient id
 
         foreach my $EduMatControl (@eduMatControls) {
 
@@ -179,7 +181,6 @@ sub publishEducationalMaterials
 
 			# Fetch patient filters (if any)
             my @patientFilters = $eduMatFilters->getPatientFilters();
-
 			# We will flag whether there are patient filters or other (non-patient) filters
 			# The reason is that the patient filter will combine as an OR with the non-patient filters
 			# If any of the non-patient filters exist, all non-patient filters combine in an AND (i.e. intersection)
@@ -367,7 +368,7 @@ sub publishEducationalMaterials
     				# Finding the existence of the patient in the patient-specific filters
     				# If the patient exists, or all patients were selected as triggers, 
                     # then patient passes else move on to next patient
-                    if ($patientId ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
+                    if ($patientSer  ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
                         $patientPassed = 1;
                     }
                     else {next;}
@@ -508,7 +509,69 @@ sub insertEducationalMaterialIntoOurDB
 	return $edumat;
 }
 
+#======================================================================================
+# Subroutine to sync the master table to the slave table and then set the publish flag 
+# from 1 to 2. This will identify what is currently being process by the cron job vs what
+# have just been activated during the cron running
+#======================================================================================
+sub CheckEduMatControlsMarkedForPublishModularCron
+{
+	my ($module) = @_; # current datetime, cron module type, 
 
+    # --------------------------------------------------
+    # First step is to make sure that the two tables have the same amount of records
+	my $insert_sql = "
+	INSERT INTO cronControlEducationalMaterial (cronControlEducationalMaterialControlSerNum, publishFlag, lastPublished, lastUpdated, sessionId)
+    SELECT EMC.EducationalMaterialControlSerNum, EMC.PublishFlag, EMC.LastPublished, EMC.LastUpdated, EMC.SessionId
+    FROM EducationalMaterialControl EMC
+    WHERE EMC.EducationalMaterialControlSerNum NOT IN (
+        SELECT cronControlEducationalMaterialControlSerNum FROM cronControlEducationalMaterial
+        );
+    ";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($insert_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+    # --------------------------------------------------
+    # Second step is to sync the publish flag between the two tables
+    # EducationalMaterialControl is the master and cronControlEducationalMaterial is the slave
+    my $update_sql = "
+        UPDATE EducationalMaterialControl EMC, cronControlEducationalMaterial CCEM
+        SET CCEM.publishFlag = EMC.PublishFlag
+        WHERE CCEM.cronControlEducationalMaterialControlSerNum = EMC.EducationalMaterialControlSerNum
+            AND CCEM.publishFlag <> EMC.PublishFlag;";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($update_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+    # --------------------------------------------------
+    # Third step update the publish flag from 1 to 2
+	my $update2_sql = "
+        UPDATE cronControlEducationalMaterial
+        SET publishFlag = 2
+        WHERE publishFlag = 1
+        ;
+    ";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($update2_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+}
 # Exit smoothly 
 1;
 

@@ -5,9 +5,8 @@
  * Time: 8:44 AM
  */
 
-abstract class Module
+abstract class Module extends OpalProject
 {
-    protected $opalDB;
     protected $moduleId;
     protected $access;
 
@@ -15,16 +14,7 @@ abstract class Module
      * constructor of the class
      * */
     public function __construct($moduleId, $guestStatus = false) {
-        $this->opalDB = new DatabaseOpal(
-            OPAL_DB_HOST,
-            OPAL_DB_NAME,
-            OPAL_DB_PORT,
-            OPAL_DB_USERNAME,
-            OPAL_DB_PASSWORD,
-            false,
-            $_SESSION["ID"],
-            $guestStatus
-        );
+        parent::__construct($_SESSION["ID"], $guestStatus);
         $this->opalDB->setSessionId($_SESSION["sessionId"]);
         $this->moduleId = $moduleId;
 
@@ -49,22 +39,6 @@ abstract class Module
                 HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Module session cannot be found. Please contact your administrator.");
             $this->access = intval($_SESSION["userAccess"][$moduleId]["access"]);
         }
-    }
-
-    protected function _insertAudit($module, $method, $arguments, $access, $username = false) {
-        $toInsert = array(
-            "module"=>$module,
-            "method"=>$method,
-            "argument"=>json_encode($arguments),
-            "access"=>$access,
-            "ipAddress"=>HelpSetup::getUserIP(),
-        );
-        if($username) {
-            $toInsert["createdBy"] = $username;
-            $this->opalDB->insertAuditForceUser($toInsert);
-        }
-        else
-            $this->opalDB->insertAudit($toInsert);
     }
 
     /*
@@ -143,47 +117,4 @@ abstract class Module
         return $this->opalDB->getPublicationModulesUser();
     }
 
-    /*
-     * Get the list of educational materials. Protected function so any module can call it the same way when needed
-     * without having to call the module educational materials itself, but cannot be called from outside.
-     * @params  void
-     * @return  $result - array - list of educational materials
-     * */
-    protected function _getListEduMaterial() {
-        $results = $this->opalDB->getEducationalMaterial();
-        foreach($results as &$row) {
-            $row["tocs"] = $this->opalDB->getTocsContent($row["serial"]);
-        }
-
-        return $results;
-    }
-
-    /*
-     * Get the details of aneducational material. Protected function so any module can call it the same way when needed
-     * without having to call the module educational materials itself, but cannot be called from outside.
-     * @params  void
-     * @return  $result - array - list of educational materials
-     * */
-    protected function _getEducationalMaterialDetails($eduId) {
-        $results = $this->opalDB->getEduMaterialDetails($eduId);
-        $results["tocs"] = $this->opalDB->getTocsContent($results["serial"]);
-        return $results;
-    }
-
-    /*
-     * Get the activate source database (Aria, ORMS, local, etc...)
-     * @params  void
-     * @return  $assignedDB : array - source database ID
-     * */
-    protected function _getActiveSourceDatabase(){
-        $assigned = $this->opalDB->getActiveSourceDatabase();
-        $assigned = HelpSetup::arraySanitization($assigned);
-        $assignedDB = array();
-        foreach($assigned as $item) {
-            array_push($assignedDB, $item["SourceDatabaseSerNum"]);
-        }
-        return $assignedDB;
-    }
-
-    
 }

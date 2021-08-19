@@ -5,7 +5,6 @@ angular.module('opalAdmin.controllers.user.add.ad', ['ui.bootstrap', 'ui.grid'])
 	 * Controller for user registration
 	 *******************************************************************************/
 	controller('user.add.ad', function ($scope, userCollectionService, $state, $filter, Session, ErrorHandler) {
-		var OAUserId = Session.retrieveObject('user').id;
 
 		$scope.userType = [
 			{
