@@ -47,6 +47,7 @@ const PUSH_NOTIFICATION_CONFIG = array(
 );
 
 const DEFAULT_CRON_OAUSERID = 23;
+const UNDEFINED_SMS_APPOINTMENT_CODE = "UNDEFINED";
 
 const CHECKED_IN = 1;
 const NOT_CHECKED_IN = 0;
@@ -121,6 +122,7 @@ define("ACTIVE_RECORD", 1);
 define("INACTIVE_RECORD", 0);
 define("HUMAN_USER", 1);
 define("SYSTEM_USER", 2);
+const USER_ACCESS_DENIED = "0";
 
 define("PURPOSE_RESEARCH", 2);
 define("PURPOSE_CONSENT", 4);
