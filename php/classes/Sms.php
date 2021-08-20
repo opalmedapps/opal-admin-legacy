@@ -1,49 +1,81 @@
 <?php
 
-/*
- * Sms class objects and method
- * */
+/**
+ * SMS class objet and methods. WARNING! Because of the nature of the ORMS API with its limited calls, some of them are
+ * used multiple times, and they do not allow a full validation of the data to be sent back to the ORMS API. For more
+ * info, please see your administrator.
+ */
 
 class Sms extends Module {
+
+    /**
+     * Constructor. If ORMS is not available, returns an error the mode cannot be found (404)
+     * @param false $guestStatus
+     */
     public function __construct($guestStatus = false) {
         if(!WRM_DB_ENABLED)
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_FOUND);
         parent::__construct(MODULE_SMS, $guestStatus);
     }
 
-    /*
-     * Get a list of sms appointments
-     * @return  List of sms appointments
-     * */
+    /**
+     * Get a list of SMS appointments from ORMS
+     * @return mixed ORMS API call result
+     */
     public function getAppointments() {
         $this->checkReadAccess();
-        return $this->_postRequest(WRM_API_URL."/sms/smsAppointment/getSmsAppointments");
+        return $this->_postRequest(WRM_API_URL.WRM_API_METHOD["getSmsAppointments"]);
     }
 
-    /*
-     * Sanitize, validate and get a list of events for the given type and speciality.
-     * Validation code :    Error validation code is coded as an int of 2 bits. Bit information
+    /**
+     * Validate and sanitize fields used to get messages. WARNING! Because of the nature of the ORMS API, it is
+     * impossible to determine if the specialty code is valid or not. For more info, please see your administrator.
+     * @param $post array - data received from the front end
+     * @param $dataReady array - data ready to be sent to the ORMS API
+     * Validation code :    Error validation code is coded as an int of 2 bits (value from 0 to 3). Bits information
      *                      are coded from right to left:
-     *                      1: appointment type missing
-     *                      2: speciality Code missing
-     * @params  $post (array) data received from the front end.
-     * @return  List of sms messages for the given type and speciality
-     * */
+     *                      1: Type is invalid or missing
+     *                      2: Speciality code is missing.
+     * @return string - error code detected
+     */
+    protected function _validateGetMessages(&$post, &$dataReady) {
+        $validType = $this->_postRequest(WRM_API_URL.WRM_API_METHOD["getTypes"]);
+        $errCode = "";
+        $dataReady = array();
+
+        if (is_array($post)) {
+
+            // 1st bit
+            if (!array_key_exists("type", $post) || (!in_array($post["type"], $validType) && $post["type"] != UNDEFINED_SMS_APPOINTMENT_CODE))
+                $errCode = "1" . $errCode;
+            else {
+                $dataReady["type"] = $post["type"];
+                $errCode = "0" . $errCode;
+            }
+
+            // 2nd bit
+            if (!array_key_exists("specialityCode", $post) || $post["specialityCode"] == "")
+                $errCode = "1" . $errCode;
+            else {
+                $errCode = "0" . $errCode;
+                $dataReady["specialityCode"] = $post["specialityCode"];
+            }
+        } else
+            $errCode .= "11";
+
+        return $errCode;
+    }
+
+    /**
+     * Get a list of events for the given type and speciality. WARNING! Because of the nature of the ORMS API, it is
+     * impossible to determine if the specialty code is valid or not. For more info, please see your administrator.
+     * @param $post array - data received from the end user
+     * @return mixed - results of the ORMS API call
+     */
     public function getMessages($post) {
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
-        $errCode = "";
-        if (is_array($post)) {
-            if (!array_key_exists("type", $post) || $post["type"] == "")
-                $errCode = "1" . $errCode;
-            else
-                $errCode = "0" . $errCode;
-            if (!array_key_exists("specialityCode", $post) || $post["specialityCode"] == "")
-                $errCode = "1" . $errCode;
-            else
-                $errCode = "0" . $errCode;
-        } else
-            $errCode .= "11";
+        $errCode = $this->_validateGetMessages($post, $dataReady);
 
         $errCode = bindec($errCode);
         if ($errCode != 0)
@@ -52,6 +84,18 @@ class Sms extends Module {
         return $this->_postRequest(WRM_API_URL.WRM_API_METHOD["getMessages"], $post);
     }
 
+    /**
+     * Validate and prepare the change of state of a list of SMS appointment codes received from the user. WARNING!
+     * Because of the nature of the ORMS API, it is impossible to determine if the IDs of the SMS appointment codes are
+     * valid or not. Plus, since there is only one API method to update the information, it is possible to modify the
+     * state and type in batch without any warning. For more info, please see your administrator.
+     * @param $post array - data received from the front end
+     * @param $dataReady array - data ready to be sent to the ORMS API
+     * Validation code :    Error validation code is coded as an int of 1 bits (value from 0 to 1). Bits information
+     *                      are coded from right to left:
+     *                      1: One of the SMS appointment code is invalid or missing data
+     * @return string - error code detected
+     */
     protected function _validateActivationState(&$post, &$dataReady) {
         $validType = $this->_postRequest(WRM_API_URL.WRM_API_METHOD["getTypes"]);
         $dataReady = array();
@@ -81,6 +125,71 @@ class Sms extends Module {
         return $errCode;
     }
 
+    /**
+     * Validate and prepare appointment code status received from the user. WARNING! Because of the nature of the ORMS
+     * API, it is impossible to determine if the ID of the SMS appointment code is a valid one or not. For more info,
+     * please see your administrator.
+     * @param $post array - data received from the front end
+     * @param $dataReady array - data ready to be sent to the ORMS API
+     * Validation code :    Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit information
+     *                      are coded from right to left:
+     *                      1: SMS ID is missing
+     *                      2: activation state is missing or invalid
+     *                      3: type is missing or invalid
+     *                      4: appointment code cannot be set to UNDEFINED and active
+     * @return string - error code detected
+     */
+    protected function _validateAppointmentCode(&$post, &$dataReady) {
+        $validType = $this->_postRequest(WRM_API_URL.WRM_API_METHOD["getTypes"]);
+        $dataReady = array();
+        $errCode = "";
+        if (is_array($post)) {
+
+            // 1st bit
+            if (!array_key_exists("id", $post) || $post["id"] == "")
+                $errCode = "1" . $errCode;
+            else {
+                $dataReady["id"] = $post["id"];
+                $errCode = "0" . $errCode;
+            }
+
+            // 2nd bit
+            if (!array_key_exists("active", $post) || (intval($post["active"]) != 0 && intval($post["active"]) != 1))
+                $errCode = "1" . $errCode;
+            else {
+                $dataReady["active"] = $post["active"];
+                $errCode = "0" . $errCode;
+            }
+
+            // 3rd bit
+            if (!array_key_exists("type", $post) || (!in_array($post["type"], $validType) && $post["type"] != UNDEFINED_SMS_APPOINTMENT_CODE))
+                $errCode = "1" . $errCode;
+            else {
+                $dataReady["type"] = $post["type"];
+                $errCode = "0" . $errCode;
+            }
+
+            // 4th bit
+            if(bindec($errCode) != 0)
+                $errCode = "0" . $errCode;
+            else {
+                if ($post["type"] == UNDEFINED_SMS_APPOINTMENT_CODE && $post["active"] == 1)
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "1" . $errCode;
+            }
+        }  else
+            $errCode = "1111";
+        return $errCode;
+    }
+
+    /**
+     * Update the activation state of a list of SMS appointment codes. WARNING! Because of the nature of
+     * the ORMS API, it is impossible to determine if the IDs of the SMS appointment codes are valid or not. Plus, since
+     * there is only one API method to update the information, it is possible to modify the state and type in batch
+     * without any warning. For more info, please see your administrator.
+     * @param $post array - contains the list of SMS appointment code received from the end user.
+     */
     public function updateActivationState($post){
         $this->checkWriteAccess($post);
         $post = HelpSetup::arraySanitization($post);
@@ -90,23 +199,31 @@ class Sms extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         foreach ($dataReady as $item)
-            $this->_postRequest(WRM_API_URL."/sms/smsAppointment/updateSmsAppointment", $item);
+            $this->_postRequest(WRM_API_URL.WRM_API_METHOD["updateSmsAppointment"], $item);
     }
 
+    /**
+     * Validate and update a SMS appointment codes. WARNING! Because of the nature of the ORMS API, it is impossible to
+     * determine if the ID of the SMS appointment code is valid or not. Plus, since there is only one API method to
+     * update the information. For more info, please see your administrator.
+     * @param $post array - contains the list of SMS appointment code received from the end user.
+     */
     public function updateAppointmentCode($post){
         $this->checkWriteAccess($post);
         $post = HelpSetup::arraySanitization($post);
-        $errCode = $this->_validateActivationState($post, $dataReady);
+        $errCode = $this->_validateAppointmentCode($post, $dataReady);
         $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        foreach ($dataReady as $item)
-            $this->_postRequest(WRM_API_URL."/sms/smsAppointment/updateSmsAppointment", $item);
+        $this->_postRequest(WRM_API_URL.WRM_API_METHOD["updateSmsAppointment"], $dataReady);
     }
 
     /**
-     * Validate a SMS message.
+     * Validate a SMS message. WARNING! Because of the nature of the ORMS API, it is impossible to determine if the IDs
+     * of the SMS appointment codes are valid or not. Plus, since there is only one API method to update the
+     * information, it is possible to modify the state and type in batch without any warning. For more info, please see
+     * your administrator.
      * @param $post array - data to validate
      * Validation code :    Error validation code is coded as an int of 1 bit (value from 0 to 1). Bit information
      *                      are coded from right to left:
@@ -224,8 +341,11 @@ class Sms extends Module {
 
         if($api->getError())
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to ORMS: " . $api->getError());
-        else if($api->getHttpCode() != HTTP_STATUS_SUCCESS)
-            HelpSetup::returnErrorMessage($api->getHttpCode(),"Error from ORMS: " . $requestResult["error"]);
+        else if($api->getHttpCode() != HTTP_STATUS_SUCCESS) {
+            echo $api->getHttpCode();
+            print_r($api->getAnswer());
+            HelpSetup::returnErrorMessage($api->getHttpCode(), "Error from ORMS: " . $requestResult["error"]);
+        }
 
         return $requestResult["data"];
     }

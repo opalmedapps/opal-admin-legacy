@@ -3139,8 +3139,9 @@
     },
     "EDIT": {
       "TITLE" : "Edit Appointment",
-      "INFO_MESSAGE" : "You are now editing an appointment, click \"Save\" button to Save the changes. ",
-      "NOTE_MESSAGE" : "Note: An appointment type can't be UNDEFINED if the appointment is active. ",
+      "NOTE_MESSAGE" : "Warning! An appointment cannot be active if its type is defined as 'UNDEFINED'.",
+      "ACTIVATION": "Activate the appointment",
+      "ENABLE": "Activate ORMS SMS",
       "SEARCH": "Search",
       "SAVE": "Save",
       "CANCEL": "Cancel",
@@ -3161,12 +3162,13 @@
       "ERROR_DETAILS": "An error occurred while getting the details of the sms appointment."
     },
     "VALIDATION": {
-      "APPOINTMENT_ID": "Appointment Id missing",
-      "MESSAGE": "Message missing",
-      "MESSAGE_ID": "Message id missing",
-      "SPECIALITY": "Speciality code missing",
-      "ACTIVE": "Activation flag missing",
-      "TYPE": "Type missing"
+      "APPOINTMENT_ID": "SMS appointment ID is missing.",
+      "MESSAGE": "Message is missing",
+      "MESSAGE_ID": "Message ID is missing",
+      "SPECIALITY": "Speciality code is missing",
+      "ACTIVE": "Activation flag is missing",
+      "TYPE": "Type is missing",
+      "UNDEFINED_ACTIVE": "An appointment code set to UNDEFINED cannot be active"
     }
   },
   "ERROR_HANDLER": {

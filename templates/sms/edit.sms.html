@@ -5,12 +5,11 @@
             <span class="glyphicon glyphicon-pencil"></span>
             {{'SMS.EDIT.TITLE'|translate}}
         </h2>
-        <p class="text-info">{{'SMS.EDIT.INFO_MESSAGE'|translate}}</p>
-        <p class="text-info"><b>{{'SMS.EDIT.NOTE_MESSAGE'|translate}}</b></p>
+        <p class="text-danger">{{'SMS.EDIT.NOTE_MESSAGE'|translate}}</p>
     </div>
     <div class="modal-buttons col-xs-12 col-md-6">
         <form method="post" ng-submit="updateAppointment()">
-            <input class="btn btn-primary submit" ng-class="{'disabled': (!changesDetected) || (currentAppointment.active == 1 && typeSelected=='UNDEFINED')}" type="submit" value="{{'SMS.EDIT.SAVE'|translate}}">
+            <input class="btn btn-primary submit" ng-class="{'disabled': (!changesDetected) || (appointment.active == 1 && appointment.type=='UNDEFINED')}" type="submit" value="{{'SMS.EDIT.SAVE'|translate}}">
             <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'SMS.EDIT.CANCEL'|translate}}">
         </form>
     </div>
@@ -26,13 +25,26 @@
             </uib-accordion-heading>
             <div class="row">
                 <div class="col-xs-12">
-                    <label><strong>{{'SMS.EDIT.RESOURCE_NAME'|translate}}</strong></label> : {{currentAppointment.resourceDescription}}&nbsp&nbsp&nbsp({{currentAppointment.resourceCode}})
+                    <label><strong>{{'SMS.EDIT.RESOURCE_NAME'|translate}}</strong></label> : {{appointment.resourceDescription}}&nbsp&nbsp&nbsp({{appointment.resourceCode}})
                 </div>
                 <div class="col-xs-12">
-                    <label><strong>{{'SMS.EDIT.APPOINTMENT_CODE'|translate}}</strong></label> : {{currentAppointment.appointmentCode}}
+                    <label><strong>{{'SMS.EDIT.APPOINTMENT_CODE'|translate}}</strong></label> : {{appointment.appointmentCode}}
                 </div>
                 <div class="col-xs-12">
-                    <label><strong>{{'SMS.EDIT.SPECIALITY'|translate}}</strong></label> : {{currentAppointment.speciality}}
+                    <label><strong>{{'SMS.EDIT.SPECIALITY'|translate}}</strong></label> : {{appointment.speciality}}
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Activation state -->
+        <div uib-accordion-group is-open="activationSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'SMS.EDIT.ACTIVATION'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': activationSection.open, 'glyphicon-chevron-right': !activationSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12">
+                    <label><strong>{{'SMS.EDIT.ENABLE'|translate}}</strong></label> :  <input type="checkbox" ng-disabled="appointment.type == 'UNDEFINED'"  ng-true-value="1" ng-false-value="0" ng-model="appointment.active">
                 </div>
             </div>
         </div>
@@ -45,9 +57,8 @@
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
                 <strong>{{'SMS.EDIT.CURRENT_TYPE'|translate}}</strong><br>
-                <p>
-                    {{currentAppointmentType}}
-                </p>
+                <p>{{appointment.type}}
+</p>
             </div>
             <div>
                 <div class="input-group">
@@ -57,10 +68,11 @@
                 <ul class="list-items">
                     <li ng-repeat="type in TypeList | filter: typeSearchField">
                         <label>
-                            <input type="radio" ng-checked="type==typeSelected" ng-click="updateType(type)"> {{type}}
+                            <input type="radio" ng-disabled="(type == 'UNDEFINED' && appointment.active == 1)" ng-model="appointment.type" value="{{type}}" /> {{type}}
                         </label>
                     </li>
                 </ul>
+
             </div>
         </div>
     </uib-accordion>
