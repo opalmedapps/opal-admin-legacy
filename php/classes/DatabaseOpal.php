@@ -504,7 +504,7 @@ class DatabaseOpal extends DatabaseAccess {
         );
         return $this->_execute($sqlToUpdate, $toUpdate);
     }
-    
+
     /*
      * Returns the list of modules.
      * @params  void
@@ -1435,13 +1435,21 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-    /*
-     * Get access level for a specific combo or role/module
-     * */
+    /**
+     * Get access level for a specific combo or role/module. If ORMS is not active or present, deactivate SMS if it's
+     * not already.
+     * @param $roleId
+     * @return array - access levels for a specific role
+     */
     function getUserAccess($roleId) {
-        return $this->_fetchAll(OPAL_GET_USER_ACCESS, array(
+        $result = $this->_fetchAll(OPAL_GET_USER_ACCESS, array(
             array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_INT),
         ));
+        if(!WRM_DB_ENABLED)
+            foreach ($result as &$item)
+                if($item["ID"] == MODULE_SMS && $item["access"] != USER_ACCESS_DENIED)
+                    $item["access"] =  USER_ACCESS_DENIED;
+        return $result;
     }
 
     /*
@@ -3498,7 +3506,7 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-/**
+    /**
      * Get patient appointment
      * @params $site : String - Patient identifier site
      * @params $mrn  : int - Patient identifier mrn

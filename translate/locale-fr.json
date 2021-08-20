@@ -3158,9 +3158,10 @@
     },
     "EDIT": {
       "TITLE" : "Modifier le rendez-vous",
-      "INFO_MESSAGE" : "Vous êtes en train de modifier un rendez-vous, cliquez sur le bouton \"Enregistrer\" pour enregistrer les modifications. ",
-      "NOTE_MESSAGE" : "Remarque : Un type de rendez-vous ne peut pas être NON DÉFINI si le rendez-vous est actif. ",
+      "NOTE_MESSAGE" : "Attention! Un rendez-vous ne peut être actif si son type est défini comme étant 'UNDEFINED'.",
       "SEARCH": "Recherche",
+      "ACTIVATION": "Activer le rendez-vous",
+      "ENABLE": "Activer SMS ORMS",
       "SAVE": "Enregistrer",
       "CANCEL": "Annuler",
       "TYPE": "Type",
@@ -3180,12 +3181,13 @@
       "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails du rendez-voous."
     },
     "VALIDATION": {
-      "APPOINTMENT_ID": "Id de Rendez-vous manquante",
+      "APPOINTMENT_ID": "Id de Rendez-vous manquante.",
       "MESSAGE": "Message manquant",
       "MESSAGE_ID": "Id de message manquant",
       "SPECIALITY": "Code de pécialité manquant",
       "ACTIVE": "Drapeau d'activation manquant",
-      "TYPE": "Type manquant"
+      "TYPE": "Type manquant",
+      "UNDEFINED_ACTIVE": "Un code de rendez-vous qui a pour valeur UNDEFINED ne peut pas être actif."
     }
   },
   "ERROR_HANDLER": {
