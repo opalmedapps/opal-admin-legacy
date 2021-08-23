@@ -10,7 +10,9 @@ angular.module('opalAdmin.controllers.add.sms', ['ngAnimate', 'ui.bootstrap', 'u
 			window.history.back();
 		};
 
-		getSmsSpecialityList();
+		smsCollectionService.getSmsSpeciality().then(function (response) {
+			$scope.SpecialityList = response.data;
+		});
 
 		$scope.SpecialityList = null;
 		$scope.TypeList = null;
@@ -88,13 +90,6 @@ angular.module('opalAdmin.controllers.add.sms', ['ngAnimate', 'ui.bootstrap', 'u
 		function resetMessage() {
 			$scope.messageSection.open = false;
 			steps.message.completed = false;
-		}
-
-		//Function to get Specialities from database
-		function getSmsSpecialityList() {
-			smsCollectionService.getSmsSpeciality().then(function (response) {
-				$scope.SpecialityList = response.data;
-			});
 		}
 
 		//Function to get information from database
