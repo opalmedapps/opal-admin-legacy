@@ -76,7 +76,7 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 			'<strong><a href="">{{row.entity.name_'+ Session.retrieveObject('user').language +'}}</a></strong></div>';
 
 
-		var cellTemplatePublish
+		var cellTemplatePublish;
 		if($scope.writeAccess)
 			cellTemplatePublish = '<div style="text-align: center; cursor: pointer;" ' +
 				'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
