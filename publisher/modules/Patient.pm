@@ -1254,7 +1254,8 @@ sub MarkPatientForUpdateModularCron
 		cronControlPatient.transferFlag = 1 
 	WHERE 
 		PatientControl.PatientUpdate 	= 1
-	AND cronControlPatient.cronType 	= '$module'";
+		AND PatientControl.PatientSerNum = cronControlPatient.cronControlPatientSerNum
+		AND cronControlPatient.cronType 	= '$module'";
 	# prepare query
 	my $query = $SQLDatabase->prepare($patients_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
