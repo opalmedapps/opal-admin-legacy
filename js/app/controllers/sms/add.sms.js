@@ -10,187 +10,206 @@ angular.module('opalAdmin.controllers.add.sms', ['ngAnimate', 'ui.bootstrap', 'u
 			window.history.back();
 		};
 
-		smsCollectionService.getSmsSpeciality().then(function (response) {
-			$scope.SpecialityList = response.data;
-		});
-
-		$scope.SpecialityList = null;
-		$scope.TypeList = null;
-		$scope.EventList = null;
-		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.sms]) & (1 << 1)) !== 0);
-
-		$scope.UpdateInformation = {
-			message: {English: "", French: "",},
-			speciality: "",
-			type: "",
-			event: "",
-		};
-
-		// Default boolean variables
-		$scope.typeSection = {open: false, show: false};
-		$scope.eventSection = {open: false, show: false};
-		$scope.specialitySection = {open: false, show: true};
-		$scope.messageSection = {open: false, show: false};
-
-		// completed steps boolean object; used for progress bar
-		var steps = {
-			speciality: {completed: false},
-			type: {completed: false},
-			event: {completed: false},
-			message: {complete: false}
-		};
-		// Default count of completed steps
-		$scope.numOfCompletedSteps = 0;
-
-		// Default total number of steps
-		$scope.stepTotal = 4;
-
-		// Progress for progress bar on default steps and total
-		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-
 		var arrValidationInsert = [
 			$filter('translate')('SMS.VALIDATION.MESSAGE_ID'),
 			$filter('translate')('SMS.VALIDATION.MESSAGE')
 		];
 
-		// Function to calculate / return step progress
-		function trackProgress(value, total) {
-			return Math.round(100 * value / total);
-		}
+		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.sms]) & (1 << 1)) !== 0);
 
-		// Function to return number of steps completed
-		function stepsCompleted(steps) {
+		$scope.dataReceived = {
+			speciality: null,
+			type: null,
+			event: null,
+		};
 
-			var numberOfTrues = 0;
-			for (var step in steps) {
-				if (steps[step].completed === true) {
-					numberOfTrues++;
-				}
+		smsCollectionService.getSmsSpeciality().then(function (response) {
+			$scope.dataReceived.speciality = response.data;
+		}).catch(function (err) {
+			ErrorHandler.onError(err, $filter('translate')('SMS.ADD.ERROR_DETAILS'));
+		});
+
+		$scope.totalSteps = 0;
+		$scope.completedSteps = 0;
+		$scope.formReady = false;
+
+		$scope.oldSms = {};
+
+		$scope.toSubmit = {
+			speciality: {
+				data: "",
+			},
+			type: {
+				data: "",
+			},
+			event: {
+				data: "",
+			},
+			message: {
+				en: {
+					sms: "",
+					id: "",
+				},
+				fr: {
+					sms: "",
+					id: "",
+				},
 			}
-			return numberOfTrues;
-		}
+		};
 
-		//Function to get reset type section
-		function resetType() {
-			$scope.UpdateInformation.type = "";
-			steps.type.completed = false;
-			$scope.typeSection.open = false;
-			$scope.eventSection.show = false;
-		}
+		$scope.validator = {
+			speciality: {
+				completed: false,
+				mandatory: true,
+				valid: true,
+			},
+			type: {
+				completed: false,
+				mandatory: true,
+				valid: true,
+			},
+			event: {
+				completed: false,
+				mandatory: true,
+				valid: true,
+			},
+			message: {
+				completed: false,
+				mandatory: true,
+				valid: true,
+			},
+		};
 
-		//Function to get reset event section
-		function resetEvent() {
-			$scope.UpdateInformation.event = "";
-			steps.event.completed = false;
-			$scope.eventSection.open = false;
-			$scope.messageSection.show = false;
-		}
+		$scope.leftMenu = {
+			speciality: {
+				display: false,
+				open: false,
+				preview: false,
+			},
+			type: {
+				display: false,
+				open: false,
+				preview: false,
+			},
+			event: {
+				display: false,
+				open: false,
+				preview: false,
+			},
+			message: {
+				display: false,
+				open: false,
+				preview: false,
+			},
+		};
 
-		//Function to get reset message section
-		function resetMessage() {
-			$scope.messageSection.open = false;
-			steps.message.completed = false;
-		}
+		$scope.$watch('toSubmit.speciality', function(){
+			$scope.toSubmit.type.data = "";
+			$scope.validator.type.completed = false;
+			$scope.toSubmit.event.data = "";
+			$scope.validator.event.completed = false;
+			$scope.validator.message.completed = false;
+			$scope.getSmsTypeList();
+			$scope.validator.speciality.completed = !!($scope.toSubmit.speciality.data);
+		}, true);
 
-		//Function to get information from database
-		function getSmsTypeList() {
-			smsCollectionService.getSmsType($scope.UpdateInformation.specialityCode).then(function (response) {
-				$scope.TypeList = response.data;
+		$scope.$watch('toSubmit.type', function(){
+			$scope.toSubmit.event.data = "";
+			$scope.validator.event.completed = false;
+			$scope.validator.message.completed = false;
+			if($scope.toSubmit.type.data !== "") $scope.getSmsEventList();
+			$scope.validator.type.completed = !!($scope.toSubmit.type.data);
+		}, true);
+
+		$scope.$watch('toSubmit.event', function(){
+			$scope.validator.message.completed = false;
+			$scope.validator.event.completed = !!($scope.toSubmit.event.data);
+		}, true);
+
+		$scope.$watch('toSubmit.message', function(){
+			$scope.validator.message.completed =
+				(($scope.oldSms.en.sms !== $scope.toSubmit.message.en.sms || $scope.oldSms.fr.sms !== $scope.toSubmit.message.fr.sms)
+					&& !!($scope.toSubmit.message.en.sms) && !!($scope.toSubmit.message.en.id) && !!($scope.toSubmit.message.fr.sms) && !!($scope.toSubmit.message.fr.id));
+		}, true);
+
+		$scope.$watch('validator', function() {
+			var totalsteps = 0;
+			var completedSteps = 0;
+			var nonMandatoryTotal = 0;
+			var nonMandatoryCompleted = 0;
+			angular.forEach($scope.validator, function(value) {
+				if(value.mandatory)
+					totalsteps++;
+				else
+					nonMandatoryTotal++;
+				if(value.mandatory && value.completed)
+					completedSteps++;
+				else if(!value.mandatory) {
+					if(value.completed) {
+						if (value.valid)
+							nonMandatoryCompleted++;
+					}
+					else
+						nonMandatoryCompleted++;
+				}
 			});
-		}
 
-		//Function to get event and message list from database
-		function getSmsEventList() {
-			smsCollectionService.getSmsMessages($scope.UpdateInformation.type, $scope.UpdateInformation.specialityCode).then(function (response) {
-				$scope.EventList = [];
+			$scope.totalSteps = totalsteps;
+			$scope.completedSteps = completedSteps;
+			$scope.stepProgress = $scope.totalSteps > 0 ? ($scope.completedSteps / $scope.totalSteps * 100) : 0;
+			$scope.formReady = ($scope.completedSteps >= $scope.totalSteps) && (nonMandatoryCompleted >= nonMandatoryTotal);
+		}, true);
+
+		$scope.getSmsTypeList = function () {
+			smsCollectionService.getSmsType($scope.toSubmit.speciality.data).then(function (response) {
+				$scope.dataReceived.type = response.data;
+				if($scope.dataReceived.type.length <= 0)
+					alert($filter('translate')('SMS.ADD.ERROR_NO_TYPE'));
+			}).catch(function (err) {
+				ErrorHandler.onError(err, $filter('translate')('SMS.ADD.ERROR_DETAILS'));
+			});
+		};
+
+		$scope.getSmsEventList = function () {
+			smsCollectionService.getSmsMessages($scope.toSubmit.type.data, $scope.toSubmit.speciality.data).then(function (response) {
+				$scope.dataReceived.event = [];
 				response.data.forEach(function (row) {
-					if (!$scope.EventList.includes(row.event)) $scope.EventList.push(row.event);
+					if (!$scope.dataReceived.event.includes(row.event)) $scope.dataReceived.event.push(row.event);
 				});
 				$scope.MessageList = response.data;
 			}).catch(function (err) {
 				ErrorHandler.onError(err, $filter('translate')('SMS.ADD.ERROR_DETAILS'));
 			});
-		}
+		};
 
-		//Function to update the speciality selected
 		$scope.SpecialityUpdate = function (element) {
-			if (element.specialityCode != $scope.UpdateInformation.specialityCode) {
-				resetType();
-				resetEvent();
-				resetMessage();
-			}
-			$scope.UpdateInformation.specialityCode = element.specialityCode;
-			$scope.UpdateInformation.specialityName = element.specialityName;
-			steps.speciality.completed = true;
-			$scope.specialitySection.open = true;
-			$scope.typeSection.show = true;
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-			getSmsTypeList();
+			$scope.toSubmit.speciality.data = element.specialityCode;
 		};
 
 		//Function to update the type selected
 		$scope.TypeUpdate = function (element) {
-			if (element != $scope.UpdateInformation.type) {
-				resetEvent();
-				resetMessage();
-			}
-			$scope.UpdateInformation.type = element;
-			steps.type.completed = true;
-			$scope.typeSection.open = true;
-			$scope.eventSection.show = true;
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-			getSmsEventList();
+			$scope.toSubmit.type.data = element;
 		};
 
 		//Function to update the event selected
 		$scope.EventUpdate = function (element) {
-			if (element != $scope.UpdateInformation.event) {
-				resetMessage();
-			}
-			$scope.UpdateInformation.event = element;
-			steps.event.completed = true;
-			$scope.eventSection.open = true;
-			$scope.messageSection.show = true;
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-			$scope.UpdateInformation.message.French = $scope.MessageList.filter(x => x.event == $scope.UpdateInformation.event && x.language == "French")[0];
-			$scope.UpdateInformation.message.English = $scope.MessageList.filter(x => x.event == $scope.UpdateInformation.event && x.language == "English")[0];
-		};
-
-		//Function to check the changes on message
-		$scope.CheckMessage = function () {
-			if ($scope.UpdateInformation.message.English && $scope.UpdateInformation.message.French) {
-				$scope.messageSection.open = true;
-				steps.message.completed = true;
-				$scope.numOfCompletedSteps = stepsCompleted(steps);
-				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-			}
-		};
-
-		// Function to return boolean for form completion
-		$scope.checkForm = function () {
-			return (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) === 100);
+			$scope.toSubmit.event.data = element;
+			var tempData = $scope.MessageList.filter(x => x.event === $scope.toSubmit.event.data && x.language === "French")[0];
+			$scope.toSubmit.message.fr.sms = tempData.smsMessage;
+			$scope.toSubmit.message.fr.id = tempData.messageId;
+			tempData = $scope.MessageList.filter(x => x.event === $scope.toSubmit.event.data && x.language === "English")[0];
+			$scope.toSubmit.message.en.sms = tempData.smsMessage;
+			$scope.toSubmit.message.en.id = tempData.messageId;
+			$scope.oldSms = JSON.parse(JSON.stringify($scope.toSubmit.message));
 		};
 
 		//Update Message information
 		$scope.UpdateMessage = function () {
-			var update = [
-				{
-					messageId: $scope.UpdateInformation.message.English.messageId,
-					smsMessage: $scope.UpdateInformation.message.English.smsMessage
-				},
-				{
-					messageId: $scope.UpdateInformation.message.French.messageId,
-					smsMessage: $scope.UpdateInformation.message.French.smsMessage
-				},
-			];
 			if ($scope.checkForm() && $scope.writeAccess) {
 				$.ajax({
 					type: "POST",
 					url: "sms/update/sms-message",
-					data: {updateList: update},
+					data: {updateList: $scope.toSubmit.message},
 					success: function () {
 					},
 					error: function (err) {
