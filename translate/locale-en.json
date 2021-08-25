@@ -3086,7 +3086,7 @@
       "TELEMED": "TELEMED",
       "TEST_CENTRE": "TEST_CENTRE",
       "UNDEFINED": "-",
-      "SPECIALITY": "Specialty Group",
+      "SPECIALITY": "Speciality Group",
       "ONCOLOGY": "Oncology",
       "RESOURCE_NAME": "Clinic Code",
       "ENABLE": "Enable ORMS SMS",
@@ -3130,7 +3130,7 @@
       "CONTENT_COMPLETE": "Message Complete",
       "SEARCH": "Search",
       "SHOW_ALL": "Show all",
-      "SHOW_SELECTED": "Show resources with appointments of selected specialty and type",
+      "SHOW_SELECTED": "Show resources with appointments of selected speciality and type",
       "SHOW_NOT_SELECTED": "Show other resources",
       "SUBMIT": "Submit",
       "STEP": "Step",
@@ -3138,7 +3138,8 @@
       "COMPLETED": "completed",
       "SUCCESS": "Changes Saved Successfully!",
       "ERROR": "An error occurred when saving changes.",
-      "ERROR_DETAILS": "An error occurred while getting the details of the sms message."
+      "ERROR_DETAILS": "An error occurred while getting the details of the sms message.",
+      "ERROR_NO_TYPE": "There are no messages for this speciality at this time. Please choose another speciality."
     },
     "EDIT": {
       "TITLE" : "Edit Appointment",
