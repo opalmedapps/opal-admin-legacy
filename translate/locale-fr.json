@@ -3185,7 +3185,8 @@
       "DETAILS": "Détails ",
       "SUCCESS": "Changements sauvegardés avec succès",
       "ERROR": "Une erreur s'est produite lors de l'enregistrement des modifications.",
-      "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails du rendez-voous."
+      "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails du rendez-voous.",
+      "ERROR_NO_TYPE": "Il n'existe aucun message pour cette spécialité à l'heure actuelle. Veuillez choisir une autre spécialité."
     },
     "VALIDATION": {
       "APPOINTMENT_ID": "Id de Rendez-vous manquante.",

@@ -29,7 +29,7 @@ class Sms extends Module {
 
     /**
      * Validate and sanitize fields used to get messages. WARNING! Because of the nature of the ORMS API, it is
-     * impossible to determine if the specialty code is valid or not. For more info, please see your administrator.
+     * impossible to determine if the speciality code is valid or not. For more info, please see your administrator.
      * @param $post array - data received from the front end
      * @param $dataReady array - data ready to be sent to the ORMS API
      * Validation code :    Error validation code is coded as an int of 2 bits (value from 0 to 3). Bits information
@@ -68,7 +68,7 @@ class Sms extends Module {
 
     /**
      * Get a list of events for the given type and speciality. WARNING! Because of the nature of the ORMS API, it is
-     * impossible to determine if the specialty code is valid or not. For more info, please see your administrator.
+     * impossible to determine if the speciality code is valid or not. For more info, please see your administrator.
      * @param $post array - data received from the end user
      * @return mixed - results of the ORMS API call
      */
@@ -81,7 +81,9 @@ class Sms extends Module {
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        return $this->_postRequest(WRM_API_URL.WRM_API_METHOD["getMessages"], $post);
+        $result = $this->_postRequest(WRM_API_URL.WRM_API_METHOD["getMessages"], $post);
+//        return $result;
+        return HelpSetup::arraySanitization($result);
     }
 
     /**
@@ -300,8 +302,8 @@ class Sms extends Module {
         $dataReady = array();
 
         if (is_array($post)) {
-            if (array_key_exists("specialtyCode", $post) && $post["specialtyCode"] != "")
-                $dataReady = array("specialtyCode"=>$post["specialtyCode"]);
+            if (array_key_exists("specialityCode", $post) && $post["specialityCode"] != "")
+                $dataReady = array("specialityCode"=>$post["specialityCode"]);
         }
         else
             $errCode = "1";
@@ -311,7 +313,7 @@ class Sms extends Module {
 
     /**
      * get a list of appointment type for a given speciality code.
-     * @param $post - contains the specialty code.
+     * @param $post - contains the speciality code.
      * @return mixed - answer from the ORMS API
      */
     public function getSmsType($post){
