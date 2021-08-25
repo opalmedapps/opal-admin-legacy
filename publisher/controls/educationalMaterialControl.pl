@@ -267,22 +267,24 @@ foreach my $Patient (@registeredPatients) {
             # update is done on the existing patient
             my ($UpdatedPatient, $change) = $SourcePatient->compareWith($ExistingPatient);
 
-			# if there was an actual change in comparison
-			if ($change) {
-				# update the database
-				$UpdatedPatient->updateDatabase();
-			}
+			# # 2021-08-26 YM: Remove this for now
+			# # if there was an actual change in comparison
+			# if ($change) {
+			# 	# update the database
+			# 	$UpdatedPatient->updateDatabase();
+			# }
 
             # push to patient list
             push(@patientList, $UpdatedPatient);
 
-        } else { # patient DNE
+		# # 2021-08-26 YM: Remove this for now
+        # } else { # patient DNE
 
-    		# insert Patient into our database
-	    	$SourcePatient = $SourcePatient->insertPatientIntoOurDB();
+    	# 	# insert Patient into our database
+	    # 	$SourcePatient = $SourcePatient->insertPatientIntoOurDB();
 
-            # push to patient list
-            push(@patientList, $SourcePatient);
+        #     # push to patient list
+        #     push(@patientList, $SourcePatient);
 
 	    }
     }
