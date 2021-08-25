@@ -962,20 +962,20 @@ sub insertPatientIntoOurDB
             '$deathdate'
         )
     ";
+	# # 2021-08-26 YM: Remove this for now
+	# # prepare query
+	# my $query = $SQLDatabase->prepare($insert_sql)
+	# 	or die "Could not prepare query: " . $SQLDatabase->errstr;
 
-	# prepare query
-	my $query = $SQLDatabase->prepare($insert_sql)
-		or die "Could not prepare query: " . $SQLDatabase->errstr;
+	# # execute query
+	# $query->execute()
+	# 	or die "Could not execute query: " . $query->errstr;
 
-	# execute query
-	$query->execute()
-		or die "Could not execute query: " . $query->errstr;
+	# # Retrieve the PatientSer
+	# my $ser = $SQLDatabase->last_insert_id(undef, undef, undef, undef);
 
-	# Retrieve the PatientSer
-	my $ser = $SQLDatabase->last_insert_id(undef, undef, undef, undef);
-
-	# Set the Serial in our patient object
-	$patient->setPatientSer($ser);
+	# # Set the Serial in our patient object
+	# $patient->setPatientSer($ser);
 
 	return $patient;
 }
@@ -1018,14 +1018,15 @@ sub updateDatabase
             PatientSerNum               = '$patientSer'
     ";
 
-    #print "$update_sql\n";
- 	# prepare query
-	my $query = $SQLDatabase->prepare($update_sql)
-		or die "Could not prepare query: " . $SQLDatabase->errstr;
+	# # 2021-08-26 YM: Remove this for now
+    # #print "$update_sql\n";
+ 	# # prepare query
+	# my $query = $SQLDatabase->prepare($update_sql)
+	# 	or die "Could not prepare query: " . $SQLDatabase->errstr;
 
-	# execute query
-	$query->execute()
-		or die "Could not execute query: " . $query->errstr;
+	# # execute query
+	# $query->execute()
+	# 	or die "Could not execute query: " . $query->errstr;
 
 }
 
