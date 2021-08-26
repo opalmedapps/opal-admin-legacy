@@ -11,11 +11,15 @@ angular.module('opalAdmin.controllers.add.sms', ['ngAnimate', 'ui.bootstrap', 'u
 		};
 
 		var arrValidationInsert = [
-			$filter('translate')('SMS.VALIDATION.MESSAGE_ID'),
-			$filter('translate')('SMS.VALIDATION.MESSAGE')
+			$filter('translate')('SMS.VALIDATION.ENGLISH'),
+			$filter('translate')('SMS.VALIDATION.FRENCH')
 		];
 
 		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.sms]) & (1 << 1)) !== 0);
+		if(!$scope.writeAccess) {
+			alert($filter('translate')('SMS.ADD.ERROR_ACCESS'));
+			$state.go('sms');
+		}
 
 		$scope.dataReceived = {
 			speciality: null,
@@ -37,7 +41,10 @@ angular.module('opalAdmin.controllers.add.sms', ['ngAnimate', 'ui.bootstrap', 'u
 
 		$scope.toSubmit = {
 			speciality: {
-				data: "",
+				data: {
+					name: "",
+					code: "",
+				},
 			},
 			type: {
 				data: "",
@@ -106,14 +113,14 @@ angular.module('opalAdmin.controllers.add.sms', ['ngAnimate', 'ui.bootstrap', 'u
 		$scope.$watch('toSubmit.speciality', function(){
 			$scope.toSubmit.type.data = "";
 			$scope.toSubmit.event.data = "";
-			$scope.leftMenu.speciality.display = !!($scope.toSubmit.speciality.data);
-			$scope.leftMenu.speciality.open = !!($scope.toSubmit.speciality.data);
-			$scope.leftMenu.speciality.preview = !!($scope.toSubmit.speciality.data);
+			$scope.leftMenu.speciality.display = !!($scope.toSubmit.speciality.data.code);
+			$scope.leftMenu.speciality.open = !!($scope.toSubmit.speciality.data.code);
+			$scope.leftMenu.speciality.preview = !!($scope.toSubmit.speciality.data.code);
 			$scope.validator.type.completed = false;
 			$scope.validator.event.completed = false;
 			$scope.validator.message.completed = false;
 			$scope.getSmsTypeList();
-			$scope.validator.speciality.completed = !!($scope.toSubmit.speciality.data);
+			$scope.validator.speciality.completed = !!($scope.toSubmit.speciality.data.code);
 		}, true);
 
 		$scope.$watch('toSubmit.type', function(){
@@ -138,9 +145,9 @@ angular.module('opalAdmin.controllers.add.sms', ['ngAnimate', 'ui.bootstrap', 'u
 		$scope.$watch('toSubmit.message', function(){
 			$scope.validator.message.completed =
 				(JSON.stringify($scope.oldSms) !== JSON.stringify($scope.toSubmit.message) && !!($scope.toSubmit.message.en.sms) && !!($scope.toSubmit.message.en.id) && !!($scope.toSubmit.message.fr.sms) && !!($scope.toSubmit.message.fr.id));
-			$scope.leftMenu.event.display = $scope.validator.message.completed;
-			$scope.leftMenu.event.open = $scope.validator.message.completed;
-			$scope.leftMenu.event.preview = $scope.validator.message.completed;
+			$scope.leftMenu.message.display = $scope.validator.message.completed;
+			$scope.leftMenu.message.open = $scope.validator.message.completed;
+			$scope.leftMenu.message.preview = $scope.validator.message.completed;
 		}, true);
 
 		$scope.$watch('validator', function() {
@@ -172,7 +179,7 @@ angular.module('opalAdmin.controllers.add.sms', ['ngAnimate', 'ui.bootstrap', 'u
 		}, true);
 
 		$scope.getSmsTypeList = function () {
-			smsCollectionService.getSmsType($scope.toSubmit.speciality.data).then(function (response) {
+			smsCollectionService.getSmsType($scope.toSubmit.speciality.data.code).then(function (response) {
 				$scope.dataReceived.type = response.data;
 				if($scope.dataReceived.type.length <= 0)
 					alert($filter('translate')('SMS.ADD.ERROR_NO_TYPE'));
@@ -182,7 +189,7 @@ angular.module('opalAdmin.controllers.add.sms', ['ngAnimate', 'ui.bootstrap', 'u
 		};
 
 		$scope.getSmsEventList = function () {
-			smsCollectionService.getSmsMessages($scope.toSubmit.type.data, $scope.toSubmit.speciality.data).then(function (response) {
+			smsCollectionService.getSmsMessages($scope.toSubmit.type.data, $scope.toSubmit.speciality.data.code).then(function (response) {
 				$scope.dataReceived.event = [];
 				response.data.forEach(function (row) {
 					if (!$scope.dataReceived.event.includes(row.event)) $scope.dataReceived.event.push(row.event);
@@ -194,7 +201,8 @@ angular.module('opalAdmin.controllers.add.sms', ['ngAnimate', 'ui.bootstrap', 'u
 		};
 
 		$scope.SpecialityUpdate = function (element) {
-			$scope.toSubmit.speciality.data = element.specialityCode;
+			$scope.toSubmit.speciality.data.code = element.specialityCode;
+			$scope.toSubmit.speciality.data.name = element.specialityName;
 		};
 
 		//Function to update the type selected
@@ -216,22 +224,19 @@ angular.module('opalAdmin.controllers.add.sms', ['ngAnimate', 'ui.bootstrap', 'u
 
 		//Update Message information
 		$scope.UpdateMessage = function () {
-			if ($scope.checkForm() && $scope.writeAccess) {
-				$.ajax({
-					type: "POST",
-					url: "sms/update/sms-message",
-					data: {updateList: $scope.toSubmit.message},
-					success: function () {
-					},
-					error: function (err) {
-						err.responseText = JSON.parse(err.responseText);
-						ErrorHandler.onError(err, $filter('translate')('SMS.ADD.ERROR'), arrValidationInsert);
-					},
-					complete: function () {
-						$state.go('sms');
-					}
-				});
-			}
+			$.ajax({
+				type: "POST",
+				url: "sms/update/sms-message",
+				data: $scope.toSubmit.message,
+				success: function () {
+				},
+				error: function (err) {
+					err.responseText = JSON.parse(err.responseText);
+					ErrorHandler.onError(err, $filter('translate')('SMS.ADD.ERROR'), arrValidationInsert);
+				},
+				complete: function () {
+					$state.go('sms');
+				}
+			});
 		};
-
 	});
