@@ -340,21 +340,29 @@ print "Finished patient list\n" if $verbose;
 #
 ##########################################################################################
 print "-- Start global_patientInfo_sql pre-load: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-my $numPats = @patientList;
+# my $numPats = @patientList;
 my $c = 0;
+my $global_patientInfo_sql = '';
+my $stringSize = 0;
+
 foreach my $Patient (@patientList) {
 	my $patientSer 			= $Patient->getPatientSer();
 	my $patientAriaSer		= $Patient->getPatientSourceUID(); #patientAriaSer
 	my $patientLastTransfer = $Patient->getPatientLastTransfer(); # last updated
 
-	$global_patientInfo_sql .= "
-		SELECT '$patientAriaSer', '$patientLastTransfer', '$patientSer'
-	";
+	$stringSize = length $global_patientInfo_sql;
 
-	$c++;
-	if($c < $numPats ){
-		$global_patientInfo_sql .= "UNION";
+	# skip if the aria serial number is equal to 0
+	if($patientAriaSer ne '0'){
+		# if the global_patientInfo_sql is not empty then insert UNION
+		if($stringSize > 0)){
+			$global_patientInfo_sql .= "UNION";
+		}
+		$global_patientInfo_sql .= "
+			SELECT '$patientAriaSer', '$patientLastTransfer', '$patientSer'
+		";
 	}
+	$c++;
 
 }
 print "-- End global_patientInfo_sql pre-load: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";

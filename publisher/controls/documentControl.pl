@@ -241,7 +241,8 @@ my $cronLogSer = Cron::setCronLog("Started documentControl", $start_datetime);
 # Retrieve all patients that are marked for update
 #=========================================================================================
 print "\n--- Start getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@registeredPatients = Patient::getPatientsMarkedForUpdateModularCron($cronLogSer, 'Document');
+# @registeredPatients = Patient::getPatientsMarkedForUpdateModularCron($cronLogSer, 'Document');
+@patientList = Patient::getPatientsMarkedForUpdateModularCron($cronLogSer, 'Document');
 print "--- End getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got patient list\n" if $verbose;
 
@@ -309,9 +310,12 @@ foreach my $Patient (@patientList) {
 	my $patientAriaSer		= $Patient->getPatientSourceUID(); #patient ID
 	my $patientLastTransfer = $Patient->getPatientLastTransfer(); # last updated
 
+	# get the length of the global_patientInfo_sql string
 	$stringSize = length $global_patientInfo_sql;
 
+	# skip if the aria serial number is equal to 0
 	if($patientAriaSer ne '0'){
+		# if the global_patientInfo_sql is not empty then insert UNION
 		if($stringSize > 0)){
 			$global_patientInfo_sql .= "UNION";
 		}
