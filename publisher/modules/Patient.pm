@@ -606,7 +606,9 @@ sub getPatientsMarkedForUpdateModularCron {
 	my ($cronLogSer, $cronType) = @_; # cron log serial in args
 	
 	my @patientList = (); # initialize list of patient objects
-	my ($lasttransfer, $id, $registrationdate);
+	my ($wsPatientSerNum, $wsPatientAriaSer, $wsPatientId, $wsPatientId2, $wsFirstName, $wsLastName, $wsDateOfBirth, $wsAge, 
+		$wsSex, $wsProfileImage, $wsRAMQ, $wslastTransferred, $wsAccessLevel, $wsDeathDate, $wsEmail, $wsUsername, 
+		$wsRegistrationDate);
 	
 	# Check if the list of patient is up to date.
 	CheckPatientForUpdateModularCron($cronType);
@@ -617,17 +619,41 @@ sub getPatientsMarkedForUpdateModularCron {
 	# Query
 	my $patients_sql = "
 		SELECT DISTINCT
-			cronControlPatient.lastTransferred,
-            Patient.PatientId,
-            Patient.RegistrationDate,
-			Patient.PatientAriaSer
+			P.PatientSerNum,
+			ifnull(P.PatientAriaSer, 0) PatientAriaSer,
+			IFNULL((SELECT MRN 
+				FROM Patient_Hospital_Identifier 
+				WHERE Hospital_Identifier_Type_Code = 'RVH' 
+					AND PatientSerNum = P.PatientSerNum
+				), '') PatientId,
+			IFNULL((SELECT MRN 
+				FROM Patient_Hospital_Identifier 
+				WHERE Hospital_Identifier_Type_Code = 'MGH' 
+					AND PatientSerNum = P.PatientSerNum
+				), '') PatientId2,
+			P.FirstName,
+			P.LastName,
+			P.DateOfBirth,
+			P.Age,
+			P.Sex,
+			P.ProfileImage,
+			P.SSN,
+			CCP.lastTransferred,
+			P.AccessLevel,
+			P.DeathDate,
+			P.Email,
+			U.Username,
+		P.RegistrationDate
 		FROM
-			cronControlPatient,
-            Patient
+			cronControlPatient CCP,
+		Patient P,
+		Users U
 		WHERE
-            cronControlPatient.transferFlag        = 1
-		AND cronControlPatient.cronType			   = '$cronType'
-        AND Patient.PatientSerNum                  = cronControlPatient.cronControlPatientSerNum
+		CCP.transferFlag = 1
+			AND CCP.cronType = '$cronType'
+			AND P.PatientSerNum = CCP.cronControlPatientSerNum
+			AND U.UserTypeSerNum = P.PatientSerNum
+	;
 	";
 
 	# prepare query
@@ -642,16 +668,44 @@ sub getPatientsMarkedForUpdateModularCron {
 
 		my $Patient = new Patient(); # patient object
 
-		$lasttransfer		= $data[0];
-        $id            		= $data[1];
-        $registrationdate 	= $data[2];
-		$sourceuid			= $data[3];
+		$wsPatientSerNum	= $data[0];
+		$wsPatientAriaSer	= $data[1];
+		$wsPatientId		= $data[2];
+		$wsPatientId2		= $data[3];
+		$wsFirstName		= $data[4];
+		$wsLastName			= $data[5];
+		$wsDateOfBirth		= $data[6];
+		$wsAge				= $data[7];
+		$wsSex				= $data[8];
+		$wsProfileImage		= $data[9];
+		$wsRAMQ				= $data[10];
+		$wslastTransferred	= $data[11];
+		$wsAccessLevel		= $data[12];
+		$wsDeathDate		= $data[13];
+		$wsEmail			= $data[14];
+		$wsUsername			= $data[15];
+		$wsRegistrationDate	= $data[16];
+
 		# set patient information
-		$Patient->setPatientLastTransfer($lasttransfer);
-        $Patient->setPatientId($id);
-        $Patient->setPatientRegistrationDate($registrationdate);
+		$Patient->setPatientSer($wsPatientSerNum);
+		$Patient->setPatientSourceUID($wsPatientAriaSer);
+		$Patient->setPatientId($wsPatientId);
+		$Patient->setPatientId2($wsPatientId2);
+		$Patient->setPatientFirstName($wsFirstName);
+		$Patient->setPatientLastName($wsLastName);
+		$Patient->setPatientDOB($wsDateOfBirth);
+		$Patient->setPatientAge($wsAge);
+		$Patient->setPatientSex($wsSex);
+		$Patient->setPatientPicture($wsProfileImage);
+		$Patient->setPatientSSN($wsRAMQ);
+		$Patient->setPatientLastTransfer($wslastTransferred);
+		$Patient->setPatientAccessLevel($wsAccessLevel);
+		$Patient->setPatientDeathDate($wsDeathDate);
+		$Patient->setPatientEmail($wsEmail);
+		$Patient->setPatientFirebaseUID($wsUsername);
+		$Patient->setPatientRegistrationDate($wsRegistrationDate);
 		$Patient->setPatientCronLogSer($cronLogSer);
-		$Patient->setPatientSourceUID($sourceuid);
+
 		push(@patientList, $Patient);
 	}
 
