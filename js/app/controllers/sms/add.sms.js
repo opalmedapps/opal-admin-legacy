@@ -105,8 +105,11 @@ angular.module('opalAdmin.controllers.add.sms', ['ngAnimate', 'ui.bootstrap', 'u
 
 		$scope.$watch('toSubmit.speciality', function(){
 			$scope.toSubmit.type.data = "";
-			$scope.validator.type.completed = false;
 			$scope.toSubmit.event.data = "";
+			$scope.leftMenu.speciality.display = !!($scope.toSubmit.speciality.data);
+			$scope.leftMenu.speciality.open = !!($scope.toSubmit.speciality.data);
+			$scope.leftMenu.speciality.preview = !!($scope.toSubmit.speciality.data);
+			$scope.validator.type.completed = false;
 			$scope.validator.event.completed = false;
 			$scope.validator.message.completed = false;
 			$scope.getSmsTypeList();
@@ -115,6 +118,9 @@ angular.module('opalAdmin.controllers.add.sms', ['ngAnimate', 'ui.bootstrap', 'u
 
 		$scope.$watch('toSubmit.type', function(){
 			$scope.toSubmit.event.data = "";
+			$scope.leftMenu.type.display = !!($scope.toSubmit.type.data);
+			$scope.leftMenu.type.open = !!($scope.toSubmit.type.data);
+			$scope.leftMenu.type.preview = !!($scope.toSubmit.type.data);
 			$scope.validator.event.completed = false;
 			$scope.validator.message.completed = false;
 			if($scope.toSubmit.type.data !== "") $scope.getSmsEventList();
@@ -123,13 +129,18 @@ angular.module('opalAdmin.controllers.add.sms', ['ngAnimate', 'ui.bootstrap', 'u
 
 		$scope.$watch('toSubmit.event', function(){
 			$scope.validator.message.completed = false;
+			$scope.leftMenu.event.display = !!($scope.toSubmit.event.data);
+			$scope.leftMenu.event.open = !!($scope.toSubmit.event.data);
+			$scope.leftMenu.event.preview = !!($scope.toSubmit.event.data);
 			$scope.validator.event.completed = !!($scope.toSubmit.event.data);
 		}, true);
 
 		$scope.$watch('toSubmit.message', function(){
 			$scope.validator.message.completed =
-				(($scope.oldSms.en.sms !== $scope.toSubmit.message.en.sms || $scope.oldSms.fr.sms !== $scope.toSubmit.message.fr.sms)
-					&& !!($scope.toSubmit.message.en.sms) && !!($scope.toSubmit.message.en.id) && !!($scope.toSubmit.message.fr.sms) && !!($scope.toSubmit.message.fr.id));
+				(JSON.stringify($scope.oldSms) !== JSON.stringify($scope.toSubmit.message) && !!($scope.toSubmit.message.en.sms) && !!($scope.toSubmit.message.en.id) && !!($scope.toSubmit.message.fr.sms) && !!($scope.toSubmit.message.fr.id));
+			$scope.leftMenu.event.display = $scope.validator.message.completed;
+			$scope.leftMenu.event.open = $scope.validator.message.completed;
+			$scope.leftMenu.event.preview = $scope.validator.message.completed;
 		}, true);
 
 		$scope.$watch('validator', function() {

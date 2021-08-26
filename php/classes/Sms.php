@@ -82,7 +82,6 @@ class Sms extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         $result = $this->_postRequest(WRM_API_URL.WRM_API_METHOD["getMessages"], $post);
-//        return $result;
         return HelpSetup::arraySanitization($result);
     }
 
