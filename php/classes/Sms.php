@@ -226,36 +226,31 @@ class Sms extends Module {
      * information, it is possible to modify the state and type in batch without any warning. For more info, please see
      * your administrator.
      * @param $post array - data to validate
-     * Validation code :    Error validation code is coded as an int of 1 bit (value from 0 to 1). Bit information
+     * Validation code :    Error validation code is coded as an int of 2 bits (value from 0 to 2). Bits information
      *                      are coded from right to left:
-     *                      1: Update list missing or invalid
+     *                      1: English SMS or ID are missing or invalid
+     *                      2: French SMS or ID are missing or invalid
      * @return string - error code
      */
     protected function _validateSmsMessage(&$post, &$dataReady) {
         $dataReady = array();
         $errCode = "";
         if (is_array($post)) {
-            if (!array_key_exists("updateList", $post) || !is_array($post["updateList"]))
+            if (!array_key_exists("en", $post) || !is_array($post["en"]) || !array_key_exists("id", $post["en"]) || !array_key_exists("sms", $post["en"]) || $post["en"]["id"] == "" || $post["en"]["sms"] == "")
                 $errCode = "1" . $errCode;
             else {
-                $errorFound = false;
-                foreach ($post["updateList"] as $item) {
-                    if (!array_key_exists("messageId", $item) || !array_key_exists("smsMessage", $item) || $item["messageId"] == "" || $item["smsMessage"] == "") {
-                        $errorFound = true;
-                        break;
-                    }
-                    else
-                        array_push($dataReady, array("messageId" => $item["messageId"], "smsMessage" => $item["smsMessage"]));
-                }
-                if($errorFound) {
-                    $errCode = "1" . $errCode;
-                    $dataReady = array();
-                }
-                else
-                    $errCode = "0" . $errCode;
+                array_push($dataReady, array("messageId" => $post["en"]["id"], "smsMessage" => $post["en"]["sms"]));
+                $errCode = "0" . $errCode;
+            }
+
+            if (!array_key_exists("fr", $post) || !is_array($post["fr"]) || !array_key_exists("id", $post["fr"]) || !array_key_exists("sms", $post["fr"]) || $post["fr"]["id"] == "" || $post["fr"]["sms"] == "")
+                $errCode = "1" . $errCode;
+            else {
+                array_push($dataReady, array("messageId" => $post["fr"]["id"], "smsMessage" => $post["fr"]["sms"]));
+                $errCode = "0" . $errCode;
             }
         }  else
-            $errCode = "1";
+            $errCode = "11";
         return $errCode;
     }
 
@@ -272,7 +267,7 @@ class Sms extends Module {
         $post = HelpSetup::arraySanitization($post);
         $errCode = bindec($this->_validateSmsMessage($post, $dataReady));
         if ($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
 
         foreach ($dataReady as $item)
             $this->_postRequest(WRM_API_URL.WRM_API_METHOD["updateMessage"], $item);
