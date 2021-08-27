@@ -92,5 +92,8 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.alert',
 	'opalAdmin.controllers.alert.add',
 	'opalAdmin.controllers.alert.edit',
-	'opalAdmin.controllers.alert.delete'
+	'opalAdmin.controllers.alert.delete',
+	'opalAdmin.controllers.sms',
+	'opalAdmin.controllers.add.sms',
+	'opalAdmin.controllers.sms.edit'
 ]);
