@@ -177,7 +177,7 @@ class Sms extends Module {
                 if ($post["type"] == UNDEFINED_SMS_APPOINTMENT_CODE && $post["active"] == 1)
                     $errCode = "1" . $errCode;
                 else
-                    $errCode = "1" . $errCode;
+                    $errCode = "0" . $errCode;
             }
         }  else
             $errCode = "1111";
