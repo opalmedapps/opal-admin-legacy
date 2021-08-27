@@ -1231,7 +1231,7 @@ angular.module('opalAdmin.collections', [])
 		//Function to get all sms messages based on appointments type and speciality Code.
 		smsAPI.getSmsMessages = function (type, specialityCode) {
 			return $http.post(
-				"sms/get/sms-messages",
+				"sms/get/messages",
 				$.param({
 					type: type,
 					specialityCode: specialityCode,
@@ -1245,7 +1245,7 @@ angular.module('opalAdmin.collections', [])
 		//Function to get all existing speciality group in ORMS db
 		smsAPI.getSmsSpeciality = function(){
 			return $http.post(
-				"sms/get/sms-speciality",
+				"sms/get/speciality",
 				{
 					header : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
@@ -1255,7 +1255,7 @@ angular.module('opalAdmin.collections', [])
 		//Function to get all sms appointment types based on speciality Code
 		smsAPI.getSmsType = function(specialityCode){
 			return $http.post(
-				"sms/get/sms-type",
+				"sms/get/type",
 				$.param({
 					specialityCode: specialityCode,
 				}),

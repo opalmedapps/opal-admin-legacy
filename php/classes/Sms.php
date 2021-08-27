@@ -288,7 +288,7 @@ class Sms extends Module {
      * @param array $dataReady - data ready to be sent to the ORMS API
      * Validation code :    Error validation code is coded as an int of 1 bit (value from 0 to 1). Bit information
      *                      are coded from right to left:
-     *                      1: post is not an array
+     *                      1: specialityCode is missing
      * @return string - error code
      */
     protected function _validateSmsType(&$post, &$dataReady) {
