@@ -69,53 +69,32 @@ angular.module('opalAdmin.controllers.add.sms', ['ngAnimate', 'ui.bootstrap', 'u
 				completed: false,
 				mandatory: true,
 				valid: true,
+				open: false,
 			},
 			type: {
 				completed: false,
 				mandatory: true,
 				valid: true,
+				open: false,
 			},
 			event: {
 				completed: false,
 				mandatory: true,
 				valid: true,
+				open: false,
 			},
 			message: {
 				completed: false,
 				mandatory: true,
 				valid: true,
-			},
-		};
-
-		$scope.leftMenu = {
-			speciality: {
-				display: false,
 				open: false,
-				preview: false,
-			},
-			type: {
-				display: false,
-				open: false,
-				preview: false,
-			},
-			event: {
-				display: false,
-				open: false,
-				preview: false,
-			},
-			message: {
-				display: false,
-				open: false,
-				preview: false,
 			},
 		};
 
 		$scope.$watch('toSubmit.speciality', function(){
 			$scope.toSubmit.type.data = "";
 			$scope.toSubmit.event.data = "";
-			$scope.leftMenu.speciality.display = !!($scope.toSubmit.speciality.data.code);
-			$scope.leftMenu.speciality.open = !!($scope.toSubmit.speciality.data.code);
-			$scope.leftMenu.speciality.preview = !!($scope.toSubmit.speciality.data.code);
+			$scope.validator.speciality.open = !!($scope.toSubmit.speciality.data.code);
 			$scope.validator.type.completed = false;
 			$scope.validator.event.completed = false;
 			$scope.validator.message.completed = false;
@@ -125,9 +104,7 @@ angular.module('opalAdmin.controllers.add.sms', ['ngAnimate', 'ui.bootstrap', 'u
 
 		$scope.$watch('toSubmit.type', function(){
 			$scope.toSubmit.event.data = "";
-			$scope.leftMenu.type.display = !!($scope.toSubmit.type.data);
-			$scope.leftMenu.type.open = !!($scope.toSubmit.type.data);
-			$scope.leftMenu.type.preview = !!($scope.toSubmit.type.data);
+			$scope.validator.type.open = !!($scope.toSubmit.type.data);
 			$scope.validator.event.completed = false;
 			$scope.validator.message.completed = false;
 			if($scope.toSubmit.type.data !== "") $scope.getSmsEventList();
@@ -136,18 +113,14 @@ angular.module('opalAdmin.controllers.add.sms', ['ngAnimate', 'ui.bootstrap', 'u
 
 		$scope.$watch('toSubmit.event', function(){
 			$scope.validator.message.completed = false;
-			$scope.leftMenu.event.display = !!($scope.toSubmit.event.data);
-			$scope.leftMenu.event.open = !!($scope.toSubmit.event.data);
-			$scope.leftMenu.event.preview = !!($scope.toSubmit.event.data);
+			$scope.validator.event.open = !!($scope.toSubmit.event.data);
 			$scope.validator.event.completed = !!($scope.toSubmit.event.data);
 		}, true);
 
 		$scope.$watch('toSubmit.message', function(){
 			$scope.validator.message.completed =
 				(JSON.stringify($scope.oldSms) !== JSON.stringify($scope.toSubmit.message) && !!($scope.toSubmit.message.en.sms) && !!($scope.toSubmit.message.en.id) && !!($scope.toSubmit.message.fr.sms) && !!($scope.toSubmit.message.fr.id));
-			$scope.leftMenu.message.display = $scope.validator.message.completed;
-			$scope.leftMenu.message.open = $scope.validator.message.completed;
-			$scope.leftMenu.message.preview = $scope.validator.message.completed;
+			$scope.validator.message.open = $scope.validator.message.completed;
 		}, true);
 
 		$scope.$watch('validator', function() {
