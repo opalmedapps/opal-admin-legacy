@@ -668,9 +668,13 @@ sub getPatientsMarkedForUpdateLegacy
 	my $patients_sql = "
 		SELECT DISTINCT
 			PatientControl.LastTransferred,
-            Patient.PatientId,
+            IFNULL((SELECT MRN 
+				FROM Patient_Hospital_Identifier 
+				WHERE Hospital_Identifier_Type_Code = 'RVH' 
+					AND PatientSerNum = Patient.PatientSerNum
+				), '') PatientId,
             Patient.RegistrationDate,
-			Patient.PatientAriaSer
+			ifnull(Patient.PatientAriaSer, 0) PatientAriaSer,
 		FROM
 			PatientControl,
             Patient
