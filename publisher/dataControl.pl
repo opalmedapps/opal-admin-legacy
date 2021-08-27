@@ -283,7 +283,8 @@ my $verbose = 1;
 # Retrieve all patients that are marked for update
 #=========================================================================================
 print "\n--- Start getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@registeredPatients = Patient::getPatientsMarkedForUpdate($cronLogSer);
+# @registeredPatients = Patient::getPatientsMarkedForUpdate($cronLogSer);
+@patientList = Patient::getPatientsMarkedForUpdate($cronLogSer);
 print "--- End getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got patient list\n" if $verbose;
 
