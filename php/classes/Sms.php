@@ -102,11 +102,11 @@ class Sms extends Module {
         $dataReady = array();
         $errCode = "";
         if (is_array($post)) {
-            if (!array_key_exists("updateList", $post) || !is_array($post["updateList"]))
+            if (!array_key_exists("data", $post) || !is_array($post["data"]))
                 $errCode = "1" . $errCode;
             else {
                 $errorFound = false;
-                foreach ($post["updateList"] as $item) {
+                foreach ($post["data"] as $item) {
                     if (!array_key_exists("id", $item) || !array_key_exists("active", $item) || !array_key_exists("type", $item) || $item["id"] == "" || $item["active"] == "" ||  !in_array($item["type"], $validType)) {
                         $errorFound = true;
                         break;
@@ -226,7 +226,7 @@ class Sms extends Module {
      * information, it is possible to modify the state and type in batch without any warning. For more info, please see
      * your administrator.
      * @param $post array - data to validate
-     * Validation code :    Error validation code is coded as an int of 2 bits (value from 0 to 2). Bits information
+     * Validation code :    Error validation code is coded as an int of 2 bits (value from 0 to 3). Bits information
      *                      are coded from right to left:
      *                      1: English SMS or ID are missing or invalid
      *                      2: French SMS or ID are missing or invalid
@@ -255,7 +255,7 @@ class Sms extends Module {
     }
 
     /*
-     * Sanitize, validate and update the sms message the given type, speciality, event and language
+     * Update the french and english messages of a specific SMS.
      * Validation code :    Error validation code is coded as an int of 4 bits. Bit information
      *                      are coded from right to left:
      *                      1: message id missing
