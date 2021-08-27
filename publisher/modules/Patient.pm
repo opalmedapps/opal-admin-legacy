@@ -455,9 +455,8 @@ sub getPatientInfoFromSourceDBs
 	        ON pt.PatientSer       	= ph.PatientSer
 	        LEFT JOIN VARIAN.dbo.PatientParticular ppt 
 	        ON ppt.PatientSer 		= pt.PatientSer
-	        WHERE
-	            pt.PatientSer   = '$patientAriaSer'
-	    ";
+	        WHERE pt.PatientSer   = '$patientAriaSer'
+			";
 
 		# prepare query
 		my $query = $sourceDatabase->prepare($patientInfo_sql)
@@ -674,7 +673,7 @@ sub getPatientsMarkedForUpdateLegacy
 					AND PatientSerNum = Patient.PatientSerNum
 				), '') PatientId,
             Patient.RegistrationDate,
-			ifnull(Patient.PatientAriaSer, 0) PatientAriaSer,
+			ifnull(Patient.PatientAriaSer, 0) PatientAriaSer
 		FROM
 			PatientControl,
             Patient
@@ -1060,8 +1059,16 @@ sub inOurDatabase
         SELECT DISTINCT
             Patient.PatientSerNum,
             Patient.PatientAriaSer,
-            Patient.PatientId,
-            Patient.PatientId2,
+			IFNULL((SELECT MRN 
+				FROM Patient_Hospital_Identifier 
+				WHERE Hospital_Identifier_Type_Code = 'RVH' 
+					AND PatientSerNum = P.PatientSerNum
+				), '') PatientId,
+			IFNULL((SELECT MRN 
+				FROM Patient_Hospital_Identifier 
+				WHERE Hospital_Identifier_Type_Code = 'MGH' 
+					AND PatientSerNum = P.PatientSerNum
+				), '') PatientId2,
             Patient.FirstName,
             Patient.LastName,
             Patient.Sex,
@@ -1076,10 +1083,9 @@ sub inOurDatabase
             Patient,
 			Users
         WHERE
-            Patient.SSN  		= '$patientSSN'
-		AND Patient.PatientSerNum 	= Users.UserTypeSerNum
-		AND Users.UserType 			= 'Patient'
-    ";
+            Patient.SSN  				= '$patientSSN'
+			AND Patient.PatientSerNum 	= Users.UserTypeSerNum
+			AND Users.UserType 			= 'Patient'";
 	}else{
 		print "Insufficient information retrieved from varian to identify this patient\n";
 		return;
