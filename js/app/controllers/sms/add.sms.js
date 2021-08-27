@@ -199,7 +199,7 @@ angular.module('opalAdmin.controllers.add.sms', ['ngAnimate', 'ui.bootstrap', 'u
 		$scope.UpdateMessage = function () {
 			$.ajax({
 				type: "POST",
-				url: "sms/update/sms-message",
+				url: "sms/update/message",
 				data: $scope.toSubmit.message,
 				success: function () {
 				},

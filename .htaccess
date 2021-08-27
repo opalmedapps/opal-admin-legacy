@@ -305,12 +305,12 @@ RewriteRule ^role/update/role php/role/update.role.php [QSA,L]
 
 # SMS Section
 RewriteRule ^sms/get/appointment php/sms/get.sms.appointment.php [QSA,L]
-RewriteRule ^sms/get/sms-messages php/sms/get.messages.php [QSA,L]
-RewriteRule ^sms/get/sms-speciality php/sms/get.speciality.php [QSA,L]
-RewriteRule ^sms/get/sms-type php/sms/get.sms.types.php [QSA,L]
+RewriteRule ^sms/get/messages php/sms/get.messages.php [QSA,L]
+RewriteRule ^sms/get/speciality php/sms/get.speciality.php [QSA,L]
+RewriteRule ^sms/get/type php/sms/get.sms.types.php [QSA,L]
 RewriteRule ^sms/update/activation php/sms/update.activation.state.php [QSA,L]
 RewriteRule ^sms/update/appointment-code php/sms/update.appointment.code.php [QSA,L]
-RewriteRule ^sms/update/sms-message php/sms/update.sms.message.php [QSA,L]
+RewriteRule ^sms/update/message php/sms/update.sms.message.php [QSA,L]
 
 # Studies Section
 RewriteRule ^study/get/patients-list php/study/get.patients.list.php [QSA,L]
