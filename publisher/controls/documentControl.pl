@@ -316,7 +316,7 @@ foreach my $Patient (@patientList) {
 	# skip if the aria serial number is equal to 0
 	if($patientAriaSer ne '0'){
 		# if the global_patientInfo_sql is not empty then insert UNION
-		if($stringSize > 0)){
+		if($stringSize > 0){
 			$global_patientInfo_sql .= "UNION";
 		}
 		$global_patientInfo_sql .= "
