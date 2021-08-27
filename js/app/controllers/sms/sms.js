@@ -131,9 +131,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
 
 		$scope.changesMade = false;
 		$scope.smsAppointments = [];
-		$scope.smsUpdates = {
-			updateList: []
-		};
+		$scope.smsUpdates = [];
 
 		var arrValidationInsert = [
 			$filter('translate')('SMS.VALIDATION.APPOINTMENT_ID'),
@@ -187,7 +185,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
 				angular.forEach($scope.smsAppointments, function (sms) {
 					if (sms.modified) {
 						if(sms.type !== "-")
-							$scope.smsUpdates.updateList.push({
+							$scope.smsUpdates.push({
 								id: sms.id,
 								active: sms.active,
 								type: sms.type
@@ -199,14 +197,14 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
 				$.ajax({
 					type: "POST",
 					url: "sms/update/activation",
-					data: $scope.smsUpdates,
+					data: {"data": $scope.smsUpdates},
 					success: function () {
 						getSmsAppointmentList();
 						$scope.setBannerClass('success');
 						$scope.bannerMessage = $filter('translate')('SMS.LIST.SUCCESS');
 						$scope.showBanner();
 						$scope.changesMade = false;
-						$scope.smsUpdates.updateList = [];
+						$scope.smsUpdates = [];
 					},
 					error: function(err) {
 						err.responseText = JSON.parse(err.responseText);
