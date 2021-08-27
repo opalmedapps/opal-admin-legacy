@@ -45,7 +45,7 @@
                         </div>
                         <uib-accordion class="side-navbar">
                             <!-- SECTION: Speciality -->
-                            <div uib-accordion-group is-open="leftMenu.speciality.open" class="panel-container summary-box" is-disabled="!toSubmit.speciality.data.code">
+                            <div uib-accordion-group is-open="validator.speciality.open" class="panel-container summary-box" is-disabled="!toSubmit.speciality.data.code">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items:center">
                                         <div class="col-md-2">
@@ -55,7 +55,7 @@
                                             <strong>{{'SMS.ADD.SPECIALITY'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i ng-if="validator.speciality.completed" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':leftMenu.speciality.open, 'glyphicon-chevron-right':!leftMenu.speciality.open}"></i>
+                                            <i ng-if="validator.speciality.completed" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':validator.speciality.open, 'glyphicon-chevron-right':!validator.speciality.open}"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
@@ -67,7 +67,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Type -->
-                            <div uib-accordion-group is-open="leftMenu.type.open" class="panel-container summary-box animated" ng-class="{fadeInUp: toSubmit.speciality.data.code && dataReceived.type.length > 0}" ng-if="toSubmit.speciality.data.code && dataReceived.type.length > 0" is-disabled="!toSubmit.type.data">
+                            <div uib-accordion-group is-open="validator.type.open" class="panel-container summary-box animated" ng-class="{fadeInUp: toSubmit.speciality.data.code && dataReceived.type.length > 0}" ng-if="toSubmit.speciality.data.code && dataReceived.type.length > 0" is-disabled="!toSubmit.type.data">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -77,7 +77,7 @@
                                             <strong>{{'SMS.ADD.TYPE'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':leftMenu.type.open, 'glyphicon-chevron-right':!leftMenu.type.open}" ng-if="toSubmit.type.data"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':validator.type.open, 'glyphicon-chevron-right':!validator.type.open}" ng-if="toSubmit.type.data"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
@@ -89,7 +89,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Event -->
-                            <div uib-accordion-group is-open="leftMenu.event.open" class="panel-container summary-box animated" ng-class="{fadeInUp:toSubmit.type.data}" ng-if="toSubmit.type.data" is-disabled="!toSubmit.event.data">
+                            <div uib-accordion-group is-open="validator.event.open" class="panel-container summary-box animated" ng-class="{fadeInUp:toSubmit.type.data}" ng-if="toSubmit.type.data" is-disabled="!toSubmit.event.data">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -99,7 +99,7 @@
                                             <strong>{{'SMS.ADD.EVENT'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.event.open, 'glyphicon-chevron-right': !leftMenu.event.open}" ng-if="toSubmit.event.data"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': validator.event.open, 'glyphicon-chevron-right': !validator.event.open}" ng-if="toSubmit.event.data"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
@@ -111,7 +111,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Message -->
-                            <div uib-accordion-group is-open="leftMenu.message.open" class="panel-container summary-box animated"
+                            <div uib-accordion-group is-open="validator.message.open" class="panel-container summary-box animated"
                                  ng-class="{fadeInUp:toSubmit.message.en.sms || toSubmit.message.fr.sms}" ng-if="toSubmit.message.en.sms || toSubmit.message.fr.sms" is-disabled="!validator.message.completed">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
@@ -122,8 +122,8 @@
                                             <strong>{{'SMS.ADD.CONTENT'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.message.open,
-                                            'glyphicon-chevron-right': !leftMenu.message.open}" ng-if="validator.message.completed"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': validator.message.open,
+                                            'glyphicon-chevron-right': !validator.message.open}" ng-if="validator.message.completed"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
