@@ -414,8 +414,9 @@ sub getPatientInfoFromSourceDBs
     my ($Patient) = @_; # our patient object
     my @patientList = (); # initialize a list 
 
-	my $patientAriaSer		= $Patient->getPatientSourceUID(); #patientAriaSer
-	my $patientSer 			= $Patient->getPatientSer();
+	my $patientSSN       = $Patient->getPatientSSN(); # retrieve the ssn
+	my $PatientAriaSer	 = $Patient->getPatientSourceUID(); #patientAriaSer
+	my $patientSer 		 = $Patient->getPatientSer();
     my $id      		 = $Patient->getPatientId(); # retrieve the patient ID
     my $lastTransfer     = $Patient->getPatientLastTransfer();
     my $registrationDate = $Patient->getPatientRegistrationDate();
@@ -441,21 +442,15 @@ sub getPatientInfoFromSourceDBs
 	            pt.PatientSer,
 	            pt.FirstName,
 	            pt.LastName,
-	            LEFT(LTRIM(pt.SSN), 12) SSN,
+				pt.PatientId,
 	            pt.PatientId2,
 	            CONVERT(VARCHAR, pt.DateOfBirth, 120),
-	            -- ph.Picture,
 				'' as Picture,
 	            RTRIM(pt.Sex),
-	            CONVERT(VARCHAR, ppt.DeathDate, 120),
-	            LEN(ph.Picture)
+	            (Select ppt.DeathDate from VARIAN.dbo.PatientParticular ppt where ppt.PatientSer = pt.PatientSer)
 	        FROM 
 	            VARIAN.dbo.Patient pt
-	        LEFT JOIN VARIAN.dbo.Photo ph
-	        ON pt.PatientSer       	= ph.PatientSer
-	        LEFT JOIN VARIAN.dbo.PatientParticular ppt 
-	        ON ppt.PatientSer 		= pt.PatientSer
-	        WHERE pt.PatientSer   = '$patientAriaSer'
+	        WHERE LEFT(LTRIM(pt.SSN), 12)   = '$patientSSN'
 			";
 
 		# prepare query
@@ -479,14 +474,18 @@ sub getPatientInfoFromSourceDBs
 					0 as PatientSer,
 					pt.FirstName,
 					pt.LastName,
-					pt.SSN,
+					pt.PatientId,
 					pt.PatientId2,
 					pt.DateOfBirth,
 					pt.ProfileImage,
 					RTRIM(pt.Sex),
 					pt.DeathDate
 				From Patient pt
-				where pt.PatientId = '$id'
+				Where pt.PatientSerNum =
+					(select phi.PatientSerNum 
+					from Patient_Hospital_Identifier phi
+					where phi.Hospital_Identifier_Type_Code = 'RVH'
+						and phi.MRN = '$id');
 			";
 
 			# prepare query
@@ -507,7 +506,7 @@ sub getPatientInfoFromSourceDBs
 	        my $sourceuid       = $row->[0];
 	        my $firstname       = $row->[1];
 	        my $lastname        = $row->[2];
-	        my $patientSSN      = $row->[3];
+	        my $id              = $row->[3];
 	        my $id2             = $row->[4];
 	        my $dob             = $row->[5];
 	        my $age             = getAgeAtDate($dob, $today);
@@ -839,7 +838,11 @@ sub getPatientsMarkedForUpdateModularCronLegacy {
 	my $patients_sql = "
 		SELECT DISTINCT
 			cronControlPatient.lastTransferred,
-            Patient.PatientId,
+			IFNULL((SELECT MRN 
+				FROM Patient_Hospital_Identifier 
+				WHERE Hospital_Identifier_Type_Code = 'RVH' 
+					AND PatientSerNum = P.PatientSerNum
+				), '') PatientId,
             Patient.RegistrationDate,
 			Patient.PatientAriaSer
 		FROM
@@ -1314,13 +1317,13 @@ sub compareWith
 		my $updatedUID = $UpdatedPatient->setPatientSourceUID($SPatientSourceUID); # update patient id
 		print "Will update database entry to '$updatedUID'.\n";
 	}
-	if ($SPatientId ne $OPatientId) {
+	# if ($SPatientId ne $OPatientId) {
 
-		$change = 1; # change occurred
-		print "Patient ID has changed from $OPatientId to $SPatientId!\n";
-		my $updatedId = $UpdatedPatient->setPatientId($SPatientId); # update patient id
-		print "Will update database entry to '$updatedId'.\n";
-	}
+	# 	$change = 1; # change occurred
+	# 	print "Patient ID has changed from $OPatientId to $SPatientId!\n";
+	# 	my $updatedId = $UpdatedPatient->setPatientId($SPatientId); # update patient id
+	# 	print "Will update database entry to '$updatedId'.\n";
+	# }
 	# if ($SPatientId2 ne $OPatientId2) {
 
 	# 	$change = 1; # change occurred
