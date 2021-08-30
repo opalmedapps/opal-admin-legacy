@@ -241,7 +241,7 @@ my $cronLogSer = Cron::setCronLog("Started documentControl", $start_datetime);
 # Retrieve all patients that are marked for update
 #=========================================================================================
 print "\n--- Start getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@registeredPatients = Patient::getPatientsMarkedForUpdateModularCron($cronLogSer, 'Document');
+@registeredPatients = Patient::getPatientsMarkedForUpdateModularCronLegacy($cronLogSer, 'Document');
 print "--- End getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got patient list\n" if $verbose;
 
@@ -267,12 +267,11 @@ foreach my $Patient (@registeredPatients) {
             # update is done on the existing patient
             my ($UpdatedPatient, $change) = $SourcePatient->compareWith($ExistingPatient);
 
-			# # 2021-08-26 YM: Remove this for now
-			# # if there was an actual change in comparison
-			# if ($change) {
-			# 	# update the database
-			# 	$UpdatedPatient->updateDatabase();
-			# }
+			# if there was an actual change in comparison
+			if ($change) {
+				# update the database
+				$UpdatedPatient->updateDatabase();
+			}
 
             # push to patient list
             push(@patientList, $UpdatedPatient);
@@ -299,20 +298,30 @@ print "Finished patient list\n" if $verbose;
 #
 ##########################################################################################
 print "-- Start global_patientInfo_sql pre-load: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-my $numPats = @patientList;
+# my $numPats = @patientList;
 my $c = 0;
+my $global_patientInfo_sql = '';
+my $stringSize = 0;
+
 foreach my $Patient (@patientList) {
 	my $patientSer 			= $Patient->getPatientSer();
 	my $patientAriaSer		= $Patient->getPatientSourceUID(); #patient ID
 	my $patientLastTransfer = $Patient->getPatientLastTransfer(); # last updated
 
-	$global_patientInfo_sql .= "
-		SELECT '$patientAriaSer', '$patientLastTransfer', '$patientSer'
-	";
-	$c++;
-	if($c < $numPats ){
-		$global_patientInfo_sql .= "UNION";
+	# get the length of the global_patientInfo_sql string
+	$stringSize = length $global_patientInfo_sql;
+
+	# skip if the aria serial number is equal to 0
+	if($patientAriaSer ne '0'){
+		# if the global_patientInfo_sql is not empty then insert UNION
+		if($stringSize > 0){
+			$global_patientInfo_sql .= "UNION";
+		}
+		$global_patientInfo_sql .= "
+			SELECT '$patientAriaSer', '$patientLastTransfer', '$patientSer'
+		";
 	}
+	$c++;
 
 }
 print "-- End global_patientInfo_sql pre-load: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
