@@ -671,6 +671,7 @@ sub getPatientsMarkedForUpdateLegacy
 				WHERE Hospital_Identifier_Type_Code = 'RVH' 
 					AND PatientSerNum = Patient.PatientSerNum
 				), '') PatientId,
+			Patient.SSN,
             Patient.RegistrationDate,
 			ifnull(Patient.PatientAriaSer, 0) PatientAriaSer
 		FROM
@@ -695,11 +696,13 @@ sub getPatientsMarkedForUpdateLegacy
 
 		$lasttransfer		= $data[0];
         $id            		= $data[1];
-        $registrationdate 	= $data[2];
-		$sourceuid 			= $data[3];
+		$RAMQ				= $data[2];
+        $registrationdate 	= $data[3];
+		$sourceuid 			= $data[4];
 		# set patient information
 		$Patient->setPatientLastTransfer($lasttransfer);
         $Patient->setPatientId($id);
+		$Patient->setPatientSSN($RAMQ);
         $Patient->setPatientRegistrationDate($registrationdate);
 		$Patient->setPatientCronLogSer($cronLogSer);
 		$Patient->setPatientSourceUID($sourceuid);
@@ -841,8 +844,9 @@ sub getPatientsMarkedForUpdateModularCronLegacy {
 			IFNULL((SELECT MRN 
 				FROM Patient_Hospital_Identifier 
 				WHERE Hospital_Identifier_Type_Code = 'RVH' 
-					AND PatientSerNum = P.PatientSerNum
+					AND PatientSerNum = Patient.PatientSerNum
 				), '') PatientId,
+			Patient.SSN,
             Patient.RegistrationDate,
 			Patient.PatientAriaSer
 		FROM
@@ -868,11 +872,13 @@ sub getPatientsMarkedForUpdateModularCronLegacy {
 
 		$lasttransfer		= $data[0];
         $id            		= $data[1];
-        $registrationdate 	= $data[2];
-		$sourceuid			= $data[3];
+		$RAMQ				= $data[2];
+        $registrationdate 	= $data[3];
+		$sourceuid			= $data[4];
 		# set patient information
 		$Patient->setPatientLastTransfer($lasttransfer);
         $Patient->setPatientId($id);
+		$Patient->setPatientSSN($RAMQ);
         $Patient->setPatientRegistrationDate($registrationdate);
 		$Patient->setPatientCronLogSer($cronLogSer);
 		$Patient->setPatientSourceUID($sourceuid);
@@ -1065,12 +1071,12 @@ sub inOurDatabase
 			IFNULL((SELECT MRN 
 				FROM Patient_Hospital_Identifier 
 				WHERE Hospital_Identifier_Type_Code = 'RVH' 
-					AND PatientSerNum = P.PatientSerNum
+					AND PatientSerNum = Patient.PatientSerNum
 				), '') PatientId,
 			IFNULL((SELECT MRN 
 				FROM Patient_Hospital_Identifier 
 				WHERE Hospital_Identifier_Type_Code = 'MGH' 
-					AND PatientSerNum = P.PatientSerNum
+					AND PatientSerNum = Patient.PatientSerNum
 				), '') PatientId2,
             Patient.FirstName,
             Patient.LastName,
