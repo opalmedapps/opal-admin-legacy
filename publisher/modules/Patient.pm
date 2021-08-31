@@ -485,7 +485,10 @@ sub getPatientInfoFromSourceDBs
 					(select phi.PatientSerNum 
 					from Patient_Hospital_Identifier phi
 					where phi.Hospital_Identifier_Type_Code = 'RVH'
-						and phi.MRN = '$id');
+						and phi.Is_Active = 1
+						and phi.MRN = '$id'
+					ORDER BY phi.MRN
+					LIMIT 1);
 			";
 
 			# prepare query
@@ -566,12 +569,18 @@ sub getPatientsMarkedForUpdate
 			IFNULL((SELECT MRN 
 				FROM Patient_Hospital_Identifier 
 				WHERE Hospital_Identifier_Type_Code = 'RVH' 
+					AND Is_Active = 1
 					AND PatientSerNum = P.PatientSerNum
+				ORDER BY MRN
+				LIMIT 1
 				), '') PatientId,
 			IFNULL((SELECT MRN 
 				FROM Patient_Hospital_Identifier 
-				WHERE Hospital_Identifier_Type_Code = 'MGH' 
+				WHERE Hospital_Identifier_Type_Code = 'MGH'
+					AND Is_Active = 1 
 					AND PatientSerNum = P.PatientSerNum
+				ORDER BY MRN
+				LIMIT 1
 				), '') PatientId2,
 			P.FirstName,
 			P.LastName,
@@ -670,7 +679,10 @@ sub getPatientsMarkedForUpdateLegacy
             IFNULL((SELECT MRN 
 				FROM Patient_Hospital_Identifier 
 				WHERE Hospital_Identifier_Type_Code = 'RVH' 
+					AND Is_Active = 1
 					AND PatientSerNum = Patient.PatientSerNum
+				ORDER BY MRN
+				LIMIT 1
 				), '') PatientId,
 			Patient.SSN,
             Patient.RegistrationDate,
@@ -737,12 +749,18 @@ sub getPatientsMarkedForUpdateModularCron {
 			IFNULL((SELECT MRN 
 				FROM Patient_Hospital_Identifier 
 				WHERE Hospital_Identifier_Type_Code = 'RVH' 
+					AND Is_Active = 1
 					AND PatientSerNum = P.PatientSerNum
+				ORDER BY MRN
+				LIMIT 1
 				), '') PatientId,
 			IFNULL((SELECT MRN 
 				FROM Patient_Hospital_Identifier 
 				WHERE Hospital_Identifier_Type_Code = 'MGH' 
+					AND Is_Active = 1
 					AND PatientSerNum = P.PatientSerNum
+				ORDER BY MRN
+				LIMIT 1
 				), '') PatientId2,
 			P.FirstName,
 			P.LastName,
@@ -845,7 +863,10 @@ sub getPatientsMarkedForUpdateModularCronLegacy {
 			IFNULL((SELECT MRN 
 				FROM Patient_Hospital_Identifier 
 				WHERE Hospital_Identifier_Type_Code = 'RVH' 
+					AND Is_Active = 1
 					AND PatientSerNum = Patient.PatientSerNum
+				ORDER BY MRN
+				LIMIT 1
 				), '') PatientId,
 			Patient.SSN,
             Patient.RegistrationDate,
@@ -1072,12 +1093,18 @@ sub inOurDatabase
 			IFNULL((SELECT MRN 
 				FROM Patient_Hospital_Identifier 
 				WHERE Hospital_Identifier_Type_Code = 'RVH' 
+					AND Is_Active = 1
 					AND PatientSerNum = Patient.PatientSerNum
+				ORDER BY MRN
+				LIMIT 1
 				), '') PatientId,
 			IFNULL((SELECT MRN 
 				FROM Patient_Hospital_Identifier 
 				WHERE Hospital_Identifier_Type_Code = 'MGH' 
+					AND Is_Active = 1
 					AND PatientSerNum = Patient.PatientSerNum
+				ORDER BY MRN
+				LIMIT 1
 				), '') PatientId2,
             Patient.FirstName,
             Patient.LastName,
@@ -1295,25 +1322,25 @@ sub compareWith
 	my $SPatientId			= $SuspectPatient->getPatientId();
 	# my $SPatientId2			= $SuspectPatient->getPatientId2();
 	# my $SPatientDOB			= $SuspectPatient->getPatientDOB();
-	my $SPatientAge 		= $SuspectPatient->getPatientAge();
+	# my $SPatientAge 		= $SuspectPatient->getPatientAge();
 	# my $SPatientSex			= $SuspectPatient->getPatientSex();
     # my $SPatientFirstName   = $SuspectPatient->getPatientFirstName();
     # my $SPatientLastName    = $SuspectPatient->getPatientLastName();
     # my $SPatientPicture     = $SuspectPatient->getPatientPicture();
-    my $SPatientDeathDate 	= $SuspectPatient->getPatientDeathDate();
+    # my $SPatientDeathDate 	= $SuspectPatient->getPatientDeathDate();
 	# my $SPatientSSN 		= $SuspectPatient->getPatientSSN();
 	
 	# Original Patient...
     my $OPatientSourceUID   = $OriginalPatient->getPatientSourceUID();
 	my $OPatientId			= $OriginalPatient->getPatientId();
 	# my $OPatientId2			= $OriginalPatient->getPatientId2();
-	# my $OPatientDOB			= $OriginalPatient->getPatientDOB();
-	my $OPatientAge 		= $OriginalPatient->getPatientAge();
+	# my $OPatientDOB			= $OriginalPatient->getPatientD	OB();
+	# my $OPatientAge 		= $OriginalPatient->getPatientAge();
 	# my $OPatientSex			= $OriginalPatient->getPatientSex();
     # my $OPatientFirstName   = $OriginalPatient->getPatientFirstName();
     # my $OPatientLastName    = $OriginalPatient->getPatientLastName();
     # my $OPatientPicture     = $OriginalPatient->getPatientPicture();
-    my $OPatientDeathDate 	= $OriginalPatient->getPatientDeathDate();
+    # my $OPatientDeathDate 	= $OriginalPatient->getPatientDeathDate();
 	# my $OPatientSSN 		= $OriginalPatient->getPatientSSN();
 
 	# go through each parameter
@@ -1346,25 +1373,25 @@ sub compareWith
 	# 	print "Will update database entry to \"$updatedDOB\".\n";
 
 	# }
-	if ($SPatientAge ne $OPatientAge) {
+	# if ($SPatientAge ne $OPatientAge) {
 
-		$change = 1; # change occurred
-		print "Patient Age has changed from $OPatientAge to $SPatientAge!\n";
-		my $updatedAge = $UpdatedPatient->setPatientAge($SPatientAge); # update patient age
-		print "Will update database entry to \"$updatedAge\".\n";
+	# 	$change = 1; # change occurred
+	# 	print "Patient Age has changed from $OPatientAge to $SPatientAge!\n";
+	# 	my $updatedAge = $UpdatedPatient->setPatientAge($SPatientAge); # update patient age
+	# 	print "Will update database entry to \"$updatedAge\".\n";
 
-		# block patient if patient passed 13 years of age and send email
-		if ($OPatientAge < 14 && $SPatientAge >= 14 && $OPatientAge > 0) {
-			blockPatient($UpdatedPatient, "Patient passed 13 years of age");
-			my $patientser = $UpdatedPatient->getPatientSer();
-			my $patientemail = $UpdatedPatient->getPatientEmail();
-			my $cronlogser = $UpdatedPatient->getPatientCronLogSer();
-			my $email = Email::getEmailControlDetails($patientser, "PaedPatientBlock");
-			$email->setEmailToAddress($patientemail);
-			$email->setEmailCronLogSer($cronlogser);
-			$email->sendEmail($patientser);
-		}
-	}
+	# 	# block patient if patient passed 13 years of age and send email
+	# 	if ($OPatientAge < 14 && $SPatientAge >= 14 && $OPatientAge > 0) {
+	# 		blockPatient($UpdatedPatient, "Patient passed 13 years of age");
+	# 		my $patientser = $UpdatedPatient->getPatientSer();
+	# 		my $patientemail = $UpdatedPatient->getPatientEmail();
+	# 		my $cronlogser = $UpdatedPatient->getPatientCronLogSer();
+	# 		my $email = Email::getEmailControlDetails($patientser, "PaedPatientBlock");
+	# 		$email->setEmailToAddress($patientemail);
+	# 		$email->setEmailCronLogSer($cronlogser);
+	# 		$email->sendEmail($patientser);
+	# 	}
+	# }
 	# if ($SPatientSex ne $OPatientSex) {
 
 	# 	$change = 1; # change occurred
@@ -1397,18 +1424,18 @@ sub compareWith
 	# 	print "Will update database entry to \"$updatedPicture\".\n";
 	# }
 
-	if ($SPatientDeathDate ne $OPatientDeathDate and (isValidDate($SPatientDeathDate) or isValidDate($OPatientDeathDate))) {
+	# if ($SPatientDeathDate ne $OPatientDeathDate and (isValidDate($SPatientDeathDate) or isValidDate($OPatientDeathDate))) {
 
-		$change = 1; # change occurred
-		print "Patient Death Date has changed from $OPatientDeathDate to $SPatientDeathDate!\n";
-		my $updatedDeathDate = $UpdatedPatient->setPatientDeathDate($SPatientDeathDate); # update patient death date 
-		print "Will update database entry to \"$updatedDeathDate\" and block patient.\n";
+	# 	$change = 1; # change occurred
+	# 	print "Patient Death Date has changed from $OPatientDeathDate to $SPatientDeathDate!\n";
+	# 	my $updatedDeathDate = $UpdatedPatient->setPatientDeathDate($SPatientDeathDate); # update patient death date 
+	# 	print "Will update database entry to \"$updatedDeathDate\" and block patient.\n";
 
-		# block deceased patient
-		blockPatient($UpdatedPatient, "Deceased patient"); 
-		# turn off patient control 
-		unsetPatientControl($UpdatedPatient);
-	}
+	# 	# block deceased patient
+	# 	blockPatient($UpdatedPatient, "Deceased patient"); 
+	# 	# turn off patient control 
+	# 	unsetPatientControl($UpdatedPatient);
+	# }
 	
 	# if ($SPatientSSN ne $OPatientSSN) {
 
