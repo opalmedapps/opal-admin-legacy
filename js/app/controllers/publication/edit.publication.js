@@ -1415,7 +1415,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 						publish_time: oldPublishTime,
 					};
 				}
-			} else
+			} else {
 				$.ajax({
 					type: "POST",
 					url: "publication/update/publication",
@@ -1429,6 +1429,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 						$uibModalInstance.close();
 					}
 				});
+			}
 		}
 	};
 
