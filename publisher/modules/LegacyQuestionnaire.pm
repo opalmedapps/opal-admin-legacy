@@ -475,7 +475,7 @@ sub publishLegacyQuestionnaires
                         my $wsRespondent = $data[0];
                     }
 
-                    if ($wsRespondent = 'Patient') {
+                    if ($wsRespondent eq 'Patient') {
     				    PushNotification::sendPushNotification($patientSer, $questionnaireSer, 'LegacyQuestionnaire');
                     }
     			}
