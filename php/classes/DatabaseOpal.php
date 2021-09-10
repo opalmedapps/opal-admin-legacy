@@ -3720,4 +3720,25 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":AppointmentAriaSer","variable"=>$appointment,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    function getPublicationSettings() {
+        return $this->_fetchAll(OPAL_GET_PUBLICATION_SETTINGS, array());
+    }
+
+    function getPublicationSettingsToIgnore() {
+        $tempResults = $this->_fetchAll(OPAL_GET_PUBLICATION_SETTINGS_TO_IGNORE, array());
+        $results = array();
+        foreach ($tempResults as $item) {
+            $internalName = explode(",", $item["internalName"]);
+            foreach ($internalName as $item2)
+                array_push($results, $item2);
+        }
+        return $results;
+    }
+
+    function deleteQuestionnaireFrequencyEvents($questionnaireId) {
+        return $this->_execute(OPAL_DELETE_QUESTIONNAIRE_FREQUENCY_EVENTS, array(
+            array("parameter"=>":ControlTableSerNum","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }
