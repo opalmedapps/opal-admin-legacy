@@ -1731,3 +1731,16 @@ const OPAL_GET_FIRST_MRN_SITE_BY_SOURCE_APPOINTMENT = "
     WHERE s.SourceDatabaseName = :SourceDatabaseName AND a.AppointmentAriaSer = :AppointmentAriaSer AND
     Is_Active = ".ACTIVE_RECORD." LIMIT 1;
 ";
+
+const OPAL_GET_PUBLICATION_SETTINGS = "
+    SELECT ID, internalName, opalDB, opalPK FROM ".OPAL_PUBLICATION_SETTING_TABLE." WHERE isUnique = 0;
+";
+
+const OPAL_GET_PUBLICATION_SETTINGS_TO_IGNORE = "
+    SELECT internalName FROM ".OPAL_PUBLICATION_SETTING_TABLE." WHERE isUnique = 1 UNION ALL SELECT 'CheckedInFlag'
+    AS internalName;
+";
+
+const OPAL_DELETE_QUESTIONNAIRE_FREQUENCY_EVENTS = "
+    DELETE FROM FrequencyEvents WHERE ControlTableSerNum = :ControlTableSerNum AND ControlTable = 'LegacyQuestionnaireControl';
+";
