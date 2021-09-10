@@ -449,7 +449,7 @@ sub publishLegacyQuestionnaires
     				my $questionnaireSer = $questionnaire->getLegacyQuestionnaireSer();
     				my $patientSer = $questionnaire->getLegacyQuestionnairePatientSer();
 
-                    my $wsRespondent =
+                    my $wsRespondent_sql =
                     "SELECT d.content
                     FROM OpalDB.QuestionnaireControl QC, 
                     	QuestionnaireDB.questionnaire q, 
@@ -461,6 +461,19 @@ sub publishLegacyQuestionnaires
                     	and r.title = d.contentId
                     	and d.languageId = 2
                     ;";
+
+                    # prepare query
+                    my $query = $SQLDatabase->prepare($wsRespondent_sql)
+                        or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+                    # execute query
+                    $query->execute()
+                        or die "Could not execute query: " . $query->errstr;
+
+                    while (my @data = $query->fetchrow_array()) {
+
+                        my $wsRespondent = $data[0];
+                    }
 
                     if ($wsRespondent = 'Patient') {
     				    PushNotification::sendPushNotification($patientSer, $questionnaireSer, 'LegacyQuestionnaire');
