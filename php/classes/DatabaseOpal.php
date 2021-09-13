@@ -895,6 +895,18 @@ class DatabaseOpal extends DatabaseAccess {
      *          $password (string) already encrypted
      * @return  array with the results found
      * */
+    function authenticateUserAccess($username) {
+        return $this->_fetchAll(SQL_OPAL_VALIDATE_OAUSER_ACCESS, array(
+            array("parameter"=>":Username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Authenticate a username and a password of an user in opalDB (legacy system)
+     * @params  $username (string)
+     *          $password (string) already encrypted
+     * @return  array with the results found
+     * */
     function authenticateSystemUser($username, $password) {
         return $this->_fetchAll(SQL_OPAL_VALIDATE_SYSTEM_OAUSER_LOGIN, array(
             array("parameter"=>":username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
