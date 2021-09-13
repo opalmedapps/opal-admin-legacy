@@ -414,8 +414,9 @@ sub getPatientInfoFromSourceDBs
     my ($Patient) = @_; # our patient object
     my @patientList = (); # initialize a list 
 
-	my $patientAriaSer		= $Patient->getPatientSourceUID(); #patientAriaSer
-	my $patientSer 			= $Patient->getPatientSer();
+	my $patientSSN       = $Patient->getPatientSSN(); # retrieve the ssn
+	my $PatientAriaSer	 = $Patient->getPatientSourceUID(); #patientAriaSer
+	my $patientSer 		 = $Patient->getPatientSer();
     my $id      		 = $Patient->getPatientId(); # retrieve the patient ID
     my $lastTransfer     = $Patient->getPatientLastTransfer();
     my $registrationDate = $Patient->getPatientRegistrationDate();
@@ -441,23 +442,16 @@ sub getPatientInfoFromSourceDBs
 	            pt.PatientSer,
 	            pt.FirstName,
 	            pt.LastName,
-	            LEFT(LTRIM(pt.SSN), 12) SSN,
+				pt.PatientId,
 	            pt.PatientId2,
 	            CONVERT(VARCHAR, pt.DateOfBirth, 120),
-	            -- ph.Picture,
 				'' as Picture,
 	            RTRIM(pt.Sex),
-	            CONVERT(VARCHAR, ppt.DeathDate, 120),
-	            LEN(ph.Picture)
+	            (Select ppt.DeathDate from VARIAN.dbo.PatientParticular ppt where ppt.PatientSer = pt.PatientSer)
 	        FROM 
 	            VARIAN.dbo.Patient pt
-	        LEFT JOIN VARIAN.dbo.Photo ph
-	        ON pt.PatientSer       	= ph.PatientSer
-	        LEFT JOIN VARIAN.dbo.PatientParticular ppt 
-	        ON ppt.PatientSer 		= pt.PatientSer
-	        WHERE
-	            pt.PatientSer   = '$patientAriaSer'
-	    ";
+	        WHERE LEFT(LTRIM(pt.SSN), 12)   = '$patientSSN'
+			";
 
 		# prepare query
 		my $query = $sourceDatabase->prepare($patientInfo_sql)
@@ -480,14 +474,21 @@ sub getPatientInfoFromSourceDBs
 					0 as PatientSer,
 					pt.FirstName,
 					pt.LastName,
-					pt.SSN,
+					pt.PatientId,
 					pt.PatientId2,
 					pt.DateOfBirth,
 					pt.ProfileImage,
 					RTRIM(pt.Sex),
 					pt.DeathDate
 				From Patient pt
-				where pt.PatientId = '$id'
+				Where pt.PatientSerNum =
+					(select phi.PatientSerNum 
+					from Patient_Hospital_Identifier phi
+					where phi.Hospital_Identifier_Type_Code = 'RVH'
+						and phi.Is_Active = 1
+						and phi.MRN = '$id'
+					ORDER BY phi.MRN
+					LIMIT 1);
 			";
 
 			# prepare query
@@ -508,7 +509,7 @@ sub getPatientInfoFromSourceDBs
 	        my $sourceuid       = $row->[0];
 	        my $firstname       = $row->[1];
 	        my $lastname        = $row->[2];
-	        my $patientSSN      = $row->[3];
+	        my $id              = $row->[3];
 	        my $id2             = $row->[4];
 	        my $dob             = $row->[5];
 	        my $age             = getAgeAtDate($dob, $today);
@@ -526,6 +527,7 @@ sub getPatientInfoFromSourceDBs
 	        $sourcePatient->setPatientLastName($lastname);
 	        $sourcePatient->setPatientId($id);
 	        $sourcePatient->setPatientId2($id2);
+			$sourcePatient->setPatientSSN($patientSSN);
 	        $sourcePatient->setPatientDOB($dob);
 	        $sourcePatient->setPatientAge($age);
 	        $sourcePatient->setPatientPicture($picture);
@@ -555,15 +557,136 @@ sub getPatientsMarkedForUpdate
     my ($cronLogSer) = @_; # cron log serial in args
 	
 	my @patientList = (); # initialize list of patient objects
+	my ($wsPatientSerNum, $wsPatientAriaSer, $wsPatientId, $wsPatientId2, $wsFirstName, $wsLastName, $wsDateOfBirth, $wsAge, 
+		$wsSex, $wsProfileImage, $wsRAMQ, $wslastTransferred, $wsAccessLevel, $wsDeathDate, $wsEmail, $wsUsername, 
+		$wsRegistrationDate);
+	
+	# Query
+	my $patients_sql = "
+		SELECT DISTINCT
+			P.PatientSerNum,
+			ifnull(P.PatientAriaSer, 0) PatientAriaSer,
+			IFNULL((SELECT MRN 
+				FROM Patient_Hospital_Identifier 
+				WHERE Hospital_Identifier_Type_Code = 'RVH' 
+					AND Is_Active = 1
+					AND PatientSerNum = P.PatientSerNum
+				ORDER BY MRN
+				LIMIT 1
+				), '') PatientId,
+			IFNULL((SELECT MRN 
+				FROM Patient_Hospital_Identifier 
+				WHERE Hospital_Identifier_Type_Code = 'MGH'
+					AND Is_Active = 1 
+					AND PatientSerNum = P.PatientSerNum
+				ORDER BY MRN
+				LIMIT 1
+				), '') PatientId2,
+			P.FirstName,
+			P.LastName,
+			P.DateOfBirth,
+			P.Age,
+			P.Sex,
+			P.ProfileImage,
+			P.SSN,
+			PC.lastTransferred,
+			P.AccessLevel,
+			P.DeathDate,
+			P.Email,
+			U.Username,
+			P.RegistrationDate
+		FROM
+			PatientControl PC,
+			Patient P,
+			Users U
+		WHERE PC.TransferFlag = 1
+			AND P.PatientSerNum = PC.PatientSerNum
+			AND U.UserTypeSerNum = P.PatientSerNum
+		;
+	";
+
+	# prepare query
+	my $query = $SQLDatabase->prepare($patients_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+	while (my @data = $query->fetchrow_array()) {
+
+		my $Patient = new Patient(); # patient object
+
+		$wsPatientSerNum	= $data[0];
+		$wsPatientAriaSer	= $data[1];
+		$wsPatientId		= $data[2];
+		$wsPatientId2		= $data[3];
+		$wsFirstName		= $data[4];
+		$wsLastName			= $data[5];
+		$wsDateOfBirth		= $data[6];
+		$wsAge				= $data[7];
+		$wsSex				= $data[8];
+		$wsProfileImage		= $data[9];
+		$wsRAMQ				= $data[10];
+		$wslastTransferred	= $data[11];
+		$wsAccessLevel		= $data[12];
+		$wsDeathDate		= $data[13];
+		$wsEmail			= $data[14];
+		$wsUsername			= $data[15];
+		$wsRegistrationDate	= $data[16];
+
+		# set patient information
+		$Patient->setPatientSer($wsPatientSerNum);
+		$Patient->setPatientSourceUID($wsPatientAriaSer);
+		$Patient->setPatientId($wsPatientId);
+		$Patient->setPatientId2($wsPatientId2);
+		$Patient->setPatientFirstName($wsFirstName);
+		$Patient->setPatientLastName($wsLastName);
+		$Patient->setPatientDOB($wsDateOfBirth);
+		$Patient->setPatientAge($wsAge);
+		$Patient->setPatientSex($wsSex);
+		$Patient->setPatientPicture($wsProfileImage);
+		$Patient->setPatientSSN($wsRAMQ);
+		$Patient->setPatientLastTransfer($wslastTransferred);
+		$Patient->setPatientAccessLevel($wsAccessLevel);
+		$Patient->setPatientDeathDate($wsDeathDate);
+		$Patient->setPatientEmail($wsEmail);
+		$Patient->setPatientFirebaseUID($wsUsername);
+		$Patient->setPatientRegistrationDate($wsRegistrationDate);
+		$Patient->setPatientCronLogSer($cronLogSer);
+
+		push(@patientList, $Patient);
+	}
+
+	return @patientList;
+}
+
+sub getPatientsMarkedForUpdateLegacy
+{
+
+	# Update PatientControl Transfer flag form 0 to 1
+	MarkPatientForUpdate();
+	
+    my ($cronLogSer) = @_; # cron log serial in args
+	
+	my @patientList = (); # initialize list of patient objects
 	my ($lasttransfer, $id, $registrationdate);
 	
 	# Query
 	my $patients_sql = "
 		SELECT DISTINCT
 			PatientControl.LastTransferred,
-            Patient.PatientId,
+            IFNULL((SELECT MRN 
+				FROM Patient_Hospital_Identifier 
+				WHERE Hospital_Identifier_Type_Code = 'RVH' 
+					AND Is_Active = 1
+					AND PatientSerNum = Patient.PatientSerNum
+				ORDER BY MRN
+				LIMIT 1
+				), '') PatientId,
+			Patient.SSN,
             Patient.RegistrationDate,
-			Patient.PatientAriaSer
+			ifnull(Patient.PatientAriaSer, 0) PatientAriaSer
 		FROM
 			PatientControl,
             Patient
@@ -586,11 +709,13 @@ sub getPatientsMarkedForUpdate
 
 		$lasttransfer		= $data[0];
         $id            		= $data[1];
-        $registrationdate 	= $data[2];
-		$sourceuid 			= $data[3];
+		$RAMQ				= $data[2];
+        $registrationdate 	= $data[3];
+		$sourceuid 			= $data[4];
 		# set patient information
 		$Patient->setPatientLastTransfer($lasttransfer);
         $Patient->setPatientId($id);
+		$Patient->setPatientSSN($RAMQ);
         $Patient->setPatientRegistrationDate($registrationdate);
 		$Patient->setPatientCronLogSer($cronLogSer);
 		$Patient->setPatientSourceUID($sourceuid);
@@ -602,6 +727,123 @@ sub getPatientsMarkedForUpdate
 }
 
 sub getPatientsMarkedForUpdateModularCron {
+	
+	my ($cronLogSer, $cronType) = @_; # cron log serial in args
+	
+	my @patientList = (); # initialize list of patient objects
+	my ($wsPatientSerNum, $wsPatientAriaSer, $wsPatientId, $wsPatientId2, $wsFirstName, $wsLastName, $wsDateOfBirth, $wsAge, 
+		$wsSex, $wsProfileImage, $wsRAMQ, $wslastTransferred, $wsAccessLevel, $wsDeathDate, $wsEmail, $wsUsername, 
+		$wsRegistrationDate);
+	
+	# Check if the list of patient is up to date.
+	CheckPatientForUpdateModularCron($cronType);
+
+	# Tag all patient that are to be part of the patient list
+	MarkPatientForUpdateModularCron($cronType);
+
+	# Query
+	my $patients_sql = "
+		SELECT DISTINCT
+			P.PatientSerNum,
+			ifnull(P.PatientAriaSer, 0) PatientAriaSer,
+			IFNULL((SELECT MRN 
+				FROM Patient_Hospital_Identifier 
+				WHERE Hospital_Identifier_Type_Code = 'RVH' 
+					AND Is_Active = 1
+					AND PatientSerNum = P.PatientSerNum
+				ORDER BY MRN
+				LIMIT 1
+				), '') PatientId,
+			IFNULL((SELECT MRN 
+				FROM Patient_Hospital_Identifier 
+				WHERE Hospital_Identifier_Type_Code = 'MGH' 
+					AND Is_Active = 1
+					AND PatientSerNum = P.PatientSerNum
+				ORDER BY MRN
+				LIMIT 1
+				), '') PatientId2,
+			P.FirstName,
+			P.LastName,
+			P.DateOfBirth,
+			P.Age,
+			P.Sex,
+			P.ProfileImage,
+			P.SSN,
+			CCP.lastTransferred,
+			P.AccessLevel,
+			P.DeathDate,
+			P.Email,
+			U.Username,
+		P.RegistrationDate
+		FROM
+			cronControlPatient CCP,
+			Patient P,
+			Users U
+		WHERE
+		CCP.transferFlag = 1
+			AND CCP.cronType = '$cronType'
+			AND P.PatientSerNum = CCP.cronControlPatientSerNum
+			AND U.UserTypeSerNum = P.PatientSerNum
+	;
+	";
+
+	# prepare query
+	my $query = $SQLDatabase->prepare($patients_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+	while (my @data = $query->fetchrow_array()) {
+
+		my $Patient = new Patient(); # patient object
+
+		$wsPatientSerNum	= $data[0];
+		$wsPatientAriaSer	= $data[1];
+		$wsPatientId		= $data[2];
+		$wsPatientId2		= $data[3];
+		$wsFirstName		= $data[4];
+		$wsLastName			= $data[5];
+		$wsDateOfBirth		= $data[6];
+		$wsAge				= $data[7];
+		$wsSex				= $data[8];
+		$wsProfileImage		= $data[9];
+		$wsRAMQ				= $data[10];
+		$wslastTransferred	= $data[11];
+		$wsAccessLevel		= $data[12];
+		$wsDeathDate		= $data[13];
+		$wsEmail			= $data[14];
+		$wsUsername			= $data[15];
+		$wsRegistrationDate	= $data[16];
+
+		# set patient information
+		$Patient->setPatientSer($wsPatientSerNum);
+		$Patient->setPatientSourceUID($wsPatientAriaSer);
+		$Patient->setPatientId($wsPatientId);
+		$Patient->setPatientId2($wsPatientId2);
+		$Patient->setPatientFirstName($wsFirstName);
+		$Patient->setPatientLastName($wsLastName);
+		$Patient->setPatientDOB($wsDateOfBirth);
+		$Patient->setPatientAge($wsAge);
+		$Patient->setPatientSex($wsSex);
+		$Patient->setPatientPicture($wsProfileImage);
+		$Patient->setPatientSSN($wsRAMQ);
+		$Patient->setPatientLastTransfer($wslastTransferred);
+		$Patient->setPatientAccessLevel($wsAccessLevel);
+		$Patient->setPatientDeathDate($wsDeathDate);
+		$Patient->setPatientEmail($wsEmail);
+		$Patient->setPatientFirebaseUID($wsUsername);
+		$Patient->setPatientRegistrationDate($wsRegistrationDate);
+		$Patient->setPatientCronLogSer($cronLogSer);
+
+		push(@patientList, $Patient);
+	}
+
+	return @patientList;
+}
+
+sub getPatientsMarkedForUpdateModularCronLegacy {
 	
 	my ($cronLogSer, $cronType) = @_; # cron log serial in args
 	
@@ -618,7 +860,15 @@ sub getPatientsMarkedForUpdateModularCron {
 	my $patients_sql = "
 		SELECT DISTINCT
 			cronControlPatient.lastTransferred,
-            Patient.PatientId,
+			IFNULL((SELECT MRN 
+				FROM Patient_Hospital_Identifier 
+				WHERE Hospital_Identifier_Type_Code = 'RVH' 
+					AND Is_Active = 1
+					AND PatientSerNum = Patient.PatientSerNum
+				ORDER BY MRN
+				LIMIT 1
+				), '') PatientId,
+			Patient.SSN,
             Patient.RegistrationDate,
 			Patient.PatientAriaSer
 		FROM
@@ -644,11 +894,13 @@ sub getPatientsMarkedForUpdateModularCron {
 
 		$lasttransfer		= $data[0];
         $id            		= $data[1];
-        $registrationdate 	= $data[2];
-		$sourceuid			= $data[3];
+		$RAMQ				= $data[2];
+        $registrationdate 	= $data[3];
+		$sourceuid			= $data[4];
 		# set patient information
 		$Patient->setPatientLastTransfer($lasttransfer);
         $Patient->setPatientId($id);
+		$Patient->setPatientSSN($RAMQ);
         $Patient->setPatientRegistrationDate($registrationdate);
 		$Patient->setPatientCronLogSer($cronLogSer);
 		$Patient->setPatientSourceUID($sourceuid);
@@ -838,8 +1090,22 @@ sub inOurDatabase
         SELECT DISTINCT
             Patient.PatientSerNum,
             Patient.PatientAriaSer,
-            Patient.PatientId,
-            Patient.PatientId2,
+			IFNULL((SELECT MRN 
+				FROM Patient_Hospital_Identifier 
+				WHERE Hospital_Identifier_Type_Code = 'RVH' 
+					AND Is_Active = 1
+					AND PatientSerNum = Patient.PatientSerNum
+				ORDER BY MRN
+				LIMIT 1
+				), '') PatientId,
+			IFNULL((SELECT MRN 
+				FROM Patient_Hospital_Identifier 
+				WHERE Hospital_Identifier_Type_Code = 'MGH' 
+					AND Is_Active = 1
+					AND PatientSerNum = Patient.PatientSerNum
+				ORDER BY MRN
+				LIMIT 1
+				), '') PatientId2,
             Patient.FirstName,
             Patient.LastName,
             Patient.Sex,
@@ -854,10 +1120,9 @@ sub inOurDatabase
             Patient,
 			Users
         WHERE
-            Patient.SSN  		= '$patientSSN'
-		AND Patient.PatientSerNum 	= Users.UserTypeSerNum
-		AND Users.UserType 			= 'Patient'
-    ";
+            Patient.SSN  				= '$patientSSN'
+			AND Patient.PatientSerNum 	= Users.UserTypeSerNum
+			AND Users.UserType 			= 'Patient'";
 	}else{
 		print "Insufficient information retrieved from varian to identify this patient\n";
 		return;
@@ -962,20 +1227,20 @@ sub insertPatientIntoOurDB
             '$deathdate'
         )
     ";
+	# # 2021-08-26 YM: Remove this for now
+	# # prepare query
+	# my $query = $SQLDatabase->prepare($insert_sql)
+	# 	or die "Could not prepare query: " . $SQLDatabase->errstr;
 
-	# prepare query
-	my $query = $SQLDatabase->prepare($insert_sql)
-		or die "Could not prepare query: " . $SQLDatabase->errstr;
+	# # execute query
+	# $query->execute()
+	# 	or die "Could not execute query: " . $query->errstr;
 
-	# execute query
-	$query->execute()
-		or die "Could not execute query: " . $query->errstr;
+	# # Retrieve the PatientSer
+	# my $ser = $SQLDatabase->last_insert_id(undef, undef, undef, undef);
 
-	# Retrieve the PatientSer
-	my $ser = $SQLDatabase->last_insert_id(undef, undef, undef, undef);
-
-	# Set the Serial in our patient object
-	$patient->setPatientSer($ser);
+	# # Set the Serial in our patient object
+	# $patient->setPatientSer($ser);
 
 	return $patient;
 }
@@ -989,30 +1254,41 @@ sub updateDatabase
 
     my $patientSourceUID    = $patient->getPatientSourceUID();
 	my $patientSer 			= $patient->getPatientSer();
-    my $patientId           = $patient->getPatientId();
-    my $patientId2          = $patient->getPatientId2();
-    my $patientFirstName    = $patient->getPatientFirstName();
-    my $patientLastName     = $patient->getPatientLastName();
-    my $patientDOB          = $patient->getPatientDOB();
+    # my $patientId           = $patient->getPatientId();
+    # my $patientId2          = $patient->getPatientId2();
+    # my $patientFirstName    = $patient->getPatientFirstName();
+    # my $patientLastName     = $patient->getPatientLastName();
+    # my $patientDOB          = $patient->getPatientDOB();
 	my $patientAge 			= $patient->getPatientAge();
-    my $patientPicture      = $patient->getPatientPicture();
-    my $patientSex          = $patient->getPatientSex();
-    my $patientSSN          = $patient->getPatientSSN();
+    # my $patientPicture      = $patient->getPatientPicture();
+    # my $patientSex          = $patient->getPatientSex();
+    # my $patientSSN          = $patient->getPatientSSN();
     my $patientDeathDate 	= $patient->getPatientDeathDate();
+    
+	# my $update_sql = "
+    #     UPDATE
+    #         Patient
+    #     SET
+    #         PatientAriaSer          = '$patientSourceUID',
+	# 		SSN                     = '$patientSSN',
+    #         PatientId2              = '$patientId2',
+    #         FirstName               = \"$patientFirstName\",
+    #         LastName                = \"$patientLastName\",
+    #         Sex                     = '$patientSex',
+    #         DateOfBirth             = '$patientDOB',
+	# 		Age 					= '$patientAge',
+    #         ProfileImage            = '$patientPicture',
+    #         DeathDate 				= '$patientDeathDate'
+    #     WHERE
+    #         PatientSerNum               = '$patientSer'
+    # ";
 
     my $update_sql = "
         UPDATE
             Patient
         SET
             PatientAriaSer          = '$patientSourceUID',
-			SSN                     = '$patientSSN',
-            PatientId2              = '$patientId2',
-            FirstName               = \"$patientFirstName\",
-            LastName                = \"$patientLastName\",
-            Sex                     = '$patientSex',
-            DateOfBirth             = '$patientDOB',
 			Age 					= '$patientAge',
-            ProfileImage            = '$patientPicture',
             DeathDate 				= '$patientDeathDate'
         WHERE
             PatientSerNum               = '$patientSer'
@@ -1044,28 +1320,28 @@ sub compareWith
 	# Suspect Patient...
     my $SPatientSourceUID   = $SuspectPatient->getPatientSourceUID();
 	my $SPatientId			= $SuspectPatient->getPatientId();
-	my $SPatientId2			= $SuspectPatient->getPatientId2();
-	my $SPatientDOB			= $SuspectPatient->getPatientDOB();
-	my $SPatientAge 		= $SuspectPatient->getPatientAge();
-	my $SPatientSex			= $SuspectPatient->getPatientSex();
-    my $SPatientFirstName   = $SuspectPatient->getPatientFirstName();
-    my $SPatientLastName    = $SuspectPatient->getPatientLastName();
-    my $SPatientPicture     = $SuspectPatient->getPatientPicture();
-    my $SPatientDeathDate 	= $SuspectPatient->getPatientDeathDate();
-	my $SPatientSSN 		= $SuspectPatient->getPatientSSN();
+	# my $SPatientId2			= $SuspectPatient->getPatientId2();
+	# my $SPatientDOB			= $SuspectPatient->getPatientDOB();
+	# my $SPatientAge 		= $SuspectPatient->getPatientAge();
+	# my $SPatientSex			= $SuspectPatient->getPatientSex();
+    # my $SPatientFirstName   = $SuspectPatient->getPatientFirstName();
+    # my $SPatientLastName    = $SuspectPatient->getPatientLastName();
+    # my $SPatientPicture     = $SuspectPatient->getPatientPicture();
+    # my $SPatientDeathDate 	= $SuspectPatient->getPatientDeathDate();
+	# my $SPatientSSN 		= $SuspectPatient->getPatientSSN();
 	
 	# Original Patient...
     my $OPatientSourceUID   = $OriginalPatient->getPatientSourceUID();
 	my $OPatientId			= $OriginalPatient->getPatientId();
-	my $OPatientId2			= $OriginalPatient->getPatientId2();
-	my $OPatientDOB			= $OriginalPatient->getPatientDOB();
-	my $OPatientAge 		= $OriginalPatient->getPatientAge();
-	my $OPatientSex			= $OriginalPatient->getPatientSex();
-    my $OPatientFirstName   = $OriginalPatient->getPatientFirstName();
-    my $OPatientLastName    = $OriginalPatient->getPatientLastName();
-    my $OPatientPicture     = $OriginalPatient->getPatientPicture();
-    my $OPatientDeathDate 	= $OriginalPatient->getPatientDeathDate();
-	my $OPatientSSN 		= $OriginalPatient->getPatientSSN();
+	# my $OPatientId2			= $OriginalPatient->getPatientId2();
+	# my $OPatientDOB			= $OriginalPatient->getPatientD	OB();
+	# my $OPatientAge 		= $OriginalPatient->getPatientAge();
+	# my $OPatientSex			= $OriginalPatient->getPatientSex();
+    # my $OPatientFirstName   = $OriginalPatient->getPatientFirstName();
+    # my $OPatientLastName    = $OriginalPatient->getPatientLastName();
+    # my $OPatientPicture     = $OriginalPatient->getPatientPicture();
+    # my $OPatientDeathDate 	= $OriginalPatient->getPatientDeathDate();
+	# my $OPatientSSN 		= $OriginalPatient->getPatientSSN();
 
 	# go through each parameter
     if ($SPatientSourceUID ne $OPatientSourceUID) {
@@ -1075,68 +1351,68 @@ sub compareWith
 		my $updatedUID = $UpdatedPatient->setPatientSourceUID($SPatientSourceUID); # update patient id
 		print "Will update database entry to '$updatedUID'.\n";
 	}
-	if ($SPatientId ne $OPatientId) {
+	# if ($SPatientId ne $OPatientId) {
 
-		$change = 1; # change occurred
-		print "Patient ID has changed from $OPatientId to $SPatientId!\n";
-		my $updatedId = $UpdatedPatient->setPatientId($SPatientId); # update patient id
-		print "Will update database entry to '$updatedId'.\n";
-	}
-	if ($SPatientId2 ne $OPatientId2) {
+	# 	$change = 1; # change occurred
+	# 	print "Patient ID has changed from $OPatientId to $SPatientId!\n";
+	# 	my $updatedId = $UpdatedPatient->setPatientId($SPatientId); # update patient id
+	# 	print "Will update database entry to '$updatedId'.\n";
+	# }
+	# if ($SPatientId2 ne $OPatientId2) {
 
-		$change = 1; # change occurred
-		print "Patient ID2 has changed from $OPatientId2 to $SPatientId2!\n";
-		my $updatedId2 = $UpdatedPatient->setPatientId2($SPatientId2); # update patient id2
-		print "Will update database entry to \"$updatedId2\".\n";
-	}	
-	if ($SPatientDOB ne $OPatientDOB and (isValidDate($SPatientDOB) or isValidDate($OPatientDOB))) {
+	# 	$change = 1; # change occurred
+	# 	print "Patient ID2 has changed from $OPatientId2 to $SPatientId2!\n";
+	# 	my $updatedId2 = $UpdatedPatient->setPatientId2($SPatientId2); # update patient id2
+	# 	print "Will update database entry to \"$updatedId2\".\n";
+	# }	
+	# if ($SPatientDOB ne $OPatientDOB and (isValidDate($SPatientDOB) or isValidDate($OPatientDOB))) {
 
-		$change = 1; # change occurred
-		print "Patient Date of Birth has changed from $OPatientDOB to $SPatientDOB!\n";
-		my $updatedDOB = $UpdatedPatient->setPatientDOB($SPatientDOB); # update patient date of birth
-		print "Will update database entry to \"$updatedDOB\".\n";
+	# 	$change = 1; # change occurred
+	# 	print "Patient Date of Birth has changed from $OPatientDOB to $SPatientDOB!\n";
+	# 	my $updatedDOB = $UpdatedPatient->setPatientDOB($SPatientDOB); # update patient date of birth
+	# 	print "Will update database entry to \"$updatedDOB\".\n";
 
-	}
-	if ($SPatientAge ne $OPatientAge) {
+	# }
+	# if ($SPatientAge ne $OPatientAge) {
 
-		$change = 1; # change occurred
-		print "Patient Age has changed from $OPatientAge to $SPatientAge!\n";
-		my $updatedAge = $UpdatedPatient->setPatientAge($SPatientAge); # update patient age
-		print "Will update database entry to \"$updatedAge\".\n";
+	# 	$change = 1; # change occurred
+	# 	print "Patient Age has changed from $OPatientAge to $SPatientAge!\n";
+	# 	my $updatedAge = $UpdatedPatient->setPatientAge($SPatientAge); # update patient age
+	# 	print "Will update database entry to \"$updatedAge\".\n";
 
-		# block patient if patient passed 13 years of age and send email
-		if ($OPatientAge < 14 && $SPatientAge >= 14 && $OPatientAge > 0) {
-			blockPatient($UpdatedPatient, "Patient passed 13 years of age");
-			my $patientser = $UpdatedPatient->getPatientSer();
-			my $patientemail = $UpdatedPatient->getPatientEmail();
-			my $cronlogser = $UpdatedPatient->getPatientCronLogSer();
-			my $email = Email::getEmailControlDetails($patientser, "PaedPatientBlock");
-			$email->setEmailToAddress($patientemail);
-			$email->setEmailCronLogSer($cronlogser);
-			$email->sendEmail($patientser);
-		}
-	}
-	if ($SPatientSex ne $OPatientSex) {
+	# 	# block patient if patient passed 13 years of age and send email
+	# 	if ($OPatientAge < 14 && $SPatientAge >= 14 && $OPatientAge > 0) {
+	# 		blockPatient($UpdatedPatient, "Patient passed 13 years of age");
+	# 		my $patientser = $UpdatedPatient->getPatientSer();
+	# 		my $patientemail = $UpdatedPatient->getPatientEmail();
+	# 		my $cronlogser = $UpdatedPatient->getPatientCronLogSer();
+	# 		my $email = Email::getEmailControlDetails($patientser, "PaedPatientBlock");
+	# 		$email->setEmailToAddress($patientemail);
+	# 		$email->setEmailCronLogSer($cronlogser);
+	# 		$email->sendEmail($patientser);
+	# 	}
+	# }
+	# if ($SPatientSex ne $OPatientSex) {
 
-		$change = 1; # change occurred
-		print "Patient Sex has changed from $OPatientSex to $SPatientSex!\n";
-		my $updatedSex = $UpdatedPatient->setPatientSex($SPatientSex); # update patient sex
-		print "Will update database entry to \"$updatedSex\".\n";
-	}
-	if ($SPatientFirstName ne $OPatientFirstName) {
+	# 	$change = 1; # change occurred
+	# 	print "Patient Sex has changed from $OPatientSex to $SPatientSex!\n";
+	# 	my $updatedSex = $UpdatedPatient->setPatientSex($SPatientSex); # update patient sex
+	# 	print "Will update database entry to \"$updatedSex\".\n";
+	# }
+	# if ($SPatientFirstName ne $OPatientFirstName) {
 
-		$change = 1; # change occurred
-		print "Patient First Name has changed from $OPatientFirstName to $SPatientFirstName!\n";
-		my $updatedFirstName = $UpdatedPatient->setPatientFirstName($SPatientFirstName); # update patient first name
-		print "Will update database entry to \"$updatedFirstName\".\n";
-	}
-	if ($SPatientLastName ne $OPatientLastName) {
+	# 	$change = 1; # change occurred
+	# 	print "Patient First Name has changed from $OPatientFirstName to $SPatientFirstName!\n";
+	# 	my $updatedFirstName = $UpdatedPatient->setPatientFirstName($SPatientFirstName); # update patient first name
+	# 	print "Will update database entry to \"$updatedFirstName\".\n";
+	# }
+	# if ($SPatientLastName ne $OPatientLastName) {
 
-		$change = 1; # change occurred
-		print "Patient Last Name has changed from $OPatientLastName to $SPatientLastName!\n";
-		my $updatedLastName = $UpdatedPatient->setPatientLastName($SPatientLastName); # update patient last name
-		print "Will update database entry to \"$updatedLastName\".\n";
-	}
+	# 	$change = 1; # change occurred
+	# 	print "Patient Last Name has changed from $OPatientLastName to $SPatientLastName!\n";
+	# 	my $updatedLastName = $UpdatedPatient->setPatientLastName($SPatientLastName); # update patient last name
+	# 	print "Will update database entry to \"$updatedLastName\".\n";
+	# }
 	# YM 2020-03-05
 	# Temporary disable the update of the patient images due to the freetds bug in getting the images
 	
@@ -1148,26 +1424,26 @@ sub compareWith
 	# 	print "Will update database entry to \"$updatedPicture\".\n";
 	# }
 
-	if ($SPatientDeathDate ne $OPatientDeathDate and (isValidDate($SPatientDeathDate) or isValidDate($OPatientDeathDate))) {
+	# if ($SPatientDeathDate ne $OPatientDeathDate and (isValidDate($SPatientDeathDate) or isValidDate($OPatientDeathDate))) {
 
-		$change = 1; # change occurred
-		print "Patient Death Date has changed from $OPatientDeathDate to $SPatientDeathDate!\n";
-		my $updatedDeathDate = $UpdatedPatient->setPatientDeathDate($SPatientDeathDate); # update patient death date 
-		print "Will update database entry to \"$updatedDeathDate\" and block patient.\n";
+	# 	$change = 1; # change occurred
+	# 	print "Patient Death Date has changed from $OPatientDeathDate to $SPatientDeathDate!\n";
+	# 	my $updatedDeathDate = $UpdatedPatient->setPatientDeathDate($SPatientDeathDate); # update patient death date 
+	# 	print "Will update database entry to \"$updatedDeathDate\" and block patient.\n";
 
-		# block deceased patient
-		blockPatient($UpdatedPatient, "Deceased patient"); 
-		# turn off patient control 
-		unsetPatientControl($UpdatedPatient);
-	}
+	# 	# block deceased patient
+	# 	blockPatient($UpdatedPatient, "Deceased patient"); 
+	# 	# turn off patient control 
+	# 	unsetPatientControl($UpdatedPatient);
+	# }
 	
-	if ($SPatientSSN ne $OPatientSSN) {
+	# if ($SPatientSSN ne $OPatientSSN) {
 
-		$change = 1; # change occurred
-		print "Patient ID has changed from $OPatientSSN to $SPatientSSN!\n";
-		my $updatedssn = $UpdatedPatient->setPatientSSN($SPatientSSN); # update patient RAMQ
-		print "Will update database entry to '$updatedssn'.\n";
-	}
+	# 	$change = 1; # change occurred
+	# 	print "Patient ID has changed from $OPatientSSN to $SPatientSSN!\n";
+	# 	my $updatedssn = $UpdatedPatient->setPatientSSN($SPatientSSN); # update patient RAMQ
+	# 	print "Will update database entry to '$updatedssn'.\n";
+	# }
 
 	return ($UpdatedPatient, $change);
 }
