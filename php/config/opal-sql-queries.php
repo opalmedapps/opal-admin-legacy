@@ -404,6 +404,10 @@ define("SQL_OPAL_VALIDATE_OAUSER_LOGIN_AD","
     SELECT * FROM ".OPAL_LOGIN_VIEW." WHERE username = :username AND type = " . HUMAN_USER . ";
 ");
 
+define("SQL_OPAL_VALIDATE_OAUSER_ACCESS","
+    SELECT * FROM ".OPAL_OAUSER_TABLE." WHERE Username = :Username AND deleted = ".NON_DELETED_RECORD." AND type = " . HUMAN_USER . ";
+");
+
 define("OPAL_UPDATE_PASSWORD","
     UPDATE ".OPAL_OAUSER_TABLE." SET Password = :Password WHERE OAUserSerNum = :OAUserSerNum AND Password != :Password;
 ");
