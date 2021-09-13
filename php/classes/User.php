@@ -63,7 +63,8 @@ class User extends Module {
             HelpSetup::getModuleMethodName($moduleName, $methodeName);
             $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Wrong username and/or password.");
-        }
+        } else if (count($this->opalDB->authenticateUserAccess($username)) != 1)
+                HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Wrong username and/or password.");
 
         return $result;
     }
