@@ -504,7 +504,7 @@ class DatabaseOpal extends DatabaseAccess {
         );
         return $this->_execute($sqlToUpdate, $toUpdate);
     }
-    
+
     /*
      * Returns the list of modules.
      * @params  void
@@ -886,6 +886,18 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(SQL_OPAL_VALIDATE_OAUSER_LOGIN, array(
             array("parameter"=>":username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":password","variable"=>$password,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Authenticate a username and a password of an user in opalDB (legacy system)
+     * @params  $username (string)
+     *          $password (string) already encrypted
+     * @return  array with the results found
+     * */
+    function authenticateUserAccess($username) {
+        return $this->_fetchAll(SQL_OPAL_VALIDATE_OAUSER_ACCESS, array(
+            array("parameter"=>":Username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
         ));
     }
 
@@ -1435,13 +1447,21 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-    /*
-     * Get access level for a specific combo or role/module
-     * */
+    /**
+     * Get access level for a specific combo or role/module. If ORMS is not active or present, deactivate SMS if it's
+     * not already.
+     * @param $roleId
+     * @return array - access levels for a specific role
+     */
     function getUserAccess($roleId) {
-        return $this->_fetchAll(OPAL_GET_USER_ACCESS, array(
+        $result = $this->_fetchAll(OPAL_GET_USER_ACCESS, array(
             array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_INT),
         ));
+        if(!WRM_DB_ENABLED)
+            foreach ($result as &$item)
+                if($item["ID"] == MODULE_SMS && $item["access"] != USER_ACCESS_DENIED)
+                    $item["access"] =  USER_ACCESS_DENIED;
+        return $result;
     }
 
     /*
@@ -3498,7 +3518,7 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-/**
+    /**
      * Get patient appointment
      * @params $site : String - Patient identifier site
      * @params $mrn  : int - Patient identifier mrn
@@ -3710,6 +3730,27 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(OPAL_GET_FIRST_MRN_SITE_BY_SOURCE_APPOINTMENT, array(
             array("parameter"=>":SourceDatabaseName","variable"=>$source,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":AppointmentAriaSer","variable"=>$appointment,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function getPublicationSettings() {
+        return $this->_fetchAll(OPAL_GET_PUBLICATION_SETTINGS, array());
+    }
+
+    function getPublicationSettingsToIgnore() {
+        $tempResults = $this->_fetchAll(OPAL_GET_PUBLICATION_SETTINGS_TO_IGNORE, array());
+        $results = array();
+        foreach ($tempResults as $item) {
+            $internalName = explode(",", $item["internalName"]);
+            foreach ($internalName as $item2)
+                array_push($results, $item2);
+        }
+        return $results;
+    }
+
+    function deleteQuestionnaireFrequencyEvents($questionnaireId) {
+        return $this->_execute(OPAL_DELETE_QUESTIONNAIRE_FREQUENCY_EVENTS, array(
+            array("parameter"=>":ControlTableSerNum","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 }
