@@ -20,7 +20,6 @@ define( "OPAL_DB_PASSWORD_GUEST", $config['databaseConfig']['opalGuest']['passwo
 
 //Definition of all the tables from the opalDB database
 define("OPAL_OAUSER_TABLE","OAUser");
-define("OPAL_OAUSER_ROLE_TABLE","OAUserRole");
 define("OPAL_OAUSER_ACTIVITY_LOG_TABLE","OAActivityLog");
 define("OPAL_ALIAS_EXPRESSION_MH_TABLE","AliasExpressionMH");
 define("OPAL_DIAGNOSIS_TRANSLATION_MH_TABLE","DiagnosisTranslationMH");
