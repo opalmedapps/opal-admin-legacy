@@ -404,6 +404,10 @@ define("SQL_OPAL_VALIDATE_OAUSER_LOGIN_AD","
     SELECT * FROM ".OPAL_LOGIN_VIEW." WHERE username = :username AND type = " . HUMAN_USER . ";
 ");
 
+define("SQL_OPAL_VALIDATE_OAUSER_ACCESS","
+    SELECT * FROM ".OPAL_OAUSER_TABLE." WHERE Username = :Username AND deleted = ".NON_DELETED_RECORD." AND type = " . HUMAN_USER . ";
+");
+
 define("OPAL_UPDATE_PASSWORD","
     UPDATE ".OPAL_OAUSER_TABLE." SET Password = :Password WHERE OAUserSerNum = :OAUserSerNum AND Password != :Password;
 ");
@@ -1730,4 +1734,17 @@ const OPAL_GET_FIRST_MRN_SITE_BY_SOURCE_APPOINTMENT = "
     LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum
     WHERE s.SourceDatabaseName = :SourceDatabaseName AND a.AppointmentAriaSer = :AppointmentAriaSer AND
     Is_Active = ".ACTIVE_RECORD." LIMIT 1;
+";
+
+const OPAL_GET_PUBLICATION_SETTINGS = "
+    SELECT ID, internalName, opalDB, opalPK FROM ".OPAL_PUBLICATION_SETTING_TABLE." WHERE isUnique = 0;
+";
+
+const OPAL_GET_PUBLICATION_SETTINGS_TO_IGNORE = "
+    SELECT internalName FROM ".OPAL_PUBLICATION_SETTING_TABLE." WHERE isUnique = 1 UNION ALL SELECT 'CheckedInFlag'
+    AS internalName;
+";
+
+const OPAL_DELETE_QUESTIONNAIRE_FREQUENCY_EVENTS = "
+    DELETE FROM FrequencyEvents WHERE ControlTableSerNum = :ControlTableSerNum AND ControlTable = 'LegacyQuestionnaireControl';
 ";

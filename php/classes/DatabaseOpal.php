@@ -895,6 +895,18 @@ class DatabaseOpal extends DatabaseAccess {
      *          $password (string) already encrypted
      * @return  array with the results found
      * */
+    function authenticateUserAccess($username) {
+        return $this->_fetchAll(SQL_OPAL_VALIDATE_OAUSER_ACCESS, array(
+            array("parameter"=>":Username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Authenticate a username and a password of an user in opalDB (legacy system)
+     * @params  $username (string)
+     *          $password (string) already encrypted
+     * @return  array with the results found
+     * */
     function authenticateSystemUser($username, $password) {
         return $this->_fetchAll(SQL_OPAL_VALIDATE_SYSTEM_OAUSER_LOGIN, array(
             array("parameter"=>":username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
@@ -3718,6 +3730,27 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(OPAL_GET_FIRST_MRN_SITE_BY_SOURCE_APPOINTMENT, array(
             array("parameter"=>":SourceDatabaseName","variable"=>$source,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":AppointmentAriaSer","variable"=>$appointment,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function getPublicationSettings() {
+        return $this->_fetchAll(OPAL_GET_PUBLICATION_SETTINGS, array());
+    }
+
+    function getPublicationSettingsToIgnore() {
+        $tempResults = $this->_fetchAll(OPAL_GET_PUBLICATION_SETTINGS_TO_IGNORE, array());
+        $results = array();
+        foreach ($tempResults as $item) {
+            $internalName = explode(",", $item["internalName"]);
+            foreach ($internalName as $item2)
+                array_push($results, $item2);
+        }
+        return $results;
+    }
+
+    function deleteQuestionnaireFrequencyEvents($questionnaireId) {
+        return $this->_execute(OPAL_DELETE_QUESTIONNAIRE_FREQUENCY_EVENTS, array(
+            array("parameter"=>":ControlTableSerNum","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 }
