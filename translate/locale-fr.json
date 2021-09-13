@@ -1754,7 +1754,7 @@
       "CHECKIN_DETAILS": "Détails de l'enregistrement",
       "CHECKIN_EXPLANATION": "Veuillez indiquer si l'enregistrement est possible ou non pour ce rendez-vous et fournir les instructions relatives à l'enregistrement.",
       "CHECKIN_POSSIBLE": "Enregistrement possible?",
-      "CHECKIN_INSTRUCTIONS": "Instructions d'enregistrement",
+      "CHECKIN_INSTRUCTIONS": "Instructions",
       "INSTRUCTIONS": "Instructions",
       "OPTIONAL_FIELD": "Champ facultatif:",
       "HOSPITAL_EXPLANATION": "Assigner une carte d'hôpital fournira un affichage de carte pour le rendez-vous.",
