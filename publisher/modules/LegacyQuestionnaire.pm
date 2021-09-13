@@ -470,10 +470,7 @@ sub publishLegacyQuestionnaires
                     $query->execute()
                         or die "Could not execute query: " . $query->errstr;
 
-                    while (my @data = $query->fetchrow_array()) {
-
-                        my $wsRespondent = $data[0];
-                    }
+                    my $wsRespondent =  $query->fetchrow();
 
                     if ($wsRespondent eq 'Patient') {
     				    PushNotification::sendPushNotification($patientSer, $questionnaireSer, 'LegacyQuestionnaire');
