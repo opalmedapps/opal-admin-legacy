@@ -1732,7 +1732,7 @@
       "CHECKIN_DETAILS": "Checkin Details",
       "CHECKIN_EXPLANATION": "Please indicate whether check-in is possible or not for this appointment and provide the check-in instructions.",
       "CHECKIN_POSSIBLE": "Check-in possible?",
-      "CHECKIN_INSTRUCTIONS": "Instructions",
+      "CHECKIN_INSTRUCTIONS": "Checkin Instructions",
       "INSTRUCTIONS": "Instructions",
       "OPTIONAL_FIELD": "Optional field:",
       "HOSPITAL_EXPLANATION": "Assigning a hospital map will provide a map display for the appointment.",
