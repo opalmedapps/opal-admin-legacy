@@ -1012,8 +1012,30 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  array with the result of the count
      * */
     function countUsername($username) {
+//        echo str_replace(":Username", "'".$username."'", OPAL_COUNT_USERNAME);
         return $this->_fetch(OPAL_COUNT_USERNAME, array(
             array("parameter"=>":Username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Check if the user exists already or not
+     * @param $username
+     * @return array - records found
+     */
+    function isUserExists($username) {
+        return $this->_fetchAll(OPAL_IS_USER_EXISTS, array(
+            array("parameter"=>":Username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    function updateUser($type, $username, $password, $language, $roleId) {
+        return $this->_execute(OPAL_UPDATE_USER, array(
+            array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":type","variable"=>$type,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":Language","variable"=>$language,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Password","variable"=>$password,"data_type"=>PDO::PARAM_STR),
         ));
     }
 
@@ -1050,16 +1072,6 @@ class DatabaseOpal extends DatabaseAccess {
             "DateAdded"=>date("Y-m-d H:i:s"),
         );
         return $this->_replaceRecordIntoTable(OPAL_OAUSER_TABLE, $toInsert);
-    }
-
-    /*
-     * insert into the intersection table of role-user to give a role to an user
-     * @params  $userId (int) ID of the user
-     *          $roleId (int) ID of the role
-     * @return  array with the result of the insert
-     * */
-    function insertUserRole($userId, $roleId) {
-        return $this->_replaceRecordIntoTable(OPAL_OAUSER_ROLE_TABLE, array("OAUserSerNum"=>$userId, "RoleSerNum"=>$roleId));
     }
 
     /*
