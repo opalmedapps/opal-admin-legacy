@@ -242,55 +242,58 @@ my $cronLogSer = Cron::setCronLog("Started announceControl", $start_datetime);
 # Retrieve all patients that are marked for update
 #=========================================================================================
 print "\n--- Start getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@registeredPatients = Patient::getPatientsMarkedForUpdateModularCron($cronLogSer, 'Announcement');
+# @registeredPatients = Patient::getPatientsMarkedForUpdateModularCron($cronLogSer, 'Announcement');
+@patientList = Patient::getPatientsMarkedForUpdateModularCron($cronLogSer, 'Announcement');
 print "--- End getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got patient list\n" if $verbose;
 
-print "--- Start Loop over each patient: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "--- Start Loop over each patient: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 #=========================================================================================
 # Loop over each patient.
 #=========================================================================================
-foreach my $Patient (@registeredPatients) {
+# foreach my $Patient (@registeredPatients) {
 
-    # retrieve information from source databases
-    my @sourcePatients = $Patient->getPatientInfoFromSourceDBs();
+#     # retrieve information from source databases
+#     my @sourcePatients = $Patient->getPatientInfoFromSourceDBs();
 
-    foreach my $SourcePatient (@sourcePatients) {
+#     foreach my $SourcePatient (@sourcePatients) {
 
-        # check if patient exists in our database (it should by default)
-        my $patientExists = $SourcePatient->inOurDatabase();
+#         # check if patient exists in our database (it should by default)
+#         my $patientExists = $SourcePatient->inOurDatabase();
 
-        if ($patientExists) { # patient exists
+#         if ($patientExists) { # patient exists
 
-            my $ExistingPatient = dclone($patientExists); # reassign variable
+#             my $ExistingPatient = dclone($patientExists); # reassign variable
 
-            # compare our source patient with the existing patient
-            # update is done on the existing patient
-            my ($UpdatedPatient, $change) = $SourcePatient->compareWith($ExistingPatient);
+#             # compare our source patient with the existing patient
+#             # update is done on the existing patient
+#             my ($UpdatedPatient, $change) = $SourcePatient->compareWith($ExistingPatient);
 
-			# if there was an actual change in comparison
-			if ($change) {
-				# update the database
-				$UpdatedPatient->updateDatabase();
-			}
+# 			# # 2021-08-26 YM: Remove this for now
+# 			# # if there was an actual change in comparison
+# 			# if ($change) {
+# 			# 	# update the database
+# 			# 	$UpdatedPatient->updateDatabase();
+# 			# }
 
-            # push to patient list
-            push(@patientList, $UpdatedPatient);
+#             # push to patient list
+#             push(@patientList, $UpdatedPatient);
 
-        } else { # patient DNE
+# 		# # 2021-08-26 YM: Remove this for now
+#         # } else { # patient DNE
 
-    		# insert Patient into our database
-	    	$SourcePatient = $SourcePatient->insertPatientIntoOurDB();
+#     	# 	# insert Patient into our database
+# 	    # 	$SourcePatient = $SourcePatient->insertPatientIntoOurDB();
 
-            # push to patient list
-            push(@patientList, $SourcePatient);
+#         #     # push to patient list
+#         #     push(@patientList, $SourcePatient);
 
-	    }
-    }
-}
+# 	    }
+#     }
+# }
 
-print "-- End Loop over each patient: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished patient list\n" if $verbose;
+# print "-- End Loop over each patient: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Finished patient list\n" if $verbose;
 
 ##########################################################################################
 #

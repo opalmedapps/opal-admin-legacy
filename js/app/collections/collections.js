@@ -1028,7 +1028,7 @@ angular.module('opalAdmin.collections', [])
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
-		}
+		};
 
 		studyAPI.consentFormPublished = function(consentId){
 			return $http.post(
@@ -1040,7 +1040,7 @@ angular.module('opalAdmin.collections', [])
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
-		}
+		};
 
 		return studyAPI;
 	})
@@ -1211,4 +1211,58 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		return installAPI;
+	})
+
+	//sms API service
+	.factory('smsCollectionService',function($http){
+
+		var smsAPI = {};
+
+		//Function to get all existing sms appointments in ORMS db
+		smsAPI.getSmsAppointments = function(){
+			return $http.post(
+				"sms/get/appointment",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		//Function to get all sms messages based on appointments type and speciality Code.
+		smsAPI.getSmsMessages = function (type, specialityCode) {
+			return $http.post(
+				"sms/get/messages",
+				$.param({
+					type: type,
+					specialityCode: specialityCode,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		//Function to get all existing speciality group in ORMS db
+		smsAPI.getSmsSpeciality = function(){
+			return $http.post(
+				"sms/get/speciality",
+				{
+					header : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		//Function to get all sms appointment types based on speciality Code
+		smsAPI.getSmsType = function(specialityCode){
+			return $http.post(
+				"sms/get/type",
+				$.param({
+					specialityCode: specialityCode,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+		return smsAPI;
 	});
