@@ -1012,7 +1012,6 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  array with the result of the count
      * */
     function countUsername($username) {
-//        echo str_replace(":Username", "'".$username."'", OPAL_COUNT_USERNAME);
         return $this->_fetch(OPAL_COUNT_USERNAME, array(
             array("parameter"=>":Username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
         ));
@@ -1029,6 +1028,15 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /**
+     * Update a specific user informations and reactivate the account.
+     * @param $type int - type of account (user or system)
+     * @param $username string - username of the account to update
+     * @param $password string - encrypted password
+     * @param $language string - preferred language of the account (en/fr)
+     * @param $roleId int - ID of the role of the user
+     * @return int - number of records affected
+     */
     function updateUser($type, $username, $password, $language, $roleId) {
         return $this->_execute(OPAL_UPDATE_USER, array(
             array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_INT),
@@ -1039,13 +1047,15 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-    /*
+    /**
      * insert a new user and the date of adding
-     * @params  $username (string) username (duh!)
-     *          $password (string) encrypted password
-     *          $language (string) preferred language
-     * @return  array with the result of the insert
-     * */
+     * @param $type string - type of user (human or system)
+     * @param $username string - username to insert
+     * @param $password string - encrypted password
+     * @param $language string - preferred language (en/fr)
+     * @param $roleId int - ID of the role for the user
+     * @return int - new created ID of the user
+     */
     function insertUser($type, $username, $password, $language, $roleId) {
         $toInsert = array(
             "Username"=>$username,
