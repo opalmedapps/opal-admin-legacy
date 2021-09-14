@@ -952,11 +952,6 @@ class Publication extends Module
      * @return  void
      * */
     protected function _updateTriggers($publication, $controlTableName) {
-
-//        header('Content-Type: application/javascript');
-//        print_R($publication);
-//        echo $controlTableName;die();
-
         //Delete and update triggers
         if(!empty($publication["triggers_updated"])) {
             $existingTriggers = $this->opalDB->getFiltersByControlTableSerNum($publication["materialId"]["value"], $controlTableName);
@@ -975,7 +970,6 @@ class Publication extends Module
                     $this->opalDB->updateFiltersModificationHistory($toUpdate);
                 }
             }
-
 
             //Add new triggers
             if(!empty($publication["triggers"])) {
