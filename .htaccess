@@ -106,6 +106,11 @@ RewriteRule ^application/get/config config.json [QSA,L]
 RewriteRule ^application/get/source-databases php/application/get.source_databases.php [QSA,L]
 RewriteRule ^application/update/source-databases php/application/update.source_databases.php [QSA,L]
 
+# Appointment Section
+RewriteRule ^appointment/get/appointments php/appointment/get.appointments.php [QSA,L]
+RewriteRule ^appointment/update/appointment-check-in php/appointment/update.appointment.check.in.php [QSA,L]
+RewriteRule ^api/public/v1/appointment php/appointment/get.appointments.php [QSA,L]
+
 # Audit Section
 RewriteRule ^audit/get/audit-details php/audit/get.audit.details.php [QSA,L]
 RewriteRule ^audit/get/audits php/audit/get.audits.php [QSA,L]
@@ -242,10 +247,6 @@ RewriteRule ^patient/get/questionnaire-report php/patient/get.questionnaire_repo
 RewriteRule ^patient/get/questionnaire-options php/patient/find_qst.php [QSA,L]
 RewriteRule ^patient/update/patient-data php/patient/update.patient_data.php [QSA,L]
 RewriteRule ^patient/update/publish-flags php/patient/update.publish_flags.php [QSA,L]
-
-# Appointment Section
-RewriteRule ^appointment/get/appointments php/appointment/get.appointments.php [QSA,L]
-RewriteRule ^api/public/v1/appointment php/appointment/get.appointments.php [QSA,L]
 
 # Post Section
 RewriteRule ^post/delete/post php/post/delete.post.php [QSA,L]
