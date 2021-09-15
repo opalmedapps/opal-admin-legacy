@@ -151,4 +151,106 @@ abstract class OpalProject
         $this->opalDB->deleteResourcesForAppointment($appointmentId, $resourceIdList);
         $this->opalDB->insertResourcesForAppointment($resourceAppointmentList);
     }
+
+    /**
+     * Validate and sanitize appointment check-in info.
+     * @param $post - data for the resource to validate
+     * @param $source - contains source details
+     * @param $appointment - contains appointment details (if exists)
+     * @param $patientInfo - contains patient info (if exists)
+     * Validation code :    Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit information
+     *                      are coded from right to left:
+     *                      1: source name missing or invalid
+     *                      2: appointment missing
+     *                      3: Duplicate appointments have being found. Contact the administrator ASAP.
+     *                      4: MRN and site not found.
+     * @return string - error code
+     */
+    protected function _validateAppointmentCheckIn(&$post, &$source, &$appointment, &$patientInfo) {
+        $errCode = "";
+
+        if (is_array($post)) {
+            // 1st bit
+            if (!array_key_exists("source", $post) || $post["source"] == "") {
+                if(!array_key_exists("source", $post)) $post["source"] = "";
+                $errCode = "1" . $errCode;
+            }
+            else {
+                $source = $this->opalDB->getSourceDatabaseDetails($post["source"]);
+                if(count($source) < 1) {
+                    $errCode = "1" . $errCode;
+                    $source = array();
+                }
+                else if(count($source) == 1) {
+                    $source = $source[0];
+                    $errCode = "0" . $errCode;
+                }
+                else
+                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates sources found. Contact your administrator.");
+            }
+
+            // 2nd bit
+            if (!array_key_exists("appointment", $post) || $post["appointment"] == "") {
+                if(!array_key_exists("appointment", $post)) $post["appointment"] = "";
+                $errCode = "1" . $errCode;
+            }
+            else
+                $errCode = "0" . $errCode;
+
+            // 3rd bit
+            if(bindec($errCode) == 0) {
+                $appointment = $this->opalDB->getAppointmentForResource($post["appointment"], $source["SourceDatabaseSerNum"]);
+                if(count($appointment) > 1)
+                    $errCode = "1" . $errCode;
+                else {
+                    if(count($appointment) == 1)
+                        $appointment = $appointment[0];
+                    $errCode = "0" . $errCode;
+                }
+
+                // 4th bit
+                $patientInfo = $this->opalDB->getFirstMrnSiteBySourceAppointment($post["source"], $post["appointment"]);
+                if(count($patientInfo) < 1)
+                    $errCode = "1" . $errCode;
+                else {
+                    $patientInfo = $patientInfo[0];
+                    $errCode = "0" . $errCode;
+                }
+
+            } else
+                $errCode = "1" . $errCode;
+
+        } else
+            $errCode .= "1111";
+
+        return $errCode;
+    }
+
+    /**
+     * Updates the check-in for a particular appointment to checked and send the info to the push notification API. If
+     * the call returns an error, a code 502 (bad gateway) is returned to the caller to inform there's a problem with
+     * the push notification. Otherwise, a code 200 (all clear) is returned.
+     * @param $post array - contains the source name and the external appointment ID
+     */
+    protected function _updateAppointmentCheckIn(&$post) {
+        $errCode = $this->_validateAppointmentCheckIn($post, $source, $appointment, $patientInfo);
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        $rowCount = $this->opalDB->updateCheckInForAppointment($source["SourceDatabaseSerNum"], $post["appointment"]);
+        if($rowCount >= 1) {
+            $api = new ApiCall(PUSH_NOTIFICATION_CONFIG);
+            $api->setUrl(OPAL_CHECKIN_CALL, array(
+                "mrn"=>$patientInfo["mrn"],
+                "site"=>$patientInfo["site"],
+            ));
+            $api->execute();
+
+            if($api->getError())
+                HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY, "Error from the Opal push notification server => ".$api->getError());
+            if($api->getHttpCode() != HTTP_STATUS_SUCCESS || strpos(strtolower($api->getBody()), 'error:') !== false)
+                HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY, "Error from the Opal push notification server => ".$api->getBody());
+        }
+    }
 }

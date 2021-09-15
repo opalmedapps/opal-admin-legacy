@@ -439,13 +439,29 @@ define("OPAL_GET_USERS_LIST","
 ");
 
 define("OPAL_COUNT_USERNAME","
-    SELECT COUNT(*) AS total FROM ".OPAL_OAUSER_TABLE." WHERE Username = :Username
+    SELECT COUNT(*) AS total FROM ".OPAL_OAUSER_TABLE." WHERE Username = :Username AND deleted = ".NON_DELETED_RECORD."
+");
+
+define("OPAL_IS_USER_EXISTS","
+    SELECT * FROM ".OPAL_OAUSER_TABLE." WHERE Username = :Username;
+");
+
+define("OPAL_UNDELETE_USER","
+    UPDATE ".OPAL_OAUSER_TABLE." SET deleted = ".NON_DELETED_RECORD." WHERE Username = :Username;
+");
+
+define("OPAL_UPDATE_USER","
+    UPDATE ".OPAL_OAUSER_TABLE." SET oaRoleId = :oaRoleId, type = :type, Language = :Language, Password = :Password,
+    deleted = ".NON_DELETED_RECORD."
+    WHERE Username = :Username;
 ");
 
 define("OPAL_MARK_USER_AS_DELETED",
     "UPDATE ".OPAL_OAUSER_TABLE." SET deleted = ".DELETED_RECORD." WHERE OAUserSerNum = :recordId
     AND OAUserSerNum != :OAUserId AND deleted = ".NON_DELETED_RECORD.";
 ");
+
+const OPAL_GET_OAUSERID = "SELECT OAUserSerNum AS ID FROM " . OPAL_OAUSER_TABLE . " WHERE Username = :Username;";
 
 define("OPAL_GET_ROLES_LIST","
     SELECT DISTINCT RoleSerNum AS serial, RoleName AS name FROM Role ORDER BY RoleName;

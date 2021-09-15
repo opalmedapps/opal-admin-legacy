@@ -1017,13 +1017,45 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-    /*
+    /**
+     * Check if the user exists already or not
+     * @param $username
+     * @return array - records found
+     */
+    function isUserExists($username) {
+        return $this->_fetchAll(OPAL_IS_USER_EXISTS, array(
+            array("parameter"=>":Username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Update a specific user informations and reactivate the account.
+     * @param $type int - type of account (user or system)
+     * @param $username string - username of the account to update
+     * @param $password string - encrypted password
+     * @param $language string - preferred language of the account (en/fr)
+     * @param $roleId int - ID of the role of the user
+     * @return int - number of records affected
+     */
+    function updateUser($type, $username, $password, $language, $roleId) {
+        return $this->_execute(OPAL_UPDATE_USER, array(
+            array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":type","variable"=>$type,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":Language","variable"=>$language,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Password","variable"=>$password,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
      * insert a new user and the date of adding
-     * @params  $username (string) username (duh!)
-     *          $password (string) encrypted password
-     *          $language (string) preferred language
-     * @return  array with the result of the insert
-     * */
+     * @param $type string - type of user (human or system)
+     * @param $username string - username to insert
+     * @param $password string - encrypted password
+     * @param $language string - preferred language (en/fr)
+     * @param $roleId int - ID of the role for the user
+     * @return int - new created ID of the user
+     */
     function insertUser($type, $username, $password, $language, $roleId) {
         $toInsert = array(
             "Username"=>$username,
@@ -1050,16 +1082,6 @@ class DatabaseOpal extends DatabaseAccess {
             "DateAdded"=>date("Y-m-d H:i:s"),
         );
         return $this->_replaceRecordIntoTable(OPAL_OAUSER_TABLE, $toInsert);
-    }
-
-    /*
-     * insert into the intersection table of role-user to give a role to an user
-     * @params  $userId (int) ID of the user
-     *          $roleId (int) ID of the role
-     * @return  array with the result of the insert
-     * */
-    function insertUserRole($userId, $roleId) {
-        return $this->_replaceRecordIntoTable(OPAL_OAUSER_ROLE_TABLE, array("OAUserSerNum"=>$userId, "RoleSerNum"=>$roleId));
     }
 
     /*
