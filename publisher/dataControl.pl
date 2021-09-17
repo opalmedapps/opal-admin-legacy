@@ -407,45 +407,45 @@ foreach my $PatientDoctor (@PDList) {
 print "-- End Loop over each PD: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished patient doctor list\n" if $verbose;
 
-##########################################################################################
-#
-# Data Retrieval DIAGNOSES - get list of diagnosis info updated since last update
-#
-##########################################################################################
-print "\n--- Start getDiagnosesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@DiagnosisList = Diagnosis::getDiagnosesFromSourceDB(\@patientList, $global_patientInfo_sql);
-print "--- End getDiagnosesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Got diagnosis list\n" if $verbose;
+# ##########################################################################################
+# #
+# # Data Retrieval DIAGNOSES - get list of diagnosis info updated since last update
+# #
+# ##########################################################################################
+# print "\n--- Start getDiagnosesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# @DiagnosisList = Diagnosis::getDiagnosesFromSourceDB(\@patientList, $global_patientInfo_sql);
+# print "--- End getDiagnosesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Got diagnosis list\n" if $verbose;
 
-#=========================================================================================
-# Loop over each diagnosis. Various functions are done.
-#=========================================================================================
-print "-- Start Loop over each diagnosis: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-foreach my $Diagnosis (@DiagnosisList) {
+# #=========================================================================================
+# # Loop over each diagnosis. Various functions are done.
+# #=========================================================================================
+# print "-- Start Loop over each diagnosis: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# foreach my $Diagnosis (@DiagnosisList) {
 
-	# check if diagnosis exists in our database
-	my $DiagnosisExists = $Diagnosis->inOurDatabase();
+# 	# check if diagnosis exists in our database
+# 	my $DiagnosisExists = $Diagnosis->inOurDatabase();
 
-	if ($DiagnosisExists) { # diagnosis exists
+# 	if ($DiagnosisExists) { # diagnosis exists
 
-		my $ExistingDiagnosis = dclone($DiagnosisExists); # reassign variable
+# 		my $ExistingDiagnosis = dclone($DiagnosisExists); # reassign variable
 
-		# compare our retrieve Diagnosis with existing Diagnosis
-		# update is done on the original (existing) Diagnosis
-		my $UpdatedDiagnosis = $Diagnosis->compareWith($ExistingDiagnosis);
+# 		# compare our retrieve Diagnosis with existing Diagnosis
+# 		# update is done on the original (existing) Diagnosis
+# 		my $UpdatedDiagnosis = $Diagnosis->compareWith($ExistingDiagnosis);
 
-		# after updating our Diagnosis object, update the database
-		$UpdatedDiagnosis->updateDatabase();
+# 		# after updating our Diagnosis object, update the database
+# 		$UpdatedDiagnosis->updateDatabase();
 
-	} else { # diagnosis DNE
+# 	} else { # diagnosis DNE
 
-		# insert Diagnosis into our database
-		$Diagnosis->insertDiagnosisIntoOurDB();
-	}
-}
+# 		# insert Diagnosis into our database
+# 		$Diagnosis->insertDiagnosisIntoOurDB();
+# 	}
+# }
 
-print "-- End Loop over each diagnosis: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished diagnosis list\n" if $verbose;
+# print "-- End Loop over each diagnosis: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Finished diagnosis list\n" if $verbose;
 
 ##########################################################################################
 #
