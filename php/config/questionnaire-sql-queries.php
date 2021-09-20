@@ -623,7 +623,6 @@ define("SQL_GET_QUESTIONNAIRE_LIST_ORMS","
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS respondent_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.title AND d.languageId = ".FRENCH_LANGUAGE.") AS respondent_FR
     FROM ".OPAL_DB_NAME.".".OPAL_QUESTIONNAIRE_CONTROL_TABLE." QC, ".OPAL_DB_NAME.".".OPAL_QUESTIONNAIRE_TABLE." Q, 
-    ".OPAL_DB_NAME.".".OPAL_PATIENT_TABLE." P,
     ".OPAL_DB_NAME.".".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." PHI, ".QUESTIONNAIRE_TABLE." qDB_q
     LEFT JOIN ".PURPOSE_TABLE." p ON p.ID = qDB_q.purposeId LEFT JOIN ".RESPONDENT_TABLE." r ON r.ID = qDB_q.respondentId
     WHERE QC.QuestionnaireControlSerNum = Q.QuestionnaireControlSerNum AND qDB_q.ID = QC.QuestionnaireDBSerNum
