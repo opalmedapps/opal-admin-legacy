@@ -439,15 +439,17 @@ sub getPatientInfoFromSourceDBs
 
 	    my $patientInfo_sql = "
 	        SELECT DISTINCT 
-	            pt.PatientSer,
-	            pt.FirstName,
-	            pt.LastName,
-				pt.PatientId,
-	            pt.PatientId2,
-	            CONVERT(VARCHAR, pt.DateOfBirth, 120),
-				'' as Picture,
-	            RTRIM(pt.Sex),
-	            (Select ppt.DeathDate from VARIAN.dbo.PatientParticular ppt where ppt.PatientSer = pt.PatientSer)
+	            isnull(pt.PatientSer, '') PatientSer,
+	            isnull(pt.FirstName, '') FirstName,
+	            isnull(pt.LastName, '') LastName,
+					isnull(pt.PatientId, '') PatientId,
+	            isnull(pt.PatientId2, '') PatientId2,
+	            isnull(CONVERT(VARCHAR, pt.DateOfBirth, 120), '') DateOfBirth,
+					'' as Picture,
+	            isnull(RTRIM(pt.Sex), '') Sex,
+	            isnull((Select ppt.DeathDate 
+						from VARIAN.dbo.PatientParticular ppt 
+						where ppt.PatientSer = pt.PatientSer), '') DeathDate 
 	        FROM 
 	            VARIAN.dbo.Patient pt
 	        WHERE LEFT(LTRIM(pt.SSN), 12)   = '$patientSSN'
@@ -470,25 +472,23 @@ sub getPatientInfoFromSourceDBs
 
 			# Query
 			my $patients_sql = "
-				SELECT DISTINCT 
-					0 as PatientSer,
-					pt.FirstName,
-					pt.LastName,
-					pt.PatientId,
-					pt.PatientId2,
-					pt.DateOfBirth,
-					pt.ProfileImage,
-					RTRIM(pt.Sex),
-					pt.DeathDate
-				From Patient pt
-				Where pt.PatientSerNum =
-					(select phi.PatientSerNum 
-					from Patient_Hospital_Identifier phi
-					where phi.Hospital_Identifier_Type_Code = 'RVH'
-						and phi.Is_Active = 1
-						and phi.MRN = '$id'
-					ORDER BY phi.MRN
-					LIMIT 1);
+			SELECT DISTINCT 
+				0 as PatientSer,
+				ifnull(pt.FirstName, '') FirstName,
+				ifnull(pt.LastName, '') LastName,
+				ifnull(phi.MRN, '') PatientId,
+				ifnull(pt.PatientId2, '') PatientId2,
+				ifnull(pt.DateOfBirth, '') DateOfBirth,
+				ifnull(pt.ProfileImage, '') ProfileImage,
+				ifnull(RTRIM(pt.Sex), '') Sex,
+				ifnull(pt.DeathDate, '') DeathDate
+			From Patient pt, Patient_Hospital_Identifier phi
+			Where pt.PatientSerNum = phi.PatientSerNum 
+				and phi.Hospital_Identifier_Type_Code = 'RVH'
+				and phi.Is_Active = 1
+				and phi.MRN = '$id'
+			ORDER BY phi.MRN
+			LIMIT 1;
 			";
 
 			# prepare query
@@ -500,7 +500,6 @@ sub getPatientInfoFromSourceDBs
 				or die "Could not execute query: " . $query->errstr;
 
 			$data = $query->fetchall_arrayref();
-
 		};
 
 		foreach my $row (@$data) {
