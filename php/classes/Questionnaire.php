@@ -537,7 +537,7 @@ class Questionnaire extends QuestionnaireModule {
                 $result["question_EN"]
             );
         }
-        
+
         return $results;
     }
 
@@ -652,6 +652,36 @@ class Questionnaire extends QuestionnaireModule {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         return $this->opalDB->getLastCompletedQuestionnaire($patientSite["PatientSerNum"]);
+    }
+
+    /**
+     * Get the last completed questionnaire from multiple patients.
+     * @param $post array - contains an array of mrn and site
+     * @return array - array of last answered questionnaires found (if any)
+     */
+    public function getLastCompletedQuestionnaireForPatients($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+
+        $post = array_map(fn($x,$y) => ["mrn" => $x, "site" => $y],$post["mrn"],$post["site"]);
+
+        $patientQuestionnaires = [];
+
+        foreach($post as $patient) {
+            $patientSite = array();
+            if (is_array($patient))
+                $errCode = $this->_validateBasicPatientInfo($patient, $patientSite);
+            else
+                $errCode = "111";
+
+            $errCode = bindec($errCode);
+            if ($errCode != 0)
+                HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+            $patientQuestionnaires[] = $this->opalDB->getLastCompletedQuestionnaire($patientSite["PatientSerNum"]);
+        }
+
+        return $patientQuestionnaires;
     }
 
     /**
