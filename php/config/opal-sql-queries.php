@@ -947,8 +947,8 @@ define("OPAL_GET_APPOINTMENT", "
     AND als.HospitalMapSerNum = hm.HospitalMapSerNum
     AND r.ResourceSerNum = ra.ResourceSerNum    
     AND ra.AppointmentSerNum = a.AppointmentSerNum
-    AND (:startDate IS NULL OR ScheduledStartTime >=  CAST(:startDate AS DATE))
-    AND (:endDate IS NULL OR ScheduledStartTime <= CAST(:endDate AS DATE));
+    AND (:startDate IS NULL OR ScheduledStartTime >=  CAST(:startDate AS DATETIME))
+    AND (:endDate IS NULL OR ScheduledStartTime <= CAST(:endDate AS DATETIME));
 ");
 
 define("OPAL_GET_APPOINTMENT_REPORT", "

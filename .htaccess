@@ -108,6 +108,7 @@ RewriteRule ^application/update/source-databases php/application/update.source_d
 
 # Appointment Section
 RewriteRule ^appointment/get/appointments php/appointment/get.appointments.php [QSA,L]
+RewriteRule ^appointment/update/appointment php/appointment/update.appointment.php [QSA,L]
 RewriteRule ^appointment/update/appointment-check-in php/appointment/update.appointment.check.in.php [QSA,L]
 RewriteRule ^api/public/v1/appointment php/appointment/get.appointments.php [QSA,L]
 
