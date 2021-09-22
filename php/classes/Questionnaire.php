@@ -676,7 +676,8 @@ class Questionnaire extends QuestionnaireModule {
 
             $errCode = bindec($errCode);
             if ($errCode != 0)
-                HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+                //HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+                $patientSite = ["mrn" => "NO_MRN", "site" => "NO_SITE"];
 
             $patientQuestionnaires[] = $this->opalDB->getLastCompletedQuestionnaire($patientSite["PatientSerNum"]);
         }
