@@ -916,6 +916,13 @@ define("OPAL_GET_DIAGNOSIS_REPORT", "
     FROM ".OPAL_DIAGNOSIS_TABLE." WHERE PatientSerNum = :pnum;
 ");
 
+define("OPAL_GET_APPOINTMENT_ID", "
+SELECT AppointmentSerNum 
+FROM Appointment
+WHERE SourceDatabaseSerNum=:SourceSystem
+AND AppointmentAriaSer=:SourceId
+");
+
 define("OPAL_GET_APPOINTMENT", "
     SELECT DISTINCT phi.PatientSerNum,
     hm.MapUrl,hm.MapURL_EN,hm.MapURL_FR,hm.MapName_EN,hm.MapName_FR,hm.MapDescription_EN,hm.MapDescription_FR,

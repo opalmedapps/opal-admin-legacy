@@ -3575,9 +3575,9 @@ class DatabaseOpal extends DatabaseAccess {
      * @return array - an appointment details
      */
     function findAppointment($sourceSystem,$sourceId){
-        return $this->_fetchAll(OPAL_GET_APPOINTMENT, array(
-            array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceSystem,"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":AppointmentAriaSer","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
+        return $this->_fetch(OPAL_GET_APPOINTMENT_ID, array(
+            array("parameter"=>":SourceSystem","variable"=>$sourceSystem,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SourceId","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
@@ -3587,7 +3587,8 @@ class DatabaseOpal extends DatabaseAccess {
      * @return int - number of row modified
      */
     function insertAppointment($toInsert) {
-        return $this->_insertRecordIntoTable(OPAL_APPOINTMENTS_TABLE, $toInsert);
+
+        return $this->_replaceRecordIntoTable(OPAL_APPOINTMENTS_TABLE, $toInsert);
     }
 
     function getMrnPatientSerNum($patientSerNum) {

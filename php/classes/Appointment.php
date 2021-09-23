@@ -179,6 +179,7 @@ class Appointment extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>$errCode)));
 
         $aliasInfos = $this->opalDB->getAlias('Appointment',$post['appointmentTypeCode'], $post['appointmentTypeDescription']);
+        $appointment = $this->opalDB->findAppointment($source["SourceDatabaseSerNum"],$post["sourceId"]);
 
         if(count($aliasInfos) <= 1) {
             $toInsert = array(
@@ -203,14 +204,18 @@ class Appointment extends Module {
                 "ReadStatus" => 0,
                 "SessionId"=>$this->opalDB->getSessionId(),
             );
-            $currentAppointment = $this->opalDB->insertAppointment($toInsert);
+
+            if (array_key_exists("AppointmentSerNum", $appointment) && $appointment["AppointmentSerNum"] != "") {
+                $toInsert["AppointmentSerNum"] = $appointment["AppointmentSerNum"];
+            }
+            
+            return $this->opalDB->insertAppointment($toInsert);
+
         } else {
 
         }
 
-        var_dump( $toInsert);
         /*
-
         $currentPatientDiagnosis = $this->opalDB->getPatientDiagnosisId($patientSite["PatientSerNum"], $source["SourceDatabaseSerNum"], $post["rowId"]);
         if(count($currentPatientDiagnosis) <= 1) {
             if(count($currentPatientDiagnosis) == 1) {
