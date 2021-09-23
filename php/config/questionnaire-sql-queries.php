@@ -635,62 +635,52 @@ define("SQL_GET_QUESTIONNAIRE_LIST_ORMS","
 // This function has to be redone since it was not designed properly but we are lacking time and man power. It was
 // taken directly from the stored procedure getQuestionNameAndAnswerByID. See OPAL-1026
 define("GET_ANSWERS_CHART_TYPE","
-	SELECT UNIX_TIMESTAMP(DATE_FORMAT(aq.lastUpdated, '%Y-%m-%d')) AS dateTimeAnswered,
-		B.value AS answer,
-		B.Id AS answerId
-	FROM ".ANSWER_SECTION_TABLE." aSec, 
-		".QUESTION_SECTION_TABLE." qSec, 
-		".ANSWER_QUESTIONNAIRE_TABLE." aq,
-		".QUESTION_TABLE." q,
-		(SELECT A.Id, A.questionId, A.sectionId, A.answerSectionId,
-	
-		(SELECT CONVERT(atb.value, CHAR(516)) 
-		FROM ".ANSWER_TEXT_BOX_TABLE." atb
-		WHERE atb.answerId = A.ID
-		UNION 
-		SELECT CONVERT(asr.value, CHAR(516))
-		FROM ".ANSWER_SLIDER_TABLE." asr
-		WHERE asr.answerId = A.ID
-		UNION 
-		SELECT CONVERT(adt.value, CHAR(516))
-		FROM ".ANSWER_DATE_TABLE." adt
-		WHERE adt.answerId = A.ID
-		UNION 
-		SELECT CONVERT(atme.value, CHAR(516))
-		FROM ".ANSWER_TIME_TABLE." atme
-		WHERE atme.answerId = A.ID
-		UNION 
-		SELECT CONVERT(getDisplayName(rbOpt.description, :languageId), CHAR(516)) 
-		FROM ".ANSWER_RADIO_BUTTON_TABLE." aRB, ".RADIO_BUTTON_OPTION_TABLE." rbOpt
-		WHERE aRB.answerId = A.ID
-			AND rbOpt.ID = aRB.value) AS value
-	FROM ".ANSWER_TABLE." A
-	WHERE A.deleted = ".NON_DELETED_RECORD."
-	UNION
-	SELECT A.Id, A.questionId, A.sectionId, A.answerSectionId, CONVERT(getDisplayName(cOpt.description, :languageId), CHAR(516)) AS value
-	FROM ".ANSWER_TABLE." A, answerCheckbox aC, checkboxOption cOpt
-	WHERE A.deleted = ".NON_DELETED_RECORD."
-		AND aC.answerId = A.ID
-			AND cOpt.ID = aC.value
-	UNION
-	SELECT A.Id, A.questionId, A.sectionId, A.answerSectionId,CONVERT(getDisplayName(lOpt.description, :languageId), CHAR(516)) AS value
-	FROM ".ANSWER_TABLE." A, ".ANSWER_LABEL_TABLE." aL, ".LABEL_OPTION_TABLE." lOpt
-	WHERE A.deleted = ".NON_DELETED_RECORD."
-		AND aL.answerId = A.ID
-			AND lOpt.ID = aL.value) B
-	WHERE
-		qSec.questionId = B.questionId
-		AND qSec.sectionId = B.sectionId
-		AND B.answerSectionId = aSec.ID
-		AND aSec.answerQuestionnaireId = aq.ID
-		AND aq.patientId = :patientId
-		AND aq.status = ".QUESTIONNAIRE_STATUS_COMPLETED."
-		AND aq.questionnaireId = :questionnaireId
-		AND aq.deleted = ".NON_DELETED_RECORD."
-		AND q.ID = B.questionId
-		AND q.deleted = ".NON_DELETED_RECORD."
-		AND qSec.ID = :questionSectionId
-		AND getDisplayName(q.question, :languageId) = :questionText
+	SELECT UNIX_TIMESTAMP(DATE_FORMAT(aq.lastUpdated, '%Y-%m-%d')) AS dateTimeAnswered, 
+        (CASE 
+            When a.typeId = ".CHECKBOXES." Then (SELECT CONVERT(getDisplayName(cOpt.description, :languageId), CHAR(516)) 
+                                                FROM ".ANSWER_CHECKBOX_TABLE." aC
+                                                INNER JOIN ".CHECKBOX_OPTION_TABLE." cOpt
+                                                ON cOpt.ID = aC.value
+                                                WHERE aC.answerId = a.ID)
+            When a.typeId = ".SLIDERS." Then (SELECT CONVERT(asr.value, CHAR(516))
+                                                FROM ".ANSWER_SLIDER_TABLE." asr
+                                                WHERE asr.answerId = a.ID)
+            When a.typeId = ".TEXT_BOX." Then (SELECT CONVERT(atb.value, CHAR(516)) 
+                                                FROM ".ANSWER_TEXT_BOX_TABLE." atb
+                                                WHERE atb.answerId = a.ID)
+            When a.typeId = ".RADIO_BUTTON." Then (SELECT CONVERT(getDisplayName(rbOpt.description, :languageId), CHAR(516)) 
+                                                FROM ".ANSWER_RADIO_BUTTON_TABLE." aRB 
+                                                INNER JOIN ".RADIO_BUTTON_OPTION_TABLE." rbOpt
+                                                ON rbOpt.ID = aRB.value
+                                                WHERE aRB.answerId = a.ID)
+            When a.typeId = ".LABEL." Then (SELECT CONVERT(getDisplayName(lOpt.description, :languageId), CHAR(516)) 
+                                                FROM ".ANSWER_LABEL_TABLE." aL
+                                                INNER JOIN ".LABEL_OPTION_TABLE." lOpt
+                                                ON lOpt.ID = aL.value
+                                                WHERE aL.answerId = a.ID)
+            When a.typeId = ".TIME." Then (SELECT CONVERT(atme.value, CHAR(516))
+                                                FROM ".ANSWER_TIME_TABLE." atme
+                                                WHERE atme.answerId = a.ID)
+            When a.typeId = ".DATE." Then (SELECT CONVERT(adt.value, CHAR(516))
+                                                FROM ".ANSWER_DATE_TABLE." adt
+                                                WHERE adt.answerId = a.ID)
+            ELSE NULL
+            END) AS answer,
+        a.ID AS answerId
+    FROM ".ANSWER_TABLE." a
+    INNER JOIN ".ANSWER_SECTION_TABLE." aSec ON a.answerSectionId = aSec.ID
+    AND a.deleted = ".NON_DELETED_RECORD."
+    INNER JOIN ".ANSWER_QUESTIONNAIRE_TABLE." aq ON aq.questionnaireId = :questionnaireId
+    AND aq.ID = aSec.answerQuestionnaireId 
+    AND aq.patientId = :patientId
+    AND aq.status = ".QUESTIONNAIRE_STATUS_COMPLETED."
+    AND aq.deleted = ".NON_DELETED_RECORD."
+    INNER JOIN ".QUESTION_SECTION_TABLE." qSec ON a.sectionId = qSec.sectionId 
+    AND qSec.questionId = a.questionId
+    INNER JOIN ".QUESTION_TABLE." q ON qSec.questionId = q.ID 
+    AND qSec.ID = :questionSectionId 
+    AND q.deleted = ".NON_DELETED_RECORD."
+    AND getDisplayName(q.question, :languageId) = :questionText
 	;
 ");
 
