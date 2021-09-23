@@ -1613,6 +1613,15 @@ define("OPAL_EDU_MATERIAL_COND", "ifnull(EducationalMaterialControlSerNum, -1) !
 define("OPAL_HOSP_MAP_SERNUM", "HospitalMapSerNum = :HospitalMapSerNum");
 define("OPAL_HOSP_MAP_COND", "ifnull(HospitalMapSerNum, -1) != :HospitalMapSerNum");
 
+define("OPAL_GET_ALIAS_EXPRESSION","
+    SELECT A.AliasSerNum, A.AliasUpdate, A.SourceDatabaseSerNum, AE.AliasExpressionSerNum, AE.ExpressionName, AE.Description
+    FROM ".OPAL_ALIAS_TABLE." A, ".OPAL_ALIAS_EXPRESSION_TABLE." AE
+    WHERE A.AliasSerNum = AE.AliasSerNum
+    AND A.AliasType = :AliasType
+    AND AE.ExpressionName = :ExpressionName
+    AND AE.Description = :Description;
+");
+
 define("OPAL_DELETE_ALIAS_EXPRESSIONS","
     DELETE ae FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa ON
     msa.ID = ae.masterSourceAliasId

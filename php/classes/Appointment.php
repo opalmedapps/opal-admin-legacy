@@ -178,27 +178,34 @@ class Appointment extends Module {
         if($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>$errCode)));
 
-        $toInsert = array(
-            "PatientSerNum"=>$patientSite["PatientSerNum"],
-            "SourceDatabaseSerNum"=>$source["SourceDatabaseSerNum"],
-            "AppointmentAriaSer"=>$post["sourceId"],
-            "PrioritySerNum"=>0,
-            "DiagnosisSerNum" => 0,
-            "Status" => $post["status"],
-            "State" => "Active",
-            "ScheduledStartTime" => $post["scheduledTimestamp"],
-            "ScheduledEndTime" => $post["scheduledTimestamp"],
-            "ActualStartDate" => "0000-00-00 00:00:00",
-            "ActualEndDate" => "0000-00-00 00:00:00",
-            "Location" => "10",
-            "RoomLocation_EN" => "",
-            "RoomLocation_FR" => "",
-            "Checkin" => 0,
-            "ChangeRequest" => 0,
-            "DateAdded" => date("Y-m-d H:i:s"),
-            "ReadStatus" => 0,
-            "SessionId"=>$this->opalDB->getSessionId(),
-        );
+        $aliasInfos = $this->opalDB->getAlias($post['appointmentTypeCode'], $post['appointmentTypeDescription']);
+        var_dump( $aliasInfos);
+        if(count($aliasInfos) <= 1) {
+            $toInsert = array(
+                "AliasExpressionSerNum" => $aliasInfos['AliasExpressionSerNum'],
+                "PatientSerNum"=>$patientSite["PatientSerNum"],
+                "SourceDatabaseSerNum"=>$source["SourceDatabaseSerNum"],
+                "AppointmentAriaSer"=>$post["sourceId"],
+                "PrioritySerNum"=>0,
+                "DiagnosisSerNum" => 0,
+                "Status" => $post["status"],
+                "State" => "Active",
+                "ScheduledStartTime" => $post["scheduledTimestamp"],
+                "ScheduledEndTime" => $post["scheduledTimestamp"],
+                "ActualStartDate" => "0000-00-00 00:00:00",
+                "ActualEndDate" => "0000-00-00 00:00:00",
+                "Location" => "10",
+                "RoomLocation_EN" => "",
+                "RoomLocation_FR" => "",
+                "Checkin" => 0,
+                "ChangeRequest" => 0,
+                "DateAdded" => date("Y-m-d H:i:s"),
+                "ReadStatus" => 0,
+                "SessionId"=>$this->opalDB->getSessionId(),
+            );
+        } else {
+
+        }
 
         var_dump( $toInsert);
         /*
