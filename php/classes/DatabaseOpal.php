@@ -3409,6 +3409,19 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
+     * Get a specific alias with appointment code and clinical description in the Alias table
+     * @param $typeCode string - appointment type
+     * @param $typeDesc string - appointment type description
+     * @return array - data found if any
+     */
+    function getAlias($typeCode,$typeDesc) {
+        return $this->_fetchAll(OPAL_GET_ALIAS_EXPRESSION, array(
+            array("parameter"=>":ExpressionName","variable"=>$typeCode,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Description"   ,"variable"=>$typeDesc,"data_type"=>PDO::PARAM_STR)
+        ));
+    }
+
+    /**
      * Update an alias.
      * @param $toUpdate
      * @return int - number of row updated
