@@ -3414,8 +3414,9 @@ class DatabaseOpal extends DatabaseAccess {
      * @param $typeDesc string - appointment type description
      * @return array - data found if any
      */
-    function getAlias($typeCode,$typeDesc) {
+    function getAlias($aliasType,$typeCode,$typeDesc) {
         return $this->_fetchAll(OPAL_GET_ALIAS_EXPRESSION, array(
+            array("parameter"=>":AliasType","variable"=>$aliasType,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":ExpressionName","variable"=>$typeCode,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":Description"   ,"variable"=>$typeDesc,"data_type"=>PDO::PARAM_STR)
         ));
