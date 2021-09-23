@@ -205,10 +205,10 @@ class Appointment extends Module {
                 "SessionId"=>$this->opalDB->getSessionId(),
             );
 
-            if (array_key_exists("AppointmentSerNum", $appointment) && $appointment["AppointmentSerNum"] != "") {
+            if ($appointment["AppointmentSerNum"] != "") {
                 $toInsert["AppointmentSerNum"] = $appointment["AppointmentSerNum"];
             }
-            
+
             return $this->opalDB->insertAppointment($toInsert);
 
         } else {
