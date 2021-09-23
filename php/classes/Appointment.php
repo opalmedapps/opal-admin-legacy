@@ -45,14 +45,14 @@ class Appointment extends Module {
     protected function _validateAppointmentSourceExternalId(&$post, &$patientSite, &$source)  {
         $patientSite = array();
         $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
-        var_dump($patientSite);
+
 
         // 4th bit - source
         if(!array_key_exists("sourceSystem", $post) || $post["sourceSystem"] == "") {
             $errCode = "1" . $errCode;
         } else {
             $source = $this->opalDB->getSourceDatabaseDetails($post["sourceSystem"]);
-            var_dump($source);
+
             if(count($source) != 1) {
                 $source = array();
                 $errCode = "1" . $errCode;
