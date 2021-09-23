@@ -179,7 +179,7 @@ class Appointment extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>$errCode)));
 
         $aliasInfos = $this->opalDB->getAlias('Appointment',$post['appointmentTypeCode'], $post['appointmentTypeDescription']);
-        var_dump( $aliasInfos);
+
         if(count($aliasInfos) <= 1) {
             $toInsert = array(
                 "AliasExpressionSerNum" => $aliasInfos['AliasExpressionSerNum'],
@@ -203,6 +203,7 @@ class Appointment extends Module {
                 "ReadStatus" => 0,
                 "SessionId"=>$this->opalDB->getSessionId(),
             );
+            $currentAppointment = $this->insertAppointment($toInsert);
         } else {
 
         }
