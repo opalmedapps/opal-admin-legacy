@@ -106,7 +106,7 @@ class Appointment extends Module {
                 $errCode = "0" . $errCode;
             }
             //bit 6
-            if(!array_key_exists("Status", $post) || $post["Status"] == ""){
+            if(!array_key_exists("status", $post) || $post["status"] == ""){
                 $errCode = "1" . $errCode;
             }else{
                 $errCode = "0" . $errCode;
@@ -182,7 +182,7 @@ class Appointment extends Module {
 
         if(count($aliasInfos) <= 1) {
             $toInsert = array(
-                "AliasExpressionSerNum" => $aliasInfos['AliasExpressionSerNum'],
+                "AliasExpressionSerNum" => $aliasInfos[0]['AliasExpressionSerNum'],
                 "PatientSerNum"=>$patientSite["PatientSerNum"],
                 "SourceDatabaseSerNum"=>$source["SourceDatabaseSerNum"],
                 "AppointmentAriaSer"=>$post["sourceId"],
@@ -203,7 +203,7 @@ class Appointment extends Module {
                 "ReadStatus" => 0,
                 "SessionId"=>$this->opalDB->getSessionId(),
             );
-            $currentAppointment = $this->insertAppointment($toInsert);
+            $currentAppointment = $this->opalDB->insertAppointment($toInsert);
         } else {
 
         }
