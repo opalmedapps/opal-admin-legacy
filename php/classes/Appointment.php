@@ -100,7 +100,7 @@ class Appointment extends Module
     public function deleteAppointment($post)
     {
         $source = null;
-        $this->checkDeleteAccess($post);
+        $this->checkWriteAccess($post);
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateDeleteAppointment($post, $source);
 
@@ -134,7 +134,7 @@ class Appointment extends Module
             if (!array_key_exists("sourceSystem", $post) || $post["sourceSystem"] == "") {
                 $errCode = "1" . $errCode;
             } else {
-                $source = $this->opalDB->getSourceDatabaseDetails($post["source"]);
+                $source = $this->opalDB->getSourceDatabaseDetails($post["sourceSystem"]);
                 // 2sd bit - source exists
                 if (count($source) != 1) {
                     $source = array();
