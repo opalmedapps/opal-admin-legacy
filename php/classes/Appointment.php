@@ -113,7 +113,7 @@ class Appointment extends Module
         else if (count($currentAppointment) < 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation" => 7)));
 
-        $this->opalDB->deletePatientDiagnosis($currentAppointment["AppointmentSerNum"]);
+        $this->opalDB->deleteAppointment($currentAppointment["AppointmentSerNum"]);
     }
 
     /**
