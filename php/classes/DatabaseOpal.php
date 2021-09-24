@@ -3587,7 +3587,6 @@ class DatabaseOpal extends DatabaseAccess {
      * @return int - number of row modified
      */
     function insertAppointment($toInsert) {
-
         return $this->_replaceRecordIntoTable(OPAL_APPOINTMENTS_TABLE, $toInsert);
     }
 
