@@ -207,13 +207,21 @@ class Appointment extends Module {
 
         $aliasInfos = $this->opalDB->getAlias('Appointment',$post['appointmentTypeCode'], $post['appointmentTypeDescription']);
         if(count($aliasInfos) <= 1) {
+            _updateAppointmentPending($toInsert);
+
             $toInsert["AliasExpressionSerNum"] = $aliasInfos[0]['AliasExpressionSerNum'];
             return $this->opalDB->insertAppointment($toInsert);
         } else {
             return $this->_insertAppointmentPending($toInsert);
+            return $this->_insertAppointmentPendingMH($toInsert);
         }
 
         return false;
+    }
+
+    protected function _updateAppointmentPending($toInsert) {
+        $pendingAppointment = $this->opalDB->findPendingAppointment($toInsert["SourceDatabaseSerNum"],$toInsert["sourceId"]);
+        $this->opalDB->deleteAppointmentPending($pendingAppointment["AppointmentSerNum"]);
     }
 
     protected function _insertAppointmentPending($toInsert) {
@@ -223,7 +231,10 @@ class Appointment extends Module {
             $toInsert["AppointmentSerNum"] = $pendingAppointment["AppointmentSerNum"];
             $toInsert["DateModified"] = date("Y-m-d H:i:s");
             unset($toInsert["DateAdded"]);
-        }
+        } else {
+            $toInsert["Level"]  = $pendingAppointment["Level"]  + 1;
+        } 
+
         return $this->opalDB->insertPendingAppointment($toInsert);
     }
 

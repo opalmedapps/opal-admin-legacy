@@ -94,6 +94,8 @@ define("OPAL_TRIGGER_TABLE","jsonTrigger");
 define("OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE","Patient_Hospital_Identifier");
 define("OPAL_DIAGNOSIS_TABLE","Diagnosis");
 define("OPAL_APPOINTMENTS_TABLE", "Appointment");
+define("OPAL_APPOINTMENTS_PENDING_TABLE", "AppointmentPending");
+define("OPAL_APPOINTMENTS_PENDING_MH_TABLE", "AppointmentPendingMH");
 define("OPAL_APPOINTMENT_CHECKIN_TABLE","AppointmentCheckin");
 define("OPAL_RESOURCE_TABLE", "Resource");
 define("OPAL_RESOURCE_APPOINTMENT_TABLE", "ResourceAppointment");

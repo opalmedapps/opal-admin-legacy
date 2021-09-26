@@ -3582,12 +3582,68 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Insert a resource only if it does not exists already.
+     * Get Pending Appointment
+     * @params $sourceSystem : String - Source System (Aria, Medivisit, etc)
+     * @params $sourceId  : int - Source System Appointment Id
+     * @return array - an appointment details
+     */
+    function findPendingAppointment($sourceSystem,$sourceId){
+        return $this->_fetch(OPAL_GET_APPOINTMENT_PENDING_ID, array(
+            array("parameter"=>":SourceSystem","variable"=>$sourceSystem,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SourceId","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get pending appointment history
+     * @params $sourceSystem : String - Source System (Aria, Medivisit, etc)
+     * @params $sourceId  : int - Source System Appointment Id
+     * @return array - an appointment details
+     */
+    function findPendingMHAppointment($sourceSystem,$sourceId){
+        return $this->_fetch(OPAL_GET_APPOINTMENT_PENDING_MH_ID, array(
+            array("parameter"=>":SourceSystem","variable"=>$sourceSystem,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SourceId","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Insert an appointment only if it does not exists already.
      * @param $toInsert
      * @return int - number of row modified
      */
     function insertAppointment($toInsert) {
         return $this->_replaceRecordIntoTable(OPAL_APPOINTMENTS_TABLE, $toInsert);
+    }
+
+    /**
+     * Insert pending appointment.
+     * @param $toInsert
+     * @return int - number of row modified
+     */
+    function insertPendingAppointment($toInsert) {
+        return $this->_replaceRecordIntoTable(OPAL_APPOINTMENTS_PENDING_TABLE, $toInsert);
+    }
+
+    /**
+     * Insert pending appointment history.
+     * @param $toInsert
+     * @return int - number of row modified
+     */
+    function insertPendingMHAppointment($toInsert) {
+        return $this->_replaceRecordIntoTable(OPAL_APPOINTMENTS_PENDING_MH_TABLE, $toInsert);
+    }
+
+    /**
+     * Delete a specific appointmentPending record
+     * @param $id - primary key of the record in appointmentPending to delete
+     * @return int - number of records affected
+     */
+    function deleteAppointmentPending($id) {
+        $toDelete = array(
+            array("parameter"=>":AppointmentSerNum","variable"=>$id),
+        );
+        return $this->_execute(OPAL_DELETE_APPOINTMENT_PENDING, $toDelete);
     }
 
     function getMrnPatientSerNum($patientSerNum) {
