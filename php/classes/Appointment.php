@@ -233,7 +233,7 @@ class Appointment extends Module {
             unset($toInsert["DateAdded"]);
         } else {
             $toInsert["Level"]  = $pendingAppointment["Level"]  + 1;
-        } 
+        }
 
         return $this->opalDB->insertPendingAppointment($toInsert);
     }
