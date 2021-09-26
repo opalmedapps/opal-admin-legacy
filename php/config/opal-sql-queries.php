@@ -918,9 +918,27 @@ define("OPAL_GET_DIAGNOSIS_REPORT", "
 
 define("OPAL_GET_APPOINTMENT_ID", "
 SELECT AppointmentSerNum 
-FROM Appointment
+FROM ".OPAL_APPOINTMENTS_TABLE."
 WHERE SourceDatabaseSerNum=:SourceSystem
 AND AppointmentAriaSer=:SourceId
+");
+
+define("OPAL_GET_APPOINTMENT_PENDING_ID", "
+SELECT AppointmentSerNum 
+FROM ".OPAL_APPOINTMENTS_PENDING_TABLE."
+WHERE SourceDatabaseSerNum=:SourceSystem
+AND AppointmentAriaSer=:SourceId
+");
+
+define("OPAL_GET_APPOINTMENT_PENDING_MH_ID", "
+SELECT AppointmentSerNum 
+FROM ".OPAL_APPOINTMENTS_PENDING_MH_TABLE."
+WHERE SourceDatabaseSerNum=:SourceSystem
+AND AppointmentAriaSer=:SourceId
+");
+
+define("OPAL_DELETE_APPOINTMENT_PENDING","
+    DELETE FROM ".OPAL_APPOINTMENTS_PENDING_TABLE." WHERE AppointmentSerNum = :AppointmentSerNum; 
 ");
 
 define("OPAL_GET_APPOINTMENT", "
