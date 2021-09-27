@@ -166,11 +166,12 @@ class Appointment extends Module {
      * @param $post array - contains the source name and the external appointment ID
      */
     public function insertAppointment($post) {
+        $this->checkWriteAccess($post);
+        $post = HelpSetup::arraySanitization($post);
         return $this->_replaceAppointment($post);
     }
 
     protected function _replaceAppointment($post) {
-        $this->checkWriteAccess($post);
         $patientSite = null;
         $source = null;
 
@@ -227,13 +228,11 @@ class Appointment extends Module {
     protected function _insertAppointmentPending($toInsert) {
         $pendingAppointment = $this->opalDB->findPendingAppointment($toInsert["SourceDatabaseSerNum"],$toInsert["sourceId"]);
         $toInsert["Level"]  = 1;
-        if ($pendingAppointment["AppointmentSerNum"] != "") {
+        if(count($pendingAppointment) < 1) {
             $toInsert["AppointmentSerNum"] = $pendingAppointment["AppointmentSerNum"];
             $toInsert["DateModified"] = date("Y-m-d H:i:s");
             unset($toInsert["DateAdded"]);
-        } else {
-            $toInsert["Level"]  = $pendingAppointment["Level"]  + 1;
-        }
+        } 
 
         return $this->opalDB->insertPendingAppointment($toInsert);
     }
