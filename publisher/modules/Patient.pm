@@ -887,7 +887,7 @@ sub getPatientsMarkedForUpdateModularCronLegacy {
 	# Query
 	my $patients_sql = "
 		SELECT DISTINCT
-			cronControlPatient.lastTransferred,
+			'$control_table'.lastTransferred,
 			IFNULL((SELECT MRN 
 				FROM Patient_Hospital_Identifier 
 				WHERE Hospital_Identifier_Type_Code = 'RVH' 
@@ -903,8 +903,8 @@ sub getPatientsMarkedForUpdateModularCronLegacy {
 			'$control_table',
             Patient
 		WHERE
-            cronControlPatient.transferFlag        = 1
-        AND Patient.PatientSerNum                  = cronControlPatient.cronControlPatientSerNum
+            '$control_table'.transferFlag        = 1
+        AND Patient.PatientSerNum                  = '$control_table'.cronControlPatientSerNum
 	";
 
 	# prepare query
@@ -1040,18 +1040,17 @@ sub setPatientLastTransferredIntoOurDB
 #======================================================================================
 sub setPatientLastTransferredModularCron
 {
-	my ($current_datetime, $module) = @_; # current datetime, cron module type, 
+	my ($current_datetime, $control_table) = @_; # current datetime, cron module type,
 
 	my $update_sql = "
 		UPDATE 
-			cronControlPatient
+			'$control_table'
 		SET
 			lastTransferred	= '$current_datetime',
             lastUpdated 		= lastUpdated,
 			transferFlag 		= 0
 		WHERE
 			transferFlag		= 1
-		AND cronType 			= '$module'
 	";
 
 	# prepare query
@@ -1557,7 +1556,7 @@ sub MarkPatientForUpdateModularCron
 		'$control_table'.transferFlag = 1
 	WHERE 
 		PatientControl.PatientUpdate 	= 1
-		AND PatientControl.PatientSerNum = cronControlPatient.cronControlPatientSerNum ";
+		AND PatientControl.PatientSerNum = '$control_table'.cronControlPatientSerNum ";
 	# prepare query
 	my $query = $SQLDatabase->prepare($patients_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
