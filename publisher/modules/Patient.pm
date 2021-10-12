@@ -790,7 +790,7 @@ sub getPatientsMarkedForUpdateModularCron {
 			U.Username,
 		P.RegistrationDate
 		FROM
-			'$control_table' CCP,
+			$control_table CCP,
 			Patient P,
 			Users U
 		WHERE
@@ -887,7 +887,7 @@ sub getPatientsMarkedForUpdateModularCronLegacy {
 	# Query
 	my $patients_sql = "
 		SELECT DISTINCT
-			'$control_table'.lastTransferred,
+			$control_table.lastTransferred,
 			IFNULL((SELECT MRN 
 				FROM Patient_Hospital_Identifier 
 				WHERE Hospital_Identifier_Type_Code = 'RVH' 
@@ -900,11 +900,11 @@ sub getPatientsMarkedForUpdateModularCronLegacy {
             Patient.RegistrationDate,
 			Patient.PatientAriaSer
 		FROM
-			'$control_table',
+			$control_table,
             Patient
 		WHERE
-            '$control_table'.transferFlag        = 1
-        AND Patient.PatientSerNum                  = '$control_table'.cronControlPatientSerNum
+            $control_table.transferFlag        = 1
+        AND Patient.PatientSerNum                  = $control_table.cronControlPatientSerNum
 	";
 
 	# prepare query
@@ -1044,7 +1044,7 @@ sub setPatientLastTransferredModularCron
 
 	my $update_sql = "
 		UPDATE 
-			'$control_table'
+			$control_table
 		SET
 			lastTransferred	= '$current_datetime',
             lastUpdated 		= lastUpdated,
@@ -1527,10 +1527,10 @@ sub CheckPatientForUpdateModularCron
 	my ($control_table) = @_; #args cronType module name
 
 	my $patients_sql = "
-		INSERT INTO '$control_table' (cronControlPatientSerNum, LastTransferred, LastUpdated, TransferFlag)
+		INSERT INTO $control_table (cronControlPatientSerNum, LastTransferred, LastUpdated, TransferFlag)
 		SELECT PatientSerNum, LastTransferred, LastUpdated, 0 TransferFlag  FROM PatientControl PC
 		WHERE PC.PatientSerNum NOT IN 
-			(SELECT cronControlPatientSerNum FROM '$control_table');
+			(SELECT cronControlPatientSerNum FROM $control_table);
 ";
 	# prepare query
 	my $query = $SQLDatabase->prepare($patients_sql)
@@ -1550,13 +1550,13 @@ sub MarkPatientForUpdateModularCron
 
 	my $patients_sql = "
 	UPDATE 
-		'$control_table',
+		$control_table,
 		PatientControl
 	SET 
-		'$control_table'.transferFlag = 1
+		$control_table.transferFlag = 1
 	WHERE 
 		PatientControl.PatientUpdate 	= 1
-		AND PatientControl.PatientSerNum = '$control_table'.cronControlPatientSerNum ";
+		AND PatientControl.PatientSerNum = $control_table.cronControlPatientSerNum ";
 	# prepare query
 	my $query = $SQLDatabase->prepare($patients_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
