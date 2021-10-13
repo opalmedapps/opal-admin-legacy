@@ -728,17 +728,32 @@ sub getPatientsMarkedForUpdateLegacy
 sub getPatientsMarkedForUpdateModularCron {
 	
 	my ($cronLogSer, $cronType) = @_; # cron log serial in args
-	
+
+    $control_table = "";
+	if($cronType eq 'Document'){
+        $control_table = "cronControlPatient_Document";
+    }elsif($cronType eq 'EducationalMaterial'){
+        $control_table = "cronControlPatient_EducationalMaterial";
+    }elsif($cronType eq 'Announcement'){
+        $control_table = "cronControlPatient_Announcement";
+    }elsif($cronType eq 'LegacyQuestionnaire'){
+        $control_table = "cronControlPatient_LegacyQuestionnaire";
+    }elsif($cronType eq 'Patients for Patients'){
+        $control_table = "cronControlPatient_PatientsForPatients";
+    }elsif($cronType eq 'Treatment Team Message'){
+        $control_table = "cronControlPatient_TreatmentTeamMessage";
+    }
+
 	my @patientList = (); # initialize list of patient objects
 	my ($wsPatientSerNum, $wsPatientAriaSer, $wsPatientId, $wsPatientId2, $wsFirstName, $wsLastName, $wsDateOfBirth, $wsAge, 
 		$wsSex, $wsProfileImage, $wsRAMQ, $wslastTransferred, $wsAccessLevel, $wsDeathDate, $wsEmail, $wsUsername, 
 		$wsRegistrationDate);
 	
 	# Check if the list of patient is up to date.
-	CheckPatientForUpdateModularCron($cronType);
+	CheckPatientForUpdateModularCron($control_table);
 
 	# Tag all patient that are to be part of the patient list
-	MarkPatientForUpdateModularCron($cronType);
+	MarkPatientForUpdateModularCron($control_table);
 
 	# Query
 	my $patients_sql = "
@@ -775,12 +790,11 @@ sub getPatientsMarkedForUpdateModularCron {
 			U.Username,
 		P.RegistrationDate
 		FROM
-			cronControlPatient CCP,
+			$control_table CCP,
 			Patient P,
 			Users U
 		WHERE
 		CCP.transferFlag = 1
-			AND CCP.cronType = '$cronType'
 			AND P.PatientSerNum = CCP.cronControlPatientSerNum
 			AND U.UserTypeSerNum = P.PatientSerNum
 	;
@@ -845,20 +859,35 @@ sub getPatientsMarkedForUpdateModularCron {
 sub getPatientsMarkedForUpdateModularCronLegacy {
 	
 	my ($cronLogSer, $cronType) = @_; # cron log serial in args
-	
+
+    $control_table = "";
+	if($cronType eq 'Document'){
+        $control_table = "cronControlPatient_Document";
+    }elsif($cronType eq 'EducationalMaterial'){
+        $control_table = "cronControlPatient_EducationalMaterial";
+    }elsif($cronType eq 'Announcement'){
+        $control_table = "cronControlPatient_Announcement";
+    }elsif($cronType eq 'LegacyQuestionnaire'){
+        $control_table = "cronControlPatient_LegacyQuestionnaire";
+    }elsif($cronType eq 'Patients for Patients'){
+        $control_table = "cronControlPatient_PatientsForPatients";
+    }elsif($cronType eq 'Treatment Team Message'){
+        $control_table = "cronControlPatient_TreatmentTeamMessage";
+    }
+
 	my @patientList = (); # initialize list of patient objects
 	my ($lasttransfer, $id, $registrationdate);
 	
 	# Check if the list of patient is up to date.
-	CheckPatientForUpdateModularCron($cronType);
+	CheckPatientForUpdateModularCron($control_table);
 
 	# Tag all patient that are to be part of the patient list
-	MarkPatientForUpdateModularCron($cronType);
+	MarkPatientForUpdateModularCron($control_table);
 
 	# Query
 	my $patients_sql = "
 		SELECT DISTINCT
-			cronControlPatient.lastTransferred,
+			$control_table.lastTransferred,
 			IFNULL((SELECT MRN 
 				FROM Patient_Hospital_Identifier 
 				WHERE Hospital_Identifier_Type_Code = 'RVH' 
@@ -871,12 +900,11 @@ sub getPatientsMarkedForUpdateModularCronLegacy {
             Patient.RegistrationDate,
 			Patient.PatientAriaSer
 		FROM
-			cronControlPatient,
+			$control_table,
             Patient
 		WHERE
-            cronControlPatient.transferFlag        = 1
-		AND cronControlPatient.cronType			   = '$cronType'
-        AND Patient.PatientSerNum                  = cronControlPatient.cronControlPatientSerNum
+            $control_table.transferFlag        = 1
+        AND Patient.PatientSerNum                  = $control_table.cronControlPatientSerNum
 	";
 
 	# prepare query
@@ -1012,18 +1040,32 @@ sub setPatientLastTransferredIntoOurDB
 #======================================================================================
 sub setPatientLastTransferredModularCron
 {
-	my ($current_datetime, $module) = @_; # current datetime, cron module type, 
+	my ($current_datetime, $cronType) = @_; # current datetime, cron module type,
+
+    $control_table = "";
+	if($cronType eq 'Document'){
+        $control_table = "cronControlPatient_Document";
+    }elsif($cronType eq 'EducationalMaterial'){
+        $control_table = "cronControlPatient_EducationalMaterial";
+    }elsif($cronType eq 'Announcement'){
+        $control_table = "cronControlPatient_Announcement";
+    }elsif($cronType eq 'LegacyQuestionnaire'){
+        $control_table = "cronControlPatient_LegacyQuestionnaire";
+    }elsif($cronType eq 'Patients for Patients'){
+        $control_table = "cronControlPatient_PatientsForPatients";
+    }elsif($cronType eq 'Treatment Team Message'){
+        $control_table = "cronControlPatient_TreatmentTeamMessage";
+    }
 
 	my $update_sql = "
 		UPDATE 
-			cronControlPatient
+			$control_table
 		SET
 			lastTransferred	= '$current_datetime',
             lastUpdated 		= lastUpdated,
 			transferFlag 		= 0
 		WHERE
 			transferFlag		= 1
-		AND cronType 			= '$module'
 	";
 
 	# prepare query
@@ -1497,14 +1539,17 @@ sub MarkPatientForUpdate
 #======================================================================================
 sub CheckPatientForUpdateModularCron
 {	
-	my ($module) = @_; #args cronType module name
+	my ($control_table) = @_; #args cronType module name
 
 	my $patients_sql = "
-		INSERT INTO cronControlPatient (cronControlPatientSerNum, cronType, LastTransferred, LastUpdated, TransferFlag)
-		SELECT PatientSerNum, '$module',  LastTransferred, LastUpdated, 0 TransferFlag  FROM PatientControl PC
+		INSERT INTO $control_table (cronControlPatientSerNum, LastTransferred, LastUpdated, TransferFlag)
+		SELECT PatientSerNum, LastTransferred, LastUpdated, 0 TransferFlag  FROM PatientControl PC
 		WHERE PC.PatientSerNum NOT IN 
-			(SELECT cronControlPatientSerNum FROM cronControlPatient WHERE cronType = '$module');
+			(SELECT cronControlPatientSerNum FROM $control_table);
 ";
+
+	print "SQL: $patients_sql\n\n";
+
 	# prepare query
 	my $query = $SQLDatabase->prepare($patients_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -1519,18 +1564,17 @@ sub CheckPatientForUpdateModularCron
 #======================================================================================
 sub MarkPatientForUpdateModularCron
 {	
-	my ($module) = @_; #args cronType module name
+	my ($control_table) = @_; #args cronType module name
 
 	my $patients_sql = "
 	UPDATE 
-		cronControlPatient,
+		$control_table,
 		PatientControl
 	SET 
-		cronControlPatient.transferFlag = 1 
+		$control_table.transferFlag = 1
 	WHERE 
 		PatientControl.PatientUpdate 	= 1
-		AND PatientControl.PatientSerNum = cronControlPatient.cronControlPatientSerNum
-		AND cronControlPatient.cronType 	= '$module'";
+		AND PatientControl.PatientSerNum = $control_table.cronControlPatientSerNum ";
 	# prepare query
 	my $query = $SQLDatabase->prepare($patients_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
