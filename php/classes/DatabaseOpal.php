@@ -3657,20 +3657,6 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-    /**
-     * Get patient appointment
-     * @params $sourceSystem : String - Source System (Aria, Medivisit, etc)
-     * @params $sourceId  : int - Source System Appointment Id
-     * @return array - an appointment details
-     */
-    function findAppointment($sourceSystem,$sourceId){
-        return $this->_fetch(OPAL_GET_APPOINTMENT_ID, array(
-            array("parameter"=>":SourceSystem","variable"=>$sourceSystem,"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":SourceId","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
-        ));
-    }
-
-
     function getMrnPatientSerNum($patientSerNum) {
         return $this->_fetchAll(OPAL_GET_MRN_PATIENT_SERNUM, array(
             array("parameter"=>":PatientSerNum","variable"=>$patientSerNum,"data_type"=>PDO::PARAM_INT)));
