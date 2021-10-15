@@ -663,8 +663,6 @@ class Questionnaire extends QuestionnaireModule {
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
 
-        $post = array_map(fn($x,$y) => ["mrn" => $x, "site" => $y],$post["mrn"],$post["site"]);
-
         $patientQuestionnaires = [];
 
         foreach($post as $patient) {
@@ -675,11 +673,8 @@ class Questionnaire extends QuestionnaireModule {
                 $errCode = "111";
 
             $errCode = bindec($errCode);
-            if ($errCode != 0)
-                //HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
-                $patientSite = ["mrn" => "NO_MRN", "site" => "NO_SITE"];
 
-            $patientQuestionnaires[] = $this->opalDB->getLastCompletedQuestionnaire($patientSite["PatientSerNum"]);
+            $patientQuestionnaires[] = ($errCode == 0) ? $this->opalDB->getLastCompletedQuestionnaire($patientSite["PatientSerNum"]) : false;
         }
 
         return $patientQuestionnaires;
