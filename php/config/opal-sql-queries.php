@@ -932,14 +932,27 @@ AND AppointmentAriaSer=:SourceId
 define("OPAL_GET_APPOINTMENT_PENDING_ID", "
 SELECT AppointmentSerNum
 FROM ".OPAL_APPOINTMENTS_PENDING_TABLE."
-WHERE SourceDatabaseSerNum=:SourceSystem
+WHERE sourceName=:SourceSystem
 AND AppointmentAriaSer=:SourceId
 ");
 
 define("OPAL_GET_APPOINTMENT_PENDING_MH_ID", "
 SELECT AppointmentSerNum
 FROM ".OPAL_APPOINTMENTS_PENDING_MH_TABLE."
-WHERE SourceDatabaseSerNum=:SourceSystem
+WHERE sourceName=:SourceSystem
+AND AppointmentAriaSer=:SourceId
+");
+
+define("OPAL_GET_APPOINTMENT_PENDING_MH", "
+SELECT AppointmentSerNum, revisionId, ACTION, PatientSerNum, 
+sourceName, AppointmentAriaSer, PrioritySerNum, 
+DiagnosisSerNum, STATUS, State, ScheduledStartTime, 
+ScheduledEndTime, ActualStartDate, ActualEndDate, 
+Location, RoomLocation_EN, RoomLocation_FR, Checkin, LEVEL, 
+ChangeRequest, PendingDate, ProcessedDate, ReadStatus, 
+SessionId, LastUpdated
+FROM ".OPAL_APPOINTMENTS_PENDING_MH_TABLE."
+WHERE sourceName=:SourceSystem
 AND AppointmentAriaSer=:SourceId
 ");
 
@@ -1804,3 +1817,20 @@ const OPAL_GET_PUBLICATION_SETTINGS_TO_IGNORE = "
 const OPAL_DELETE_QUESTIONNAIRE_FREQUENCY_EVENTS = "
     DELETE FROM FrequencyEvents WHERE ControlTableSerNum = :ControlTableSerNum AND ControlTable = 'LegacyQuestionnaireControl';
 ";
+
+const UPDATE_APPOINTMENT_PENDING_LEVEL_IN_PROCESS = "
+    UPDATE ".OPAL_APPOINTMENTS_PENDING_TABLE." ap SET ap.`level` = ".APPOINTMENT_LEVEL_IN_PROCESS.", updatedBy = :updatedBy
+    WHERE ( SELECT COUNT(*) AS total FROM ".OPAL_APPOINTMENTS_PENDING_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s
+    ON s.SourceDatabaseName = a.sourceName WHERE s.SourceDatabaseName = ap.sourceName AND
+    s.Enabled = ".ACTIVE_RECORD." AND a.AppointmentAriaSer = ap.AppointmentAriaSer AND ap.`level` = ".APPOINTMENT_LEVEL_READY.") = 1
+";
+
+const GET_OLDEST_APPOINTMENT_PENDING_IN_PROCESS = "
+    SELECT ap.*, (SELECT a.AppointmentSerNum FROM ".OPAL_APPOINTMENTS_PENDING_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s
+    ON s.SourceDatabaseName = a.sourceName WHERE s.SourceDatabaseName = ap.sourceName AND s.Enabled = 1 AND
+    a.AppointmentAriaSer = ap.AppointmentAriaSer) AS AppointmentSerNum, (SELECT s1.SourceDatabaseSerNum FROM
+    ".OPAL_SOURCE_DATABASE_TABLE." s1 WHERE s1.SourceDatabaseName = ap.sourceName AND s1.Enabled = 1) AS SourceDatabaseSerNum
+    FROM ".OPAL_APPOINTMENTS_PENDING_TABLE." ap WHERE ap.`level` = 2 ORDER BY DateAdded ASC LIMIT 1;
+";
+
+const OPAL_DELETE_APPOINTMENT_PENDING = "DELETE FROM " . OPAL_APPOINTMENTS_PENDING_TABLE . " WHERE ID = :ID;";

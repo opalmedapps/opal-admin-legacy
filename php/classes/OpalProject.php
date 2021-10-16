@@ -102,13 +102,14 @@ abstract class OpalProject
         } else {
             $errCode = "0" . $errCode;
         }
-
+        
         // 3rd bit - MRN and site combo must exists
         if(bindec($errCode) != 0) {
             $patientSite = array();
             $errCode = "1" . $errCode;
-        } else {
-            $patientSite = $this->opalDB->getPatientSite($post["mrn"], $post["site"]);
+        } else {            
+            $patientSite = $this->opalDB->getPatientSite($post["mrn"], $post["site"]);            
+
             if(count($patientSite) != 1) {
                 $patientSite = array();
                 $errCode = "1" . $errCode;
