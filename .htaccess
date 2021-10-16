@@ -120,6 +120,7 @@ RewriteRule ^audit/get/audits php/audit/get.audits.php [QSA,L]
 # Cron Job section
 RewriteRule ^cron-job/update/resource-pending php/cron-job/update.resource.pending.php [QSA,L]
 RewriteRule ^cron-job/update/appointment-check-in php/cron-job/update.appointment.check.in.php [QSA,L]
+RewriteRule ^cron-job/update/appointment-pending php/cron-job/update.appointment.pending.php [QSA,L]
 
 # Cron Logs Section
 RewriteRule ^cron/get/cron-chart-logs php/cron/get.cron_chart_logs.php [QSA,L]

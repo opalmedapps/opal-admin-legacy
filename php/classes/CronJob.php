@@ -79,4 +79,44 @@ class CronJob extends OpalProject {
         $post = HelpSetup::arraySanitization($post);
         $this->_updateAppointmentCheckIn($post);
     }
+
+    /**
+     * Update appointment in appointmentPending table.
+     */
+    public function updateAppointmentPending(){
+        //$this->_checkCronAccess();
+        $ret = $this->opalDB->updateAppointmentPendingLevelInProcess();
+        
+        $appointmentPending = $this->opalDB->getOldestAppointmentPendingInProcess();
+        
+        $startTime = time();
+        while(count($appointmentPending) > 0 && (time() - $startTime) < 29) {            
+            $appointmentPending = $appointmentPending[0];
+            $appointmentPending["SourceDatabaseSerNum"] = $this->opalDB->getSourceId($appointmentPending["sourceName"])[0]['ID'];
+            $aliasInfos = $this->opalDB->getAlias('Appointment',$appointmentPending['appointmentTypeCode'], $appointmentPending['appointmentTypeDescription']);
+            if($appointmentPending["AppointmentSerNum"] == "" || $appointmentPending["SourceDatabaseSerNum"] == "")
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Appointment or source database missing.");
+            
+           // $this->_insertResources($appointmentPending["AppointmentSerNum"], $appointments, $appointmentPending["SourceDatabaseSerNum"]);
+            //$this->opalDB->deleteAppointmentPending($appointmentPending["AppointmentSerNum"]);
+            if(count($aliasInfos) == 1) { 
+                unset($appointmentPending["Level"]);
+                unset($appointmentPending["updatedBy"]);
+                unset($appointmentPending["sourceName"]);
+                unset($appointmentPending["DateModified"]);                
+                                                
+                unset($appointmentPending["appointmentTypeCode"]);   
+                unset($appointmentPending["appointmentTypeDescription"]); 
+                $appointmentPending["AliasExpressionSerNum"] = $aliasInfos[0]['AliasExpressionSerNum'];
+                //var_dump($appointmentPending);
+                
+                $this->opalDB->deleteAppointmentPending($appointmentPending["AppointmentSerNum"]);
+                unset($appointmentPending["AppointmentSerNum"]);
+                return $this->opalDB->insertAppointment($appointmentPending);
+
+            }  else {
+                break;
+            }
+        }
+    }
 }

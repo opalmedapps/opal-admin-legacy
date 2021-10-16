@@ -48,8 +48,7 @@ class Appointment extends Module
     protected function _validateAppointmentSourceExternalId(&$post, &$patientSite, &$source)  {
         $patientSite = array();
         $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
-
-
+        
         // 4th bit - source
         if(!array_key_exists("sourceSystem", $post) || $post["sourceSystem"] == "") {
             $errCode = "1" . $errCode;
@@ -79,7 +78,7 @@ class Appointment extends Module
     protected function _validateInsertAppointment(&$post, &$patientSite, &$source) {
         $post = HelpSetup::arraySanitization($post);
         $errCode = "";
-
+        
         if(is_array($post)){
             $errCode = $this->_validateAppointmentSourceExternalId($post, $patientSite, $source);
 
@@ -102,13 +101,13 @@ class Appointment extends Module
             }else{
                 $errCode = "0" . $errCode;
             }
-            //bit 6
+            //bit 7
             if(!array_key_exists("scheduledTimestamp", $post) || $post["scheduledTimestamp"] == ""){
                 $errCode = "1" . $errCode;
             }else{
                 $errCode = "0" . $errCode;
             }
-            //bit 6
+            //bit 8
             if(!array_key_exists("status", $post) || $post["status"] == ""){
                 $errCode = "1" . $errCode;
             }else{
@@ -190,6 +189,7 @@ class Appointment extends Module
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation" => 7)));
 
         $this->opalDB->deleteAppointment($currentAppointment["AppointmentSerNum"]);
+        
     }
 
     /**
@@ -231,7 +231,7 @@ class Appointment extends Module
         return bindec($errCode);
     }
 
-    /*
+    /**
      * Insert an appointment
      * @param $post array - contains the source name and the external appointment ID
      */
@@ -250,10 +250,10 @@ class Appointment extends Module
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>$errCode)));
 
         $toInsert = array(
-            "PatientSerNum"=>$patientSite["PatientSerNum"],
-            "SourceDatabaseSerNum"=>$source["SourceDatabaseSerNum"],
-            "AppointmentAriaSer"=>$post["sourceId"],
-            "PrioritySerNum"=>0,
+            "PatientSerNum" => $patientSite["PatientSerNum"],
+            "sourceName" => $source["SourceDatabaseName"],
+            "AppointmentAriaSer" => $post["sourceId"],
+            "PrioritySerNum" => 0,
             "DiagnosisSerNum" => 0,
             "Status" => $post["status"],
             "State" => "Active",
@@ -268,54 +268,69 @@ class Appointment extends Module
             "ChangeRequest" => 0,
             "DateAdded" => date("Y-m-d H:i:s"),
             "ReadStatus" => 0,
-            "SessionId"=>$this->opalDB->getSessionId(),
+            "updatedBy"=>$this->opalDB->getUsername(),
+            "SessionId" => $this->opalDB->getSessionId(),
         );
 
         $appointment = $this->opalDB->findAppointment($source["SourceDatabaseSerNum"],$post["sourceId"]);
-        if ($appointment["AppointmentSerNum"] != "") {
+        
+        if(count($appointment) > 0 ) {
+            $appointment = $appointment[0];
+            unset($toInsert["sourceName"]);
+            $toInsert["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];
             $toInsert["AppointmentSerNum"] = $appointment["AppointmentSerNum"];
         }
-
+        
         $aliasInfos = $this->opalDB->getAlias('Appointment',$post['appointmentTypeCode'], $post['appointmentTypeDescription']);
-        if(count($aliasInfos) <= 1) {
+        if(count($aliasInfos) == 1) {
             $this->_updateAppointmentPending($toInsert);
-
+            unset($toInsert["sourceName"]);
+            unset($toInsert["updatedBy"]);
+            $toInsert["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];
             $toInsert["AliasExpressionSerNum"] = $aliasInfos[0]['AliasExpressionSerNum'];
             return $this->opalDB->insertAppointment($toInsert);
         } else {
-            return $this->_insertAppointmentPending($toInsert);
-            return $this->_insertAppointmentPendingMH($toInsert);
+            $toInsert["Level"]  = 1;
+            $toInsert["appointmentTypeCode"] = $post['appointmentTypeCode'];
+            $toInsert["appointmentTypeDescription"] = $post['appointmentTypeDescription'];
+            $toInsert["AppointmentSerNum"] = $this->_insertAppointmentPending($toInsert, $source);
+            $this->_insertAppointmentPendingMH($toInsert, $source);
         }
-
         return false;
     }
 
     protected function _updateAppointmentPending($toInsert) {
-        $pendingAppointment = $this->opalDB->findPendingAppointment($toInsert["SourceDatabaseSerNum"],$toInsert["sourceId"]);
+        $pendingAppointment = $this->opalDB->findPendingAppointment($toInsert["SourceDatabaseSerNum"],$toInsert["AppointmentAriaSer"]);
         $this->opalDB->deleteAppointmentPending($pendingAppointment["AppointmentSerNum"]);
     }
 
-    protected function _insertAppointmentPending($toInsert) {
-        $pendingAppointment = $this->opalDB->findPendingAppointment($toInsert["SourceDatabaseSerNum"],$toInsert["sourceId"]);
-        $toInsert["Level"]  = 1;
-        if(count($pendingAppointment) < 1) {
-            $toInsert["AppointmentSerNum"] = $pendingAppointment["AppointmentSerNum"];
-            $toInsert["DateModified"] = date("Y-m-d H:i:s");
-            unset($toInsert["DateAdded"]);
-        }
+    protected function _insertAppointmentPending($toInsert, &$source) {        
+        $pendingAppointment = $this->opalDB->findPendingAppointment($source["SourceDatabaseName"],$toInsert["AppointmentAriaSer"]);
+        $toInsert["DateModified"] = date("Y-m-d H:i:s");
 
+        if(count($pendingAppointment) > 0) {
+            $pendingAppointment = $pendingAppointment[0];
+            $toInsert["AppointmentSerNum"] = $pendingAppointment["AppointmentSerNum"];            
+        }
+        unset($toInsert["SourceDatabaseSerNum"]);
         return $this->opalDB->insertPendingAppointment($toInsert);
     }
 
-    protected function _insertAppointmentPendingMH($toInsert) {
-        $pendingAppointment = $this->opalDB->findPendingMHAppointment($toInsert["SourceDatabaseSerNum"],$toInsert["sourceId"]);
-        $toInsert["Level"]  = 1;
-        if ($pendingAppointment["AppointmentSerNum"] != "") {
+    protected function _insertAppointmentPendingMH($toInsert, &$source) {
+        $pendingAppointment = $this->opalDB->findPendingMHAppointment($source["SourceDatabaseName"],$toInsert["AppointmentAriaSer"]);        
+        unset($toInsert["DateAdded"]);        
+
+        if(count($pendingAppointment) > 0) {
+            $pendingAppointment = $pendingAppointment[0];
             $toInsert["AppointmentSerNum"] = $pendingAppointment["AppointmentSerNum"];
-            unset($toInsert["DateAdded"]);
+            $toInsert["PendingDate"] = $pendingAppointment["PendingDate"];
+            $toInsert["action"] = "UPDATE";
         } else {
+            $toInsert["action"] = "INSERT";
             $toInsert["PendingDate"] = date("Y-m-d H:i:s");
         }
+
+        unset($toInsert["SourceDatabaseSerNum"]);
         return $this->opalDB->insertPendingMHAppointment($toInsert);
     }
 }

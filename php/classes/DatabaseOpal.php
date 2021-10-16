@@ -3575,7 +3575,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return array - an appointment details
      */
     function findAppointment($sourceSystem,$sourceId){
-        return $this->_fetch(OPAL_GET_APPOINTMENT_ID, array(
+        return $this->_fetchAll(OPAL_GET_APPOINTMENT_ID, array(
             array("parameter"=>":SourceSystem","variable"=>$sourceSystem,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":SourceId","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
         ));
@@ -3588,7 +3588,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return array - an appointment details
      */
     function findPendingAppointment($sourceSystem,$sourceId){
-        return $this->_fetch(OPAL_GET_APPOINTMENT_PENDING_ID, array(
+        return $this->_fetchAll(OPAL_GET_APPOINTMENT_PENDING_ID, array(
             array("parameter"=>":SourceSystem","variable"=>$sourceSystem,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":SourceId","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
         ));
@@ -3601,7 +3601,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return array - an appointment details
      */
     function findPendingMHAppointment($sourceSystem,$sourceId){
-        return $this->_fetch(OPAL_GET_APPOINTMENT_PENDING_MH_ID, array(
+        return $this->_fetchAll(OPAL_GET_APPOINTMENT_PENDING_MH, array(
             array("parameter"=>":SourceSystem","variable"=>$sourceSystem,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":SourceId","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
         ));
@@ -3631,7 +3631,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return int - number of row modified
      */
     function insertPendingMHAppointment($toInsert) {
-        return $this->_replaceRecordIntoTable(OPAL_APPOINTMENTS_PENDING_MH_TABLE, $toInsert);
+        return $this->_insertRecordIntoTable(OPAL_APPOINTMENTS_PENDING_MH_TABLE, $toInsert);        
     }
 
     /**
@@ -3876,5 +3876,21 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_execute(OPAL_DELETE_QUESTIONNAIRE_FREQUENCY_EVENTS, array(
             array("parameter"=>":ControlTableSerNum","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
         ));
+    }
+
+    /**
+     * Update ever appointment pending of level 1 with appointment ready to level 2.
+     * @return int - number or records affected
+     */
+    function updateAppointmentPendingLevelInProcess() {
+        return $this->_updateRecordIntoTable(UPDATE_APPOINTMENT_PENDING_LEVEL_IN_PROCESS, array("updatedBy"=>$this->getUsername()));
+    }
+
+    /**
+     * Return the oldest appointment pending marked as a level 2 (processing)
+     * @return array - data found
+     */
+    function getOldestAppointmentPendingInProcess() {
+        return $this->_fetchAll(GET_OLDEST_APPOINTMENT_PENDING_IN_PROCESS, array());
     }
 }

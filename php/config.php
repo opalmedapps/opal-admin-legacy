@@ -82,6 +82,8 @@ define("ALIAS_TYPE_DOCUMENT", 3);
 
 const RESOURCE_LEVEL_READY = 1;
 const RESOURCE_LEVEL_IN_PROCESS = 2;
+const APPOINTMENT_LEVEL_READY = 1;
+const APPOINTMENT_LEVEL_IN_PROCESS = 2;
 
 /*
  * Module ID of each module in the opalAdmin
