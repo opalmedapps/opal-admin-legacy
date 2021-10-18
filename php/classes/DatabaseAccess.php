@@ -425,8 +425,9 @@ class DatabaseAccess extends HelpSetup
             foreach($record as $key=>$value) {
                 array_push($fieldsName, "`$key`");
                 array_push($subFieldsName, "tblnm.$key");
-                array_push($ids,  "'$value'");
-                array_push($conditions, "tblnm.$key = :".$key.$cpt);
+                array_push($ids, ":$key$cpt");
+                if(empty($fieldsCondition) || in_array($key, $fieldsCondition))
+                    array_push($conditions, "tblnm.$key = :".$key.$cpt);
                 array_push($params, array("parameter"=>":".$key.$cpt, "variable"=>$value));
             }
             $subSql = str_replace("%%VALUES%%", implode(", ", $ids), SQL_GENERAL_INSERT_INTERSECTION_TABLE_SUB_REQUEST);
