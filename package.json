@@ -21,7 +21,6 @@
     "express": "^4.15.3",
     "firebase": "^3.7.6",
     "firebase-admin": "^4.2.0",
-    "npm": "^7.5.4",
     "validate-commit-message": "^3.0.1"
   }
 }

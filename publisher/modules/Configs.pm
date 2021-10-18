@@ -16,18 +16,9 @@ use JSON;
 # Get directory path of this file
 my $path_name = abs_path($0);
 # Strip child directories to get root path
-# 2021-06-03 KA cron refactor:
-# add these lines for all future modular cron controllers
 $path_name =~ s/publisher\/dataControl.pl//g;
 $path_name =~ s/publisher\/dataControl2.pl//g;
 $path_name =~ s/publisher\/modules\/PushNotificationFromPHP.pm//g;
-$path_name =~ s/publisher\/controls\/announcementControl.pl//g;
-$path_name =~ s/publisher\/controls\/documentControl.pl//g;
-$path_name =~ s/publisher\/controls\/txTeamMessagesControl.pl//g;
-$path_name =~ s/publisher\/controls\/patientsForPatientsControl.pl//g;
-$path_name =~ s/publisher\/controls\/legacyQuestionnaireControl.pl//g;
-$path_name =~ s/publisher\/controls\/educationalMaterialControl.pl//g;
-
 my $config_file = $path_name . 'config.json';
 
 # Get contents of config file

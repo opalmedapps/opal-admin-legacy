@@ -227,8 +227,8 @@ sub getPatientLocationHstryDateTime
 #====================================================================================
 sub getPatientLocationsFromSourceDB
 {
-	my @patientList = @_[0];
-    my $global_patientInfo_sql = @_[1];
+	my (@patientList) = @_; # a list of patients
+
 	my @patientLocationList = (); # initialize a list for PL objects
 
 	if (scalar @patientList == 0) {
@@ -291,18 +291,33 @@ sub getPatientLocationsFromSourceDB
 				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
 					DROP TABLE #tempPatient;
 
-				WITH PatientInfo (PatientAriaSer, LastTransfer, PatientSerNum) AS (
+				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
-			$patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
-			
+			my $numOfPatients = @patientList;
+			my $counter = 0;
+			foreach my $Patient (@patientList) {
+				my $patientSer 			= $Patient->getPatientSer();
+				my $id      		 	= $Patient->getPatientId(); # get patient ID
+				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
+
+				$patientInfo_sql .= "
+					SELECT '$id', '$patientLastTransfer', '$patientSer'
+				";
+
+				$counter++;
+				if ( $counter < $numOfPatients ) {
+					$patientInfo_sql .= "UNION";
+				}
+			}
 			$patientInfo_sql .= ")
 			Select c.* into #tempPL
 			from PatientInfo c;
-			Create Index temporaryindex on #tempPL (PatientAriaSer);
+			Create Index temporaryindex on #tempPL (ID);
 			Create Index temporaryindex2 on #tempPL (PatientSerNum);
 			
 			Select p.PatientSer, p.PatientId into #tempPatient
 			from VARIAN.dbo.Patient p;
+			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
 			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
 			";
 
@@ -326,7 +341,8 @@ sub getPatientLocationsFromSourceDB
 						#tempPL as PatientInfo
 					WHERE
 						sa.ActivityInstanceSer 			= ai.ActivityInstanceSer
-					AND	sa.PatientSer 					= PatientInfo.PatientAriaSer
+					AND	sa.PatientSer 					= (select pt.PatientSer 
+						from #tempPatient pt where pt.PatientId = PatientInfo.ID)
 					AND	ai.ActivitySer					= act.ActivitySer
 					AND	act.ActivityCode 				= lt.LookupValue
 					AND	sa.ScheduledActivitySer 		= pl.ScheduledActivitySer
@@ -445,7 +461,20 @@ sub getPatientLocationsFromSourceDB
 			my $numOfPatients = @patientList;
 			my $counter = 0;
 			my $databaseName = $Configs::OPAL_DB_NAME;
-			
+			# foreach my $Patient (@patientList) {
+				# my $patientSer 			= $Patient->getPatientSer();
+				# my $patientSSN          = $Patient->getPatientSSN(); # get ssn
+				# my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
+
+				# $patientInfo_sql .= "
+					# SELECT '$patientSSN' as SSN, '$patientLastTransfer' as LastTransfer, '$patientSer' as PatientSerNum
+				# ";
+
+				# $counter++;
+				# if ( $counter < $numOfPatients ) {
+					# $patientInfo_sql .= "UNION";
+				# }
+			# }
 
 			my $plInfo_sql = "
 				SELECT DISTINCT
@@ -497,7 +526,7 @@ sub getPatientLocationsFromSourceDB
 				}
 			}
 
-		
+			#print "$plInfo_sql\n";
 			# prepare query
 			
 			my $query = $sourceDatabase->prepare($plInfo_sql)
@@ -612,7 +641,6 @@ sub getPatientLocationsMHFromSourceDB
 
 		my $patientSer 				= $Patient->getPatientSer();
 		my $id      		 		= $Patient->getPatientId(); # get patient ID
-		my $patientAriaSer			= $Patient->getPatientSourceUID(); #patientAriaSer
 		my $patientLastTransfer		= $Patient->getPatientLastTransfer();
 
 		# reformat patient last transfer date
@@ -644,7 +672,8 @@ sub getPatientLocationsMHFromSourceDB
 						VARIAN.dbo.ScheduledActivity sa,
 						VARIAN.dbo.PatientLocationMH plmh
 					WHERE
-						sa.PatientSer 			= '$patientAriaSerW'
+						sa.PatientSer 			= (select pt.PatientSer 
+						from VARIAN.dbo.Patient pt where pt.PatientId = '$id')
 					AND	sa.ScheduledActivitySer = plmh.ScheduledActivitySer
 					AND plmh.PatientLocationSer = '$sourceuid'
 				";
@@ -733,6 +762,7 @@ sub getPatientLocationsMHFromSourceDB
 					AND pl.PatientLocationSerNum 	= '$sourceuid'
 					and mval.AppointSys <> 'Aria'
 					";
+
                 # print "$plInfo_sql\n";
 		        # prepare query
     		    my $query = $sourceDatabase->prepare($plInfo_sql)
