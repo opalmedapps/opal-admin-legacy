@@ -4,1064 +4,510 @@
  * TestResult class
  *
  */
-class TestResult extends Module {
-
+class TestResult extends Module
+{
     public function __construct($guestStatus = false) {
         parent::__construct(MODULE_TEST_RESULTS, $guestStatus);
     }
 
-    /**
-     *
-     * Updates the publish flag(s) in the database
-     *
-     * @param array $testResultList : a list of test results
-     * @param object $user : the current user in session
-     * @return array $response : response
-     */
-    public function updatePublishFlags( $testResultList, $user ) {
-        $this->checkWriteAccess(array($testResultList, $user));
-        $response = array(
-            'value'     => 0,
-            'message'   => ''
-        );
-        $userSer = $user['id'];
-        $sessionId = $user['sessionid'];
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            foreach ($testResultList as $testResult) {
-                $publishFlag = $testResult['publish'];
-                $serial = $testResult['serial'];
-                $sql = "
-                    UPDATE
-                        TestResultControl
-                    SET
-                        TestResultControl.PublishFlag = $publishFlag,
-                        TestResultControl.LastUpdatedBy = $userSer,
-                        TestResultControl.SessionId = '$sessionId'
-                    WHERE
-                        TestResultControl.TestResultControlSerNum = $serial
-                ";
-                $query = $host_db_link->prepare( $sql );
-                $query->execute();
+    /*
+     * Validate and sanitize a test result.
+     * @params  $post : array - data for the test result to validate
+     * Validation code :    Error validation code is coded as an int of 9 bits (value from 0 to 511). Bit informations
+     *                      are coded from right to left:
+     *                      1: english name missing
+     *                      2: french name missing
+     *                      3: english description missing
+     *                      4: french description missing
+     *                      5: english group missing
+     *                      6: french group missing
+     *                      7: test names missing or invalid
+     *                      8: educational material (if present) invalid
+     *                      9: serial is missing or invalid (when updating only)
+     * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
+     *          $errMsgs : array - contains the invalid entries with an error code.
+     * */
+    protected function _validateTestResult(&$post, $isAnUpdate = false)
+    {
+        $errCode = "";
+        $post = HelpSetup::arraySanitization($post);
+
+        if (is_array($post)) {
+
+            //1st bit
+            if (!array_key_exists("name_EN", $post) || $post["name_EN"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            //2nd bit
+            if (!array_key_exists("name_FR", $post) || $post["name_FR"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            //3rd bit
+            if (!array_key_exists("description_EN", $post) || $post["description_EN"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            //4th bit
+            if (!array_key_exists("description_FR", $post) || $post["description_FR"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            //5th bit
+            if (!array_key_exists("group_EN", $post) || $post["group_EN"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            //6th bit
+            if (!array_key_exists("group_FR", $post) || $post["group_FR"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            //7th bit
+            if (!array_key_exists("tests", $post) || !is_array($post["tests"]) || count($post["tests"]) <= 0) {
+                $errCode = "1" . $errCode;
+            } else {
+                $allGood = true;
+                if (is_array($post["tests"])) {
+                    $tempTest = array();
+                    foreach ($post["tests"] as $test) {
+                        if (!array_key_exists("id", $test) || $test["id"] == "") {
+                            $allGood = false;
+                            break;
+                        } else
+                            array_push($tempTest, $test["id"]);
+                    }
+                    if($allGood) {
+                        $found = $this->opalDB->countTestExpressionsIDs($tempTest);
+                        if($found["total"] != count($tempTest))
+                            $allGood = false;
+                    }
+                } else
+                    $allGood = false;
+                if (!$allGood)
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
             }
 
-            $this->sanitizeEmptyTestResults($user);
+            //8th bit
+            if (array_key_exists("eduMat", $post) && $post["eduMat"] != "") {
+                if (!is_array($post["eduMat"]) || !array_key_exists("serial", $post["eduMat"]) || $post["eduMat"]["serial"] == "") {
+                    $errCode = "1" . $errCode;
+                } else {
+                    $count = $this->opalDB->doesEduMaterialExists($post["eduMat"]["serial"]);
+                    if (count($count) < 1)
+                        $errCode = "1" . $errCode;
+                    else if (count($count) == 1)
+                        $errCode = "0" . $errCode;
+                    else
+                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated entries detected in the records. Please contact your administrator.");
+                }
+            } else
+                $errCode = "0" . $errCode;
 
-            $response['value'] = 1; // Success
-            return $response;
-        } catch( PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
-        }
+            //9th bit - deprecated
+            /*            if (array_key_exists("additional_links", $post)) {
+                            if (is_array($post["additional_links"])) {
+                                $allGood = true;
+                                $addId = array();
+                                foreach ($post["additional_links"] as $link) {
+                                    if ((!array_key_exists("name_EN", $link) || $link["name_EN"] == "") || (!array_key_exists("name_FR", $link) || $link["name"] == "name_FR") || (!array_key_exists("url_EN", $link) || $link["url_EN"] == "") || (!array_key_exists("url_FR", $link) || $link["url_FR"] == "")) {
+                                        $allGood = false;
+                                        break;
+                                    } else if (array_key_exists("serial", $link) && $link["serial"] != "") {
+                                        array_push($addId, $link["serial"]);
+                                    }
+
+                                }
+                                if (!$allGood)
+                                    $errCode = "1" . $errCode;
+                                else {
+                                    if(count($addId) > 0) {
+                                        $totalCount = $this->opalDB->countTestResultsAdditionalLinks($addId);
+                                        if($totalCount["total"] != count($addId))
+                                            $errCode = "1" . $errCode;
+                                        else
+                                            $errCode = "0" . $errCode;
+                                    } else
+                                        $errCode = "0" . $errCode;
+                                }
+                            } else
+                                $errCode = "1" . $errCode;
+                        } else
+                            $errCode = "0" . $errCode;*/
+
+            //9th bit
+            if ($isAnUpdate) {
+                if (!array_key_exists("serial", $post) || $post["serial"] == "")
+                    $errCode = "1" . $errCode;
+                else {
+                    $result = $this->opalDB->getTestResultDetails($post["serial"]);
+                    if (count($result) < 1)
+                        $errCode = "1" . $errCode;
+                    else if (count($result) == 1)
+                        $errCode = "0" . $errCode;
+                    else
+                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates test results found.");
+                }
+            } else
+                $errCode = "0" . $errCode;
+
+
+        } else
+            $errCode = "111111111";
+        return $errCode;
     }
 
-    /**
-     *
-     * Gets details on a particular test result
-     *
-     * @param integer $serial : the serial number of the test result
-     * @return array $testResultDetails : the test result details
-     */
-    public function getTestResultDetails ($serial) {
-        $this->checkReadAccess($serial);
-        $testResultDetails = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    tr.Name_EN,
-                    tr.Name_FR,
-                    tr.Description_EN,
-                    tr.Description_FR,
-                    tr.Group_EN,
-                    tr.Group_FR,
-                    tr.EducationalMaterialControlSerNum
-                FROM
-                    TestResultControl tr
-                WHERE
-                    tr.TestResultControlSerNum = $serial
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
+    /*
+     * Delete a specific test result if it exists. If it does not, return an error 422 with validation code 1.
+     * @params  $post - int : ID of the test result to delete
+     * @return  void
+     * */
+    public function deleteTestResult($post)
+    {
+        $this->checkDeleteAccess($post);
 
-            $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
-
-            $name_EN            = $data[0];
-            $name_FR            = $data[1];
-            $description_EN     = $data[2];
-            $description_FR     = $data[3];
-            $group_EN           = $data[4];
-            $group_FR           = $data[5];
-            $eduMatSer          = $data[6];
-            $tests              = array();
-            $additionalLinks    = array();
-
-            $eduMat         = "";
-
-            $sql = "
-                SELECT DISTINCT
-                    tre.ExpressionName
-                FROM
-                    TestResultExpression tre
-                WHERE
-                    tre.TestResultControlSerNum = $serial
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $testArray = array(
-                    'name'  => $data[0],
-                    'id'    => $data[0],
-                    'added' => 1
-                );
-
-                array_push($tests, $testArray);
-            }
-
-            if ($eduMatSer != 0) {
-                $eduMat = $this->_getEducationalMaterialDetails($eduMatSer);
-            }
-
-            $sql = "
-                SELECT DISTINCT
-                    tral.TestResultAdditionalLinksSerNum,
-                    tral.Name_EN,
-                    tral.Name_FR,
-                    tral.URL_EN,
-                    tral.URL_FR
-                FROM
-                    TestResultAdditionalLinks tral
-                WHERE
-                    tral.TestResultControlSerNum = $serial
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $linkSer        = $data[0];
-                $linkName_EN    = $data[1];
-                $linkName_FR    = $data[2];
-                $linkURL_EN     = urldecode($data[3]);
-                $linkURL_FR     = urldecode($data[4]);
-
-                $linkDetails = array (
-                    'serial'        => $linkSer,
-                    'name_EN'       => $linkName_EN,
-                    'name_FR'       => $linkName_FR,
-                    'url_EN'        => $linkURL_EN,
-                    'url_FR'        => $linkURL_FR
-                );
-                array_push($additionalLinks, $linkDetails);
-            }
-
-            $testResultDetails = array(
-                'name_EN'           => $name_EN,
-                'name_FR'           => $name_FR,
-                'description_EN'    => $description_EN,
-                'description_FR'    => $description_FR,
-                'group_EN'          => $group_EN,
-                'group_FR'          => $group_FR,
-                'serial'            => $serial,
-                'eduMatSer'         => $eduMatSer,
-                'eduMat'            => $eduMat,
-                'count'             => count($tests),
-                'tests'             => $tests,
-                'additional_links'  => $additionalLinks
-            );
-            return $testResultDetails;
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
+        $errCode = "";
+        if (!array_key_exists("serial", $post) || $post["serial"] == "")
+            $errCode = "1";
+        else {
+            $result = $this->opalDB->getTestResultDetails($post["serial"]);
+            if (count($result) < 1)
+                $errCode = "1";
+            else if (count($result) == 1)
+                $errCode = "0";
+            else
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates test results found.");
         }
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+
+        $this->opalDB->unsetTestResultExpressions($post["serial"]);
+//        $this->opalDB->deleteTestResultAdditionalLinks($post["serial"]);
+        $this->opalDB->deleteTestResult($post["serial"]);
     }
 
-    /**
-     *
-     * Gets a list of test result groups
-     *
-     * @return array $groups : the list of existing test groups
-     */
-    public function getTestResultGroups () {
+    /*
+     * Get the list of educational materials available.
+     * @params  void
+     * @return  array : list of educational materials
+     * */
+    public function getEducationalMaterials()
+    {
         $this->checkReadAccess();
-        $groups = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    trc.Group_EN,
-                    trc.Group_FR
-                FROM
-                    TestResultControl trc
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $groupDetails = array(
-                    'EN'    => $data[0],
-                    'FR'    => $data[1]
-                );
-                array_push($groups, $groupDetails);
-            }
-
-            return $groups;
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
-        }
+        return $this->_getListEduMaterial();
     }
 
-    /**
-     *
-     * Gets a list of test result names from a source database
-     *
-     * @return array $testNames : the list of test names
-     */
-    public function getTestNames() {
+    /*
+     * Get the list of all test names available, and assigned test results if it exists.
+     * @params  void
+     * @returns $final : array - contains test names and assigned test results if it exists.
+     * */
+    public function getTestNames()
+    {
         $this->checkReadAccess();
-        $testNames = array();
-        $databaseObj = new Database();
+        $results = $this->opalDB->getTestNames();
+        $final = array();
 
-        try {
-
-            // get already assigned expressions from our database
-            $assignedTests = $this->getAssignedTests();
-
-            // ***********************************
-            // ARIA
-            // ***********************************
-            $sourceDBSer = ARIA_SOURCE_DB;
-            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
-            if ($source_db_link) {
-
-                $sql = "
-                    SELECT DISTINCT
-                        tr.comp_name
-                    FROM
-                        VARIAN.dbo.test_result tr
-                ";
-                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                $query->execute();
-
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $testName = $data[0];
-                    $testArray = array(
-                        'name'      => $testName,
-                        'id'        => $testName,
-                        'added'     => 0,
-                        'assigned'  => null
-                    );
-                    $assignedTest = $this->assignedSearch($testName, $assignedTests);
-                    if ($assignedTest) {
-                        $testArray['added'] = 0;
-                        $testArray['assigned'] = $assignedTest;
-                    }
-                    array_push($testNames, $testArray);
-                }
-
-            }
-
-            // ***********************************
-            // WaitRoomManagement
-            // ***********************************
-            $sourceDBSer = ORMS_SOURCE_DB;
-            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
-            if ($source_db_link) {
-
-                $sql = "SELECT 'QUERY_HERE'";
-                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                $query->execute();
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    // Set appropriate test result data here from query
-
-                    //array_push($testNames, $testArray); // Uncomment for use
-                }
-
-            }
-
-            // ***********************************
-            // Mosaiq
-            // ***********************************
-            $sourceDBSer = MOSAIQ_SOURCE_DB;
-            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
-            if ($source_db_link) {
-
-                $sql = "SELECT 'QUERY_HERE'";
-                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                $query->execute();
-
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                    // Set appropriate test result data here from query
-                    //array_push($testNames, $testArray); // Uncomment for use
-                }
-
-            }
-
-            return $testNames;
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for lab results. " . $e->getMessage());
+        foreach ($results as $result) {
+            array_push($final, array(
+                "added"=>0,
+                "id"=>$result["id"],
+                "name"=>$result["name"],
+                "assigned"=>(!is_null($result["TestControlSerNum"]) ? array("id"=>$result["TestControlSerNum"], "name_EN"=>$result["name_EN"]) : null)
+            ));
         }
+        return $final;
     }
 
+    /*
+     * Get the details of a test results. It includes the expression names, and educational material if present.
+     * @params  $post - array - contains only the serial or ID
+     * @return  $result - contains all the details of the test result
+     * */
+    public function getTestResultDetails($post)
+    {
+        $this->checkReadAccess($post);
+        $id = intval($post["serial"]);
 
-    /**
-     *
-     * Gets a list of already assigned tests in our database
-     *
-     * @return array $tests : the list of tests
-     */
-    public function getAssignedTests () {
-        $tests = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT 
-                    tre.ExpressionName,
-                    trc.Name_EN
-                FROM 
-                    TestResultExpression tre,
-                    TestResultControl trc
-                WHERE
-                    trc.TestResultControlSerNum = tre.TestResultControlSerNum
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
+        $result = $this->opalDB->getTestResultDetails($id);
+        if (count($result) < 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation" => 1)));
+        else if (count($result) == 1)
+            $result = $result[0];
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates test results found.");
 
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+        $result["tests"] = $this->opalDB->getTestExpressionNames($id);
+        $result["count"] = count($result["tests"]);
+//        $result["additional_links"] = $this->opalDB->getTestResultAdditionalLinks($id);
 
-                $testResultDetails = array(
-                    'id'     => $data[0],
-                    'name_EN'       => "$data[1]"
-                );
-                array_push($tests, $testResultDetails);
-            }
+        $result["eduMat"] = array();
+        if (intval($result["eduMatSer"]) != 0)
+            $result["eduMat"] = $this->_getEducationalMaterialDetails(intval($result["eduMatSer"]));
 
-            return $tests;
-
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
-        }
+        return $result;
     }
 
-    /**
-     *
-     * Inserts a test result into the database
-     *
-     * @param array $testResultDetails : the test result details
-     * @return void
-     */
-    public function insertTestResult ($testResultDetails) {
-        $this->checkWriteAccess($testResultDetails);
-        $name_EN            = $testResultDetails['name_EN'];
-        $name_FR            = $testResultDetails['name_FR'];
-        $description_EN     = $testResultDetails['description_EN'];
-        $description_FR     = $testResultDetails['description_FR'];
-        $group_EN           = $testResultDetails['group_EN'];
-        $group_FR           = $testResultDetails['group_FR'];
-        $tests              = $testResultDetails['tests'];
-        $additionalLinks    = $testResultDetails['additional_links'];
-        $userSer            = $testResultDetails['user']['id'];
-        $sessionId          = $testResultDetails['user']['sessionid'];
-        $eduMatSer          = 'NULL';
-        if ( is_array($testResultDetails['edumat']) && isset($testResultDetails['edumat']['serial']) ) {
-            $eduMatSer = $testResultDetails['edumat']['serial'];
-        }
-
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                INSERT INTO
-                    TestResultControl (
-                        Name_EN,
-                        Name_FR,
-                        Description_EN,
-                        Description_FR,
-                        Group_EN,
-                        Group_FR,
-                        EducationalMaterialControlSerNum,
-                        DateAdded,
-                        LastPublished,
-                        LastUpdatedBy,
-                        SessionId
-                    )
-                VALUES (
-                    \"$name_EN\",
-                    \"$name_FR\",
-                    \"$description_EN\",
-                    \"$description_FR\",
-                    \"$group_EN\",
-                    \"$group_FR\",
-                    $eduMatSer,
-                    NOW(),
-                    NOW(),
-                    $userSer,
-                    '$sessionId'
-                )
-            ";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-            $testResultSer = $host_db_link->lastInsertId();
-
-            foreach ($tests as $test) {
-
-                $name   = $test['name'];
-
-                $sql = "
-                    INSERT INTO
-                        TestResultExpression (
-                            TestResultControlSerNum,
-                            ExpressionName,
-                            DateAdded,
-                            LastUpdatedBy,
-                            SessionId
-                        )
-                    VALUES (
-                        '$testResultSer',
-                        \"$name\",
-                        NOW(),
-                        '$userSer',
-                        '$sessionId'
-                    )
-                    ON DUPLICATE KEY UPDATE 
-                        TestResultControlSerNum = '$testResultSer',
-                        LastUpdatedBy = '$userSer',
-                        SessionId = '$sessionId'
-                ";
-                $query = $host_db_link->prepare( $sql );
-                $query->execute();
-            }
-
-            if ($additionalLinks) {
-                foreach ($additionalLinks as $link) {
-
-                    $linkName_EN        = $link['name_EN'];
-                    $linkName_FR        = $link['name_FR'];
-                    $linkURL_EN         = $link['url_EN'];
-                    $linkURL_FR         = $link['url_FR'];
-
-                    $sql = "
-                        INSERT INTO 
-                            TestResultAdditionalLinks (
-                                TestResultControlSerNum,
-                                Name_EN,
-                                Name_FR,
-                                URL_EN,
-                                URL_FR,
-                                DateAdded
-                            )
-                        VALUES (
-                            '$testResultSer',
-                            \"$linkName_EN\",
-                            \"$linkName_FR\",
-                            \"$linkURL_EN\",
-                            \"$linkURL_FR\",
-                            NOW()
-                        )
-                    ";
-                    $query = $host_db_link->prepare( $sql );
-                    $query->execute();
-                }
-            }
-
-            $this->sanitizeEmptyTestResults($testResultDetails['user']);
-
-        } catch( PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
-        }
-
-    }
-
-    /**
-     *
-     * Gets a list of existing test results in the database
-     *
-     * @return array $testResultList : the list of existing test results
-     */
-    public function getExistingTestResults () {
+    /*
+     * Get the list of test result groups in french and english
+     * @params  void
+     * @return  array - list of the result group
+     * */
+    public function getTestResultGroups()
+    {
         $this->checkReadAccess();
-        $testResultList = array();
-
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    tr.TestResultControlSerNum,
-                    tr.Name_EN,
-                    tr.Name_FR,
-                    tr.Description_EN,
-                    tr.Description_FR,
-                    tr.Group_EN,
-                    tr.Group_FR,
-                    tr.PublishFlag,
-                    tr.EducationalMaterialControlSerNum
-                FROM
-                    TestResultControl tr
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $testResultSer          = $data[0];
-                $name_EN                = $data[1];
-                $name_FR                = $data[2];
-                $description_EN         = $data[3];
-                $description_FR         = $data[4];
-                $group_EN               = $data[5];
-                $group_FR               = $data[6];
-                $publishFlag            = $data[7];
-                $eduMatSer              = $data[8];
-                $eduMat                 = "";
-                $tests                  = array();
-                $additionalLinks        = array();
-
-                $sql = "
-                    SELECT DISTINCT
-                        tre.ExpressionName
-                    FROM
-                        TestResultExpression tre
-                    WHERE
-                        tre.TestResultControlSerNum = $testResultSer
-                ";
-
-                $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $secondQuery->execute();
-
-                while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $testNameArray = array(
-                        'name'  => $secondData[0],
-                        'id'    => $secondData[0],
-                        'added' => 1
-                    );
-
-                    array_push($tests, $testNameArray);
-                }
-
-                if ($eduMatSer != 0) {
-                    $eduMat = $this->_getEducationalMaterialDetails($eduMatSer);
-                }
-
-                $sql = "
-                    SELECT DISTINCT
-                        tral.TestResultAdditionalLinksSerNum,
-                        tral.Name_EN,
-                        tral.Name_FR,
-                        tral.URL_EN,
-                        tral.URL_FR
-                    FROM
-                        TestResultAdditionalLinks tral
-                    WHERE
-                        tral.TestResultControlSerNum = $testResultSer
-                ";
-                $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $secondQuery->execute();
-
-                while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                    $linkSer        = $secondData[0];
-                    $linkName_EN    = $secondData[1];
-                    $linkName_FR    = $secondData[2];
-                    $linkURL_EN     = urldecode($secondData[3]);
-                    $linkURL_FR     = urldecode($secondData[4]);
-
-                    $linkDetails = array (
-                        'serial'        => $linkSer,
-                        'name_EN'       => $linkName_EN,
-                        'name_FR'       => $linkName_FR,
-                        'url_EN'        => $linkURL_EN,
-                        'url_FR'        => $linkURL_FR
-                    );
-                    array_push($additionalLinks, $linkDetails);
-                }
-
-                $testArray = array(
-                    'name_EN'           => $name_EN,
-                    'name_FR'           => $name_FR,
-                    'serial'            => $testResultSer,
-                    'description_EN'    => $description_EN,
-                    'description_FR'    => $description_FR,
-                    'group_EN'          => $group_EN,
-                    'group_FR'          => $group_FR,
-                    'publish'           => $publishFlag,
-                    'changed'           => 0,
-                    'eduMatSer'         => $eduMatSer,
-                    'eduMat'            => $eduMat,
-                    'tests'             => $tests,
-                    'count'             => count($tests),
-                    'additional_links'  => $additionalLinks
-                );
-
-                array_push($testResultList, $testArray);
-            }
-            return $testResultList;
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
-        }
+        return $this->opalDB->getTestResultGroups();
     }
 
-    /**
-     *
-     * Updates test result details in the database
-     *
-     * @param array $testResultDetails : the test result details
-     * @return array : response
-     */
-    public function updateTestResult ($testResultDetails) {
-        $this->checkWriteAccess($testResultDetails);
-        $name_EN            = $testResultDetails['name_EN'];
-        $name_FR            = $testResultDetails['name_FR'];
-        $description_EN     = $testResultDetails['description_EN'];
-        $description_FR     = $testResultDetails['description_FR'];
-        $group_EN           = $testResultDetails['group_EN'];
-        $group_FR           = $testResultDetails['group_FR'];
-        $serial             = $testResultDetails['serial'];
-        $tests              = $testResultDetails['tests'];
-        $eduMatSer          = $testResultDetails['edumatser'] ? $testResultDetails['edumatser'] : 'NULL';
-        $additionalLinks    = $testResultDetails['additional_links'];
-        $userSer            = $testResultDetails['user']['id'];
-        $sessionId          = $testResultDetails['user']['sessionid'];
-
-        $existingTests      = array();
-
-        $detailsUpdated     = $testResultDetails['details_updated'];
-        $testNamesUpdated   = $testResultDetails['test_names_updated'];
-        $additionalLinksUpdated     = $testResultDetails['additional_links_updated'];
-
-        $response = array(
-            'value'     => 0,
-            'message'   => ''
-        );
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            if ($detailsUpdated) {
-                $sql = "
-                    UPDATE
-                        TestResultControl
-                    SET
-                        TestResultControl.Name_EN           = \"$name_EN\",
-                        TestResultControl.Name_FR           = \"$name_FR\",
-                        TestResultControl.Description_EN    = \"$description_EN\",
-                        TestResultControl.Description_FR    = \"$description_FR\",
-                        TestResultControl.Group_EN          = \"$group_EN\",
-                        TestResultControl.Group_FR          = \"$group_FR\",
-                        TestResultControl.EducationalMaterialControlSerNum = $eduMatSer,
-                        TestResultControl.LastUpdatedBy     = $userSer,
-                        TestResultControl.SessionId         = '$sessionId'
-                    WHERE
-                        TestResultControl.TestResultControlSerNum = $serial
-                ";
-
-                $query = $host_db_link->prepare( $sql );
-                $query->execute();
-            }
-
-            if ($testNamesUpdated) {
-
-                $sql = "
-                    SELECT DISTINCT
-                        tre.ExpressionName
-                    FROM
-                        TestResultExpression tre
-                    WHERE
-                        tre.TestResultControlSerNum = $serial
-                ";
-                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
-
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                    array_push($existingTests, $data[0]);
-                }
-
-                // If old test names not in new test names, delete from database
-                foreach ($existingTests as $existingTestName) {
-                    if (!in_array($existingTestName, $tests)) {
-                        $sql = "
-                            DELETE FROM
-                                TestResultExpression
-                            WHERE
-                                TestResultExpression.ExpressionName = \"$existingTestName\"
-                            AND TestResultExpression.TestResultControlSerNum = $serial
-                        ";
-
-                        $query = $host_db_link->prepare( $sql );
-                        $query->execute();
-
-                        $sql = "
-                            UPDATE TestResultExpressionMH
-                            SET 
-                                TestResultExpressionMH.LastUpdatedBy = '$userSer',
-                                TestResultExpressionMH.SessionId = '$sessionId'
-                            WHERE
-                                TestResultExpressionMH.ExpressionName = \"$existingTestName\"
-                            ORDER BY TestResultExpressionMH.RevSerNum DESC 
-                            LIMIT 1
-                        ";
-                        $query = $host_db_link->prepare( $sql );
-                        $query->execute();
-                    }
-                }
-
-                // If new test names, insert into database
-                foreach ($tests as $test) {
-                    if(!in_array($test, $existingTests)) {
-                        $sql = "
-                            INSERT INTO
-                                TestResultExpression (
-                                    TestResultControlSerNum,
-                                    ExpressionName,
-                                    LastUpdatedBy,
-                                    SessionId
-                                )
-                            VALUES (
-                                '$serial',
-                                \"$test\",
-                                '$userSer',
-                                '$sessionId'
-                            )
-                            ON DUPLICATE KEY UPDATE
-                                TestResultControlSerNum = '$serial',
-                                LastUpdatedBy = '$userSer',
-                                SessionId = '$sessionId'
-                        ";
-
-                        $query = $host_db_link->prepare( $sql );
-                        $query->execute();
-                    }
-                }
-            }
-
-            if ($additionalLinksUpdated) {
-
-                // clear existing links
-                $sql = "
-                    DELETE FROM 
-                        TestResultAdditionalLinks
-                    WHERE
-                        TestResultAdditionalLinks.TestResultControlSerNum = '$serial'
-                ";
-                $query = $host_db_link->prepare( $sql );
-                $query->execute();
-
-                if ($additionalLinks) {
-                    // add new links
-                    foreach ($additionalLinks as $link) {
-
-                        $linkName_EN        = $link['name_EN'];
-                        $linkName_FR        = $link['name_FR'];
-                        $linkURL_EN         = $link['url_EN'];
-                        $linkURL_FR         = $link['url_FR'];
-
-                        $sql = "
-                            INSERT INTO 
-                                TestResultAdditionalLinks (
-                                    TestResultControlSerNum,
-                                    Name_EN,
-                                    Name_FR,
-                                    URL_EN,
-                                    URL_FR,
-                                    DateAdded
-                                )
-                            VALUES (
-                                '$serial',
-                                \"$linkName_EN\",
-                                \"$linkName_FR\",
-                                \"$linkURL_EN\",
-                                \"$linkURL_FR\",
-                                NOW()
-                            )
-                        ";
-                        $query = $host_db_link->prepare( $sql );
-                        $query->execute();
-                    }
-                }
-            }
-
-            $this->sanitizeEmptyTestResults($testResultDetails['user']);
-
-            $response['value'] = 1; // Success
-            return $response;
-
-        } catch( PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
-        }
+    /*
+     * Get the list of all test results available
+     * @params  void
+     * @return  array - list of all test results
+     * */
+    public function getTestResults()
+    {
+        $this->checkReadAccess();
+        return $this->opalDB->getTestResults();
     }
 
-    /**
-     *
-     * Removes a test result from the database
-     *
-     * @param integer $testResultSer : the serial number of the test result
-     * @param object $user : the current user in session
-     * @return array $response : response
-     */
-    public function deleteTestResult ($testResultSer, $user) {
-        $this->checkDeleteAccess(array($testResultSer, $user));
-        $response = array(
-            'value'     => 0,
-            'message'   => ''
+    /*
+     * Insert a new test result after validation.
+     * @params  $post - array - contains the test results details
+     * @return  200 or error 422 with array (validation=>integer) for a validation error
+     * */
+    public function insertTestResult($post)
+    {
+        $this->checkWriteAccess($post);
+        $errCode = $this->_validateTestResult($post);
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        //Insert into test result control
+        $toInsert = array(
+            "Name_EN" => $post['name_EN'],
+            "Name_FR" => $post['name_FR'],
+            "Description_EN" => $post['description_EN'],
+            "Description_FR" => $post['description_FR'],
+            "Group_EN" => $post['group_EN'],
+            "Group_FR" => $post['group_FR'],
+            "PublishFlag" => 0,
+            "EducationalMaterialControlSerNum" => (is_array($post['eduMat']) && isset($post['eduMat']['serial'])) ? $post['eduMat']['serial'] : null,
         );
 
-        $userSer = $user['id'];
-        $sessionId = $user['sessionid'];
+        $newId = $this->opalDB->insertTestResult($toInsert);
 
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "
-                DELETE FROM
-                    TestResultExpression
-                WHERE
-                    TestResultExpression.TestResultControlSerNum = $testResultSer
-            ";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-            $sql = "
-                DELETE FROM
-                    TestResultAdditionalLinks
-                WHERE
-                    TestResultAdditionalLinks.TestResultControlSerNum = $testResultSer
-            ";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-            $sql = "
-                DELETE FROM
-                    TestResultControl
-                WHERE
-                    TestResultControl.TestResultControlSerNum = $testResultSer
-            ";
-
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-            $sql = "
-                UPDATE TestResultControlMH
-                SET 
-                    TestResultControlMH.LastUpdatedBy = '$userSer',
-                    TestResultControlMH.SessionId = '$sessionId'
-                WHERE
-                    TestResultControlMH.TestResultControlSerNum = $testResultSer
-                ORDER BY TestResultControlMH.RevSerNum DESC 
-                LIMIT 1
-            ";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-
-            $response['value'] = 1;
-            return $response;
-
-        } catch( PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
+        //Insert into test result expression
+        foreach ($post['tests'] as $test) {
+            $this->opalDB->updateTextExpression($newId, $test["id"]);
         }
+
+        //Insert into Test Result Additional links
+/*        $toInsertMultipleLinks = array();
+        if ($post['additional_links']) {
+            foreach ($post['additional_links'] as $link) {
+                array_push($toInsertMultipleLinks, array(
+                    "TestResultControlSerNum" => $newId,
+                    "Name_EN" => $link['name_EN'],
+                    "Name_FR" => $link['name_FR'],
+                    "URL_EN" => $link['url_EN'],
+                    "URL_FR" => $link['url_FR'],
+                ));
+            }
+            if (count($toInsertMultipleLinks) > 0)
+                $this->opalDB->insertTestResultAdditionalLinks($toInsertMultipleLinks);
+        }*/
+
+        // This function sanitize and deactivate the publish flags of test results without any test name, otherwise
+        // the cron job will crash (don't ask)
+        $this->opalDB->sanitizeEmptyTestResults();
     }
 
-    /**
-     *
-     * Removes publish flag for test results without assigned tests
-     *
-     * @param object $user : the session user
-     * @return void
-     */
-    public function sanitizeEmptyTestResults($user) {
-        $userSer = $user['id'];
-        $sessionId = $user['sessionid'];
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                UPDATE 
-                    TestResultControl 
-                LEFT JOIN 
-                    TestResultExpression 
-                ON  TestResultControl.TestResultControlSerNum = TestResultExpression.TestResultControlSerNum
-                SET 
-                    TestResultControl.PublishFlag       = 0, 
-                    TestResultControl.LastUpdatedBy     = $userSer,
-                    TestResultControl.SessionId         = '$sessionId'
-                WHERE  
-                    TestResultExpression.TestResultControlSerNum IS NULL 
-            ";
+    /*
+     * Return the global test result chart log or for a specific test result if an ID is specified
+     * @params  $post - array : may or may not contain ID of the test result
+     * @return  $testResultLogs - array : contains all the logs of test result(s)
+     * */
+/*    public function getTestResultChartLogs($post)
+    {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
 
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-            return;
-        } catch( PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
+        if (!array_key_exists("serial", $post) || $post["serial"] == "")
+            $id = false;
+        else {
+            $result = $this->opalDB->getTestResultDetails($post["serial"]);
+            if (count($result) < 1)
+                $errCode = "1";
+            else if (count($result) == 1)
+                $errCode = "0";
+            else
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates test results found.");
+            $errCode = bindec($errCode);
+            if ($errCode != 0)
+                HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+            $id = $post["serial"];
         }
-    }
 
-    /**
-     *
-     * Gets chart logs of a test result or results
-     *
-     * @param integer $serial : the test result serial number
-     * @return array $testResultLogs : the test result logs for highcharts
-     */
-    public function getTestResultChartLogs ($serial) {
-        $this->checkReadAccess($serial);
+        if(!$id)
+            $results = $this->opalDB->getTestResultChartLog();
+        else
+            $results = $this->opalDB->getTestResultChartLogById($id);
+
         $testResultLogs = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = null;
-            // get all logs for all test results
-            if (!$serial) {
-
-                $sql = "
-                    SELECT DISTINCT
-                        trmh.CronLogSerNum,
-                        COUNT(trmh.CronLogSerNum),
-                        cl.CronDateTime,
-                        trc.Name_EN
-                    FROM
-                        TestResultMH trmh,
-                        TestResultExpression tre,
-                        CronLog cl,
-                        TestResultControl trc
-                    WHERE
-                        cl.CronStatus = 'Started'
-                    AND cl.CronLogSerNum = trmh.CronLogSerNum
-                    AND trmh.CronLogSerNum IS NOT NULL
-                    AND trmh.TestResultExpressionSerNum = tre.TestResultExpressionSerNum
-                    AND tre.TestResultControlSerNum = trc.TestResultControlSerNum
-                    GROUP BY
-                        trmh.CronLogSerNum,
-                        cl.CronDateTime
-                    ORDER BY 
-                        cl.CronDateTime ASC 
-                ";
-
-                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
-
-                $testResultSeries = array();
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $seriesName = $data[3];
-                    $testResultDetail = array (
-                        'x' => $data[2],
-                        'y' => intval($data[1]),
-                        'cron_serial' => $data[0]
-                    );
-                    if(!isset($testResultSeries[$seriesName])) {
-                        $testResultSeries[$seriesName] = array(
-                            'name'  => $seriesName,
-                            'data'  => array()
-                        );
-                    }
-                    array_push($testResultSeries[$seriesName]['data'], $testResultDetail);
-                }
-
-                foreach ($testResultSeries as $seriesName => $series) {
-                    array_push($testResultLogs, $series);
-                }
-
+        $testResultSeries = array();
+        foreach ($results as $data) {
+            $testResultDetail = array(
+                'x' => $data["x"],
+                'y' => intval($data["y"]),
+                'cron_serial' => $data["cron_serial"]
+            );
+            if (!isset($testResultSeries[$data["name"]])) {
+                $testResultSeries[$data["name"]] = array(
+                    'name' => $data["name"],
+                    'data' => array()
+                );
             }
-            // get logs for specific test results
-            else {
-                $sql = "
-                    SELECT DISTINCT
-                        trmh.CronLogSerNum,
-                        COUNT(trmh.CronLogSerNum),
-                        cl.CronDateTime
-                    FROM
-                        TestResultMH trmh,
-                        TestResultExpression tre,
-                        CronLog cl
-                    WHERE
-                        cl.CronStatus = 'Started'
-                    AND cl.CronLogSerNum = trmh.CronLogSerNum
-                    AND trmh.CronLogSerNum IS NOT NULL
-                    AND trmh.TestResultExpressionSerNum = tre.TestResultExpressionSerNum
-                    AND tre.TestResultControlSerNum = $serial
-                    GROUP BY
-                        trmh.CronLogSerNum,
-                        cl.CronDateTime
-                    ORDER BY 
-                        cl.CronDateTime ASC 
-                ";
-
-                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
-
-                $testResultSeries = array();
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $seriesName = 'Test Result';
-                    $testResultDetail = array (
-                        'x' => $data[2],
-                        'y' => intval($data[1]),
-                        'cron_serial' => $data[0]
-                    );
-                    if(!isset($testResultSeries[$seriesName])) {
-                        $testResultSeries[$seriesName] = array(
-                            'name'  => $seriesName,
-                            'data'  => array()
-                        );
-                    }
-                    array_push($testResultSeries[$seriesName]['data'], $testResultDetail);
-                }
-
-                foreach ($testResultSeries as $seriesName => $series) {
-                    array_push($testResultLogs, $series);
-                }
-            }
-            return $testResultLogs;
-
-        } catch( PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
+            array_push($testResultSeries[$data["name"]]['data'], $testResultDetail);
         }
-    }
+
+        foreach ($testResultSeries as $seriesName => $series) {
+            array_push($testResultLogs, $series);
+        }
+
+        return $testResultLogs;
+    }*/
 
     /**
      * Gets list logs of test results during one or many cron sessions
      */
-    public function getTestResultListLogs($testResultIds) {
+/*    public function getTestResultListLogs($testResultIds)
+    {
         $this->checkReadAccess($testResultIds);
         foreach ($testResultIds as &$id) {
             $id = intval($id);
         }
         return $this->opalDB->getTestResultsLogs($testResultIds);
+    }*/
+
+    /*
+     * Update the list of publish flags for the test results
+     * @params  $post - array - contains the list of publication and their publish status
+     * @return  void
+     * */
+    public function updatePublishFlags($post)
+    {
+        $this->checkWriteAccess($post);
+        $post = HelpSetup::arraySanitization($post["data"]);
+        $errCode = "";
+
+        foreach ($post as $testResult) {
+            $result = $this->opalDB->getTestResultDetails($testResult["serial"]);
+            if (count($result) < 1 || ($testResult['publish'] != 0 && $testResult['publish'] != 1))
+                $errCode = "1";
+            else if (count($result) == 1 && ($testResult['publish'] == 0 || $testResult['publish'] == 1))
+                $errCode = "0";
+            else
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates test results found.");
+        }
+
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        foreach ($post as $testResult) {
+            $this->opalDB->updateTestResultPublishFlag($testResult['serial'], $testResult['publish']);
+        }
+
+        // This function sanitize and deactivate the publish flags of test results without any test name, otherwise
+        // the cron job will crash (don't ask)
+        $this->opalDB->sanitizeEmptyTestResults();
     }
 
-    /**
-     *
-     * Checks if an expression has been assigned to an test
-     *
-     * @param string $id    : the needle id
-     * @param array $array  : the key-value haystack
-     * @return $assignedTest
-     */
-    public function assignedSearch($id, $array) {
-        $assignedTest = null;
-        if(empty($array) || !$id){
-            return $assignedTest;
-        }
-        foreach ($array as $key => $val) {
-            if ($val['id'] === $id) {
-                $assignedTest = $val;
-                return $assignedTest;
-            }
-        }
-        return $assignedTest;
-    }
+    /*
+     * Update a test result. First it validates its data and structure. If everything is fine, update TestResultControl.
+     * Next, it deletes unused test result expressions, then it adds the new one. Finally, unpublish any test result
+     * without test expression to avoid the cron crashing.
+     * @params  $post - array : contains all the test result data
+     * @return  void
+     * */
+    public function updateTestResult($post)
+    {
+        $this->checkWriteAccess($post);
+        $errCode = $this->_validateTestResult($post, true);
+        /*        $linksToKeepAndUpdate = array();
+                $linksToNotDelete = array();
+                $linksToAdd = array();*/
 
-    public function getEducationalMaterials() {
-        $this->checkReadAccess();
-        return $this->_getListEduMaterial();
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        $toUpdate = array(
+            "name_EN" => $post['name_EN'],
+            "name_FR" => $post['name_FR'],
+            "description_EN" => $post['description_EN'],
+            "description_FR" => $post['description_FR'],
+            "group_EN" => $post['group_EN'],
+            "group_FR" => $post['group_FR'],
+            "EducationalMaterialControlSerNum" => (is_array($post['eduMat']) && isset($post['eduMat']['serial'])) ? $post['eduMat']['serial'] : null,
+            "TestControlSerNum" => $post['serial'],
+        );
+
+        $result = $this->opalDB->updateTestControl($toUpdate);
+        $result += $this->opalDB->removeUnusedTestExpression($post['serial'], $post["tests"]);
+
+        //Insert into test result expression
+        foreach ($post['tests'] as $test) {
+            $this->opalDB->updateTextExpression($post['serial'], $test["id"]);
+        }
+
+        /*        if ((array_key_exists("additional_links", $post)) && (is_array($post["additional_links"]))) {
+                    foreach($post["additional_links"] as $link) {
+                        if ($link["serial"] != "") {
+                            array_push($linksToNotDelete, $link["serial"]);
+                            array_push($linksToKeepAndUpdate, array(
+                                "TestResultAdditionalLinksSerNum" => $link["serial"],
+                                "Name_EN" => $link["name_EN"],
+                                "Name_FR" => $link["name_FR"],
+                                "URL_EN" => $link["url_EN"],
+                                "URL_FR" => $link["url_FR"]
+                            ));
+                        } else
+                            array_push($linksToAdd, array(
+                                "TestResultControlSerNum" => $post["serial"],
+                                "Name_EN" => $link["name_EN"],
+                                "Name_FR" => $link["name_FR"],
+                                "URL_EN" => $link["url_EN"],
+                                "URL_FR" => $link["url_FR"]
+                            ));
+                    }
+                } else
+                    $linksToNotDelete = array(-1);
+
+                if (count($linksToNotDelete) > 0)
+                    $result += $this->opalDB->deleteUnusedAddLinks($post['serial'], $linksToNotDelete);
+                if (count($linksToKeepAndUpdate) > 0) {
+                    foreach ($linksToKeepAndUpdate as $link) {
+                        $result += $this->opalDB->updateTestResultAdditionalLink($link);
+                    }
+                }
+                if (count($linksToAdd) > 0) {
+                    $result += $this->opalDB->insertTestResultAdditionalLinks($linksToAdd);
+                }*/
+
+        // This function sanitize and deactivate the publish flags of test results without any test name, otherwise
+        // the cron job will crash (don't ask)
+        $this->opalDB->sanitizeEmptyTestResults();
     }
 }

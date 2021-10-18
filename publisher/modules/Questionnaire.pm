@@ -157,8 +157,7 @@ sub publishQuestionnaires
 	foreach my $Patient (@patientList) {
 
 		my $patientSer = $Patient->getPatientSer(); 
-		my $patientId = $Patient->getPatientId();
-
+		
 		foreach my $QuestionnaireControl (@questionnaireControls) {
 
 			my $questionnaireControlSer 	= $QuestionnaireControl->getQuestionnaireControlSer();
@@ -341,7 +340,7 @@ sub publishQuestionnaires
                 if ($isPatientSpecificFilterDefined eq 1 or $isNonPatientSpecificFilterDefined eq 0) {
     				# Finding the existence of the patient in the patient-specific filters
     				# If the patient does not exist, then continue to the next educational material
-                    if ($patientId ~~ @patientFilters) {
+                    if ($patientSer ~~ @patientFilters) {
                         $patientPassed = 1;
                     }
                     else {next;}

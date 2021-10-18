@@ -67,9 +67,6 @@ angular.module('opalAdmin.controllers.loginModal', ['ngAnimate', 'ui.bootstrap']
 					$rootScope.$broadcast(AUTH_EVENTS.loginFailed);
 
 					switch(err.status) {
-					case HTTP_CODE.badRequestError:
-						$errMsg = $filter('translate')('LOGIN.ERROR_400');
-						break;
 					case HTTP_CODE.notAuthenticatedError:
 						$errMsg = $filter('translate')('LOGIN.ERROR_401');
 						break;
@@ -84,6 +81,9 @@ angular.module('opalAdmin.controllers.loginModal', ['ngAnimate', 'ui.bootstrap']
 						break;
 					case HTTP_CODE.loginTimeoutError:
 						$errMsg = $filter('translate')('LOGIN.ERROR_440');
+						break;
+					case HTTP_CODE.httpToHttpsError:
+						$errMsg = $filter('translate')('LOGIN.ERROR_497');
 						break;
 					case HTTP_CODE.internalServerError:
 						$errMsg = $filter('translate')('LOGIN.ERROR_500');

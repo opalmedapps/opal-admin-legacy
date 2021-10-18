@@ -44,16 +44,27 @@ angular.module('opalAdmin.services', [])
 	})
 
 	.service('ErrorHandler', function($filter, $rootScope, HTTP_CODE, AUTH_EVENTS) {
-		this.onError = function(response, clientErrMsg) {
+		this.onError = function(response, clientErrMsg, arrValidation) {
+			var tempText;
 			if(response.status === HTTP_CODE.notFoundError)
 				alert(clientErrMsg + " " + $filter('translate')('ERROR_HANDLER.404.MESSAGE'));
 			else if(response.status === HTTP_CODE.internalServerError) {
-				var tempText;
 				if (response.responseText)
 					tempText = JSON.parse(response.responseText);
 				else
 					tempText = $filter('translate')('ERROR_HANDLER.500.UNKNOWN');
 				alert(clientErrMsg + " " + $filter('translate')('ERROR_HANDLER.500.MESSAGE') + "\r\n" + tempText);
+			}
+			else if(response.status === HTTP_CODE.badRequestError) {
+				var errMsg = $filter('translate')('ERROR_HANDLER.400.MESSAGE');
+				if (typeof (arrValidation) != "undefined") {
+					for (var i = 0; i < arrValidation.length; i++) {
+						if ((parseInt(response.responseText.validation) & (1 << i)) !== 0) {
+							errMsg += " " + arrValidation[i];
+						}
+					}
+				}
+				alert(errMsg);
 			}
 			else if(response.status === HTTP_CODE.forbiddenAccessError)
 				$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
