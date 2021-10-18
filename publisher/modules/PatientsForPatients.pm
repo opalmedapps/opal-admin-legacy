@@ -153,25 +153,23 @@ sub publishPatientsForPatients
 {
     my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
 
-    #my $today_date = strftime("%Y-%m-%d", localtime(time));
+    my $today_date = strftime("%Y-%m-%d", localtime(time));
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
 
     # Date object of today at 8AM
-    #my $today_at_eightAM = Time::Piece->strptime($today_date . " 08:00:00", "%Y-%m-%d %H:%M:%S");
+    my $today_at_eightAM = Time::Piece->strptime($today_date . " 08:00:00", "%Y-%m-%d %H:%M:%S");
     # Date object of today at 8PM
-    #my $today_at_eightPM = Time::Piece->strptime($today_date . " 20:00:00", "%Y-%m-%d %H:%M:%S");
+    my $today_at_eightPM = Time::Piece->strptime($today_date . " 20:00:00", "%Y-%m-%d %H:%M:%S");
 
     # If we are not within the window to publish patsforpats then return
-    #if ( (($now - $today_at_eightAM) < 0) or (($now - $today_at_eightPM) > 0) ) {return;}
+    if ( (($now - $today_at_eightAM) < 0) or (($now - $today_at_eightPM) > 0) ) {return;}
 
-    # Check for any new updates from the main cron control
-	PostControl::CheckPostControlsMarkedForPublishModularCron('Patients for Patients');
-
-    my @patsForPatsControls = PostControl::getPostControlsMarkedForPublishModularCron('Patients for Patients');
+    my @patsForPatsControls = PostControl::getPostControlsMarkedForPublish('Patients For Patients');
 
     foreach my $Patient (@patientList) {
 
         my $patientSer          = $Patient->getPatientSer(); # get patient serial
+		my $patientId 			= $Patient->getPatientId(); # get patient id 
 
         foreach my $PostControl (@patsForPatsControls) {
 
@@ -324,7 +322,7 @@ sub publishPatientsForPatients
                     # Finding the existence of the patient in the patient-specific filters
                     # If the patient exists, or all patients were selected as triggers, 
                     # then patient passes else move on to next patient
-                    if ($patientSer ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
+                    if ($patientId ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
                         $patientPassed = 1;
                     }
                     else {next;}

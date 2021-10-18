@@ -77,16 +77,12 @@ class Question extends QuestionnaireModule {
         if($validatedQuestion["typeId"] === SLIDERS) {
             $validatedQuestion["options"]["minValue"] = floatval($validatedQuestion["options"]["minValue"]);
             $validatedQuestion["options"]["maxValue"] = floatval($validatedQuestion["options"]["maxValue"]);
-            $validatedQuestion["options"]["increment"] = 1.0;
+            $validatedQuestion["options"]["increment"] = floatval($validatedQuestion["options"]["increment"]);
 
-            // For now, the increment step will be enforced to be 1. Later, it may change.
-            // $validatedQuestion["options"]["increment"] = floatval($validatedQuestion["options"]["increment"]);
-
-            if ($validatedQuestion["options"]["minCaption_EN"] == "" || $validatedQuestion["options"]["minCaption_FR"] == "" || $validatedQuestion["options"]["maxCaption_EN"] == "" || $validatedQuestion["options"]["maxCaption_FR"] == "" || $validatedQuestion["options"]["minValue"] < 0.0 || $validatedQuestion["options"]["maxValue"] < 0.0 || $validatedQuestion["options"]["increment"] != 1.0 || $validatedQuestion["options"]["minValue"] >= $validatedQuestion["options"]["maxValue"])
+            if ($validatedQuestion["options"]["minCaption_EN"] == "" || $validatedQuestion["options"]["minCaption_FR"] == "" || $validatedQuestion["options"]["maxCaption_EN"] == "" || $validatedQuestion["options"]["maxCaption_FR"] == "" || $validatedQuestion["options"]["minValue"] <= 0.0 || $validatedQuestion["options"]["maxValue"] <= 0.0 || $validatedQuestion["options"]["increment"] <= 0.0 || $validatedQuestion["options"]["minValue"] >= $validatedQuestion["options"]["maxValue"])
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid slider data.");
 
-            // For now, the increment step will be enforced to be 1. Later, it may change.
-            /*$options["maxValue"] = floatval(floor(($options["maxValue"] - $options["minValue"]) / $options["increment"]) * $options["increment"]) + $options["minValue"];*/
+            $options["maxValue"] = floatval(floor(($options["maxValue"] - $options["minValue"]) / $options["increment"]) * $options["increment"]) + $options["minValue"];
         }
         return $validatedQuestion;
     }
@@ -236,7 +232,7 @@ class Question extends QuestionnaireModule {
 
             if ($libNameEn == "") $libNameEn = "None";
             if ($libNameFr == "") $libNameFr = "Aucune";
-            $questionLocked = $this->_isQuestionLocked($row["ID"]);
+            $questionLocked = $this->isQuestionLocked($row["ID"]);
 
             $questionArray = array (
                 'serNum'				=> $row["ID"],
@@ -309,7 +305,7 @@ class Question extends QuestionnaireModule {
      * @param   $question (BIGINT ID of the question to look for)
      * @return  $questionLocked (boolean)
      * */
-    protected function _isQuestionLocked($questionId) {
+    function isQuestionLocked($questionId) {
         $questionnairesList = array();
         $questionnaires = $this->questionnaireDB->fetchQuestionnairesIdQuestion($questionId);
 
@@ -326,29 +322,19 @@ class Question extends QuestionnaireModule {
     }
 
     /**
-     * Gets question details. Public method with check access
+     * Gets question details
      *
      * @param   question ID (int)
      * @return  array $questionDetails : the question details
      */
     function getQuestionDetails($questionId) {
         $this->checkReadAccess($questionId);
-        return $this->_getQuestionDetails($questionId);
-    }
-    
-    /*
-     * Get question details. Protected method with no check access. Internal use only.
-     * @param   question ID (int)
-     * @return  array $questionDetails : the question details
-     * */
-    protected function _getQuestionDetails($questionId) {
-        $this->checkReadAccess($questionId);
         $question = $this->questionnaireDB->getQuestionDetails($questionId);
         if(count($question) != 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot get question details.");
 
         $question = $question[0];
-        $question["locked"] = $this->_isQuestionLocked($questionId);
+        $question["locked"] = $this->isQuestionLocked($questionId);
 
         $readOnly = false;
         $isOwner = false;
@@ -396,7 +382,7 @@ class Question extends QuestionnaireModule {
      * @param   $questionId (BINGINT ID of the question to which we remove the libraries)
      * @return  $libraries (array of libraries to be updated and/or added. Any other libraries has to be removed)
      * */
-    protected function _updateLibrariesForQuestion($questionId, $libraries) {
+    function updateLibrariesForQuestion($questionId, $libraries) {
         $total = 0;
         if(empty($libraries))
             $libraries = array("-1");
@@ -429,7 +415,7 @@ class Question extends QuestionnaireModule {
      * @param   $options (array of options of the question, $subOptions (array of the different choices)
      * @return  $total (number of records affected by the update)
      * */
-    protected function _updateRadioButtonOptions($options, $subOptions) {
+    function updateRadioButtonOptions($options, $subOptions) {
         $optionsToKeepAndUpdate = array();
         $optionsToAdd = array();
         $total = 0;
@@ -497,7 +483,7 @@ class Question extends QuestionnaireModule {
      * @param   $options (array of options of the question, $subOptions (array of the different choices)
      * @return  $total (number of records affected by the update)
      * */
-    protected function _updateCheckboxOptions($options, $subOptions) {
+    function updateCheckboxOptions($options, $subOptions) {
         $optionsToKeepAndUpdate = array();
         $optionsToAdd = array();
         $total = 0;
@@ -564,17 +550,17 @@ class Question extends QuestionnaireModule {
      * @param   $options (array of options of the question)
      * @return  $total (number of records affected by the update)
      * */
-    protected function _updateSliderOptions($options) {
+    function updateSliderOptions($options) {
         $total = 0;
 
         $options["minValue"] = floatval($options["minValue"]);
         $options["maxValue"] = floatval($options["maxValue"]);
         $options["increment"] = floatval($options["increment"]);
 
-        if( $options["minCaption_EN"] == "" ||  $options["minCaption_FR"] == "" ||  $options["maxCaption_EN"] == "" ||  $options["maxCaption_FR"] == "" || $options["minValue"] < 0.0 || $options["maxValue"] < 0.0 || $options["increment"] != 1.0 || $options["minValue"] >= $options["maxValue"])
+        if( $options["minCaption_EN"] == "" ||  $options["minCaption_FR"] == "" ||  $options["maxCaption_EN"] == "" ||  $options["maxCaption_FR"] == "" || $options["minValue"] <= 0.0 || $options["maxValue"] <= 0.0 || $options["increment"] <= 0.0 || $options["minValue"] >= $options["maxValue"])
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid data.");
 
-//        $options["maxValue"] = floatval(floor(($options["maxValue"] - $options["minValue"]) / $options["increment"]) * $options["increment"]) + $options["minValue"];
+        $options["maxValue"] = floatval(floor(($options["maxValue"] - $options["minValue"]) / $options["increment"]) * $options["increment"]) + $options["minValue"];
 
         $toUpdateDict = array(
             array("content"=>$options["minCaption_FR"], "languageId"=>FRENCH_LANGUAGE, "contentId"=>$options["minCaption"]),
@@ -606,7 +592,7 @@ class Question extends QuestionnaireModule {
      * @params  Reference of the updated questions (array) and current question in the DB (array)
      * @return  boolean if the data are compromised or not.
      * */
-    protected function _validatePivotalIDs(&$updatedQuestion, &$oldQuestion) {
+    function validatePivotalIDs(&$updatedQuestion, &$oldQuestion) {
         $answer = true;
         $arrayOldOption = array();
 
@@ -667,16 +653,16 @@ class Question extends QuestionnaireModule {
     function updateQuestion($updatedQuestion) {
         $this->checkWriteAccess($updatedQuestion);
         $total = 0;
-        $oldQuestion = $this->_getQuestionDetails($updatedQuestion["ID"]);
-        $isLocked = $this->_isQuestionLocked($oldQuestion["ID"]);
+        $oldQuestion = $this->getQuestionDetails($updatedQuestion["ID"]);
+        $isLocked = $this->isQuestionLocked($oldQuestion["ID"]);
         if ($oldQuestion["deleted"] == DELETED_RECORD || $this->questionnaireDB->getUsername() == "" || ($oldQuestion["private"] === PRIVATE_RECORD && $this->questionnaireDB->getOAUserId() != $oldQuestion["OAUserId"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
         else if(empty($updatedQuestion["options"]) || ($updatedQuestion["typeId"] == RADIO_BUTTON || $updatedQuestion["typeId"] == CHECKBOXES) && empty($updatedQuestion["subOptions"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data.");
-        else if(!$this->_validatePivotalIDs($updatedQuestion, $oldQuestion))
+        else if(!$this->validatePivotalIDs($updatedQuestion, $oldQuestion))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Corrupted data.");
 
-        $total += $this->_updateLibrariesForQuestion($updatedQuestion["ID"], $updatedQuestion["libraries"]);
+        $total += $this->updateLibrariesForQuestion($updatedQuestion["ID"], $updatedQuestion["libraries"]);
 
         if($isLocked) {
             if ($total > 0)
@@ -721,11 +707,11 @@ class Question extends QuestionnaireModule {
 
 
         if($updatedQuestion["typeId"] == RADIO_BUTTON)
-            $total += $this->_updateRadioButtonOptions($updatedQuestion["options"],$updatedQuestion["subOptions"]);
+            $total += $this->updateRadioButtonOptions($updatedQuestion["options"],$updatedQuestion["subOptions"]);
         else if($updatedQuestion["typeId"] == CHECKBOXES)
-            $total += $this->_updateCheckboxOptions($updatedQuestion["options"],$updatedQuestion["subOptions"]);
+            $total += $this->updateCheckboxOptions($updatedQuestion["options"],$updatedQuestion["subOptions"]);
         else if($updatedQuestion["typeId"] == SLIDERS)
-            $total += $this->_updateSliderOptions($updatedQuestion["options"]);
+            $total += $this->updateSliderOptions($updatedQuestion["options"]);
 
         if ($questionUpdated == 0 && $total > 0)
             $this->questionnaireDB->forceUpdate($updatedQuestion["ID"], QUESTION_TABLE);
@@ -748,7 +734,7 @@ class Question extends QuestionnaireModule {
      */
     function deleteQuestion($questionId) {
         $this->checkDeleteAccess($questionId);
-        $questionToDelete = $this->_getQuestionDetails($questionId);
+        $questionToDelete = $this->getQuestionDetails($questionId);
 
         if ($this->questionnaireDB->getOAUserId() <= 0 || ($questionToDelete["private"] == PRIVATE_RECORD && $this->questionnaireDB->getOAUserId() != $questionToDelete["OAUserId"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");

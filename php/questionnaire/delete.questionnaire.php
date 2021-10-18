@@ -1,5 +1,5 @@
 <?php
-include_once("../config.php");
+include_once('questionnaire.inc');
 
 $questionnaireId = strip_tags($_POST['ID']);
 $questionnaireObj = new Questionnaire();

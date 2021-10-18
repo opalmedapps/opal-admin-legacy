@@ -69,8 +69,7 @@ class Post extends Module {
     public function insertPost( $toInsert ) {
         $this->checkWriteAccess($toInsert);
         $toInsert["PublishDate"]="0000-00-00 00:00:00";
-        $temp = $this->opalDB->insertPost($toInsert);
-        return $temp;
+        return $this->opalDB->insertPost($toInsert);
     }
 
     /*
@@ -106,11 +105,9 @@ class Post extends Module {
         $result = $this->opalDB->getPublicationChartLogs(MODULE_POST, $serial);
 
         //The Y value has to be converted to an int, or the chart log will reject it on the front end.
-        $tempArray = array();
-        foreach($result as $item)
+        foreach ($result as &$item) {
             $item["y"] = intval($item["y"]);
-            array_push($tempArray, $item);
-        $result = $tempArray;
+        }
 
         if (count($result) > 0)
             array_push($data, array("name"=>$type, "data"=>$result));

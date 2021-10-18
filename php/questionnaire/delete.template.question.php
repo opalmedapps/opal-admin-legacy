@@ -1,5 +1,7 @@
 <?php
-include_once("../config.php");
+
+/* To delete a question */
+include_once('questionnaire.inc');
 
 // Retrieve FORM param
 $templateQuestionId = strip_tags($_POST['ID']);

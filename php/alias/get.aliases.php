@@ -1,8 +1,8 @@
 <?php
-include_once("../config.php");
-
-$alias = new Alias();
-$result = $alias->getAliases();
-
+include_once('alias.inc');
 header('Content-Type: application/javascript');
-echo json_encode($result);
+
+$alias = new Alias; // Object
+$existingAliasList = $alias->getAliases();
+
+echo json_encode($existingAliasList);

@@ -1,21 +1,11 @@
 <?php
 	header('Content-Type: application/javascript');
   /* Script to call sendCallPatientNotification given the following GET requests. */
-  require_once('HospitalPushNotification.php');
 
-  // determine patientId or MRN
-  $wsPatientID    = HospitalPushNotification::sanitizeInput(isset($_GET["patientid"]) ? $_GET["patientid"] : "---NA---");
-  $wsMRN          = HospitalPushNotification::sanitizeInput(isset($_GET["mrn"]) ? $_GET["mrn"] : "---NA---");
-  $patientId      = HospitalPushNotification::getPatientIDorMRN($wsPatientID, $wsMRN);
-
-  // Meesage and appointment ID
-  $room_EN        = HospitalPushNotification::sanitizeInput(isset($_GET['room_EN']) ? $_GET['room_EN'] : "");
-  $room_FR        = HospitalPushNotification::sanitizeInput(isset($_GET['room_FR']) ? $_GET['room_FR'] : "");
-  $apptSourceUID  = HospitalPushNotification::sanitizeInput(isset($_GET['appointment_ariaser']) ? $_GET['appointment_ariaser'] : "");
-
-  // $wsSite is the site of the hospital code (should be three digit)
-  // If $wsSite is empty, then default it to RVH because it could be from a legacy call
-  $wsSite         = HospitalPushNotification::sanitizeInput(isset($_GET["site"]) ? $_GET["site"] : "RVH");
+  $patientId      = $_GET['patientid'];
+  $room_EN        = $_GET['room_EN'];
+  $room_FR        = $_GET['room_FR'];
+  $apptSourceUID  = $_GET['appointment_ariaser'];
 
   // Combine room info
   $room = array(
@@ -23,9 +13,10 @@
     'room_FR'   => $room_FR
   );
 
+  include_once('HospitalPushNotification.php');
+
   // Call API
-  // Repeating the PatientID because this function is designed to work with legacy and multisite
-  $responses = HospitalPushNotification::sendCallPatientNotification($patientId, $room, $apptSourceUID, $patientId, $wsSite);
+  $responses = HospitalPushNotification::sendCallPatientNotification($patientId, $room, $apptSourceUID);
 
   // Return responses
   print json_encode($responses);

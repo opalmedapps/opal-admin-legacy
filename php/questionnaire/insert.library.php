@@ -1,5 +1,6 @@
 <?php
-include_once("../config.php");
+/* To insert a newly-created library */
+include_once('questionnaire.inc');
 
 // Construct array from FORM params
 $libraryArray = array(
