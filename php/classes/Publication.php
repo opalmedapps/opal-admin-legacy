@@ -13,14 +13,15 @@ class Publication extends Module
      * @params  $OAUserId (ID of the user)
      * @returns None
      * */
-    protected function _connectQuestionnaireDB() {
+    protected function _connectQuestionnaireDB($OAUserId) {
         $this->questionnaireDB = new DatabaseQuestionnaire(
             QUESTIONNAIRE_DB_2019_HOST,
             QUESTIONNAIRE_DB_2019_NAME,
             QUESTIONNAIRE_DB_2019_PORT,
             QUESTIONNAIRE_DB_2019_USERNAME,
             QUESTIONNAIRE_DB_2019_PASSWORD,
-            false
+            false,
+            $OAUserId
         );
 
         $this->questionnaireDB->setUsername($this->opalDB->getUsername());
@@ -75,6 +76,7 @@ class Publication extends Module
             foreach($subModuleList as $subModule) {
                 if($postDetails["type"] == $subModule->name_EN) {
                     $results["publication"]["subModule"] = json_decode(json_encode($subModule), true);
+                    //$results["publication"]["modifyPublishDateTime"] = $subModule["publishDateTime"];
                     break;
                 }
             }
@@ -144,25 +146,7 @@ class Publication extends Module
             $results["occurrence"] = $occurrenceArray;
         }
 
-        // Because some doctors, appointments or patients can be removed from their tables but still being present in
-        // the filter table, we must clean up the filters first before sending the data to the front end.
-        $triggersTemp = $this->opalDB->getTriggersDetails($publicationId, $module["controlTableName"]);
-        $publicationSettings = $this->opalDB->getPublicationSettings();
-        $test = array();
-
-        foreach ($publicationSettings as $item)
-            $test[$item["internalName"]] = $this->_reassignData($this->opalDB->fetchTriggersData($item["opalDB"]), $item["opalPK"], $item["internalName"]);
-
-        $toIgnore = $this->opalDB->getPublicationSettingsToIgnore();
-
-        foreach ($triggersTemp as $key=>$item) {
-            if (in_array($item["type"], $toIgnore))
-                continue;
-            else if(!array_key_exists($item["type"], $test) || !array_key_exists($item["id"], $test[$item["type"]]))
-                unset($triggersTemp[$key]);
-        }
-        $triggersTemp = array_values($triggersTemp);
-        $results["triggers"] = $triggersTemp;
+        $results["triggers"] = $this->opalDB->getTriggersDetails($publicationId, $module["controlTableName"]);
         return $results;
     }
 
@@ -267,10 +251,10 @@ class Publication extends Module
      * because it was decided to add it manually to the status list by hard-coding it while using incorrect values.
      * Once it will be fixed (if it is), this function will be totally useless. See ticket OPAL-74 for more details
      * */
-    protected function _reassignData($data, $id, $key)  {
+    protected function _reassignData($data, $id)  {
         $results = array();
         foreach($data as $item) {
-            if($item[$id] == "1" && $key == "AppointmentStatus")
+            if($item[$id] == "1")
                 $results["Checked In"] = $item;
             else
                 $results[strval($item[$id])] = $item;
@@ -342,6 +326,7 @@ class Publication extends Module
 
         //Validate the triggers
         foreach($validatedTriggers as $key => $trigger) {
+            $allTriggersData = array();
             $selectAllChecked = false;
             $idsFound = 0;
 
@@ -372,7 +357,7 @@ class Publication extends Module
                 //Standard process of the checkup by getting data from OpalDB
                 else {
                     if ($trigger["opalDB"] != "") {
-                        $opalData = $this->_reassignData($this->opalDB->fetchTriggersData($trigger["opalDB"]), $trigger["opalPK"], $key);
+                        $opalData = $this->_reassignData($this->opalDB->fetchTriggersData($trigger["opalDB"]), $trigger["opalPK"]);
                     }
 
                     $uniqueIdList = array();
@@ -762,8 +747,9 @@ class Publication extends Module
      * @return  void
      * */
     protected function _insertPublicationQuestionnaire(&$publication) {
-        $this->_connectQuestionnaireDB();
+        $this->_connectQuestionnaireDB($this->opalDB->getOAUserId());
         $currentQuestionnaire = $this->questionnaireDB->getQuestionnaireDetails($publication["materialId"]["value"]);
+
         if(is_array($currentQuestionnaire) && count($currentQuestionnaire) != 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire.");
         $currentQuestionnaire = $currentQuestionnaire[0];
@@ -783,23 +769,6 @@ class Publication extends Module
         $toInsert = array();
         if(!empty($publication['triggers'])) {
             foreach($publication['triggers'] as $trigger) {
-                if(($trigger['type'] == "Study") && ($currentQuestionnaire['purpose'] == PURPOSE_CONSENT)){ // we are publishing consent forms to patients of this study
-                    //fetch patient consents
-                    $patConsents = $this->opalDB->getPatientsStudyConsents($trigger['id']);
-                    foreach($patConsents as $patient){
-                        if($patient['consent'] == 'invited'){
-                            array_push($toInsert, array(
-                                "ControlTable"=>"LegacyQuestionnaireControl",
-                                "ControlTableSerNum"=>$publicationControlId,
-                                "FilterType"=>"Patient",
-                                "FilterId"=>$patient['id'],
-                                "DateAdded"=>date("Y-m-d H:i:s"),
-                                "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
-                                "SessionId"=>$this->opalDB->getSessionId(),
-                            ));
-                        }
-                    }
-                }
                 array_push($toInsert, array(
                     "ControlTable"=>"LegacyQuestionnaireControl",
                     "ControlTableSerNum"=>$publicationControlId,
@@ -809,7 +778,6 @@ class Publication extends Module
                     "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
                     "SessionId"=>$this->opalDB->getSessionId(),
                 ));
-
             }
             $this->opalDB->insertMultipleFilters($toInsert);
         }
@@ -877,54 +845,6 @@ class Publication extends Module
         );
         $total = $this->opalDB->updateQuestionnaireControl($toUpdate);
         $this->_updateTriggers($questionnaire, $controlTableName);
-
-        $this->opalDB->deleteQuestionnaireFrequencyEvents($questionnaire["materialId"]["value"]);
-        if ($questionnaire['occurrence']['set']) {
-            $toInsert = array();
-            array_push($toInsert, array(
-                "ControlTable"=>"LegacyQuestionnaireControl",
-                "ControlTableSerNum"=>$questionnaire["materialId"]["value"],
-                "MetaKey"=>"repeat_start",
-                "MetaValue"=>$questionnaire['occurrence']['start_date'],
-                "CustomFlag"=>"0",
-                "DateAdded"=>date("Y-m-d H:i:s"),
-            ));
-
-            if($questionnaire['occurrence']['end_date']) {
-                array_push($toInsert, array(
-                    "ControlTable"=>"LegacyQuestionnaireControl",
-                    "ControlTableSerNum"=>$questionnaire["materialId"]["value"],
-                    "MetaKey"=>"repeat_end",
-                    "MetaValue"=>$questionnaire['occurrence']['end_date'],
-                    "CustomFlag"=>"0",
-                    "DateAdded"=>date("Y-m-d H:i:s"),
-                ));
-            }
-
-            array_push($toInsert, array(
-                "ControlTable"=>"LegacyQuestionnaireControl",
-                "ControlTableSerNum"=>$questionnaire["materialId"]["value"],
-                "MetaKey"=>$questionnaire['occurrence']['frequency']['meta_key']."|lqc_".$questionnaire["materialId"]["value"],
-                "MetaValue"=>$questionnaire['occurrence']['frequency']['meta_value'],
-                "CustomFlag"=>$questionnaire['occurrence']['frequency']['custom'],
-                "DateAdded"=>date("Y-m-d H:i:s"),
-            ));
-
-            if(!empty($questionnaire['occurrence']['frequency']['additionalMeta'])) {
-                foreach($questionnaire['occurrence']['frequency']['additionalMeta'] as $meta) {
-                    array_push($toInsert, array(
-                        "ControlTable"=>"LegacyQuestionnaireControl",
-                        "ControlTableSerNum"=>$questionnaire["materialId"]["value"],
-                        "MetaKey"=>$meta['meta_key']."|lqc_".$questionnaire["materialId"]["value"],
-                        "MetaValue"=>implode(',', $meta['meta_value']),
-                        "CustomFlag"=>"1",
-                        "DateAdded"=>date("Y-m-d H:i:s"),
-                    ));
-                }
-            }
-            $this->opalDB->insertMultipleFrequencyEvents($toInsert);
-        }
-
     }
 
     /*
@@ -952,13 +872,13 @@ class Publication extends Module
      * @return  void
      * */
     protected function _updateTriggers($publication, $controlTableName) {
+        $total = 0;
         //Delete and update triggers
         if(!empty($publication["triggers_updated"])) {
             $existingTriggers = $this->opalDB->getFiltersByControlTableSerNum($publication["materialId"]["value"], $controlTableName);
             foreach($existingTriggers as $trigger) {
                 if(!$this->_nestedSearch($trigger["id"], $trigger["type"], $publication["triggers"])) {
-                    print_r($trigger);
-                    $this->opalDB->deleteFilters($trigger["id"], $trigger["type"], $publication["materialId"]["value"], $controlTableName);
+                    $total += $this->opalDB->deleteFilters($trigger["id"], $trigger["type"], $publication["materialId"]["value"], $controlTableName);
                     $toUpdate = array(
                         "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
                         "SessionId"=>$this->opalDB->getSessionId(),
@@ -967,79 +887,79 @@ class Publication extends Module
                         "ControlTableSerNum"=>$publication["materialId"]["value"],
                         "ControlTable"=>$controlTableName,
                     );
-                    $this->opalDB->updateFiltersModificationHistory($toUpdate);
+                    $total += $this->opalDB->updateFiltersModificationHistory($toUpdate);
                 }
             }
+        }
 
-            //Add new triggers
-            if(!empty($publication["triggers"])) {
-                $toInsert = array();
-                foreach($publication["triggers"] as $trigger) {
-                    if (!$this->_nestedSearch($trigger["id"], $trigger["type"], $existingTriggers))
-                        array_push($toInsert, array(
-                            "ControlTable"=>$controlTableName,
-                            "ControlTableSerNum"=>$publication["materialId"]["value"],
-                            "FilterType"=>$trigger['type'],
-                            "FilterId"=>$trigger['id'],
-                            "DateAdded"=>date("Y-m-d H:i:s"),
-                            "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
-                            "SessionId"=>$this->opalDB->getSessionId(),
-                        ));
-                }
-                $this->opalDB->insertMultipleFilters($toInsert);
+        //Add new triggers
+        if(!empty($publication["triggers"])) {
+            $toInsert = array();
+            foreach($publication["triggers"] as $trigger) {
+                if (!$this->_nestedSearch($trigger["id"], $trigger["type"], $existingTriggers))
+                    array_push($toInsert, array(
+                        "ControlTable"=>$controlTableName,
+                        "ControlTableSerNum"=>$publication["materialId"]["value"],
+                        "FilterType"=>$trigger['type'],
+                        "FilterId"=>$trigger['id'],
+                        "DateAdded"=>date("Y-m-d H:i:s"),
+                        "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
+                        "SessionId"=>$this->opalDB->getSessionId(),
+                    ));
             }
+            $this->opalDB->insertMultipleFilters($toInsert);
+        }
 
-            if(!$publication["occurrence"]["set"]) {
-                $this->opalDB->deleteFrequencyEvent($publication["materialId"]["value"], $controlTableName);
+        if(!$publication["occurrence"]["set"]) {
+            $total += $this->opalDB->deleteFrequencyEvent($publication["materialId"]["value"], $controlTableName);
+        }
+        else {
+            $toInsert = array(
+                "ControlTable"=>$controlTableName,
+                "ControlTableSerNum"=>$publication["materialId"]["value"],
+                "MetaKey"=>'repeat_start',
+                "MetaValue"=>$publication["occurrence"]["start_date"],
+                "CustomFlag"=>'0',
+                "DateAdded"=>date("Y-m-d H:i:s"),
+            );
+            $result = $this->opalDB->insertReplaceFrequencyEvent($toInsert);
+            if(!$publication["occurrence"]["end_date"]) {
+                $result = $this->opalDB->deleteRepeatEndFromFrequencyEvents($publication["materialId"]["value"], $controlTableName);
             }
             else {
                 $toInsert = array(
-                    "ControlTable"=>$controlTableName,
-                    "ControlTableSerNum"=>$publication["materialId"]["value"],
-                    "MetaKey"=>'repeat_start',
-                    "MetaValue"=>$publication["occurrence"]["start_date"],
-                    "CustomFlag"=>'0',
-                    "DateAdded"=>date("Y-m-d H:i:s"),
+                    "ControlTable" => $controlTableName,
+                    "ControlTableSerNum" => $publication["materialId"]["value"],
+                    "MetaKey" => 'repeat_end',
+                    "MetaValue" => $publication["occurrence"]["end_date"],
+                    "CustomFlag" => '0',
+                    "DateAdded" => date("Y-m-d H:i:s"),
                 );
                 $result = $this->opalDB->insertReplaceFrequencyEvent($toInsert);
-                if(!$publication["occurrence"]["end_date"]) {
-                    $result = $this->opalDB->deleteRepeatEndFromFrequencyEvents($publication["materialId"]["value"], $controlTableName);
-                }
-                else {
+            }
+
+            $result = $this->opalDB->deleteOtherMetasFromFrequencyEvents($publication["materialId"]["value"], $controlTableName);
+            $toInsert = array(
+                "ControlTable"=>$controlTableName,
+                "ControlTableSerNum"=>$publication["materialId"]["value"],
+                "MetaKey"=>$publication['occurrence']['frequency']['meta_key']."|lqc_".$publication["materialId"]["value"],
+                "MetaValue"=>$publication['occurrence']['frequency']['meta_value'],
+                "CustomFlag"=>$publication['occurrence']['frequency']['custom'],
+                "DateAdded"=>date("Y-m-d H:i:s"),
+            );
+            $result = $this->opalDB->insertReplaceFrequencyEvent($toInsert);
+
+            if(!empty($publication['occurrence']['frequency']['additionalMeta'])) {
+                foreach($publication['occurrence']['frequency']['additionalMeta'] as $meta) {
                     $toInsert = array(
-                        "ControlTable" => $controlTableName,
-                        "ControlTableSerNum" => $publication["materialId"]["value"],
-                        "MetaKey" => 'repeat_end',
-                        "MetaValue" => $publication["occurrence"]["end_date"],
-                        "CustomFlag" => '0',
-                        "DateAdded" => date("Y-m-d H:i:s"),
+                        "ControlTable"=>$controlTableName,
+                        "ControlTableSerNum"=>$publication["materialId"]["value"],
+                        "MetaKey"=>$meta['meta_key']."|lqc_".$publication["materialId"]["value"],
+                        "MetaValue"=>implode(',', $meta['meta_value']),
+                        "CustomFlag"=>'1',
+                        "DateAdded"=>date("Y-m-d H:i:s"),
                     );
                     $result = $this->opalDB->insertReplaceFrequencyEvent($toInsert);
-                }
-
-                $result = $this->opalDB->deleteOtherMetasFromFrequencyEvents($publication["materialId"]["value"], $controlTableName);
-                $toInsert = array(
-                    "ControlTable"=>$controlTableName,
-                    "ControlTableSerNum"=>$publication["materialId"]["value"],
-                    "MetaKey"=>$publication['occurrence']['frequency']['meta_key']."|lqc_".$publication["materialId"]["value"],
-                    "MetaValue"=>$publication['occurrence']['frequency']['meta_value'],
-                    "CustomFlag"=>$publication['occurrence']['frequency']['custom'],
-                    "DateAdded"=>date("Y-m-d H:i:s"),
-                );
-                $result = $this->opalDB->insertReplaceFrequencyEvent($toInsert);
-
-                if(!empty($publication['occurrence']['frequency']['additionalMeta'])) {
-                    foreach($publication['occurrence']['frequency']['additionalMeta'] as $meta) {
-                        $toInsert = array(
-                            "ControlTable"=>$controlTableName,
-                            "ControlTableSerNum"=>$publication["materialId"]["value"],
-                            "MetaKey"=>$meta['meta_key']."|lqc_".$publication["materialId"]["value"],
-                            "MetaValue"=>implode(',', $meta['meta_value']),
-                            "CustomFlag"=>'1',
-                            "DateAdded"=>date("Y-m-d H:i:s"),
-                        );
-                        $result = $this->opalDB->insertReplaceFrequencyEvent($toInsert);
-                    }
                 }
             }
         }
@@ -1131,7 +1051,6 @@ class Publication extends Module
         $results["appointmentStatuses"] = $this->opalDB->getAppointmentsStatusTriggers();
         $results["doctors"] = $this->opalDB->getDoctorsTriggers();
         $results["machines"] = $this->opalDB->getTreatmentMachinesTriggers();
-        $results["studies"] = $this->opalDB->getStudiesTriggers();
 
         foreach($results["doctors"] as &$doctor) {
             $doctor["name"] = ucwords(strtolower($doctor["LastName"] . ", " . preg_replace("/^[Dd][Rr]([.]?[ ]?){1}/", "", $doctor["FirstName"]) . " " . " (" . $doctor["id"] . ")"));

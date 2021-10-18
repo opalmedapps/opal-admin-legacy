@@ -14,7 +14,7 @@ define( "ARIA_DB_ENABLED", (intval($config['databaseConfig']['aria']['enabled'])
 define( "ARIA_DB_HOST", $config['databaseConfig']['aria']['host'] );
 define( "ARIA_DB_PORT", $config['databaseConfig']['aria']['port']);
 define( "ARIA_DB_NAME", $config['databaseConfig']['aria']['name']);
-if(in_array($_SERVER['REMOTE_ADDR'], LOCALHOST_ADDRESS))
+if(in_array($_SERVER['REMOTE_ADDR'], $localHostAddr))
     define( "ARIA_DB_DSN", "odbc:Driver={SQL Server};Server=" . ARIA_DB_HOST);
 else
     # define( "ARIA_DB_DSN", "dblib:host=" . ARIA_DB_HOST . ":" . ARIA_DB_PORT . "\\database" . ";charset=utf8");

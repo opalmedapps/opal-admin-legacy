@@ -1,0 +1,70 @@
+<!-- Modal title -->
+<div class="modal-header">
+  <div class="col-xs-12 col-md-6">
+    <h2 class="modal-title">
+      <span class="glyphicon glyphicon-pencil"></span> 
+      Edit Patient 
+    </h2>
+    <p class="modal-title-caption">
+      {{patient.name}} 
+    </p>
+  </div>
+  <div class="modal-buttons col-xs-12 col-md-6">
+    <span> 
+      <form method="post" ng-submit="updatePatient()">
+        <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+      </form>
+    </span>     
+  </div>
+</div>
+<div class="modal-body">
+  <uib-accordion>
+    <div uib-accordion-group is-open="true">
+      <!-- SECTION: Change password -->
+      <uib-accordion-heading>
+        <div>
+          <strong>Change Password </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusPassword.open, 'glyphicon-chevron-right': !statusPassword.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="form-horizontal">
+				<div class="form-group has-feedback" ng-class="{'has-error': validOldPassword.status == 'invalid', 'has-warning': validOldPassword.status == 'warning'}">
+					<label class="control-label col-xs-12 col-md-2">
+						Current Password
+					</label>
+					<div class="col-xs-12 col-md-7">
+						<input type="password" class="form-control" required="required" ng-change="validateOldPassword(patient.oldPassword)" ng-model="patient.oldPassword" ng-disabled="patientIsDisabled">
+						<span ng-show="validOldPassword.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-remove': validOldPassword.status == 'invalid', 'glyphicon-warning-sign': validOldPassword.status == 'warning'}" aria-hidden="true"></span>
+					</div>
+					<em class="control-label col-xs-12 col-md-3" ng-show="validOldPassword.status == 'invalid' || validOldPassword.status == 'warning'" ng-class="{'has-error': validOldPassword.status == 'invalid', 'has-warning': validOldPassword.status == 'warning'}" style="text-align:left;">
+						{{validOldPassword.message}}
+					</em>
+				</div>
+        <div class="form-group has-feedback" ng-class="{'has-success': validPassword.status == 'valid', 'has-error': validPassword.status == 'invalid', 'has-warning': validPassword.status == 'warning'}">
+          <label class="control-label col-md-2">
+            Password <br><em><small>(min: 6 characters)</small></em>
+          </label>
+          <div class="col-xs-12 col-md-7">
+            <input type="password" class="form-control" ng-change="validatePassword(patient.password)" ng-model="patient.password" ng-disabled="patientIsDisabled">
+            <span ng-show="validPassword.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validPassword.status == 'valid', 'glyphicon-remove': validPassword.status == 'invalid', 'glyphicon-warning-sign': validPassword.status == 'warning'}" aria-hidden="true"></span>
+          </div>
+          <em class="control-label col-xs-12 col-md-3" ng-show="validPassword.status == 'invalid' || validPassword.status == 'warning'" ng-class="{'has-success': validPassword.status == 'valid', 'has-error': validPassword.status == 'invalid', 'has-warning': validPassword.status == 'warning'}" style="text-align:left">
+            {{validPassword.message}}
+          </em>
+        </div>
+        <div class="form-group has-feedback" ng-class="{'has-success': validConfirmPassword.status == 'valid', 'has-error': validConfirmPassword.status == 'invalid', 'has-warning': validConfirmPassword.status == 'warning'}">
+          <label class="control-label col-xs-12 col-md-2">
+            Re-type Password
+          </label>
+          <div class="col-xs-12 col-md-7">
+            <input type="password" class="form-control" required="required" ng-change="validateConfirmPassword(patient.confirmPassword)" ng-model="patient.confirmPassword" ng-disabled="patient.password.length < 6 || !patient.password">
+            <span ng-show="validConfirmPassword.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validConfirmPassword.status == 'valid', 'glyphicon-remove': validConfirmPassword.status == 'invalid', 'glyphicon-warning-sign': validConfirmPassword.status == 'warning'}" aria-hidden="true"></span>
+          </div>
+          <em class="control-label col-xs-12 col-md-3" ng-show="validConfirmPassword.status == 'invalid' || validConfirmPassword.status == 'warning'" ng-class="{'has-success': validConfirmPassword.status == 'valid', 'has-error': validConfirmPassword.status == 'invalid', 'has-warning': validConfirmPassword.status == 'warning'}" style="text-align:left">
+            {{validConfirmPassword.message}}
+          </em>
+        </div>    
+      </div>
+    </div>
+	</uib-accordion>
+</div>

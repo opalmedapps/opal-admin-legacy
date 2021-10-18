@@ -167,8 +167,10 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 	// Function to assign '1' to existing diagnosis
 	function checkAdded(diagnosisList) {
 		angular.forEach($scope.diagnosisTranslation.diagnoses, function (selectedDiagnosis) {
+			var selectedDiagnosisSourceUID = selectedDiagnosis.sourceuid;
 			angular.forEach(diagnosisList, function (diagnosis) {
-				if (diagnosis.code === selectedDiagnosis.code && diagnosis.description === selectedDiagnosis.description) {
+				var sourceuid = diagnosis.sourceuid;
+				if (sourceuid == selectedDiagnosisSourceUID) {
 					diagnosis.added = 1;
 					diagnosis.assigned = null; // remove self assigned diagnoses
 				}
@@ -276,27 +278,24 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 
 			// For some reason the HTML text fields add a zero-width-space
 			// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
+			$scope.diagnosisTranslation.description_EN = $scope.diagnosisTranslation.description_EN.replace(/\u200B/g,'');
+			$scope.diagnosisTranslation.description_FR = $scope.diagnosisTranslation.description_FR.replace(/\u200B/g,'');
 
-			var toSubmit = {
-				serial: $scope.currentDiagnosisTranslation.serial,
-				description_EN: $scope.diagnosisTranslation.description_EN.replace(/\u200B/g,''),
-				description_FR: $scope.diagnosisTranslation.description_FR.replace(/\u200B/g,''),
-				name_EN: $scope.diagnosisTranslation.name_EN,
-				name_FR: $scope.diagnosisTranslation.name_FR,
-				eduMat: ($scope.diagnosisTranslation.eduMat != null ? $scope.diagnosisTranslation.eduMat.serial : null),
-				diagnoses: []
-			};
-
+			$scope.diagnosisTranslation.diagnoses = [];
+			// Fill in the diagnoses from diagnosisList
 			angular.forEach($scope.diagnosisList, function (diagnosis) {
-				if (diagnosis.added)
-					toSubmit.diagnoses.push(diagnosis.ID);
+				if(diagnosis.added) {
+					$scope.diagnosisTranslation.diagnoses.push(diagnosis);
+				}
 			});
-
+			// Log who updated diagnosis translation
+			var currentUser = Session.retrieveObject('user');
+			$scope.diagnosisTranslation.user = currentUser;
 			// Submit form
 			$.ajax({
 				type: "POST",
 				url: "diagnosis-translation/update/diagnosis-translation",
-				data: toSubmit,
+				data: $scope.diagnosisTranslation,
 				success: function () {
 					$scope.setBannerClass('success');
 					$scope.$parent.bannerMessage = $filter('translate')('DIAGNOSIS.EDIT.SUCCESS_UPDATE');

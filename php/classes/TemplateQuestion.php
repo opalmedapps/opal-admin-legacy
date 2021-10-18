@@ -20,7 +20,7 @@ class TemplateQuestion extends QuestionnaireModule {
     const PIVOTAL_TEMPLATE_QUESTION_SUB_OPTIONS_FIELDS = array("ID", "parentTableId", "description");
     */
 
-    protected function _validateAndSanitize($newTemplateQuestion) {
+    public function validateAndSanitize($newTemplateQuestion) {
         $validatedQT = array(
             'typeId' => strip_tags($newTemplateQuestion['typeId']),
             'name_EN' => strip_tags($newTemplateQuestion['name_EN']),
@@ -59,7 +59,7 @@ class TemplateQuestion extends QuestionnaireModule {
         $validatedQT["subOptions"] = $subOptions;
 
         if($validatedQT["typeId"] == SLIDERS) {
-            if(!$validatedQT["options"] = $this->_validateSliderForm($validatedQT["options"]))
+            if(!$validatedQT["options"] = $this->validateSliderForm($validatedQT["options"]))
                 return false;
         }
         else if ($validatedQT["typeId"] == CHECKBOXES || $validatedQT["typeId"] == RADIO_BUTTON) {
@@ -72,23 +72,6 @@ class TemplateQuestion extends QuestionnaireModule {
         return $validatedQT;
     }
 
-    /**
-     * Validate a slider options
-     * param $sliderOptions
-     * return false || array
-     */
-    protected function _validateSliderForm($sliderOptions) {
-        $sliderOptions["minValue"] = floatval($sliderOptions["minValue"]);
-        $sliderOptions["maxValue"] = floatval($sliderOptions["maxValue"]);
-        $sliderOptions["increment"] = floatval($sliderOptions["increment"]);
-        if($sliderOptions["increment"] != 1)
-            return false;
-//        $sliderOptions["maxValue"] = floatval(floor(($sliderOptions["maxValue"] - $sliderOptions["minValue"]) / $sliderOptions["increment"]) * $sliderOptions["increment"]) + $sliderOptions["minValue"];
-        if ($sliderOptions["minCaption_EN"] == "" || $sliderOptions["minCaption_FR"] == "" || $sliderOptions["maxCaption_EN"] == "" || $sliderOptions["maxCaption_FR"] == "" || $sliderOptions["minValue"] < 0.0 || $sliderOptions["maxValue"] < 0.0 || $sliderOptions["minValue"] >= $sliderOptions["maxValue"])
-            return false;
-        return $sliderOptions;
-    }
-    
     /*
      * This function validate the pivotal IDs of an updated type template to insure it will not compromise the data when
      * updating the database.
@@ -96,7 +79,7 @@ class TemplateQuestion extends QuestionnaireModule {
      * @params  Reference of the updated type template (array) and current type template in the DB (array)
      * @return  boolean if the data are compromised or not.
      * */
-    protected function _validatePivotalIDs(&$updatedTemplateQuestion, &$oldTemplateQuestion) {
+    function validatePivotalIDs(&$updatedTemplateQuestion, &$oldTemplateQuestion) {
         $answer = true;
         $arrayOldOption = array();
 
@@ -145,8 +128,8 @@ class TemplateQuestion extends QuestionnaireModule {
      *
      * @param   $options (array of options of the template question, $subOptions (array of the different choices)
      * @return  $total (number of records affected by the update)
-     * */
-    protected function _updateRadioButtonOptions($options, $subOptions) {
+ * */
+    function updateRadioButtonOptions($options, $subOptions) {
         $optionsToKeepAndUpdate = array();
         $optionsToAdd = array();
         $total = 0;
@@ -218,7 +201,7 @@ class TemplateQuestion extends QuestionnaireModule {
      * @param   $options (array of options of the question, $subOptions (array of the different choices)
      * @return  $total (number of records affected by the update)
      * */
-    protected function _updateCheckboxOptions($options, $subOptions) {
+    function updateCheckboxOptions($options, $subOptions) {
         $optionsToKeepAndUpdate = array();
         $optionsToAdd = array();
         $total = 0;
@@ -285,18 +268,17 @@ class TemplateQuestion extends QuestionnaireModule {
      * @param   $options (array of options of the question)
      * @return  $total (number of records affected by the update)
      * */
-    protected function _updateSliderOptions($options) {
+    function updateSliderOptions($options) {
         $total = 0;
 
         $options["minValue"] = floatval($options["minValue"]);
         $options["maxValue"] = floatval($options["maxValue"]);
         $options["increment"] = floatval($options["increment"]);
 
-        if($options["minCaption_EN"] == "" ||  $options["minCaption_FR"] == "" || $options["maxCaption_EN"] == "" ||  $options["maxCaption_FR"] == "" || $options["minValue"] < 0.0 || $options["maxValue"] < 0.0 || $options["increment"] != 1.0 || $options["minValue"] >= $options["maxValue"])
+        if($options["minCaption_EN"] == "" ||  $options["minCaption_FR"] == "" || $options["maxCaption_EN"] == "" ||  $options["maxCaption_FR"] == "" || $options["minValue"] <= 0.0 || $options["maxValue"] <= 0.0 || $options["increment"] <= 0.0 || $options["minValue"] >= $options["maxValue"])
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid data.");
 
-        // for now increment will be hardcoded
-//        $options["maxValue"] = floatval(floor(($options["maxValue"] - $options["minValue"]) / $options["increment"]) * $options["increment"]) + $options["minValue"];
+        $options["maxValue"] = floatval(floor(($options["maxValue"] - $options["minValue"]) / $options["increment"]) * $options["increment"]) + $options["minValue"];
 
         $toUpdateDict = array(
             array("content"=>$options["minCaption_FR"], "languageId"=>FRENCH_LANGUAGE, "contentId"=>$options["minCaption"]),
@@ -338,11 +320,11 @@ class TemplateQuestion extends QuestionnaireModule {
      * param   array type template details (array)
      * return  void
      */
-    public function updateTemplateQuestion($updatedTemplateQuestion) {
+    function updateTemplateQuestion($updatedTemplateQuestion) {
         $this->checkWriteAccess($updatedTemplateQuestion);
         $total = 0;
-        $oldTemplateQuestion = $this->_getTemplateQuestionDetails($updatedTemplateQuestion["ID"]);
-        $updatedTemplateQuestion = $this->_validateAndSanitize($updatedTemplateQuestion);
+        $oldTemplateQuestion = $this->getTemplateQuestionDetails($updatedTemplateQuestion["ID"]);
+        $updatedTemplateQuestion = $this->validateAndSanitize($updatedTemplateQuestion);
 
         if(!$updatedTemplateQuestion)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid question type format");
@@ -350,7 +332,7 @@ class TemplateQuestion extends QuestionnaireModule {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
         else if(empty($updatedTemplateQuestion["options"]) || ($updatedTemplateQuestion["typeId"] == RADIO_BUTTON || $updatedTemplateQuestion["typeId"] == CHECKBOXES) && empty($updatedTemplateQuestion["subOptions"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data.");
-        else if(!$this->_validatePivotalIDs($updatedTemplateQuestion, $oldTemplateQuestion))
+        else if(!$this->validatePivotalIDs($updatedTemplateQuestion, $oldTemplateQuestion))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Corrupted data.");
 
         $toUpdateDict = array(
@@ -374,11 +356,11 @@ class TemplateQuestion extends QuestionnaireModule {
         $totalTemplateQuestionUpdated = $this->questionnaireDB->updateTemplateQuestion($toUpdateTemplateQuestion);
 
         if($updatedTemplateQuestion["typeId"] == RADIO_BUTTON)
-            $total += $this->_updateRadioButtonOptions($updatedTemplateQuestion["options"],$updatedTemplateQuestion["subOptions"]);
+            $total += $this->updateRadioButtonOptions($updatedTemplateQuestion["options"],$updatedTemplateQuestion["subOptions"]);
         else if($updatedTemplateQuestion["typeId"] == CHECKBOXES)
-            $total += $this->_updateCheckboxOptions($updatedTemplateQuestion["options"],$updatedTemplateQuestion["subOptions"]);
+            $total += $this->updateCheckboxOptions($updatedTemplateQuestion["options"],$updatedTemplateQuestion["subOptions"]);
         else if($updatedTemplateQuestion["typeId"] == SLIDERS)
-            $total += $this->_updateSliderOptions($updatedTemplateQuestion["options"]);
+            $total += $this->updateSliderOptions($updatedTemplateQuestion["options"]);
 
         if ($totalTemplateQuestionUpdated == 0 && $total > 0)
             $this->questionnaireDB->forceUpdate($updatedTemplateQuestion["ID"], TEMPLATE_QUESTION_TABLE);
@@ -392,7 +374,7 @@ class TemplateQuestion extends QuestionnaireModule {
     public function insertTemplateQuestion($newTemplateQuestion){
         $this->checkWriteAccess($newTemplateQuestion);
         $total = 0;
-        $newTemplateQuestion = $this->_validateAndSanitize($newTemplateQuestion);
+        $newTemplateQuestion = $this->validateAndSanitize($newTemplateQuestion);
 
         if(!$newTemplateQuestion)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid question type format");
@@ -477,21 +459,12 @@ class TemplateQuestion extends QuestionnaireModule {
     }
 
     /*
-     * This function returns the details of a specific question type. Public function that checks access.
+     * This function returns the details of a specific question type.
      * @param   ID of the question type (int)
      * @return  array of details of the question type
      * */
     public function getTemplateQuestionDetails($templateQuestionId) {
         $this->checkReadAccess($templateQuestionId);
-        return $this->_getTemplateQuestionDetails($templateQuestionId);
-    }
-
-    /*
-     * This function returns the details of a specific question type. Protected function only using internally.
-     * @param   ID of the question type (int)
-     * @return  array of details of the question type
-     * */
-    protected function _getTemplateQuestionDetails($templateQuestionId) {
         $templateQuestion = $this->questionnaireDB->getTemplateQuestionDetails($templateQuestionId);
         if(!is_array($templateQuestion) || count($templateQuestion) != 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Errors fetching the question type. Number of result is wrong.");

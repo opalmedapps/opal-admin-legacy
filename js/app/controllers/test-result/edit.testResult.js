@@ -1,4 +1,6 @@
-angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).controller('testResult.edit', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, testResultCollectionService, Session, ErrorHandler) {
+angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
+
+controller('testResult.edit', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, testResultCollectionService, Session, ErrorHandler) {
 
 	// Default Boolean
 	$scope.changesMade = false; // changes been made?
@@ -30,7 +32,7 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 	testResultCollectionService.getTestResultGroups().then(function (response) {
 		$scope.TestResultGroups_EN = response.data.EN;
 		$scope.TestResultGroups_FR = response.data.FR;
-	}).catch(function (err) {
+	}).catch(function(err) {
 		ErrorHandler.onError(err, $filter('translate')('TEST.EDIT.ERROR_GROUP'));
 	});
 
@@ -40,26 +42,28 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 
 	// Call our API service to get the list of educational material
 	testResultCollectionService.getEducationalMaterials().then(function (response) {
-		response.data.forEach(function (entry) {
-			if ($scope.language.toUpperCase() === "FR") {
+		response.data.forEach(function(entry) {
+			if($scope.language.toUpperCase() === "FR") {
 				entry.name_display = entry.name_FR;
 				entry.url_display = entry.url_FR;
-			} else {
+			}
+			else {
 				entry.name_display = entry.name_EN;
 				entry.url_display = entry.url_EN;
 			}
 			entry.tocs.forEach(function (sub) {
-				if ($scope.language.toUpperCase() === "FR") {
+				if($scope.language.toUpperCase() === "FR") {
 					sub.name_display = sub.name_FR;
 					sub.url_display = sub.url_FR;
-				} else {
+				}
+				else {
 					entry.name_display = sub.name_EN;
 					sub.url_display = sub.url_EN;
 				}
 			});
 		});
 		$scope.eduMatList = response.data; // Assign value
-	}).catch(function (err) {
+	}).catch(function(err) {
 		ErrorHandler.onError(err, $filter('translate')('TEST.EDIT.ERROR_EDUCATION'));
 	});
 
@@ -90,7 +94,7 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 
 	$scope.setTestCodeFilter = function (filter) {
 		$scope.testCodeFilter = filter;
-	};
+	}
 
 	/* Function for the "Processing" dialog */
 	var processingModal;
@@ -107,14 +111,15 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 
 	// Call our API service to get the current test result details
 	testResultCollectionService.getTestResultDetails($scope.currentTestResult.serial).then(function (response) {
-		if ($scope.language.toUpperCase() === "FR") {
+		if($scope.language.toUpperCase() === "FR") {
 			response.data.eduMat.name_display = response.data.eduMat.name_FR;
 			response.data.eduMat.url_display = response.data.eduMat.url_FR;
-		} else {
+		}
+		else {
 			response.data.eduMat.name_display = response.data.eduMat.name_EN;
 			response.data.eduMat.url_display = response.data.eduMat.url_EN;
 		}
-		if (typeof response.data.eduMat.tocs !== 'undefined') {
+		if(typeof response.data.eduMat.tocs  !== 'undefined') {
 			response.data.eduMat.tocs.forEach(function (sub) {
 				if ($scope.language.toUpperCase() === "FR") {
 					sub.name_display = sub.name_FR;
@@ -129,14 +134,14 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 
 		// Call our API service to get the list of test names
 		testResultCollectionService.getTestNames().then(function (response) {
-			if (response.data.length <= 0) {
+			if(response.data.length <= 0) {
 				alert($filter('translate')('TEST.EDIT.ERROR_NO_TEST_FOUND'));
 				$scope.cancel();
 				processingModal.close(); // hide modal
 				processingModal = null; // remove reference
 			}
 			$scope.testList = checkAdded(response.data);
-		}).catch(function (err) {
+		}).catch(function(err) {
 			ErrorHandler.onError(err, $filter('translate')('TEST.EDIT.ERROR_TEST'));
 			$scope.cancel();
 		}).finally(function () {
@@ -144,7 +149,7 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 			processingModal = null; // remove reference
 		});
 
-	}).catch(function (err) {
+	}).catch(function(err) {
 		ErrorHandler.onError(err, $filter('translate')('TEST.EDIT.ERROR_DETAILS'));
 	});
 
@@ -178,20 +183,21 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 	$scope.checkForm = function () {
 		if ($scope.testResult.name_EN && $scope.testResult.name_FR && $scope.testResult.description_EN
 			&& $scope.testResult.description_FR && $scope.testResult.group_EN && $scope.testResult.group_FR
-			&& $scope.checkTestsAdded($scope.testList) /*&& $scope.additionalLinksComplete && $scope.changesMade*/) {
+			&& $scope.checkTestsAdded($scope.testList) && $scope.additionalLinksComplete && $scope.changesMade) {
 			return true;
-		} else return false;
+		}
+		else return false;
 	};
 
 	$scope.detailsUpdated = function () {
 		$scope.testResult.details_updated = 1;
 		$scope.setChangesMade();
-	};
+	}
 
-/*	$scope.additionalLinksUpdated = function () {
+	$scope.additionalLinksUpdated = function () {
 		$scope.testResult.additional_links_updated = 1;
 		$scope.setChangesMade();
-	};*/
+	}
 
 	$scope.eduMatUpdate = function (event, eduMat) {
 
@@ -199,11 +205,13 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 			if ($scope.testResult.eduMat.serial == event.target.value) {
 				$scope.testResult.eduMatSer = null;
 				$scope.testResult.eduMat = null;
-			} else {
-				$scope.testResult.eduMat = eduMat;
 			}
-		} else {
-			$scope.testResult.eduMat = eduMat;
+			else {
+				$scope.testResult.eduMat = eduMat
+			}
+		}
+		else {
+			$scope.testResult.eduMat = eduMat
 		}
 		// Toggle boolean
 		$scope.setChangesMade();
@@ -213,9 +221,9 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 	$scope.showTOCs = false;
 	$scope.toggleTOCDisplay = function () {
 		$scope.showTOCs = !$scope.showTOCs;
-	};
+	}
 
-/*	// Function to add an additional link to the test result
+	// Function to add an additional link to the test result
 	$scope.addAdditionalLink = function () {
 		$scope.testResult.additional_links.push({
 			name_EN: "",
@@ -237,7 +245,7 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 		}
 		$scope.setChangesMade();
 		$scope.testResult.additional_links_updated = 1;
-	};*/
+	};
 
 	// Function to add / remove a test
 	$scope.toggleTestSelection = function (test) {
@@ -250,7 +258,8 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 
 			test.added = 0; // added parameter
 
-		} else { // Originally not added, add it
+		}
+		else { // Originally not added, add it
 
 			test.added = 1;
 
@@ -274,33 +283,37 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 
 	$scope.setChangesMade = function () {
 		$scope.changesMade = true;
-/*		$scope.additionalLinksComplete = true;
-		if ($scope.testResult.additional_links) {
+		$scope.additionalLinksComplete = true;
+		if($scope.testResult.additional_links) {
 			angular.forEach($scope.testResult.additional_links, function (link) {
 				if (!link.name_EN || !link.name_FR || !link.url_EN
 					|| !link.url_FR) {
 					$scope.additionalLinksComplete = false;
 				}
 			});
-		}*/
+		}
 	};
 
 	// Submit changes
 	$scope.updateTestResult = function () {
 
 		if ($scope.checkForm()) {
+
 			// For some reason the HTML text fields add a zero-width-space
 			// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
-			$scope.testResult.description_EN = $scope.testResult.description_EN.replace(/\u200B/g, '');
-			$scope.testResult.description_FR = $scope.testResult.description_FR.replace(/\u200B/g, '');
+			$scope.testResult.description_EN = $scope.testResult.description_EN.replace(/\u200B/g,'');
+			$scope.testResult.description_FR = $scope.testResult.description_FR.replace(/\u200B/g,'');
 
 			$scope.testResult.tests = [];
 			// Fill in the tests from testList
 			angular.forEach($scope.testList, function (test) {
 				if (test.added)
-					$scope.testResult.tests.push(test);
+					$scope.testResult.tests.push(test.name);
 			});
-			$scope.testResult.serial = $scope.currentTestResult.serial;
+
+			// Log who updated test result
+			var currentUser = Session.retrieveObject('user');
+			$scope.testResult.user = currentUser;
 
 			// Submit form
 			$.ajax({
@@ -312,7 +325,7 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 					$scope.$parent.bannerMessage = $filter('translate')('TEST.EDIT.SUCCESS_EDIT');
 					$scope.showBanner();
 				},
-				error: function (err) {
+				error: function(err) {
 					ErrorHandler.onError(err, $filter('translate')('TEST.EDIT.ERROR_UPDATE'));
 				},
 				complete: function () {

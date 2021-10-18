@@ -310,9 +310,7 @@ sub getTaskCronLogSer
 #======================================================================================
 sub getTasksFromSourceDB
 {
-	my $cronLogSer = @_[0];
-	my @patientList = @_[1];
-    my $global_patientInfo_sql = @_[2];
+	my ($cronLogSer, @patientList) = @_; # a list of patients and cron log serial from args
 
 	my @taskList = (); # initialize a list for task objects
 
@@ -373,17 +371,33 @@ sub getTasksFromSourceDB
 				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
 					DROP TABLE #tempPatient;
 
-				WITH PatientInfo (PatientAriaSer, LastTransfer, PatientSerNum) AS (
+				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
-			$patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
+			my $numOfPatients = @patientList;
+			my $counter = 0;
+			foreach my $Patient (@patientList) {
+				my $patientSer 			= $Patient->getPatientSer();
+				my $id      		 	= $Patient->getPatientId(); # get patient ID
+				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
+
+				$patientInfo_sql .= "
+					SELECT '$id', '$patientLastTransfer', '$patientSer'
+				";
+
+				$counter++;
+				if ( $counter < $numOfPatients ) {
+					$patientInfo_sql .= "UNION";
+				}
+			}
 			$patientInfo_sql .= ")
 			Select c.* into #tempTask
 			from PatientInfo c;
-			Create Index temporaryindexTask1 on #tempTask (PatientAriaSer);
+			Create Index temporaryindexTask1 on #tempTask (ID);
 			Create Index temporaryindexTask2 on #tempTask (PatientSerNum);
 
 			Select p.PatientSer, p.PatientId into #tempPatient
 			from VARIAN.dbo.Patient p;
+			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
 			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
 			";
 
@@ -416,7 +430,8 @@ sub getTasksFromSourceDB
 					NonScheduledActivity.ActivityInstanceSer 	= ActivityInstance.ActivityInstanceSer
 				AND ActivityInstance.ActivitySer 			    = Activity.ActivitySer
 				AND Activity.ActivityCode 				        = lt.LookupValue
-				AND NonScheduledActivity.PatientSer 			= PatientInfo.PatientAriaSer
+				AND NonScheduledActivity.PatientSer = (select pt.PatientSer
+					from #tempPatient pt where pt.PatientId = PatientInfo.ID)
 				AND (
 			";
 
