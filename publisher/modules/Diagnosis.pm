@@ -227,9 +227,7 @@ sub getDiagnosisStageCriteria
 #======================================================================================
 sub getDiagnosesFromSourceDB
 {
-	my @patientList = @_[0];
-    my $global_patientInfo_sql = @_[1];
-
+	my (@patientList) = @_; # patient list from args
 	my @diagnosisList = (); # initialize a list for diagnosis objects
 
 	# for query results
@@ -253,20 +251,36 @@ sub getDiagnosesFromSourceDB
 				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
 					DROP TABLE #tempPatient;
 
-				WITH PatientInfo (PatientAriaSer, LastTransfer, PatientSerNum) AS (
+				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
-			$patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
+			my $numOfPatients = @patientList;
+			my $counter = 0;
+			foreach my $Patient (@patientList) {
+				my $patientSer 			= $Patient->getPatientSer();
+				my $id      		 	= $Patient->getPatientId(); # get patient ID
+				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
+
+				$patientInfo_sql .= "
+					SELECT '$id', '$patientLastTransfer', '$patientSer'
+				";
+
+				$counter++;
+				if ( $counter < $numOfPatients ) {
+					$patientInfo_sql .= "UNION";
+				}
+			}
 			$patientInfo_sql .= ")
 			Select c.* into #tempDiag
 			from PatientInfo c;
-			Create Index temporaryindexDiag1 on #tempDiag (PatientAriaSer);
+			Create Index temporaryindexDiag1 on #tempDiag (ID);
 			Create Index temporaryindexDiag2 on #tempDiag (PatientSerNum);
 
 			Select p.PatientSer, p.PatientId into #tempPatient
 			from VARIAN.dbo.Patient p;
+			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
 			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
 			";
-			
+
 			my $diagInfo_sql = $patientInfo_sql . "
 		    	SELECT DISTINCT
 			    	dx.DiagnosisSer,
@@ -286,7 +300,8 @@ sub getDiagnosesFromSourceDB
 			    AND	dx.Description 			NOT LIKE '%ERROR%'
     			AND	dx.HstryDateTime    	> PatientInfo.LastTransfer
 	    		AND dx.DateStamp			> '1970-01-01 00:00:00'
-				AND dx.PatientSer 			= PatientInfo.PatientAriaSer
+				AND dx.PatientSer 			= (select pt.PatientSer 
+					from #tempPatient pt where pt.PatientId = PatientInfo.ID)
 		    ";
 
     		# prepare query

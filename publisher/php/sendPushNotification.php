@@ -1,15 +1,13 @@
 <?php
 	header('Content-Type: application/javascript');
   /* Script to send push notifications given the following POST requests. */
-  
+
+  $messageTitle       = $_POST['message_title'];
+  $messageText        = $_POST['message_text'];
+  $deviceType         = $_POST['device_type'];
+  $registrationID     = $_POST['registration_id'];
+
   include_once('HospitalPushNotification.php');
-
-  // print "Title: " . $_POST['message_title'] . "\n\n";
-
-  $messageTitle       = HospitalPushNotification::sanitizeInput($_POST['message_title']);
-  $messageText        = HospitalPushNotification::sanitizeInput($_POST['message_text']);
-  $deviceType         = HospitalPushNotification::sanitizeInput($_POST['device_type']);
-  $registrationID     = HospitalPushNotification::sanitizeInput($_POST['registration_id']);
 
   // Call API to send push notification
   $response = HospitalPushNotification::sendNotification($deviceType, $registrationID, $messageTitle, $messageText);

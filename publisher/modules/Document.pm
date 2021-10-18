@@ -411,9 +411,7 @@ sub getDocCronLogSer
 #======================================================================================
 sub getDocsFromSourceDB
 {
-	my $cronLogSer = @_[0];
-	my @patientList = @_[1];
-    my $global_patientInfo_sql = @_[2];
+	my ($cronLogSer, @patientList) = @_; # a list of patients and cron log serial from args
 
 	my @docList = (); # initialize a list for document objects
 
@@ -429,11 +427,8 @@ sub getDocsFromSourceDB
 	my ($apprvby, $apprvts, $authoredby, $dos, $createdby, $createdts);
     my $lasttransfer;
 
-	# Check for any new updates from the main cron control
-	CheckAliasesMarkedForUpdateModularCron('Document');
-
     # retrieve all aliases that are marked for update
-    my @aliasList = Alias::getAliasesMarkedForUpdateModularCron('Document');
+    my @aliasList = Alias::getAliasesMarkedForUpdate('Document');
 
 	######################################
     # ARIA
@@ -486,17 +481,33 @@ sub getDocsFromSourceDB
 				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
 					DROP TABLE #tempPatient;
 
-				WITH PatientInfo (PatientAriaSer, LastTransfer, PatientSerNum) AS (
+				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
-			$patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
+			my $numOfPatients = @patientList;
+			my $counter = 0;
+			foreach my $Patient (@patientList) {
+				my $patientSer 			= $Patient->getPatientSer();
+				my $id      		 	= $Patient->getPatientId(); # get patient ID
+				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
+
+				$patientInfo_sql .= "
+					SELECT '$id', '$patientLastTransfer', '$patientSer'
+				";
+
+				$counter++;
+				if ( $counter < $numOfPatients ) {
+					$patientInfo_sql .= "UNION";
+				}
+			}
 			$patientInfo_sql .= ")
 			Select c.* into #tempClinic
 			from PatientInfo c;
-			Create Index temporaryindexClinic1 on #tempClinic (PatientAriaSer);
+			Create Index temporaryindexClinic1 on #tempClinic (ID);
 			Create Index temporaryindexClinic2 on #tempClinic (PatientSerNum);
 			
 			Select p.PatientSer, p.PatientId into #tempPatient
 			from VARIAN.dbo.Patient p;
+			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
 			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
 			";
 
@@ -529,7 +540,8 @@ sub getDocsFromSourceDB
 					#tempClinic PatientInfo
 				WHERE
 					pt.pt_id 			            = visit_note.pt_id
-				AND pt.patient_ser			        = PatientInfo.PatientAriaSer
+				AND pt.patient_ser			        = (select pt.PatientSer 
+					from #tempPatient pt where pt.PatientId = PatientInfo.ID)
 				AND visit_note.note_typ		        = note_typ.note_typ
 				AND visit_note.appr_flag		    = 'A'
 				AND visit_note.doc_file_loc = FL.[FileName]
@@ -570,6 +582,11 @@ sub getDocsFromSourceDB
 					$docInfo_sql .= ")";
 				}
 			}
+			
+			# open(my $fh, '>>', 'ym.txt');
+			# print $fh $docInfo_sql;
+			# close $fh;
+
 			# prepare query
 			my $query = $sourceDatabase->prepare($docInfo_sql)
 				or die "Could not prepare query: " . $sourceDatabase->errstr;
@@ -827,7 +844,7 @@ sub inOurDatabase
 }
 
 #======================================================================================
-# Subroutine to copy/transfer our patient documents into a target directory
+# Subroutine to copy/transfer our patient documents into a target director
 #======================================================================================
 sub transferPatientDocuments
 {
@@ -1521,72 +1538,6 @@ sub compareWith
 	}
 
 	return $UpdatedDoc;
-}
-
-#======================================================================================
-# Subroutine to sync the master table to the slave table and then set the publish flag 
-# from 1 to 2. This will identify what is currently being process by the cron job vs what
-# have just been activated during the cron running
-#======================================================================================
-sub CheckAliasesMarkedForUpdateModularCron
-{
-	my ($module) = @_; # current datetime, cron module type, 
-
-	# --------------------------------------------------
-	# First step is to make sure that the two tables have the same amount of records
-	my $insert_sql = "
-	INSERT INTO cronControlAlias (cronControlAliasSerNum, cronType, aliasUpdate, lastTransferred, lastUpdated, sessionId)
-	SELECT A.AliasSerNum, '$module' cronType, A.AliasUpdate, A.LastTransferred, A.LastUpdated, A.SessionId
-	FROM Alias A
-	WHERE A.AliasType = '$module'
-		AND A.AliasSerNum NOT IN (SELECT cronControlAliasSerNum FROM cronControlAlias CCP
-		WHERE CCP.cronType = '$module');
-    	";
-
-    # prepare query
-	my $query = $SQLDatabase->prepare($insert_sql)
-		or die "Could not prepare query: " . $SQLDatabase->errstr;
-
-	# execute query
-	$query->execute()
-		or die "Could not execute query: " . $query->errstr;
-
-	# --------------------------------------------------
-    # Second step is to sync the publish flag between the two tables
-    # Alias is the master and cronControlAlias is the slave
-	my $update_sql = "
-		UPDATE Alias A, cronControlAlias CCA
-		SET CCA.aliasUpdate = A.AliasUpdate
-		WHERE A.AliasSerNum = CCA.cronControlAliasSerNum
-			AND CCA.aliasUpdate <> A.AliasUpdate
-			AND CCA.cronType = '$module';
-    	";
-
-    # prepare query
-	my $query = $SQLDatabase->prepare($update_sql)
-		or die "Could not prepare query: " . $SQLDatabase->errstr;
-
-	# execute query
-	$query->execute()
-		or die "Could not execute query: " . $query->errstr;
-
-	# --------------------------------------------------
-	# Third step update the publish flag from 1 to 2
-	my $update2_sql = "
-		UPDATE cronControlAlias
-		SET aliasUpdate = 2
-		WHERE aliasUpdate = 1
-			AND cronType = '$module';
-    	";
-
-    # prepare query
-	my $query = $SQLDatabase->prepare($update2_sql)
-		or die "Could not prepare query: " . $SQLDatabase->errstr;
-
-	# execute query
-	$query->execute()
-		or die "Could not execute query: " . $query->errstr;
-
 }
 
 # To exit/return always true (for the module itself)

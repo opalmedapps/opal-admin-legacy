@@ -339,9 +339,8 @@ sub getAgeFilterFromOurDB
     return $ageFilter;
 }
 
-
 #======================================================================================
-# Subroutine to get patient filters from DB given a control serial number and table name - returns list of patientSerNum
+# Subroutine to get patient filters from DB given a control serial number and table name
 #======================================================================================
 sub getPatientFiltersFromOurDB
 {

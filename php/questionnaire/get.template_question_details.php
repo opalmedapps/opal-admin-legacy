@@ -5,7 +5,7 @@
  * Time: 7:31 AM
  */
 
-include_once("../config.php");
+include_once('questionnaire.inc');
 
 $templateQuestionId = strip_tags($_POST['templateQuestionId']);
 
