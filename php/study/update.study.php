@@ -1,5 +1,6 @@
 <?php
-include_once("../config.php");
+
+include_once('study.inc');
 
 $customCode = new Study();
 $customCode->updateStudy($_POST);

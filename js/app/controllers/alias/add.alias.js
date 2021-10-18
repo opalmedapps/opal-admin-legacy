@@ -87,21 +87,6 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 		checkin_details: ''
 	};
 
-	var arrValidationInsert = [
-		$filter('translate')('ALIAS.VALIDATION.TYPE'),
-		$filter('translate')('ALIAS.VALIDATION.CHECKIN'),
-		$filter('translate')('ALIAS.VALIDATION.HOSPITAL'),
-		$filter('translate')('ALIAS.VALIDATION.COLOR'),
-		$filter('translate')('ALIAS.VALIDATION.DESCRPIPTION_EN'),
-		$filter('translate')('ALIAS.VALIDATION.DESCRPIPTION_FR'),
-		$filter('translate')('ALIAS.VALIDATION.EDU_MAT'),
-		$filter('translate')('ALIAS.VALIDATION.NAME_EN'),
-		$filter('translate')('ALIAS.VALIDATION.NAME_FR'),
-		$filter('translate')('ALIAS.VALIDATION.SOURCE_DB'),
-		$filter('translate')('ALIAS.VALIDATION.ALIAS_EXP'),
-		$filter('translate')('ALIAS.VALIDATION.ID'),
-	];
-
 	// Initialize list that will hold unassigned terms
 	$scope.termList = [];
 	// Initialize list that will hold educational materials
@@ -111,6 +96,9 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 
 	// Initialize list that will hold source databases
 	$scope.sourceDBList = [];
+
+	// Initialize list that will hold existing color tags
+	$scope.existingColorTags = [];
 
 	// Initialize the termFilter from NULL to single quotes
 	$scope.termFilter = '';
@@ -469,34 +457,35 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 	$scope.submitAlias = function () {
 
 		if ($scope.checkForm()) {
-			var toSubmit = {
-				"checkin_details" : $scope.newAlias.checkin_details,
-				"color" : $scope.newAlias.color,
-				"description_EN" : $scope.newAlias.description_EN.replace(/\u200B/g,''),
-				"description_FR" : $scope.newAlias.description_FR.replace(/\u200B/g,''),
-				"eduMat" : (typeof $scope.newAlias.eduMatSer !== "undefined" ? $scope.newAlias.eduMatSer: null),
-				"hospitalMap" : (typeof $scope.newAlias.hospitalMapSer !== "undefined" ? $scope.newAlias.hospitalMapSer: null),
-				"name_EN" : $scope.newAlias.name_EN,
-				"name_FR" : $scope.newAlias.name_FR,
-				"source_db" : $scope.newAlias.source_db.serial,
-				"type" : $scope.newAlias.type.name,
-				"terms" : []
-			};
 
+			// For some reason the HTML text fields add a zero-width-space
+			// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
+			$scope.newAlias.description_EN = $scope.newAlias.description_EN.replace(/\u200B/g,'');
+			$scope.newAlias.description_FR = $scope.newAlias.description_FR.replace(/\u200B/g,'');
+
+			// Fill it with the added terms from termList
 			angular.forEach($scope.termList, function (term) {
 				if (term.added)
-					toSubmit.terms.push(term.masterSourceAliasId);
+					$scope.newAlias.terms.push(term);
 			});
+
+			if ($scope.newAlias.type == "Appointment") {
+				$scope.newAlias.checkin_details.instruction_EN = $scope.newAlias.checkin_details.instruction_EN.replace(/\u200B/g,'');
+				$scope.newAlias.checkin_details.instruction_FR = $scope.newAlias.checkin_details.instruction_FR.replace(/\u200B/g,'');
+			}
+
+			// Log who created this alias
+			var currentUser = Session.retrieveObject('user');
+			$scope.newAlias.user = currentUser;
 
 			// Submit form
 			$.ajax({
 				type: "POST",
 				url: "alias/insert/alias",
-				data: toSubmit,
+				data: $scope.newAlias,
 				success: function () {},
 				error: function (err) {
-					err.responseText = JSON.parse(err.responseText);
-					ErrorHandler.onError(err, $filter('translate')('ALIAS.ADD.ERROR_ADD'), arrValidationInsert);
+					ErrorHandler.onError(err, $filter('translate')('ALIAS.ADD.ERROR_ADD'));
 				},
 				complete: function() {
 					$state.go('alias');

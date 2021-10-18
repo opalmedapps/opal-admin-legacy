@@ -636,43 +636,5 @@
                 </ul>
             </div>
         </div>
-        <!-- SECTION: Study Trigger -->
-        <div ng-if="triggerSection.study.available" uib-accordion-group is-open="studyTriggerSection.open">
-            <uib-accordion-heading>
-                <div>
-                    <strong>{{'PUBLICATION.EDIT.TRIGGER_STUDY'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': studyTriggerSection.open, 'glyphicon-chevron-right': !studyTriggerSection.open}"></i>
-                </div>
-            </uib-accordion-heading>
-            <div class="alert alert-info" role="alert">
-                <strong>{{'PUBLICATION.EDIT.CURRENT_TRIGGER_STUDY'|translate}}</strong><br>
-                <p>
-                    <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!(studyTriggerList|filter:{added:true}).length || selectAll.study.all"></span>
-                    <span ng-if="!(studyTriggerList|filter:{added:true}).length && !selectAll.study.all">{{'PUBLICATION.EDIT.NO_TRIGGER'|translate}}</span>
-                    <span ng-if="!(studyTriggerList|filter:{added:true}).length && selectAll.study.all">{{'PUBLICATION.EDIT.ALL_STUDIES'|translate}}</span>
-                <ul class="list-items" ng-if="(studyTriggerList|filter:{added:true}).length && !selectAll.study.all">
-                    <li ng-repeat="study in studyTriggerList | filter: {added: true} : 1">{{study.name}}</li>
-                </ul>
-                </p>
-            </div>
-            <div>
-                <div class="input-group">
-                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                    <input class="form-control" maxlength="100" type="text" ng-model="studySearchField" ng-change="selectAll.study.checked = false;" placeholder="{{'PUBLICATION.EDIT.SEARCH'|translate}}" ng-disabled="selectAll.study.checked && selectAll.study.all" />
-                </div>
-                <div style="padding: 7px;">
-                    <label>
-                        <input type="checkbox" ng-click="toggleAllTriggers(studyTriggerList, studySearchField, selectAll.study, triggerSection.study)" ng-checked="selectAll.study.checked"> {{'PUBLICATION.EDIT.SELECT_ALL'|translate}}
-                    </label>
-                </div>
-
-                <ul class="list-items" ng-show="!selectAll.study.checked || !selectAll.study.all">
-                    <li ng-repeat="study in studyTriggerList | filter: studySearchField">
-                        <label>
-                            <input ng-disabled="selectAll.study.checked && selectAll.study.all" type="checkbox" ng-model="study.added" ng-click="selectTrigger(study, selectAll.study, triggerSection.study)"> {{study.name}}
-                        </label>
-                    </li>
-                </ul>
-            </div>
-        </div>
     </uib-accordion>
 </div>

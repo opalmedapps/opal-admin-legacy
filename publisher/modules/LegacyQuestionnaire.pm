@@ -152,7 +152,17 @@ sub publishLegacyQuestionnaires
 {
 	my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
 	
+    my $today_date = strftime("%Y-%m-%d", localtime(time));
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
+
+    # Date object of today at 7:30AM
+    my $today_at_eightAM = Time::Piece->strptime($today_date . " 07:30:00", "%Y-%m-%d %H:%M:%S");
+    # Date object of today at 9PM
+    my $today_at_eightPM = Time::Piece->strptime($today_date . " 21:00:00", "%Y-%m-%d %H:%M:%S");
+
+    # If we are not within the window to publish the messages then return
+    if ( (($now - $today_at_eightAM) < 0) or (($now - $today_at_eightPM) > 0) ) {return;}
+
 
 	# Retrieve all the legacy questionnaire controls
 	my @legacyQuestionnaireControls = getLegacyQuestionnaireControlsMarkedForPublish(); 
@@ -160,6 +170,7 @@ sub publishLegacyQuestionnaires
 	foreach my $Patient (@patientList) {
 
 		my $patientSer 	= $Patient->getPatientSer();
+		my $patientId  	= $Patient->getPatientId();
 
 		foreach my $QuestionnaireControl (@legacyQuestionnaireControls) {
 
@@ -415,7 +426,7 @@ sub publishLegacyQuestionnaires
     				# Finding the existence of the patient in the patient-specific filters
     				# If the patient exists, or all patients were selected as triggers, 
                     # then patient passes else move on to next patient
-    				if ($patientSer ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
+    				if ($patientId ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
                         $patientPassed = 1;
                         if ($frequencyFilter) {
                             $recurringFlag = 1;
@@ -448,33 +459,7 @@ sub publishLegacyQuestionnaires
     				# send push notification
     				my $questionnaireSer = $questionnaire->getLegacyQuestionnaireSer();
     				my $patientSer = $questionnaire->getLegacyQuestionnairePatientSer();
-
-                    my $wsRespondent_sql =
-                    "SELECT d.content
-                    FROM OpalDB.QuestionnaireControl QC, 
-                    	QuestionnaireDB.questionnaire q, 
-                    	QuestionnaireDB.dictionary d, 
-                    	QuestionnaireDB.respondent r
-                    where QC.QuestionnaireDBSerNum = q.ID
-                    	and QC.QuestionnaireControlSerNum = $questionnaireControlSer
-                    	and q.respondentId = r.ID
-                    	and r.title = d.contentId
-                    	and d.languageId = 2
-                    ;";
-
-                    # prepare query
-                    my $query = $SQLDatabase->prepare($wsRespondent_sql)
-                        or die "Could not prepare query: " . $SQLDatabase->errstr;
-
-                    # execute query
-                    $query->execute()
-                        or die "Could not execute query: " . $query->errstr;
-
-                    my $wsRespondent =  $query->fetchrow();
-
-                    if ($wsRespondent eq 'Patient') {
-    				    PushNotification::sendPushNotification($patientSer, $questionnaireSer, 'LegacyQuestionnaire');
-                    }
+    				PushNotification::sendPushNotification($patientSer, $questionnaireSer, 'LegacyQuestionnaire');
     			}
             }
 

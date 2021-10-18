@@ -170,40 +170,40 @@
             </div>
         </div>
         <!-- SECTION: Additional links -->
-<!--        <div uib-accordion-group is-open="additionalLinksSection.open">-->
-<!--            <uib-accordion-heading>-->
-<!--                <div>-->
-<!--                    <strong>{{'TEST.EDIT.LINKS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': additionalLinksSection.open, 'glyphicon-chevron-right': !additionalLinksSection.open}"></i>-->
-<!--                </div>-->
-<!--            </uib-accordion-heading>-->
-<!--            <div class="row" ng-repeat="link in testResult.additional_links" style="margin-bottom:7px; border-bottom:1px solid #ddd;">-->
-<!--                <div class="col-xs-12" style="margin:0 0 7px 0; padding:0 15px; font-size:30px;">-->
-<!--                    <span style="float:right; cursor:pointer;" ng-click="removeAdditionalLink($index)"><span class="glyphicon glyphicon-remove"></span></span>-->
-<!--                </div>-->
-<!--                <div class="col-xs-12 col-sm-6">-->
-<!--                    <div class="input-group" style="margin-bottom: 7px;">-->
-<!--                        <span class="input-group-addon">{{'TEST.EDIT.ENGLISH_TITLE_ABRV'|translate}}</span>-->
-<!--                        <input class="form-control" type="text" ng-model="link.name_EN" ng-change="additionalLinksUpdated()" placeholder="{{'TEST.EDIT.ENGLISH_TITLE'|translate}}" required="required">-->
-<!--                    </div>-->
-<!--                    <div class="input-group" style="margin-bottom: 7px;">-->
-<!--                        <span class="input-group-addon">{{'TEST.EDIT.ENGLISH_URL_ABRV'|translate}}</span>-->
-<!--                        <input class="form-control" type="text" ng-model="link.url_EN" ng-change="additionalLinksUpdated()" placeholder="{{'TEST.EDIT.ENGLISH_URL'|translate}}" required="required">-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="col-xs-12 col-sm-6">-->
-<!--                    <div class="input-group" style="margin-bottom: 7px;">-->
-<!--                        <span class="input-group-addon">{{'TEST.EDIT.FRENCH_TITLE_ABRV'|translate}}</span>-->
-<!--                        <input class="form-control" type="text" ng-model="link.name_FR" ng-change="additionalLinksUpdated()" placeholder="{{'TEST.EDIT.FRENCH_TITLE'|translate}}" required="required">-->
-<!--                    </div>-->
-<!--                    <div class="input-group" style="margin-bottom: 7px;">-->
-<!--                        <span class="input-group-addon">{{'TEST.EDIT.FRENCH_URL_ABRV'|translate}}</span>-->
-<!--                        <input class="form-control" type="text" ng-model="link.url_FR" ng-change="additionalLinksUpdated()" placeholder="{{'TEST.EDIT.FRENCH_URL'|translate}}" required="required">-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            <div class="table-buttons">-->
-<!--                <button class="btn btn-primary" ng-click="addAdditionalLink()">{{'TEST.EDIT.ADD_LINK'|translate}}</button>-->
-<!--            </div>-->
-<!--        </div>-->
+        <div uib-accordion-group is-open="additionalLinksSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'TEST.EDIT.LINKS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': additionalLinksSection.open, 'glyphicon-chevron-right': !additionalLinksSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row" ng-repeat="link in testResult.additional_links" style="margin-bottom:7px; border-bottom:1px solid #ddd;">
+                <div class="col-xs-12" style="margin:0 0 7px 0; padding:0 15px; font-size:30px;">
+                    <span style="float:right; cursor:pointer;" ng-click="removeAdditionalLink($index)"><span class="glyphicon glyphicon-remove"></span></span>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <div class="input-group" style="margin-bottom: 7px;">
+                        <span class="input-group-addon">{{'TEST.EDIT.ENGLISH_TITLE_ABRV'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="link.name_EN" ng-change="additionalLinksUpdated()" placeholder="{{'TEST.EDIT.ENGLISH_TITLE'|translate}}" required="required">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 7px;">
+                        <span class="input-group-addon">{{'TEST.EDIT.ENGLISH_URL_ABRV'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="link.url_EN" ng-change="additionalLinksUpdated()" placeholder="{{'TEST.EDIT.ENGLISH_URL'|translate}}" required="required">
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <div class="input-group" style="margin-bottom: 7px;">
+                        <span class="input-group-addon">{{'TEST.EDIT.FRENCH_TITLE_ABRV'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="link.name_FR" ng-change="additionalLinksUpdated()" placeholder="{{'TEST.EDIT.FRENCH_TITLE'|translate}}" required="required">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 7px;">
+                        <span class="input-group-addon">{{'TEST.EDIT.FRENCH_URL_ABRV'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="link.url_FR" ng-change="additionalLinksUpdated()" placeholder="{{'TEST.EDIT.FRENCH_URL'|translate}}" required="required">
+                    </div>
+                </div>
+            </div>
+            <div class="table-buttons">
+                <button class="btn btn-primary" ng-click="addAdditionalLink()">{{'TEST.EDIT.ADD_LINK'|translate}}</button>
+            </div>
+        </div>
     </uib-accordion>
 </div>

@@ -1,8 +1,8 @@
 <?php
-include_once("../config.php");
+
+header('Content-Type: application/javascript');
+include_once('test-result.inc');
 
 $testResultObject = new TestResult; // Object
 $testNames = $testResultObject->getTestNames();
-
-header('Content-Type: application/javascript');
 echo json_encode($testNames);

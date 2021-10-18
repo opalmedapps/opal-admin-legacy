@@ -1,5 +1,5 @@
 <?php
-include_once("../config.php");
+include_once('questionnaire.inc');
 
 $templateQuestion = new TemplateQuestion(); // Object
 $templateQuestionList = $templateQuestion->getTemplatesQuestions();

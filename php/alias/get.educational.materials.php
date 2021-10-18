@@ -1,5 +1,5 @@
 <?php
-include_once("../config.php");
+include_once('alias.inc');
 
 $alias = new Alias; // Object
 $results = $alias->getEducationalMaterials();
