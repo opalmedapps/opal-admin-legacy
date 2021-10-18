@@ -1,5 +1,6 @@
 <?php
-include_once("../config.php");
+
+include_once('questionnaire.inc');
 
 $questionArray = Question::validateAndSanitize($_POST);
 if(!$questionArray)

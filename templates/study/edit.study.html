@@ -15,66 +15,24 @@
 </div>
 <div class="modal-body">
     <uib-accordion close-others="false">
-        <!-- SECTION: Code -->
-        <div uib-accordion-group is-open="codeSection.open">
+        <!-- SECTION: Titles -->
+        <div uib-accordion-group is-open="titleSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>{{'STUDY.EDIT.DETAILS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': codeSection.open, 'glyphicon-chevron-right': !codeSection.open}"></i>
+                    <strong>{{'STUDY.EDIT.DETAILS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="row">
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div class="input-group">
                         <span class="input-group-addon">{{'STUDY.EDIT.STUDY_ID'|translate}}</span>
-                        <input ng-disabled="locked" class="form-control" type="text" ng-model="toSubmit.details.code" required="required" />
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- SECTION: Titles -->
-        <div uib-accordion-group is-open="titleSection.open">
-            <uib-accordion-heading>
-                <div>
-                    <strong>{{'STUDY.EDIT.TITLES'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
-                </div>
-            </uib-accordion-heading>
-            <div class="row">
-                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-                    <div class="input-group">
-                        <span class="input-group-addon">{{'STUDY.EDIT.ENGLISH_ABVR'|translate}}</span>
-                        <textarea class="form-control" rows="1" ng-model="toSubmit.title_desc.title_EN" placeholder="{{'STUDY.EDIT.PLACEHOLDER_ENGLISH_TITLE'|translate}}"></textarea>
+                        <input ng-disabled="locked" class="form-control" type="text" ng-model="toSubmit.details.code" ng-change="detailsUpdate()" required="required" />
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div class="input-group">
-                        <span class="input-group-addon">{{'STUDY.EDIT.FRENCH_ABVR'|translate}}</span>
-                        <textarea class="form-control" rows="1" ng-model="toSubmit.title_desc.title_FR" placeholder="{{'STUDY.EDIT.PLACEHOLDER_FRENCH_TITLE'|translate}}"></textarea>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- SECTION: Description -->
-        <div uib-accordion-group is-open="descriptionSection.open">
-            <uib-accordion-heading>
-                <div>
-                    <strong>Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': descriptionSection.open, 'glyphicon-chevron-right': !descriptionSection.open}"></i>
-                </div>
-            </uib-accordion-heading>
-            <div class="row">
-                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-                    <div style="text-align:center; margin-bottom: 10px;">
-                        <span style="font-size:20px;">{{'STUDY.EDIT.HTML_ENGLISH'|translate}}</span>
-                    </div>
-                    <div class="input-group">
-                        <div text-angular ng-model="toSubmit.title_desc.description_EN" placeholder="{{'STUDY.EDIT.PLACEHOLDER_ENGLISH_DESCRIPTION'|translate}}" required="required" ta-toolbar="toolbar"></div>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-                    <div style="text-align:center; margin-bottom: 10px;">
-                        <span style="font-size:20px;">{{'STUDY.EDIT.HTML_FRENCH'|translate}}</span>
-                    </div>
-                    <div class="input-group">
-                        <div text-angular ng-model="toSubmit.title_desc.description_FR" placeholder="{{'STUDY.EDIT.PLACEHOLDER_FRENCH_DESCRIPTION'|translate}}" required="required" ta-toolbar="toolbar" ></div>
+                        <span class="input-group-addon">{{'STUDY.EDIT.TITLE_2'|translate}}</span>
+                        <input ng-disabled="locked" class="form-control" type="text" ng-model="toSubmit.details.title" ng-change="detailsUpdate()" required="required" />
                     </div>
                 </div>
             </div>
@@ -90,28 +48,7 @@
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div class="input-group">
                         <span class="input-group-addon">{{'STUDY.EDIT.NAME'|translate}}</span>
-                        <input class="form-control" type="text" ng-model="toSubmit.investigator.name" required="required" />
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-                    <div class="input-group">
-                        <span class="input-group-addon">{{'STUDY.ADD.EMAIL'|translate}}</span>
-                        <input class="form-control" type="text" ng-model="toSubmit.investigator.email" ng-change="validateInvestigatorInfo()" required="required"/>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-4" style="margin-bottom: 10px;">
-                    <div class="input-group">
-                        <span class="input-group-addon">{{'STUDY.ADD.PHONE'|translate}}</span>
-                        <input class="form-control" type="text" ng-model="toSubmit.investigator.phone" ng-change="validateInvestigatorInfo()" required="required"/>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-2" style="margin-bottom: 10px;">
-                    <div class="input-group">
-                        <input class="form-control" type="text" ng-model="toSubmit.investigator.phoneExt" ng-change="validateInvestigatorInfo()" placeholder="ext."/>
+                        <input class="form-control" type="text" ng-model="toSubmit.investigator.name" ng-change="nameUpdate()" required="required" />
                     </div>
                 </div>
             </div>
@@ -152,132 +89,6 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- SECTION: Patient Consent Status -->
-        <div uib-accordion-group is-open="statusSection.open">
-            <uib-accordion-heading>
-                <div>
-                    <strong>{{'STUDY.EDIT.CONSENT_STATUS'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusSection.open, 'glyphicon-chevron-right': !statusSection.open}"></i>
-                </div>
-            </uib-accordion-heading>
-            <div class="alert alert-info" role="alert">
-                <strong>{{'STUDY.EDIT.CURRENT_CONSENTS'|translate}}</strong><br>
-                <p>
-                    <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!(patientConsentList.length)"></span>
-                    <span ng-if="!(patientConsentList.length)">{{'STUDY.EDIT.NO_PATIENT'|translate}}</span>
-                    <ul class="list-items" ng-if="(patientConsentList.length)">
-                        <li ng-repeat="pat in patientConsentList">{{pat.name}} {{pat.consent_display}}</li>
-                    </ul>
-                </p>
-            </div>
-            <div>
-                <div class="input-group">
-                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                    <input class="form-control" maxlength="100" type="text" ng-model="patientSearchField" placeholder="{{'STUDY.EDIT.SEARCH'|translate}}" />
-                </div>
-
-                <ul class="list-items">
-                    <li ng-repeat="patient in patientConsentList | filter: patientSearchField">
-                        <label>
-                            {{patient.name}}
-                        </label>
-                        <select
-                            ng-options="status for status in consentChoices"
-                            ng-model="patient.consent_display" ng-click="patientConsentChange(patient)">
-                        </select>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <!-- SECTION: Patients list -->
-        <div uib-accordion-group is-open="patienSection.open">
-            <uib-accordion-heading>
-                <div>
-                    <strong>{{'STUDY.EDIT.PATIENTS'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': patienSection.open, 'glyphicon-chevron-right': !patienSection.open}"></i>
-                </div>
-            </uib-accordion-heading>
-            <div class="alert alert-info" role="alert">
-                <strong>{{'STUDY.EDIT.CURRENT_PATIENTS'|translate}}</strong><br>
-                <p>
-                    <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!(patientsList|filter:{added:true}).length"></span>
-                    <span ng-if="!(patientsList|filter:{added:true}).length">{{'STUDY.EDIT.NO_PATIENT'|translate}}</span>
-                <ul class="list-items" ng-if="(patientsList|filter:{added:true}).length">
-                    <li ng-repeat="study in patientsList | filter: {added: true} : 1">{{study.name}}</li>
-                </ul>
-                </p>
-            </div>
-            <div>
-                <div class="input-group">
-                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                    <input class="form-control" maxlength="100" type="text" ng-model="patientSearchField" placeholder="{{'STUDY.EDIT.SEARCH'|translate}}" />
-                </div>
-
-                <ul class="list-items">
-                    <li ng-repeat="patient in patientsList | filter: patientSearchField">
-                        <label>
-                            <input type="checkbox" ng-model="patient.added" ng-click=""> {{patient.name}}
-                        </label>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <!-- SECTION: Questionnaire list -->
-        <div uib-accordion-group is-open="questionnaireSection.open">
-            <uib-accordion-heading>
-                <div>
-                    <strong>{{'STUDY.EDIT.QUESTIONNAIRE'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': questionnaireSection.open, 'glyphicon-chevron-right': !questionnaireSection.open}"></i>
-                </div>
-            </uib-accordion-heading>
-            <div class="alert alert-info" role="alert">
-                <strong>{{'STUDY.EDIT.CURRENT_QUESTIONNAIRE'|translate}}</strong><br>
-                <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!(questionnaireList|filter:{added:true}).length"></span>
-                <span ng-if="!(questionnaireList|filter:{added:true}).length">{{'STUDY.EDIT.NO_QUESTIONNAIRE'|translate}}</span>
-                <ul class="list-items" ng-if="(questionnaireList|filter:{added:true}).length">
-                    <li ng-repeat="questionnaire in questionnaireList | filter: {added: true} : 1">{{questionnaire.name_display}}</li>
-                </ul>
-            </div>
-            <div>
-                <div class="input-group">
-                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                    <input class="form-control" maxlength="100" type="text" ng-model="questionnaireSearchField" placeholder="{{'STUDY.EDIT.SEARCH'|translate}}" />
-                </div>
-
-                <ul class="list-items">
-                    <li ng-repeat="questionnaire in questionnaireList | filter: questionnaireSearchField">
-                        <label>
-                            <input type="checkbox" ng-model="questionnaire.added"> {{questionnaire.name_display}}
-                        </label>
-                    </li>
-                </ul>
-            </div>
-        </div>
-         <!-- SECTION: Consent Form -->
-         <div uib-accordion-group is-open="consentSection.open">
-            <uib-accordion-heading>
-                <div>
-                    <strong>{{'STUDY.EDIT.CONSENT_FORM'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': consentSection.open, 'glyphicon-chevron-right': !consentSection.open}"></i>
-                </div>
-            </uib-accordion-heading>
-            <div class="row">
-                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-                    <div class="input-group">
-                        <span class="input-group-addon">{{'STUDY.EDIT.CONSENT_ID'|translate}}</span>
-                        <input ng-disabled="true" class="form-control" type="text" ng-model="consentTitle" required="required" />
-                    </div>
-                    <ul class="list-items" ng-show="!formPublished">
-                        <li ng-repeat="at in consentFormList | filter: consentFormFilter">
-                            <label>
-                                <input ng-disabled="formPublished" type="radio" name="formName" value="{{at.ID}}" ng-model="toSubmit.consent_form.id" ng-change="consentFormUpdate(at)"/> {{at.name_display}}
-                            </label>
-                        </li>
-                    </ul>
-                    <div ng-if="formPublished" class="col-xs-12 panel-danger">
-                        <p style="margin-bottom: 10px;">
-                            <span style="color:#d9534f"><strong>{{'STUDY.EDIT.CONSENT_FORM_PUBLISHED'|translate}}</strong></span>
-                        </p>
                     </div>
                 </div>
             </div>

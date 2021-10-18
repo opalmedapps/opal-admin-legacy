@@ -1,5 +1,6 @@
 <?php
-include_once("../config.php");
+
+include_once('study.inc');
 
 $study = new Study(); // Object
 $results = $study->getStudies();

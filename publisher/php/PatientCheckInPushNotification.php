@@ -11,8 +11,10 @@ class PatientCheckInPushNotification{
     /**
      * API METHODS
      * ===============================================
+
+    /**
      * @name sendPatientCheckInNotification
-     * @desc Using the PatientSerNum, it will send a notification to the patient cell phone stating that they are now checked in.
+     * @desc Using the PatientID, it will send a notification to the patient cell phone stating that they are now checked in.
      * @param $patientSerNum
      * @param $success
      * @return  array containing keys of success, failure,
@@ -167,7 +169,7 @@ class PatientCheckInPushNotification{
      *    (getDevicesForPatient($patientId)
      *    Consumes a PatientId, $patientId
      *    Returns: Returns array with devices that match that particular PatiendId.
-     *    Notes: Removed the limites of records
+     *    Notes: Limit the number of devices to send push notification. Currenlty set to 15.
      **/
     private static function getPatientDevices($patientSerNum){
         global $pdo;
@@ -179,7 +181,7 @@ class PatientCheckInPushNotification{
                   AND P.PatientSerNum = PD.PatientSerNum
                   AND length(trim(PD.RegistrationId)) > 0
                   AND PD.DeviceType in (0,1)
-                  ORDER BY PD.LastUpdated desc;";
+                  ORDER BY PD.LastUpdated desc limit 25;";
 
             $result = $pdo->query($sql);
         }catch(PDOException $e) {
