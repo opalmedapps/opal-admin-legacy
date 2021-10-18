@@ -1,6 +1,5 @@
 <?php
-/* To delete a question */
-include_once('questionnaire.inc');
+include_once("../config.php");
 
 // Retrieve FORM param
 $serNum = strip_tags($_POST['ID']);

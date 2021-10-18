@@ -1,6 +1,5 @@
 <?php
-/* To get a list of existing hospital maps */
-include_once('alias.inc');
+include_once("../config.php");
 
 $anAlias = new Alias; // Object
 $existingHosMapList = $anAlias->getHospitalMaps();

@@ -132,4 +132,4 @@ git checkout staging
 * [Bootstrap](http://getbootstrap.com) - CSS
 * [PHP](http://php.net)
 * [Perl](http://perldoc.perl.org) 
-* [JavaScript](https://www.javascript.com) 
+* [JavaScript](https://www.javascript.com)

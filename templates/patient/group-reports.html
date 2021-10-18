@@ -1,0 +1,296 @@
+<div id="main">
+    <div id="top">
+        <div class="row">           
+            <!-- Load side menu -->
+            <div id="side-panel-scrollbar" class="col-lg-2">
+                <div ng-include="'templates/patient/menu-side.html'"></div>
+            </div>
+    
+            <div class="col-lg-10 animated fadeIn">
+                <div class="row main-title">
+                    <div class="col-xs-12 col-md-8 title-content">
+                        <span class="fa fa-address-card"></span> 
+                        <h1><strong>{{'PATIENTS.REPORT.GROUP.TITLE'|translate}}</strong></h1>
+                    </div>
+                    <!-- breadcrumbs -->
+                    <div class="col-md-4 title-breadcrumbs">
+                        <span><a ui-sref="home">{{'BREADCRUMBS.HOME'|translate}}</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>{{'PATIENTS.LIST.TITLE'|translate}}</strong></span>
+                    </div>
+                </div>
+            </div>
+            <div id="GroupReport" class="col-xs-12 col-lg-10 animated fadeInRight">
+                <div class="section-content">
+                    <div class="row">
+                        <div class="col-xs-12 side-menu-title">
+                            <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                               <span style="background-color:#e6edfa; padding: 0 10px;">
+                                   <h2>{{'PATIENTS.REPORT.GROUP.PSELECT'|translate}}</h2>
+                               </span>
+                           </div>
+                       </div>
+                    </div>
+                    <div class="row list-logs">
+                        <div class="col-lg-10">
+                            <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-default" ng-click="switchView('education')" ng-class="{'active': category.education}">
+                                        <i class="fa fa-list"></i> <label class="control-label" style="text-transform:none;">{{'PATIENTS.REPORT.GROUP.TITLE_EDUC'|translate}}</label>
+                                    </button>
+                                </div>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-default" ng-click="switchView('questionnaire'); genQuestionnaireOptions();" ng-class="{'active': category.questionnaire}">
+                                        <i class="fa fa-list"></i> <label class="control-label" style="text-transform:none;">{{'PATIENTS.REPORT.GROUP.TITLE_QST'|translate}}</label>
+                                    </button>
+                                </div>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-default" ng-click="switchView('demographics'); genPatientReport();" ng-class="{'active': category.demographics}">
+                                        <i class="fa fa-list"></i> <label class="control-label" style="text-transform:none;">{{'PATIENTS.REPORT.GROUP.TITLE_DEMO'|translate}}</label>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row" ng-show="category.education">
+                        <div class="col-md-6 animated fadeInRight">
+                            <div class="panel">
+                                <div class="panel-body form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-md-8">
+                                            <label class="control-label">
+                                                {{'PATIENTS.REPORT.GROUP.EDUC_TYPE'|translate}}
+                                            </label>
+                                            <select ng-show="siteLanguage=='EN'" ng-model="materialType" ng-options="x for x in materialTypesEN" ng-change="genEducationMaterialOptions()"></select>
+                                            <select ng-show="siteLanguage=='FR'" ng-model="materialTypeFR" ng-options="x for x in materialTypesFR" ng-change="genEducationMaterialOptions()"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-show="displayMaterialList">
+                                        <div class="col-xs-12 col-md-8">
+                                        <label class="control-label">
+                                            {{'PATIENTS.REPORT.GROUP.ALL'|translate}} {{materialType}} {{'PATIENTS.REPORT.GROUP.FOUND'|translate}}
+                                        </label>
+                                            <select ng-model="selectedMaterial" ng-options="x for x in educList" ng-change="genEducReport();" style="max-width:200px;"></select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 animated fadeInRight">
+                            <div class="panel">
+                                <div class="panel-body form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-md-6">
+                                            <label class="control-label">{{'PATIENTS.REPORT.GROUP.STATS'|translate}}</label>
+                                        </div>
+                                        <div class="col-xs-12 col-md-6">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-md-6">
+                                            <label class="control-label">{{'PATIENTS.REPORT.GROUP.MF'|translate}}</label>
+                                        </div>
+                                        <div class="col-xs-12 col-md-6">
+                                            {{educFemPcnt}}% / {{educMalPcnt}}% / {{educUnkPcnt}}% 
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-md-6">
+                                            <label class="control-label">{{'PATIENTS.REPORT.GROUP.AVAGE'|translate}}</label>
+                                        </div>
+                                        <div class="col-xs-12 col-md-6">
+                                            {{educAvgAge}} {{'PATIENTS.REPORT.GROUP.YR'|translate}}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-md-6">
+                                            <label class="control-label">{{'PATIENTS.REPORT.GROUP.READ'|translate}}</label>
+                                        </div>
+                                        <div class="col-xs-12 col-md-6">
+                                            {{educReadPcnt}}% 
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-md-6">
+                                            <label class="control-label">{{'PATIENTS.REPORT.GROUP.AVTIME'|translate}}</label>
+                                        </div>
+                                        <div class="col-xs-12 col-md-6">
+                                            {{educAvgDaysToRead}} {{'PATIENTS.REPORT.GROUP.DY'|translate}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="showEducReport && category.education">
+                        <div class="col-xs-12 side-menu-title">
+                            <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                <span style="background-color:#e6edfa; padding: 0 10px;">
+                                    <h2>{{'PATIENTS.REPORT.GROUP.REPORT'|translate}} {{materialType}}: {{selectedMaterial}}, {{educReportLength}} {{'PATIENTS.REPORT.GROUP.RECORDS'|translate}}</h2>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="showEducReport && category.education">
+                        <div class="col-xs-12 animated fadeInRight">
+                            <div resize ng-if="!refresh" class="gridStyle" style="border:none;" ng-style="{ 'width' : width, 'height' : height}" ui-grid="educGridOptions"></div>
+                        </div>
+                    </div>
+                
+
+                    <div class="row" ng-show="category.questionnaire">
+                        <div class="col-md-6 animated fadeInRight">
+                            <div class="panel">
+                                <div class="panel-body form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-md-8">
+                                            <label class="control-label">
+                                                {{'PATIENTS.REPORT.GROUP.QST_CHOOSE'|translate}}
+                                            </label>
+                                            <select ng-model="selectedQuestionnaire" ng-options="x for x in qstList"
+                                                ng-change="genQstReport();"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 animated fadeInRight">
+                            <div class="panel">
+                                <div class="panel-body form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-md-6">
+                                            <label class="control-label">{{'PATIENTS.REPORT.GROUP.STATS'|translate}}</label>
+                                        </div>
+                                        <div class="col-xs-12 col-md-6">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-md-6">
+                                            <label class="control-label">{{'PATIENTS.REPORT.GROUP.MF'|translate}}</label>
+                                        </div>
+                                        <div class="col-xs-12 col-md-6">
+                                            {{qstPcntFemale}}% / {{qstPcntMale}}% / {{qstPcntUnk}}%
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-md-6">
+                                            <label class="control-label">{{'PATIENTS.REPORT.GROUP.UNIQUE'|translate}}</label>
+                                        </div>
+                                        <div class="col-xs-12 col-md-6">
+                                            {{qstUniquePats}}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-md-6">
+                                            <label class="control-label">{{'PATIENTS.REPORT.GROUP.AVAGE'|translate}}</label>
+                                        </div>
+                                        <div class="col-xs-12 col-md-6">
+                                            {{qstAvgAge}} {{'PATIENTS.REPORT.GROUP.YR'|translate}}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-md-6">
+                                            <label class="control-label">{{'PATIENTS.REPORT.GROUP.PCNT_COMPLETE'|translate}}</label>
+                                        </div>
+                                        <div class="col-xs-12 col-md-6">
+                                            {{qstPcntCompleted}}%
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-md-6">
+                                            <label class="control-label">{{'PATIENTS.REPORT.GROUP.AVTIME'|translate}}</label>
+                                        </div>
+                                        <div class="col-xs-12 col-md-6">
+                                            {{qstAvgCompletTime}} {{'PATIENTS.REPORT.GROUP.DY'|translate}}
+                                        </div>
+                                    </div>
+                                        
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
+                    <div class="row" ng-show="showQstReport && category.questionnaire">
+                        <div class="col-xs-12 side-menu-title">
+                            <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                <span style="background-color:#e6edfa; padding: 0 10px;">
+                                    <h2>{{'PATIENTS.REPORT.GROUP.REPORT'|translate}}  {{selectedQuestionnaire}}, {{qstReportLength}} {{'PATIENTS.REPORT.GROUP.RECORDS'|translate}}</h2>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="showQstReport && category.questionnaire">
+                        <div class="col-xs-12 animated fadeInRight">
+                            <div resize ng-if="!refresh" class="gridStyle" style="border:none;" ng-style="{ 'width' : width, 'height' : height}" ui-grid="qstGridOptions"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="row" ng-show="category.demographics">
+                        <div class="col-md-8 animated fadeInRight">
+                            <div class="panel">
+                                <div id="plot1"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 animated fadeInRight">
+                            <div class="panel">
+                                <div class="panel-body form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-md-8">
+                                            <label class="control-label">{{'PATIENTS.REPORT.GROUP.STATS'|translate}}</label>
+                                        </div>
+                                        <div class="col-xs-12 col-md-4">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-md-8">
+                                            <label class="control-label">{{'PATIENTS.REPORT.GROUP.MF'|translate}}</label>
+                                        </div>
+                                        <div class="col-xs-12 col-md-4">
+                                            {{demoPcntFemale}}% / {{demoPcntMale}}% / {{demoPcntUnk}}%
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-md-8">
+                                            <label class="control-label">{{'PATIENTS.REPORT.GROUP.AVAGE'|translate}}</label>
+                                        </div>
+                                        <div class="col-xs-12 col-md-4">
+                                            {{demoAvgAge}} {{'PATIENTS.REPORT.GROUP.YR'|translate}}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-md-8">
+                                            <label class="control-label">{{'PATIENTS.REPORT.GROUP.FE'|translate}}</label>
+                                        </div>
+                                        <div class="col-xs-12 col-md-4">
+                                            {{demoPcntFrench}}% / {{demoPcntEnglish}}%
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                        </div>
+                    </div>    
+                    <div class="row" ng-show="category.demographics">
+                        <div class="col-xs-12 side-menu-title">
+                            <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                <span style="background-color:#e6edfa; padding: 0 10px;">
+                                    <h2>{{'PATIENTS.REPORT.GROUP.REPORT'|translate}} {{'PATIENTS.REPORT.GROUP.TITLE_DEMO'|translate}}, {{patientReportLength}} {{'PATIENTS.REPORT.GROUP.RECORDS'|translate}}</h2>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="category.demographics">
+                        <div class="col-xs-12 animated fadeInRight">
+                            <div resize ng-if="!refresh" class="gridStyle" style="border:none;" ng-style="{ 'width' : width, 'height' : height}" ui-grid="demoGridOptions"></div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

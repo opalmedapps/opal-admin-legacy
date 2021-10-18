@@ -1,0 +1,64 @@
+<div id="main">
+    <div id="top">
+        <div class="clearfix">
+            <div class="row">
+                <!-- Load side menu -->
+                <div id="side-panel-scrollbar" class="col-lg-2">
+                    <div ng-include="'templates/side-panel-menu.html'"></div>
+                </div>
+                <!-- Right detail panel view -->
+                <div class="col-lg-10 animated fadeIn">
+                    <div class="row main-title">
+                        <!-- Page title -->
+                        <div class="col-xs-12 col-md-9 title-content">
+                            <span class="glyphicon glyphicon-phone"></span>
+                            <h1><strong>{{'SMS.LIST.TITLE'|translate}}</strong></h1>
+                        </div>
+                        <!-- Breadcrumbs -->
+                        <div class="col-md-3 title-breadcrumbs">
+                            <span><a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>{{'SMS.LIST.TITLE'|translate}}</strong></span>
+                        </div>
+                    </div>
+                    <div class="row clearfix operations">
+                        <div class="save-add col-xs-12 col-sm-6 col-md-8 col-lg-9">
+                            <!-- Add button -->
+                            <a ng-if="writeAccess" style="margin-right:20px;" href="" ng-click="goToMessage()" class="btn btn-md btn-outline item-button">
+                                <span style="font-size: 17px;" class="glyphicon glyphicon-pencil"></span>
+                                <span style="font-size: 20px;"><strong>{{'SMS.LIST.ADD_EDIT'|translate}}</strong></span>
+                            </a>
+                            <!-- Save changes button -->
+                            <a href="" ng-if="writeAccess&&changesMade" ng-click="submitUpdate()" class="btn btn-md item-button-success animated"  ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false">
+                                <span style="font-size: 17px;" class="glyphicon glyphicon-ok"></span>
+                                <span style="font-size: 20px;"><strong>{{'SMS.LIST.SAVE'|translate}}</strong></span>
+                            </a>
+                        </div>
+                        <!-- Search field -->
+                        <div class="search col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                            <div class="form-group has-feedback" style="margin-bottom: 0">
+                                <input type="text" class="form-control" ng-model="filterValue" ng-change="filterSms(filterValue)" placeholder="{{'SMS.LIST.SEARCH'|translate}}">
+                                <span class="glyphicon glyphicon-search form-control-feedback"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- The main table -->
+                    <div>
+                        <div>
+                            <div class="panel-container" style="text-align:left;">
+                                <div class="panel-info">
+                                    <div class="panel-input">
+                                        <div id="data-table">
+                                            <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:75vh">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bannerMessage alert-success">{{bannerMessage}}</div>
+</div>
