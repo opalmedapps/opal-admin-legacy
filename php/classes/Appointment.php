@@ -21,7 +21,7 @@ class Appointment extends Module
      * @param $post array - mrn & featureList
      * @return $errCode
      */
-    protected function _validateAppointment(&$post)
+    protected function _validateAppointment(&$post): string
     {
         $errCode = "";
 
