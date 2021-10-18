@@ -37,7 +37,7 @@ controller('patientActivity', function ($scope, $uibModal, $filter, patientColle
 		var matcher = new RegExp($scope.filterValue, 'i');
 		renderableRows.forEach(function (row) {
 			var match = false;
-			['patientid', 'deviceid', 'name'].forEach(function (field) {
+			['deviceId', 'name'].forEach(function (field) {
 				if (row.entity[field].match(matcher)) {
 					match = true;
 				}
@@ -60,11 +60,14 @@ controller('patientActivity', function ($scope, $uibModal, $filter, patientColle
 	$scope.gridOptions = {
 		data: 'patientActivityList',
 		columnDefs: [
-			{ field: 'patientid', displayName: $filter('translate')('PATIENTS.ACTIVITY.PATIENTID'), width: '15%', enableColumnMenu: false },
+			{ field: 'RAMQ', displayName: $filter('translate')('PATIENTS.ACTIVITY.RAMQ'), width: '10%', enableColumnMenu: false },
 			{ field: 'name', displayName: $filter('translate')('PATIENTS.ACTIVITY.NAME'), width: '15%', enableColumnMenu: false },
-			{ field: 'deviceid', displayName: $filter('translate')('PATIENTS.ACTIVITY.DEVICEID'), width: '30%', enableColumnMenu: false },
-			{ field: 'login', displayName: $filter('translate')('PATIENTS.ACTIVITY.LOGIN'), width: '20%', enableColumnMenu: false },
-			{ field: 'logout', displayName: $filter('translate')('PATIENTS.ACTIVITY.LOGOUT'), width: '20%', enableColumnMenu: false }
+			{ field: 'MRN', displayName: $filter('translate')('PATIENTS.ACTIVITY.MRN'), width: '13%', enableColumnMenu: false },
+			{ field: 'deviceId', displayName: $filter('translate')('PATIENTS.ACTIVITY.DEVICEID'), width: '25%', enableColumnMenu: false },
+			{ field: 'login', displayName: $filter('translate')('PATIENTS.ACTIVITY.LOGIN'), width: '15%', enableColumnMenu: false },
+			{ field: 'deviceType', displayName: $filter('translate')('PATIENTS.ACTIVITY.TYPE'), width: '12%', enableColumnMenu: false },
+			{ field: 'appVersion', displayName: $filter('translate')('PATIENTS.ACTIVITY.VERSION'), width: '10%', enableColumnMenu: false },
+			// { field: 'logout', displayName: $filter('translate')('PATIENTS.ACTIVITY.LOGOUT'), width: '20%', enableColumnMenu: false }
 		],
 		//useExternalFiltering: true,
 		enableFiltering: true,
@@ -81,8 +84,20 @@ controller('patientActivity', function ($scope, $uibModal, $filter, patientColle
 	$scope.loading = true;
 	// Call our API to get the list of patient activities
 	patientCollectionService.getPatientActivities().then(function (response) {
-		// Assign value
 		$scope.patientActivityList = response.data;
+
+		var temp;
+
+		for (var i = 0; i < $scope.patientActivityList.length; i++) {
+			temp = "";
+			if($scope.patientActivityList[i].MRN.length > 0)
+				for (var j = 0; j < $scope.patientActivityList[i].MRN.length; j++)
+					temp += $scope.patientActivityList[i].MRN[j].MRN + " (" + $scope.patientActivityList[i].MRN[j].hospital + "), ";
+
+			$scope.patientActivityList[i].MRN = temp.slice(0, -2);
+		}
+
+
 	}).catch(function(err) {
 		ErrorHandler.onError(err, $filter('translate')('PATIENTS.ACTIVITY.ERROR_ACTIVITIES'));
 	}).finally(function () { $scope.loading = false; });

@@ -151,7 +151,7 @@ angular.module('opalAdmin.controllers.template.question', ['ngAnimate', 'ngSanit
 		};
 
 		function getTemplateQuestionsList() {
-			questionnaireCollectionService.getTemplatesQuestions(Session.retrieveObject('user').id).then(function (response) {
+			questionnaireCollectionService.getTemplatesQuestions().then(function (response) {
 				$scope.templateQuestionList = response.data;
 			}).catch(function(err) {
 				ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.ERROR_RESPONSE_TYPES_LIST'));

@@ -23,6 +23,10 @@ class DatabaseOpal extends DatabaseAccess {
             }
             else {
                 $userInfo = $this->_getUserInfoFromDB($newOAUserId);
+                if(count($userInfo) == 1)
+                    $userInfo = $userInfo[0];
+                else
+                    HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "User not authenticated.");
                 $this->OAUserId = $userInfo["OAUserId"];
                 $this->username = $userInfo["username"];
                 $this->userRole = $userInfo["userRole"];
@@ -92,7 +96,7 @@ class DatabaseOpal extends DatabaseAccess {
         $sqlModule = str_replace("%%QUESTIONNAIRECONTROL%%", OPAL_QUESTIONNAIRE_CONTROL_TABLE, $sqlModule);
         $sqlModule = str_replace("%%POSTCONTROL%%", OPAL_POST_TABLE, $sqlModule);
         $sqlModule = str_replace("%%MODULE%%", OPAL_MODULE_TABLE, $sqlModule);
-        $sqlModule = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_CONTROL_TABLE, $sqlModule);
         $sqlModule = str_replace("%%PHASEINTREATMENT%%", OPAL_PHASE_IN_TREATMENT_TABLE, $sqlModule);
 
         return $this->_fetchAll($sqlModule, array());
@@ -189,10 +193,11 @@ class DatabaseOpal extends DatabaseAccess {
         $sqlFetchPerModule = str_replace("%%TXTEAMMESSAGE%%", OPAL_TX_TEAM_MESSAGE_TABLE, $sqlFetchPerModule);
         $sqlFetchPerModule = str_replace("%%ANNOUNCEMENT%%", OPAL_ANNOUNCEMENT_TABLE, $sqlFetchPerModule);
         $sqlFetchPerModule = str_replace("%%PATIENTSFORPATIENTS%%", OPAL_PATIENTS_FOR_PATIENTS_TABLE, $sqlFetchPerModule);
-        $sqlFetchPerModule = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_TABLE, $sqlFetchPerModule);
+        $sqlFetchPerModule = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_CONTROL_TABLE, $sqlFetchPerModule);
         $sqlFetchPerModule = str_replace("%%PHASEINTREATMENT%%", OPAL_PHASE_IN_TREATMENT_TABLE, $sqlFetchPerModule);
+        $sqlFetchPerModule = str_replace(":OAUserId", intval($this->getOAUserId()), $sqlFetchPerModule);
 
-        $result["publications"] = $this->_fetchAll($sqlFetchPerModule,  array(array("parameter"=>":OAUserId","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT)));
+        $result["publications"] = $this->_fetchAll($sqlFetchPerModule, array());
         $result["triggers"] = $this->getPublicationSettingsPerModule($moduleId);
         $result["unique"] = $module["unique"];
         $result["subModule"] = $module["subModule"];
@@ -223,7 +228,7 @@ class DatabaseOpal extends DatabaseAccess {
         $sqlFetchDetails = str_replace("%%TXTEAMMESSAGE%%", OPAL_TX_TEAM_MESSAGE_TABLE, $sqlFetchDetails);
         $sqlFetchDetails = str_replace("%%ANNOUNCEMENT%%", OPAL_ANNOUNCEMENT_TABLE, $sqlFetchDetails);
         $sqlFetchDetails = str_replace("%%PATIENTSFORPATIENTS%%", OPAL_PATIENTS_FOR_PATIENTS_TABLE, $sqlFetchDetails);
-        $sqlFetchDetails = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_TABLE, $sqlFetchDetails);
+        $sqlFetchDetails = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_CONTROL_TABLE, $sqlFetchDetails);
         $sqlFetchDetails = str_replace("%%PHASEINTREATMENT%%", OPAL_PHASE_IN_TREATMENT_TABLE, $sqlFetchDetails);
 
         return $this->_fetch($sqlFetchDetails,  array(array("parameter"=>":ID","variable"=>$publicationId,"data_type"=>PDO::PARAM_INT)));
@@ -337,7 +342,7 @@ class DatabaseOpal extends DatabaseAccess {
         $sqlPublicationListLog = str_replace("%%TXT_TEAM_MSG_MH_TABLE%%", OPAL_TXT_TEAM_MSG_MH_TABLE, $sqlPublicationListLog);
         $sqlPublicationListLog = str_replace("%%PATIENTS_FOR_PATIENTS_MH_TABLE%%", OPAL_PATIENTS_FOR_PATIENTS_MH_TABLE, $sqlPublicationListLog);
         $sqlPublicationListLog = str_replace("%%EDUCATION_MATERIAL_MH_TABLE%%", OPAL_EDUCATION_MATERIAL_MH_TABLE, $sqlPublicationListLog);
-        $sqlPublicationListLog = str_replace("%%EDUCATION_MATERIAL_CONTROL_TABLE%%", OPAL_EDUCATION_MATERIAL_TABLE, $sqlPublicationListLog);
+        $sqlPublicationListLog = str_replace("%%EDUCATION_MATERIAL_CONTROL_TABLE%%", OPAL_EDUCATION_MATERIAL_CONTROL_TABLE, $sqlPublicationListLog);
         $sqlPublicationListLog = str_replace("%%QUESTIONNAIRE_MH_TABLE%%", OPAL_QUESTIONNAIRE_MH_TABLE, $sqlPublicationListLog);
         $sqlPublicationListLog = str_replace("%%QUESTIONNAIRE_CONTROL_TABLE%%", OPAL_QUESTIONNAIRE_CONTROL_TABLE, $sqlPublicationListLog);
         $sqlPublicationListLog = str_replace("%%CRON_LOG_IDS%%", implode(", ", $cronIds), $sqlPublicationListLog);
@@ -405,7 +410,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  ID of the entry
      * */
     function insertPublishedQuestionnaire($toInsert) {
-        return $this->_insertRecordIntoTable(OPAL_QUESTIONNAIRE_CONTROL_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_QUESTIONNAIRE_CONTROL_TABLE, $toInsert);
     }
 
     /*
@@ -414,7 +419,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  ID of the entry
      * */
     function insertMultipleFilters($toInsert) {
-        $this->_insertMultipleRecordsIntoTable(OPAL_FILTERS_TABLE, $toInsert);
+        $this->_replaceMultipleRecordsIntoTable(OPAL_FILTERS_TABLE, $toInsert);
     }
 
     /*
@@ -423,7 +428,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  number of records affected
      * */
     function insertMultipleFrequencyEvents($toInsert) {
-        $this->_insertMultipleRecordsIntoTable(OPAL_FREQUENCY_EVENTS_TABLE, $toInsert);
+        $this->_replaceMultipleRecordsIntoTable(OPAL_FREQUENCY_EVENTS_TABLE, $toInsert);
     }
 
     /*
@@ -541,7 +546,7 @@ class DatabaseOpal extends DatabaseAccess {
             default:
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module.");
         }
-        $lastId = $this->_insertRecordIntoTable($tableToInsert, $toInsert);
+        $lastId = $this->_replaceRecordIntoTable($tableToInsert, $toInsert);
         $externalId = -1 * abs(intval($lastId));
 
         $sql = str_replace("%%MASTER_TABLE%%", $tableToInsert, OPAL_UPDATE_EXTERNAL_ID_MASTER_SOURCE);
@@ -650,7 +655,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  ID of the insertion
      * */
     function insertReplaceFrequencyEvent($record) {
-        return $this->_insertRecordIntoTable(OPAL_FREQUENCY_EVENTS_TABLE, $record);
+        return $this->_replaceRecordIntoTable(OPAL_FREQUENCY_EVENTS_TABLE, $record);
     }
 
     /*
@@ -698,7 +703,7 @@ class DatabaseOpal extends DatabaseAccess {
         $toInsert["LastUpdatedBy"] = $this->getOAUserId();
         $toInsert["SessionId"] = $this->getSessionId();
         $toInsert["DateAdded"] = date("Y-m-d H:i:s");
-        return $this->_insertRecordIntoTable(OPAL_POST_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_POST_TABLE, $toInsert);
     }
 
     /*
@@ -780,7 +785,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @returns total results inserted (int)
      * */
     function insertAliases($toInsert) {
-        return $this->_insertMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_ALIAS_TABLE, $toInsert);
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_ALIAS_TABLE, $toInsert);
     }
 
     /*
@@ -789,7 +794,16 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  patient triggers found (array)
      * */
     function getPatientsTriggers() {
-        return $this->_fetchAll(OPAL_GET_PATIENTS_TRIGGERS, array());
+        $results = $this->_fetchAll(OPAL_GET_PATIENTS_TRIGGERS, array());
+        foreach($results as &$item) {
+            $temp = $this->_fetchAll(OPAL_GET_MRN_PATIENT_SERNUM, array(array("parameter"=>":PatientSerNum","variable"=>$item["id"],"data_type"=>PDO::PARAM_INT)));
+            $mrnList = array();
+            foreach ($temp as $mrn)
+                array_push($mrnList, $mrn["MRN"] . " (".$mrn["hospital"].")");
+            if(count($mrnList) > 0)
+                $item["name"] .= " (MRN: " . implode(", ", $mrnList) . ")";
+        }
+        return $results;
     }
 
     /*
@@ -838,6 +852,15 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
+     * Get all the treatment machine triggers
+     * @params  void
+     * @return  treatment machine triggers found (array)
+     * */
+    function getStudiesTriggers() {
+        return $this->_fetchAll(OPAL_GET_STUDIES_TRIGGERS, array());
+    }
+
+    /*
      * Count the total iteration of a custom code.
      * @params  $tableName (string) name of the table where to count
      *          $code (string) name of the custom code to count
@@ -872,6 +895,18 @@ class DatabaseOpal extends DatabaseAccess {
      *          $password (string) already encrypted
      * @return  array with the results found
      * */
+    function authenticateUserAccess($username) {
+        return $this->_fetchAll(SQL_OPAL_VALIDATE_OAUSER_ACCESS, array(
+            array("parameter"=>":Username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Authenticate a username and a password of an user in opalDB (legacy system)
+     * @params  $username (string)
+     *          $password (string) already encrypted
+     * @return  array with the results found
+     * */
     function authenticateSystemUser($username, $password) {
         return $this->_fetchAll(SQL_OPAL_VALIDATE_SYSTEM_OAUSER_LOGIN, array(
             array("parameter"=>":username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
@@ -897,7 +932,7 @@ class DatabaseOpal extends DatabaseAccess {
      * */
     function insertUserActivity($toInsert) {
         $toInsert["DateAdded"] = date("Y-m-d H:i:s");
-        return $this->_insertRecordIntoTable(OPAL_USER_ACTIVITY_LOG_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_USER_ACTIVITY_LOG_TABLE, $toInsert);
     }
 
     /*
@@ -982,13 +1017,45 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-    /*
+    /**
+     * Check if the user exists already or not
+     * @param $username
+     * @return array - records found
+     */
+    function isUserExists($username) {
+        return $this->_fetchAll(OPAL_IS_USER_EXISTS, array(
+            array("parameter"=>":Username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Update a specific user informations and reactivate the account.
+     * @param $type int - type of account (user or system)
+     * @param $username string - username of the account to update
+     * @param $password string - encrypted password
+     * @param $language string - preferred language of the account (en/fr)
+     * @param $roleId int - ID of the role of the user
+     * @return int - number of records affected
+     */
+    function updateUser($type, $username, $password, $language, $roleId) {
+        return $this->_execute(OPAL_UPDATE_USER, array(
+            array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":type","variable"=>$type,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":Language","variable"=>$language,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Password","variable"=>$password,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
      * insert a new user and the date of adding
-     * @params  $username (string) username (duh!)
-     *          $password (string) encrypted password
-     *          $language (string) preferred language
-     * @return  array with the result of the insert
-     * */
+     * @param $type string - type of user (human or system)
+     * @param $username string - username to insert
+     * @param $password string - encrypted password
+     * @param $language string - preferred language (en/fr)
+     * @param $roleId int - ID of the role for the user
+     * @return int - new created ID of the user
+     */
     function insertUser($type, $username, $password, $language, $roleId) {
         $toInsert = array(
             "Username"=>$username,
@@ -998,7 +1065,7 @@ class DatabaseOpal extends DatabaseAccess {
             "Language"=>$language,
             "DateAdded"=>date("Y-m-d H:i:s"),
         );
-        return $this->_insertRecordIntoTable(OPAL_OAUSER_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_OAUSER_TABLE, $toInsert);
     }
 
     /*
@@ -1014,17 +1081,7 @@ class DatabaseOpal extends DatabaseAccess {
             "Language"=>$language,
             "DateAdded"=>date("Y-m-d H:i:s"),
         );
-        return $this->_insertRecordIntoTable(OPAL_OAUSER_TABLE, $toInsert);
-    }
-
-    /*
-     * insert into the intersection table of role-user to give a role to an user
-     * @params  $userId (int) ID of the user
-     *          $roleId (int) ID of the role
-     * @return  array with the result of the insert
-     * */
-    function insertUserRole($userId, $roleId) {
-        return $this->_insertRecordIntoTable(OPAL_OAUSER_ROLE_TABLE, array("OAUserSerNum"=>$userId, "RoleSerNum"=>$roleId));
+        return $this->_replaceRecordIntoTable(OPAL_OAUSER_TABLE, $toInsert);
     }
 
     /*
@@ -1209,7 +1266,7 @@ class DatabaseOpal extends DatabaseAccess {
         $newStudy["createdBy"] = $this->getUsername();
         $newStudy["creationDate"] = date("Y-m-d H:i:s");
         $newStudy["updatedBy"] = $this->getUsername();
-        return $this->_insertRecordIntoTable(OPAL_STUDY_TABLE, $newStudy);
+        return $this->_replaceRecordIntoTable(OPAL_STUDY_TABLE, $newStudy);
     }
 
     /*
@@ -1218,7 +1275,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @returns (array) details of the study
      * */
     function getStudyDetails($studyId) {
-        return $this->_fetch(OPAL_GET_STUDY_DETAILS,
+        return $this->_fetchAll(OPAL_GET_STUDY_DETAILS,
             array(array("parameter"=>":ID","variable"=>$studyId,"data_type"=>PDO::PARAM_INT))
         );
     }
@@ -1231,6 +1288,20 @@ class DatabaseOpal extends DatabaseAccess {
     function updateStudy($study) {
         $study["updatedBy"] = $this->getUsername();
         return $this->_updateRecordIntoTable(OPAL_UPDATE_STUDY, $study);
+    }
+
+    /**
+     * Update a specific patient consent status (invited, opalConsented, otherConsented, declined)
+     * @params $studyID (int) study id
+     *         $patId (int) patient Id
+     *         $patConsent (int) new patient consent
+     */
+    function updateStudyConsent($studyID, $patId, $patConsent){
+        return $this->_fetchAll(OPAL_UPDATE_STUDY_CONSENT, array(
+            array("parameter"=>":studyId","variable"=>$studyID,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":patientId","variable"=>$patId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":patientConsent","variable"=>$patConsent,"data_type"=>PDO::PARAM_INT),
+        ));
     }
 
     /*
@@ -1294,7 +1365,7 @@ class DatabaseOpal extends DatabaseAccess {
         $toInsert["createdBy"] = $this->getUsername();
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
         $toInsert["updatedBy"] = $this->getUsername();
-        return $this->_insertRecordIntoTable(OPAL_OA_ROLE_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_OA_ROLE_TABLE, $toInsert);
     }
 
     /*
@@ -1303,7 +1374,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @returns int : ID of the entry
      * */
     function insertRoleModule($toInsert) {
-        return $this->_insertMultipleRecordsIntoTable(OPAL_OA_ROLE_MODULE_TABLE, $toInsert);
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_OA_ROLE_MODULE_TABLE, $toInsert);
     }
 
     /*
@@ -1358,7 +1429,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  int - number of records updated
      * */
     function insertOARoleModule($multipleUpdates) {
-        return $this->_insertMultipleRecordsIntoTable(OPAL_OA_ROLE_MODULE_TABLE, $multipleUpdates);
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_OA_ROLE_MODULE_TABLE, $multipleUpdates);
     }
 
     /*
@@ -1398,13 +1469,21 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-    /*
-     * Get access level for a specific combo or role/module
-     * */
+    /**
+     * Get access level for a specific combo or role/module. If ORMS is not active or present, deactivate SMS if it's
+     * not already.
+     * @param $roleId
+     * @return array - access levels for a specific role
+     */
     function getUserAccess($roleId) {
-        return $this->_fetchAll(OPAL_GET_USER_ACCESS, array(
+        $result = $this->_fetchAll(OPAL_GET_USER_ACCESS, array(
             array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_INT),
         ));
+        if(!WRM_DB_ENABLED)
+            foreach ($result as &$item)
+                if($item["ID"] == MODULE_SMS && $item["access"] != USER_ACCESS_DENIED)
+                    $item["access"] =  USER_ACCESS_DENIED;
+        return $result;
     }
 
     /*
@@ -1422,6 +1501,10 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  array - list of educational material
      * */
     function getEducationalMaterial() {
+        return $this->_fetchAll(OPAL_GET_EDUCATIONAL_MATERIAL, array());
+    }
+
+    function getPublishedEducationalMaterial() {
         return $this->_fetchAll(OPAL_GET_EDUCATIONAL_MATERIAL, array());
     }
 
@@ -1697,7 +1780,7 @@ class DatabaseOpal extends DatabaseAccess {
         $toSubmit["creationDate"] = date("Y-m-d H:i:s");
         $toSubmit["createdBy"] = $this->username;
         $toSubmit["updatedBy"] = $this->username;
-        return $this->_insertRecordIntoTable(OPAL_ALERT_TABLE, $toSubmit);
+        return $this->_replaceRecordIntoTable(OPAL_ALERT_TABLE, $toSubmit);
     }
 
     /*
@@ -1742,7 +1825,7 @@ class DatabaseOpal extends DatabaseAccess {
     function insertAudit($toInsert) {
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
         $toInsert["createdBy"] = ($this->username != null ? $this->username : UNKNOWN_USER);
-        return $this->_insertRecordIntoTable(OPAL_AUDIT_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_AUDIT_TABLE, $toInsert);
     }
 
     /*
@@ -1752,7 +1835,7 @@ class DatabaseOpal extends DatabaseAccess {
      * */
     function insertAuditForceUser($toInsert) {
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
-        return $this->_insertRecordIntoTable(OPAL_AUDIT_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_AUDIT_TABLE, $toInsert);
     }
 
     /*
@@ -1845,7 +1928,7 @@ class DatabaseOpal extends DatabaseAccess {
         $toInsert["LastUpdatedBy"] = $this->getOAUserId();
         $toInsert["SessionId"] = $this->getSessionId();
 
-        return $this->_insertRecordIntoTable(OPAL_DIAGNOSIS_TRANSLATION_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_DIAGNOSIS_TRANSLATION_TABLE, $toInsert);
     }
 
     /*
@@ -1859,7 +1942,7 @@ class DatabaseOpal extends DatabaseAccess {
             $item["LastUpdatedBy"] = $this->getOAUserId();
             $item["SessionId"] = $this->getSessionId();
         }
-        return $this->_insertMultipleRecordsIntoTable(OPAL_DIAGNOSIS_CODE_TABLE, $toInsert);
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_DIAGNOSIS_CODE_TABLE, $toInsert);
     }
 
     /*
@@ -1918,6 +2001,19 @@ class DatabaseOpal extends DatabaseAccess {
     function deleteDiagnosisTranslation($diagnosisTranslationId) {
         return $this->_execute(OPAL_DELETE_DIAGNOSIS_TRANSLATION, array(
             array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisTranslationId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get all the triggers
+     * @params  int : $sourceContentId - content id the triggers are attached to
+     *          int : $sourceModuleId - module id of the source content
+     * @return  triggers found (array)
+     * */
+    function getTriggersList($sourceContentId, $sourceModuleId) {
+        return $this->_fetchAll(OPAL_GET_TRIGGERS_LIST, array(
+            array("parameter"=>":sourceContentId","variable"=>$sourceContentId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":sourceModuleId","variable"=>$sourceModuleId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
@@ -1992,8 +2088,8 @@ class DatabaseOpal extends DatabaseAccess {
     function getDiagnosisCodeDetails($code, $source, $externalId) {
         return $this->_fetchAll(OPAL_GET_DIAGNOSIS_CODE_DETAILS, array(
             array("parameter"=>":code","variable"=>$code,"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":externalId","variable"=>$externalId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SourceDatabaseName","variable"=>$source,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":externalId","variable"=>$externalId,"data_type"=>PDO::PARAM_STR),
         ));
     }
 
@@ -2002,10 +2098,10 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  $toInsert : array - Contains the patient diagnosis info
      * @return  int - last insert ID
      * */
-    function insertPatientDiagnosis($toInsert) {
+    function replacePatientDiagnosis($toInsert) {
         $toInsert["createdBy"] = $this->getUsername();
         $toInsert["updatedBy"] = $this->getUsername();
-        return $this->_insertRecordIntoTable(OPAL_DIAGNOSIS_TABLE, $toInsert);
+        return $this->_replaceRecordIntoTable(OPAL_DIAGNOSIS_TABLE, $toInsert);
     }
 
     /*
@@ -2015,11 +2111,11 @@ class DatabaseOpal extends DatabaseAccess {
      *          $externalId : string - external ID from an outside source
      * @return  Diagnosis SerNum for a specific patient in a specific DB
      * */
-    function getPatientDiagnosisId($patientId, $source, $externalId) {
+    function getPatientDiagnosisId($patientId, $source, $diagnosisAriaSer) {
         return $this->_fetchAll(OPAL_GET_PATIENT_DIAGNOSIS_ID, array(
             array("parameter"=>":PatientSerNum","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$source,"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":DiagnosisAriaSer","variable"=>$externalId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":DiagnosisAriaSer","variable"=>$diagnosisAriaSer,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
@@ -2031,6 +2127,1652 @@ class DatabaseOpal extends DatabaseAccess {
     function deletePatientDiagnosis($id) {
         $this->_execute(OPAL_DELETE_PATIENT_DIAGNOSIS, array(
             array("parameter"=>":DiagnosisSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get the patient by their last name
+     * @params  $name : string - target patient last name
+     * @return  array - list of patient(s) matching search
+     * */
+    function getPatientName($plname) {
+        return $this->_fetchAll(OPAL_GET_PATIENT_NAME, array(
+            array("parameter"=>":name","variable"=>'%'.$plname.'%',"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Get the patient by their mrn
+     * @params  $mrn : string - target patient mrn
+     * @return  array - list of patient(s) matching search
+     * */
+    function getPatientMRN($pmrn) {
+        return $this->_fetchAll(OPAL_GET_PATIENT_MRN, array(
+            array("parameter"=>":MRN","variable"=>'%'.$pmrn.'%',"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Get the patient by their ramq
+     * @params  $mrn : string - target patient ramq
+     * @return  array - list of patient(s) matching search
+     * */
+    function getPatientRAMQ($ssn) {
+        return $this->_fetchAll(OPAL_GET_PATIENT_RAMQ, array(
+            array("parameter"=>":SSN","variable"=>'%'.$ssn.'%',"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient diagnosis report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient diagnosis details
+     */
+    function getPatientDiagnosisReport($pnum){
+        return $this->_fetchAll(OPAL_GET_DIAGNOSIS_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient appointment report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient appointment details
+     */
+    function getPatientAppointmentReport($pnum){
+        return $this->_fetchAll(OPAL_GET_APPOINTMENT_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient questionnaire report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient questionnaire details
+     */
+    function getPatientQuestionnaireReport($pnum){
+        return $this->_fetchAll(OPAL_GET_QUESTIONNAIRE_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient educational material report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient educ material details
+     */
+    function getPatientEducMaterialReport($pnum){
+        return $this->_fetchAll(OPAL_GET_EDUCATIONAL_MATERIAL_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient legacy test results report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient test result details
+     */
+    function getPatientLegacyTestReport($pnum){
+        return $this->_fetchAll(OPAL_GET_LEGACY_TEST_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient test results report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient test result details
+     */
+    function getPatientTestReport($pnum){
+        return $this->_fetchAll(OPAL_GET_TEST_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient notifications report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient notifiations details
+     */
+    function getPatientNotificationsReport($pnum){
+        return $this->_fetchAll(OPAL_GET_NOTIFICATIONS_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient treatment plan report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient tx plan details
+     */
+    function getPatientTreatmentPlanReport($pnum){
+        return $this->_fetchAll(OPAL_GET_TREATMENT_PLAN_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient clinnotes  report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient clinnote details
+     */
+    function getPatientClinNoteReport($pnum){
+        return $this->_fetchAll(OPAL_GET_CLINICAL_NOTES_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient treating team report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient tx team details
+     */
+    function getPatientTxTeamReport($pnum){
+        return $this->_fetchAll(OPAL_GET_TREATING_TEAM_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient general report
+     * @params $pnum : int - target patient ser num
+     * @return array - patient gen details
+     */
+    function getPatientGeneralReport($pnum){
+        return $this->_fetchAll(OPAL_GET_GENERAL_REPORT, array(
+            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get educational material options
+     * @params $matType : string - material category
+     * @return array - educ options
+     */
+    function getEducMatOptions($matType){
+        return $this->_fetchAll(OPAL_GET_EDUCATIONAL_MATERIAL_OPTIONS, array(
+            array("parameter"=>":matType","variable"=>$matType,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get educational material group report
+     * @param $matType : string - material category
+     * @param $matName : string - material name
+     * @return array - educ material report
+     */
+    function getEducMatReport($matType, $matName){
+        return $this->_fetchAll(OPAL_GET_EDUCATIONAL_MATERIAL_GROUP, array(
+            array("parameter"=>":matType","variable"=>$matType,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":matName","variable"=>$matName,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get questionnaire options
+     * @param void
+     * @return array - questionnaire names (EN)
+     */
+    function getQstOptions(){
+        return $this->_fetchAll(OPAL_GET_QUESTIONNAIRE_OPTIONS, array());
+    }
+
+    /**
+     * Get questionnaires group report
+     * @param $qName : string - questionnaire name
+     * @return array - questionnaires group report
+     */
+    function getQstReport($qName){
+        return $this->_fetchAll(OPAL_GET_QUESTIONNAIRE_REPORT_GROUP, array(
+            array("parameter"=>":qName","variable"=>$qName,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get demographics group report
+     * @param void
+     * @return array - demographics report
+     */
+    function getDemoReport(){
+        return $this->_fetchAll(OPAL_GET_DEMOGRAPHICS_REPORT_GROUP, array());
+    }
+
+    /*
+     * Fetch all test results
+     * @params  void
+     * @return  array - list of test results
+     * */
+    function getTestResults() {
+        return $this->_fetchAll(OPAL_GET_TEST_RESULTS, array());
+    }
+
+    /*
+     * fetch all currently assigned test results
+     * @params  void
+     * @return  array - list of assigned tests
+     * */
+    function getAssignedTests() {
+        return $this->_fetchAll(OPAL_GET_ASSIGNED_TESTS, array());
+    }
+
+    /*
+     * Update the publish flag of a test result
+     * @params  $id : int - primary key in test result control table
+     *          $publishFlag : int - 0 (unpublished) or 1 (published)
+     * @return  void
+     * */
+    function updateTestResultPublishFlag($id, $publishFlag) {
+        $this->_execute(OPAL_UPDATE_TEST_RESULTS_PUBLISH_FLAG, array(
+            array("parameter"=>":PublishFlag","variable"=>$publishFlag,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":LastUpdatedBy","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SessionId","variable"=>$this->getSessionId(),"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":TestControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get details of a specific test result.
+     * @params  $id : int - primary key in test result control table
+     * @return  array - details from the test result
+     * */
+    function getTestResultDetails($id) {
+        return $this->_fetchAll(OPAL_GET_TEST_RESULT_DETAILS, array(
+            array("parameter"=>":TestControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get list of expression names of a test result
+     * @params  $id : int - primary key in test result control table
+     * @return  array - list of expression names of the test result
+     * */
+    function getTestExpressionNames($id) {
+        return $this->_fetchAll(OPAL_GET_TEST_EXPRESSION_NAMES, array(
+            array("parameter"=>":TestControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Publish a patient questionnaire
+     * @params  int : $questionnaireControlSerNum - the questionnaire in OpalDB
+     *          int : $patientSerNum - patient serial in OpalDB
+     * @return int - ID of the record inserted
+     * */
+    function publishQuestionnaire($questionnaireControlSerNum, $patientSerNum) {
+        $toSubmit = array(
+            "QuestionnaireControlSerNum"=>$questionnaireControlSerNum,
+            "PatientSerNum"=>$patientSerNum,
+            "DateAdded"=>date("Y-m-d H:i:s"),
+            "SessionId"=>$this->getSessionId()
+        );
+        return $this->_insertRecordIntoTable(OPAL_QUESTIONNAIRE_TABLE, $toSubmit);
+    }
+
+    /*
+     * Get additional links of a test result
+     * @params  $id : int - primary key in test result control table
+     * @return  array - list of IDs of additional links
+     * */
+    /*    function getTestResultAdditionalLinks($id) {
+            return $this->_fetchAll(OPAL_GET_TEST_RESULT_ADD_LINK, array(
+                array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+            ));
+        }*/
+
+    /*
+     * Get list of test results groups in french and english
+     * @params  vois
+     * @return  array - list of test result groups
+     * */
+    function getTestResultGroups() {
+        return $this->_fetchAll(OPAL_GET_TEST_RESULT_GROUPS, array());
+    }
+
+    /*
+     * Insert a test result in the test result control table
+     * @params  $toInsert : array - Contains the test result info
+     * @return  int - last insert ID
+     * */
+    function insertTestResult($toInsert) {
+        $toInsert["DateAdded"] = date("Y-m-d H:i:s");
+        $toInsert["LastPublished"] = date("Y-m-d H:i:s");
+        $toInsert["LastUpdatedBy"] = $this->getOAUserId();
+        $toInsert["SessionId"] = $this->getSessionId();
+        return $this->_replaceRecordIntoTable(OPAL_TEST_CONTROL_TABLE, $toInsert);
+    }
+
+    /*
+     * Insert a list of test expression codes into the test expression table
+     * @params  $toInsert : array - list of test expression
+     * @return  int - last ID entered
+     * */
+    function insertMultipleTestExpressions($toInsert) {
+        foreach ($toInsert as &$item) {
+            $item["DateAdded"] = date("Y-m-d H:i:s");
+            $item["LastUpdatedBy"] = $this->getOAUserId();
+            $item["SessionId"] = $this->getSessionId();
+        }
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_TEST_RESULT_EXPRESSION_TABLE, $toInsert);
+    }
+
+    /*
+     * Insert a list of additional links for test results
+     * @params  $toInsert : array - list of test expression
+     * @return  int - last ID entered
+     * */
+    /*    function insertTestResultAdditionalLinks($toInsert) {
+            foreach ($toInsert as &$item) {
+                $item["DateAdded"] = date("Y-m-d H:i:s");
+            }
+            return $this->_replaceMultipleRecordsIntoTable(OPAL_TEST_RESULT_ADD_LINKS_TABLE, $toInsert);
+        }*/
+
+    /*
+     * Get if the educational material exists
+     * @params  void
+     * @return  array - list of educational material details
+     * */
+    function doesEduMaterialExists($id) {
+        return $this->_fetchAll(OPAL_DOES_EDU_MATERIAL_EXISTS, array(
+            array("parameter"=>":EducationalMaterialControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Deactivate all test results without test expression attached to.
+     * @params  void
+     * @return  int - number of records affected
+     * */
+    function sanitizeEmptyTestResults() {
+        return $this->_updateRecordIntoTable(OPAL_SANITIZE_EMPTY_TEST_RESULTS, array(
+            "LastUpdatedBy"=>$this->getOAUserId(),
+            "SessionId"=>$this->getSessionId(),
+        ));
+    }
+
+    /*
+     * Update a test result control entry if the data changed.
+     * @params  $toUpdate : array - contains all the details to update if necessary
+     * @return  int - number of records affected.
+     * */
+    function updateTestControl($toUpdate) {
+        $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
+        $toUpdate["SessionId"] = $this->getSessionId();
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_TEST_CONTROL, $toUpdate);
+    }
+
+    /*
+     * Delete test expressions from a test result that are not in use anymore.
+     * @params  $id - int : ID of the test result
+     * @return  $list - array : list of test expression name
+     * @return  int - number of records deleted
+     * */
+    function removeUnusedTestExpression($id, $list) {
+        $sqlUpdate = str_replace("%%LISTIDS%%", "'" . implode("', '", $list) . "'", OPAL_REMOVE_UNUSED_TEST_EXPRESSIONS);
+        return $this->_execute($sqlUpdate, array(
+            array("parameter"=>":TestControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Count the number of the test additional links by a list of IDs.
+     * @params  $ids - array : list of ids
+     * @return  array: total count found
+     * */
+    /*    function countTestResultsAdditionalLinks($ids) {
+            $sqlCount = str_replace("%%LISTIDS%%", implode(", ", $ids), OPAL_COUNT_TR_ADDITIONAL_LINKS);
+            return $this->_fetch($sqlCount, array());
+        }*/
+
+    /*
+     * Delete unused additionalk links that are not a list of IDS for a specific test result
+     * @params  $id - int : ID of the test result
+     *          $list - array : list of IDs not to delete
+     * @return  int - number of records affected
+     */
+    /*    function deleteUnusedAddLinks($id, $list) {
+            $sqlDelete = str_replace("%%LISTIDS%%", implode(", ", $list), OPAL_DELETE_UNUSED_ADD_LINKS);
+            return $this->_execute($sqlDelete, array(
+                array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+            ));
+        }*/
+
+    /*
+     * Update a specific test restul additionnal link
+     * @params  $toUpdate - array : contains all the additional links details
+     * @return  int - number of records affected
+     * */
+    /*    function updateTestResultAdditionalLink($toUpdate) {
+            return $this->_updateRecordIntoTable(OPAL_UPDATE_ADDITIONAL_LINKS, $toUpdate);
+        }*/
+
+    /*
+     * Get the test result chart log
+     * @params  void
+     * @return  array : list of chart logs
+     * */
+    function getTestResultChartLog() {
+        return $this->_fetchAll(OPAL_GET_TEST_RESULT_CHART_LOG, array());
+    }
+
+    /*
+     * Get the test result chart log for a specific ID
+     * @params  void
+     * @return  array : list of chart logs
+     * */
+    function getTestResultChartLogById($id) {
+        return $this->_fetchAll(OPAL_GET_TEST_RESULT_CHART_LOG_BY_ID, array(
+            array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Delete all expressions of a test result
+     * @params  $id - int : ID of the test result
+     * @return  int : number of records deleted.
+     * */
+    function unsetTestResultExpressions($id) {
+        return $this->_execute(OPAL_UNSET_TEST_EXPRESSIONS, array(
+            array("parameter"=>":TestControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Delete all links of a test result
+     * @params  $id - int : ID of the test result
+     * @return  int : number of records deleted.
+     * */
+    /*    function deleteTestResultAdditionalLinks($id) {
+            return $this->_execute(OPAL_DELETE_TEST_RESULT_ADDITIONAL_LINKS, array(
+                array("parameter"=>":TestResultControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+            ));
+        }*/
+
+    /*
+     * Delete a test result
+     * @params  $id - int : ID of the test result
+     * @return  int : number of records deleted.
+     * */
+    function deleteTestResult($id) {
+        return $this->_execute(OPAL_DELETE_TEST_RESULT, array(
+            array("parameter"=>":TestControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Update the latest test result MH after deletion to update the userId and SessionId to the user who deleted it
+     * @params  $id - int : user ID
+     * @return  int : number of records updated.
+     * */
+    function updateTestResultMHDeletion($id) {
+        $toUpdate = array(
+            "LastUpdatedBy"=>$this->getOAUserId(),
+            "SessionId"=>$this->getSessionId(),
+            "TestResultControlSerNum"=>$id,
+        );
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_TEST_RESULT_MH_DELETION, $toUpdate);
+    }
+
+    /*
+     * Get all test names for test results
+     * @params  void
+     * @return  array : test names details
+     * */
+    function getTestNames() {
+        return $this->_fetchAll(OPAL_GET_TEST_NAMES, array());
+    }
+
+    /*
+     * count the total of test expressions that exists based on a list of IDs
+     * @params  $list : array - list of IDs of test expressions
+     * @return  array - total of IDs
+     * */
+    function countTestExpressionsIDs($list) {
+        $sql = str_replace("%%LISTIDS%%", implode(", ", $list), OPAL_COUNT_TEST_IDS);
+        return $this->_fetch($sql, array());
+    }
+
+    /**
+     * Update a specific test expression
+     * @param $testId
+     * @param $testExpressionId
+     * @return int - number of record updated
+     */
+    function updateTextExpression($testId, $testExpressionId) {
+        $toUpdate = array(
+            "LastUpdatedBy"=>$this->getOAUserId(),
+            "SessionId"=>$this->getSessionId(),
+            "TestControlSerNum"=>$testId,
+            "TestExpressionSerNum"=>$testExpressionId,
+        );
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_TEST_EXPRESSION, $toUpdate);
+    }
+
+    /*
+     * Get the list of patients
+     * @params  void
+     * @return  array - List of patients
+     * */
+    function getPatientsList() {
+        $results = $this->_fetchAll(OPAL_GET_PATIENTS_LIST, array());
+        foreach($results as &$item) {
+            $temp = $this->_fetchAll(OPAL_GET_MRN_PATIENT_SERNUM, array(array("parameter"=>":PatientSerNum","variable"=>$item["id"],"data_type"=>PDO::PARAM_INT)));
+            $mrnList = array();
+            foreach ($temp as $mrn)
+                array_push($mrnList, $mrn["MRN"] . " (".$mrn["hospital"].")");
+            if(count($mrnList) > 0)
+                $item["name"] .= " (MRN: " . implode(", ", $mrnList) . ")";
+        }
+        return $results;
+    }
+
+    /*
+     * Get a list of patients based on a list of IDs
+     * @params  $list - array - Id of patients
+     * @return  array - list of patients found
+     * */
+    function getPatientsListByIds($list) {
+        $sql = str_replace("%%LISTIDS%%", implode(", ", $list), OPAL_GET_PATIENTS_LIST_BY_ID);
+        return $this->_fetchAll($sql, array());
+    }
+
+    /**
+     * Insert multiple patients to a study
+     * @param $toInsert array - data to insert
+     * @return int Last ID inserted
+     */
+    function insertMultiplePatientsStudy($toInsert) {
+        return $this->_insertMultipleRecordsIntoTable(OPAL_PATIENT_STUDY_TABLE, $toInsert);
+    }
+
+    /**
+     * Insert multiple questionnaires to a study
+     * @param $toInsert - array - list of questionnaire/study ID
+     * @return int Last ID inserted
+     */
+    function insertMultipleQuestionnairesStudy($toInsert) {
+        return $this->_insertMultipleRecordsIntoTable(OPAL_QUESTIONNAIRE_STUDY_TABLE, $toInsert);
+    }
+
+    /**
+     * Get the list of patients of a specific study
+     * @param $studyId - ID of the study
+     * @return array list of patients found
+     */
+    function getPatientsStudy($studyId) {
+        return $this->_fetchAll(OPAL_GET_PATIENTS_STUDY, array(
+            array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the list of patient consents of a specific study
+     * @param $studyId - ID of the study
+     * @return array list of patients found
+     */
+    function getPatientsStudyConsents($studyId) {
+        $results = $this->_fetchAll(OPAL_GET_PATIENTS_STUDY_CONSENTS, array(
+            array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
+        ));
+        foreach($results as &$item) {
+            $temp = $this->_fetchAll(OPAL_GET_MRN_PATIENT_SERNUM, array(array("parameter"=>":PatientSerNum","variable"=>$item["id"],"data_type"=>PDO::PARAM_INT)));
+            $mrnList = array();
+            foreach ($temp as $mrn)
+                array_push($mrnList, $mrn["MRN"] . " (".$mrn["hospital"].")");
+            if(count($mrnList) > 0)
+                $item["name"] .= " (MRN: " . implode(", ", $mrnList) . ")";
+        }
+        return $results;
+    }
+
+    /**
+     * Check if a consent form is published
+     * @param $consentId - consent form Id
+     * @return array list of forms found
+     */
+    function checkConsentFormPublished($consentId){
+        return $this->_fetchAll(OPAL_CHECK_CONSENT_FORM_PUBLISHED, array(
+            array("parameter"=>":consentId","variable"=>$consentId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the study's current consent form
+     * @param $studyId - int study ID
+     * @return array consent form found
+     */
+    function getConsentFormByStudyId($studyId){
+        return $this->_fetchAll(OPAL_GET_CONSENT_BY_STUDY_ID, array(
+            array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the list of questionnaires of a specifc study
+     * @param $studyId - ID of the study
+     * @return array - list of questionnaires associated to the study
+     */
+    function getQuestionnairesStudy($studyId) {
+        return $this->_fetchAll(OPAL_GET_QUESTIONNAIRES_STUDY, array(
+            array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Delete all patients to a specific study EXCEPT the one provided in the array
+     * @param $studyId - Study ID
+     * @param $toKeep - array - List of patients to keep in the study
+     * @return int - number of lines affected
+     */
+    function deletePatientsStudy($studyId, $toKeep) {
+        $sql = str_replace("%%LISTIDS%%", implode(", ", $toKeep),OPAL_DELETE_PATIENTS_STUDY);
+        return $this->_execute($sql, array(
+            array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Delete all questionnaires to a specific study EXCEPT the one provided in the array
+     * @param $studyId - Study ID
+     * @param $toKeep - array - List of questionnaires to keep in the study
+     * @return int - number of lines affected
+     */
+    function deleteQuestionnairesStudy($studyId, $toKeep) {
+        $sql = str_replace("%%LISTIDS%%", implode(", ", $toKeep),OPAL_DELETE_QUESTIONNAIRES_STUDY);
+        return $this->_execute($sql, array(
+            array("parameter"=>":studyId","variable"=>$studyId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Remove a specific questionnaire from all studies
+     * @param $questionnaireId - ID of the questionnaire
+     * @return int - number of lines affected
+     */
+    function purgeQuestionnaireFromStudies($questionnaireId) {
+        return $this->_execute(OPAL_DELETE_QUESTIONNAIRE_FROM_STUDIES, array(
+            array("parameter"=>":questionnaireId","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Update the publish flag of a specific patient
+     * @param $id - Patient ID (or sernum)
+     * @param $transfer - Status of the update
+     * @return int - total record updated
+     */
+    function updatePatientPublishFlag($id, $transfer) {
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT_PUBLISH_FLAG, array(
+            "PatientUpdate"=>$transfer,
+            "PatientSerNum"=>$id,
+        ));
+    }
+
+    /**
+     * Return the list of available patients
+     * @return array
+     */
+    function getPatients() {
+        $results = $this->_fetchAll(OPAL_GET_PATIENTS, array());
+        foreach ($results as &$item)
+            $item["MRN"] = $this->getMrnPatientSerNum($item["serial"]);
+        return $results;
+    }
+
+    /**
+     * Return the latest 20,000 entries of patient activity log
+     * @return array
+     */
+    function getPatientActivityLog() {
+        $results = $this->_fetchAll(OPAL_GET_PATIENT_ACTIVITY, array());
+        foreach ($results as &$item) {
+            $item["MRN"] = $this->getMrnPatientSerNum($item["serial"]);
+            unset($item["serial"]);
+        }
+        return $results;
+    }
+
+
+
+    /**
+     * Update specific patient demographic information
+     * @params $toUpdate - array of demographics fields to be update
+     *
+     * @return void
+     */
+
+    function updatePatient($toUpdate) {
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT, $toUpdate);
+    }
+
+    /**
+     * Update patient identifiers list
+     * @params $toUpdate - array of identifier information
+     *
+     * @return void
+     */
+    function updatePatientLink($toUpdate) {
+
+        while (($identifier = array_shift($toUpdate)) !== NULL) {
+            if (!empty($identifier["Patient_Hospital_Identifier_Id"])){
+                $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT_HOSPITAL_IDENTIFIER,$identifier);
+            } else {
+                $this->_insertRecordIntoTable(OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE,$identifier);
+            }
+        }
+        return ;
+    }
+
+
+    /*
+     * Get the list of all undeleted master diagnoses
+     * @params  void
+     * @return  array - List of master diagnoses
+     * */
+    function getSourceTestResults() {
+        return $this->_fetchAll(OPAL_GET_SOURCE_TEST_RESULTS, array());
+    }
+
+    /*
+     * get the details of a source test result with the externalId and source
+     * @params  $externalId - int - ID of the external source
+     *          $source - int - primary key of the source itself
+     * @return  array - details of the source
+     * */
+    function getSourceTestResultDetails($source, $code) {
+        return $this->_fetchAll(OPAL_GET_SOURCE_TEST_RESULT_DETAILS, array(
+            array("parameter"=>":code","variable"=>$code,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * @param $sourceDatabaseName - string - name of the source database
+     * @return array
+     */
+    function getSourceId($sourceDatabaseName) {
+        return $this->_fetchAll(OPAL_GET_SOURCE_ID, array(
+            array("parameter"=>":SourceDatabaseName","variable"=>$sourceDatabaseName,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Insert list of test results code/description into the masterSourceTable.
+     * @params  $toInsert : array - contains the list of all the diagnoses to insert.
+     * @return  int - last inserted ID
+     * */
+    function insertSourceTestResults($toInsert) {
+        foreach ($toInsert as &$item) {
+            $item["createdBy"] = $this->getUsername();
+            $item["updatedBy"] = $this->getUsername();
+        }
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_TEST_RESULT_TABLE, $toInsert);
+    }
+
+    /*
+     * Replace an actual source diagnosis with a new one while keeping the primary key.
+     * @params  $toUpdate - array - contains the details of the record to replace with
+     * @return  int - number of record affected
+     * */
+    function replaceSourceTestResult($toUpdate) {
+        return $this->_execute(OPAL_REPLACE_TEST_RESULT, array(
+            array("parameter"=>":code","variable"=>$toUpdate["code"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":description","variable"=>$toUpdate["description"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":creationDate","variable"=>$toUpdate["creationDate"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":createdBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":ID","variable"=>$toUpdate["ID"],"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Update a source diagnosis with a new source and description. creation date and name are not affected. It is not
+     * a replace.
+     * @params  $toUpdate - array - contains the details of the record to replace with
+     * @return  int - number of record affected
+     * */
+    function updateSourceTestResult($toUpdate) {
+        return $this->_execute(OPAL_UPDATE_TEST_RESULT, array(
+            array("parameter"=>":code","variable"=>$toUpdate["code"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":externalId","variable"=>$toUpdate["externalId"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":source","variable"=>$toUpdate["source"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":description","variable"=>$toUpdate["description"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * check if a specific source test results record exists by searching by code and source.
+     * @params  $source - ID of the source
+     *          $externalId - externalID of the record in the source
+     * @returns int - list of any record found (if exists)
+     * */
+    function isSourceTestResultsExists($source, $code) {
+        return $this->_fetchAll(OPAL_SOURCE_TEST_RESULTS_EXISTS, array(
+            array("parameter"=>":code","variable"=>$code,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * mark a source test result as deleted.
+     * @params  $toDelete - array - contains source and code
+     * @returns int - number of records affected
+     * */
+    function markAsDeletedSourceTestResults($todelete) {
+        return $this->_execute(OPAL_MARK_AS_DELETED_SOURCE_TEST_RESULT, array(
+            array("parameter"=>":code","variable"=>$todelete["code"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":source","variable"=>$todelete["source"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":deletedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Get the list of all active database sources (i.e. not local)
+     * @params  void
+     * @return  array - list of activate database sources with ID and name
+     * */
+    function getExternalSourceDatabase() {
+        return $this->_fetchAll(OPAL_GET_EXTERNAL_SOURCE_DB, array());
+    }
+
+    /*
+     * Get the list of all undeleted master diagnoses
+     * @params  void
+     * @return  array - List of master diagnoses
+     * */
+    function getSourceDiagnoses() {
+        return $this->_fetchAll(OPAL_GET_SOURCE_DIAGNOSES, array());
+    }
+
+    /*
+     * get the details of a source diagnosis with the externalId and source
+     * @params  $externalId - int - ID of the external source
+     *          $source - int - primary key of the source itself
+     * @return  array - details of the source
+     * */
+    function getSourceDiagnosisDetails($externalId, $source, $code) {
+        return $this->_fetchAll(OPAL_GET_SOURCE_DIAGNOSIS_DETAILS, array(
+            array("parameter"=>":externalId","variable"=>$externalId,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":code","variable"=>$code,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Insert list of diagnoses code/description into the masterSourceTable.
+     * @params  $toInsert : array - contains the list of all the diagnoses to insert.
+     * @return  int - last inserted ID
+     * */
+    function insertSourceDiagnoses($toInsert) {
+        foreach ($toInsert as &$item) {
+            $item["createdBy"] = $this->getUsername();
+            $item["updatedBy"] = $this->getUsername();
+        }
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE, $toInsert);
+    }
+
+    /*
+     * Replace an actual source diagnosis with a new one while keeping the primary key.
+     * @params  $toUpdate - array - contains the details of the record to replace with
+     * @return  int - number of record affected
+     * */
+    function replaceSourceDiagnosis($toUpdate) {
+        return $this->_execute(OPAL_REPLACE_SOURCE_DIAGNOSIS, array(
+            array("parameter"=>":externalId","variable"=>$toUpdate["externalId"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":source","variable"=>$toUpdate["source"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":code","variable"=>$toUpdate["code"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":description","variable"=>$toUpdate["description"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":creationDate","variable"=>$toUpdate["creationDate"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":createdBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Update a source diagnosis with a new source and description. creation date and name are not affected. It is not
+     * a replace.
+     * @params  $toUpdate - array - contains the details of the record to replace with
+     * @return  int - number of record affected
+     * */
+    function updateSourceDiagnosis($toUpdate) {
+        return $this->_execute(OPAL_UPDATE_SOURCE_DIAGNOSIS, array(
+            array("parameter"=>":code","variable"=>$toUpdate["code"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":externalId","variable"=>$toUpdate["externalId"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":source","variable"=>$toUpdate["source"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":description","variable"=>$toUpdate["description"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * check if a specific record exists.
+     * @params  $source - ID of the source
+     *          $externalId - externalID of the record in the source
+     * @returns int - list of any record found (if exists)
+     * */
+    function isMasterSourceDiagnosisExists($source, $externalId, $code) {
+        return $this->_fetchAll(OPAL_IS_SOURCE_DIAGNOSIS_EXISTS, array(
+            array("parameter"=>":externalId","variable"=>$externalId,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":code","variable"=>$code,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * mark a source diagnoses as deleted.
+     * @params  $toDelete - array - contains source and externalId
+     * @returns int - number of records affected
+     * */
+    function markAsDeletedSourceDiagnoses($todelete) {
+        return $this->_execute(OPAL_MARKED_AS_DELETED_SOURCE_DIAGNOSIS, array(
+            array("parameter"=>":externalId","variable"=>$todelete["externalId"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":source","variable"=>$todelete["source"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":code","variable"=>$todelete["code"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":deletedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Get the list of all non deleted source aliases available
+     * @params  void
+     * @return  array - list of all non deleted source aliases
+     * */
+    function getSourceAliases(){
+        return $this->_fetchAll(OPAL_GET_SOURCE_ALIASES, array());
+    }
+
+    /*
+     * get the details of a source alias with the externalId and source
+     * @params  $externalId - int - ID of the external source
+     *          $source - int - primary key of the source itself
+     * @return  array - details of the source alias
+     * */
+    function getSourceAliasDetails($externalId, $source, $code, $type) {
+        return $this->_fetchAll(OPAL_GET_SOURCE_ALIAS_DETAILS, array(
+            array("parameter"=>":externalId","variable"=>$externalId,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":type","variable"=>$type,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":code","variable"=>$code,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Insert list of aliases code/description into the masterSourceTable.
+     * @params  $toInsert : array - contains the list of all the aliases to insert.
+     * @return  int - last inserted ID
+     * */
+    function insertSourceAliases($toInsert) {
+        foreach ($toInsert as &$item) {
+            $item["createdBy"] = $this->getUsername();
+            $item["updatedBy"] = $this->getUsername();
+        }
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_ALIAS_TABLE, $toInsert);
+    }
+
+    /*
+     * Replace an actual source alias with a new one while keeping the primary key.
+     * @params  $toUpdate - array - contains the details of the record to replace with
+     * @return  int - number of record affected
+     * */
+    function replaceSourceAlias($toUpdate) {
+        return $this->_execute(OPAL_REPLACE_SOURCE_ALIAS, array(
+            array("parameter"=>":externalId","variable"=>$toUpdate["externalId"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":type","variable"=>$toUpdate["type"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":source","variable"=>$toUpdate["source"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":code","variable"=>$toUpdate["code"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":description","variable"=>$toUpdate["description"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":createdBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Update a source alias with a new source and description. creation date and name are not affected. It is not
+     * a replace.
+     * @params  $toUpdate - array - contains the details of the record to replace with
+     * @return  int - number of record affected
+     * */
+    function updateSourceAlias($toUpdate) {
+        return $this->_execute(OPAL_UPDATE_SOURCE_ALIAS, array(
+            array("parameter"=>":type","variable"=>$toUpdate["type"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":code","variable"=>$toUpdate["code"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":externalId","variable"=>$toUpdate["externalId"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":source","variable"=>$toUpdate["source"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":description","variable"=>$toUpdate["description"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Determined if a source alias exists already
+     * @params  $source - int - ID of the source database
+     *          $externalId - int - external ID of the source alias
+     * @return  array - list of existing source alias
+     * */
+    function isMasterSourceAliasExists($source, $externalId, $code, $type) {
+        return $this->_fetchAll(OPAL_IS_SOURCE_ALIAS_EXISTS, array(
+            array("parameter"=>":externalId","variable"=>$externalId,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":type","variable"=>$type,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":code","variable"=>$code,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * mark a source alias as deleted.
+     * @params  $toDelete - array - contains source and externalId
+     * @returns int - number of records affected
+     * */
+    function markAsDeletedSourceAliases($todelete) {
+        return $this->_execute(OPAL_MARKED_AS_DELETED_SOURCE_ALIAS, array(
+            array("parameter"=>":externalId","variable"=>$todelete["externalId"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":source","variable"=>$todelete["source"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":code","variable"=>$todelete["code"],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":type","variable"=>$todelete["type"],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":updatedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":deletedBy","variable"=>$this->getUsername(),"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * fetch all the available aliases in active source database
+     * @return array
+     */
+    function getAliases() {
+        return $this->_fetchAll(OPAL_GET_ALIASES, array());
+    }
+
+    /**
+     * Get the list of alias expressions of an alias not yet published (or not used)
+     * @param $aliasId int - ID of the alias
+     * @return array - list of unpublished alias expressions
+     */
+    function getUnpublishedAliasExpression($aliasId) {
+        return $this->_fetchAll(OPAL_GET_ALIASES_UNPUBLISHED_EXPRESSION, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT)
+        ));
+    }
+
+    /**
+     * Get the list of alias expressions of an alias already published (or in use)
+     * @param $aliasId int - ID of the alias
+     * @return array - list of published alias expressions
+     */
+    function getPublishedAliasExpression($aliasId) {
+        return $this->_fetchAll(OPAL_GET_ALIASES_PUBLISHED_EXPRESSION, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT)
+        ));
+    }
+
+    /**
+     * Fetch the alias details
+     * @param $aliasId int - ID of the alias
+     * @return array - details
+     */
+    function getAliasDetails($aliasId) {
+        return $this->_fetchAll(OPAL_GET_ALIAS_DETAILS, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Deactivate any alias without expressions.
+     * @return int - number of records affected
+     */
+    function sanitizeEmptyAliases() {
+        return $this->_updateRecordIntoTable(OPAL_SANITIZE_EMPTY_ALIASES, array(
+            "LastUpdatedBy"=>$this->getOAUserId(),
+            "SessionId"=>$this->getSessionId(),
+        ));
+    }
+
+    /**
+     * Update publish flag of a sepcific alias.
+     * @param $aliasId - ID of the alias
+     * @param $statusFlag - status of the alias
+     * @return int - number of records affected
+     */
+    function updateAliasPublishFlag($aliasId, $statusFlag) {
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_ALIAS_PUBLISH_FLAG, array(
+            "AliasUpdate"=>$statusFlag,
+            "AliasSerNum"=>$aliasId,
+            "LastUpdatedBy"=>$this->getOAUserId(),
+            "SessionId"=>$this->getSessionId(),
+        ));
+    }
+
+    /**
+     * Get the list of source databases
+     * @return array - list of source databases
+     */
+    function getSourceDatatabes() {
+        return $this->_fetchAll(OPAL_GET_SOURCE_DATABASES, array());
+    }
+
+    /**
+     * Get the list of codes for aliases based on the type and the source
+     * @param $type int type of the alias (task, document or appointment)
+     * @param $source int source database (aria, orms, medivisit, etc)
+     * @return array
+     */
+    function getSourceAliasesByTypeAndSource($type, $source) {
+        if ($source == ARIA_SOURCE_DB)
+            $sqlQuery = OPAL_GET_ARIA_SOURCE_ALIASES;
+        else
+            $sqlQuery = OPAL_GET_SOURCE_ALIASES;
+
+        return $this->_fetchAll($sqlQuery, array(
+            array("parameter"=>":type","variable"=>$type,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":source","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the list of deactivated diagnoses codes for a specific diagnosis
+     * @param $diagnosisTransId
+     * @return array
+     */
+    function getdeactivatedDiagnosesCodes($diagnosisTransId) {
+        return $this->_fetchAll(OPAL_GET_DEACTIVATED_DIAGNOSIS_CODES, array(
+            array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisTransId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * get the list of all non deleted diagnosis codes ID
+     * @param $listIds
+     * @return array
+     */
+    function getListDiagnosisCodes($listIds) {
+        return $this->_fetchAll(str_replace("%%LISTIDS%%", implode(", ", $listIds), OPAL_GET_LIST_DIAGNOSIS_CODES), array());
+    }
+
+    /**
+     * Get all alias logs for one year
+     * @return array
+     */
+    function getAliasLogs() {
+        return $this->_fetchAll(OPAL_GET_ALIAS_LOGS, array());
+    }
+
+    /**
+     * Get the log of a specific appointment (alias
+     * @param $AliasSerNum - ID of the Alias
+     * @return array
+     */
+    function getAppointmentLogs($aliasSerNum) {
+        return $this->_fetchAll(OPAL_GET_APPOINTMENT_LOGS, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasSerNum,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the log of a specific task (alias
+     * @param $AliasSerNum - ID of the Alias
+     * @return array
+     */
+    function getTaskLogs($aliasSerNum) {
+        return $this->_fetchAll(OPAL_TASK_LOGS, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasSerNum,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the log of a specific document (alias
+     * @param $AliasSerNum - ID of the Alias
+     * @return array
+     */
+    function getDocumentLogs($aliasSerNum) {
+        return $this->_fetchAll(OPAL_GET_DOCUMENT_LOGS, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasSerNum,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * count the number of educational material found with a specific ID
+     * @param $eduId
+     * @return array - total field counted
+     */
+    function countEduMaterial($eduId) {
+        return $this->_fetch(OPAL_COUNT_EDU_MATERIAL, array(
+            array("parameter"=>":EducationalMaterialControlSerNum","variable"=>$eduId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * count the number of hospital map found with a specific ID
+     * @param $mapId
+     * @return array - total field counted
+     */
+    function countHospitalMap($mapId) {
+        return $this->_fetch(OPAL_COUNT_HOSPITAL_MAP, array(
+            array("parameter"=>":HospitalMapSerNum","variable"=>$mapId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Count the number of alias expression from a list of IDs
+     * @param $listIds array - list of IDs of alias expressions
+     * @return array - total found
+     */
+    function selectAliasExpressionsToInsert($listIds) {
+        return $this->_fetchAll(str_replace("%%LISTIDS%%", implode(", ", $listIds), OPAL_SELECT_ALIAS_EXPRESSIONS_TO_INSERT), array());
+    }
+
+    /**
+     * Check if the source DB exists
+     * @param $sourceId int - ID of the source database
+     * @return array - total of source DB found
+     */
+    function countSourceDatabase($sourceId) {
+        return $this->_fetch(OPAL_COUNT_SOURCE_DB, array(
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Insert new alias and returns latest ID created
+     * @param $toInsert array - data to insert
+     * @return int - new ID
+     */
+    function insertAlias($toInsert) {
+        $toInsert["LastUpdatedBy"] = $this->getOAUserId();
+        $toInsert["SessionId"] = $this->getSessionId();
+        return $this->_insertRecordIntoTable(OPAL_ALIAS_TABLE, $toInsert);
+    }
+
+    /**
+     * Insert a list of multiple alias expression
+     * @param $toInsert array - data to insert
+     * @return int - last inserted ID
+     */
+    function replaceAliasExpressions($toInsert) {
+        foreach ($toInsert as &$item) {
+            $item["LastUpdatedBy"] = $this->getOAUserId();
+            $item["SessionId"] = $this->getSessionId();
+        }
+        return $this->_replaceMultipleRecordsIntoTable(OPAL_ALIAS_EXPRESSION_TABLE, $toInsert);
+    }
+
+    /**
+     * Insert (by doing a SQL REPLACE) an appointment checkin
+     * @param $toInsert
+     * @return int - ID of the last insert
+     */
+    function replaceAppointmentCheckin($toInsert) {
+        $toInsert["LastUpdatedBy"] = $this->getOAUserId();
+        $toInsert["SessionId"] = $this->getSessionId();
+        return $this->_replaceRecordIntoTable(OPAL_APPOINTMENT_CHECKIN_TABLE, $toInsert);
+    }
+
+    /**
+     * Update an alias.
+     * @param $toUpdate
+     * @return int - number of row updated
+     */
+    function updateAlias($toUpdate) {
+        $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
+        $toUpdate["SessionId"] = $this->getSessionId();
+
+        $sql = OPAL_UPDATE_ALIAS;
+        $eduTemp = OPAL_EDU_MATERIAL_SERNUM;
+        $eduTempCond = OPAL_EDU_MATERIAL_COND;
+        if(empty($toUpdate["EducationalMaterialControlSerNum"])) {
+            unset($toUpdate["EducationalMaterialControlSerNum"]);
+            $eduTemp = str_replace(":EducationalMaterialControlSerNum", "NULL", $eduTemp);
+            $eduTempCond = str_replace("!= :EducationalMaterialControlSerNum", "IS NOT NULL", $eduTempCond);
+        }
+
+        $hosTemp = OPAL_HOSP_MAP_SERNUM;
+        $hosTempCond = OPAL_HOSP_MAP_COND;
+        if(empty($toUpdate["HospitalMapSerNum"])) {
+            unset($toUpdate["HospitalMapSerNum"]);
+            $hosTemp = str_replace(":HospitalMapSerNum", "NULL", $hosTemp);
+            $hosTempCond = str_replace("!= :HospitalMapSerNum", "IS NOT NULL", $hosTempCond);
+        }
+
+        $sql = str_replace("%%EDU_MATERIAL_COND%%", $eduTempCond, str_replace("%%EDU_MATERIAL%%", $eduTemp, $sql));
+        $sql = str_replace("%%HOSP_MAP_COND%%", $hosTempCond, str_replace("%%HOSP_MAP%%", $hosTemp, $sql));
+
+        return $this->_updateRecordIntoTable($sql, $toUpdate);
+    }
+
+    /**
+     * Delete alias expressions of an alias except the list of aliases to keep. Will also ignore published and marked
+     * as deleted source aliases.
+     * @param $aliasId int - ID of the alias to delete the alias expressions
+     * @param $sourceIds array - list of IDs of alias expression to keep
+     * @return int - number of records affected
+     */
+    function deleteAliasExpressions($aliasId, $sourceIds) {
+        $sql = str_replace("%%LIST_SOURCES_UIDS%%",implode(", ", $sourceIds), OPAL_DELETE_ALIAS_EXPRESSIONS);
+        return $this->_execute($sql, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Update alias expression
+     * @param $toUpdate array - details of the alias expression
+     * @return int - number of records affected
+     */
+    function updateAliasExpression($toUpdate) {
+        $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
+        $toUpdate["SessionId"] = $this->getSessionId();
+        if(array_key_exists("LastTransferred", $toUpdate) && $toUpdate["LastTransferred"] != "")
+            $sql = OPAL_UPDATE_ALIAS_EXPRESSION_WITH_LAST_TRANSFERRED;
+        else
+            $sql = OPAL_UPDATE_ALIAS_EXPRESSION;
+
+        return $this->_updateRecordIntoTable($sql, $toUpdate);
+    }
+
+    /**
+     * Get the list of deactivated alias expression where the source in masterSourceAlias is marked as deleted
+     * @param $aliasId int - ID of the alias
+     * @return array - list of alias expressions where the source mark tham as deleted
+     */
+    function getDeactivatedAliasExpressions($aliasId) {
+        return $this->_fetchAll(OPAL_GET_DELETED_ALIASES_EXPRESSION, array(
+            array("parameter"=>":AliasSerNum","variable"=>$aliasId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Count the total of existing alises from a list of alias ID
+     * @param $listIDs - list of alias IDs
+     * @return array
+     */
+    function getCountAliases($listIDs) {
+        $sql = str_replace("%%LISTIDS%%",implode(", ", $listIDs), OPAL_GET_COUNT_ALIASES);
+        return $this->_fetch($sql, array());
+    }
+
+    /**
+     * Get the last completed questionnaire from a specific patient on a site.
+     * @param $patientId - internal patient ID found
+     * @return array - last answered questionnaire found (if any)
+     */
+    function getLastCompletedQuestionnaire($patientId) {
+        return $this->_fetch(OPAL_GET_LAST_COMPLETED_QUESTIONNAIRE, array(
+            array("parameter"=>":PatientSerNum","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the lis of completed questionnaires of patient, grouped by MRN.
+     * @param array $questionnaireList - list of questionnaire ID (optional)
+     * @return array - results found
+     */
+    function getPatientsCompletedQuestionnaires($questionnaireList = array()) {
+        $sql = str_replace(
+            "%%CONDTION_OPTINAL%%",
+            count($questionnaireList) > 0 ? str_replace("%%QUESTIONNAIRES_LIST%%", implode(", ", $questionnaireList), OPAL_CONDITION_QUESTIONNAIRES_OPTIONAL) : "",
+            OPAL_GET_PATIENTS_COMPLETED_QUESTIONNAIRES
+        );
+        return $this->_fetchAll($sql, array());
+    }
+
+    /**
+     * Find the list of studies associated to one questionnaire
+     * @param $questionnaireId - ID of the questionnaire
+     * @return array - studies found
+     */
+    function getStudiesQuestionnaire($questionnaireId) {
+        return $this->_fetchAll(OPAL_GET_STUDIES_QUESTIONNAIRE, array(
+            array("parameter"=>":questionnaireId","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * List the studies a patient consented for.
+     * @param $mrn string - Medical Record Number
+     * @param $site string - Code of the site
+     * @return array - studies found
+     */
+    function getStudiesPatientConsented($mrn, $site) {
+        return $this->_fetchAll(OPAL_GET_STUDIES_PATIENT_CONSENTED, array(
+            array("parameter"=>":MRN","variable"=>$mrn,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Hospital_Identifier_Type_Code","variable"=>$site,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient appointment
+     * @params $site : String - Patient identifier site
+     * @params $mrn  : int - Patient identifier mrn
+     * @return array - patient appointment details
+     */
+    function getAppointment($site,$mrn,$startDate,$endDate){
+        return $this->_fetchAll(OPAL_GET_APPOINTMENT, array(
+            array("parameter"=>":site","variable"=>$site,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":mrn","variable"=>$mrn,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":startDate","variable"=>$startDate,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":endDate","variable"=>$endDate,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    function getMrnPatientSerNum($patientSerNum) {
+        return $this->_fetchAll(OPAL_GET_MRN_PATIENT_SERNUM, array(
+            array("parameter"=>":PatientSerNum","variable"=>$patientSerNum,"data_type"=>PDO::PARAM_INT)));
+    }
+
+    /**
+     * Insert failed resource info into resourcePendingError table
+     * @param $sourceName string - name of the source (e.g. Aria)
+     * @param $appointmentId int - external Appointment Id
+     * @param $resources string - list of resources
+     * @param $error string - error found
+     * @return int - last record ID
+     */
+    function insertResourcePendingError($sourceName, $appointmentId, $resources, $error) {
+        $toInsert = array(
+            "sourceName"=>$sourceName,
+            "appointmentId"=>$appointmentId,
+            "resources"=>$resources,
+            "error"=>$error,
+            "creationDate"=>date("Y-m-d H:i:s"),
+            "createdBy"=>$this->username,
+            "updatedBy"=>$this->username,
+        );
+        return $this->_insertRecordIntoTable(OPAL_RESOURCE_PENDING_ERROR_TABLE, $toInsert);
+    }
+
+    /**
+     * Get an appointment by the externalId and sourceId if it exists
+     * @param $appointmentAriaId - external ID
+     * @param $sourceId - Source ID
+     * @return array - data found if any
+     */
+    function getAppointmentForResource($appointmentAriaId, $sourceId) {
+        return $this->_fetchAll(OPAL_GET_APPOINTMENT_FOR_RESOURCE, array(
+            array("parameter"=>":AppointmentAriaSer","variable"=>$appointmentAriaId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get a specific resource pending from the resource pending table
+     * @param $source string - source database name
+     * @param $appointmentId int - appointment ID of the future appointment
+     * @return array - data found if any
+     */
+    function getResourcePending($source, $appointmentId) {
+        return $this->_fetchAll(OPAL_GET_RESOURCE_PENDING, array(
+            array("parameter"=>":sourceName","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":appointmentId","variable"=>$appointmentId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Insert Insert pending resource only if they don't exist.
+     * @param $toInsert array - pending resource details
+     * @return int - last inserted ID
+     */
+    function insertPendingResource($toInsert) {
+        $toInsert["createdBy"] = $this->getUsername();
+        $toInsert["creationDate"] = date("Y-m-d H:i:s");
+        $toInsert["updatedBy"] = $this->getUsername();
+        return $this->_insertRecordIntoTableConditional(OPAL_RESOURCE_PENDING_TABLE, $toInsert);
+    }
+
+    /**
+     * Update pending resource
+     * @param $toUpdate - pending resource details
+     * @return int - number of row modified
+     */
+    function updatePendingResource($toUpdate) {
+        $toUpdate["updatedBy"] = $this->getUsername();
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_RESOURCE_PENDING, $toUpdate);
+    }
+
+    /**
+     * Update a resource
+     * @param $toUpdate - resource details
+     * @return int - number of row modified
+     */
+    function updateResource($toUpdate) {
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_RESOURCE, $toUpdate);
+    }
+
+    /**
+     * Insert a resource only if it does not exists already.
+     * @param $toInsert
+     * @return int - number of row modified
+     */
+    function insertResource($toInsert) {
+        return $this->_insertRecordIntoTableConditional(OPAL_RESOURCE_TABLE, $toInsert);
+    }
+
+    /**
+     * Get a list of resources based on the list of resource code and source and add the appointmentId to the result.
+     * This result is used to update the pivot table.
+     * @param $resources array - list of resources with code.
+     * @param $sourceId int - source database ID
+     * @param $appointmentId int - ID of the appointment to which is associated the resources
+     * @return array - contains the list of internal resource ID with the appointment ID and other data to update pivot table
+     */
+    function getResourceIds($resources, $sourceId, $appointmentId) {
+        $cpt = 0;
+        $dataSQL = "SourceDatabaseSerNum = :source AND (";
+        $dataToList = array(
+            array("parameter"=>":source","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":AppointmentSerNum","variable"=>$appointmentId,"data_type"=>PDO::PARAM_INT),
+        );
+        foreach ($resources as $resource) {
+            $dataSQL .= "ResourceCode = :code$cpt OR ";
+            array_push($dataToList,
+                array("parameter"=>":code$cpt","variable"=>$resource["code"],"data_type"=>PDO::PARAM_STR),
+            );
+            $cpt++;
+        }
+        $dataSQL = substr($dataSQL, 0, -4);
+        $dataSQL .= ")";
+        $sql = str_replace("%%SOURCE_CODE_LIST%%", $dataSQL, OPAL_GET_RESOURCES_FOR_RESOURCE_APPOINTMENT);
+
+        return $this->_fetchAll($sql, $dataToList);
+    }
+
+    /**
+     * Delete from pivot table resourceAppointment ressource not attached to specific appointment
+     * @param $appointmentId int - appointment ID
+     * @param $resourceIdList array - list of resource IDs
+     * @return int - number of rows affected
+     */
+    function deleteResourcesForAppointment($appointmentId, $resourceIdList) {
+        $sql = str_replace("%%RESOURCE_ID_LIST%%", implode(", ", $resourceIdList), DELETE_FROM_RESOURCE_APPOINTMENT);
+        return $this->_execute($sql, array(
+            array("parameter"=>":AppointmentSerNum","variable"=>$appointmentId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Insert into pivot table resourceAppointment missing links. This is a conditional insert on the fields
+     * ResourceSerNum and AppointmentSerNum if they do not exist.
+     * @param $records array - records to add
+     * @return int - number of records affected
+     */
+    function insertResourcesForAppointment($records) {
+        return $this->_replaceMultipleRecordsIntoTableConditional(OPAL_RESOURCE_APPOINTMENT_TABLE, $records,
+            array("ResourceSerNum", "AppointmentSerNum")
+        );
+    }
+
+    /**
+     * Update ever resource pending of level 1 with appointment ready to level 2.
+     * @return int - number or records affected
+     */
+    function updateResourcePendingLevelInProcess() {
+        return $this->_updateRecordIntoTable(UPDATE_RESOURCE_PENDING_LEVEL_IN_PROCESS, array("updatedBy"=>$this->getUsername()));
+    }
+
+    /**
+     * Return the oldest resource pending marked as a level 2 (processing)
+     * @return array - data found
+     */
+    function getOldestResourcePendingInProcess() {
+        return $this->_fetchAll(GET_OLDEST_RESOURCE_PENDING_IN_PROCESS, array());
+    }
+
+    /**
+     * Delete a specific resourcePending record
+     * @param $id - primary key of the record in resourcePending to delete
+     * @return int - number of records affected
+     */
+    function deleteResourcePendingInProcess($id) {
+        $toDelete = array(
+            array("parameter"=>":ID","variable"=>$id),
+        );
+        return $this->_execute(OPAL_DELETE_RESOURCE_PENDING, $toDelete);
+    }
+
+    /**
+     * Update the check-in of an appointment to checked if it was not checked and returned the number of affected rows
+     * @param $source int - source database ID
+     * @param $appointment - external appointment ID
+     * @return int - number of row affected
+     */
+    function updateCheckInForAppointment($source, $appointment) {
+        return $this->_updateRecordIntoTable(UPDATE_APPOINTMENT_CHECKIN, array(
+            "SourceDatabaseSerNum"=>$source,
+            "AppointmentAriaSer"=>$appointment,
+        ));
+    }
+
+    /**
+     * Get the first site and mrn found based on its source and appointment ID. Used to send push notification.
+     * @param $source int - source database ID
+     * @param $appointment - external appointment ID
+     * @return array - list of records found. Must be one since a LIMIT 1 is set up in the SQL
+     */
+    function getFirstMrnSiteBySourceAppointment($source, $appointment) {
+        return $this->_fetchAll(OPAL_GET_FIRST_MRN_SITE_BY_SOURCE_APPOINTMENT, array(
+            array("parameter"=>":SourceDatabaseName","variable"=>$source,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":AppointmentAriaSer","variable"=>$appointment,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function getPublicationSettings() {
+        return $this->_fetchAll(OPAL_GET_PUBLICATION_SETTINGS, array());
+    }
+
+    function getPublicationSettingsToIgnore() {
+        $tempResults = $this->_fetchAll(OPAL_GET_PUBLICATION_SETTINGS_TO_IGNORE, array());
+        $results = array();
+        foreach ($tempResults as $item) {
+            $internalName = explode(",", $item["internalName"]);
+            foreach ($internalName as $item2)
+                array_push($results, $item2);
+        }
+        return $results;
+    }
+
+    function deleteQuestionnaireFrequencyEvents($questionnaireId) {
+        return $this->_execute(OPAL_DELETE_QUESTIONNAIRE_FREQUENCY_EVENTS, array(
+            array("parameter"=>":ControlTableSerNum","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 }

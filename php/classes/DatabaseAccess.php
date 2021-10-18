@@ -190,6 +190,46 @@ class DatabaseAccess extends HelpSetup
     }
 
     /*
+     * this function is used to fetch all stored procedure results from a SQL query by binding parameters.
+     * param   SQL query that begins with "SELECT" (string)
+     *          array of parameters to bind (optional) following PDO rules
+     *          ex: array(
+     *                  array(
+     *                      "parameter"=>":example",
+     *                      "variable"=>"Hello world!",
+     *                      "data_type"=>PDO::PARAM_STR,
+     *                  )
+     *              )
+     * return  array of result
+     * */
+    protected function _fetchAllStoredProcedure($sqlFetchAll, $paramList = array()) {
+        $results = array();
+        try {
+            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $stmt = $this->connection->prepare($sqlFetchAll);
+            if(is_array($paramList) && count($paramList) > 0) {
+                foreach($paramList as $value) {
+                    if(isset($value["data_type"]) &&  $value["data_type"] != "")
+                        $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
+                    else
+                        $stmt->bindParam($value["parameter"], $value["variable"], self::_getTypeOf($value["variable"]));
+                }
+            }
+            $stmt->execute();
+            do {
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                array_push($results, $result);
+
+            } while ($stmt->nextRowset() && $stmt->columnCount());
+            return $results;
+        }
+        catch(PDOException $e) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Fetch all failed.\r\nError : ". $e->getMessage());
+            return false;
+        }
+    }
+
+    /*
      * this function execute a SQL query and returns true once completed.
      * @param   SQL query (string)
      *          array of parameters to bind (optional) following PDO rules
@@ -234,15 +274,17 @@ class DatabaseAccess extends HelpSetup
             return PDO::PARAM_INT;
         else if (filter_var($aVar, FILTER_VALIDATE_BOOLEAN) !== false)
             return PDO::PARAM_BOOL;
+        else if (is_null($aVar))
+            return PDO::PARAM_NULL;
         else
             return PDO::PARAM_STR;
     }
 
-    /* Execute a query insert SQL command
+    /* Execute a query insert or replace SQL command
      * Entry:   SQL INSERT command (String)
      * Exit:    ID of last entry
      */
-    protected function _queryInsert($sqlInsert, $paramList = array()) {
+    protected function _queryInsertReplace($sqlInsert, $paramList = array()) {
         $cpt = 0;
         try {
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -256,7 +298,7 @@ class DatabaseAccess extends HelpSetup
                         $stmt->bindParam($value["parameter"], $value["variable"], self::_getTypeOf($value["variable"]));
                 }
             }
-            $stmt->execute();
+            $stmt->execute(); //error here
             return $this->connection->lastInsertId();
         }
         catch(PDOException $e) {
@@ -267,9 +309,49 @@ class DatabaseAccess extends HelpSetup
     }
 
     /*
+     * This function build a SQL replace query with a table name and a list of records and launch its execution.
+     * @param   table name where to replace (string)
+     *          array of records that contain arrays of data to replace and their field name. Each array must have the
+     *          same structure and same order.
+     *          example:    Array (
+	 *                          Array (
+	 * 	                            "field1" => "data"
+     *                              "field2" => "more data"
+     *                              "field3" => "even more data"
+     *                          )
+	 *                          Array (
+	 *                              "field1" => "enough data?"
+     *                              "field2" => "no more data!"
+     *                              "field3" => "data!"
+	 *                          )
+     *                      )
+     * */
+    protected function _replaceMultipleRecordsIntoTable($tableName, $records) {
+        $sqlInsert = str_replace("%%TABLENAME%%", $tableName, SQL_GENERAL_REPLACE_INTO);
+        $multiples = array();
+        $cpt = 0;
+        $ready = array();
+        foreach ($records as $data) {
+            $cpt++;
+            $fields = array();
+            $params = array();
+            foreach($data as $key=>$value) {
+                array_push($fields, $key);
+                array_push($params, ":".$key.$cpt);
+                array_push($ready, array("parameter"=>":".$key.$cpt,"variable"=>$value));
+            }
+            $sqlFieldNames = "`".implode("`, `", $fields)."`";
+            array_push($multiples, implode(", ", $params));
+        }
+
+        $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . "(" . implode("), (", $multiples) . ");";
+        return $this->_queryInsertReplace($sqlInsert, $ready);
+    }
+
+    /*
      * This function build a SQL insert query with a table name and a list of records and launch its execution.
      * @param   table name where to insert (string)
-     *          array of records that contain arrays of data to insert and their field name. Each array must have the
+     *          array of records that contain arrays of data to replace and their field name. Each array must have the
      *          same structure and same order.
      *          example:    Array (
 	 *                          Array (
@@ -303,29 +385,33 @@ class DatabaseAccess extends HelpSetup
         }
 
         $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . "(" . implode("), (", $multiples) . ");";
-        return $this->_queryInsert($sqlInsert, $ready);
+        return $this->_queryInsertReplace($sqlInsert, $ready);
     }
 
-    /*
-     * This function build a SQL insert query with a table name and a list of records and launch its execution. The
+    /**
+     * This function build a SQL replace query with a table name and a list of records and launch its execution. The
      * records will only be added if they do not exists already.
-     * @param   table name where to insert (string)
-     *          array of records that contain arrays of data to insert and their field name. Each array must have the
-     *          same structure and same order.
-     *          example:    Array (
-	 *                          Array (
-	 * 	                            "field1" => "data"
-     *                              "field2" => "more data"
-     *                              "field3" => "even more data"
+     * @param $tableName string - name of the table
+     * @param $records array - array of records that contain arrays of data to replace and their field name. Each array
+     *                          must have the same structure and same order.
+     *                          example:
+     *                              Array (
+     *                              Array (
+     * 	                                "field1" => "data"
+     *                                  "field2" => "more data"
+     *                                  "field3" => "even more data"
+     *                              )
+     *                              Array (
+     *                                  "field1" => "enough data?"
+     *                                  "field2" => "no more data!"
+        *                              "field3" => "data!"
+     *                              )
      *                          )
-	 *                          Array (
-	 *                              "field1" => "enough data?"
-     *                              "field2" => "no more data!"
-     *                              "field3" => "data!"
-	 *                          )
-     *                      )
-     * */
-    protected function _insertMultipleRecordsIntoTableConditional($tableName, $records) {
+     * @param array $fieldsCondition - contains the fields to check on conditions if they exists or not. If empty, check
+     *                                  all fields
+     * @return int number of row counts modified
+     */
+    protected function _replaceMultipleRecordsIntoTableConditional($tableName, $records, $fieldsCondition = array()) {
         $sqlSubSet = array();
         $cpt = 0;
         $params = array();
@@ -339,8 +425,9 @@ class DatabaseAccess extends HelpSetup
             foreach($record as $key=>$value) {
                 array_push($fieldsName, "`$key`");
                 array_push($subFieldsName, "tblnm.$key");
-                array_push($ids, $value);
-                array_push($conditions, "tblnm.$key = :".$key.$cpt);
+                array_push($ids, ":$key$cpt");
+                if(empty($fieldsCondition) || in_array($key, $fieldsCondition))
+                    array_push($conditions, "tblnm.$key = :".$key.$cpt);
                 array_push($params, array("parameter"=>":".$key.$cpt, "variable"=>$value));
             }
             $subSql = str_replace("%%VALUES%%", implode(", ", $ids), SQL_GENERAL_INSERT_INTERSECTION_TABLE_SUB_REQUEST);
@@ -350,10 +437,69 @@ class DatabaseAccess extends HelpSetup
         }
 
         $finalSql =
-            str_replace("%%TABLENAME%%", $tableName, str_replace("%%FIELDS%%", implode(",", $fieldsName), SQL_GENERAL_INSERT_INTERSECTION_TABLE)
+            str_replace("%%TABLENAME%%", $tableName, str_replace("%%FIELDS%%", implode(",", $fieldsName), SQL_GENERAL_REPLACE_INTERSECTION_TABLE)
                 . implode(SQL_GENERAL_UNION_ALL, $sqlSubSet));
 
         return $this->_execute($finalSql, $params);
+    }
+
+    protected function _insertRecordIntoTableConditional($tableName, $record) {
+        $sqlSubSet = array();
+
+        $params = array();
+
+        $fieldsName = array();
+        $subFieldsName = array();
+        $ids = array();
+        $conditions = array();
+        foreach($record as $key=>$value) {
+            array_push($fieldsName, "`$key`");
+            array_push($subFieldsName, "tblnm.$key");
+            array_push($ids, ":".$key);
+            array_push($conditions, "tblnm.$key = :".$key);
+            array_push($params, array("parameter"=>":".$key, "variable"=>$value));
+        }
+        $subSql = str_replace("%%VALUES%%", implode(", ", $ids), SQL_GENERAL_INSERT_INTERSECTION_TABLE_SUB_REQUEST);
+        $subSql = str_replace("%%FIELDS%%", implode(", ", $subFieldsName), $subSql);
+        $subSql = str_replace("%%CONDITIONS%%", implode(" AND ", $conditions), $subSql);
+        array_push($sqlSubSet, $subSql);
+
+        $finalSql =
+            str_replace("%%TABLENAME%%", $tableName,
+                str_replace("%%FIELDS%%", implode(",", $fieldsName),
+                    SQL_GENERAL_INSERT_INTERSECTION_TABLE) . $subSql);
+
+        return $this->_execute($finalSql, $params);
+    }
+
+    /*
+     * This function build a SQL replace query with a table name and one record and launch its execution.
+     * @param   table name where to replace (string)
+     *          array of records that contain arrays of data to replace and their field name. Each array must have the
+     *          same structure and same order.
+     *          example:    Array (
+	 * 	                            "field1" => "data"
+     *                              "field2" => "more data"
+     *                              "field3" => "even more data"
+     *                      )
+     * */
+    protected function _replaceRecordIntoTable($tableName, $record) {
+        $sqlInsert = str_replace("%%TABLENAME%%", $tableName, SQL_GENERAL_REPLACE_INTO);
+        $multiples = array();
+        $cpt = 1;
+        $ready = array();
+        $fields = array();
+        $params = array();
+        foreach($record as $key=>$value) {
+            array_push($fields, $key);
+            array_push($params, ":".$key.$cpt);
+            array_push($ready, array("parameter"=>":".$key.$cpt,"variable"=>$value));
+        }
+        $sqlFieldNames = "`".implode("`, `", $fields)."`";
+        array_push($multiples, implode(", ", $params));
+
+        $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . "(" . implode("), (", $multiples) . ");";
+        return $this->_queryInsertReplace($sqlInsert, $ready);
     }
 
     /*
@@ -383,7 +529,7 @@ class DatabaseAccess extends HelpSetup
         array_push($multiples, implode(", ", $params));
 
         $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . "(" . implode("), (", $multiples) . ");";
-        return $this->_queryInsert($sqlInsert, $ready);
+        return $this->_queryInsertReplace($sqlInsert, $ready);
     }
 
     /*

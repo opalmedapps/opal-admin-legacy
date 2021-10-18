@@ -16,6 +16,10 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 1)) !== 0);
 		$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 2)) !== 0);
 
+		var arrValidationInsert = [
+			$filter('translate')('PATIENTS.LIST.VALIDATION_FLAGS'),
+		];
+
 		$scope.bannerMessage = "";
 		// Function to show page banner
 		$scope.showBanner = function () {
@@ -54,7 +58,7 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 			var matcher = new RegExp($scope.filterValue, 'i');
 			renderableRows.forEach(function (row) {
 				var match = false;
-				['name', 'patientid', 'email'].forEach(function (field) {
+				['name', 'RAMQ', 'email', 'MRN'].forEach(function (field) {
 					if (row.entity[field].match(matcher)) {
 						match = true;
 					}
@@ -77,9 +81,10 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 		$scope.gridOptions = {
 			data: 'patientList',
 			columnDefs: [
-				{ field: 'patientid', displayName: $filter('translate')('PATIENTS.LIST.PATIENTID'), width: '15%', enableColumnMenu: false },
-				{ field: 'name', displayName: $filter('translate')('PATIENTS.LIST.NAME'), width: '30%', enableColumnMenu: false },
-				{ field: 'email', displayName: $filter('translate')('PATIENTS.LIST.EMAIL'), width: '30%', enableColumnMenu: false },
+				{ field: 'RAMQ', displayName: $filter('translate')('PATIENTS.LIST.RAMQ'), width: '15%', enableColumnMenu: false },
+				{ field: 'name', displayName: $filter('translate')('PATIENTS.LIST.NAME'), width: '20%', enableColumnMenu: false },
+				{ field: 'email', displayName: $filter('translate')('PATIENTS.LIST.EMAIL'), width: '20%', enableColumnMenu: false },
+				{ field: 'MRN', displayName: $filter('translate')('PATIENTS.LIST.MRN'), width: '20%', enableColumnMenu: false },
 				{ field: 'transfer', displayName: $filter('translate')('PATIENTS.LIST.PUBLISH_FLAG'), width: '10%', cellTemplate: checkboxCellTemplate, enableFiltering: false, enableColumnMenu: false },
 				{ field: 'lasttransferred', displayName: $filter('translate')('PATIENTS.LIST.LAST'), width:'15%', enableColumnMenu: false },
 
@@ -96,9 +101,7 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 
 		// Initialize list of existing patients
 		$scope.patientList = [];
-		$scope.patientTransfers = {
-			transferList: []
-		};
+		$scope.patientTransfers = [];
 
 		getPatientsList();
 
@@ -129,16 +132,17 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 		$scope.submitTransferFlags = function () {
 			if ($scope.changesMade) {
 				angular.forEach($scope.patientList, function (patient) {
-					$scope.patientTransfers.transferList.push({
+					$scope.patientTransfers.push({
 						serial: patient.serial,
 						transfer: patient.transfer
 					});
 				});
+
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "patient/update/patient-publish-flags",
-					data: $scope.patientTransfers,
+					url: "patient/update/publish-flags",
+					data: {data: $scope.patientTransfers},
 					success: function () {
 						$scope.setBannerClass('success');
 						$scope.bannerMessage = $filter('translate')('PATIENTS.LIST.SUCCESS_FLAGS');
@@ -147,35 +151,27 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 						getPatientsList();
 					},
 					error: function(err) {
-						ErrorHandler.onError(err, $filter('translate')('PATIENTS.LIST.ERROR_FLAGS'));
+						err.responseText = JSON.parse(err.responseText);
+						ErrorHandler.onError(err, $filter('translate')('PATIENTS.LIST.ERROR_FLAGS'), arrValidationInsert);
 					}
 				});
 			}
 		};
 
-		// Function for when a user has been clicked for (un)blocking
-		// Open a modal
-		$scope.patientToToggleBlock = null;
-		$scope.toggleBlock = function (currentPatient) {
-
-			$scope.patientToToggleBlock = currentPatient;
-			var modalInstance = $uibModal.open({
-				templateUrl: 'templates/patient/block.patient.html',
-				windowClass: 'customModal',
-				controller: 'patient.block',
-				scope: $scope,
-				backdrop: 'static'
-			});
-
-			// After toggle, refresh the patient list
-			modalInstance.result.then(function () {
-				getPatientsList();
-			});
-		};
-
 		function getPatientsList() {
 			patientCollectionService.getPatients().then(function (response) {
 				$scope.patientList = response.data;
+				var temp;
+
+				for (var i = 0; i < $scope.patientList.length; i++) {
+					temp = "";
+					if($scope.patientList[i].MRN.length > 0)
+						for (var j = 0; j < $scope.patientList[i].MRN.length; j++)
+							temp += $scope.patientList[i].MRN[j].MRN + " (" + $scope.patientList[i].MRN[j].hospital + "), ";
+
+					$scope.patientList[i].MRN = temp.slice(0, -2);
+				}
+
 			}).catch(function(err) {
 				ErrorHandler.onError(err, $filter('translate')('PATIENTS.LIST.ERROR_PATIENTS'));
 			});
