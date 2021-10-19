@@ -183,24 +183,23 @@ class Appointment extends Module
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation" => $errCode)));
 
         $currentAppointment = $this->opalDB->findAppointment($source["SourceDatabaseSerNum"],$post["sourceId"]);
-        if (count($currentAppointment) > 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates appointment found.");
-        else if (count($currentAppointment) < 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation" => 7)));
-        else {
+        $pendingAppointment = $this->opalDB->findPendingAppointment($source["SourceDatabaseName"],$post["sourceId"]);
+
+        if (count($currentAppointment) > 1){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates appointment found.");                    
+        } else if (count($currentAppointment) == 1){
             $appointment = $currentAppointment[0];
             $this->opalDB->deleteAppointment($appointment["AppointmentSerNum"]);
-        }
-
-        $pendingAppointment = $this->opalDB->findPendingAppointment($source["SourceDatabaseName"],$post["sourceId"]);
-        if(count($pendingAppointment) == 1) {
+        } else if(count($pendingAppointment) == 1) {
             $toInsert = $pendingAppointment[0];
             $toInsert["DateModified"] = date("Y-m-d H:i:s");
             $toInsert["Status"] = "Deleted";
             $toInsert["State"] = "Deleted";
             $this->opalDB->insertPendingAppointment($toInsert);
             $this->_insertAppointmentPendingMH($toInsert, $source);
-        }        
+        } else if (count($currentAppointment) < 1 && count($pendingAppointment) < 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation" => 7)));
+        }      
     }
 
     /**
