@@ -3568,6 +3568,7 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":endDate","variable"=>$endDate,"data_type"=>PDO::PARAM_STR),
         ));
     }
+    
     /**
      * Get patient appointment
      * @params $sourceSystem : String - Source System (Aria, Medivisit, etc)
