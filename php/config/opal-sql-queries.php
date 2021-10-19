@@ -936,6 +936,20 @@ WHERE sourceName=:SourceSystem
 AND AppointmentAriaSer=:SourceId
 ");
 
+define("OPAL_GET_APPOINTMENT_PENDING", "
+SELECT AppointmentSerNum, PatientSerNum, sourceName, 
+appointmentTypeCode, appointmentTypeDescription, 
+AppointmentAriaSer, PrioritySerNum, DiagnosisSerNum, 
+STATUS, State, ScheduledStartTime, ScheduledEndTime, 
+ActualStartDate, ActualEndDate, Location, 
+RoomLocation_EN, RoomLocation_FR, Checkin, 
+ChangeRequest, DateAdded, DateModified, ReadStatus, 
+LEVEL, SessionId, updatedBy, LastUpdated
+FROM ".OPAL_APPOINTMENTS_PENDING_TABLE."
+WHERE sourceName=:SourceSystem
+AND AppointmentAriaSer=:SourceId
+");
+
 define("OPAL_GET_APPOINTMENT_PENDING_MH_ID", "
 SELECT AppointmentSerNum
 FROM ".OPAL_APPOINTMENTS_PENDING_MH_TABLE."
