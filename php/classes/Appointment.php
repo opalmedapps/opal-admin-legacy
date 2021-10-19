@@ -191,14 +191,14 @@ class Appointment extends Module
             $appointment = $currentAppointment[0];
             $this->opalDB->deleteAppointment($appointment["AppointmentSerNum"]);
         } else if(count($pendingAppointment) == 1) {
-            $toInsert = $pendingAppointment[0];            
+            $toInsert = $pendingAppointment[0];
             $toInsert["Status"] = "Deleted";
             $toInsert["State"] = "Deleted";
             $toInsert["DateModified"] = date("Y-m-d H:i:s");
-            $this->_insertAppointmentPendingMH($toInsert, $source);
+            $this->opalDB->insertPendingAppointment($toInsert);
 
             unset($toInsert["DateModified"]);
-            $this->opalDB->insertPendingAppointment($toInsert);
+            $this->_insertAppointmentPendingMH($toInsert, $source);            
             
         } else if (count($currentAppointment) < 1 && count($pendingAppointment) < 1) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, "Appointment not found.");
