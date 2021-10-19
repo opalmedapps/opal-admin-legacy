@@ -195,10 +195,11 @@ class Appointment extends Module
             $toInsert["DateModified"] = date("Y-m-d H:i:s");
             $toInsert["Status"] = "Deleted";
             $toInsert["State"] = "Deleted";
+            var_dump($toInsert);
             $this->opalDB->insertPendingAppointment($toInsert);
             $this->_insertAppointmentPendingMH($toInsert, $source);
         } else if (count($currentAppointment) < 1 && count($pendingAppointment) < 1) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation" => 7)));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, "Appointment not found.");
         }      
     }
 
