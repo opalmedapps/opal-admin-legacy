@@ -197,7 +197,7 @@ class Appointment extends Module
             $toInsert["State"] = "Deleted";
             $this->opalDB->insertPendingAppointment($toInsert);
             $this->_insertAppointmentPendingMH($toInsert, $source);
-        } else if (count($currentAppointment) < 1 && count($pendingAppointment) < 1)
+        } else if (count($currentAppointment) < 1 && count($pendingAppointment) < 1) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation" => 7)));
         }      
     }
