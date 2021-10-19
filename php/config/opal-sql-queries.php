@@ -936,6 +936,7 @@ WHERE sourceName=:SourceSystem
 AND AppointmentAriaSer=:SourceId
 ");
 
+
 define("OPAL_GET_APPOINTMENT_PENDING", "
 SELECT AppointmentSerNum, PatientSerNum, sourceName, 
 appointmentTypeCode, appointmentTypeDescription, 
