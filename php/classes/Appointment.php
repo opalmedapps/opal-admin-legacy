@@ -194,9 +194,10 @@ class Appointment extends Module
             $toInsert = $pendingAppointment[0];            
             $toInsert["Status"] = "Deleted";
             $toInsert["State"] = "Deleted";
+            $toInsert["DateModified"] = date("Y-m-d H:i:s");
             $this->_insertAppointmentPendingMH($toInsert, $source);
 
-            $toInsert["DateModified"] = date("Y-m-d H:i:s");
+            unset($toInsert["DateModified"]);
             $this->opalDB->insertPendingAppointment($toInsert);
             
         } else if (count($currentAppointment) < 1 && count($pendingAppointment) < 1) {
