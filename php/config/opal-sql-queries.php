@@ -940,11 +940,11 @@ define("OPAL_GET_APPOINTMENT_PENDING", "
 SELECT AppointmentSerNum, PatientSerNum, sourceName, 
 appointmentTypeCode, appointmentTypeDescription, 
 AppointmentAriaSer, PrioritySerNum, DiagnosisSerNum, 
-STATUS, State, ScheduledStartTime, ScheduledEndTime, 
+Status, State, ScheduledStartTime, ScheduledEndTime, 
 ActualStartDate, ActualEndDate, Location, 
 RoomLocation_EN, RoomLocation_FR, Checkin, 
 ChangeRequest, DateAdded, DateModified, ReadStatus, 
-LEVEL, SessionId, updatedBy, LastUpdated
+Level, SessionId, updatedBy, LastUpdated
 FROM ".OPAL_APPOINTMENTS_PENDING_TABLE."
 WHERE sourceName=:SourceSystem
 AND AppointmentAriaSer=:SourceId
@@ -960,9 +960,9 @@ AND AppointmentAriaSer=:SourceId
 define("OPAL_GET_APPOINTMENT_PENDING_MH", "
 SELECT AppointmentSerNum, revisionId, ACTION, PatientSerNum, 
 sourceName, AppointmentAriaSer, PrioritySerNum, 
-DiagnosisSerNum, STATUS, State, ScheduledStartTime, 
+DiagnosisSerNum, Status, State, ScheduledStartTime, 
 ScheduledEndTime, ActualStartDate, ActualEndDate, 
-Location, RoomLocation_EN, RoomLocation_FR, Checkin, LEVEL, 
+Location, RoomLocation_EN, RoomLocation_FR, Checkin, Level, 
 ChangeRequest, PendingDate, ProcessedDate, ReadStatus, 
 SessionId, LastUpdated
 FROM ".OPAL_APPOINTMENTS_PENDING_MH_TABLE."
