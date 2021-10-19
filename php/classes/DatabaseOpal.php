@@ -3588,7 +3588,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return array - an appointment details
      */
     function findPendingAppointment($sourceSystem,$sourceId){
-        return $this->_fetchAll(OPAL_GET_APPOINTMENT_PENDING_ID, array(
+        return $this->_fetchAll(OPAL_GET_APPOINTMENT_PENDING, array(
             array("parameter"=>":SourceSystem","variable"=>$sourceSystem,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":SourceId","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
         ));
