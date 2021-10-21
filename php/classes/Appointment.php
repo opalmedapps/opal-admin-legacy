@@ -188,13 +188,18 @@ class Appointment extends Module
         if (count($currentAppointment) > 1){
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates appointment found.");                    
         } else if (count($currentAppointment) == 1){
-            $appointment = $currentAppointment[0];
-            $this->opalDB->deleteAppointment($appointment["AppointmentSerNum"]);
+            $toUpdate = $currentAppointment[0];
+            $toUpdate["Status"] = APPOINTMENT_STATUS_CODE_DELETED;
+            $toUpdate["State"] = APPOINTMENT_STATE_CODE_DELETED;
+            $toUpdate["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];
+            $this->opalDB->deleteAppointment($toUpdate);
+
         } else if(count($pendingAppointment) == 1) {
             $toInsert = $pendingAppointment[0];
-            $toInsert["Status"] = "Deleted";
-            $toInsert["State"] = "Deleted";
-            $toInsert["DateModified"] = date("Y-m-d H:i:s");
+            $toInsert["Status"] = APPOINTMENT_STATUS_CODE_DELETED;
+            $toInsert["State"] = APPOINTMENT_STATUS_CODE_DELETED;
+            $toInsert["DateModified"] = date("Y-m-d H:i:s");            
+            $toInsert["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];
             $this->opalDB->insertPendingAppointment($toInsert);
 
             unset($toInsert["DateModified"]);
@@ -207,7 +212,7 @@ class Appointment extends Module
 
     /**
      * Validate basic information of a specific database source.
-     * @params  $post : array - Contains the following information
+     * @param  $post : array - Contains the following information
      *                          sourceSystem : Source database of appointment (i.e. Aria, Medivisit, Mosaic, etc.)
      *                          sourceId : Source system unique appointment ID (i.e. YYYYA9999999, 9999999)
      *                          source : Source database of the diagnosis (mandatory)
@@ -346,4 +351,90 @@ class Appointment extends Module
         unset($toInsert["SourceDatabaseSerNum"]);
         return $this->opalDB->insertPendingMHAppointment($toInsert);
     }
+
+    /**
+     * Validate basic information of a specific database source.
+     * @param  $post : array - Contains the following information
+     *                          sourceSystem : Source database of appointment (i.e. Aria, Medivisit, Mosaic, etc.)
+     *                          sourceId : Source system unique appointment ID (i.e. YYYYA9999999, 9999999)
+     *                          source : Source database of the diagnosis (mandatory)
+     * Validation code :
+     *                      1: source invalid or missing
+     */
+    protected function _validateUpdateAppointmentStatus(&$post, &$source)
+    {
+
+        $errCode = "";
+        if (is_array($post)) {
+            // 1th bit - source
+            if (!array_key_exists("sourceSystem", $post) || $post["sourceSystem"] == "") {
+                $errCode = "1" . $errCode;
+            } else {
+                $source = $this->opalDB->getSourceDatabaseDetails($post["sourceSystem"]);
+                // 2sd bit - source exists
+                if (count($source) != 1) {
+                    $source = array();
+                    $errCode = "1" . $errCode;
+                } else {
+                    $source = $source[0];
+                    $errCode = "0" . $errCode;
+                }
+            }
+            // 3th bit - sourceId
+            if (!array_key_exists("sourceId", $post) || $post["sourceId"] == "") {
+                $errCode = "1" . $errCode;
+            }
+        } else {
+            $errCode = "111";
+        }
+
+        return bindec($errCode);
+    }
+
+
+    /**
+     * Update a specific appointment status.
+     * @params  $post : array - contains the following info:
+     *                          sourceSystem : Source database of appointment (i.e. Aria, Medivisit, Mosaic, etc.)
+     *                          sourceId : Source system unique appointment ID (i.e. YYYYA9999999, 9999999)
+     * @return  int - number of records update
+     * */
+    public function updateAppointmentStatus($post)
+    {
+        $source = null;
+        $this->checkWriteAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validateUpdateAppointmentStatus($post, $source);
+
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation" => $errCode)));
+
+        $currentAppointment = $this->opalDB->findAppointment($source["SourceDatabaseSerNum"],$post["sourceId"]);
+        $pendingAppointment = $this->opalDB->findPendingAppointment($source["SourceDatabaseName"],$post["sourceId"]);
+
+        if (count($currentAppointment) > 1){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates appointment found.");                    
+        } else if (count($currentAppointment) == 1){
+            $toUpdate = $currentAppointment[0];
+            $toUpdate["Status"] = $post["status"];
+            $toUpdate["State"] = APPOINTMENT_STATE_CODE_ACTIVE;
+            $toUpdate["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];
+            return $this->opalDB->updateAppointment($toUpdate);
+
+        } else if(count($pendingAppointment) == 1) {
+            $toInsert = $pendingAppointment[0];
+            $toInsert["Status"] = $post["status"];
+            $toUpdate["State"] = APPOINTMENT_STATE_CODE_ACTIVE;
+            $toInsert["DateModified"] = date("Y-m-d H:i:s");
+            
+            $this->opalDB->insertPendingAppointment($toInsert);
+
+            unset($toInsert["DateModified"]);
+            $this->_insertAppointmentPendingMH($toInsert, $source);            
+            
+        } else if (count($currentAppointment) < 1 && count($pendingAppointment) < 1) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, "Appointment not found.");
+        }      
+    }
+
 }
