@@ -3568,7 +3568,7 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":endDate","variable"=>$endDate,"data_type"=>PDO::PARAM_STR),
         ));
     }
-    
+
     /**
      * Get patient appointment
      * @params $sourceSystem : String - Source System (Aria, Medivisit, etc)
@@ -3652,9 +3652,12 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  $id : int - Diagnosis sernum
      * @return  int - number of record deleted
      */
-    function deleteAppointment($id) {
+    function deleteAppointment($toUpdate) {
         $this->_execute(OPAL_UPDATE_APPOINTMENT_STATUS, array(
-            array("parameter"=>":AppointmentSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":AppointmentSerNum","variable"=>$toUpdate['AppointmentSerNum'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$toUpdate['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":Status","variable"=>$toUpdate['Status'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":State","variable"=>$toUpdate['State'],"data_type"=>PDO::PARAM_STR),            
         ));
     }
 
@@ -3894,4 +3897,18 @@ class DatabaseOpal extends DatabaseAccess {
     function getOldestAppointmentPendingInProcess() {
         return $this->_fetchAll(GET_OLDEST_APPOINTMENT_PENDING_IN_PROCESS, array());
     }
+
+    /**
+     * Update an appointment
+     * @param $toUpdate - appointment details
+     * @return int - number of row modified
+     */
+    function updateAppointment($toUpdate) {        
+        $this->_execute(OPAL_UPDATE_APPOINTMENT_STATUS, array(
+            array("parameter"=>":Status","variable"=>$toUpdate['Status'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":State","variable"=>$toUpdate['State'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$toUpdate['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":AppointmentSerNum","variable"=>$toUpdate['AppointmentSerNum'],"data_type"=>PDO::PARAM_INT),
+        ));
+    }    
 }
