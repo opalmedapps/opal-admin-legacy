@@ -917,9 +917,10 @@ define("OPAL_GET_DIAGNOSIS_REPORT", "
 ");
 
 define ("OPAL_UPDATE_APPOINTMENT_STATUS","
-UPDATE ".OPAL_APPOINTMENTS_TABLE."
-SET Status='Deleted' , State = 'Deleted'
-WHERE AppointmentSerNum = :AppointmentSerNum
+UPDATE ".OPAL_APPOINTMENTS_TABLE." 
+SET Status=:Status , State=:State 
+WHERE SourceDatabaseSerNum=:SourceDatabaseSerNum 
+AND AppointmentSerNum=:AppointmentSerNum 
 ");
 
 define("OPAL_GET_APPOINTMENT_ID", "
