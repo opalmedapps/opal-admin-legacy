@@ -939,7 +939,7 @@ AND AppointmentAriaSer=:SourceId
 
 
 define("OPAL_GET_APPOINTMENT_PENDING", "
-SELECT AppointmentSerNum, PatientSerNum, sourceName, 
+SELECT ID, PatientSerNum, sourceName, 
 appointmentTypeCode, appointmentTypeDescription, 
 AppointmentAriaSer, PrioritySerNum, DiagnosisSerNum, 
 Status, State, ScheduledStartTime, ScheduledEndTime, 
@@ -953,14 +953,14 @@ AND AppointmentAriaSer=:SourceId
 ");
 
 define("OPAL_GET_APPOINTMENT_PENDING_MH_ID", "
-SELECT AppointmentSerNum
+SELECT AppointmentPendingId
 FROM ".OPAL_APPOINTMENTS_PENDING_MH_TABLE."
 WHERE sourceName=:SourceSystem
 AND AppointmentAriaSer=:SourceId
 ");
 
 define("OPAL_GET_APPOINTMENT_PENDING_MH", "
-SELECT AppointmentSerNum, revisionId, ACTION, PatientSerNum, 
+SELECT AppointmentPendingId, revisionId, ACTION, PatientSerNum, 
 sourceName, AppointmentAriaSer, PrioritySerNum, 
 DiagnosisSerNum, Status, State, ScheduledStartTime, 
 ScheduledEndTime, ActualStartDate, ActualEndDate, 
@@ -973,7 +973,7 @@ AND AppointmentAriaSer=:SourceId
 ");
 
 define("OPAL_DELETE_APPOINTMENT_PENDING","
-    DELETE FROM ".OPAL_APPOINTMENTS_PENDING_TABLE." WHERE AppointmentSerNum = :AppointmentSerNum;
+    DELETE FROM ".OPAL_APPOINTMENTS_PENDING_TABLE." WHERE ID = :AppointmentSerNum;
 ");
 
 define("OPAL_GET_APPOINTMENT", "
@@ -1836,15 +1836,15 @@ const OPAL_DELETE_QUESTIONNAIRE_FREQUENCY_EVENTS = "
 
 const UPDATE_APPOINTMENT_PENDING_LEVEL_IN_PROCESS = "
     UPDATE ".OPAL_APPOINTMENTS_PENDING_TABLE." ap SET ap.`level` = ".APPOINTMENT_LEVEL_IN_PROCESS.", updatedBy = :updatedBy
-    WHERE ( SELECT COUNT(*) AS total FROM ".OPAL_APPOINTMENTS_PENDING_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s
-    ON s.SourceDatabaseName = a.sourceName WHERE s.SourceDatabaseName = ap.sourceName AND
+    WHERE ( SELECT COUNT(*) AS total FROM ".OPAL_APPOINTMENTS_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s
+    ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum WHERE s.SourceDatabaseName = ap.sourceName AND
     s.Enabled = ".ACTIVE_RECORD." AND a.AppointmentAriaSer = ap.AppointmentAriaSer AND ap.`level` = ".APPOINTMENT_LEVEL_READY.") = 1
 ";
 
 const GET_OLDEST_APPOINTMENT_PENDING_IN_PROCESS = "
-    SELECT ap.*, (SELECT a.AppointmentSerNum FROM ".OPAL_APPOINTMENTS_PENDING_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s
-    ON s.SourceDatabaseName = a.sourceName WHERE s.SourceDatabaseName = ap.sourceName AND s.Enabled = 1 AND
+    SELECT ap.*, (SELECT a.AppointmentSerNum FROM ".OPAL_APPOINTMENTS_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s
+    ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum WHERE s.SourceDatabaseName = ap.sourceName AND s.Enabled = 1 AND
     a.AppointmentAriaSer = ap.AppointmentAriaSer) AS AppointmentSerNum, (SELECT s1.SourceDatabaseSerNum FROM
     ".OPAL_SOURCE_DATABASE_TABLE." s1 WHERE s1.SourceDatabaseName = ap.sourceName AND s1.Enabled = 1) AS SourceDatabaseSerNum
-    FROM ".OPAL_APPOINTMENTS_PENDING_TABLE." ap WHERE ap.`level` = 2 ORDER BY DateAdded ASC LIMIT 1;
+    FROM ".OPAL_APPOINTMENTS_PENDING_TABLE." ap WHERE ap.`level` = 1 ORDER BY DateAdded ASC;
 ";
