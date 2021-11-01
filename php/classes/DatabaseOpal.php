@@ -18,6 +18,7 @@ class DatabaseOpal extends DatabaseAccess {
 
             if($_SESSION["ID"] && $_SESSION["ID"] == $newOAUserId) {
                 $this->OAUserId = $_SESSION["ID"];
+                $this->type = $_SESSION["type"];
                 $this->username = $_SESSION["username"];
                 $this->userRole = $_SESSION["roleId"];
             }
@@ -28,6 +29,7 @@ class DatabaseOpal extends DatabaseAccess {
                 else
                     HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "User not authenticated.");
                 $this->OAUserId = $userInfo["OAUserId"];
+                $this->type = $userInfo["type"];
                 $this->username = $userInfo["username"];
                 $this->userRole = $userInfo["userRole"];
             }
@@ -1825,7 +1827,11 @@ class DatabaseOpal extends DatabaseAccess {
     function insertAudit($toInsert) {
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
         $toInsert["createdBy"] = ($this->username != null ? $this->username : UNKNOWN_USER);
-        return $this->_replaceRecordIntoTable(OPAL_AUDIT_TABLE, $toInsert);
+        if($this->type == HUMAN_USER)
+            $sqlTable = OPAL_AUDIT_TABLE;
+        else
+            $sqlTable = OPAL_AUDIT_SYSTEM_TABLE;
+        return $this->_replaceRecordIntoTable($sqlTable, $toInsert);
     }
 
     /*
@@ -1835,7 +1841,11 @@ class DatabaseOpal extends DatabaseAccess {
      * */
     function insertAuditForceUser($toInsert) {
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
-        return $this->_replaceRecordIntoTable(OPAL_AUDIT_TABLE, $toInsert);
+        if($this->type == HUMAN_USER)
+            $sqlTable = OPAL_AUDIT_TABLE;
+        else
+            $sqlTable = OPAL_AUDIT_SYSTEM_TABLE;
+        return $this->_replaceRecordIntoTable($sqlTable, $toInsert);
     }
 
     /*
@@ -3773,6 +3783,16 @@ class DatabaseOpal extends DatabaseAccess {
     function deleteQuestionnaireFrequencyEvents($questionnaireId) {
         return $this->_execute(OPAL_DELETE_QUESTIONNAIRE_FREQUENCY_EVENTS, array(
             array("parameter"=>":ControlTableSerNum","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function getAuditSystemLastDates() {
+        return $this->_fetchAll(OPAL_GET_AUDIT_SYSTEM_LAST_DATES, array());
+    }
+
+    function getAuditSystemEntriesByDate($date) {
+        return $this->_fetchAll(OPAL_GET_AUDIT_SYSTEM_ENTRIES_BY_DATE, array(
+            array("parameter"=>":creationDate","variable"=>$date,"data_type"=>PDO::PARAM_STR),
         ));
     }
 }
