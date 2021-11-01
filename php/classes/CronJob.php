@@ -85,21 +85,31 @@ class CronJob extends OpalProject {
      */
     public function updateAppointmentPending(){
         //$this->_checkCronAccess();
-        $ret = $this->opalDB->updateAppointmentPendingLevelInProcess();
-        
-        $appointmentPending = $this->opalDB->getOldestAppointmentPendingInProcess();
-        
+        //$this->opalDB->updateAppointmentPendingLevelInProcess();        
+        $appointmentPendingList = $this->opalDB->getOldestAppointmentPendingInProcess();
+
         $startTime = time();
-        while(count($appointmentPending) > 0 && (time() - $startTime) < 29) {            
-            $appointmentPending = $appointmentPending[0];
-            $appointmentPending["SourceDatabaseSerNum"] = $this->opalDB->getSourceId($appointmentPending["sourceName"])[0]['ID'];
+        while(count($appointmentPendingList) > 0 && (time() - $startTime) < 29) {
+            $appointmentPending = array_shift($appointmentPendingList);
+            print_r("\n\n SourceDatabase : ");
+            var_dump($this->opalDB->getSourceId($appointmentPending["sourceName"]));
+            print_r("\n\n SourceDatabaseSerNum : ");
+            //var_dump($this->opalDB->getSourceId($appointmentPending["sourceName"])[0]['ID']);
+            $appointmentPending["SourceDatabaseSerNum"] = $this->opalDB->getSourceId($appointmentPending["sourceName"])[0]['ID'];            
+
             $aliasInfos = $this->opalDB->getAlias('Appointment',$appointmentPending['appointmentTypeCode'], $appointmentPending['appointmentTypeDescription']);
-            if($appointmentPending["AppointmentSerNum"] == "" || $appointmentPending["SourceDatabaseSerNum"] == "")
-                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Appointment or source database missing.");
             
-           // $this->_insertResources($appointmentPending["AppointmentSerNum"], $appointments, $appointmentPending["SourceDatabaseSerNum"]);
-            //$this->opalDB->deleteAppointmentPending($appointmentPending["AppointmentSerNum"]);
             if(count($aliasInfos) == 1) { 
+                print_r("\n\n************************************************");
+                print_r("\n\n TYPE Code : ");
+                print_r($appointmentPending['appointmentTypeCode']);
+            
+                print_r("\n\n TYPE Desc : ");
+                print_r($appointmentPending['appointmentTypeDescription']);                
+
+                print_r("\n\n************************************************\n\n");
+                var_dump($aliasInfos);
+
                 unset($appointmentPending["Level"]);
                 unset($appointmentPending["updatedBy"]);
                 unset($appointmentPending["sourceName"]);
@@ -108,14 +118,14 @@ class CronJob extends OpalProject {
                 unset($appointmentPending["appointmentTypeCode"]);   
                 unset($appointmentPending["appointmentTypeDescription"]); 
                 $appointmentPending["AliasExpressionSerNum"] = $aliasInfos[0]['AliasExpressionSerNum'];
-                //var_dump($appointmentPending);
                 
-                $this->opalDB->deleteAppointmentPending($appointmentPending["AppointmentSerNum"]);
-                unset($appointmentPending["AppointmentSerNum"]);
-                return $this->opalDB->insertAppointment($appointmentPending);
+                print_r("\n\n Appointment ID : ");
+                print_r($appointmentPending["AppointmentSerNum"]);
+                //$this->opalDB->deleteAppointmentPending($appointmentPending["ID"]);
+                unset($appointmentPending["ID"]);
 
-            }  else {
-                break;
+                var_dump($appointmentPending);
+                return $this->opalDB->insertAppointment($appointmentPending);
             }
         }
     }
