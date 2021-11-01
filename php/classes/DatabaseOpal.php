@@ -3644,6 +3644,8 @@ class DatabaseOpal extends DatabaseAccess {
         $toDelete = array(
             array("parameter"=>":AppointmentSerNum","variable"=>$id),
         );
+        print_r("\n\n");
+        var_dump($toDelete);
         return $this->_execute(OPAL_DELETE_APPOINTMENT_PENDING, $toDelete);
     }
 
