@@ -69,40 +69,42 @@ class CronJob extends OpalProject {
     }
 
     public function backupAuditSystem() {
+        try {
 //        $this->_checkCronAccess();
-        $dateList = $this->opalDB->getAuditSystemLastDates();
-        foreach ($dateList as $date) {
-            $entries = $this->opalDB->getAuditSystemEntriesByDate($date["date"]);
-            if (count($entries) > 0) {
-                $folder = FRONTEND_ABS_PATH . 'logs/'.date("Y", strtotime($date["date"])).'/'.date("m", strtotime($date["date"]));
-                if(!is_dir($folder))
-                    mkdir($folder, 0774, true);
+            $dateList = $this->opalDB->getAuditSystemLastDates();
+            foreach ($dateList as $date) {
+                $entries = $this->opalDB->getAuditSystemEntriesByDate($date["date"]);
+                if (count($entries) > 0) {
+                    $folder = FRONTEND_ABS_PATH . 'logs/'.date("Y", strtotime($date["date"])).'/'.date("m", strtotime($date["date"]));
+                    if(!is_dir($folder))
+                        mkdir($folder, 0774, true);
 
-                $file = 'audit-system-'.$date["date"].'.sql';
-                $contents = str_replace("%%DATE_TO_INSERT%%", str_replace("-", "", $date["date"]), OPAL_TEMPLATE_AUDIT_SYSTEM);
+                    $file = 'audit-system-'.$date["date"].'.sql';
+                    $contents = str_replace("%%DATE_TO_INSERT%%", str_replace("-", "", $date["date"]), OPAL_TEMPLATE_AUDIT_SYSTEM);
 
-                $tempData = "";
-                foreach ($entries as $entry)
-                    $tempData .= "(" .
-                        "'" . str_replace("'", "\'", $entry["module"]) . "', " .
-                        "'" . str_replace("'", "\'", $entry["method"]) . "', " .
-                        "'" . str_replace("'", "\'", $entry["argument"]) . "', " .
-                        "'" . str_replace("'", "\'", $entry["access"]) . "', " .
-                        "'" . str_replace("'", "\'", $entry["ipAddress"]) . "', " .
-                        "'" . str_replace("'", "\'", $entry["creationDate"]) . "', " .
-                        "'" . str_replace("'", "\'", $entry["createdBy"]) . "'),\r\n";
+                    $tempData = "";
+                    foreach ($entries as $entry)
+                        $tempData .= "(" .
+                            "'" . str_replace("'", "\'", $entry["module"]) . "', " .
+                            "'" . str_replace("'", "\'", $entry["method"]) . "', " .
+                            "'" . str_replace("'", "\'", $entry["argument"]) . "', " .
+                            "'" . str_replace("'", "\'", $entry["access"]) . "', " .
+                            "'" . str_replace("'", "\'", $entry["ipAddress"]) . "', " .
+                            "'" . str_replace("'", "\'", $entry["creationDate"]) . "', " .
+                            "'" . str_replace("'", "\'", $entry["createdBy"]) . "'),\r\n";
 
-                $contents = str_replace("%%INSERT_DATA_HERE%%", substr($tempData, 0, -3), $contents);
+                    $contents = str_replace("%%INSERT_DATA_HERE%%", substr($tempData, 0, -3), $contents);
 
-                try {
+
                     $a = new PharData($folder."/".$file);
                     $a->addFromString($file, $contents);
                     $a->compress(Phar::GZ);
                     unlink($folder."/".$file);
-                } catch (Exception $e) {
-                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, $e->getMessage());
+                    $this->opalDB->deleteAuditSystemByDate($date["date"]);
                 }
             }
+        } catch (Exception $e) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, $e->getMessage());
         }
     }
 

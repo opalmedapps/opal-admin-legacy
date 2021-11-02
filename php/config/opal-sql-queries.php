@@ -1775,8 +1775,7 @@ const OPAL_GET_AUDIT_SYSTEM_ENTRIES_BY_DATE = "
     SELECT * FROM ".OPAL_AUDIT_SYSTEM_TABLE." WHERE DATE(creationDate) = :creationDate;
 ";
 
-const OPAL_TEMPLATE_AUDIT_SYSTEM = "
-DROP TABLE IF EXISTS `auditSystem%%DATE_TO_INSERT%%`;
+const OPAL_TEMPLATE_AUDIT_SYSTEM = "DROP TABLE IF EXISTS `auditSystem%%DATE_TO_INSERT%%`;
 CREATE TABLE `auditSystem%%DATE_TO_INSERT%%` (
 	`ID` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT 'Primary key. Auto-increment.',
 	`module` VARCHAR(128) NOT NULL COMMENT 'Name of the module the user accessed' COLLATE 'latin1_swedish_ci',
@@ -1791,5 +1790,8 @@ CREATE TABLE `auditSystem%%DATE_TO_INSERT%%` (
 COLLATE='latin1_swedish_ci' ENGINE=InnoDB;
 INSERT INTO `auditSystem%%DATE_TO_INSERT%%` (`module`, `method`, `argument`, `access`, `ipAddress`, `creationDate`, `createdBy`) VALUES
 %%INSERT_DATA_HERE%%
-;
+;";
+
+const OPAL_DELETE_AUDIT_SYSTEM_BY_DATE = "
+    DELETE FROM ".OPAL_AUDIT_SYSTEM_TABLE." WHERE DATE(creationDate) = :creationDate;
 ";

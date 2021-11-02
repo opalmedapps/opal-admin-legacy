@@ -3769,6 +3769,10 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(OPAL_GET_PUBLICATION_SETTINGS, array());
     }
 
+    /**
+     *
+     * @return array - list of records found
+     */
     function getPublicationSettingsToIgnore() {
         $tempResults = $this->_fetchAll(OPAL_GET_PUBLICATION_SETTINGS_TO_IGNORE, array());
         $results = array();
@@ -3780,18 +3784,43 @@ class DatabaseOpal extends DatabaseAccess {
         return $results;
     }
 
+    /**
+     * Delete the frequency event from a specific questionnaire
+     * @param $questionnaireId - questionnaire from which frequency events are deleted
+     * @return int - number of records deleted
+     */
     function deleteQuestionnaireFrequencyEvents($questionnaireId) {
         return $this->_execute(OPAL_DELETE_QUESTIONNAIRE_FREQUENCY_EVENTS, array(
             array("parameter"=>":ControlTableSerNum","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
+    /**
+     * Get the latest dates of entries from the audit system table
+     * @return array - list of records found
+     */
     function getAuditSystemLastDates() {
         return $this->_fetchAll(OPAL_GET_AUDIT_SYSTEM_LAST_DATES, array());
     }
 
+    /**
+     * Get a list of audit system entries based on their creation date
+     * @param $date string - date of records to retrieve
+     * @return array - list of records found
+     */
     function getAuditSystemEntriesByDate($date) {
         return $this->_fetchAll(OPAL_GET_AUDIT_SYSTEM_ENTRIES_BY_DATE, array(
+            array("parameter"=>":creationDate","variable"=>$date,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Delete a list of audit system entries based on their creation date
+     * @param $date string - date of records to delete
+     * @return int - number of records deleted
+     */
+    function deleteAuditSystemByDate($date) {
+        return $this->_execute(OPAL_DELETE_AUDIT_SYSTEM_BY_DATE, array(
             array("parameter"=>":creationDate","variable"=>$date,"data_type"=>PDO::PARAM_STR),
         ));
     }
