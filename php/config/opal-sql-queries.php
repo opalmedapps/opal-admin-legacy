@@ -6,7 +6,8 @@ define("SQL_OPAL_SELECT_USER_INFO",
     "SELECT OAUserSerNum AS OAUserId,
     Username AS username,
     Language as language,
-    oaRoleId as userRole
+    oaRoleId as userRole,
+    type
     FROM ".OPAL_OAUSER_TABLE."
     WHERE OAUserSerNum = :OAUserSerNum"
 );
@@ -1763,4 +1764,39 @@ const OPAL_GET_PUBLICATION_SETTINGS_TO_IGNORE = "
 
 const OPAL_DELETE_QUESTIONNAIRE_FREQUENCY_EVENTS = "
     DELETE FROM FrequencyEvents WHERE ControlTableSerNum = :ControlTableSerNum AND ControlTable = 'LegacyQuestionnaireControl';
+";
+
+const OPAL_GET_AUDIT_SYSTEM_LAST_DATES = "
+    SELECT DISTINCT DATE(creationDate) AS `date` FROM ".OPAL_AUDIT_SYSTEM_TABLE." WHERE creationDate != ''
+    AND DATE(creationDate) != CURDATE() ORDER BY `date` DESC LIMIT ".LIMIT_DAYS_AUDIT_SYSTEM_BACKUP.";
+";
+
+const OPAL_GET_AUDIT_SYSTEM_ENTRIES_BY_DATE = "
+    SELECT * FROM ".OPAL_AUDIT_SYSTEM_TABLE." WHERE DATE(creationDate) = :creationDate;
+";
+
+const OPAL_TEMPLATE_AUDIT_SYSTEM = "DROP TABLE IF EXISTS `auditSystem%%DATE_TO_INSERT%%`;
+CREATE TABLE `auditSystem%%DATE_TO_INSERT%%` (
+	`ID` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT 'Primary key. Auto-increment.',
+	`module` VARCHAR(128) NOT NULL COMMENT 'Name of the module the user accessed' COLLATE 'latin1_swedish_ci',
+	`method` VARCHAR(128) NOT NULL COMMENT 'Name of the method in the module the user activated' COLLATE 'latin1_swedish_ci',
+	`argument` LONGTEXT NOT NULL COMMENT 'Arguments (if any) passed to the method called.' COLLATE 'latin1_swedish_ci',
+	`access` VARCHAR(16) NOT NULL COMMENT 'If the access to the user was GRANTED or DENIED' COLLATE 'latin1_swedish_ci',
+	`ipAddress` VARCHAR(64) NOT NULL COMMENT 'IP address of the user' COLLATE 'latin1_swedish_ci',
+	`creationDate` DATETIME NOT NULL COMMENT 'Date of the user request',
+	`createdBy` VARCHAR(128) NOT NULL COMMENT 'Username of the user who made the request' COLLATE 'latin1_swedish_ci',
+	PRIMARY KEY (`ID`) USING BTREE
+)
+COLLATE='latin1_swedish_ci' ENGINE=InnoDB;
+INSERT INTO `auditSystem%%DATE_TO_INSERT%%` (`module`, `method`, `argument`, `access`, `ipAddress`, `creationDate`, `createdBy`) VALUES
+%%INSERT_DATA_HERE%%
+;";
+
+const OPAL_DELETE_AUDIT_SYSTEM_BY_DATE = "
+    DELETE FROM ".OPAL_AUDIT_SYSTEM_TABLE." WHERE DATE(creationDate) = :creationDate;
+";
+
+const OPAL_COUNT_AUDIT_SYSTEM_REMAINING_DATES = "
+    SELECT COUNT(DISTINCT DATE(creationDate)) AS remaining FROM ".OPAL_AUDIT_SYSTEM_TABLE." WHERE creationDate != ''
+    AND DATE(creationDate) != CURDATE();
 ";
