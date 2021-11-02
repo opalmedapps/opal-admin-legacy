@@ -69,6 +69,55 @@ class CronJob extends OpalProject {
     }
 
     /**
+     * Take the five most recent days of data in auditSystem table and back up the data in separate tar.gz files. The
+     * files are stored in the logs folder, separated by year and months. Then the data are deleted from the table.
+     * At the end, returns the number of days remaining to back up, excluding the current date. This way, the process
+     * can be launch again if necessary instead of waiting for the next day.
+     * WARNING : because of the nature of creating file and large amount of data, the try/catch has being implemented
+     * as a safeguard.
+     * @return array - number of days not backed up remaining
+     */
+    public function backupAuditSystem() {
+        try {
+        $this->_checkCronAccess();
+            $dateList = $this->opalDB->getAuditSystemLastDates();
+            foreach ($dateList as $date) {
+                $entries = $this->opalDB->getAuditSystemEntriesByDate($date["date"]);
+                if (count($entries) > 0) {
+                    $folder = FRONTEND_ABS_PATH . 'logs/'.date("Y", strtotime($date["date"])).'/'.date("m", strtotime($date["date"]));
+                    if(!is_dir($folder))
+                        mkdir($folder, 0774, true);
+
+                    $file = 'audit-system-'.$date["date"].'.sql';
+                    $contents = str_replace("%%DATE_TO_INSERT%%", str_replace("-", "", $date["date"]), OPAL_TEMPLATE_AUDIT_SYSTEM);
+
+                    $tempData = "";
+                    foreach ($entries as $entry)
+                        $tempData .= "(" .
+                            "'" . str_replace("'", "\'", $entry["module"]) . "', " .
+                            "'" . str_replace("'", "\'", $entry["method"]) . "', " .
+                            "'" . str_replace("'", "\'", $entry["argument"]) . "', " .
+                            "'" . str_replace("'", "\'", $entry["access"]) . "', " .
+                            "'" . str_replace("'", "\'", $entry["ipAddress"]) . "', " .
+                            "'" . str_replace("'", "\'", $entry["creationDate"]) . "', " .
+                            "'" . str_replace("'", "\'", $entry["createdBy"]) . "'),\r\n";
+
+                    $contents = str_replace("%%INSERT_DATA_HERE%%", substr($tempData, 0, -3), $contents);
+
+                    $a = new PharData($folder."/".$file);
+                    $a->addFromString($file, $contents);
+                    $a->compress(Phar::GZ);
+                    unlink($folder."/".$file);
+                    $this->opalDB->deleteAuditSystemByDate($date["date"]);
+                }
+            }
+            return $this->opalDB->countAuditSystemRemainingDates();
+        } catch (Exception $e) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, $e->getMessage());
+        }
+    }
+
+    /**
      * Updates the check-in for a particular appointment to checked and send the info to the push notification API. If
      * the call returns an error, a code 502 (bad gateway) is returned to the caller to inform there's a problem with
      * the push notification. Otherwise, a code 200 (all clear) is returned.
