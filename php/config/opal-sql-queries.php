@@ -1795,3 +1795,8 @@ INSERT INTO `auditSystem%%DATE_TO_INSERT%%` (`module`, `method`, `argument`, `ac
 const OPAL_DELETE_AUDIT_SYSTEM_BY_DATE = "
     DELETE FROM ".OPAL_AUDIT_SYSTEM_TABLE." WHERE DATE(creationDate) = :creationDate;
 ";
+
+const OPAL_COUNT_AUDIT_SYSTEM_REMAINING_DATES = "
+    SELECT COUNT(DISTINCT DATE(creationDate)) AS remaining FROM ".OPAL_AUDIT_SYSTEM_TABLE." WHERE creationDate != ''
+    AND DATE(creationDate) != CURDATE();
+";

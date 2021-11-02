@@ -3765,12 +3765,16 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /**
+     * Get the list of publication settings
+     * @return array - list of records found
+     */
     function getPublicationSettings() {
         return $this->_fetchAll(OPAL_GET_PUBLICATION_SETTINGS, array());
     }
 
     /**
-     *
+     * Get the list of publication settings to ignore
      * @return array - list of records found
      */
     function getPublicationSettingsToIgnore() {
@@ -3823,5 +3827,9 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_execute(OPAL_DELETE_AUDIT_SYSTEM_BY_DATE, array(
             array("parameter"=>":creationDate","variable"=>$date,"data_type"=>PDO::PARAM_STR),
         ));
+    }
+
+    function countAuditSystemRemainingDates() {
+        return $this->_fetch(OPAL_COUNT_AUDIT_SYSTEM_REMAINING_DATES, array());
     }
 }
