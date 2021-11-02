@@ -68,9 +68,18 @@ class CronJob extends OpalProject {
         }
     }
 
+    /**
+     * Take the five most recent days of data in auditSystem table and back up the data in separate tar.gz files. The
+     * files are stored in the logs folder, separated by year and months. Then the data are deleted from the table.
+     * At the end, returns the number of days remaining to back up, excluding the current date. This way, the process
+     * can be launch again if necessary instead of waiting for the next day.
+     * WARNING : because of the nature of creating file and large amount of data, the try/catch has being implemented
+     * as a safeguard.
+     * @return array - number of days not backed up remaining
+     */
     public function backupAuditSystem() {
         try {
-//        $this->_checkCronAccess();
+        $this->_checkCronAccess();
             $dateList = $this->opalDB->getAuditSystemLastDates();
             foreach ($dateList as $date) {
                 $entries = $this->opalDB->getAuditSystemEntriesByDate($date["date"]);
@@ -95,7 +104,6 @@ class CronJob extends OpalProject {
 
                     $contents = str_replace("%%INSERT_DATA_HERE%%", substr($tempData, 0, -3), $contents);
 
-
                     $a = new PharData($folder."/".$file);
                     $a->addFromString($file, $contents);
                     $a->compress(Phar::GZ);
@@ -103,6 +111,7 @@ class CronJob extends OpalProject {
                     $this->opalDB->deleteAuditSystemByDate($date["date"]);
                 }
             }
+            return $this->opalDB->countAuditSystemRemainingDates();
         } catch (Exception $e) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, $e->getMessage());
         }
