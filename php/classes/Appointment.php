@@ -311,7 +311,8 @@ class Appointment extends Module
             $toInsert["Level"]  = 1;
             $toInsert["appointmentTypeCode"] = $post['appointmentTypeCode'];
             $toInsert["appointmentTypeDescription"] = $post['appointmentTypeDescription'];
-            $toInsert["AppointmentSerNum"] = $this->_insertAppointmentPending($toInsert, $source);
+            //$toInsert["AppointmentSerNum"] = $this->_insertAppointmentPending($toInsert, $source);
+            $toInsert["ID"] = $this->_insertAppointmentPending($toInsert, $source);
             $this->_insertAppointmentPendingMH($toInsert, $source);
         }
         return false;
@@ -328,9 +329,11 @@ class Appointment extends Module
 
         if(count($pendingAppointment) > 0) {
             $pendingAppointment = $pendingAppointment[0];
-            $toInsert["AppointmentSerNum"] = $pendingAppointment["AppointmentSerNum"];            
+            $toInsert["ID"] = $pendingAppointment["ID"];            
+            //$toInsert["AppointmentSerNum"] = $pendingAppointment["AppointmentSerNum"];            
         }
         unset($toInsert["SourceDatabaseSerNum"]);
+        unset($toInsert["AppointmentSerNum"]);
         return $this->opalDB->insertPendingAppointment($toInsert);
     }
 
@@ -340,7 +343,9 @@ class Appointment extends Module
 
         if(count($pendingAppointment) > 0) {
             $pendingAppointment = $pendingAppointment[0];
-            $toInsert["AppointmentSerNum"] = $pendingAppointment["AppointmentSerNum"];
+            //$toInsert["AppointmentSerNum"] = $pendingAppointment["AppointmentSerNum"];
+            $toInsert["AppointmentPendingId"] = $pendingAppointment["AppointmentPendingId"];
+            
             $toInsert["PendingDate"] = $pendingAppointment["PendingDate"];
             $toInsert["action"] = "UPDATE";
         } else {
@@ -349,6 +354,8 @@ class Appointment extends Module
         }
 
         unset($toInsert["SourceDatabaseSerNum"]);
+        unset($toInsert["AppointmentSerNum"]);
+        unset($toInsert["ID"]);
         return $this->opalDB->insertPendingMHAppointment($toInsert);
     }
 

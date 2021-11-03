@@ -876,18 +876,18 @@ sub compareWith
 		my $updatedState = $UpdatedTask->setTaskState($Sstate); # update
 		print "Will update database entry to '$updatedState'.\n";
 	}
-	if ($Scompletiondate ne $Ocompletiondate) {
-
-		print "Task Completion Date has changed from '$Ocompletiondate' to '$Scompletiondate'\n";
-		my $updatedCompletionDate = $UpdatedTask->setTaskCompletionDate($Scompletiondate); # update
-		print "Will update database entry to '$updatedCompletionDate'.\n";
-	}
-	if ($Scronlogser ne $Ocronlogser) {
-
-		print "Task Cron Log serial has changed from '$Ocronlogser' to '$Scronlogser'\n";
-		my $updatedCronLogSer = $UpdatedTask->setTaskCronLogSer($Scronlogser); # update
-		print "Will update database entry to '$updatedCronLogSer'.\n";
-	}
+#	if ($Scompletiondate ne $Ocompletiondate) {
+    #
+#		print "Task Completion Date has changed from '$Ocompletiondate' to '$Scompletiondate'\n";
+#		my $updatedCompletionDate = $UpdatedTask->setTaskCompletionDate($Scompletiondate); # update
+#		print "Will update database entry to '$updatedCompletionDate'.\n";
+#	}
+#	if ($Scronlogser ne $Ocronlogser) {
+    #
+#		print "Task Cron Log serial has changed from '$Ocronlogser' to '$Scronlogser'\n";
+#		my $updatedCronLogSer = $UpdatedTask->setTaskCronLogSer($Scronlogser); # update
+#		print "Will update database entry to '$updatedCronLogSer'.\n";
+#	}
 
 	return $UpdatedTask;
 }

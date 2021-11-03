@@ -84,48 +84,25 @@ class CronJob extends OpalProject {
      * Update appointment in appointmentPending table.
      */
     public function updateAppointmentPending(){
-        //$this->_checkCronAccess();
-        //$this->opalDB->updateAppointmentPendingLevelInProcess();        
         $appointmentPendingList = $this->opalDB->getOldestAppointmentPendingInProcess();
-
         $startTime = time();
         while(count($appointmentPendingList) > 0 && (time() - $startTime) < 29) {
             $appointmentPending = array_shift($appointmentPendingList);
-            print_r("\n\n SourceDatabase : ");
-            var_dump($this->opalDB->getSourceId($appointmentPending["sourceName"]));
-            print_r("\n\n SourceDatabaseSerNum : ");
-            //var_dump($this->opalDB->getSourceId($appointmentPending["sourceName"])[0]['ID']);
-            $appointmentPending["SourceDatabaseSerNum"] = $this->opalDB->getSourceId($appointmentPending["sourceName"])[0]['ID'];            
+            $appointmentPending["SourceDatabaseSerNum"] = $this->opalDB->getSourceId($appointmentPending["sourceName"])[0]['ID'];
 
             $aliasInfos = $this->opalDB->getAlias('Appointment',$appointmentPending['appointmentTypeCode'], $appointmentPending['appointmentTypeDescription']);
-            
-            if(count($aliasInfos) == 1) { 
-                print_r("\n\n************************************************");
-                print_r("\n\n TYPE Code : ");
-                print_r($appointmentPending['appointmentTypeCode']);
-            
-                print_r("\n\n TYPE Desc : ");
-                print_r($appointmentPending['appointmentTypeDescription']);                
-
-                print_r("\n\n************************************************\n\n");
-                var_dump($aliasInfos);
-
+            if(count($aliasInfos) == 1) {
                 unset($appointmentPending["Level"]);
                 unset($appointmentPending["updatedBy"]);
                 unset($appointmentPending["sourceName"]);
-                unset($appointmentPending["DateModified"]);                
-                                                
-                unset($appointmentPending["appointmentTypeCode"]);   
-                unset($appointmentPending["appointmentTypeDescription"]); 
+                unset($appointmentPending["DateModified"]);
+                unset($appointmentPending["appointmentTypeCode"]);
+                unset($appointmentPending["appointmentTypeDescription"]);
                 $appointmentPending["AliasExpressionSerNum"] = $aliasInfos[0]['AliasExpressionSerNum'];
                 
-                print_r("\n\n Appointment ID : ");
-                print_r($appointmentPending["AppointmentSerNum"]);
-                //$this->opalDB->deleteAppointmentPending($appointmentPending["ID"]);
+                $this->opalDB->deleteAppointmentPending($appointmentPending["ID"]);
                 unset($appointmentPending["ID"]);
-
-                var_dump($appointmentPending);
-                return $this->opalDB->insertAppointment($appointmentPending);
+                $this->opalDB->insertAppointment($appointmentPending);
             }
         }
     }

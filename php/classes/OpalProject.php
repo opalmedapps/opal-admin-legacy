@@ -138,7 +138,6 @@ abstract class OpalProject
                 "ResourceName"=>$resource["name"],
                 "ResourceType"=>$resource["type"],
             );
-
             $rowCount = $this->opalDB->updateResource($data);
             if (intval($rowCount) <= 0)
                 $this->opalDB->insertResource($data);
@@ -148,7 +147,7 @@ abstract class OpalProject
         $resourceIdList = array();
         foreach ($resourceAppointmentList as $id)
             array_push($resourceIdList, intval($id["ResourceSerNum"]));
-
+        
         $this->opalDB->deleteResourcesForAppointment($appointmentId, $resourceIdList);
         $this->opalDB->insertResourcesForAppointment($resourceAppointmentList);
     }
