@@ -931,7 +931,7 @@ AND AppointmentAriaSer=:SourceId
 ");
 
 define("OPAL_GET_APPOINTMENT_PENDING_ID", "
-SELECT AppointmentSerNum
+SELECT ID
 FROM ".OPAL_APPOINTMENTS_PENDING_TABLE."
 WHERE sourceName=:SourceSystem
 AND AppointmentAriaSer=:SourceId

@@ -53,8 +53,8 @@ class MasterSourceAlias extends MasterSourceModule {
     protected function _insertSourceAliases($post, $typeAlias) {
         $toInsert = array();
         $toUpdate = array();
+        
         $errMsgs = $this->_validateAndSanitizeSourceAliases($post, $toInsert, $toUpdate, $typeAlias);
-
         if(count($toInsert) > 0)
             $this->opalDB->insertSourceAliases($toInsert);
 
@@ -144,11 +144,11 @@ class MasterSourceAlias extends MasterSourceModule {
 
         if(count($post) > MAXIMUM_RECORDS_BATCH)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => bindec("100000")));
-
+        
         foreach ($post as $item) {
             if(is_array($item)) {
                 $errCode = "";
-                $this->_validateKeyFields($errCode, $item);
+                $this->_validateKeyFields($errCode, $item);                
                 if (!array_key_exists("description", $item) || $item["description"] == "")
                     $errCode = "1" . $errCode;
                 else
@@ -165,10 +165,11 @@ class MasterSourceAlias extends MasterSourceModule {
                     $item["creationDate"] = date("Y-m-d H:i:s");
                     $errCode = "0" . $errCode;
                 }
-
+                
                 $errCode = bindec($errCode);
                 if ($errCode == 0) {
                     $data = $this->opalDB->isMasterSourceAliasExists($item["source"], $item["externalId"], $item["code"], $typeAlias);
+                    
                     if (count($data) < 1) // || (count($data) == 1 && $data[0]["deleted"] == DELETED_RECORD))
                         array_push($toInsert, array(
                             "source" => $item["source"],
