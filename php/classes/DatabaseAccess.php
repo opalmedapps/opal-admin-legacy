@@ -19,6 +19,7 @@ class DatabaseAccess extends HelpSetup
     protected $sessionId;
     protected $username;
     protected $userRole;
+    protected $type;
 
     /* constructor that connects to the database */
     function __construct($newServer = "localhost", $newDB = "", $newPort = "3306", $newUserDB = "root", $newPass = "", $dsn = false) {
@@ -63,6 +64,22 @@ class DatabaseAccess extends HelpSetup
     public function getUsername()
     {
         return $this->username;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param mixed $type
+     */
+    public function setType($type): void
+    {
+        $this->type = $type;
     }
 
     /**
