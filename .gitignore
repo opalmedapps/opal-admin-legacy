@@ -42,6 +42,8 @@ uploads/**
 
 # ignore log files
 publisher/logs/**
+/logs/**
+
 # except readme
 !publisher/logs/README.md
 
@@ -67,3 +69,6 @@ dbv/config.php
 
 # ignore trigger system test file
 php/trigger/test-qTrigger.php
+
+# ignore PHP error log
+php-error.log

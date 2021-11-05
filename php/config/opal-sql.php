@@ -39,6 +39,7 @@ define("OPAL_FILTERS_MH_TABLE","FiltersMH");
 define("OPAL_FREQUENCY_EVENTS_TABLE","FrequencyEvents");
 define("OPAL_MODULE_TABLE","module");
 define("OPAL_AUDIT_TABLE","audit");
+define("OPAL_AUDIT_SYSTEM_TABLE","auditSystem");
 define("OPAL_CATEGORY_MODULE_TABLE","categoryModule");
 define("OPAL_MODULE_PUBLICATION_SETTING_TABLE","modulePublicationSetting");
 define("OPAL_PUBLICATION_SETTING_TABLE","publicationSetting");
