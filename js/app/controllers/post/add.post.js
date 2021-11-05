@@ -89,6 +89,10 @@ controller('post.add', function ($scope, $filter, $state, $sce, $uibModal, $loca
 		$('.form-box-right').addClass('fadeInRight');
 	};
 
+	$scope.removeNonprintableChars = function(value) {
+		return value.replace(/[^ -~]+/g, "");
+	};
+
 	// Function to toggle necessary changes when updating post name
 	$scope.titleUpdate = function () {
 		$scope.titleSection.open = true;
@@ -134,6 +138,10 @@ controller('post.add', function ($scope, $filter, $state, $sce, $uibModal, $loca
 	$scope.submitPost = function () {
 		if ($scope.checkForm()) {
 			$scope.newPost.type = $scope.newPost.type.name;
+			$scope.newPost.name_EN = $scope.removeNonprintableChars($scope.newPost.name_EN);
+			$scope.newPost.name_FR = $scope.removeNonprintableChars($scope.newPost.name_FR);
+			$scope.newPost.body_EN = $scope.removeNonprintableChars($scope.newPost.body_EN);
+			$scope.newPost.body_FR = $scope.removeNonprintableChars($scope.newPost.body_FR);
 			$.ajax({
 				type: "POST",
 				url: "post/insert/post",

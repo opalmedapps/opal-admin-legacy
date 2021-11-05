@@ -12,6 +12,7 @@ date_default_timezone_set("America/Toronto");
 error_reporting(E_ALL & ~E_NOTICE ^ E_WARNING);
 ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
+ini_set("error_log", __DIR__."/../php-error.log");
 
 // Get directory path of this file
 $pathname 	= __DIR__;
@@ -51,6 +52,8 @@ const UNDEFINED_SMS_APPOINTMENT_CODE = "UNDEFINED";
 
 const CHECKED_IN = 1;
 const NOT_CHECKED_IN = 0;
+
+const LIMIT_DAYS_AUDIT_SYSTEM_BACKUP = 5;
 
 define("OPAL_CHECKIN_CALL", "http://" . $_SERVER['HTTP_HOST'] . "/opalAdmin/publisher/php/OpalCheckIn.php");
 

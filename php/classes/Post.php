@@ -26,7 +26,7 @@ class Post extends Module {
      * @params  array for future post to insert
      * @return  array of sanitized data or false if incorrect/incomplete
      * */
-    static function validateAndSanitize($postToSanitize) {
+    protected function _validateAndSanitize($postToSanitize) {
         $validatedPost = array(
             "PostName_EN"=>strip_tags($postToSanitize['name_EN']),
             "PostName_FR"=>strip_tags($postToSanitize['name_FR']),
@@ -66,11 +66,15 @@ class Post extends Module {
      * @param array that contains a line for the post table
      * @return ID of the new entry
      * */
-    public function insertPost( $toInsert ) {
-        $this->checkWriteAccess($toInsert);
-        $toInsert["PublishDate"]="0000-00-00 00:00:00";
-        $temp = $this->opalDB->insertPost($toInsert);
-        return $temp;
+    public function insertPost($post) {
+        $this->checkWriteAccess($post);
+
+        $sanitizedPost = $this->_validateAndSanitize($post);
+        if(!$sanitizedPost)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid post format");
+
+        $sanitizedPost["PublishDate"]="0000-00-00 00:00:00";
+        return $this->opalDB->insertPost($sanitizedPost);
     }
 
     /*
@@ -144,12 +148,16 @@ class Post extends Module {
      * @params  array $postDetails - contains post details
      * @returns int number of record affected OR false if a problem occurs
      * */
-    public function updatePost($postDetails) {
-        $this->checkWriteAccess($postDetails);
+    public function updatePost($post) {
+        $this->checkWriteAccess($post);
 
-        $currentPost = $this->opalDB->getPostDetails($postDetails["PostControlSerNum"]);
+        $sanitizedPost = $this->_validateAndSanitize($post);
+        if(!$sanitizedPost)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid post format");
+
+        $currentPost = $this->opalDB->getPostDetails($sanitizedPost["PostControlSerNum"]);
         if($currentPost["locked"] == 0)
-            return $this->opalDB->updatePost($postDetails);
+            return $this->opalDB->updatePost($sanitizedPost);
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Post locked.");
     }
