@@ -241,4 +241,20 @@ class HelpSetup {
     public static function validatePhoneExt($phoneExt){
         return preg_match('/^\d{0,6}$/', $phoneExt);
     }
+
+    public static function filePutContents($dir, $contents){
+        $parts = explode('/', $dir);
+        $file = array_pop($parts);
+        $dir = '';
+        foreach($parts as $part)
+            if(!is_dir($dir .= "/$part")) {
+                echo "$dir $part\r\n";
+
+                if (mkdir($dir, 0774)) {
+                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot create folder");
+                }
+            }
+        if(file_put_contents("$dir/$file", $contents) == false)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot create file");
+    }
 }
