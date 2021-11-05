@@ -115,6 +115,7 @@ class User extends Module {
         $_SESSION["username"] = $result["username"];
         $_SESSION["language"] = $result["language"];
         $_SESSION["role"] = $result["role"];
+        $_SESSION["type"] = $result["type"];
         $_SESSION['sessionId'] = HelpSetup::makeSessionId();
         $_SESSION['lastActivity'] = time();
         $_SESSION['created'] = time();
