@@ -508,7 +508,7 @@ foreach my $Task (@TaskList) {
 	if ($TaskExists) { # task exists
 
 		my $ExistingTask = dclone($TaskExists); # reassign variable
-        if($Task->isEquals($ExistingTask)){}
+        if($Task->isEquals($ExistingTask)){
 		# compare our retrieve Task with existing Task
 		# update is done on the original (existing) Task
 		    my $UpdatedTask = $Task->compareWith($ExistingTask);
