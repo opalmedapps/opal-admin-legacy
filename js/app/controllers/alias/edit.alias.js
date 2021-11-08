@@ -373,9 +373,6 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 					if (term.added)
 						toSubmit.terms.push(term.masterSourceAliasId);
 				});
-
-				console.log(toSubmit);
-
 				$.ajax({
 					type: "POST",
 					url: "alias/update/alias",
