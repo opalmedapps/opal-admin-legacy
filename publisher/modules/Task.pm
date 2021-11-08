@@ -852,7 +852,7 @@ sub compareWith
 		my $updatedPrioritySer = $UpdatedTask->setTaskPrioritySer($Spriorityser); # update
 		print "Will update database entry to '$updatedPrioritySer'.\n";
 	}
-	if ($Sdiagnosisser ne $Odiagnosisser) {
+	if (($Sdiagnosisser ne $Odiagnosisser) && ($Sdiagnosisser ne '')) {
 
 		print "Task Diagnosis serial has changed from '$Odiagnosisser' to '$Sdiagnosisser'\n";
 		my $updatedDiagnosisSer = $UpdatedTask->setTaskDiagnosisSer($Sdiagnosisser); # update
@@ -876,20 +876,48 @@ sub compareWith
 		my $updatedState = $UpdatedTask->setTaskState($Sstate); # update
 		print "Will update database entry to '$updatedState'.\n";
 	}
-	if ($Scompletiondate ne $Ocompletiondate) {
+	if (($Scompletiondate ne $Ocompletiondate) && ($Scompletiondate ne '')) {
 
 		print "Task Completion Date has changed from '$Ocompletiondate' to '$Scompletiondate'\n";
 		my $updatedCompletionDate = $UpdatedTask->setTaskCompletionDate($Scompletiondate); # update
 		print "Will update database entry to '$updatedCompletionDate'.\n";
 	}
-	if ($Scronlogser ne $Ocronlogser) {
-
-		print "Task Cron Log serial has changed from '$Ocronlogser' to '$Scronlogser'\n";
-		my $updatedCronLogSer = $UpdatedTask->setTaskCronLogSer($Scronlogser); # update
-		print "Will update database entry to '$updatedCronLogSer'.\n";
-	}
 
 	return $UpdatedTask;
+}
+
+sub isEquals
+{
+	my ($SuspectTask, $OriginalTask) = @_; # our two task objects from arguments
+	my $UpdatedTask = dclone($OriginalTask);
+
+	# retrieve parameters
+	# Suspect Task...
+	my $Sduedatetime	    = $SuspectTask->getTaskDueDateTime();
+	my $Saliasexpressionser	= $SuspectTask->getTaskAliasExpressionSer();
+    my $Spriorityser        = $SuspectTask->getTaskPrioritySer();
+    my $Sdiagnosisser       = $SuspectTask->getTaskDiagnosisSer();
+	my $Screationdate	    = $SuspectTask->getTaskCreationDate();
+	my $Sstatus		        = $SuspectTask->getTaskStatus();
+	my $Scompletiondate	    = $SuspectTask->getTaskCompletionDate();
+	my $Sstate		        = $SuspectTask->getTaskState();
+	my $Scronlogser		    = $SuspectTask->getTaskCronLogSer();
+
+	# Original Task...
+	my $Oduedatetime	    = $OriginalTask->getTaskDueDateTime();
+	my $Oaliasexpressionser	= $OriginalTask->getTaskAliasExpressionSer();
+    my $Opriorityser        = $OriginalTask->getTaskPrioritySer();
+    my $Odiagnosisser       = $OriginalTask->getTaskDiagnosisSer();
+	my $Ocreationdate	    = $OriginalTask->getTaskCreationDate();
+	my $Ostatus		        = $OriginalTask->getTaskStatus();
+	my $Ocompletiondate	    = $OriginalTask->getTaskCompletionDate();
+	my $Ostate	    	    = $OriginalTask->getTaskState();
+	my $Ocronlogser	    	= $OriginalTask->getTaskCronLogSer();
+
+	# compare all parameters
+	return (($Sduedatetime ne $Oduedatetime) && ($Saliasexpressionser ne $Oaliasexpressionser) && ($Spriorityser ne $Opriorityser)
+	&& ($Sdiagnosisser ne $Odiagnosisser) && ($Sdiagnosisser ne '') && ($Screationdate ne $Ocreationdate) && ($Sstatus ne $Ostatus) &&
+	($Sstate ne $Ostate) && ($Scompletiondate ne $Ocompletiondate) && ($Scompletiondate ne ''));
 }
 
 # To exit/return always true (for the module itself)

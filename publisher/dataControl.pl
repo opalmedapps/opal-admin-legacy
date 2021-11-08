@@ -508,13 +508,14 @@ foreach my $Task (@TaskList) {
 	if ($TaskExists) { # task exists
 
 		my $ExistingTask = dclone($TaskExists); # reassign variable
-
+        if($Task->isEquals($ExistingTask)){
 		# compare our retrieve Task with existing Task
 		# update is done on the original (existing) Task
-		my $UpdatedTask = $Task->compareWith($ExistingTask);
+		    my $UpdatedTask = $Task->compareWith($ExistingTask);
 
 		# after updating our Task object, update the database
-		$UpdatedTask->updateDatabase();
+		    $UpdatedTask->updateDatabase();
+		}
 
 	} else { # task DNE
 
