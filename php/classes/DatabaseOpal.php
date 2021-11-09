@@ -3968,5 +3968,27 @@ class DatabaseOpal extends DatabaseAccess {
     function countAuditSystemRemainingDates() {
         return $this->_fetch(OPAL_COUNT_AUDIT_SYSTEM_REMAINING_DATES, array());
     }
+
+    /**
+     * Get a specific document with ID
+     * @param $documentId string - DocumentID
+     * @param $sourceId string - appointment type description
+     * @return array - data found if any
+     */
+    function getDocument($sourceId,$documentId) {
+        return $this->_fetchAll(OPAL_GET_DOCUMENT, array(            
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":DocumentId"   ,"variable"=>$documentId,"data_type"=>PDO::PARAM_STR)
+        ));
+    }
+
+    /**
+     * Insert an appointment only if it does not exists already.
+     * @param $toInsert
+     * @return int - number of row modified
+     */
+    function insertDocument($toInsert) {
+        return $this->_replaceRecordIntoTable(OPAL_DOCUMENT_TABLE, $toInsert);
+    }
 }
 

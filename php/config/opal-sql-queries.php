@@ -1885,3 +1885,11 @@ const OPAL_COUNT_AUDIT_SYSTEM_REMAINING_DATES = "
     AND DATE(creationDate) != CURDATE();
 ";
 
+const OPAL_GET_DOCUMENT = "
+SELECT DocumentSerNum,PatientSerNum,SourceDatabaseSerNum,
+DocumentId, AliasExpressionSerNum, DateAdded 
+FROM ".OPAL_DOCUMENT_TABLE." 
+WHERE DocumentId = :DocumentId
+AND SourceDatabaseSerNum = :SourceDatabaseSerNum;
+";
+
