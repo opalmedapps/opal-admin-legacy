@@ -12,6 +12,11 @@ class CronJob extends OpalProject {
     public function __construct() {
         parent::__construct(DEFAULT_CRON_OAUSERID, false);
 
+        $this->opalDB->setUsername(DEFAULT_CRON_USERNAME);
+        $this->opalDB->setOAUserId(DEFAULT_CRON_OAUSERID);
+        $this->opalDB->setSessionId(HelpSetup::makeSessionId());
+        $this->opalDB->setType(SYSTEM_USER);
+        $this->opalDB->setUserRole(DEFAULT_CRON_ROLE);
         $this->questionnaireDB = new DatabaseQuestionnaire(
             QUESTIONNAIRE_DB_2019_HOST,
             QUESTIONNAIRE_DB_2019_NAME,
