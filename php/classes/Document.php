@@ -140,7 +140,8 @@ class Document extends Module
         $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
-                
+           
+        $doc = $this->opalDB->getDocument($source["SourceDatabaseSerNum"], $post["documentId"]);        
         $toInsert = array(
             "PatientSerNum" => $patientSite["PatientSerNum"],
             "SourceDatabaseSerNum" => $source["SourceDatabaseSerNum"],
@@ -157,34 +158,33 @@ class Document extends Module
             "CreatedBySerNum" => $post["creationUserId"],
             "CreatedTimeStamp" => $post["creationDatetime"],
             "TransferStatus" => "T",
-            "TransferLog" => "",
+            "TransferLog" => "Transfert Api",
             "ReadStatus" => 0,
+            "LastUpdated" => $post["modifiedDatetime"],
             "SessionId" => $this->opalDB->getSessionId()
         );
 
-        $aliasInfos = $this->opalDB->getAlias('Document',$post['noteDescription'], $post['noteDescription']);
-        
+        $aliasInfos = $this->opalDB->getAlias('Document',$post['noteDescription'], $post['noteDescription']);        
         if(count($aliasInfos) == 1) {            
             $toInsert["AliasExpressionSerNum"] = $aliasInfos[0]["AliasExpressionSerNum"];
         }
 
-        $doc = $this->opalDB->getDocument($source["SourceDatabaseSerNum"], $post["documentId"]);        
-
         if (count($doc) == 0) {
-            $toInsert["DateAdded"] = date("Y-m-d H:i:s");            
-            $id = $this->opalDB->insertDocument($toInsert);                    
-            var_dump($id);
+            $toInsert["DateAdded"] = date("Y-m-d H:i:s");
+            $id = $this->opalDB->insertDocument($toInsert);
         } else {
-            $toInsert["LastUpdated"] = $post["modifiedDatetime"];
+            $toInsert["DocumentSerNum"] = $doc[0]["DocumentSerNum"];
+            $toInsert["DateAdded"]      = $doc[0]["DateAdded"];
+            $this->opalDB->updateDocument($toInsert);
         }
 
         if ($post["validEntry"] == "Y"  && array_key_exists("documentString", $post) && $post["documentString"] != "")  {
             $filename = basename($post["fileName"]);
-            $output_file = "/OpalDocuments/clinical/documents/" . $filename;            
-            $ifp = fopen ( $output_file, "w+") or die("Unable to open file!");            
+            $output_file = CLINICAL_DOC_PATH . $filename;
+            $ifp = fopen ( $output_file, "w+") or die("Unable to open file!");
             $data = explode( ',', $post["documentString"]);
-            fwrite ( $ifp, base64_decode( $data[0] ) );            
-            fclose( $ifp );            
+            fwrite ( $ifp, base64_decode( $data[0] ) );
+            fclose( $ifp );
         }
     }
     /*
