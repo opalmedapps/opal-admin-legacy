@@ -423,8 +423,8 @@
                                                 <li ng-repeat="term in termList | filter: searchTermsFilter">
                                                     <label ng-class="{greenText: term.added, grayText: term.assigned && !term.added}">
                                                         <input type="checkbox" ng-click="toggleTermSelection(term)" ng-checked="term.added" /> {{term.name}}
-                                                        <span ng-class="{redText: term.assigned && !term.added}" ng-if="term.assigned && !term.added"><em> --- {{'ALIAS.ADD.ASSIGN_TO'|translate}} {{term.assigned.name_EN}}</em></span>
-                                                        <span ng-class="{redText: term.assigned}" ng-if="term.assigned && term.added"><em> --- {{'ALIAS.ADD.WILL_REPLACE'|translate}} {{term.assigned.name_EN}}</em></span>
+                                                        <span ng-class="{redText: term.assigned && !term.added}" ng-if="term.assigned && !term.added"><em> --- {{'ALIAS.ADD.ASSIGN_TO'|translate}} {{term.assigned}}</em></span>
+                                                        <span ng-class="{redText: term.assigned}" ng-if="term.assigned && term.added"><em> --- {{'ALIAS.ADD.WILL_REPLACE'|translate}} {{term.assigned}}</em></span>
                                                     </label>
                                                 </li>
                                             </ul>
@@ -567,7 +567,7 @@
                                     <div class="panel-body form-horizontal">
                                         <div class="form-group">
                                             <label class="control-label col-xs-12 col-lg-2">
-                                                {{'ALIAS.ADD.CHECKIN_INSTRUCTIONS'|translate}}
+                                                {{'ALIAS.ADD.INSTRUCTIONS'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
                                                 <div text-angular ng-model="newAlias.checkin_details.instruction_EN" ng-change="checkinDetailsUpdate()" placeholder="{{'ALIAS.ADD.ENGLISH_INSTRUCTIONS'|translate}} " required="required" ta-toolbar="toolbar"></div>

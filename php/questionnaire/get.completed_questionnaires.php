@@ -1,6 +1,6 @@
 <?php
 
-	/* TODO */
-	include_once('questionnaire.inc');
-	
+/* TODO */
+include_once("../config.php");
+
 ?>

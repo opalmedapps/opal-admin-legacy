@@ -12,6 +12,7 @@ date_default_timezone_set("America/Toronto");
 error_reporting(E_ALL & ~E_NOTICE ^ E_WARNING);
 ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
+ini_set("error_log", __DIR__."/../php-error.log");
 
 // Get directory path of this file
 $pathname 	= __DIR__;
@@ -24,7 +25,37 @@ $json = file_get_contents($abspath . 'config.json');
 // Decode json to variable
 $config = json_decode($json, true);
 
-$localHostAddr = array('127.0.0.1','localhost','::1');
+define("USER_SALT", $config["login"]["salt"]);
+define("ACTIVE_DIRECTORY", $config["login"]["activeDirectory"]);
+define("ACTIVE_DIRECTORY_SETTINGS", $config["login"]["activeDirectory"]["settings"]);
+define("MSSS_ACTIVE_DIRECTORY_CONFIG", $config["login"]["activeDirectory"]["config"]);
+define("AD_LOGIN_ACTIVE", ACTIVE_DIRECTORY["enabled"]);
+
+const LOCALHOST_ADDRESS = array('127.0.0.1','localhost','::1');
+const DEFAULT_API_CONFIG = array(
+    CURLOPT_COOKIESESSION=>true,
+    CURLOPT_RETURNTRANSFER=>true,
+    CURLOPT_FOLLOWLOCATION=>true,
+    CURLOPT_POST=>true,
+    CURLOPT_SSL_VERIFYPEER=>false,
+    CURLOPT_HEADER=>true,
+);
+
+const PUSH_NOTIFICATION_CONFIG = array(
+    CURLOPT_RETURNTRANSFER=>true,
+    CURLOPT_FOLLOWLOCATION=>true,
+    CURLOPT_HEADER=>true
+);
+
+const DEFAULT_CRON_OAUSERID = 23;
+const UNDEFINED_SMS_APPOINTMENT_CODE = "UNDEFINED";
+
+const CHECKED_IN = 1;
+const NOT_CHECKED_IN = 0;
+
+const LIMIT_DAYS_AUDIT_SYSTEM_BACKUP = 5;
+
+define("OPAL_CHECKIN_CALL", "http://" . $_SERVER['HTTP_HOST'] . "/opalAdmin/publisher/php/OpalCheckIn.php");
 
 // DEFINE MOSAIQ SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MicrosoftSQL (MSSQL) setup.
@@ -43,6 +74,19 @@ define( "FRONTEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", FRONTEND_ABS_PA
 define( "UPLOAD_ABS_PATH", FRONTEND_ABS_PATH . "uploads/" );
 define( "UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
 define( "ADMIN_REGISTRATION_URL", $config['pathConfig']['registration_url'] );
+
+define("ALIAS_TYPE_APPOINTMENT_TEXT", 'Appointment');
+define("ALIAS_TYPE_DOCUMENT_TEXT", 'Document');
+define("ALIAS_TYPE_TASK_TEXT", 'Task');
+
+define("ALIAS_TYPE_TASK", 1);
+define("ALIAS_TYPE_APPOINTMENT", 2);
+define("ALIAS_TYPE_DOCUMENT", 3);
+
+const RESOURCE_LEVEL_READY = 1;
+const RESOURCE_LEVEL_IN_PROCESS = 2;
+const APPOINTMENT_LEVEL_READY = 1;
+const APPOINTMENT_LEVEL_IN_PROCESS = 2;
 
 /*
  * Module ID of each module in the opalAdmin
@@ -65,7 +109,13 @@ define("MODULE_CUSTOM_CODE", 15);
 define("MODULE_ROLE", 16);
 define("MODULE_ALERT", 17);
 define("MODULE_AUDIT", 18);
+define("MODULE_TRIGGER", 19);
+define("MODULE_MASTER_SOURCE", 20);
+define("MODULE_RESOURCE", 21);
+define("MODULE_SMS", 22);
 define("LOCAL_SOURCE_ONLY", -1);
+
+define("MODULE_PUBLICATION_TRIGGER",array(MODULE_QUESTIONNAIRE, MODULE_ALERT, MODULE_EDU_MAT, MODULE_POST));
 
 define("DELETED_RECORD", 1);
 define("NON_DELETED_RECORD", 0);
@@ -77,56 +127,16 @@ define("ACTIVE_RECORD", 1);
 define("INACTIVE_RECORD", 0);
 define("HUMAN_USER", 1);
 define("SYSTEM_USER", 2);
+const USER_ACCESS_DENIED = "0";
 
-require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php");
-require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php");
-require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql.php");
-require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."aria-sql.php");
-require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."orms-sql.php");
+define("PURPOSE_RESEARCH", 2);
+define("PURPOSE_CONSENT", 4);
+define("RESPONDENT_PATIENT", 1);
 
-// Include the classes
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Module.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "User.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Database.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Alias.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Audit.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Post.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "EduMaterial.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "HospitalMap.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Notification.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Cron.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "CrontabManager.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Patient.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TestResult.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Install.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Email.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "QuestionnaireModule.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Questionnaire.php");
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Publication.php");
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "CustomCode.php");
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Study.php");
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Alert.php");
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Role.php");
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Question.php");
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TemplateQuestion.php");
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Library.php");
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Diagnosis.php");
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Application.php");
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Encrypt.php");
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "HelpSetup.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseAccess.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseQuestionnaire.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseOpal.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseAria.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseOrms.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseDisconnected.php" );
+define("TRIGGER_EVENT_PUBLISH", 1);
 
-// Push Notification FCM and APN credientials.
-define( "API_KEY" , $config['pushNotificationConfig']['android']['apiKey'] );
-define( "ANDROID_URL" , $config['pushNotificationConfig']['android']['androidURL'] );
-define( "CERTIFICATE_PASSWORD" , $config['pushNotificationConfig']['apple']['certificate']['password'] );
-define( "CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['filename'] );
-define( "IOS_URL" , $config['pushNotificationConfig']['apple']['appleURL'] );
+define("OPAL_QUESTIONNAIRE_COMPLETED_FLAG",1);
+define("OPAL_ANSWER_QUESTIONNAIRE_COMPLETED_FLAG",2);
 
 /*
  * Question type definition for the legacy questionnaire and the new questionnaire 2019
@@ -150,10 +160,78 @@ define("ORMS_SOURCE_DB", 2);
 define("MOSAIQ_SOURCE_DB", 3);
 define("LOCAL_SOURCE_DB", -1);
 
-define("USER_SALT", $config["login"]["salt"]);
-define("ACTIVE_DIRECTORY", $config["login"]["activeDirectory"]);
-define("ACTIVE_DIRECTORY_SETTINGS", $config["login"]["activeDirectory"]["settings"]);
-define("AD_LOGIN_ACTIVE", ACTIVE_DIRECTORY["enabled"]);
+// Definition of patient consent status for studies
+const CONSENT_STATUS_INVITED = 1;
+const CONSENT_STATUS_OPAL_CONSENTED = 2;
+const CONSENT_STATUS_OTHER_CONSENTED = 3;
+const CONSENT_STATUS_DECLINED = 4;
+
+require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php";
+require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php";
+require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql.php";
+require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql-queries.php";
+require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql-queries.php";
+require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."aria-sql.php";
+require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."orms-sql.php";
+
+// Include the classes
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "OpalProject.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Module.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "User.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Alias.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Audit.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Post.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "CronJob.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Resource.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "EduMaterial.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "HospitalMap.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Notification.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Cron.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "CrontabManager.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Patient.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TestResult.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Install.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Email.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "QuestionnaireModule.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Questionnaire.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Publication.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "MasterSourceModule.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "MasterSourceAlias.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "MasterSourceAppointment.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "MasterSourceTask.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "MasterSourceDocument.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "MasterSourceDiagnosis.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "MasterSourceTestResult.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "CustomCode.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Study.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Trigger.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Alert.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Role.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Question.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TemplateQuestion.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Library.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Diagnosis.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Application.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "HelpSetup.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseAccess.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseQuestionnaire.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseOpal.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseAria.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseOrms.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseDisconnected.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Trigger.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Appointment.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "ApiCall.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Sms.php" );
+
+// Push Notification FCM and APN credientials.
+define( "API_KEY" , $config['pushNotificationConfig']['android']['apiKey'] );
+define( "ANDROID_URL" , $config['pushNotificationConfig']['android']['androidURL'] );
+define( "CERTIFICATE_PASSWORD" , $config['pushNotificationConfig']['apple']['certificate']['password'] );
+define( "CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['filename'] );
+define( "APNS_TOPIC" , $config['pushNotificationConfig']['apple']['certificate']['topic'] );
+define( "CERTIFICATE_KEY" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['key'] );
+define( "IOS_URL" , $config['pushNotificationConfig']['apple']['appleURL'] );
 
 define("ACCESS_READ", 1);
 define("ACCESS_READ_WRITE", 3);
@@ -167,14 +245,18 @@ define("ACCESS_DENIED", "DENIED");
 define("ENCRYPTED_DATA", "ENCRYPTED DATA");
 define("UNKNOWN_USER", "UNKNOWN USER");
 
+define("MAXIMUM_RECORDS_BATCH", 500);
+
 /*
  * List of HTTP status codes
  * */
 define("HTTP_STATUS_SUCCESS",200);
 define("HTTP_STATUS_INTERNAL_SERVER_ERROR",500);
+define("HTTP_STATUS_BAD_GATEWAY",502);
 define("HTTP_STATUS_BAD_REQUEST_ERROR",400);
 define("HTTP_STATUS_NOT_AUTHENTICATED_ERROR",401);
 define("HTTP_STATUS_FORBIDDEN_ERROR",403);
+define("HTTP_STATUS_NOT_FOUND",404);
 define("HTTP_STATUS_SESSION_TIMEOUT_ERROR",419);
 define("HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR",422);
 define("HTTP_STATUS_LOGIN_TIMEOUT_ERROR",440);
@@ -187,7 +269,24 @@ if(!$ignoreSecuredConnection) {
     }
 }
 
+define("ABVR_FRENCH_LANGUAGE", "FR");
+define("ABVR_ENGLISH_LANGUAGE", "EN");
+// all language abbreviations in opal admin
+define("OPAL_ADMIN_LANGUAGES",array(ABVR_FRENCH_LANGUAGE, ABVR_ENGLISH_LANGUAGE));
+
+
 /*
  * PHP Sessions config
  * */
 define("PHP_SESSION_TIMEOUT", 7200);
+
+/*
+ * Appointment Status
+ * */
+const APPOINTMENT_STATUS_CODE_OPEN = "Open";
+const APPOINTMENT_STATUS_CODE_PROGRESS = "In Progress";
+const APPOINTMENT_STATUS_CODE_CANCELLED = "Cancelled";
+const APPOINTMENT_STATUS_CODE_COMPLETED = "Completed";
+const APPOINTMENT_STATUS_CODE_DELETED = "Deleted";
+const APPOINTMENT_STATE_CODE_ACTIVE = "Active";
+const APPOINTMENT_STATE_CODE_DELETED = "Deleted";

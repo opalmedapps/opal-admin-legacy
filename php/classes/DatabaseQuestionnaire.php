@@ -873,7 +873,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     /*
-     * Insert into the library question intersection table. It will associate a question with a list of libraries
+     * Insert into the library question pivot table. It will associate a question with a list of libraries
      * @params  array of options to insert in the table mentioned above
      * @returns void
      * */
@@ -1152,5 +1152,222 @@ class DatabaseQuestionnaire extends DatabaseAccess
 
         $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . implode(" UNION ALL ", $sqlConditional);
         return $this->_queryInsertReplace($sqlInsert, $ready);
+    }
+
+    /*
+     * Returns questionnaire info (including answers) from a questionnaire
+     * @params  int : $patientQuestionnaireSer - serial number of the particular questionnaire-patient relation 
+     * @return  questionnaire results (array)
+     * */
+    function getQuestionnaireResults($patientQuestionnaireSer, $language) {
+        return $this->_fetchAllStoredProcedure(SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_INFO, array(
+            array("parameter"=>":pqser","variable"=>$patientQuestionnaireSer,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":language","variable"=>$language,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * Returns questionnaire info (including answers) from a questionnaire
+     * @params  int : $questionnaireId - id of the particular questionnaire 
+     * @params  int : $patientSerNum - serial of the patient 
+     * @return  questionnaire details (array)
+     * */
+    function getLastAnsweredQuestionnaire($questionnaireId, $patientSerNum) {
+        return $this->_fetchAllStoredProcedure(SQL_QUESTIONNAIRE_GET_PREV_QUESTIONNAIRE, array(
+            array("parameter"=>":questionnaireid","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":ptser","variable"=>$patientSerNum,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * List all available purposes.
+     * @params  void
+     * @return array - list of purposes
+     * */
+    function getPurposes() {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_PURPOSES, array());
+    }
+
+    /*
+     * List all available respondents.
+     * @params  void
+     * @return array - list of respondents
+     * */
+    function getRespondents() {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_RESPONDENTS, array());
+    }
+
+    /*
+     * Get a purpose details
+     * @params  $id - int : purpose ID
+     * @return  array - details of the purpose
+     * */
+    function getPurposeDetails($id) {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_PURPOSE_DETAILS, array(
+            array("parameter"=>":ID","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get a respondent details
+     * @params  $id - int : respondent ID
+     * @return  array - details of the respondent
+     * */
+    function getRespondentDetails($id) {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_RESPONDENT_DETAILS, array(
+            array("parameter"=>":ID","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get the list of questionnaires associated to research and patient
+     * */
+    function getResearchPatient() {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_RESEARCH_PATIENT, array(
+        ));
+    }
+
+    /**
+     *  Get the title of a consent form questionnaire given the consentQuestionnaireId
+     */
+    function getStudyConsentFormTitle($consentId){
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_CONSENT_FORM_TITLE, array(
+            array("parameter"=>":consentId","variable"=>$consentId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the list of questionnaire found based on an array of IDs
+     * @param $list - list of questionnaire ID to verify
+     * @return array - list of the questionnaires found
+     */
+    function getQuestionnairesListByIds($list) {
+        $sql = str_replace("%%LISTIDS%%", implode(", ", $list), SQL_QUESTIONNAIRE_GET_QUESTIONNAIRES_BY_ID);
+        return $this->_fetchAll($sql, array());
+    }
+
+    /**
+     * Get the list of questionnaires consent form
+     * @return array - results
+     */
+    function getConsentForms(){
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_CONSENT_FORMS, array(
+        ));
+    }
+
+    /**
+     * Get the list of questionnaires status, visualization form, and completion date for a specific patient on a site
+     * @param $mrn - patient identification
+     * @param $site - code of the site
+     * @return array - results found
+     */
+    function getQuestionnaireListOrms($mrn, $site){
+        return $this->_fetchAll(SQL_GET_QUESTIONNAIRE_LIST_ORMS, array(
+            array("parameter"=>":Hospital_Identifier_Type_Code","variable"=>$site,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":MRN","variable"=>$mrn,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get the list of questions name and their respective answer from a specific patient to a specific question in a
+     * specific questionnaire for a chart view. Using the $questionSectionId and $questionText does not seems to be the
+     * right thing to do but because of a lack of time and man power, we cannot test it more and simplify the SQL query.
+     * See ticket OPAL-1026.
+     * @param $patientId - internal patient ID
+     * @param $questionnaireId - questionnaire Id
+     * @param $questionSectionId - question section ID
+     * @param $questionText - text of the question
+     * @param int $languageId - Primary key language - default english (2)
+     * @return array - results found
+     */
+    function getAnswersChartType($patientId, $questionnaireId, $questionSectionId, $questionText, $languageId = 2) {
+        return $this->_fetchAll(GET_ANSWERS_CHART_TYPE, array(
+            array("parameter"=>":languageId","variable"=>$languageId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":patientId","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":questionnaireId","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":questionSectionId","variable"=>$questionSectionId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":questionText","variable"=>$questionText,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get the list of questions name and their respective answer from a specific patient to a specific question in a
+     * specific questionnaire for a non chart view.
+     * @param $answerQuestionnaireId - Primary key of answerQuestionnaire table
+     * @param $sectionId - Primary key of the section
+     * @param $questionId - Primary key of the question
+     * @param int $languageId - Primary key language - default english (2)
+     * @return false
+     */
+    function getAnswersNonChartType($answerQuestionnaireId, $sectionId, $questionId, $languageId = 2) {
+        return $this->_fetchAll(GET_ANSWERS_NON_CHART_TYPE, array(
+            array("parameter"=>":languageId","variable"=>$languageId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":sectionId","variable"=>$sectionId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":answerQuestionnaireId","variable"=>$answerQuestionnaireId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get patient info based on the external ID
+     * @param $externalId - external ID of the patient
+     * @return array - data on patient found
+     */
+    function getPatientPerExternalId($externalId) {
+        return $this->_fetchAll(GET_PATIENT_PER_EXTERNALID, array(
+            array("parameter"=>":externalId","variable"=>$externalId,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    function getPublishedQuestionnaires() {
+        return $this->_fetchAll(SQL_GET_PUBLISHED_QUESTIONNAIRES, array());
+    }
+
+    /**
+     * Get the list of answered questions from a specific patient
+     * @param $mrn - Patient MRN
+     * @param $hospitalCode - Code of the Hospital
+     * @return array - results found
+     */
+    function getAnsweredQuestionnairesPatient($mrn, $hospitalCode) {
+        return $this->_fetchAll(SQL_GET_ANSWERED_QUESTIONNAIRES_PATIENT, array(
+            array("parameter"=>":MRN","variable"=>$mrn,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Hospital_Identifier_Type_Code","variable"=>$hospitalCode,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get the list of questions from a specific questionnaire
+     * @param $questionnaireId - ID of the questionnaire
+     * @return array - list of questions
+     */
+    function getQuestionsByQuestionnaireId($questionnaireId) {
+        return $this->_fetchAll(SQL_GET_QUESTIONS_BY_QUESTIONNAIRE_ID, array(
+            array("parameter"=>":ID","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the list of completed questionnaires and the questions associated.
+     * @param $patientId - ID of the patient
+     * @param $questionnaireId - ID of the questionnaire
+     * @return array - results found
+     */
+    function getCompletedQuestionnaireInfo($patientId, $questionnaireId) {
+        return $this->_fetchAll(SQL_GET_COMPLETED_QUESTIONNAIRE_INFO, array(
+            array("parameter"=>":patientId","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":ID","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the list of available options for a specific question
+     * @param $questionId - ID of the question
+     * @return array - list of the options of the question
+     */
+    function getQuestionOptions($questionId) {
+        return $this->_fetchAll(SQL_GET_QUESTION_OPTIONS, array(
+            array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
+        ));
     }
 }
