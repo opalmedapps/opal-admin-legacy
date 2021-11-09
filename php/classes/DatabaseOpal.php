@@ -3990,5 +3990,14 @@ class DatabaseOpal extends DatabaseAccess {
     function insertDocument($toInsert) {
         return $this->_replaceRecordIntoTable(OPAL_DOCUMENT_TABLE, $toInsert);
     }
-}
 
+
+    /**
+     * Insert an appointment only if it does not exists already.
+     * @param $toInsert
+     * @return int - number of row modified
+     */
+    function updateDocument($records) {
+        return $this->_replaceRecordIntoTable(OPAL_DOCUMENT_TABLE, $records);
+    }
+}

@@ -74,6 +74,7 @@ define( "FRONTEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", FRONTEND_ABS_PA
 define( "UPLOAD_ABS_PATH", FRONTEND_ABS_PATH . "uploads/" );
 define( "UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
 define( "ADMIN_REGISTRATION_URL", $config['pathConfig']['registration_url'] );
+define( "CLINICAL_DOC_PATH", $config['pathConfig']['shared_drive_path'] . "clinical/documents/");
 
 define("ALIAS_TYPE_APPOINTMENT_TEXT", 'Appointment');
 define("ALIAS_TYPE_DOCUMENT_TEXT", 'Document');
