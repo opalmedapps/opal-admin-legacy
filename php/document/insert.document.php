@@ -6,8 +6,8 @@
 
 include_once("../config.php");
 
-$publication = new Document();
-$publication->insertDocument($_POST);
+$document = new Document();
+$document->insertDocument($_POST);
 
 header('Content-Type: application/javascript');
 http_response_code(HTTP_STATUS_SUCCESS);
