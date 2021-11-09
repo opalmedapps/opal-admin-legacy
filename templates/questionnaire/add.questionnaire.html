@@ -83,6 +83,41 @@
                                     <p ng-if="newQuestionnaire.description_FR" style="padding-left:10px; font-size:10px;"><em>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.SEE_DESCRIPTION'|translate}}</em></p>
                                 </div>
                             </div>
+                            <!-- SECTION: Purpose & Respondent -->
+                            <div uib-accordion-group is-open="purposeRespondentSection.open"
+                                 class="panel-container summary-box animated" ng-class="{fadeInUp: purposeRespondentSection.show}"
+                                 ng-if="purposeRespondentSection.show"
+                                 is-disabled="!newQuestionnaire.purpose && !newQuestionnaire.respondent">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="newQuestionnaire.purpose && newQuestionnaire.respondent"
+                                                  style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.RESPONDENT_PURPOSE_LEFT'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon"
+                                               ng-class="{'glyphicon-chevron-down': purposeRespondentSection.open, 'glyphicon-chevron-right': !purposeRespondentSection.open}"
+                                               ng-if="newQuestionnaire.purpose || newQuestionnaire.respondent"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="newQuestionnaire.purpose || newQuestionnaire.respondent"
+                                     class="description">
+                                    <p ng-if="newQuestionnaire.purpose" style="margin-bottom:5px;">
+                                        <strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.PURPOSE'|translate}}</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{newQuestionnaire.purpose.title_display}}
+                                    </p>
+                                    <p ng-if="newQuestionnaire.respondent" style="margin-bottom:5px;">
+                                        <strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.RESPONDENT'|translate}}</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{newQuestionnaire.respondent.title_display}}
+                                    </p>
+                                </div>
+                            </div>
                             <!-- SECTION: Privacy -->
                             <div uib-accordion-group is-open="privacySection.open"
                                  class="panel-container summary-box animated" ng-class="{fadeInUp: privacySection.show}"
@@ -283,7 +318,47 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>                    
+                        </div>
+
+
+                        <!-- SECTION: Role -->
+                        <div class="row animated" ng-class="{fadeInUp: purposeRespondentSection.show}" ng-if="purposeRespondentSection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.RESPONDENT_PURPOSE'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: purposeRespondentSection.show}" ng-if="purposeRespondentSection.show">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="color:#d9534f"><strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.REQUIRED'|translate}}</strong></span>
+                                    {{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.RESPONDENT_PURPOSE_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: purposeRespondentSection.show}" ng-if="purposeRespondentSection.show" style="margin-bottom: 15px;">
+                            <div class="col-xs-12 col-sm-6">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-6">
+                                        <select ng-model="newQuestionnaire.purpose" ng-change="purposeRespondentUpdate()" ng-options="purpose as purpose.title_display for purpose in purposeList" class="form-control">
+                                            <option ng-hide="newQuestionnaire.purpose" value="">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.SELECT_PURPOSE'|translate}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6">
+                                        <select ng-model="newQuestionnaire.respondent" ng-change="purposeRespondentUpdate()" ng-options="respondent as respondent.title_display for respondent in respondentList" class="form-control">
+                                            <option ng-hide="newQuestionnaire.respondent" value="">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.SELECT_RESPONDENT'|translate}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
                         <!-- SECTION: Privacy -->
                         <div class="row animated" ng-class="{fadeInUp: privacySection.show}"
                              ng-if="privacySection.show">

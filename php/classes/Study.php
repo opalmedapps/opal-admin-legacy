@@ -6,8 +6,36 @@
 
 class Study extends Module {
 
+    protected $questionnaireDB;
+
     public function __construct($guestStatus = false) {
         parent::__construct(MODULE_STUDY, $guestStatus);
+    }
+
+    /*
+     * This function connects to the questionnaire database if needed
+     * @params  $OAUserId (ID of the user)
+     * @returns None
+     * */
+    protected function _connectQuestionnaireDB() {
+        $this->questionnaireDB = new DatabaseQuestionnaire(
+            QUESTIONNAIRE_DB_2019_HOST,
+            QUESTIONNAIRE_DB_2019_NAME,
+            QUESTIONNAIRE_DB_2019_PORT,
+            QUESTIONNAIRE_DB_2019_USERNAME,
+            QUESTIONNAIRE_DB_2019_PASSWORD,
+            false
+        );
+
+        $this->questionnaireDB->setUsername($this->opalDB->getUsername());
+        $this->questionnaireDB->setOAUserId($this->opalDB->getOAUserId());
+        $this->questionnaireDB->setUserRole($this->opalDB->getUserRole());
+    }
+
+    public function getResearchPatient() {
+        $this->checkReadAccess();
+        $this->_connectQuestionnaireDB();
+        return $this->questionnaireDB->getResearchPatient();
     }
 
     /*
@@ -28,6 +56,7 @@ class Study extends Module {
      * */
     public function insertStudy($post) {
         $this->checkWriteAccess($post);
+        $this->_connectQuestionnaireDB();
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateStudy($post);
         $errCode = bindec($errCode);
@@ -41,9 +70,13 @@ class Study extends Module {
             "title_FR"=>$post["title_FR"],
             "description_EN"=>$post["description_EN"],
             "description_FR"=>$post["description_FR"],
-            "investigator"=>$post["investigator"]
+            "investigator"=>$post["investigator"],
+            "phone"=>$post["investigator_phone"],
+            "email"=>$post["investigator_email"],
+            "consentQuestionnaireId"=>$post["consent_form"]
         );
-
+        if(array_key_exists("investigator_phoneExt", $post) && $post["investigator_phoneExt"] != "")
+            $toInsert["phoneExt"] = $post["investigator_phoneExt"];
         if(array_key_exists("start_date", $post) && $post["start_date"] != "")
             $toInsert["startDate"] = gmdate("Y-m-d", $post["start_date"]);
         if(array_key_exists("end_date", $post) && $post["end_date"] != "")
@@ -54,8 +87,15 @@ class Study extends Module {
         if(array_key_exists("patients", $post) && is_array($post["patients"]) && count($post["patients"]) > 0) {
             $toInsertMultiple = array();
             foreach ($post["patients"] as $patient)
-                array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$newStudyId));
+                array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$newStudyId, "consentStatus"=>1)); //default invited when patient is added to study
             $result = $this->opalDB->insertMultiplePatientsStudy($toInsertMultiple);
+        }
+
+        if(array_key_exists("questionnaire", $post) && is_array($post["questionnaire"]) && count($post["questionnaire"]) > 0) {
+            $toInsertMultiple = array();
+            foreach ($post["questionnaire"] as $questionnaire)
+                array_push($toInsertMultiple, array("questionnaireId"=>$questionnaire, "studyId"=>$newStudyId));
+            $result = $this->opalDB->insertMultipleQuestionnairesStudy($toInsertMultiple);
         }
     }
 
@@ -63,7 +103,7 @@ class Study extends Module {
      * Validate and sanitize a study.
      * @params  $post : array - data for the study to validate
      *          $isAnUpdate : array - if the validation must include the ID of the study or not
-     * Validation code :    Error validation code is coded as an int of 11 bits (value from 0 to 2047). Bit informations
+     * Validation code :    Error validation code is coded as an int of 12 bits (value from 0 to 4095). Bit informations
      *                      are coded from right to left:
      *                      1: study code missing
      *                      2: english title missing
@@ -71,11 +111,18 @@ class Study extends Module {
      *                      4: english description missing
      *                      5: french description missing
      *                      6: investigator name missing
-     *                      7: start date (if present) invalid
-     *                      8: end date (if present) invalid
-     *                      9: date range (if start date and end date exist) invalid
-     *                      10: patient list (if exists) invalid
-     *                      11: study ID is missing or invalid if it is an update
+     *                      7: investigator phone missing
+     *                      8: investigator email missing
+     *                      9: start date (if present) invalid
+     *                      10: end date (if present) invalid
+     *                      11: date range (if start date and end date exist) invalid
+     *                      12: patient list (if exists) invalid
+     *                      13: questionnaire list (if exists) invalid
+     *                      14: consent_form missing or invalid
+     *                      15: patient consent list (if exists) invalid
+     *                      16: investigator phone extension (if exists) invalid
+     *                      17: study ID is missing or invalid if it is an update
+     *                     
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errCode : array - contains the invalid entries with an error code.
      * */
@@ -122,6 +169,25 @@ class Study extends Module {
                 $errCode = "0" . $errCode;
 
             // 7th bit
+            if (!array_key_exists("investigator_phone", $post) || $post["investigator_phone"] == "")
+                $errCode = "1" . $errCode;
+            else if(HelpSetup::validatePhone($post["investigator_phone"]) == 0){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+                
+            // 8th bit
+            if (!array_key_exists("investigator_email", $post) || $post["investigator_email"] == "")
+                $errCode = "1" . $errCode;
+            else if(!(HelpSetup::validateEmail($post["investigator_email"]))){
+                $errCode = "1" . $errCode;
+            }else{
+                $errCode = "0" . $errCode;
+            }
+               
+
+            // 9th bit
             if (array_key_exists("start_date", $post) && $post["start_date"] != "") {
                 if (!HelpSetup::isValidTimeStamp($post["start_date"]))
                     $errCode = "1" . $errCode;
@@ -132,7 +198,7 @@ class Study extends Module {
             } else
                 $errCode = "0" . $errCode;
 
-            // 8th bit
+            // 10th bit
             if (array_key_exists("end_date", $post) && $post["end_date"] != "") {
                 if (!HelpSetup::isValidTimeStamp($post["end_date"]))
                     $errCode = "1" . $errCode;
@@ -143,7 +209,7 @@ class Study extends Module {
             } else
                 $errCode = "0" . $errCode;
 
-            // 9th bit
+            // 11th bit
             if ($startDate && $endDate) {
                 if ((int)$post["end_date"] < (int)$post["start_date"])
                     $errCode = "1" . $errCode;
@@ -152,14 +218,16 @@ class Study extends Module {
             } else
                 $errCode = "0" . $errCode;
 
-            //10th bit
+            //12th bit
             if (array_key_exists("patients", $post)) {
                 if(!is_array($post["patients"]))
                     $errCode = "1" . $errCode;
                 else {
-                    foreach ($post["patients"] as &$id)
-                        $id = intval($id);
-
+                    $tempArray = array();
+                    foreach($post["patients"] as $id)
+                        array_push($tempArray, intval($id));
+                    $post["patients"] = $tempArray;
+    
                     $total = $this->opalDB->getPatientsListByIds($post["patients"]);
                     if (count($total) != count($post["patients"]))
                         $errCode = "1" . $errCode;
@@ -169,7 +237,75 @@ class Study extends Module {
             } else
                 $errCode = "0" . $errCode;
 
-            //11th bit
+            //13th bit
+            if (array_key_exists("questionnaire", $post)) {
+                if(!is_array($post["questionnaire"]))
+                    $errCode = "1" . $errCode;
+                else {
+                    $tempArray = array();
+                    foreach($post["questionnaire"] as $id)
+                        array_push($tempArray, intval($id));
+                    $post["questionnaire"] = $tempArray;
+                    $total = $this->questionnaireDB->getQuestionnairesListByIds($post["questionnaire"]);
+                    if (count($total) != count($post["questionnaire"]))
+                        $errCode = "1" . $errCode;
+                    else
+                        $errCode = "0" . $errCode;
+                }
+            } else
+                $errCode = "0" . $errCode;
+            // //14th bit
+            if(array_key_exists("consent_form", $post) && $post["consent_form"] != ""){
+                $curConsent = $this->getConsentFormByStudyId(intval($post["ID"]));
+                if(count($this->getConsentPublished($curConsent[0]["consentQuestionnaireId"])) == 1){ //the current consent form for this study is published
+                    if($curConsent != $post["consent_form"]){ // if posted form doesnt match current, then someone is trying to bypass our rules for consent forms
+                        $errCode = "1" . $errCode;
+                    }else{
+                        $errCode = "0" . $errCode;
+                    }
+                }else{// we are okay to change the consent form, just need to check that the posted form exists
+                    $this->_connectQuestionnaireDB();
+                    $res = $this->questionnaireDB->getStudyConsentFormTitle(intval($post["consent_form"]));
+                    if(count($res) != 1){
+                        $errCode = "1" . $errCode;
+                    }else{
+                        $errCode = "0" . $errCode;
+                    }
+                }
+            }
+            else
+                $errCode = "1" . $errCode;
+            
+            //15th bit
+            if (array_key_exists("patientConsents", $post)) {
+                if(!is_array($post["patientConsents"]))
+                    $errCode = "1" . $errCode;
+                else {
+                    $patConsIds = array();
+                    foreach ($post["patientConsents"] as $patient){
+                        $id = intval($patient['id']);
+                        array_push($patConsIds, $id);
+                    }
+                    $total = $this->opalDB->getPatientsListByIds($patConsIds);
+                    if (count($total) != count($patConsIds))
+                        $errCode = "1" . $errCode;
+                    else
+                        $errCode = "0" . $errCode;
+                }
+            } else
+                $errCode = "0" . $errCode;
+            
+            // 16th bit 
+            if (array_key_exists("investigator_phoneExt", $post) && $post["investigator_phoneExt"] != "") {
+                if ((HelpSetup::validatePhoneExt($post["investigator_phoneExt"])) == 0)
+                    $errCode = "1" . $errCode;
+                else {
+                    $errCode = "0" . $errCode;
+                }
+            } else
+                $errCode = "0" . $errCode;
+
+            //17th bit
             if($isAnUpdate) {
                 if (!array_key_exists("id", $post) || $post["id"] == "")
                     $errCode = "1" . $errCode;
@@ -184,8 +320,9 @@ class Study extends Module {
                 }
             } else
                 $errCode = "0" . $errCode;
+    
         } else
-            $errCode .= "11111111111";
+            $errCode .= "11111111111111111";
 
         return $errCode;
     }
@@ -207,6 +344,14 @@ class Study extends Module {
             $temp = $this->opalDB->getPatientsStudy(intval($studyId));
             foreach($temp as $item)
                 array_push($result["patients"], $item["patientId"]);
+            $result["questionnaire"] = array();
+            $temp = $this->opalDB->getQuestionnairesStudy(intval($studyId));
+            foreach($temp as $item)
+                array_push($result["questionnaire"], $item["questionnaireId"]);
+            if($result["consentQuestionnaireId"]){
+                $this->_connectQuestionnaireDB();
+                $result["consentQuestionnaireTitle"] = $this->questionnaireDB->getStudyConsentFormTitle(intval($result["consentQuestionnaireId"]));
+            }
             return $result;
         }
         else
@@ -221,11 +366,23 @@ class Study extends Module {
     public function getPatientsList() {
         $this->checkReadAccess();
         $result = $this->opalDB->getPatientsList();
-        usort($result, "self::_sort_name");
+        usort($result, "self::_sortName");
         return $result;
     }
 
-    protected static function _sort_name($a, $b){
+    /*
+    * Get the list of patient consents for
+    * @params $studyId (int) ID of the study
+    * @return (array) details of patient consent status
+    */
+    public function getPatientsConsentList($studyId) {
+        $this->checkReadAccess($studyId);
+        $result = $this->opalDB->getPatientsStudyConsents($studyId);
+        return $result;
+    }
+
+
+    protected static function _sortName($a, $b){
         return strcmp($a["name"], $b["name"]);
     }
 
@@ -236,6 +393,7 @@ class Study extends Module {
      * */
     public function updateStudy($post) {
         $this->checkWriteAccess($post);
+        $this->_connectQuestionnaireDB();
         $study = HelpSetup::arraySanitization($post);
         $result = $this->_validateStudy($study, true);
         if(is_array($result) && count($result) > 0)
@@ -248,8 +406,15 @@ class Study extends Module {
             "title_FR"=>$study["title_FR"],
             "description_EN"=>$study["description_EN"],
             "description_FR"=>$study["description_FR"],
-            "investigator"=>$study["investigator"]
+            "investigator"=>$study["investigator"],
+            "phone"=>$post["investigator_phone"],
+            "email"=>$post["investigator_email"],
+            "consentQuestionnaireId"=>$post["consent_form"]
         );
+        if($study["investigator_phoneExt"])
+            $toUpdate["phoneExt"] = $study["investigator_phoneExt"];
+        else
+            $toUpdate['phoneExt'] = null;
         if($study["start_date"])
             $toUpdate["startDate"] = gmdate("Y-m-d", $study["start_date"]);
         else
@@ -261,14 +426,15 @@ class Study extends Module {
 
         $total = $this->opalDB->updateStudy($toUpdate);
 
+        //Update patient-study table
         $currentPatients = array();
-        $toKeep = $toKeep = array(-1);
+        $toKeep = array(-1);
         $toAdd = array();
         if(array_key_exists("patients", $post) && is_array($post["patients"]) && count($post["patients"]) > 0) {
             $temp = $this->opalDB->getPatientsStudy($study["ID"]);
             foreach($temp as $item)
                 array_push($currentPatients, $item["patientId"]);
-
+            
             foreach ($study["patients"] as $item) {
                 if(in_array($item, $currentPatients))
                     array_push($toKeep, intval($item));
@@ -276,16 +442,103 @@ class Study extends Module {
                     array_push($toAdd, intval($item));
             }
         }
+        
         $total += $this->opalDB->deletePatientsStudy($study["ID"], $toKeep);
-
+        
+        
         if(count($toAdd) > 0) {
             $toInsertMultiple = array();
             foreach ($toAdd as $patient)
-                array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$study["ID"]));
-            print_r($toInsertMultiple);
-
+                array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$study["ID"], "consentStatus"=>1));
             $total += $this->opalDB->insertMultiplePatientsStudy($toInsertMultiple);
         }
+
+        //update any changed patient consents
+        if(array_key_exists("patientConsents", $post) && is_array($post["patientConsents"]) && count($post["patientConsents"]) > 0){
+            foreach($post["patientConsents"] as $item){
+                if($item['changed'] && $item['consent'] && $item['id']){
+                    $this->opalDB->updateStudyConsent($study["ID"], $item['id'], intval($item['consent']));  
+                    $total += 1;
+                }
+            }
+        }
+        //Update questionnaire-study table
+        $currentQuestionnaires = array();
+        $toKeep = array(-1);
+        $toAdd = array();
+        if(array_key_exists("questionnaire", $post) && is_array($post["questionnaire"]) && count($post["questionnaire"]) > 0) {
+            $temp = $this->opalDB->getQuestionnairesStudy($study["ID"]);
+            foreach($temp as $item)
+                array_push($currentQuestionnaires, $item["questionnaireId"]);
+
+            foreach ($study["questionnaire"] as $item) {
+                if(in_array($item, $currentQuestionnaires))
+                    array_push($toKeep, intval($item));
+                else
+                    array_push($toAdd, intval($item));
+            }
+        }
+        $total += $this->opalDB->deleteQuestionnairesStudy($study["ID"], $toKeep);
+
+        if(count($toAdd) > 0) {
+            $toInsertMultiple = array();
+            foreach ($toAdd as $questionnaire)
+                array_push($toInsertMultiple, array("questionnaireId"=>$questionnaire, "studyId"=>$study["ID"]));
+
+            $total += $this->opalDB->insertMultipleQuestionnairesStudy($toInsertMultiple);
+        }
+
         return $total;
     }
+
+    /*
+     * Get the list of consent forms
+     * @return  (array) questionnaire consent forms
+     * */
+    public function getConsentForms() {
+        $this->checkReadAccess();
+        $this->_connectQuestionnaireDB();
+        $result = $this->questionnaireDB->getConsentForms();
+        return $result;
+    }
+
+    /**
+     * Check if current consent form has been published to questionnaire control
+     * @return (array) list of forms found
+     */
+    public function getConsentPublished($consentId){
+        $this->checkReadAccess();
+        $result = $this->opalDB->checkConsentFormPublished($consentId);
+        return $result;
+    }
+
+    /**
+     * Get this study's current consent form
+     * @return array length 1 , consentQuestionnaireId
+     */
+    protected function getConsentFormByStudyId($studyId){
+        return $this->opalDB->getConsentFormByStudyId($studyId);
+    }
+
+    /**
+     * Returns the list of consented studies of a specific patient
+     * @param $post - contains MRN and site code, both mandatory
+     * @return array - studies found (if any)
+     */
+    public function getStudiesPatientConsented($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = "";
+        if (is_array($post))
+            $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
+        else
+            $errCode = "111";
+
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        return $this->opalDB->getStudiesPatientConsented($post["mrn"], $post["site"]);
+    }
+
 }
