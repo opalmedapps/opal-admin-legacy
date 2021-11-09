@@ -49,6 +49,7 @@ angular.module('opalAdmin', [
 		role: 16,
 		alert: 17,
 		audit: 18,
+		sms: 22,
 	})
 
 	.constant('HTTP_CODE', {
@@ -124,9 +125,10 @@ angular.module('opalAdmin', [
 			.state('notification-add', { url: '/notification/add', templateUrl: "templates/notification/add.notification.html", controller: "notification.add", data: { requireLogin: true } })
 			.state('patients/menu', { url: '/patients/menu', templateUrl: "templates/patient/menu-main.html", controller: "patient", data: { requireLogin: true, accessible: true } })
 			.state('patients', { url: '/patients', templateUrl: "templates/patient/patient.html", controller: "patient", data: { requireLogin: true } })
-			.state('patients-register', { url: '/patients/register', templateUrl: "templates/patient/patient-registration.html", controller: "patientRegistration", data: {  requireLogin: true } })
 			.state('patients/activity', { url: '/patients/activity', templateUrl: "templates/patient/patient-activity.html", controller: "patientActivity", data: { requireLogin: true } })
-			.state('patients/report', { url: '/patients/report', templateUrl: "templates/patient/patient-report.html", controller: "patient", data: { requireLogin: true } })
+			.state('patients/report', { url: '/patients/report', templateUrl: "templates/patient/patient-report.html", controller: "patientReportHandler", data: { requireLogin: true } })
+			.state('patients/report/individual', { url: '/patients/report/individual', templateUrl: "templates/patient/individual-reports.html", controller: "patientReports", data: { requireLogin: true } })
+			.state('patients/report/group', { url: '/patients/report/group', templateUrl: "templates/patient/group-reports.html", controller: "groupReports", data: { requireLogin: true } })
 			.state('test-result', { url: '/test-result', templateUrl: "templates/test-result/test-result.html", controller: "testResult", data: { requireLogin: true } })
 			.state('test-result-add', { url: '/test-result/add', templateUrl: "templates/test-result/add.test-result.html", controller: "testResult.add", data: { requireLogin: true } })
 			.state('cron', { url: '/cron', templateUrl: "templates/cron/cron.html", controller: "cron", data: { requireLogin: true } })
@@ -159,7 +161,9 @@ angular.module('opalAdmin', [
 			.state('alert-add', { url: '/alert/add', templateUrl: "templates/alert/add.alert.html", controller: "alert.add", data: { requireLogin: true } })
 			.state('audit', { url: '/audit', templateUrl: "templates/audit/audits.html", controller: "audit", data: { requireLogin: true } })
 			.state('user-activity', { url: '/user-activity', templateUrl: "templates/user/user-activity.html", controller: "userActivity", data: { requireLogin: true } })
-			.state('protected-route', { url: '/protected', resolve: { auth: function resolveAuthentication(AuthResolver) { return AuthResolver.resolve(); } } });
+			.state('protected-route', { url: '/protected', resolve: { auth: function resolveAuthentication(AuthResolver) { return AuthResolver.resolve(); } } })
+			.state('sms',{ url: '/sms', templateUrl: "templates/sms/sms.html", controller: "sms", data:{ requireLogin: false } })
+			.state('sms/message',{ url: '/sms/message', templateUrl: "templates/sms/add.sms.html", controller: "add.sms", data:{ requireLogin: false } });
 
 	}])
 

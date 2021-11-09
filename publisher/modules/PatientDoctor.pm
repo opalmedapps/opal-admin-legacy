@@ -153,7 +153,7 @@ sub getPatientDoctorsFromSourceDB
 	foreach my $Patient (@patientList) {
 
 		my $patientSer		= $Patient->getPatientSer();
-		my $id 				= $Patient->getPatientId();
+		my $patientAriaSer		= $Patient->getPatientSourceUID(); #patientAriaSer
 		my $lastTransfer	= $Patient->getPatientLastTransfer();
 
         ######################################
@@ -174,7 +174,7 @@ sub getPatientDoctorsFromSourceDB
 		    		VARIAN.dbo.Patient pt
 			    WHERE
 			    	pt.PatientSer 			= pd.PatientSer
-    			AND	pt.PatientId			= '$id'
+    			AND	pt.PatientSer			= '$patientAriaSer'
 	    		AND	dr.ResourceSer	    	= pd.ResourceSer
 		    	AND	pd.HstryDateTime		> '$lastTransfer'
     		";  

@@ -97,7 +97,7 @@
                     </div>
                     <div class="input-group" style="margin-bottom: 20px;">
                         <span class="input-group-addon">{{'EDUCATION.EDIT.ENGLISH_TYPE_ABVR'|translate}}</span>
-                        <input class="form-control" type="text" ng-model="toc.type_EN" ng-change="validateTOCs()" typeahead-on-select="validateTOCs()" uib-typeahead="type for type in EduMatTypes_EN | filter:$viewValue" typeahead-min-length="0" placeholder="{{'EDUCATION.EDIT.ENGLISH_TYPE'|translate}}" required="required">
+                        <input class="form-control" type="text" ng-model="toc.type_EN" ng-change="typeTocUpdate(toc, 'EN')" typeahead-on-select="typeTocUpdate(toc, 'EN')" uib-typeahead="type.EN as type.EN for type in EduMatTypes | filter:{EN:$viewValue}" typeahead-min-length="0" placeholder="{{'EDUCATION.EDIT.ENGLISH_TYPE'|translate}}" required="required">
                     </div>
                 </div>
                 <div class="col-xs-12 col-md-6">
@@ -111,7 +111,7 @@
                     </div>
                     <div class="input-group" style="margin-bottom: 20px;">
                         <span class="input-group-addon">{{'EDUCATION.EDIT.FRENCH_TYPE_ABVR'|translate}}</span>
-                        <input class="form-control" type="text" ng-model="toc.type_FR" ng-change="validateTOCs()" typeahead-on-select="validateTOCs()" uib-typeahead="type for type in EduMatTypes_FR | filter:$viewValue" typeahead-min-length="0" placeholder="{{'EDUCATION.EDIT.FRENCH_TYPE'|translate}}" required="required">
+                        <input class="form-control" type="text" ng-model="toc.type_FR" ng-change="typeTocUpdate(toc, 'FR')" typeahead-on-select="typeTocUpdate(toc, 'FR')" uib-typeahead="type.FR as type.FR for type in EduMatTypes | filter:{FR:$viewValue}" typeahead-min-length="0" placeholder="{{'EDUCATION.EDIT.FRENCH_TYPE'|translate}}" required="required">
                     </div>
                 </div>
             </div>
