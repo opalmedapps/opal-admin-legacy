@@ -31,6 +31,7 @@
                     <strong>{{'ALIAS.EDIT.ASSIGNED_CODE'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': expressionSection.open, 'glyphicon-chevron-right': !expressionSection.open}"></i>
                 </div>
             </uib-accordion-heading>
+            <p ng-if="alias.published.length > 0" ng-bind-html="'ALIAS.EDIT.NOTE_PUBLISHED'|translate"></p>
             <div class="alert alert-danger" role="alert" ng-if="alias.published.length > 0">
                 <strong><span class="fa fa-lock"></span> {{'ALIAS.EDIT.PUBLISHED_CODE'|translate}}</strong>
                 <ul class="list-items">
@@ -293,8 +294,8 @@
                     <strong>{{'DIAGNOSIS.EDIT.DEACTIVATED_DIAGNOSES'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': deactivatedAliasSection.open, 'glyphicon-chevron-right': !deactivatedAliasSection.open}"></i>
                 </div>
             </uib-accordion-heading>
+            <p ng-bind-html="noteDeactivated"></p>
             <div class="alert alert-danger" role="alert">
-                <p>
                 <ul class="list-items">
                     <li ng-repeat="deletedAlias in alias.deleted">
                         {{deletedAlias.externalId}} - {{deletedAlias.id}} | {{deletedAlias.description}}
