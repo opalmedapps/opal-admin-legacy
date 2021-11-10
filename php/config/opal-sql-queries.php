@@ -1426,7 +1426,7 @@ define("OPAL_GET_ALIASES","
 ");
 
 define("OPAL_GET_ALIASES_UNPUBLISHED_EXPRESSION","
-    SELECT ae.ExpressionName AS id, ae.Description AS description, 1 AS added FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae
+    SELECT ae.ExpressionName AS id, ae.Description AS description, m.externalId, 1 AS added FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae
     LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m ON m.ID = ae.masterSourceAliasId
     RIGHT JOIN ".OPAL_ALIAS_TABLE." al ON al.AliasSerNum = ae.AliasSerNum
     WHERE ae.AliasSerNum = :AliasSerNum
@@ -1439,7 +1439,7 @@ define("OPAL_GET_ALIASES_UNPUBLISHED_EXPRESSION","
 ");
 
 define("OPAL_GET_ALIASES_PUBLISHED_EXPRESSION","
-    SELECT ae.Description AS description FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae
+    SELECT ae.ExpressionName AS id, ae.Description AS description, m.externalId FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae
     LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m ON m.ID = ae.masterSourceAliasId
     RIGHT JOIN ".OPAL_ALIAS_TABLE." al ON al.AliasSerNum = ae.AliasSerNum
     WHERE ae.AliasSerNum = :AliasSerNum
@@ -1452,7 +1452,7 @@ define("OPAL_GET_ALIASES_PUBLISHED_EXPRESSION","
 ");
 
 define("OPAL_GET_DELETED_ALIASES_EXPRESSION","
-    SELECT ae.Description AS description FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae
+    SELECT ae.ExpressionName AS id, ae.Description AS description, msa.externalId FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae
     LEFT JOIN ".OPAL_ALIAS_TABLE." al ON al.AliasSerNum = ae.AliasSerNum
     LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa ON msa.ID = ae.masterSourceAliasId
     WHERE msa.deleted = ".DELETED_RECORD." AND ae.AliasSerNum = :AliasSerNum;
@@ -1485,7 +1485,7 @@ define("OPAL_GET_SOURCE_DATABASES","
 ");
 
 define("OPAL_GET_ARIA_SOURCE_ALIASES","
-    SELECT m.ID AS masterSourceAliasId, m.description AS name, m.code AS id, m.description, a.AliasName_EN AS assigned
+    SELECT m.ID AS masterSourceAliasId, m.description AS name, m.code AS id, m.description, m.externalId, a.AliasName_EN AS assigned
     FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m
     LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = m.ID
     LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
@@ -1498,7 +1498,7 @@ define("OPAL_GET_ARIA_SOURCE_ALIASES","
     AND m.deleted = ".NON_DELETED_RECORD." ORDER BY m.code");
 
 define("OPAL_GET_SOURCE_ALIASES","
-    SELECT m.ID AS masterSourceAliasId, CONCAT(m.code, ' (', m.description, ')') AS name, m.code AS id, m.description,
+    SELECT m.ID AS masterSourceAliasId, CONCAT(m.code, ' (', m.description, ')') AS name, m.code AS id, m.description, m.externalId, 
     a.AliasName_EN AS assigned FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m
     LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = m.ID
     LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
