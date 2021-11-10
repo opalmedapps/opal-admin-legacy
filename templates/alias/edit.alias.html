@@ -31,11 +31,12 @@
                     <strong>{{'ALIAS.EDIT.ASSIGNED_CODE'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': expressionSection.open, 'glyphicon-chevron-right': !expressionSection.open}"></i>
                 </div>
             </uib-accordion-heading>
+            <p ng-if="alias.published.length > 0" ng-bind-html="'ALIAS.EDIT.NOTE_PUBLISHED'|translate"></p>
             <div class="alert alert-danger" role="alert" ng-if="alias.published.length > 0">
                 <strong><span class="fa fa-lock"></span> {{'ALIAS.EDIT.PUBLISHED_CODE'|translate}}</strong>
                 <ul class="list-items">
                     <li ng-repeat="publishedAlias in alias.published">
-                        {{publishedAlias.description}}
+                        {{publishedAlias.externalId}} - {{publishedAlias.id}} | {{publishedAlias.description}}
                     </li>
                 </ul>
             </div>
@@ -44,7 +45,7 @@
                 <p>
                 <ul class="list-items">
                     <li ng-repeat="selectedTerm in termList | filter: {added: 1}">
-                        {{selectedTerm.name}}
+                        {{selectedTerm.externalId}} - {{selectedTerm.name}} | {{selectedTerm.description}}
                     </li>
                 </ul>
                 </p>
@@ -68,7 +69,7 @@
                 <ul class="list-items">
                     <li ng-repeat="term in termList | filter: searchTermsFilter">
                         <label ng-class="{greenText: term.added, grayText: term.assigned && !term.added}">
-                            <input type="checkbox" ng-click="toggleTermSelection(term)" ng-checked="term.added" /> {{term.name}}
+                            <input type="checkbox" ng-click="toggleTermSelection(term)" ng-checked="term.added" /> {{term.externalId}} - {{term.name}} | {{term.description}}
                             <span ng-class="{redText: term.assigned && !term.added}" ng-if="term.assigned && !term.added"><em> --- {{'ALIAS.EDIT.ASSIGN_TO'|translate}} {{term.assigned}}</em></span>
                             <span ng-class="{redText: term.assigned}" ng-if="term.assigned && term.added"><em> --- {{'ALIAS.EDIT.WILL_REPLACE'|translate}} {{term.assigned}}</em></span>
                         </label>
@@ -293,11 +294,11 @@
                     <strong>{{'DIAGNOSIS.EDIT.DEACTIVATED_DIAGNOSES'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': deactivatedAliasSection.open, 'glyphicon-chevron-right': !deactivatedAliasSection.open}"></i>
                 </div>
             </uib-accordion-heading>
+            <p ng-bind-html="noteDeactivated"></p>
             <div class="alert alert-danger" role="alert">
-                <p>
                 <ul class="list-items">
                     <li ng-repeat="deletedAlias in alias.deleted">
-                        {{deletedAlias.description}}
+                        {{deletedAlias.externalId}} - {{deletedAlias.id}} | {{deletedAlias.description}}
                     </li>
                 </ul>
                 </p>
