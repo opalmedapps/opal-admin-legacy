@@ -12,6 +12,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		$scope.showAssigned = false;
 		$scope.hideAssigned = false;
 		$scope.language = Session.retrieveObject('user').language;
+		$scope.noteDeactivated = $filter('translate')('ALIAS.EDIT.NOTE_DEACTIVATED');
 
 		// Default toolbar for wysiwyg
 		$scope.toolbar = [
@@ -170,6 +171,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 		// Call our API service to get the current alias details
 		aliasCollectionService.getAliasDetails($scope.currentAlias.serial).then(function (response) {
+			$scope.noteDeactivated = $scope.noteDeactivated.replace("%%SYSTEM_NAME%%", response.data.source_db.name);
 			if($scope.language.toUpperCase() === "FR") {
 				response.data.eduMat.name_display = response.data.eduMat.name_FR;
 				response.data.eduMat.url_display = response.data.eduMat.url_FR;
