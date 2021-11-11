@@ -199,7 +199,7 @@ class Appointment extends Module
             $toInsert["Status"] = APPOINTMENT_STATUS_CODE_DELETED;
             $toInsert["State"] = APPOINTMENT_STATUS_CODE_DELETED;
             $toInsert["DateModified"] = date("Y-m-d H:i:s");            
-            $toInsert["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];
+            $toInsert["sourceName"] = $source["SourceDatabaseName"];
             $this->opalDB->insertPendingAppointment($toInsert);
 
             unset($toInsert["DateModified"]);
