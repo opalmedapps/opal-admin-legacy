@@ -99,29 +99,22 @@ class Document extends Module
         } else{
             $errCode = "0" . $errCode;
         }
-
+       
         //bit 13
-        if(!array_key_exists("errorMessage", $post) || $post["errorMessage"] == ""){
-            $errCode = "1" . $errCode;
-        } else{
-            $errCode = "0" . $errCode;
-        }
-
-        //bit 14
         if(!array_key_exists("fileName", $post) || $post["fileName"] == ""){
             $errCode = "1" . $errCode;
         } else{
             $errCode = "0" . $errCode;
         }
 
-        //bit 15
+        //bit 14
         if(!array_key_exists("creationUserId", $post) || $post["creationUserId"] == ""){
             $errCode = "1" . $errCode;
         } else{
             $errCode = "0" . $errCode;
         }
 
-        //bit 16
+        //bit 15
         if(array_key_exists("creationDatetime", $post) && $post["creationDatetime"] != "") {
             if(!HelpSetup::verifyDate($post["creationDatetime"], false, 'Y-m-d H:i:s'))
                 $errCode = "1" . $errCode;
@@ -129,7 +122,7 @@ class Document extends Module
                 $errCode = "0" . $errCode;
             }
         }
-
+        
         return $errCode;
     }
 
@@ -184,6 +177,7 @@ class Document extends Module
             $ifp = fopen ( $output_file, "w+") or die("Unable to open file!");
             $data = explode( ',', $post["documentString"]);
             fwrite ( $ifp, base64_decode( $data[0] ) );
+            chmod($output_file, 0755);
             fclose( $ifp );
         }
     }
