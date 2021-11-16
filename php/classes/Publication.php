@@ -957,7 +957,6 @@ class Publication extends Module
             $existingTriggers = $this->opalDB->getFiltersByControlTableSerNum($publication["materialId"]["value"], $controlTableName);
             foreach($existingTriggers as $trigger) {
                 if(!$this->_nestedSearch($trigger["id"], $trigger["type"], $publication["triggers"])) {
-                    print_r($trigger);
                     $this->opalDB->deleteFilters($trigger["id"], $trigger["type"], $publication["materialId"]["value"], $controlTableName);
                     $toUpdate = array(
                         "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
