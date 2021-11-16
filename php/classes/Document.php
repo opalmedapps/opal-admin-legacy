@@ -164,13 +164,22 @@ class Document extends Module
 
         if (count($doc) == 0) {
             $toInsert["DateAdded"] = date("Y-m-d H:i:s");
+            $action = "Document";
             $id = $this->opalDB->insertDocument($toInsert);
+            $toInsert["DocumentSerNum"] = $id;
         } else {
+            $action = "UpdDocument";
             $toInsert["DocumentSerNum"] = $doc[0]["DocumentSerNum"];
             $toInsert["DateAdded"]      = $doc[0]["DateAdded"];
             $this->opalDB->updateDocument($toInsert);
         }
-
+        
+        $patientAccessLevel = $this->opalDB->getPatientAccessLevel($patientSite["PatientSerNum"]);
+        
+        if(array_key_exists("Accesslevel", $patientAccessLevel) && $patientAccessLevel["Accesslevel"] == 3){            
+            $this->_notifyDocumentChange($toInsert,$action);
+        }
+        
         if ($post["validEntry"] == "Y"  && array_key_exists("documentString", $post) && $post["documentString"] != "")  {
             $filename = basename($post["fileName"]);
             $output_file = CLINICAL_DOC_PATH . $filename;
@@ -179,7 +188,7 @@ class Document extends Module
             fwrite ( $ifp, base64_decode( $data[0] ) );
             chmod($output_file, 0755);
             fclose( $ifp );
-        }
+        }        
     }
     /*
      * Insert a new document after validation.
@@ -192,4 +201,53 @@ class Document extends Module
         return $this->_insertDocument($post);
     }
 
+    protected function _notifyDocumentChange($data, $action){
+        $notificationControl = $this->opalDB->getNotificationControlDetails($data["PatientSerNum"],$action);
+        $controlser         = $notificationControl[0]["NotificationControlSerNum"];
+        $title              = $notificationControl[0]["Name"];
+        $message            = $notificationControl[0]["Message"];
+
+        $ptdIds = $this->opalDB->getPatientDeviceIdentifiers($data["PatientSerNum"]);       
+
+        if (count($ptdIds) == 0){
+            $toInsert = array( 
+                "SendStatus" => "W",
+                "SendLog" => "Patient has no device identifier! No push notification sent.",
+                "DateAdded" => date("Y-m-d H:i:s"),
+                "RefTableRowSerNum" => $data["DocumentSerNum"],
+                "NotificationControlSerNum" => $controlser,
+                "PatientSerNum"=>$data["PatientSerNum"],
+                "PatientDeviceIdentifierSerNum" => null
+            );            
+            $this->opalDB->insertPushNotification($toInsert);            
+        } else {
+            foreach($ptdIds as $ptdId) {
+                $ptdidser       = $ptdId["PatientDeviceIdentifierSerNum"];
+                $registrationId = $ptdId["RegistrationId"];
+                $deviceType     = $ptdId["DeviceType"];
+
+                $response = array("success" => 1);
+                $response = HospitalPushNotification::sendNotification($deviceType, $registrationId, $title, $message);                               
+                
+                if ($response["success"] == 1){
+                    $sendstatus = "T"; // successful
+                    $sendlog    = "Push notification successfully sent! Message: $message";
+                } else {
+                    $sendstatus = "F"; // failed
+                    $sendlog    = "Failed to send push notification! Message: " . $response['error'];
+                }
+
+                $toInsert = array( 
+                    "SendStatus" => $sendstatus,
+                    "SendLog" => $sendlog,
+                    "DateAdded" => date("Y-m-d H:i:s"),
+                    "RefTableRowSerNum" => $data["DocumentSerNum"],
+                    "NotificationControlSerNum" => $controlser,
+                    "PatientSerNum"=>$data["PatientSerNum"],
+                    "PatientDeviceIdentifierSerNum" => $ptdidser
+                );                
+                $this->opalDB->insertPushNotification($toInsert);
+            }
+        }
+    }
 }

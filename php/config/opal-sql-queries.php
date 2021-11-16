@@ -925,7 +925,7 @@ AND AppointmentSerNum=:AppointmentSerNum
 ");
 
 define("OPAL_GET_APPOINTMENT_ID", "
-SELECT AppointmentSerNum
+SELECT *
 FROM ".OPAL_APPOINTMENTS_TABLE."
 WHERE SourceDatabaseSerNum=:SourceSystem
 AND AppointmentAriaSer=:SourceId
@@ -1893,3 +1893,33 @@ WHERE DocumentId = :DocumentId
 AND SourceDatabaseSerNum = :SourceDatabaseSerNum;
 ";
 
+const OPAL_GET_NOTIFICATION_CONTROL_DETAILS = "
+SELECT DISTINCT nc.NotificationControlSerNum,
+    CASE
+        WHEN p.Language = 'EN' THEN nc.Description_EN
+        WHEN p.Language = 'FR' THEN nc.Description_FR
+    END AS Message,
+    CASE 
+        WHEN p.Language = 'EN' THEN nc.Name_EN
+        WHEN p.Language = 'FR' THEN nc.Name_FR
+    END As Name
+FROM   ".OPAL_PATIENT_TABLE." p, ".OPAL_NOTIFICATION_CONTROL_TABLE." nc,
+        ".OPAL_NOTIFICATION_TYPES_TABLE." nt
+WHERE p.PatientSerNum              = :Patientser
+    AND nc.NotificationTypeSerNum  = nt.NotificationTypeSerNum
+    AND nt.NotificationTypeId      = :Notificationtype
+";
+
+const OPAL_GET_PATIENT_DEVICE_IDENTIFIERS = "
+SELECT DISTINCT ptdid.PatientDeviceIdentifierSerNum,
+    ptdid.RegistrationId, ptdid.DeviceType
+FROM ".OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE." ptdid
+WHERE
+    ptdid.PatientSerNum = :Patientser
+    AND ptdid.DeviceType in ('0', '1')
+    AND IfNull(RegistrationId, '') <> ''
+";
+
+const OPAL_GET_PATIENT_ACCESS_LEVEL = "
+SELECT pt.Accesslevel
+FROM " . OPAL_PATIENT_TABLE . " pt WHERE pt.PatientSerNum = :PatientSer;";
