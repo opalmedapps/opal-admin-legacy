@@ -315,7 +315,7 @@ class Appointment extends Module
             $toInsert["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];
             $toInsert["AppointmentSerNum"] = $appointment["AppointmentSerNum"];
         }
-        $post["scheduledTimestamp"] = "2021-11-15 23:30:00";
+        
         $aliasInfos = $this->opalDB->getAlias('Appointment',$post['appointmentTypeCode'], $post['appointmentTypeDescription']);
         if(count($aliasInfos) == 1) {
             $this->_updateAppointmentPending($toInsert);
