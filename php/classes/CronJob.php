@@ -133,4 +133,31 @@ class CronJob extends OpalProject {
         $post = HelpSetup::arraySanitization($post);
         $this->_updateAppointmentCheckIn($post);
     }
+
+    /**
+     * Update appointment in appointmentPending table.
+     */
+    public function updateAppointmentPending(){
+        $appointmentPendingList = $this->opalDB->getOldestAppointmentPendingInProcess();
+        $startTime = time();
+        while(count($appointmentPendingList) > 0 && (time() - $startTime) < 29) {
+            $appointmentPending = array_shift($appointmentPendingList);
+            $appointmentPending["SourceDatabaseSerNum"] = $this->opalDB->getSourceId($appointmentPending["sourceName"])[0]['ID'];
+
+            $aliasInfos = $this->opalDB->getAlias('Appointment',$appointmentPending['appointmentTypeCode'], $appointmentPending['appointmentTypeDescription']);
+            if(count($aliasInfos) == 1) {
+                unset($appointmentPending["Level"]);
+                unset($appointmentPending["updatedBy"]);
+                unset($appointmentPending["sourceName"]);
+                unset($appointmentPending["DateModified"]);
+                unset($appointmentPending["appointmentTypeCode"]);
+                unset($appointmentPending["appointmentTypeDescription"]);
+                $appointmentPending["AliasExpressionSerNum"] = $aliasInfos[0]['AliasExpressionSerNum'];
+                
+                $this->opalDB->deleteAppointmentPending($appointmentPending["ID"]);
+                unset($appointmentPending["ID"]);
+                $this->opalDB->insertAppointment($appointmentPending);
+            }
+        }
+    }
 }

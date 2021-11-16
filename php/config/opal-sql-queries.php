@@ -30,10 +30,10 @@ define("SQL_OPAL_GET_PUBLISHED_QUESTIONNAIRES",
 );
 
 define("SQL_OPAL_GET_FILTERS_BY_CONTROL_TABLE_SERNUM",
-    "SELECT DISTINCT 
+    "SELECT DISTINCT
     FilterType AS type,
     FilterId AS id
-    FROM 
+    FROM
     ".OPAL_FILTERS_TABLE."
     WHERE ControlTableSerNum = :ControlTableSerNum
     AND ControlTable = :ControlTable
@@ -51,19 +51,19 @@ define("SQL_OPAL_DELETE_FILTERS",
 
 define("SQL_OPAL_UPDATE_FILTERSMH",
     "UPDATE ".OPAL_FILTERS_MH_TABLE."
-    SET 
+    SET
     LastUpdatedBy = :LastUpdatedBy,
     SessionId = :SessionId
     WHERE FilterId = :FilterId
     AND FilterType = :FilterType
     AND ControlTableSerNum = :ControlTableSerNum
     AND ControlTable = :ControlTable
-    ORDER BY DateAdded DESC 
+    ORDER BY DateAdded DESC
     LIMIT 1;"
 );
 
 define("SQL_OPAL_DELETE_FREQUENCY_EVENTS_TABLE",
-    "DELETE FROM ".OPAL_FREQUENCY_EVENTS_TABLE." 
+    "DELETE FROM ".OPAL_FREQUENCY_EVENTS_TABLE."
     WHERE ControlTable = :ControlTable
     AND ControlTableSerNum = :ControlTableSerNum;"
 );
@@ -138,35 +138,35 @@ define("SQL_OPAL_GET_QUESTIONNAIRE_CONTROL_DETAILS",
 );
 
 define("SQL_OPAL_GET_FREQUENCY_EVENTS",
-    "SELECT DISTINCT CustomFlag, MetaKey, MetaValue 
+    "SELECT DISTINCT CustomFlag, MetaKey, MetaValue
     FROM ".OPAL_FREQUENCY_EVENTS_TABLE."
     WHERE ControlTable = :ControlTable
     AND ControlTableSerNum = :ControlTableSerNum;"
 );
 
 define("SQL_OPAL_UPDATE_QUESTIONNAIRE_CONTROL",
-    "UPDATE 
-    ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." 
-    SET 
-    ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.".QuestionnaireName_EN = :QuestionnaireName_EN, 
+    "UPDATE
+    ".OPAL_QUESTIONNAIRE_CONTROL_TABLE."
+    SET
+    ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.".QuestionnaireName_EN = :QuestionnaireName_EN,
     ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.".QuestionnaireName_FR = :QuestionnaireName_FR,
     ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.".LastUpdatedBy = :LastUpdatedBy,
     ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.".SessionId = :SessionId
-    WHERE 
+    WHERE
     ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.".QuestionnaireControlSerNum = :QuestionnaireControlSerNum;"
 );
 
 define("SQL_OPAL_MARK_AS_DELETED_MASTER_SOURCE", "
     UPDATE %%MASTER_SOURCE_TABLE%% SET deleted = ".DELETED_RECORD.", deletedBy = :deletedBy, updatedBy = :updatedBy
-    WHERE ID = :ID AND source = -1; 
+    WHERE ID = :ID AND source = -1;
 ");
 
 define("SQL_OPAL_UPDATE_POST_CONTROL",
-    "UPDATE ".OPAL_POST_TABLE." SET 
-    PublishDate = :PublishDate, 
+    "UPDATE ".OPAL_POST_TABLE." SET
+    PublishDate = :PublishDate,
     LastUpdatedBy = :LastUpdatedBy,
     SessionId = :SessionId
-    WHERE 
+    WHERE
     PostControlSerNum = :PostControlSerNum;"
 );
 
@@ -210,7 +210,7 @@ define("SQL_OPAL_GET_POSTS", "
     PostName_EN AS name_EN,
     PostName_FR AS name_FR,
     (SELECT COUNT(*) from ".OPAL_FILTERS_TABLE." f WHERE f.ControlTableSerNum = pc.PostControlSerNum and ControlTable = '".OPAL_POST_TABLE."') AS locked
-    FROM 
+    FROM
 	".OPAL_POST_TABLE." pc
 	WHERE deleted != ".DELETED_RECORD.";
 ");
@@ -288,7 +288,7 @@ define("SQL_OPAL_GET_ANNOUNCEMENT_CHART","
     AND cl.CronLogSerNum = anmh.CronLogSerNum AND anmh.CronLogSerNum IS NOT NULL
     AND anmh.PostControlSerNum = :PostControlSerNum GROUP BY anmh.CronLogSerNum, cl.CronDateTime
     AND cl.CronDateTime >= DATE_SUB(NOW(),INTERVAL 1 YEAR)
-    ORDER BY cl.CronDateTime ASC 
+    ORDER BY cl.CronDateTime ASC
 ");
 
 define("SQL_OPAL_GET_ANNOUNCEMENT_CHART_PER_IDS","
@@ -324,7 +324,7 @@ define("SQL_OPAL_GET_PFP_CHART","
     AND cl.CronLogSerNum = pfpmh.CronLogSerNum AND pfpmh.CronLogSerNum IS NOT NULL
     AND pfpmh.PostControlSerNum = :PostControlSerNum GROUP BY pfpmh.CronLogSerNum, cl.CronDateTime
     AND cl.CronDateTime >= DATE_SUB(NOW(),INTERVAL 1 YEAR)
-    ORDER BY cl.CronDateTime ASC 
+    ORDER BY cl.CronDateTime ASC
 ");
 
 define("SQL_OPAL_GET_EDUCATIONAL_CHART","
@@ -333,7 +333,7 @@ define("SQL_OPAL_GET_EDUCATIONAL_CHART","
     AND cl.CronLogSerNum = emmh.CronLogSerNum AND emmh.CronLogSerNum IS NOT NULL
     AND emmh.EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum GROUP BY emmh.CronLogSerNum, cl.CronDateTime
     AND cl.CronDateTime >= DATE_SUB(NOW(),INTERVAL 1 YEAR)
-    ORDER BY cl.CronDateTime ASC 
+    ORDER BY cl.CronDateTime ASC
 ");
 
 define("OPAL_UPDATE_MASTER_SOURCE", "
@@ -475,7 +475,7 @@ define("OPAL_GET_USER_LOGIN_DETAILS","
 	    IF(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)) > 0, CONCAT(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 'm'), ''),
 	    SECOND(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 's') AS session_duration
     FROM ".OPAL_OAUSER_TABLE." oa, ".OPAL_OAUSER_ACTIVITY_LOG_TABLE." oaa LEFT JOIN ".OPAL_OAUSER_ACTIVITY_LOG_TABLE." oaa2
-    ON oaa.SessionId = oaa2.SessionId  AND oaa2.Activity = 'Logout' 
+    ON oaa.SessionId = oaa2.SessionId  AND oaa2.Activity = 'Logout'
     WHERE oaa.`Activity` = 'Login' AND oa.OAUserSerNum = oaa.OAUserSerNum AND oa.OAUserSerNum = :OAUserSerNum ORDER BY oaa.DateAdded DESC;
 ");
 
@@ -489,12 +489,12 @@ define("OPAL_GET_USER_ALIAS_DETAILS","
 
 define("OPAL_GET_USER_ALIAS_EXPRESSIONS","
     SELECT DISTINCT AliasSerNum AS serial, RevSerNum AS revision, SessionId AS sessionid, ExpressionName AS expression,
-    Description AS resource_description, ModificationAction AS mod_action, DateAdded AS date_added FROM ".OPAL_ALIAS_EXPRESSION_MH_TABLE." 
+    Description AS resource_description, ModificationAction AS mod_action, DateAdded AS date_added FROM ".OPAL_ALIAS_EXPRESSION_MH_TABLE."
     WHERE LastUpdatedBy = :LastUpdatedBy ORDER BY DateAdded DESC;
 ");
 
 define("OPAL_GET_USER_DIAGNOSIS_TRANSLATIONS","
-    SELECT DISTINCT DiagnosisTranslationSerNum AS serial, RevSerNum AS revision, SessionId AS sessionid, 
+    SELECT DISTINCT DiagnosisTranslationSerNum AS serial, RevSerNum AS revision, SessionId AS sessionid,
     EducationalMaterialControlSerNum AS educational_material, Name_EN AS name_EN, Name_FR AS name_FR, Description_EN AS description_EN,
     Description_FR AS description_FR, ModificationAction AS mod_action, DateAdded AS date_added FROM ".OPAL_DIAGNOSIS_TRANSLATION_MH_TABLE."
     WHERE LastUpdatedBy = :LastUpdatedBy ORDER BY DateAdded DESC;
@@ -533,7 +533,7 @@ define("OPAL_GET_USER_POST","
 ");
 
 define("OPAL_GET_USER_NOTIFICATION","
-    SELECT DISTINCT NotificationControlSerNum AS control_serial, RevSerNum AS revision, SessionId AS sessionid, 
+    SELECT DISTINCT NotificationControlSerNum AS control_serial, RevSerNum AS revision, SessionId AS sessionid,
     NotificationTypeSerNum AS `type`, Name_EN AS name_EN, Name_FR AS name_FR, Description_EN AS description_EN,
     Description_FR AS description_FR, ModificationAction AS mod_action, DateAdded AS date_added
     FROM ".OPAL_NOTIFICATION_CONTROL_MH_TABLE." WHERE LastUpdatedBy = :LastUpdatedBy ORDER BY DateAdded DESC;
@@ -571,7 +571,7 @@ define("OPAL_GET_STUDY_DETAILS","
 
 define("OPAL_UPDATE_STUDY","
     UPDATE ".OPAL_STUDY_TABLE." SET code = :code, title_EN = :title_EN, title_FR = :title_FR, description_EN = :description_EN, description_FR = :description_FR, investigator = :investigator, phone = :phone, email = :email, phoneExt = :phoneExt, startDate = :startDate,
-    endDate = :endDate, consentQuestionnaireId = :consentQuestionnaireId, updatedBy = :updatedBy WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD."; 
+    endDate = :endDate, consentQuestionnaireId = :consentQuestionnaireId, updatedBy = :updatedBy WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD.";
 ");
 
 define("OPAL_UPDATE_STUDY_CONSENT", "
@@ -583,7 +583,7 @@ define("OPAL_MARK_STUDY_AS_DELETED", "
 ");
 
 define("OPAL_GET_ROLES", "
-    SELECT r.ID, r.name_EN, r.name_FR, (SELECT COUNT(*) FROM ".OPAL_OAUSER_TABLE." u WHERE u.oaRoleId = r.ID) AS total 
+    SELECT r.ID, r.name_EN, r.name_FR, (SELECT COUNT(*) FROM ".OPAL_OAUSER_TABLE." u WHERE u.oaRoleId = r.ID) AS total
     FROM ".OPAL_OA_ROLE_TABLE." r WHERE r.deleted = ".NON_DELETED_RECORD.";
 ");
 
@@ -601,7 +601,7 @@ define("OPAL_GET_USER_ROLE_MODULE_ACCESS","
 
 define("OPAL_GET_OA_ROLE_DETAILS","
     SELECT r.ID, r.name_EN, r.name_FR, (SELECT COUNT(*) FROM ".OPAL_OAUSER_TABLE." u WHERE u.oaRoleId = r.ID) AS total
-    FROM ".OPAL_OA_ROLE_TABLE." r      
+    FROM ".OPAL_OA_ROLE_TABLE." r
     WHERE r.ID = :ID AND r.deleted = ".NON_DELETED_RECORD.";
 ");
 
@@ -732,7 +732,7 @@ define("OPAL_GET_CRON_LOG_TEST_RESULTS","
 ");
 
 define("OPAL_GET_CRON_LOG_EMAILS","
-    SELECT DISTINCT cl.CronDateTime AS x, COUNT(emmh.CronLogSerNum) AS y, emmh.CronLogSerNum AS cron_serial FROM ".OPAL_EMAIL_LOG_MH_TABLE." emmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = emmh.CronLogSerNum AND emmh.CronLogSerNum IS NOT NULL GROUP BY  emmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC 
+    SELECT DISTINCT cl.CronDateTime AS x, COUNT(emmh.CronLogSerNum) AS y, emmh.CronLogSerNum AS cron_serial FROM ".OPAL_EMAIL_LOG_MH_TABLE." emmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = emmh.CronLogSerNum AND emmh.CronLogSerNum IS NOT NULL GROUP BY  emmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC
 ");
 
 define("OPAL_GET_CRON_LOG_QUESTIONNAIRES","
@@ -867,7 +867,7 @@ define("OPAL_SOURCE_DATABASE","AND s.SourceDatabaseName %%OPERATOR%% :SourceData
 
 define("OPAL_GET_PATIENT_SITE","
     SELECT * FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." WHERE Hospital_Identifier_Type_Code = :Hospital_Identifier_Type_Code
-    AND MRN = :MRN AND Is_Active = ".ACTIVE_RECORD."; 
+    AND MRN = :MRN AND Is_Active = ".ACTIVE_RECORD.";
 ");
 
 define("OPAL_GET_SOURCE_DB_DETAILS","
@@ -883,18 +883,18 @@ define("OPAL_GET_DIAGNOSIS_CODE_DETAILS","
 
 define("OPAL_GET_PATIENT_DIAGNOSIS_ID","
     SELECT DiagnosisSerNum FROM ".OPAL_DIAGNOSIS_TABLE." WHERE PatientSerNum = :PatientSerNum
-    AND SourceDatabaseSerNum = :SourceDatabaseSerNum AND DiagnosisAriaSer = :DiagnosisAriaSer; 
+    AND SourceDatabaseSerNum = :SourceDatabaseSerNum AND DiagnosisAriaSer = :DiagnosisAriaSer;
 ");
 
 define("OPAL_DELETE_PATIENT_DIAGNOSIS","
-    DELETE FROM ".OPAL_DIAGNOSIS_TABLE." WHERE DiagnosisSerNum = :DiagnosisSerNum; 
+    DELETE FROM ".OPAL_DIAGNOSIS_TABLE." WHERE DiagnosisSerNum = :DiagnosisSerNum;
 ");
 
 define("OPAL_GET_PATIENT_NAME", "
     SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
     CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
     SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang FROM ".OPAL_PATIENT_TABLE." WHERE LastName LIKE :name;
-														  
+
 ");
 
 define("OPAL_GET_PATIENT_MRN", "
@@ -909,7 +909,7 @@ define("OPAL_GET_PATIENT_RAMQ", "
     SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
     CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
     SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :SSN;
-													 
+
 ");
 
 define("OPAL_GET_DIAGNOSIS_REPORT", "
@@ -917,45 +917,105 @@ define("OPAL_GET_DIAGNOSIS_REPORT", "
     FROM ".OPAL_DIAGNOSIS_TABLE." WHERE PatientSerNum = :pnum;
 ");
 
+define ("OPAL_UPDATE_APPOINTMENT_STATUS","
+UPDATE ".OPAL_APPOINTMENTS_TABLE." 
+SET Status=:Status , State=:State 
+WHERE SourceDatabaseSerNum=:SourceDatabaseSerNum 
+AND AppointmentSerNum=:AppointmentSerNum 
+");
+
+define("OPAL_GET_APPOINTMENT_ID", "
+SELECT *
+FROM ".OPAL_APPOINTMENTS_TABLE."
+WHERE SourceDatabaseSerNum=:SourceSystem
+AND AppointmentAriaSer=:SourceId
+");
+
+define("OPAL_GET_APPOINTMENT_PENDING_ID", "
+SELECT ID
+FROM ".OPAL_APPOINTMENTS_PENDING_TABLE."
+WHERE sourceName=:SourceSystem
+AND AppointmentAriaSer=:SourceId
+");
+
+
+define("OPAL_GET_APPOINTMENT_PENDING", "
+SELECT ID, PatientSerNum, sourceName, 
+appointmentTypeCode, appointmentTypeDescription, 
+AppointmentAriaSer, PrioritySerNum, DiagnosisSerNum, 
+Status, State, ScheduledStartTime, ScheduledEndTime, 
+ActualStartDate, ActualEndDate, Location, 
+RoomLocation_EN, RoomLocation_FR, Checkin, 
+ChangeRequest, DateAdded, DateModified, ReadStatus, 
+Level, SessionId, updatedBy, LastUpdated
+FROM ".OPAL_APPOINTMENTS_PENDING_TABLE."
+WHERE sourceName=:SourceSystem
+AND AppointmentAriaSer=:SourceId
+");
+
+define("OPAL_GET_APPOINTMENT_PENDING_MH_ID", "
+SELECT AppointmentPendingId
+FROM ".OPAL_APPOINTMENTS_PENDING_MH_TABLE."
+WHERE sourceName=:SourceSystem
+AND AppointmentAriaSer=:SourceId
+");
+
+define("OPAL_GET_APPOINTMENT_PENDING_MH", "
+SELECT AppointmentPendingId, revisionId, ACTION, PatientSerNum, 
+sourceName, AppointmentAriaSer, PrioritySerNum, 
+DiagnosisSerNum, Status, State, ScheduledStartTime, 
+ScheduledEndTime, ActualStartDate, ActualEndDate, 
+Location, RoomLocation_EN, RoomLocation_FR, Checkin, Level, 
+ChangeRequest, PendingDate, ProcessedDate, ReadStatus, 
+SessionId, LastUpdated
+FROM ".OPAL_APPOINTMENTS_PENDING_MH_TABLE."
+WHERE sourceName=:SourceSystem
+AND AppointmentAriaSer=:SourceId
+");
+
+define("OPAL_DELETE_APPOINTMENT_PENDING","
+    DELETE FROM ".OPAL_APPOINTMENTS_PENDING_TABLE." WHERE ID = :AppointmentSerNum;
+");
+
 define("OPAL_GET_APPOINTMENT", "
     SELECT DISTINCT phi.PatientSerNum,
     hm.MapUrl,hm.MapURL_EN,hm.MapURL_FR,hm.MapName_EN,hm.MapName_FR,hm.MapDescription_EN,hm.MapDescription_FR,
     a.ScheduledStartTime AS starttime, a.ScheduledEndTime AS endtime,
     a.checkin,a.SourceDatabaseSerNum,a.AppointmentAriaSer,em.ReadStatus,
-    r.ResourceName,r.ResourceType,a.Status , 
-    a.RoomLocation_EN,a.RoomLocation_FR,    
+    r.ResourceName,r.ResourceType,a.Status ,
+    a.RoomLocation_EN,a.RoomLocation_FR,
     ac.CheckinPossible,ac.CheckinInstruction_EN,ac.CheckinInstruction_FR,
     hm.HospitalMapSerNum,
-    a.ScheduledStartTime AS starttime, a.Status AS status, a.DateAdded AS dateadded,    
+    a.ScheduledStartTime AS starttime, a.Status AS status, a.DateAdded AS dateadded,
     als.AliasName_EN AS aliasname, als.AliasType AS aliastype, r.ResourceName AS resourcename
     FROM ".OPAL_APPOINTMENTS_TABLE." a,
      ".OPAL_HOSPITAL_MAP_TABLE." hm,
-    ".OPAL_ALIAS_TABLE." als, 
-    ".OPAL_APPOINTMENT_CHECK_IN_TABLE." ac, 
-     ".OPAL_ALIAS_EXPRESSION_TABLE." ae,      
+    ".OPAL_ALIAS_TABLE." als,
+    ".OPAL_APPOINTMENT_CHECK_IN_TABLE." ac,
+     ".OPAL_ALIAS_EXPRESSION_TABLE." ae,
     ".OPAL_RESOURCE_TABLE." r, ".OPAL_RESOURCE_APPOINTMENT_TABLE." ra,
-    ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE ." phi,   
+    ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE ." phi,
     ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." emc ,
     ".OPAL_EDUCATION_MATERIAL_TABLE." em
     WHERE phi.Hospital_Identifier_Type_Code = :site
-    AND phi.mrn = :mrn 
-    AND phi.PatientSerNum = a.PatientSerNum 
-    AND em.PatientSerNum = a.PatientSerNum 
-    AND em.EducationalMaterialControlSerNum=emc.EducationalMaterialControlSerNum 
+    AND phi.mrn = :mrn
+    AND phi.PatientSerNum = a.PatientSerNum
+    AND em.PatientSerNum = a.PatientSerNum
+    AND em.EducationalMaterialControlSerNum=emc.EducationalMaterialControlSerNum
     AND a.AliasExpressionSerNum = ae.AliasExpressionSerNum
     AND ae.AliasSerNum = als.AliasSerNum
-    AND als.AliasSerNum = ac.AliasSerNum 
+    AND als.AliasSerNum = ac.AliasSerNum
     AND als.HospitalMapSerNum = hm.HospitalMapSerNum
-    AND r.ResourceSerNum = ra.ResourceSerNum    
+    AND r.ResourceSerNum = ra.ResourceSerNum
     AND ra.AppointmentSerNum = a.AppointmentSerNum
-    AND (:startDate IS NULL OR ScheduledStartTime >=  CAST(:startDate AS DATE))
-    AND (:endDate IS NULL OR ScheduledStartTime <= CAST(:endDate AS DATE));
+    AND (:startDate IS NULL OR ScheduledStartTime >=  CAST(:startDate AS DATETIME))
+    AND (:endDate IS NULL OR ScheduledStartTime <= CAST(:endDate AS DATETIME));
 ");
 
 define("OPAL_GET_APPOINTMENT_REPORT", "
     SELECT a.ScheduledStartTime AS starttime, a.Status AS status, a.DateAdded AS dateadded,
     als.AliasName_EN AS aliasname, als.AliasType AS aliastype, r.ResourceName AS resourcename
-    FROM ".OPAL_APPOINTMENTS_TABLE." a, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_ALIAS_TABLE." als, 
+    FROM ".OPAL_APPOINTMENTS_TABLE." a, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_ALIAS_TABLE." als,
     ".OPAL_RESOURCE_TABLE." r, ".OPAL_RESOURCE_APPOINTMENT_TABLE." ra
     WHERE PatientSerNum = :pnum AND a.AliasExpressionSerNum = ae.AliasExpressionSerNum
     AND ae.AliasSerNum = als.AliasSerNum AND r.ResourceSerNum = ra.ResourceSerNum
@@ -989,7 +1049,7 @@ define("OPAL_GET_TEST_REPORT", "
 	ptr.ReadStatus as readstatus,
 	IfNull((select tc.Name_EN from ".OPAL_TEST_CONTROL_TABLE." tc where te.TestControlSerNum = tc.TestControlSerNum), te.ExpressionName) as testname,
 	ptr.AbnormalFlag as abnormalflag,
-	ptr.NormalRange as normalrange, 	
+	ptr.NormalRange as normalrange,
 	case
 		when ptr.TestValue = 'Non détecté' then '0'
 		when ptr.TestValue = 'Détecté' then '1'
@@ -1019,7 +1079,7 @@ define("OPAL_GET_TREATMENT_PLAN_REPORT", "
     SELECT d.Description_EN AS diagnosisdescription, a.AliasType AS aliastype, pr.PriorityCode AS prioritycode,
     ae.Description AS aliasexpressiondescription, a.AliasName_EN AS aliasname, a.AliasDescription_EN AS aliasdescription,
     t.Status AS taskstatus, t.State AS taskstate, t.DueDateTime AS taskdue, t.CompletionDate AS taskcompletiondate
-    FROM ".OPAL_TASK_TABLE." t, ".OPAL_PATIENT_TABLE." p, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_ALIAS_TABLE." a, 
+    FROM ".OPAL_TASK_TABLE." t, ".OPAL_PATIENT_TABLE." p, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_ALIAS_TABLE." a,
     ".OPAL_DIAGNOSIS_TABLE." d, ".OPAL_PRIORITY_TABLE." AS pr
     WHERE t.PatientSerNum = p.PatientSerNum AND p.PatientSerNum = pr.PatientSerNum
     AND ae.AliasExpressionSerNum = t.AliasExpressionSerNum AND ae.AliasSerNum = a.AliasSerNum
@@ -1126,7 +1186,7 @@ define("OPAL_DOES_EDU_MATERIAL_EXISTS","
 define("OPAL_SANITIZE_EMPTY_TEST_RESULTS","
     UPDATE ".OPAL_TEST_CONTROL_TABLE." tc LEFT JOIN ".OPAL_TEST_EXPRESSION_TABLE." tre ON
     tc.TestControlSerNum = tre.TestControlSerNum SET tc.PublishFlag = ".INACTIVE_RECORD.", tc.LastUpdatedBy = :LastUpdatedBy,
-    tc.SessionId = :SessionId WHERE tre.TestExpressionSerNum IS NULL; 
+    tc.SessionId = :SessionId WHERE tre.TestExpressionSerNum IS NULL;
 ");
 
 define("OPAL_UPDATE_TEST_CONTROL", "
@@ -1160,7 +1220,7 @@ define("OPAL_GET_TEST_RESULT_CHART_LOG","
     SELECT DISTINCT trmh.CronLogSerNum AS cron_serial, COUNT(trmh.CronLogSerNum) AS y, cl.CronDateTime AS x,
     trc.Name_EN AS name FROM ".OPAL_TEST_RESULT_MH_TABLE." trmh, ".OPAL_TEST_RESULT_EXPRESSION_TABLE." tre,
     ".OPAL_CRON_LOG_TABLE." cl, ".OPAL_TEST_RESULT_CONTROL_TABLE." trc WHERE cl.CronStatus = 'Started'
-    AND cl.CronLogSerNum = trmh.CronLogSerNum AND trmh.CronLogSerNum IS NOT NULL 
+    AND cl.CronLogSerNum = trmh.CronLogSerNum AND trmh.CronLogSerNum IS NOT NULL
     AND trmh.TestResultExpressionSerNum = tre.TestResultExpressionSerNum
     AND tre.TestResultControlSerNum = trc.TestResultControlSerNum GROUP BY trmh.CronLogSerNum, cl.CronDateTime
     ORDER BY cl.CronDateTime ASC;
@@ -1170,7 +1230,7 @@ define("OPAL_GET_TEST_RESULT_CHART_LOG_BY_ID","
     SELECT DISTINCT trmh.CronLogSerNum AS cron_serial, COUNT(trmh.CronLogSerNum) AS y, cl.CronDateTime AS x,
     trc.Name_EN AS name FROM ".OPAL_TEST_RESULT_MH_TABLE." trmh, ".OPAL_TEST_RESULT_EXPRESSION_TABLE." tre,
     ".OPAL_CRON_LOG_TABLE." cl, ".OPAL_TEST_RESULT_CONTROL_TABLE." trc WHERE cl.CronStatus = 'Started'
-    AND cl.CronLogSerNum = trmh.CronLogSerNum AND trmh.CronLogSerNum IS NOT NULL 
+    AND cl.CronLogSerNum = trmh.CronLogSerNum AND trmh.CronLogSerNum IS NOT NULL
     AND trmh.TestResultExpressionSerNum = tre.TestResultExpressionSerNum AND tre.TestResultControlSerNum = :TestResultControlSerNum
     AND tre.TestResultControlSerNum = trc.TestResultControlSerNum GROUP BY trmh.CronLogSerNum, cl.CronDateTime
     ORDER BY cl.CronDateTime ASC;
@@ -1195,7 +1255,7 @@ define("OPAL_UPDATE_TEST_RESULT_MH_DELETION","
 
 define("OPAL_GET_TEST_NAMES","
     SELECT te.TestExpressionSerNum AS id, te.TestControlSerNum, tc.Name_EN AS name_EN, te.ExpressionName AS name
-    FROM ".OPAL_TEST_EXPRESSION_TABLE." te LEFT JOIN ".OPAL_TEST_CONTROL_TABLE." tc 
+    FROM ".OPAL_TEST_EXPRESSION_TABLE." te LEFT JOIN ".OPAL_TEST_CONTROL_TABLE." tc
     ON te.TestControlSerNum = tc.TestControlSerNum ORDER BY te.ExpressionName;
 ");
 
@@ -1204,7 +1264,7 @@ define("OPAL_COUNT_TEST_IDS","
 ");
 
 define("OPAL_UPDATE_TEST_EXPRESSION","
-    UPDATE ".OPAL_TEST_EXPRESSION_TABLE." SET TestControlSerNum = :TestControlSerNum, SessionId = :SessionId, 
+    UPDATE ".OPAL_TEST_EXPRESSION_TABLE." SET TestControlSerNum = :TestControlSerNum, SessionId = :SessionId,
     LastUpdatedBy = :LastUpdatedBy WHERE TestExpressionSerNum = :TestExpressionSerNum;
 ");
 
@@ -1228,7 +1288,7 @@ define("OPAL_GET_PATIENTS_STUDY_CONSENTS","
 ");
 
 define("OPAL_CHECK_CONSENT_FORM_PUBLISHED","
-    SELECT QuestionnaireControlSerNum, QuestionnaireName_EN, QuestionnaireName_FR, PublishFlag, DateAdded 
+    SELECT QuestionnaireControlSerNum, QuestionnaireName_EN, QuestionnaireName_FR, PublishFlag, DateAdded
     FROM ".OPAL_QUESTIONNAIRE_CONTROL_TABLE."
     WHERE QuestionnaireDBSerNum = :consentId AND PublishFlag = 1;
 ");
@@ -1258,27 +1318,27 @@ define("OPAL_UPDATE_PATIENT_PUBLISH_FLAG","
 ");
 
 define("OPAL_UPDATE_PATIENT","
-    UPDATE ".OPAL_PATIENT_TABLE." SET PatientAriaSer = :PatientAriaSer, PatientId = :PatientId,	PatientId2 = :PatientId2, 
-	FirstName = :FirstName, LastName = :LastName, Alias = :Alias, ProfileImage = :ProfileImage, Sex = :Sex, 
-	DateOfBirth = :DateOfBirth, Age = :Age, TelNum = :TelNum, EnableSMS = :EnableSMS, Email = :Email, 
-	Language = :Language, SSN = :SSN, AccessLevel = :AccessLevel, RegistrationDate = :RegistrationDate, 
-	ConsentFormExpirationDate = :ConsentFormExpirationDate, BlockedStatus = :BlockedStatus, StatusReasonTxt = :StatusReasonTxt, 
-	DeathDate = :DeathDate, SessionId = :SessionId, TestUser = :TestUser, TermsAndAgreementSign = :TermsAndAgreementSign, 
+    UPDATE ".OPAL_PATIENT_TABLE." SET PatientAriaSer = :PatientAriaSer, PatientId = :PatientId,	PatientId2 = :PatientId2,
+	FirstName = :FirstName, LastName = :LastName, Alias = :Alias, ProfileImage = :ProfileImage, Sex = :Sex,
+	DateOfBirth = :DateOfBirth, Age = :Age, TelNum = :TelNum, EnableSMS = :EnableSMS, Email = :Email,
+	Language = :Language, SSN = :SSN, AccessLevel = :AccessLevel, RegistrationDate = :RegistrationDate,
+	ConsentFormExpirationDate = :ConsentFormExpirationDate, BlockedStatus = :BlockedStatus, StatusReasonTxt = :StatusReasonTxt,
+	DeathDate = :DeathDate, SessionId = :SessionId, TestUser = :TestUser, TermsAndAgreementSign = :TermsAndAgreementSign,
 	TermsAndAgreementSignDateTime = :TermsAndAgreementSignDateTime WHERE PatientSerNum = :PatientSerNum
 ");
 
 define("OPAL_UPDATE_PATIENT_HOSPITAL_IDENTIFIER","
-    UPDATE " . OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE . " SET 
+    UPDATE " . OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE . " SET
     PatientSerNum = :PatientSerNum,
     Hospital_Identifier_Type_Code = :Hospital_Identifier_Type_Code,
     MRN = :MRN,
-    Is_Active = :Is_Active 
+    Is_Active = :Is_Active
     WHERE Patient_Hospital_Identifier_Id = :Patient_Hospital_Identifier_Id
 ");
 
 define("OPAL_GET_PATIENTS","
     SELECT DISTINCT pc.PatientSerNum AS serial, pt.SSN AS RAMQ, pc.PatientUpdate AS transfer, CONCAT(UCASE(LEFT(pt.FirstName, 1)), LCASE(SUBSTRING(pt.FirstName, 2)),
-																								
+
     ' ', UCASE(LEFT(pt.LastName, 1)), LCASE(SUBSTRING(pt.LastName, 2))) AS name, pc.LastTransferred AS lasttransferred, pt.email AS email FROM ".OPAL_PATIENT_TABLE." pt RIGHT JOIN
     ".OPAL_PATIENT_CONTROL_TABLE." pc ON pt.PatientSerNum = pc.PatientSerNum LEFT JOIN ".OPAL_USERS_TABLE." usr ON
     pt.PatientSerNum = usr.UserTypeSerNum WHERE usr.UserType = 'Patient';
@@ -1507,7 +1567,7 @@ define("OPAL_GET_SOURCE_ALIASES","
         WHEN a.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
         WHEN a.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." app WHERE app.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
         ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
-    END    
+    END
     AND m.deleted = ".NON_DELETED_RECORD." ORDER BY m.code");
 
 define("OPAL_GET_DEACTIVATED_DIAGNOSIS_CODES","
@@ -1614,6 +1674,15 @@ define("OPAL_EDU_MATERIAL_COND", "ifnull(EducationalMaterialControlSerNum, -1) !
 define("OPAL_HOSP_MAP_SERNUM", "HospitalMapSerNum = :HospitalMapSerNum");
 define("OPAL_HOSP_MAP_COND", "ifnull(HospitalMapSerNum, -1) != :HospitalMapSerNum");
 
+define("OPAL_GET_ALIAS_EXPRESSION","
+    SELECT A.AliasSerNum, A.AliasUpdate, A.SourceDatabaseSerNum, AE.AliasExpressionSerNum, AE.ExpressionName, AE.Description
+    FROM ".OPAL_ALIAS_TABLE." A, ".OPAL_ALIAS_EXPRESSION_TABLE." AE
+    WHERE A.AliasSerNum = AE.AliasSerNum
+    AND A.AliasType = :AliasType
+    AND AE.ExpressionName = :ExpressionName
+    AND AE.Description = :Description;
+");
+
 define("OPAL_DELETE_ALIAS_EXPRESSIONS","
     DELETE ae FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa ON
     msa.ID = ae.masterSourceAliasId
@@ -1628,7 +1697,7 @@ define("OPAL_DELETE_ALIAS_EXPRESSIONS","
 ");
 
 define("OPAL_UPDATE_ALIAS_EXPRESSION", "
-    UPDATE ".OPAL_ALIAS_EXPRESSION_TABLE." SET 
+    UPDATE ".OPAL_ALIAS_EXPRESSION_TABLE." SET
     AliasSerNum = :AliasSerNum,
     masterSourceAliasId = :masterSourceAliasId,
     ExpressionName = :ExpressionName,
@@ -1636,16 +1705,16 @@ define("OPAL_UPDATE_ALIAS_EXPRESSION", "
     LastUpdatedBy = :LastUpdatedBy,
     SessionId = :SessionId
     WHERE AliasExpressionSerNum = :AliasExpressionSerNum AND
-    (AliasSerNum != :AliasSerNum OR 
-    masterSourceAliasId != :masterSourceAliasId OR 
-    ExpressionName != :ExpressionName OR 
-    Description != :Description OR 
-    LastUpdatedBy != :LastUpdatedBy OR 
+    (AliasSerNum != :AliasSerNum OR
+    masterSourceAliasId != :masterSourceAliasId OR
+    ExpressionName != :ExpressionName OR
+    Description != :Description OR
+    LastUpdatedBy != :LastUpdatedBy OR
     SessionId != :SessionId)
 ");
 
 define("OPAL_UPDATE_ALIAS_EXPRESSION_WITH_LAST_TRANSFERRED", "
-    UPDATE ".OPAL_ALIAS_EXPRESSION_TABLE." SET 
+    UPDATE ".OPAL_ALIAS_EXPRESSION_TABLE." SET
     AliasSerNum = :AliasSerNum,
     masterSourceAliasId = :masterSourceAliasId,
     ExpressionName = :ExpressionName,
@@ -1654,12 +1723,12 @@ define("OPAL_UPDATE_ALIAS_EXPRESSION_WITH_LAST_TRANSFERRED", "
     LastTransferred = :LastTransferred,
     SessionId = :SessionId
     WHERE AliasExpressionSerNum = :AliasExpressionSerNum AND
-    (AliasSerNum != :AliasSerNum OR 
-    masterSourceAliasId != :masterSourceAliasId OR 
-    ExpressionName != :ExpressionName OR 
-    Description != :Description OR 
-    LastUpdatedBy != :LastUpdatedBy OR 
-    SessionId != :SessionId OR 
+    (AliasSerNum != :AliasSerNum OR
+    masterSourceAliasId != :masterSourceAliasId OR
+    ExpressionName != :ExpressionName OR
+    Description != :Description OR
+    LastUpdatedBy != :LastUpdatedBy OR
+    SessionId != :SessionId OR
     LastTransferred != :LastTransferred)
 ");
 
@@ -1714,7 +1783,7 @@ const OPAL_UPDATE_RESOURCE = "
 ";
 
 const OPAL_GET_RESOURCES_FOR_RESOURCE_APPOINTMENT = "
-    SELECT :AppointmentSerNum AS AppointmentSerNum, NOW() AS DateAdded, '1' AS ExclusiveFlag, '0' AS PrimaryFlag, 
+    SELECT :AppointmentSerNum AS AppointmentSerNum, NOW() AS DateAdded, '1' AS ExclusiveFlag, '0' AS PrimaryFlag,
     ResourceSerNum FROM ".OPAL_RESOURCE_TABLE." WHERE %%SOURCE_CODE_LIST%%;
 ";
 
@@ -1766,6 +1835,21 @@ const OPAL_DELETE_QUESTIONNAIRE_FREQUENCY_EVENTS = "
     DELETE FROM FrequencyEvents WHERE ControlTableSerNum = :ControlTableSerNum AND ControlTable = 'LegacyQuestionnaireControl';
 ";
 
+const UPDATE_APPOINTMENT_PENDING_LEVEL_IN_PROCESS = "
+    UPDATE ".OPAL_APPOINTMENTS_PENDING_TABLE." ap SET ap.`level` = ".APPOINTMENT_LEVEL_IN_PROCESS.", updatedBy = :updatedBy
+    WHERE ( SELECT COUNT(*) AS total FROM ".OPAL_APPOINTMENTS_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s
+    ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum WHERE s.SourceDatabaseName = ap.sourceName AND
+    s.Enabled = ".ACTIVE_RECORD." AND a.AppointmentAriaSer = ap.AppointmentAriaSer AND ap.`level` = ".APPOINTMENT_LEVEL_READY.") = 1
+";
+
+const GET_OLDEST_APPOINTMENT_PENDING_IN_PROCESS = "
+    SELECT ap.*, (SELECT a.AppointmentSerNum FROM ".OPAL_APPOINTMENTS_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s
+    ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum WHERE s.SourceDatabaseName = ap.sourceName AND s.Enabled = 1 AND
+    a.AppointmentAriaSer = ap.AppointmentAriaSer) AS AppointmentSerNum, (SELECT s1.SourceDatabaseSerNum FROM
+    ".OPAL_SOURCE_DATABASE_TABLE." s1 WHERE s1.SourceDatabaseName = ap.sourceName AND s1.Enabled = 1) AS SourceDatabaseSerNum
+    FROM ".OPAL_APPOINTMENTS_PENDING_TABLE." ap WHERE ap.`level` = 1 ORDER BY DateAdded ASC;
+";
+
 const OPAL_GET_AUDIT_SYSTEM_LAST_DATES = "
     SELECT DISTINCT DATE(creationDate) AS `date` FROM ".OPAL_AUDIT_SYSTEM_TABLE." WHERE creationDate != ''
     AND DATE(creationDate) != CURDATE() ORDER BY `date` DESC LIMIT ".LIMIT_DAYS_AUDIT_SYSTEM_BACKUP.";
@@ -1800,3 +1884,42 @@ const OPAL_COUNT_AUDIT_SYSTEM_REMAINING_DATES = "
     SELECT COUNT(DISTINCT DATE(creationDate)) AS remaining FROM ".OPAL_AUDIT_SYSTEM_TABLE." WHERE creationDate != ''
     AND DATE(creationDate) != CURDATE();
 ";
+
+const OPAL_GET_DOCUMENT = "
+SELECT DocumentSerNum,PatientSerNum,SourceDatabaseSerNum,
+DocumentId, AliasExpressionSerNum, DateAdded 
+FROM ".OPAL_DOCUMENT_TABLE." 
+WHERE DocumentId = :DocumentId
+AND SourceDatabaseSerNum = :SourceDatabaseSerNum;
+";
+
+const OPAL_GET_NOTIFICATION_CONTROL_DETAILS = "
+SELECT DISTINCT nc.NotificationControlSerNum,
+    CASE
+        WHEN p.Language = 'EN' THEN nc.Description_EN
+        WHEN p.Language = 'FR' THEN nc.Description_FR
+    END AS Message,
+    CASE 
+        WHEN p.Language = 'EN' THEN nc.Name_EN
+        WHEN p.Language = 'FR' THEN nc.Name_FR
+    END As Name
+FROM   ".OPAL_PATIENT_TABLE." p, ".OPAL_NOTIFICATION_CONTROL_TABLE." nc,
+        ".OPAL_NOTIFICATION_TYPES_TABLE." nt
+WHERE p.PatientSerNum              = :Patientser
+    AND nc.NotificationTypeSerNum  = nt.NotificationTypeSerNum
+    AND nt.NotificationTypeId      = :Notificationtype
+";
+
+const OPAL_GET_PATIENT_DEVICE_IDENTIFIERS = "
+SELECT DISTINCT ptdid.PatientDeviceIdentifierSerNum,
+    ptdid.RegistrationId, ptdid.DeviceType
+FROM ".OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE." ptdid
+WHERE
+    ptdid.PatientSerNum = :Patientser
+    AND ptdid.DeviceType in ('0', '1')
+    AND IfNull(RegistrationId, '') <> ''
+";
+
+const OPAL_GET_PATIENT_ACCESS_LEVEL = "
+SELECT pt.Accesslevel
+FROM " . OPAL_PATIENT_TABLE . " pt WHERE pt.PatientSerNum = :PatientSer;";

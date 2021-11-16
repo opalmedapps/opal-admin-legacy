@@ -693,7 +693,7 @@ class Patient extends Module {
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
-
+        
         $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
