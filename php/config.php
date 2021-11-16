@@ -76,6 +76,7 @@ define( "FRONTEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", FRONTEND_ABS_PA
 define( "UPLOAD_ABS_PATH", FRONTEND_ABS_PATH . "uploads/" );
 define( "UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
 define( "ADMIN_REGISTRATION_URL", $config['pathConfig']['registration_url'] );
+define( "CLINICAL_DOC_PATH", $config['pathConfig']['shared_drive_path'] . "clinical/documents/");
 
 define("ALIAS_TYPE_APPOINTMENT_TEXT", 'Appointment');
 define("ALIAS_TYPE_DOCUMENT_TEXT", 'Document');
@@ -87,6 +88,8 @@ define("ALIAS_TYPE_DOCUMENT", 3);
 
 const RESOURCE_LEVEL_READY = 1;
 const RESOURCE_LEVEL_IN_PROCESS = 2;
+const APPOINTMENT_LEVEL_READY = 1;
+const APPOINTMENT_LEVEL_IN_PROCESS = 2;
 
 /*
  * Module ID of each module in the opalAdmin
@@ -223,6 +226,7 @@ require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Appointment.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "ApiCall.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Sms.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Document.php");
 
 // Push Notification FCM and APN credientials.
 define( "API_KEY" , $config['pushNotificationConfig']['android']['apiKey'] );
@@ -279,3 +283,14 @@ define("OPAL_ADMIN_LANGUAGES",array(ABVR_FRENCH_LANGUAGE, ABVR_ENGLISH_LANGUAGE)
  * PHP Sessions config
  * */
 define("PHP_SESSION_TIMEOUT", 7200);
+
+/*
+ * Appointment Status
+ * */
+const APPOINTMENT_STATUS_CODE_OPEN = "Open";
+const APPOINTMENT_STATUS_CODE_PROGRESS = "In Progress";
+const APPOINTMENT_STATUS_CODE_CANCELLED = "Cancelled";
+const APPOINTMENT_STATUS_CODE_COMPLETED = "Completed";
+const APPOINTMENT_STATUS_CODE_DELETED = "Deleted";
+const APPOINTMENT_STATE_CODE_ACTIVE = "Active";
+const APPOINTMENT_STATE_CODE_DELETED = "Deleted";

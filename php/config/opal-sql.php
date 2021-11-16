@@ -95,6 +95,8 @@ define("OPAL_TRIGGER_TABLE","jsonTrigger");
 define("OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE","Patient_Hospital_Identifier");
 define("OPAL_DIAGNOSIS_TABLE","Diagnosis");
 define("OPAL_APPOINTMENTS_TABLE", "Appointment");
+define("OPAL_APPOINTMENTS_PENDING_TABLE", "AppointmentPending");
+define("OPAL_APPOINTMENTS_PENDING_MH_TABLE", "AppointmentPendingMH");
 define("OPAL_APPOINTMENT_CHECKIN_TABLE","AppointmentCheckin");
 define("OPAL_RESOURCE_TABLE", "Resource");
 define("OPAL_RESOURCE_APPOINTMENT_TABLE", "ResourceAppointment");
@@ -114,6 +116,7 @@ define("OPAL_TEST_RESULT_CONTROL_TABLE","TestResultControl");
 define("OPAL_PATIENT_ACTIVITY_LOG_TABLE","PatientActivityLog");
 define("OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE", "PatientDeviceIdentifier");
 define("OPAL_APPOINTMENT_CHECK_IN_TABLE", "AppointmentCheckin");
+define("OPAL_PUSH_NOTIFICATION_TABLE", "PushNotification");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");

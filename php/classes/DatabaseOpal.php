@@ -3419,6 +3419,20 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
+     * Get a specific alias with appointment code and clinical description in the Alias table
+     * @param $typeCode string - appointment type
+     * @param $typeDesc string - appointment type description
+     * @return array - data found if any
+     */
+    function getAlias($aliasType,$typeCode,$typeDesc) {
+        return $this->_fetchAll(OPAL_GET_ALIAS_EXPRESSION, array(
+            array("parameter"=>":AliasType","variable"=>$aliasType,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":ExpressionName","variable"=>$typeCode,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Description"   ,"variable"=>$typeDesc,"data_type"=>PDO::PARAM_STR)
+        ));
+    }
+
+    /**
      * Update an alias.
      * @param $toUpdate
      * @return int - number of row updated
@@ -3562,6 +3576,98 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":mrn","variable"=>$mrn,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":startDate","variable"=>$startDate,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":endDate","variable"=>$endDate,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get patient appointment
+     * @params $sourceSystem : String - Source System (Aria, Medivisit, etc)
+     * @params $sourceId  : int - Source System Appointment Id
+     * @return array - an appointment details
+     */
+    function findAppointment($sourceSystem,$sourceId){
+        return $this->_fetchAll(OPAL_GET_APPOINTMENT_ID, array(
+            array("parameter"=>":SourceSystem","variable"=>$sourceSystem,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SourceId","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get Pending Appointment
+     * @params $sourceSystem : String - Source System (Aria, Medivisit, etc)
+     * @params $sourceId  : int - Source System Appointment Id
+     * @return array - an appointment details
+     */
+    function findPendingAppointment($sourceSystem,$sourceId){
+        return $this->_fetchAll(OPAL_GET_APPOINTMENT_PENDING, array(
+            array("parameter"=>":SourceSystem","variable"=>$sourceSystem,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SourceId","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get pending appointment history
+     * @params $sourceSystem : String - Source System (Aria, Medivisit, etc)
+     * @params $sourceId  : int - Source System Appointment Id
+     * @return array - an appointment details
+     */
+    function findPendingMHAppointment($sourceSystem,$sourceId){
+        return $this->_fetchAll(OPAL_GET_APPOINTMENT_PENDING_MH, array(
+            array("parameter"=>":SourceSystem","variable"=>$sourceSystem,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SourceId","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Insert an appointment only if it does not exists already.
+     * @param $toInsert
+     * @return int - number of row modified
+     */
+    function insertAppointment($toInsert) {
+        return $this->_replaceRecordIntoTable(OPAL_APPOINTMENTS_TABLE, $toInsert);
+    }
+
+    /**
+     * Insert pending appointment.
+     * @param $toInsert
+     * @return int - number of row modified
+     */
+    function insertPendingAppointment($toInsert) {
+        return $this->_replaceRecordIntoTable(OPAL_APPOINTMENTS_PENDING_TABLE, $toInsert);
+    }
+
+    /**
+     * Insert pending appointment history.
+     * @param $toInsert
+     * @return int - number of row modified
+     */
+    function insertPendingMHAppointment($toInsert) {
+        return $this->_insertRecordIntoTable(OPAL_APPOINTMENTS_PENDING_MH_TABLE, $toInsert);        
+    }
+
+    /**
+     * Delete a specific appointmentPending record
+     * @param $id - primary key of the record in appointmentPending to delete
+     * @return int - number of records affected
+     */
+    function deleteAppointmentPending($id) {
+        $toDelete = array(
+            array("parameter"=>":AppointmentSerNum","variable"=>$id),
+        );
+        return $this->_execute(OPAL_DELETE_APPOINTMENT_PENDING, $toDelete);
+    }
+
+    /**
+     * Delete a specific appointment.
+     * @params  $id : int - Diagnosis sernum
+     * @return  int - number of record deleted
+     */
+    function deleteAppointment($toUpdate) {
+        $this->_execute(OPAL_UPDATE_APPOINTMENT_STATUS, array(
+            array("parameter"=>":AppointmentSerNum","variable"=>$toUpdate['AppointmentSerNum'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$toUpdate['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":Status","variable"=>$toUpdate['Status'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":State","variable"=>$toUpdate['State'],"data_type"=>PDO::PARAM_STR),            
         ));
     }
 
@@ -3800,7 +3906,37 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Get the latest dates of entries from the audit system table
+
+     * Update ever appointment pending of level 1 with appointment ready to level 2.
+     * @return int - number or records affected
+     */
+    function updateAppointmentPendingLevelInProcess() {
+        return $this->_updateRecordIntoTable(UPDATE_APPOINTMENT_PENDING_LEVEL_IN_PROCESS, array("updatedBy"=>$this->getUsername()));
+    }
+
+    /**
+     * Return the oldest appointment pending marked as a level 2 (processing)
+     * @return array - data found
+     */
+    function getOldestAppointmentPendingInProcess() {
+        return $this->_fetchAll(GET_OLDEST_APPOINTMENT_PENDING_IN_PROCESS, array());
+    }
+
+    /**
+     * Update an appointment
+     * @param $toUpdate - appointment details
+     * @return int - number of row modified
+     */
+    function updateAppointment($toUpdate) {        
+        $this->_execute(OPAL_UPDATE_APPOINTMENT_STATUS, array(
+            array("parameter"=>":Status","variable"=>$toUpdate['Status'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":State","variable"=>$toUpdate['State'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$toUpdate['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":AppointmentSerNum","variable"=>$toUpdate['AppointmentSerNum'],"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /* Get the latest dates of entries from the audit system table
      * @return array - list of records found
      */
     function getAuditSystemLastDates() {
@@ -3831,5 +3967,83 @@ class DatabaseOpal extends DatabaseAccess {
 
     function countAuditSystemRemainingDates() {
         return $this->_fetch(OPAL_COUNT_AUDIT_SYSTEM_REMAINING_DATES, array());
+    }
+
+    /**
+     * Get a specific document with ID
+     * @param $documentId string - DocumentID
+     * @param $sourceId string - appointment type description
+     * @return array - data found if any
+     */
+    function getDocument($sourceId,$documentId) {
+        return $this->_fetchAll(OPAL_GET_DOCUMENT, array(            
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":DocumentId"   ,"variable"=>$documentId,"data_type"=>PDO::PARAM_STR)
+        ));
+    }
+
+    /**
+     * Insert an appointment only if it does not exists already.
+     * @param $toInsert
+     * @return int - number of row modified
+     */
+    function insertDocument($toInsert) {
+        return $this->_replaceRecordIntoTable(OPAL_DOCUMENT_TABLE, $toInsert);
+    }
+
+
+    /**
+     * Insert a document info only if it does not exists already.
+     * @param $toInsert
+     * @return int - number of row modified
+     */
+    function updateDocument($records) {
+        return $this->_replaceRecordIntoTable(OPAL_DOCUMENT_TABLE, $records);
+    }
+
+
+    /**
+     * Get patient device 
+     * @param $typeCode string - appointment type
+     * @param $typeDesc string - appointment type description
+     * @return array - data found if any
+     */
+    function getPatientDeviceIdentifiers($patientser) {
+        return $this->_fetchAll(OPAL_GET_PATIENT_DEVICE_IDENTIFIERS, array(
+            array("parameter"=>":Patientser","variable"=>$patientser,"data_type"=>PDO::PARAM_STR)
+        ));
+    }
+
+    /**
+     * Get patient notificaton control detail
+     * @param $patientser string - patient ID
+     * @param $notificationType string - notification description
+     * @return array - data found if any
+     */
+    function getNotificationControlDetails($patientser, $notificationtype){
+        return $this->_fetchAll(OPAL_GET_NOTIFICATION_CONTROL_DETAILS, array(
+            array("parameter"=>":Patientser","variable"=>$patientser,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Notificationtype","variable"=>$notificationtype,"data_type"=>PDO::PARAM_STR)
+        ));
+    }
+
+    /*
+     * Insert a new notification
+     * @params  array of the notification infos
+     * @return  ID of the entry
+     * */
+    function insertPushNotification($toInsert) {        
+        return $this->_replaceRecordIntoTable(OPAL_PUSH_NOTIFICATION_TABLE, $toInsert);
+    }
+
+    /**
+     *  Get patient access level
+     * @param $patientser string - patient ID
+     * @return array - data found if any
+     */
+    function getPatientAccessLevel($patientser){        
+        return $this->_fetch(OPAL_GET_PATIENT_ACCESS_LEVEL, array(
+            array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR)
+        ));
     }
 }

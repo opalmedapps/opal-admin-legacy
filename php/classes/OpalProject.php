@@ -102,13 +102,14 @@ abstract class OpalProject
         } else {
             $errCode = "0" . $errCode;
         }
-
+        
         // 3rd bit - MRN and site combo must exists
         if(bindec($errCode) != 0) {
             $patientSite = array();
             $errCode = "1" . $errCode;
-        } else {
-            $patientSite = $this->opalDB->getPatientSite($post["mrn"], $post["site"]);
+        } else {            
+            $patientSite = $this->opalDB->getPatientSite($post["mrn"], $post["site"]);            
+
             if(count($patientSite) != 1) {
                 $patientSite = array();
                 $errCode = "1" . $errCode;
@@ -137,7 +138,6 @@ abstract class OpalProject
                 "ResourceName"=>$resource["name"],
                 "ResourceType"=>$resource["type"],
             );
-
             $rowCount = $this->opalDB->updateResource($data);
             if (intval($rowCount) <= 0)
                 $this->opalDB->insertResource($data);
@@ -147,7 +147,7 @@ abstract class OpalProject
         $resourceIdList = array();
         foreach ($resourceAppointmentList as $id)
             array_push($resourceIdList, intval($id["ResourceSerNum"]));
-
+        
         $this->opalDB->deleteResourcesForAppointment($appointmentId, $resourceIdList);
         $this->opalDB->insertResourcesForAppointment($resourceAppointmentList);
     }
