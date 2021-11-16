@@ -3993,11 +3993,57 @@ class DatabaseOpal extends DatabaseAccess {
 
 
     /**
-     * Insert an appointment only if it does not exists already.
+     * Insert a document info only if it does not exists already.
      * @param $toInsert
      * @return int - number of row modified
      */
     function updateDocument($records) {
         return $this->_replaceRecordIntoTable(OPAL_DOCUMENT_TABLE, $records);
+    }
+
+
+    /**
+     * Get patient device 
+     * @param $typeCode string - appointment type
+     * @param $typeDesc string - appointment type description
+     * @return array - data found if any
+     */
+    function getPatientDeviceIdentifiers($patientser) {
+        return $this->_fetchAll(OPAL_GET_PATIENT_DEVICE_IDENTIFIERS, array(
+            array("parameter"=>":Patientser","variable"=>$patientser,"data_type"=>PDO::PARAM_STR)
+        ));
+    }
+
+    /**
+     * Get patient notificaton control detail
+     * @param $patientser string - patient ID
+     * @param $notificationType string - notification description
+     * @return array - data found if any
+     */
+    function getNotificationControlDetails($patientser, $notificationtype){
+        return $this->_fetchAll(OPAL_GET_NOTIFICATION_CONTROL_DETAILS, array(
+            array("parameter"=>":Patientser","variable"=>$patientser,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Notificationtype","variable"=>$notificationtype,"data_type"=>PDO::PARAM_STR)
+        ));
+    }
+
+    /*
+     * Insert a new notification
+     * @params  array of the notification infos
+     * @return  ID of the entry
+     * */
+    function insertPushNotification($toInsert) {        
+        return $this->_replaceRecordIntoTable(OPAL_PUSH_NOTIFICATION_TABLE, $toInsert);
+    }
+
+    /**
+     *  Get patient access level
+     * @param $patientser string - patient ID
+     * @return array - data found if any
+     */
+    function getPatientAccessLevel($patientser){        
+        return $this->_fetch(OPAL_GET_PATIENT_ACCESS_LEVEL, array(
+            array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR)
+        ));
     }
 }
