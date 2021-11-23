@@ -211,7 +211,14 @@ sub getPostControlsMarkedForPublishModularCron
 {
 
     my ($postType) = @_; # the type from args
-    my @postControlList = (); # initialize a list 
+    my @postControlList = (); # initialize a list
+
+    $control_table = "";
+    if($postType eq 'Announcement'){
+        $control_table = "cronControlPost_Announcement";
+    }elsif($postType eq 'Treatment Team Message'){
+        $control_table = "cronControlPost_TreatmentTeamMessage";
+    }
 
     my $info_sql = "
         SELECT DISTINCT
@@ -221,10 +228,9 @@ sub getPostControlsMarkedForPublishModularCron
             ccp.lastPublished
         FROM
             PostControl pc,
-            cronControlPost ccp
+            $control_table ccp
         WHERE
             ccp.publishFlag      = 2
-        AND ccp.cronType         = '$postType'
         AND pc.PostControlSerNum = ccp.cronControlPostSerNum
     ";
 
@@ -295,13 +301,19 @@ sub setPostControlLastPublishedModularControllers
 {
     my ($current_datetime, $module) = @_; # our current datetime in args
 
+    $control_table = "";
+    if($module eq 'Announcement'){
+        $control_table = "cronControlPost_Announcement";
+    }elsif($module eq 'Treatment Team Message'){
+        $control_table = "cronControlPost_TreatmentTeamMessage";
+    }
+
     my $update_sql = "
-        UPDATE cronControlPost CCP, PostControl PC
+        UPDATE $control_table CCP, PostControl PC
         SET PC.LastPublished = '$current_datetime',
             CCP.lastPublished = '$current_datetime',
             CCP.publishFlag = 1
         WHERE CCP.cronControlPostSerNum = PC.PostControlSerNum
-            AND CCP.cronType = '$module'
             AND CCP.publishFlag = 2
         ;
     ";
@@ -322,17 +334,23 @@ sub setPostControlLastPublishedModularControllers
 #======================================================================================
 sub CheckPostControlsMarkedForPublishModularCron
 {
-	my ($module) = @_; # current datetime, cron module type, 
+	my ($module) = @_; # current datetime, cron module type,
+
+    $control_table = "";
+    if($module eq 'Announcement'){
+        $control_table = "cronControlPost_Announcement";
+    }elsif($module eq 'Treatment Team Message'){
+        $control_table = "cronControlPost_TreatmentTeamMessage";
+    }
 
     # --------------------------------------------------
     # First step is to make sure that the two tables have the same amount of records
 	my $insert_sql = "
-		INSERT INTO cronControlPost (cronControlPostSerNum, cronType, publishFlag, lastPublished, lastUpdated, sessionId)
-		SELECT PC.PostControlSerNum, '$module' cronType, PC.PublishFlag, PC.LastPublished, PC.LastUpdated, PC.SessionId
+		INSERT INTO $control_table (cronControlPostSerNum, publishFlag, lastPublished, lastUpdated, sessionId)
+		SELECT PC.PostControlSerNum, PC.PublishFlag, PC.LastPublished, PC.LastUpdated, PC.SessionId
 		FROM PostControl PC
 		WHERE PC.PostType = '$module'
-			AND PC.PostControlSerNum NOT IN (SELECT cronControlPostSerNum FROM cronControlPost CCP
-			WHERE CCP.cronType = '$module');
+			AND PC.PostControlSerNum NOT IN (SELECT cronControlPostSerNum FROM $control_table);
     	";
 
     # prepare query
@@ -347,11 +365,10 @@ sub CheckPostControlsMarkedForPublishModularCron
     # Second step is to sync the publish flag between the two tables
     # PostControl is the master and cronControlPost is the slave
 	my $update_sql = "
-        UPDATE PostControl PC, cronControlPost CCP
+        UPDATE PostControl PC, $control_table CCP
         SET CCP.publishFlag = PC.PublishFlag
         WHERE PC.PostControlSerNum = CCP.cronControlPostSerNum
-            AND CCP.publishFlag <> PC.PublishFlag
-            AND CCP.cronType = '$module';
+            AND CCP.publishFlag <> PC.PublishFlag;
     	";
 
     # prepare query
@@ -365,10 +382,9 @@ sub CheckPostControlsMarkedForPublishModularCron
     # --------------------------------------------------
     # Third step update the publish flag from 1 to 2
 	my $update2_sql = "
-        UPDATE cronControlPost 
+        UPDATE $control_table
         SET publishFlag = 2
-        WHERE cronType = '$module'
-            AND publishFlag = 1;
+        WHERE publishFlag = 1;
     	";
 
     # prepare query
