@@ -195,7 +195,7 @@ class Appointment extends Module
             $toUpdate["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];
             $OStartDateTime = strtotime($toUpdate["ScheduledStartTime"]); 
 
-            if ($post["status"] == "Cancelled"){
+            if ($post["status"] == "Cancelled" || $post["status"] == "Deleted"){
                 $action = "AppointmentCancelled";
                 $replacementMap = array();
                 setlocale(LC_TIME, 'fr_CA');                                        
