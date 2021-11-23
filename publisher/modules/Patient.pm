@@ -1548,7 +1548,6 @@ sub CheckPatientForUpdateModularCron
 			(SELECT cronControlPatientSerNum FROM $control_table);
 ";
 
-	print "SQL: $patients_sql\n\n";
 
 	# prepare query
 	my $query = $SQLDatabase->prepare($patients_sql)
