@@ -635,13 +635,38 @@ define("SQL_GET_QUESTIONNAIRE_LIST_ORMS","
 // This function has to be redone since it was not designed properly but we are lacking time and man power. It was
 // taken directly from the stored procedure getQuestionNameAndAnswerByID. See OPAL-1026
 define("GET_ANSWERS_CHART_TYPE","
-	SELECT UNIX_TIMESTAMP(DATE_FORMAT(aq.lastUpdated, '%Y-%m-%d')) AS dateTimeAnswered, 
-        (CASE 
-            When a.typeId = ".CHECKBOXES." Then (SELECT CONVERT(getDisplayName(cOpt.description, :languageId), CHAR(516)) 
-                                                FROM ".ANSWER_CHECKBOX_TABLE." aC
-                                                INNER JOIN ".CHECKBOX_OPTION_TABLE." cOpt
-                                                ON cOpt.ID = aC.value
-                                                WHERE aC.answerId = a.ID)
+    SELECT a.dateTimeAnswered,
+        GROUP_CONCAT(CONVERT(getDisplayName(cOpt.description, :languageId), CHAR(516)) SEPARATOR '|') AS answer,
+        a.ID AS answerId,
+        NULL AS min_Value,
+        NULL AS max_Value	
+    FROM (SELECT UNIX_TIMESTAMP(DATE_FORMAT(aq.lastUpdated, '%Y-%m-%d')) AS dateTimeAnswered,
+        a.ID,
+        a.ID AS answerId
+    FROM ".ANSWER_TABLE." a
+        INNER JOIN ".ANSWER_SECTION_TABLE." aSec ON a.answerSectionId = aSec.ID
+        AND a.deleted = ".NON_DELETED_RECORD."
+        AND a.typeId = ".CHECKBOXES."
+        INNER JOIN ".ANSWER_QUESTIONNAIRE_TABLE." aq ON aq.questionnaireId = :questionnaireId
+        AND aq.ID = aSec.answerQuestionnaireId 
+        AND aq.patientId = :patientId
+        AND aq.status = ".QUESTIONNAIRE_STATUS_COMPLETED."
+        AND aq.deleted = ".NON_DELETED_RECORD."
+        INNER JOIN ".QUESTION_SECTION_TABLE." qSec ON a.sectionId = qSec.sectionId 
+        AND qSec.questionId = a.questionId
+        INNER JOIN ".QUESTION_TABLE." q ON qSec.questionId = q.ID 
+        AND qSec.ID = :questionSectionId 
+        AND q.deleted = ".NON_DELETED_RECORD."
+        AND getDisplayName(q.question, :languageId) = :questionText
+    ) as a,
+        ".ANSWER_CHECKBOX_TABLE." aC
+        INNER JOIN ".CHECKBOX_OPTION_TABLE." cOpt
+        ON cOpt.ID = aC.value
+        WHERE aC.answerId = a.ID
+        GROUP BY a.ID
+    UNION
+    SELECT UNIX_TIMESTAMP(DATE_FORMAT(aq.lastUpdated, '%Y-%m-%d')) AS dateTimeAnswered,
+        (CASE
             When a.typeId = ".SLIDERS." Then (SELECT CONVERT(asr.value, CHAR(516))
                                                 FROM ".ANSWER_SLIDER_TABLE." asr
                                                 WHERE asr.answerId = a.ID)
@@ -664,24 +689,29 @@ define("GET_ANSWERS_CHART_TYPE","
             When a.typeId = ".DATE." Then (SELECT CONVERT(adt.value, CHAR(516))
                                                 FROM ".ANSWER_DATE_TABLE." adt
                                                 WHERE adt.answerId = a.ID)
-            ELSE NULL
-            END) AS answer,
-        a.ID AS answerId
+        ELSE 
+            NULL
+        END) AS answer,
+        a.ID AS answerId,
+        s.minValue AS min_Value,
+        s.maxValue AS max_Value	
     FROM ".ANSWER_TABLE." a
-    INNER JOIN ".ANSWER_SECTION_TABLE." aSec ON a.answerSectionId = aSec.ID
-    AND a.deleted = ".NON_DELETED_RECORD."
-    INNER JOIN ".ANSWER_QUESTIONNAIRE_TABLE." aq ON aq.questionnaireId = :questionnaireId
-    AND aq.ID = aSec.answerQuestionnaireId 
-    AND aq.patientId = :patientId
-    AND aq.status = ".QUESTIONNAIRE_STATUS_COMPLETED."
-    AND aq.deleted = ".NON_DELETED_RECORD."
-    INNER JOIN ".QUESTION_SECTION_TABLE." qSec ON a.sectionId = qSec.sectionId 
-    AND qSec.questionId = a.questionId
-    INNER JOIN ".QUESTION_TABLE." q ON qSec.questionId = q.ID 
-    AND qSec.ID = :questionSectionId 
-    AND q.deleted = ".NON_DELETED_RECORD."
-    AND getDisplayName(q.question, :languageId) = :questionText
-	;
+        INNER JOIN ".ANSWER_SECTION_TABLE." aSec ON a.answerSectionId = aSec.ID
+        AND a.deleted = ".NON_DELETED_RECORD."
+        AND a.typeId <> ".CHECKBOXES."
+        INNER JOIN ".ANSWER_QUESTIONNAIRE_TABLE." aq ON aq.questionnaireId = :questionnaireId
+        AND aq.ID = aSec.answerQuestionnaireId 
+        AND aq.patientId = :patientId
+        AND aq.status = ".QUESTIONNAIRE_STATUS_COMPLETED."
+        AND aq.deleted = ".NON_DELETED_RECORD."
+        INNER JOIN ".QUESTION_SECTION_TABLE." qSec ON a.sectionId = qSec.sectionId 
+        AND qSec.questionId = a.questionId
+        INNER JOIN ".QUESTION_TABLE." q ON qSec.questionId = q.ID 
+        AND qSec.ID = :questionSectionId 
+        AND q.deleted = ".NON_DELETED_RECORD."
+        AND getDisplayName(q.question, :languageId) = :questionText
+        LEFT JOIN ".SLIDER_TABLE." s on s.questionId = q.ID
+    ;
 ");
 
 define("GET_PATIENT_PER_EXTERNALID", "
