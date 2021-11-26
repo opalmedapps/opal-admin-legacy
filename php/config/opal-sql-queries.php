@@ -1931,3 +1931,10 @@ SET pt.Accesslevel = :AccessLevel WHERE pt.PatientSerNum = :PatientSer;";
 const OPAL_UPDATE_PATIENT_EMAIL = "
 UPDATE " . OPAL_PATIENT_TABLE . " pt
 SET pt.Email = :Email WHERE pt.PatientSerNum = :PatientSer;";
+
+const OPAL_DELETE_SECURITY_ANSWER_EMAIL = "
+DELETE " . OPAL_SECURITY_ANSWER_TABLE . " sat WHERE sat.PatientSerNum = :PatientSer;";
+
+const OPAL_UPDATE_PATIENT_Password = "
+UPDATE " . OPAL_USERS_TABLE . " ut
+SET ut.Password = :Password WHERE ut.username = :username AND ut.SessionId 'opalAdmin';";
