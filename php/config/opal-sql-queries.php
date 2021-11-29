@@ -1923,3 +1923,11 @@ WHERE
 const OPAL_GET_PATIENT_ACCESS_LEVEL = "
 SELECT pt.Accesslevel
 FROM " . OPAL_PATIENT_TABLE . " pt WHERE pt.PatientSerNum = :PatientSer;";
+
+const OPAL_GET_ALIAS_EXPRESSION_DETAIL = "
+SELECT ExpressionName, Description,
+    AliasType, AliasName_FR, AliasName_EN,
+    AliasDescription_FR, AliasDescription_EN
+FROM ".OPAL_ALIAS_EXPRESSION_TABLE." AE, ". OPAL_ALIAS_TABLE." A
+WHERE AE.AliasExpressionSerNum = :AliasExpressionSerNum
+AND AE.AliasSerNum = A.AliasSerNum;";

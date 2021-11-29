@@ -190,23 +190,31 @@ class Document extends Module
             fclose( $ifp );
         }        
     }
-    /*
+    /** 
      * Insert a new document after validation.
-     * @params  $post - array - contains document details
-     * @return  200 or error 400 with validation error
-     * */
+     * @param  $post - array - contains document details
+     * @return int 200 or error 400 with validation error
+     */
     public function insertDocument($post) {
         $this->checkWriteAccess($post);        
         $post = HelpSetup::arraySanitization($post);
         return $this->_insertDocument($post);
     }
 
+    /**
+     * Notifiy document change
+     * @param $data - contains document details
+     * @param $action - trigger event
+     * @return null
+     */
     protected function _notifyDocumentChange($data, $action){
         $notificationControl = $this->opalDB->getNotificationControlDetails($data["PatientSerNum"],$action);
         $controlser         = $notificationControl[0]["NotificationControlSerNum"];
         $title              = $notificationControl[0]["Name"];
         $message            = $notificationControl[0]["Message"];
-
+        
+        $this->_insertNotification($data,$controlser,$data["DocumentSerNum"]);
+        
         $ptdIds = $this->opalDB->getPatientDeviceIdentifiers($data["PatientSerNum"]);       
 
         if (count($ptdIds) == 0){

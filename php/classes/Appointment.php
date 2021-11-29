@@ -279,6 +279,7 @@ class Appointment extends Module
     protected function _replaceAppointment($post) {
         $patientSite = null;
         $source = null;
+        $replacementMap = array();
 
         $errCode = $this->_validateInsertAppointment($post, $patientSite, $source);
         if($errCode != 0)
@@ -307,25 +308,41 @@ class Appointment extends Module
             "SessionId" => $this->opalDB->getSessionId(),
         );
 
+        $aliasInfos = $this->opalDB->getAlias('Appointment',$post['appointmentTypeCode'], $post['appointmentTypeDescription']);
         $appointment = $this->opalDB->findAppointment($source["SourceDatabaseSerNum"],$post["sourceId"]);
-        
-        if(count($appointment) > 0 ) {
+        $SStartDateTime = strtotime($post["scheduledTimestamp"]);
+        $OStartDateTime = strtotime($post["scheduledTimestamp"]);
+
+        if(count($appointment) == 0 ) {
+            $action = 'AppointmentNew';                    
+            setlocale(LC_TIME, 'fr_CA');                                        
+            $replacementMap["\$newAppointmentDateFR"] =  strftime('%A %d %B %Y', $SStartDateTime);
+            $replacementMap["\$newAppointmentTimeFR"] =  strftime('%R', $SStartDateTime);
+            setlocale(LC_TIME, 'en_CA');
+            $replacementMap["\$newAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $SStartDateTime);
+            $replacementMap["\$newAppointmentTimeEN"] =  strftime('%l:%M %p', $SStartDateTime);
+            
+        } else {
             $appointment = $appointment[0];
             unset($toInsert["sourceName"]);
             $toInsert["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];
-            $toInsert["AppointmentSerNum"] = $appointment["AppointmentSerNum"];
+            $toInsert["AppointmentSerNum"] = $appointment["AppointmentSerNum"];            
+            $OStartDateTime = strtotime($appointment["ScheduledStartTime"]);
         }
         
-        $aliasInfos = $this->opalDB->getAlias('Appointment',$post['appointmentTypeCode'], $post['appointmentTypeDescription']);
-        if(count($aliasInfos) == 1) {
+        if(count($aliasInfos) == 0) {
+            $toInsert["Level"]  = 1;
+            $toInsert["appointmentTypeCode"] = $post['appointmentTypeCode'];
+            $toInsert["appointmentTypeDescription"] = $post['appointmentTypeDescription'];            
+            $toInsert["ID"] = $this->_insertAppointmentPending($toInsert, $source);
+            $this->_insertAppointmentPendingMH($toInsert, $source);
+        } else {
             $this->_updateAppointmentPending($toInsert);
             unset($toInsert["sourceName"]);
             unset($toInsert["updatedBy"]);
             $toInsert["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];
             $toInsert["AliasExpressionSerNum"] = $aliasInfos[0]['AliasExpressionSerNum'];
-            $SStartDateTime = strtotime($post["scheduledTimestamp"]);
-            $OStartDateTime = strtotime($appointment["ScheduledStartTime"]);            
-
+            
             if ($SStartDateTime <> $OStartDateTime) {
                 //if difference is greater than an hour
 		        // 2019-06-12 : Change from 1 hour to 2 hours by John's request
@@ -333,8 +350,7 @@ class Appointment extends Module
                 print_r("Difference entre " . $appointment["ScheduledStartTime"] . " et " . $post["scheduledTimestamp"] . " est de " . $hourdiff ."\n\n");
                                 
                 if ($hourdiff >= 2) {
-                    $action = 'AppointmentTimeChange';                                  
-                    $replacementMap = array();                
+                    $action = 'AppointmentTimeChange';                    
                     setlocale(LC_TIME, 'fr_CA');                                        
                     $replacementMap["\$oldAppointmentDateFR"] =  strftime('%A %d %B %Y', $OStartDateTime);
                     $replacementMap["\$newAppointmentDateFR"] =  strftime('%A %d %B %Y', $SStartDateTime);
@@ -346,19 +362,13 @@ class Appointment extends Module
                     $replacementMap["\$newAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $SStartDateTime);
                     $replacementMap["\$oldAppointmentTimeEN"] =  strftime('%l:%M %p', $OStartDateTime);
                     $replacementMap["\$newAppointmentTimeEN"] =  strftime('%l:%M %p', $SStartDateTime);
-
-                    $this->_notifyAppointmentChange($toInsert, $action, $replacementMap);
                 }
             }
             
-            return $this->opalDB->insertAppointment($toInsert);
-        } else {
-            $toInsert["Level"]  = 1;
-            $toInsert["appointmentTypeCode"] = $post['appointmentTypeCode'];
-            $toInsert["appointmentTypeDescription"] = $post['appointmentTypeDescription'];            
-            $toInsert["ID"] = $this->_insertAppointmentPending($toInsert, $source);
-            $this->_insertAppointmentPendingMH($toInsert, $source);
+            $toInsert["AppointmentSerNum"] = $this->opalDB->insertAppointment($toInsert);
+            $this->_notifyAppointmentChange($toInsert, $action, $replacementMap);  
         }
+        
         return false;
     }
 
@@ -501,70 +511,5 @@ class Appointment extends Module
         } else if (count($currentAppointment) < 1 && count($pendingAppointment) < 1) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, "Appointment not found.");
         }      
-    }
-
-    protected function _notifyAppointmentChange($data, $action, $dynamicKeys){
-        
-        $notificationControl = $this->opalDB->getNotificationControlDetails($data["PatientSerNum"],$action);        
-        $controlser         = $notificationControl[0]["NotificationControlSerNum"];
-        $title              = $notificationControl[0]["Name"];
-        $messageTemplate    = $notificationControl[0]["Message"];
-        
-        $patterns           = array();
-        $replacements       = array();
-        $indice             = 0;   
-        foreach($dynamicKeys as $key=>$val) {
-            $patterns[$indice] = $key;
-            $replacements[$indice] = $val;
-            $indice +=1;
-        }
-
-        ksort($patterns);
-        ksort($replacements);
-        $message =  str_replace($patterns, $replacements, $messageTemplate);
-        
-        $ptdIds = $this->opalDB->getPatientDeviceIdentifiers($data["PatientSerNum"]);
-        if (count($ptdIds) == 0){
-            $toInsert = array( 
-                "SendStatus" => "W",
-                "SendLog" => "Patient has no device identifier! No push notification sent.",
-                "DateAdded" => date("Y-m-d H:i:s"),
-                "RefTableRowSerNum" => $data["AppointmentAriaSer"],
-                "NotificationControlSerNum" => $controlser,
-                "PatientSerNum"=>$data["PatientSerNum"],
-                "PatientDeviceIdentifierSerNum" => null
-            );    
-            $this->opalDB->insertPushNotification($toInsert);        
-        } else {
-            
-            foreach($ptdIds as $ptdId) {                
-                $ptdidser       = $ptdId["PatientDeviceIdentifierSerNum"];
-                $registrationId = $ptdId["RegistrationId"];
-                $deviceType     = $ptdId["DeviceType"];
-
-                $response = array("success" => 1);
-                $response = HospitalPushNotification::sendNotification($deviceType, $registrationId, $title, $message);                               
-                
-                if ($response["success"] == 1){
-                    $sendstatus = "T"; // successful
-                    $sendlog    = "Push notification successfully sent! Message: $message";
-                } else {
-                    $sendstatus = "F"; // failed
-                    $sendlog    = "Failed to send push notification! Message: " . $response['error'];
-                }
-
-                $toInsert = array( 
-                    "SendStatus" => $sendstatus,
-                    "SendLog" => $sendlog,
-                    "DateAdded" => date("Y-m-d H:i:s"),
-                    "RefTableRowSerNum" => $data["AppointmentAriaSer"],
-                    "NotificationControlSerNum" => $controlser,
-                    "PatientSerNum"=>$data["PatientSerNum"],
-                    "PatientDeviceIdentifierSerNum" => $ptdidser
-                );
-                
-                $this->opalDB->insertPushNotification($toInsert);
-            }
-        }
     }
 }
