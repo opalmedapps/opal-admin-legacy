@@ -263,18 +263,18 @@ abstract class OpalProject
         }
     }
 
-    protected function _notifyAppointmentChange($data, $action, $dynamicKeys){
+    protected function _notifyChange($data, $action, $dynamicKeys, $refTableId){
         
         $notificationControl = $this->opalDB->getNotificationControlDetails($data["PatientSerNum"],$action);        
         $controlser         = $notificationControl[0]["NotificationControlSerNum"];
         $messageTitle       = $notificationControl[0]["Name"];
         $messageTemplate    = $notificationControl[0]["Message"];
         
-        $this->_insertNotification($data,$controlser,$data["AppointmentSerNum"]);
+        $this->_insertNotification($data,$controlser,$refTableId);
 
         $patterns           = array();
         $replacements       = array();
-        $indice             = 0;   
+        $indice             = 0;
         foreach($dynamicKeys as $key=>$val) {
             $patterns[$indice] = $key;
             $replacements[$indice] = $val;
@@ -291,7 +291,7 @@ abstract class OpalProject
                 "SendStatus" => "W",
                 "SendLog" => "Patient has no device identifier! No push notification sent.",
                 "DateAdded" => date("Y-m-d H:i:s"),
-                "RefTableRowSerNum" => $data["AppointmentSerNum"],
+                "RefTableRowSerNum" => $refTableId,
                 "NotificationControlSerNum" => $controlser,
                 "PatientSerNum"=>$data["PatientSerNum"],
                 "PatientDeviceIdentifierSerNum" => null
@@ -318,7 +318,7 @@ abstract class OpalProject
                     "SendStatus" => $sendstatus,
                     "SendLog" => $sendlog,
                     "DateAdded" => date("Y-m-d H:i:s"),
-                    "RefTableRowSerNum" => $data["AppointmentSerNum"],
+                    "RefTableRowSerNum" => $refTableId,
                     "NotificationControlSerNum" => $controlser,
                     "PatientSerNum"=>$data["PatientSerNum"],
                     "PatientDeviceIdentifierSerNum" => $ptdidser
@@ -375,7 +375,7 @@ abstract class OpalProject
             setlocale(LC_TIME, 'en_CA');        
             $replacementMap["\$getDateTime"] =  strftime('%l:%M %p', $StartDateTime);
                     
-            $this->_notifyAppointmentChange($currentAppointment[0], $action, $replacementMap);        
+            $this->_notifyChange($currentAppointment[0], $action, $replacementMap,$post["appointment"]);        
         }        
     }
 }

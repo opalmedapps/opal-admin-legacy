@@ -206,7 +206,7 @@ class Appointment extends Module
                 $replacementMap["\$oldAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $OStartDateTime);
                 $replacementMap["\$oldAppointmentTimeEN"] =  strftime('%l:%M %p', $OStartDateTime);
                 
-                $this->_notifyAppointmentChange($toUpdate,  $action, $replacementMap);
+                $this->_notifyChange($toUpdate,  $action, $replacementMap,$post["sourceId"]);
             }
 
             $this->opalDB->deleteAppointment($toUpdate);
@@ -366,7 +366,7 @@ class Appointment extends Module
             }
             
             $toInsert["AppointmentSerNum"] = $this->opalDB->insertAppointment($toInsert);
-            $this->_notifyAppointmentChange($toInsert, $action, $replacementMap);  
+            $this->_notifyChange($toInsert, $action, $replacementMap,$post["sourceId"]);  
         }
         
         return false;
@@ -492,7 +492,7 @@ class Appointment extends Module
                 $replacementMap["\$oldAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $OStartDateTime);
                 $replacementMap["\$oldAppointmentTimeEN"] =  strftime('%l:%M %p', $OStartDateTime);
                 
-                $this->_notifyAppointmentChange($toUpdate, $action, $replacementMap);
+                $this->_notifyChange($toUpdate, $action, $replacementMap,$post["sourceId"]);
             }
 
             return $this->opalDB->updateAppointment($toUpdate);
