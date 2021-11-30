@@ -1931,3 +1931,9 @@ SELECT ExpressionName, Description,
 FROM ".OPAL_ALIAS_EXPRESSION_TABLE." AE, ". OPAL_ALIAS_TABLE." A
 WHERE AE.AliasExpressionSerNum = :AliasExpressionSerNum
 AND AE.AliasSerNum = A.AliasSerNum;";
+
+
+const OPAL_GET_STAFF_DETAIL = "
+    SELECT StaffSerNum, FirstName, LastName, LastUpdated
+     FROM Staff  WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum AND StaffId =:StaffId;
+";

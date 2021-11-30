@@ -4066,4 +4066,17 @@ class DatabaseOpal extends DatabaseAccess {
     function insertNotification($toInsert) {        
         return $this->_replaceRecordIntoTable(OPAL_NOTIFICATION_TABLE, $toInsert);
     }
+
+    /** 
+     * Get Staff Serial Number
+     * @param  int source database serial number
+     * @param  int staff ID 
+     * @return  array Staff Detail
+     */
+    function getStaffDetail($sourceId,$staffId){
+        return $this->_fetch(OPAL_GET_STAFF_DETAIL, array(
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":StaffId","variable"=>$staffId,"data_type"=>PDO::PARAM_STR)
+        ));
+    }
 }
