@@ -279,6 +279,7 @@ class Appointment extends Module
     protected function _replaceAppointment($post) {
         $patientSite = null;
         $source = null;
+        $action = null;
         $replacementMap = array();
 
         $errCode = $this->_validateInsertAppointment($post, $patientSite, $source);
@@ -365,10 +366,12 @@ class Appointment extends Module
                 }
             }
             
-            $toInsert["AppointmentSerNum"] = $this->opalDB->insertAppointment($toInsert);
-            $this->_notifyChange($toInsert, $action, $replacementMap,$post["sourceId"]);  
+            $toInsert["AppointmentSerNum"] = $this->opalDB->insertAppointment($toInsert);            
         }
         
+        if (!is_null($action)){
+            $this->_notifyChange($toInsert, $action, $replacementMap,$post["sourceId"]);
+        }
         return false;
     }
 
