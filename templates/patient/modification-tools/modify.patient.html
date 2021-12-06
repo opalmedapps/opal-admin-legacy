@@ -1,13 +1,146 @@
 <div id="main">
-    <div id="top" class="home-main patient-main">
-        <div class="clearfix">
-            <div class="row">
-                <!-- Load side menu -->
-                <div id="side-panel-scrollbar" class="col-lg-2">
-                    <div ng-include="'templates/patient/menu-side.html'"></div>
+    <div id="top">
+        <div class="row">
+            <!-- Load side menu -->
+            <div id="side-panel-scrollbar" class="col-lg-2">
+                <div ng-include="'templates/patient/menu-side.html'"></div>
+            </div>
+
+            <div class="col-lg-10 animated fadeIn">
+                <div class="row main-title">
+                    <div class="col-xs-12 col-md-8 title-content">
+                        <span class="fa fa-address-card"></span>
+                        <h1><strong>{{'PATIENTS.REPORT.INDIVIDUAL.TITLE'|translate}}</strong></h1>
+                    </div>
+                    <!-- breadcrumbs -->
+                    <div class="col-md-4 title-breadcrumbs">
+                        <span><a ui-sref="home">{{'BREADCRUMBS.HOME'|translate}}</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>{{'PATIENTS.LIST.TITLE'|translate}}</strong></span>
+                    </div>
+                </div>
+            </div>
+            <div id="PatientReport" class="col-xs-12 col-lg-10 animated fadeInRight">
+                <div class="section-content">
+                    <div class="row">
+                        <div class="col-xs-12 side-menu-title">
+                            <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                <span style="background-color:#e6edfa; padding: 0 10px;">
+                                    <!-- <span class="fas fa-dot-circle"></span> -->
+                                    <h2>{{'PATIENTS.REPORT.INDIVIDUAL.PSEARCH'|translate}}</h2>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="panel">
+                                <!-- patient search  section-->
+                                <form class="panel-body form-horizontal" ng-submit="findPat()">
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-12 col-lg-4">
+                                            {{'PATIENTS.REPORT.INDIVIDUAL.PNAME'|translate}}
+                                        </label>
+                                        <div class=" col-xs-12 col-lg-10">
+                                            <input class="form-control" type="text" ng-model="searchName" ng-disabled="searchMRN || searchRAMQ" placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-12 col-lg-4">
+                                            {{'PATIENTS.REPORT.INDIVIDUAL.PRAMQ'|translate}}
+                                        </label>
+                                        <div class=" col-xs-12 col-lg-10">
+                                            <input class="form-control" type="text" ng-model="searchRAMQ" ng-disabled="searchMRN || searchName" placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-12 col-lg-4">
+                                            {{'PATIENTS.REPORT.INDIVIDUAL.PMRN'|translate}}
+                                        </label>
+                                        <div class=" col-xs-12 col-lg-10">
+                                            <input class="form-control" type="text" ng-model="searchMRN" ng-disabled="searchName || searchRAMQ" placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="save-add col-xs-12 col-sm-6 col-md-8">
+                                            <strong><input class="btn btn-md btn-outline item-button" value={{'PATIENTS.REPORT.INDIVIDUAL.SUBMIT'|translate}} type="submit" ng-disabled="!searchMRN && !searchRAMQ && !searchName"></strong>
+                                            <strong><input class="btn btn-md btn-outline item-button" value={{'PATIENTS.REPORT.INDIVIDUAL.RESET'|translate}} type="reset" ng-click="resetFieldValues()"></strong>
+                                        </div>
+                                        <!-- multiple or no patients found -->
+                                    </div>
+                                    <div class="form-group">
+                                        <div ng-show="searchResult.length > 1">
+                                            <div class="col-xs-12"><p>{{'PATIENTS.REPORT.INDIVIDUAL.MULTIPLE'|translate}}</p></div>
+                                            <div class="col-xs-12">
+                                                <select class="control-label col-xs-12" ng-model="selectedName" ng-options="x as x.name_display for x in searchResult" ng-change="displaySelection()"></select></div>
+                                        </div>
+                                        <div ng-show="noPatientFound">
+                                            <label class="control-label col-xs-12 col-lg-10">{{'PATIENTS.REPORT.INDIVIDUAL.NONE'|translate}}</label>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- patient selected section -->
+                        <div class="col-md-6">
+                            <div class="panel" ng-show="foundPatient">
+                                <div class="panel-body form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-xs-6 col-lg-4">
+                                            <label class="control-label">{{'PATIENTS.REPORT.INDIVIDUAL.LAST'|translate}}</label>
+                                        </div>
+                                        <div class="col-xs-6 col-lg-4">{{plname}}</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENTS.REPORT.INDIVIDUAL.FIRST'|translate}}</label>
+                                        <div class="col-xs-6 col-lg-4">{{pname}}</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENTS.REPORT.INDIVIDUAL.SEX'|translate}}</label>
+                                        <div class="col-xs-4 col-lg-2">{{psex}}</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENTS.REPORT.INDIVIDUAL.SERIAL'|translate}}</label>
+                                        <div class="col-xs-4 col-lg-2">{{psnum}}</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENTS.REPORT.INDIVIDUAL.EMAIL'|translate}}</label>
+                                        <div class="col-xs-4 col-lg-2">{{pemail}}</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-6 col-lg-4">RAMQ</label>
+                                        <div ng-show="pramq" class="col-xs-4 col-lg-8">{{pramq}}</div>
+                                        <div ng-show="!pramq" class="col-xs-4 col-lg-8">{{'PATIENTS.REPORT.INDIVIDUAL.NO_RAMQ'|translate}}</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-6 col-lg-4">MRN</label>
+                                        <div ng-if="MRN.length > 0" class="col-xs-4 col-lg-8">
+                                            <div ng-repeat="result in MRN">
+                                                {{result.hospital}} - {{result.MRN}}
+                                            </div>
+                                        </div>
+                                        <div ng-if="MRN.length <= 0" class="col-xs-4 col-lg-8">
+                                            {{'PATIENTS.REPORT.INDIVIDUAL.NO_MRN'|translate}}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENTS.REPORT.INDIVIDUAL.LANG'|translate}}</label>
+                                        <div class="col-xs-4 col-lg-2">{{plang}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row" ng-show="foundPatient">
+                        <div class="col-xs-12 side-menu-title" >
+                            <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                <span style="background-color:#e6edfa; padding: 0 10px;">
+                                    <h2>{{'PATIENTS.REPORT.INDIVIDUAL.ISELECT'|translate}}</h2>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="bannerMessage alert-success">{{bannerMessage}}</div>
 </div>
