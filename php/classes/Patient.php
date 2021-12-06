@@ -779,4 +779,175 @@ class Patient extends Module {
 
         return false;
     }
+
+    public function getPatientUsername($post){
+        $this->checkWriteAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validatePatientUsernameParams($post);
+        $errCode = bindec($errCode);
+        if($errCode != 0){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+        }
+
+        return $this->opalDB->getPatientUsername($post["PatientSerNum"]);
+    }
+
+    public function _validatePatientUsernameParams($post){
+
+        $errCode = "";
+
+        if(!array_key_exists("PatientSerNum", $post) || $post["PatientSerNum"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        return $errCode;
+    }
+
+    public function updatePatientEmail($post){
+        $this->checkWriteAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validatePatientEmailParams($post);
+        $errCode = bindec($errCode);
+        if($errCode != 0){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+        }
+
+        return $this->opalDB->updatePatientEmail($post["email"], $post["PatientSerNum"]);
+    }
+
+    public function _validatePatientEmailParams($post){
+
+        $errCode = "";
+
+        if(!array_key_exists("email", $post) || $post["email"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        if(!array_key_exists("PatientSerNum", $post) || $post["PatientSerNum"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        return $errCode;
+    }
+
+    public function updatePatientPassword($post){
+        $this->checkWriteAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validatePatientPasswordParams($post);
+        $errCode = bindec($errCode);
+        if($errCode != 0){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+        }
+
+        return $this->opalDB->updatePatientPassword($post["password"], $post["username"]);
+    }
+
+    public function _validatePatientPasswordParams($post){
+
+        $errCode = "";
+
+        if(!array_key_exists("password", $post) || $post["password"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        if(!array_key_exists("username", $post) || $post["username"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        return $errCode;
+    }
+
+    public function updatePatientSecurityAnswer($post){
+        $this->checkWriteAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validatePatientSecurityAnswerParams($post);
+        $errCode = bindec($errCode);
+        if($errCode != 0){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+        }
+
+        $response = $this->opalDB->deleteSecurityAnswers($post["PatientSerNum"]);
+        $response += $this->opalDB->insertSecurityAnswers($post["answer1"], $post["QuestionSerNum1"], $post["PatientSerNum"]);
+        $response += $this->opalDB->insertSecurityAnswers($post["answer2"], $post["QuestionSerNum2"], $post["PatientSerNum"]);
+        $response += $this->opalDB->insertSecurityAnswers($post["answer3"], $post["QuestionSerNum3"], $post["PatientSerNum"]);
+        return $response;
+    }
+
+    public function _validatePatientSecurityAnswerParams($post){
+
+        $errCode = "";
+
+        if(!array_key_exists("answer1", $post) || $post["answer1"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        if(!array_key_exists("QuestionSerNum1", $post) || $post["QuestionSerNum1"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        if(!array_key_exists("answer2", $post) || $post["answer2"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        if(!array_key_exists("QuestionSerNum2", $post) || $post["QuestionSerNum2"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        if(!array_key_exists("answer3", $post) || $post["answer3"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        if(!array_key_exists("QuestionSerNum3", $post) || $post["QuestionSerNum3"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        if(!array_key_exists("PatientSerNum", $post) || $post["PatientSerNum"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        return $errCode;
+    }
+
+    public function updatePatientAccessLevel($post){
+        $this->checkWriteAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validatePatientAccessLevelParams($post);
+        $errCode = bindec($errCode);
+        if($errCode != 0){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+        }
+
+        return  $this->opalDB->updatePatientAccessLevel($post["accessLevel"], $post["PatientSerNum"]);
+    }
+
+    public function _validatePatientAccessLevelParams($post){
+
+        $errCode = "";
+
+        if(!array_key_exists("accessLevel", $post) || $post["accessLevel"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        if(!array_key_exists("PatientSerNum", $post) || $post["PatientSerNum"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        return $errCode;
+
+        return $errCode;
+    }
 }
