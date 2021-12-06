@@ -1,12 +1,14 @@
 <?php
 
 header('Content-Type: application/javascript');
-include_once('patient.inc');
+include_once("../../config.php");
 
-$uid = $_POST["userId"];
-$newEmail = $_POST["new_email"];
-
+$patientObj = new Patient();
+$uid = $patientObj->getPatientUsername($_POST);
 $myFirebase = new Firebase();
-//'b0tEHXqDqwN9s7qKQdX1SqdTIQm1', "zeyu.dou@mail.mcgill.ca"
+//'b0tEHXqDqwN9s7qKQdX1SqdTIQm1', "testpassword1234!"
 
-print json_encode($myFirebase->changeEmail($uid, $newEmail));
+$myFirebase->changePassword($uid, $_POST);
+$response = $patientObj->updatePatientPassword($_POST);
+
+print json_encode($response);
