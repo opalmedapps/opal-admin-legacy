@@ -72,3 +72,5 @@ php/trigger/test-qTrigger.php
 
 # ignore PHP error log
 php-error.log
+
+/vendor/
