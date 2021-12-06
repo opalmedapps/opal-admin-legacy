@@ -4046,4 +4046,46 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR)
         ));
     }
+
+    function getPatientUsername($patientser){
+        return $this->_fetch(OPAL_GET_PATIENT_USERNAME, array(
+            array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR)
+        ));
+    }
+
+    function updatePatientEmail($email, $patientser){
+        return $this->_execute(OPAL_UPDATE_PATIENT_EMAIL, array(
+            array("parameter"=>":Email","variable"=>$email,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    function updatePatientPassword($password, $username){
+        return $this->_execute(OPAL_UPDATE_PATIENT_PASSWORD, array(
+            array("parameter"=>":Password","variable"=>$password,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    function deleteSecurityAnswers($patientser){
+        return $this->_execute(OPAL_DELETE_SECURITY_ANSWER, array(
+            array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    function insertSecurityAnswers($questionser, $patientser, $answer){
+        return $this->_execute(OPAL_INSERT_SECURITY_ANSWER, array(
+            array("parameter"=>":QuestionSer","variable"=>$questionser,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Answer","variable"=>$answer,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    function updatePatientAccessLevel($accesslevel, $patientser){
+        return $this->_execute(OPAL_UPDATE_PATIENT_ACCESS_LEVEL, array(
+            array("parameter"=>":AccessLevel","variable"=>$accesslevel,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
 }
