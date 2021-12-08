@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).controller('patientReports', function ($scope, $rootScope, Session, ErrorHandler, MODULE, $uibModal, $filter) {
+angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).controller('modify.patient', function ($scope, $rootScope, Session, ErrorHandler, MODULE, $uibModal, $filter) {
 
 	$scope.navMenu = Session.retrieveObject('menu');
 	$scope.navSubMenu = Session.retrieveObject('subMenu')[MODULE.patient];
