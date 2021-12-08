@@ -11,7 +11,7 @@
 			"username": "OPAL_DB_USERNAME_HERE",
 			"password": "OPAL_DB_PASSWORD_HERE"
 		},
-		"questionnaire": {
+		"questionnaire2019": {
 			"host": "QUESTIONNAIRE_DB_HOST_HERE",
 			"port": "QUESTIONNAIRE_DB_PORT_HERE",
 			"name": "QUESTIONNAIRE_DB_NAME_HERE",
