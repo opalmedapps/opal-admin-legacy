@@ -2824,12 +2824,12 @@
       "INDIVIDUAL":{
         "TITLE": "Individual Patient Reports",
         "PSEARCH": "Search for patient",
-        "PNAME": "Patient last name:",
+        "PSITE": "Patient Hospital Site",
         "PRAMQ": "Patient RAMQ",
         "PMRN": "Patient MRN",
         "SUBMIT": "Submit",
         "RESET": "Reset",
-        "MULTIPLE": "Multiple patients found matching search criteria, please select:",
+        "MULTIPLE": "Multiple patients found matching search criteria, please select :",
         "NONE": "No Patients found matching criteria, please try again",
         "PSELECT": "Selected Patient",
         "LAST": "Last Name",
@@ -2873,7 +2873,73 @@
         "TOT_REG": "Total Regsitrations",
         "TIME": "Time"
       }
-
+    },
+    "MODIFICATION_TOOLS": {
+      "TITLE": "Patient Modification Tools",
+      "DESCRIPTION": "Modify patient account information",
+      "MENU": {
+        "TITLE": "Patient Modification Tools",
+        "PSEARCH": "Search Patient",
+        "PSITE": "Patient Hospital Site",
+        "PMRN": "Patient MRN",
+        "PRAMQ": "Patient RAMQ",
+        "SUBMIT": "Submit",
+        "RESET": "Reset",
+        "MULTIPLE": "Multiple patients found matching search criteria, please select:",
+        "NONE": "No Patients found matching criteria, please try again",
+        "LAST": "Last Name",
+        "FIRST": "First Name",
+        "SEX": "Sex",
+        "SERIAL": "Patient Serial",
+        "EMAIL": "Email",
+        "RAMQ": "RAMQ",
+        "LANG": "Language",
+        "OPTIONS": "Options",
+        "UPDATE_EMAIL": "Change Patient Email",
+        "UPDATE_PASSWORD": "Change Patient Password",
+        "UPDATE_ACCESS_LEVEL": "Change Patient Access Level",
+        "UPDATE_SECURITY_QUESTION": "Reset Patient Security Questions"
+      },
+      "EMAIL": {
+        "TITLE": "Change Patient Email",
+        "DESCRIPTION": "change the email of the user account",
+        "NEW_EMAIL": "New email :",
+        "EMAIL_CONFIRMED": " Confirm new email :",
+        "EMAIL_NOT_SAME": "The email not match ",
+        "EMAIL_NOT_VALID": "The email is not valid, please try again",
+        "SUBMIT": "Submit",
+        "CANCEL": "Cancel"
+      },
+      "PASSWORD": {
+        "TITLE": "Change Patient Password",
+        "DESCRIPTION": "change the password of the user account",
+        "NEW_PASSWORD": "New password :",
+        "PASSWORD_CONFIRMED": "Confirm new password :",
+        "PASSWORD_NOT_SAME": "The password not match",
+        "PASSWORD_MISSING_CAPITAL_LETTER": "Password must contains at least one capital letter",
+        "PASSWORD_MISSING_LOWER_LETTER": "Password must contains at least one lower case letter",
+        "PASSWORD_MISSING_SPECIAL_CHARACTER": "Password must contains at least one special character",
+        "PASSWORD_MISSING_NUMBER": "Password must contains at least one number",
+        "PASSWORD_TOO_SHORT": "Password is too short",
+        "SUBMIT": "Submit",
+        "CANCEL": "Cancel"
+      },
+      "ACCESS_LEVEL": {
+        "TITLE": "Change Patient Access Level",
+        "DESCRIPTION": "change the access level of the user account",
+        "CURRENT_LEVEL": "Current access level :",
+        "CHOOSEN_LEVEL": "Select from following :"
+      },
+      "SECURITY_ANSWER": {
+        "TITLE": "Reset Patient Security Questions",
+        "DESCRIPTION": "reset all security questions of the user account",
+        "FIRST_QUESTION": "First Question :",
+        "FIRST_ANSWER": "Answer :",
+        "SECOND_QUESTION": "Second Question :",
+        "SECOND_ANSWER": "Answer :",
+        "THIRD_QUESTION": "Third Question :",
+        "THIRD_ANSWER": "Answer :"
+      }
     }
   },
   "USERS": {

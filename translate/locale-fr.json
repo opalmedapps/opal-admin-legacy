@@ -2893,6 +2893,73 @@
         "TOT_REG": "Nombre total d'enregistrements",
         "TIME": "Heure"
       }
+    },
+    "MODIFICATION_TOOLS": {
+      "TITLE": "Outils de modification des patients",
+      "DESCRIPTION": "Modifier les informations du compte patient",
+      "MENU": {
+        "TITLE": "Outils de modification des patients",
+        "PSEARCH": "Recherche du patient :",
+        "PSITE": "Site de l'hôpital des patients",
+        "PRAMQ": "RAMQ du patient",
+        "PMRN": "MRN du patient",
+        "SUBMIT": "Soumettre",
+        "RESET": "Réinitialiser",
+        "MULTIPLE": "Plusieurs patients ont été trouvés correspondant aux critères de recherche, veuillez sélectionner :",
+        "NONE": "Aucun patient ne correspond aux critères, veuillez réessayer",
+        "LAST": "Nom de famille",
+        "FIRST": "Prénom",
+        "SEX": "Sexe",
+        "SERIAL": "Numéro de série du patient",
+        "EMAIL": "Courriel",
+        "RAMQ": "RAMQ",
+        "LANG": "Langue de l'application Opal",
+        "OPTIONS": "Options",
+        "UPDATE_EMAIL": "Changer le courriel du patient",
+        "UPDATE_PASSWORD": "Changer le mot de passe du patient",
+        "UPDATE_ACCESS_LEVEL": "Changer le niveau d'accès des patients",
+        "UPDATE_SECURITY_QUESTION": "Réinitialiser les questions de sécurité des patients"
+      },
+      "EMAIL": {
+        "TITLE": "Changer le courriel du patient",
+        "DESCRIPTION": "changer le courriel du compte utilisateur",
+        "NEM_EMAIL": "Nouveau courriel :",
+        "EMAIL_CONFIRMED": "Confirmer le nouveau courriel :",
+        "EMAIL_NOT_SAME": "Le courriel ne correspond pas",
+        "EMAIL_NOT_VALID": "Le courriel n'est pas valide, veuillez réessayer",
+        "SUBMIT": "Soumettre",
+        "CANCEL": "Annuler"
+      },
+      "PASSWORD": {
+        "TITLE": "Changer le mot de passe du patient",
+        "DESCRIPTION": "changer le mot de passe du compte utilisateur",
+        "NEM_PASSWORD": "Nouveau mot de passe :",
+        "PASSWORD_CONFIRMED": "Confirmer le nouveau mot de passe :",
+        "PASSWORD_NOT_SAME": "Le mot de passe ne correspond pas",
+        "PASSWORD_MISSING_CAPITAL_LETTER": "Le mot de passe doit contenir au moins une majuscule",
+        "PASSWORD_MISSING_LOWER_LETTER": "Le mot de passe doit contenir au moins une lettre minicule",
+        "PASSWORD_MISSING_SPECIAL_CHARACTER": "Le mot de passe doit contenir au moins un caractère spécial",
+        "PASSWORD_MISSING_NUMBER": "Le mot de passe doit contenir au moins un chiffre",
+        "PASSWORD_TOO_SHORT": "Le mot de passe est trop court",
+        "SUBMIT": "Soumettre",
+        "CANCEL": "Annuler"
+      },
+      "ACCESS_LEVEL": {
+        "TITLE": "Changer le niveau d'accès des patients",
+        "DESCRIPTION": "changer le niveau d'accès du compte utilisateur",
+        "CURRENT_LEVEL": "Niveau d'accès actuel :",
+        "CHOOSEN_LEVEL": "Choisissez parmi les suivants :"
+      },
+      "SECURITY_ANSWER": {
+        "TITLE": "Réinitialiser les questions de sécurité des patients",
+        "DESCRIPTION": "réinitialiser toutes les questions de sécurité du compte utilisateur",
+        "FIRST_QUESTION": "Première Question :",
+        "FIRST_ANSWER": "Réponse :",
+        "SECOND_QUESTION": "Deuxième Question :",
+        "SECOND_ANSWER": "Réponse :",
+        "THIRD_QUESTION": "Troisième Question :",
+        "THIRD_ANSWER": "Réponse :"
+      }
     }
   },
   "PROFILE": {
