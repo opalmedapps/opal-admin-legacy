@@ -1,3 +1,121 @@
+Version 2.1.3.0:
+ - Merge branch 'OPAL-1159A' into 'develop'
+ - OPAL-1159A Document from Aria to Opal
+ - Merge branch 'OPAL-1171' into 'develop'
+ - uncommented today param
+ - Merge branch 'dockerfiles' into 'develop'
+ - Add section to README about using Docker
+ - Fix questionnaire key in example config
+ - Fix hard-coded absolute path in Appointment class
+ - Add Docker files to be able to run opalAdmin in a container
+ - Merge branch 'OPAL-1167' into 'develop'
+ - Opal 1167  bug in the GET_ANSWERS_CHART_TYPE and added columns to SQL_GET_QUESTIONS_BY_QUESTIONNAIRE_ID
+ - Merge branch 'OPAL-1163' into 'develop'
+ - Opal 1163
+ - Merge branch 'OPAL-1159' into develop
+ - Merge branch 'OPAL-1159' into develop
+ -  correction
+ - Add Push Notification for Document
+ - Correction appointment pending
+ - Correction Dappointment pending sourceName
+ - Merge branch 'OPAL-1158' into 'develop'
+ - OPAL-1158 - finished modification for list of codes for aliases
+ - Merge branch 'OPAL-1153' into 'develop'
+ - OPAL-1153 - fixed bug where cron audit was not properly named
+ - Process document
+ - Add Document
+ - Initial State
+ - Initial state
+ - Merge branch 'staging' into test_yves
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'OPAL-1155' into 'develop'
+ - Opal 1155
+ - OPAL-1158 - costmeic changes underway
+ - Merge branch 'staging' into test_yves
+ - Merge branch 'develop' into 'staging'
+ - Modified the git ignore and PHP log error in log
+ - correction
+ - Merge branch 'OPAL-1153' into 'develop'
+ - OPAL-1153 - finished the code
+ - OPAL-1153 - changes underway
+ - OPAL-1153 - Created cron call and creation files
+ - update cron
+ - Correction logic
+ - Fixed appointment check in in htaccess
+ - Merge branch 'OPAL-1138' into 'develop'
+ - OPAL-1138 - fixed bug by cleaning up non printable characters
+ - OPAL-1138 - centralized post validation - bug fixed
+ - OPAL-1138 - centralized post validation
+ - Update cancel pending appointment
+ - Update cancel pending appointment
+ - Update cancel pending appointment
+ - Update cancel pending appointment
+ - Update cancel pending appointment
+ - Update cancel pending appointment
+ - Update cancel pending appointment
+ - Update cancel pending appointment
+ - Update cancel pending appointment
+ - Update cancel pending appointment
+ - Merge branch 'staging' into 'test_yves'
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'hotfix-replace-appointment' into 'develop'
+ - HOTFIX - fixed function that lost data
+ - Correction logic
+ - Test_yves - API - Appointment
+ - Merge branch 'staging' into 'test_yves'
+ - Merge branch 'develop' into 'staging'
+ - cate function fixed
+ - Merge branch 'OPAL-1124' into 'develop'
+ - Opal 1124
+ - Merge branch 'develop' into 'staging'
+ - Last questionnaire list api fix
+ - Merge remote-tracking branch 'origin/OPAL-885' into test_yves
+ - OPAL-885 - API - Insert/Update Appointment
+ - OPAL-885 - API - Insert/Update Appointment
+ - OPAL-885 - API - Insert/Update Appointment
+ - OPAL-885 - API - Insert/Update Appointment
+ - OPAL-896 - API - Delete Similar Appointment
+ - OPAL-896 - API - Delete Similar Appointment
+ - OPAL-896 - API - Delete Similar Appointment
+ - OPAL-885 - API - Insert/Update Appointment
+ - OPAL-885 - API - Insert/Update Appointment
+ - OPAL-885 - API - Insert/Update Appointment
+ - OPAL-885 - API - Insert/Update Appointment
+ - OPAL-885 - API - Insert/Update Appointment
+ - OPAL-885 - API - Insert/Update Appointment
+ - OPAL-885 - API - Insert/Update Appointment
+ - OPAL-885 - API - Insert/Update Appointment
+ - OPAL-885 - API - Insert/Update Appointment
+ - Merge remote-tracking branch 'origin/develop' into OPAL-885
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'last_questionnaire_list_fix' into 'develop'
+ - Fixed bug where non-existing mrn ruins the whole request
+ - OPAL-885 - API - Insert/Update Appointment
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'last_completed_questionnaire_list_rebase' into 'develop'
+ - Added get-last-completed-questionnaire-list api
+ - Merge remote-tracking branch 'origin/staging' into staging
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'OPAL-1122' into 'develop'
+ - Fix SQL_GET_QUESTIONNAIRE_LIST_ORMS bug
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'develop' into 'staging'
+ - Merge remote-tracking branch 'origin/staging' into staging
+ - Merge branch 'develop' of https://gitlab.com/akimosupremo/opalAdmin into staging
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'develop' into 'staging'
+ - Revert "Fix bug when selecting a list of patient for the multiple cron job"
+ - Fix bug when selecting a list of patient for the multiple cron job
+ - Merge branch 'develop' into 'staging'
+ - Update README.md
+
 Version 2.1.2.0:
 
 
