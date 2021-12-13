@@ -14,7 +14,7 @@ class Questionnaire extends QuestionnaireModule {
         $this->checkReadAccess();
         $results = $this->questionnaireDB->fetchAllQuestionnaires();
         foreach($results as &$questionnaire) {
-            $questionnaire["locked"] = $this->isQuestionnaireLocked($questionnaire["ID"]);
+            $questionnaire["locked"] = $this->_isQuestionnaireLocked($questionnaire["ID"]);
         }
         return $results;
     }
@@ -28,23 +28,25 @@ class Questionnaire extends QuestionnaireModule {
         $this->checkReadAccess();
         $results = $this->questionnaireDB->fetchAllFinalQuestionnaires();
         foreach($results as &$questionnaire) {
-            $questionnaire["locked"] = $this->isQuestionnaireLocked($questionnaire["ID"]);
+            $questionnaire["locked"] = $this->_isQuestionnaireLocked($questionnaire["ID"]);
         }
         return $results;
     }
 
     /*
      * This function validate and sanitize a questionnaire
-     * @param   $questionnaireToSanitize (array)
+     * @param   $post (array)
      * @return  sanitized questionnaire or false if invalid
      * */
-    function validateAndSanitize($questionnaireToSanitize) {
+    function validateAndSanitize($post) {
+        $post = HelpSetup::arraySanitization($post);
+        //arraySanitization
         //Sanitize the name of the questionnaire. If it is empty, rejects it.
         $validatedQuestionnaire = array(
-            "title_EN"=>htmlspecialchars($questionnaireToSanitize['title_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
-            "title_FR"=>htmlspecialchars($questionnaireToSanitize['title_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
-            "description_EN"=>htmlspecialchars($questionnaireToSanitize['description_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
-            "description_FR"=>htmlspecialchars($questionnaireToSanitize['description_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "title_EN"=>htmlspecialchars($post['title_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "title_FR"=>htmlspecialchars($post['title_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "description_EN"=>htmlspecialchars($post['description_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "description_FR"=>htmlspecialchars($post['description_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
         );
 
         if ($validatedQuestionnaire["title_EN"] == "" || $validatedQuestionnaire["title_FR"] == "" || $validatedQuestionnaire["description_EN"] == "" || $validatedQuestionnaire["description_FR"] == "")
@@ -52,27 +54,27 @@ class Questionnaire extends QuestionnaireModule {
 
         //Sanitize the questionnaire ID (if any). IF there was supposed to be an ID and it's empty, reject the
         //questionnaire
-        if($questionnaireToSanitize["ID"] != "") {
-            $validatedQuestionnaire["ID"] = strip_tags($questionnaireToSanitize["ID"]);
+        if($post["ID"] != "") {
+            $validatedQuestionnaire["ID"] = strip_tags($post["ID"]);
             if($validatedQuestionnaire["ID"] == "")
                 return false;
         }
 
         //Sanitize the list of libraries associated to the questionnaire
         $libraries = array();
-        if (is_array($questionnaireToSanitize['libraries']) && count($questionnaireToSanitize['libraries']) > 0)
-            foreach($questionnaireToSanitize['libraries'] as $library)
+        if (is_array($post['libraries']) && count($post['libraries']) > 0)
+            foreach($post['libraries'] as $library)
                 array_push($libraries, strip_tags($library));
 
         $validatedQuestionnaire["libraries"] = $libraries;
-        $validatedQuestionnaire["private"] = (strip_tags($questionnaireToSanitize['private'])=="true"||strip_tags($questionnaireToSanitize['private'])=="1"?"1":"0");
-        $validatedQuestionnaire["final"] = (strip_tags($questionnaireToSanitize['final'])=="true"||strip_tags($questionnaireToSanitize['final'])=="1"?"1":"0");
+        $validatedQuestionnaire["private"] = (strip_tags($post['private'])=="true"||strip_tags($post['private'])=="1"?"1":"0");
+        $validatedQuestionnaire["final"] = (strip_tags($post['final'])=="true"||strip_tags($post['final'])=="1"?"1":"0");
 
         //Validate the list of questions
         $options = array();
         $arrIds = array();
-        if(!empty($questionnaireToSanitize["questions"]))
-            foreach($questionnaireToSanitize["questions"] as $question) {
+        if(!empty($post["questions"]))
+            foreach($post["questions"] as $question) {
                 $order = intval(strip_tags($question["order"]));
                 $questionId = intval(strip_tags($question["ID"]));
                 if ($questionId != 0)
@@ -96,6 +98,26 @@ class Questionnaire extends QuestionnaireModule {
         if(count($questionsInfo) != count($options))
             return false;
 
+        // If the purpose does not exists, reject it
+        if (array_key_exists("purpose", $post) && $post["purpose"] != "") {
+            $purpose = $this->questionnaireDB->getPurposeDetails($post["purpose"]);
+            if(count($purpose) != 1)
+                return false;
+            else
+                $validatedQuestionnaire["purpose"] = $post["purpose"];
+        } else
+            return false;
+
+        // If the respondent does not exists, reject it
+        if (array_key_exists("respondent", $post) && $post["respondent"] != "") {
+            $respondent = $this->questionnaireDB->getRespondentDetails($post["respondent"]);
+            if(count($respondent) != 1)
+                return false;
+            else
+                $validatedQuestionnaire["respondent"] = $post["respondent"];
+        } else
+            return false;
+
         //If any question is private, mark down the questionnaire should be private
         $anyPrivateQuestion = false;
         foreach($questionsInfo as $question) {
@@ -117,20 +139,38 @@ class Questionnaire extends QuestionnaireModule {
      * @param   $questionnaireId (integer)
      * @return  true or false (boolean)
      * */
-    function isQuestionnaireLocked($questionnaireId) {
+    protected function _isQuestionnaireLocked($questionnaireId) {
         $questionLocked = $this->opalDB->countLockedQuestionnaires($questionnaireId);
         $questionLocked = (intval($questionLocked["total"]) > 0?true:false);
         return $questionLocked;
     }
 
+    public function getPurposesRespondents() {
+        $this->checkReadAccess();
+        $result["purposes"] = $this->questionnaireDB->getPurposes();
+        $result["respondents"] = $this->questionnaireDB->getRespondents();
+        return $result;
+    }
+
     /*
-     * Gets questionnaire details
+     * API call to get questionnaire details
      *
      * @param integer $questionnaireId : the questionnaire ID
      * @return array $questionnaireDetails : the questionnaire details
      */
     public function getQuestionnaireDetails($questionnaireId){
         $this->checkReadAccess($questionnaireId);
+        return $this->_getQuestionnaireDetails($questionnaireId);
+
+    }
+
+    /*
+     * Protected method used only internally to get questionnaire details
+     *
+     * @param integer $questionnaireId : the questionnaire ID
+     * @return array $questionnaireDetails : the questionnaire details
+     * */
+    protected function _getQuestionnaireDetails($questionnaireId) {
         $questionnaireDetails = $this->questionnaireDB->getQuestionnaireDetails($questionnaireId);
 
         if(count($questionnaireDetails) != 1)
@@ -142,7 +182,11 @@ class Questionnaire extends QuestionnaireModule {
         $questionnaireDetails["title_FR"] = htmlspecialchars_decode($questionnaireDetails["title_FR"]);
         $questionnaireDetails["description_EN"] = htmlspecialchars_decode($questionnaireDetails["description_EN"]);
         $questionnaireDetails["description_FR"] = htmlspecialchars_decode($questionnaireDetails["description_FR"]);
-        $questionnaireDetails["locked"] = intval($this->isQuestionnaireLocked($questionnaireId));
+        $questionnaireDetails["locked"] = intval($this->_isQuestionnaireLocked($questionnaireId));
+        $questionnaireDetails["purpose"] = $this->questionnaireDB->getPurposeDetails($questionnaireDetails["purpose"]);
+        $questionnaireDetails["purpose"] = $questionnaireDetails["purpose"][0];
+        $questionnaireDetails["respondent"] = $this->questionnaireDB->getRespondentDetails($questionnaireDetails["respondent"]);
+        $questionnaireDetails["respondent"] = $questionnaireDetails["respondent"][0];
 
         $readOnly = false;
         $isOwner = false;
@@ -207,6 +251,8 @@ class Questionnaire extends QuestionnaireModule {
             "description"=>$description,
             "instruction"=>$instruction,
             "private"=>$newQuestionnaire["private"],
+            "purposeId"=>$newQuestionnaire["purpose"],
+            "respondentId"=>$newQuestionnaire["respondent"],
         );
 
         /*
@@ -242,18 +288,6 @@ class Questionnaire extends QuestionnaireModule {
     }
 
     /**
-     *
-     * Gets list logs of legacy questionnaires during one or many cron sessions
-     *
-     * @param array $serials : a list of cron log serial numbers
-     * @return array : the legacy questionnaire logs for table view
-     */
-    public function getQuestionnaireListLogs($ids) {
-        $this->checkReadAccess($ids);
-        return $this->opalDB->getQuestionnaireListLogs($ids);
-    }
-
-    /**
      * Mark a questionnaire as deleted. First, it get the last time it was updated, check if the user has the proper
      * authorization, and check if the questionnaire was already sent to a patient. Then it checked if the record was
      * updated in the meantime, and if not, it marks the questionnaire as being deleted.
@@ -270,7 +304,7 @@ class Questionnaire extends QuestionnaireModule {
      */
     public function deleteQuestionnaire($questionnaireId){
         $this->checkDeleteAccess($questionnaireId);
-        $questionnaireToDelete = $this->getQuestionnaireDetails($questionnaireId);
+        $questionnaireToDelete = $this->_getQuestionnaireDetails($questionnaireId);
 
         if ($this->questionnaireDB->getOAUserId() <= 0 || $questionnaireToDelete["deleted"] == 1 || ($questionnaireToDelete["private"] == 1 && $this->questionnaireDB->getOAUserId() != $questionnaireToDelete["OAUserId"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
@@ -278,7 +312,7 @@ class Questionnaire extends QuestionnaireModule {
         $lastUpdated = $this->questionnaireDB->getLastTimeTableUpdated(QUESTIONNAIRE_TABLE, $questionnaireId);
 
         $nobodyUpdated = $this->questionnaireDB->canRecordBeUpdated(QUESTIONNAIRE_TABLE, $questionnaireId, $lastUpdated["lastUpdated"], $lastUpdated["updatedBy"]);
-        $wasQuestionSent = $this->isQuestionnaireLocked($questionnaireId);
+        $wasQuestionSent = $this->_isQuestionnaireLocked($questionnaireId);
 
         if ($nobodyUpdated && !$wasQuestionSent) {
             $this->questionnaireDB->markAsDeletedInDictionary($questionnaireToDelete["title"]);
@@ -286,10 +320,12 @@ class Questionnaire extends QuestionnaireModule {
             $this->questionnaireDB->markAsDeletedInDictionary($questionnaireToDelete["description"]);
             $this->questionnaireDB->markAsDeletedInDictionary($questionnaireToDelete["instruction"]);
 
+
             foreach($questionnaireToDelete["sections"] as $section)
                 $this->questionnaireDB->markAsDeletedNoUSer(SECTION_TABLE, $section);
 
             $this->questionnaireDB->markAsDeleted(QUESTIONNAIRE_TABLE, $questionnaireId);
+            $this->opalDB->purgeQuestionnaireFromStudies($questionnaireId);
             $response['value'] = true; // Success
             $response['message'] = 200;
             return $response;
@@ -314,7 +350,6 @@ class Questionnaire extends QuestionnaireModule {
     public function updateQuestionnaire($updatedQuestionnaire){
         $this->checkWriteAccess($updatedQuestionnaire);
         $total = 0;
-        $questionnaireUpdated = 0;
         $oldQuestions = array();
         $newQuestions = array();
         $updatedQuestions = array();
@@ -323,10 +358,10 @@ class Questionnaire extends QuestionnaireModule {
         $visualization = 1;
 
         //Get current questionnaire infos
-        $oldQuestionnaire = $this->getQuestionnaireDetails($updatedQuestionnaire["ID"]);
+        $oldQuestionnaire = $this->_getQuestionnaireDetails($updatedQuestionnaire["ID"]);
 
         //If the questionnaire is locked, ignore all the changes
-        if($this->isQuestionnaireLocked($oldQuestionnaire["ID"])) return false;
+        if($this->_isQuestionnaireLocked($oldQuestionnaire["ID"])) return false;
 
         //Look for the current questions IDs associated to the questionnaire
         foreach($oldQuestionnaire["questions"] as $question)
@@ -416,8 +451,15 @@ class Questionnaire extends QuestionnaireModule {
             "private"=>$updatedQuestionnaire["private"],
             "final"=>$updatedQuestionnaire["final"],
             "visualization"=>$visualization,
+            "purposeId"=>$updatedQuestionnaire["purpose"],
+            "respondentId"=>$updatedQuestionnaire["respondent"],
         );
         $questionnaireUpdated = $this->questionnaireDB->updateQuestionnaire($toUpdate);
+
+        // If the questionnaire is a draft or is not a research one or not for patient, make sure it's not assigned to
+        // any study
+        if($updatedQuestionnaire["final"] == NON_FINAL_RECORD || $updatedQuestionnaire["purpose"] != PURPOSE_RESEARCH || $updatedQuestionnaire["respondent"] != RESPONDENT_PATIENT)
+            $this->opalDB->purgeQuestionnaireFromStudies($oldQuestionnaire["ID"]);
 
         /*
          * If any modifications were made except to the questionnaire table, force the questionnaire entry to be updated
@@ -426,5 +468,263 @@ class Questionnaire extends QuestionnaireModule {
         if ($questionnaireUpdated == 0 && $total > 0)
             $this->questionnaireDB->forceUpdate($updatedQuestionnaire["ID"], QUESTIONNAIRE_TABLE);
     }
+
+    /**
+     * Get the list of questionnaires status, visualization form, studies list and completion date for a specific
+     * patient on a site.
+     * Validation code :    Error validation code is coded as an int of 3 bits (value from 0 to 7). Bit information
+     *                      are coded from right to left:
+     *                      1: mrn is missing
+     *                      2: site is missing
+     *                      3: combo mrn site does not exists
+     * @param $post array - $_POST content
+     * @return array
+     */
+    public function getQuestionnaireListOrms($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = "";
+        if (is_array($post))
+            $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
+        else
+            $errCode = "111";
+
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        $results = $this->questionnaireDB->getQuestionnaireListOrms($post["mrn"], $post["site"]);
+        foreach ($results as &$item) {
+            $tempData = $this->opalDB->getStudiesQuestionnaire($item["questionnaireDBId"]);
+            $tempArray = array();
+            foreach ($tempData as $data)
+                array_push($tempArray, $data["studyId"]);
+            $item["studies"] = $tempArray;
+        }
+        return $results;
+    }
+
+    /**
+     * Get the list of chart answer from a specific questionnaire for a specific patient.
+     *
+     * Note: Using questionSectionId and questionText does not seems to be the right thing to do but because of a lack
+     * of time and man power, we cannot test it more and simplify the SQL query. See ticket OPAL-1026 for more details.
+     *
+     * @param $post array - $_POST content. Contains mrn, site code and questionnaireId
+     * @return array - answers found (if any)
+     */
+    public function getChartAnswersFromQuestionnairePatient($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $patientSite = array();
+        $errCode = $this->_validateQuestionnaireAndPatient($post, $patientSite);
+
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        $patientInfo = $this->questionnaireDB->getPatientPerExternalId($patientSite["PatientSerNum"]);
+
+        if(count($patientInfo) != 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Patients info invalid in DB. Please contact your admin.");
+        $patientInfo = $patientInfo[0];
+
+        $results = $this->questionnaireDB->getQuestionsByQuestionnaireId($post["questionnaireId"]);
+        foreach ($results as &$result) {
+            $result["answers"] = $this->questionnaireDB->getAnswersChartType(
+                $patientInfo["ID"],
+                $result["questionnaireId"],
+                $result["questionSectionId"],
+                $result["question_EN"]
+            );
+        }
+
+        return $results;
+    }
+
+    /**
+     * Get the list of non chart answer from a specific questionnaire for a specific patient.
+     * @param $post array - $_POST content. Contains mrn, site code and questionnaireId
+     * @return array - answers found (if any)
+     */
+    public function getNonChartAnswersFromQuestionnairePatient($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $patientSite = array();
+        $errCode = $this->_validateQuestionnaireAndPatient($post, $patientSite);
+
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        $patientInfo = $this->questionnaireDB->getPatientPerExternalId($patientSite["PatientSerNum"]);
+
+        if(count($patientInfo) != 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Patients info invalid in DB. Please contact your admin.");
+        $patientInfo = $patientInfo[0];
+
+        $results = $this->questionnaireDB->getCompletedQuestionnaireInfo($patientInfo["ID"], $post["questionnaireId"]);
+
+        foreach ($results as &$item) {
+            $item["options"] = $this->questionnaireDB->getQuestionOptions($item["questionId"]);
+            $item["answers"] = $this->questionnaireDB->getAnswersNonChartType(
+                $item["answerQuestionnaireId"],
+                $item["sectionId"],
+                $item["questionId"]
+            );
+        }
+
+        return $results;
+    }
+
+    /**
+     * Validate questionnaire and patient information.
+     * @param $post array - data to validate
+     * @param $patientSite array - patient info from specific site found
+     * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
+     *                      Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit information
+     *                      are coded from right to left:
+     *                      1: MRN invalid or missing
+     *                      2: site invalid or missing
+     *                      3: combo of MRN-site-patient does not exists
+     *                      4: questionnaire ID does not exists
+     * @return string - validation code in binary
+     */
+    protected function _validateQuestionnaireAndPatient(&$post, &$patientSite) {
+        if (is_array($post)) {
+            $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
+
+            // 4th bit - Questionnaire ID
+            if(!array_key_exists("questionnaireId", $post) || $post["questionnaireId"] == "") {
+                $errCode = "1" . $errCode;
+            } else {
+                $errCode = "0" . $errCode;
+            }
+        } else
+            $errCode = "1111";
+        return $errCode;
+    }
+
+    /**
+     * Return the list of published questionnaires found.
+     * @return array - published questionnaires found
+     */
+    public function getPublishedQuestionnaires() {
+        $this->checkReadAccess();
+        return $this->questionnaireDB->getPublishedQuestionnaires();
+    }
+
+    /**
+     * Get the list of questionnaires a specific patient answered.
+     * @param $post - contains the MRN of the patient and the site of the hospital
+     * @return array - list of questionnaires found
+     */
+    public function getAnsweredQuestionnairesPatient($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $patientSite = array();
+        if (is_array($post))
+            $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
+        else
+            $errCode = "111";
+
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        return $this->questionnaireDB->getAnsweredQuestionnairesPatient($post["mrn"], $post["site"]);
+    }
+
+    /**
+     * Get the last completed questionnaire from a specific patient on a site.
+     * @param $post array - contains mrn and site
+     * @return array - last answered questionnaire found (if any)
+     */
+    public function getLastCompletedQuestionnaire($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $patientSite = array();
+        if (is_array($post))
+            $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
+        else
+            $errCode = "111";
+
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        return $this->opalDB->getLastCompletedQuestionnaire($patientSite["PatientSerNum"]);
+    }
+
+    /**
+     * Get the last completed questionnaire from multiple patients.
+     * @param $post array - contains an array of mrn and site
+     * @return array - array of last answered questionnaires found (if any)
+     */
+    public function getLastCompletedQuestionnaireForPatients($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+
+        $patientQuestionnaires = [];
+
+        foreach($post as $patient) {
+            $patientSite = array();
+            if (is_array($patient))
+                $errCode = $this->_validateBasicPatientInfo($patient, $patientSite);
+            else
+                $errCode = "111";
+
+            $errCode = bindec($errCode);
+
+            $patientQuestionnaires[] = ($errCode == 0) ? $this->opalDB->getLastCompletedQuestionnaire($patientSite["PatientSerNum"]) : false;
+        }
+
+        return $patientQuestionnaires;
+    }
+
+    /**
+     * Get the lis of completed questionnaires of patient, grouped by MRN.
+     * @param $post - list of questionnaire ID (optional)
+     * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
+     *                      Error validation code is coded as an int of 1 bit (value from 0 to 1). Bit information
+     *                      are coded from right to left:
+     *                      1: questionnaire ID list invalid if present
+     * @return array - results found
+     */
+    public function getPatientsCompletedQuestionnaires($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        if (is_array($post)) {
+            if (!array_key_exists("questionnaires", $post) || (!is_array($post["questionnaires"])))
+                $post["questionnaires"] = array();
+            $listIds = array();
+
+            foreach ($post["questionnaires"]as $item) {
+                $item = intval($item);
+                if(!in_array($item, $listIds))
+                    array_push($listIds, $item);
+            }
+            if (count($listIds) != count($post["questionnaires"]))
+                $errCode = "1";
+            else {
+                $errCode = "0";
+                $post["questionnaires"] = $listIds;
+            }
+        }
+        else
+            $errCode = "1";
+
+        $errCode = bindec($errCode);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        return $this->opalDB->getPatientsCompletedQuestionnaires($post["questionnaires"]);
+    }
+
+    /**
+     * Get the list of possible purposes for a questionnaire
+     * @return array - list of purposes, french and english
+     */
+    public function getPurposes() {
+        $this->checkReadAccess();
+        return $this->questionnaireDB->getPurposes();
+    }
 }
-?>

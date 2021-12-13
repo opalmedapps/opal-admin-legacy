@@ -160,6 +160,51 @@ sub getEduMatControlsMarkedForPublish
     return @eduMatControlList;
 }
 
+sub getEduMatControlsMarkedForPublishModularCron
+{
+    my @eduMatControlList = (); # initialize a list
+
+    my $info_sql = "
+        SELECT
+            EMC.EducationalMaterialControlSerNum,
+            ccem.lastPublished
+        FROM
+        cronControlEducationalMaterial ccem, EducationalMaterialControl EMC
+        WHERE
+            ccem.cronControlEducationalMaterialControlSerNum = EMC.EducationalMaterialControlSerNum
+        AND ccem.publishFlag = 2;
+    ";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($info_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+	while (my @data = $query->fetchrow_array()) {
+
+        my $edumatControl = new EducationalMaterialControl(); # new object
+
+        my $ser             = $data[0];
+        my $lastpublished   = $data[1];
+
+        # set information
+        $edumatControl->setEduMatControlSer($ser);
+        $edumatControl->setEduMatControlLastPublished($lastpublished);
+
+        # get all the filters
+        my $filters = Filter::getAllFiltersFromOurDB($ser, 'EducationalMaterialControl');
+
+        $edumatControl->setEduMatControlFilters($filters);
+
+        push(@eduMatControlList, $edumatControl);
+    }
+
+    return @eduMatControlList;
+}
+
 #======================================================================================
 # Subroutine to set/update the "last published" field to current time 
 #======================================================================================
@@ -174,6 +219,34 @@ sub setEduMatControlLastPublishedIntoOurDB
             LastPublished = '$current_datetime'
         WHERE
             PublishFlag = 1
+    ";
+    	
+    # prepare query
+	my $query = $SQLDatabase->prepare($update_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+}
+
+#======================================================================================
+# Subroutine to set/update the "last published" field to current time for modular controllers
+#======================================================================================
+sub setEduMatControlLastPublishedModularControllers
+{
+    my ($current_datetime, $module) = @_; # our current datetime in args
+
+    my $update_sql = "
+        UPDATE
+            cronControlEducationalMaterial ccem, EducationalMaterialControl EMC
+        SET
+            ccem.lastPublished = '$current_datetime',
+            EMC.LastPublished =  '$current_datetime',
+            ccem.publishFlag = 1
+        WHERE
+            ccem.cronControlEducationalMaterialControlSerNum = EMC.EducationalMaterialControlSerNum
+            AND ccem.publishFlag = 2;
     ";
     	
     # prepare query

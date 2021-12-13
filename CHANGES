@@ -1,3 +1,28 @@
+Version 2.1.2.0:
+
+
+Version 2.1.1.0:
+    OPAL-1100 Opal - Multiple cron job are processing patient that have been flagged to not be processed
+    OPAL-1000 Feature Request - Addition of Patient Serial Number Field in Patient Report
+    OPAL-1017 Inconsistency in the diagnosis api
+    OPAL-1037 Questionnaire studies api
+    OPAL-1060 OpalAdmin - Question not saving correctly/displaying completely
+    OPAL-1081 Move authentication php scripts to api
+    OPAL-688 Opal Admin Patient Reports Refactor
+    OPAL-689 OpalAdmin - Cron Job legacy Lab Results constantly inserting into MH table
+    OPAL-821 Test PHP 8 and MariaDB 10.5
+    OPAL-851 OpalADmin- Group Reports- Patient Consent Form Expiration column - NULL
+    OPAL-852 OpalADmin - Patient activity - Display patient`s device type and version
+    OPAL-869 Convert Opal db queries to api calls
+    OPAL-879 Master Source Table changes
+    OPAL-881 Opal Admin - Test Control primary key is 0
+    OPAL-887 Opal - API for inserting / updating Resource
+    OPAL-900 Opal - Questionnaire API for generating questionnaire list
+    OPAL-912 Study - Database changes add consent status to a study
+    OPAL-913 Study - Add investigator contact information (email and phone number) 
+    OPAL-998 Multi-site - attach hospital table for Publication and Cron
+
+
 Version 2.0.2.0:
 
 

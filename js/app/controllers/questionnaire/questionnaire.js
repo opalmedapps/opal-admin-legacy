@@ -133,7 +133,7 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 		$scope.questionnaireList = [];
 
 		// Call API to get the list of questionnaires
-		questionnaireCollectionService.getQuestionnaires(OAUserId).then(function (response) {
+		questionnaireCollectionService.getQuestionnaires().then(function (response) {
 			$scope.questionnaireList = response.data;
 		}).catch(function(err) {
 			ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS'));
@@ -168,7 +168,7 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 
 			// After delete, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				questionnaireCollectionService.getQuestionnaires(OAUserId).then(function (response) {
+				questionnaireCollectionService.getQuestionnaires().then(function (response) {
 					$scope.questionnaireList = response.data;
 				}).catch(function(err) {
 					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS'));
@@ -193,7 +193,7 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 
 			// After update, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				questionnaireCollectionService.getQuestionnaires(OAUserId).then(function (response) {
+				questionnaireCollectionService.getQuestionnaires().then(function (response) {
 					$scope.questionnaireList = response.data;
 				}).catch(function(err) {
 					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS'));

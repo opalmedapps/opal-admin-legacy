@@ -21,6 +21,7 @@ class Diagnosis extends Module {
         $diagnosisId = $post["serial"];
         $result = $this->opalDB->getDiagnosisDetails($diagnosisId);
         $result["diagnoses"] = $this->opalDB->getDiagnosisCodes($diagnosisId);
+        $result["deactivated"] = $this->opalDB->getdeactivatedDiagnosesCodes($diagnosisId);
         $result["count"] = count($result["diagnoses"]);
 
         if ($result["eduMatSer"] != 0) {
@@ -42,13 +43,14 @@ class Diagnosis extends Module {
         $ad = $this->opalDB->getAssignedDiagnoses();
         $assignedDiagnoses = array();
         foreach($ad as $item) {
-            $assignedDiagnoses[$item["sourceuid"]] = $item;
+            $assignedDiagnoses[$item["SourceUID"]] = $item;
         }
         $results = $this->opalDB->getDiagnoses($assignedDB);
+
         foreach ($results as &$item) {
             $item["added"] = 0;
-            if ($assignedDiagnoses[$item["sourceuid"]])
-                $item['assigned'] = $assignedDiagnoses[$item["sourceuid"]];
+            if ($assignedDiagnoses[$item["ID"]])
+                $item['assigned'] = $assignedDiagnoses[$item["ID"]];
         }
 
         return $results;
@@ -63,6 +65,7 @@ class Diagnosis extends Module {
      * */
     protected function _validateAndSanitizeDiagnosis($post) {
         $post = HelpSetup::arraySanitization($post);
+        $listDiagnoses = array();
         $validatedDiagnosis = array();
         if(!$post["name_EN"] || !$post["name_FR"] || !$post["description_EN"] || !$post["description_FR"])
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing informations.");
@@ -77,23 +80,25 @@ class Diagnosis extends Module {
         if($post["serial"] && $post["serial"] != "")
             $validatedDiagnosis["serial"] = intval($post["serial"]);
 
-        if($post['eduMat'] && isset($post["eduMat"]["serial"])) {
-            $tempEdu = $this->opalDB->validateEduMaterialId($post["eduMat"]["serial"]);
+        if($post['eduMat'] && isset($post["eduMat"])) {
+            $post["eduMat"] = intval($post["eduMat"]);
+            $tempEdu = $this->opalDB->validateEduMaterialId($post["eduMat"]);
             if($tempEdu["total"] != "1")
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid educational material.");
-            $validatedDiagnosis["eduMat"] = $post["eduMat"]["serial"];
+            $validatedDiagnosis["eduMat"] = $post["eduMat"];
         }
 
         if(!$post["diagnoses"] || !is_array($post["diagnoses"]) || count($post["diagnoses"]) <= 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Diagnosis codes are missing.");
 
-        foreach ($post["diagnoses"] as $item) {
-            array_push($validatedDiagnosis["diagnoses"], array(
-                "sourceuid"=>intval($item['sourceuid']),
-                "code"=>$item['code'],
-                "description"=>$item['description'],
-            ));
-        }
+        foreach ($post["diagnoses"] as $item)
+            array_push($listDiagnoses, intval($item));
+
+        $diagCode = $this->opalDB->getListDiagnosisCodes($listDiagnoses);
+        if(count($diagCode) != count($post["diagnoses"]))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid diagnosis codes list.");
+
+        $validatedDiagnosis["diagnoses"] = $diagCode;
 
         return $validatedDiagnosis;
     }
@@ -117,16 +122,6 @@ class Diagnosis extends Module {
         );
 
         $diagnosisId = $this->opalDB->insertDiagnosisTranslation($toInsert);
-        $toInsert = array();
-
-        foreach($validatedPost["diagnoses"] as $item) {
-            array_push($toInsert, array(
-                "DiagnosisTranslationSerNum"=>$diagnosisId,
-                "SourceUID"=>$item['sourceuid'],
-                "DiagnosisCode"=>$item['code'],
-                "Description"=>$item['description'],
-            ));
-        }
 
         return $this->_insertDiagnosisCodes($validatedPost["diagnoses"], $diagnosisId);
     }
@@ -142,9 +137,10 @@ class Diagnosis extends Module {
         foreach($codes as $item) {
             array_push($toInsert, array(
                 "DiagnosisTranslationSerNum"=>$diagnosisId,
-                "SourceUID"=>$item['sourceuid'],
+                "SourceUID"=>$item['ID'],
                 "DiagnosisCode"=>$item['code'],
                 "Description"=>$item['description'],
+                "Source"=>$item['source'],
             ));
         }
 
@@ -187,9 +183,8 @@ class Diagnosis extends Module {
         $this->opalDB->updateDiagnosisTranslation($toUpdate);
 
         $existingSourceUIDs = array();
-        foreach ($validatedPost["diagnoses"] as $diagnosis) {
-            array_push($existingSourceUIDs, $diagnosis["sourceuid"]);
-        }
+        foreach ($validatedPost["diagnoses"] as $diagnosis)
+            array_push($existingSourceUIDs, $diagnosis["ID"]);
 
         $this->opalDB->deleteDiagnosisCodes($validatedPost["serial"], $existingSourceUIDs);
         return $this->_insertDiagnosisCodes($validatedPost["diagnoses"], $validatedPost["serial"]);
@@ -203,6 +198,7 @@ class Diagnosis extends Module {
         $this->checkDeleteAccess($post);
         $total = $this->opalDB->deleteAllDiagnosisCodes($post['serial']);
         $total += $this->opalDB->deleteDiagnosisTranslation($post['serial']);
+        return $total;
     }
 
     /*
@@ -228,7 +224,7 @@ class Diagnosis extends Module {
         $include = $startDate = $endDate = "";
         $errCode = $this->_validatePatientInfo($post, $include, $startDate, $endDate);
         if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation"=>$errCode)));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>$errCode)));
 
         return $this->opalDB->getPatientDiagnoses($post["mrn"], $post["site"], $post["source"], $include, $startDate, $endDate);
     }
@@ -320,7 +316,7 @@ class Diagnosis extends Module {
 
         $errCode = $this->_validatePatientDiagnosis($post, $patientSite, $source);
         if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation"=>$errCode)));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>$errCode)));
 
         $toInsert = array(
             "PatientSerNum"=>$patientSite["PatientSerNum"],
@@ -341,7 +337,7 @@ class Diagnosis extends Module {
                 $currentPatientDiagnosis = $currentPatientDiagnosis[0];
                 $toInsert["DiagnosisSerNum"] = $currentPatientDiagnosis["DiagnosisSerNum"];
             }
-            return $this->opalDB->insertPatientDiagnosis($toInsert);
+            return $this->opalDB->replacePatientDiagnosis($toInsert);
         }
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates patient diagnosis found.");
@@ -362,17 +358,22 @@ class Diagnosis extends Module {
         $source = null;
         $this->checkDeleteAccess($post);
         $post = HelpSetup::arraySanitization($post);
-        $errCode = $this->_validateBasicPatientInfo($post, $patientSite, $source);
+
+        if (is_array($post))
+            $errCode = $this->_validatePatientSourceExternalId($post, $patientSite, $source);
+        else
+            $errCode = 31;
+
         if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation"=>$errCode)));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>$errCode)));
 
         $currentPatientDiagnosis = $this->opalDB->getPatientDiagnosisId($patientSite["PatientSerNum"], $source["SourceDatabaseSerNum"], $post["rowId"]);
         if(count($currentPatientDiagnosis) > 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates patient diagnosis found.");
         else if(count($currentPatientDiagnosis) < 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("validation"=>32)));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>32)));
         $currentPatientDiagnosis = $currentPatientDiagnosis[0];
-        return $this->opalDB->deletePatientDiagnosis($currentPatientDiagnosis["DiagnosisSerNum"]);
+        $this->opalDB->deletePatientDiagnosis($currentPatientDiagnosis["DiagnosisSerNum"]);
     }
 
     /*
@@ -382,42 +383,23 @@ class Diagnosis extends Module {
      *                          site : Site acronym of the establishment (mandatory)
      *                          source : Source database of the diagnosis (mandatory)
      *                          rowId : External ID of the diagnosis (mandatory)
-     *                          code : Diagnosis code (mandatory)
+     * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
+     *                      Error validation code is coded as an int of 5 bits (value from 0 to 31). Bit informations
+     *                      are coded from right to left:
+     *                      1: MRN invalid or missing
+     *                      2: site invalid or missing
+     *                      3: combo of MRN-site-patient does not exists
+     *                      4: source invalid or missing
+     *                      5: rowId invalid or missing
      * @return  $errCode : int - error code.
      *          $patientSite : array (reference) - site info
      *          $source : array (reference) - source database
      * */
-    protected function _validateBasicPatientInfo(&$post, &$patientSite, &$source) {
-        $errCode = "";
+    protected function _validatePatientSourceExternalId(&$post, &$patientSite, &$source) {
+        $patientSite = array();
+        $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
 
-        //First bit - MRN
-        if(!array_key_exists("mrn", $post) || $post["mrn"] == "") {
-            $errCode = "1" . $errCode;
-        } else {
-            $errCode = "0" . $errCode;
-        }
-
-        //Second bit - Site
-        if(!array_key_exists("site", $post) || $post["site"] == "") {
-            $errCode = "1" . $errCode;
-        } else {
-            $errCode = "0" . $errCode;
-        }
-
-        //Third bit - MRN and site combo
-        if(array_key_exists("mrn", $post) && $post["mrn"] != "" && array_key_exists("site", $post) && $post["site"] != "") {
-            $patientSite = $this->opalDB->getPatientSite($post["mrn"], $post["site"]);
-            if(count($patientSite) != 1) {
-                $patientSite = array();
-                $errCode = "1" . $errCode;
-            }
-            else {
-                $patientSite = $patientSite[0];
-                $errCode = "0" . $errCode;
-            }
-        }
-
-        //Fourth bit - source
+        // 4th bit - source
         if(!array_key_exists("source", $post) || $post["source"] == "") {
             $errCode = "1" . $errCode;
         } else {
@@ -431,13 +413,11 @@ class Diagnosis extends Module {
             }
         }
 
-        //Fifth bit - external ID
-        if(!array_key_exists("rowId", $post) || $post["rowId"] == "") {
+        // 5th bit - external ID
+        if(!array_key_exists("rowId", $post) || $post["rowId"] == "")
             $errCode = "1" . $errCode;
-        }  else {
-            $post["rowId"] = intval($post["rowId"]);
+        else
             $errCode = "0" . $errCode;
-        }
         return $errCode;
     }
 
@@ -447,57 +427,85 @@ class Diagnosis extends Module {
      *                          mrn : Medical Record Number of the patient (mandatory)
      *                          site : Site acronym of the establishment (mandatory)
      *                          source : Source database of the diagnosis (mandatory)
-     *                          rowId : External ID of the diagnosis (mandatory)
+     *                          externalId : External ID of the diagnosis code (mandatory)
+     *                          rowId : External ID of the diagnosis code (mandatory)
      *                          code : Diagnosis code (mandatory)
      *                          creationDate : creation date of the record (mandatory)
      *                          descriptionEn : english description of the diagnosis (mandatory)
+     *                          descriptionFr : french description of the diagnosis (optional)
      *                          stage : no idea, but its for Aria (optional)
      *                          stageCriteria : no idea, but its for Aria (optional)
+     * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
+     *                      Error validation code is coded as an int of 11 bits (value from 0 to 2047). Bit informations
+     *                      are coded from right to left:
+     *                      1: MRN invalid or missing
+     *                      2: site invalid or missing
+     *                      3: combo of MRN-site does not exists
+     *                      4: source invalid or missing
+     *                      5: rowId invalid or missing
+     *                      6: externalId of the diagnosis code invalid or missing
+     *                      7: diagnosis code invalid or missing
+     *                      8: source diagnosis cannot be found
+     *                      9: creationDate invalid or missing
+     *                      10: descriptionEn invalid or missing
+     *                      11: descriptionFr invalid
      * @return  $errCode : int - error code.
      *          $patientSite : array (reference) - site info
      *          $source : array (reference) - source database
      * */
     protected function _validatePatientDiagnosis(&$post, &$patientSite, &$source) {
         $post = HelpSetup::arraySanitization($post);
-        $errCode = $this->_validateBasicPatientInfo($post, $patientSite, $source);
 
-        //Sixth bit - code
-        if(!array_key_exists("code", $post) || $post["code"] == "") {
-            $errCode = "1" . $errCode;
-        }
-        else {
-            $code = $this->opalDB->getDiagnosisCodeDetails($post["code"], $source["SourceDatabaseSerNum"], $post["rowId"]);
-            if(count($code) != 1) {
+        if (is_array($post)) {
+            $errCode = $this->_validatePatientSourceExternalId($post, $patientSite, $source);
+            // 6th bit - externalId of the diagnosis code
+            if (!array_key_exists("externalId", $post) || $post["externalId"] == "")
                 $errCode = "1" . $errCode;
-            } else {
-                $code = $code[0];
+            else
                 $errCode = "0" . $errCode;
+
+            // 7th bit - diagnosis code
+            if (!array_key_exists("code", $post) || $post["code"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            // 8th bit - the combo code/source/ExternalId exists as a master source diagnosis
+            if (bindec($errCode) != 0)
+                $errCode = "1" . $errCode;
+            else {
+                $code = $this->opalDB->getDiagnosisCodeDetails($post["code"], $source["SourceDatabaseName"], $post["externalId"]);
+                if (count($code) != 1)
+                    $errCode = "1" . $errCode;
+                else
+                    $errCode = "0" . $errCode;
             }
-        }
 
-        //Seventh bit - creation date
-        if(!array_key_exists("creationDate", $post) || $post["creationDate"] == "" || !HelpSetup::verifyDate($post["creationDate"], false, "Y-m-d H:i:s")) {
-            $errCode = "1" . $errCode;
-        } else {
-            $errCode = "0" . $errCode;
-        }
+            // 9th bit - creation date
+            if (!array_key_exists("creationDate", $post) || $post["creationDate"] == "" || !HelpSetup::verifyDate($post["creationDate"], false, "Y-m-d H:i:s"))
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
 
-        //bit eight - description EN
-        if(!array_key_exists("descriptionEn", $post) || $post["descriptionEn"] == "") {
-            $errCode = "1" . $errCode;
+            // 10th bit - description EN
+            if (!array_key_exists("descriptionEn", $post) || $post["descriptionEn"] == "") {
+                $errCode = "1" . $errCode;
+            } else
+                $errCode = "0" . $errCode;
+
+            // 11th bit - description FR
+            if (!array_key_exists("descriptionFr", $post)) {
+                $errCode = "1" . $errCode;
+            } else
+                $errCode = "0" . $errCode;
+
+            if (!array_key_exists("stage", $post))
+                $post["stage"] = "";
+            if (!array_key_exists("stageCriteria", $post))
+                $post["stageCriteria"] = "";
         } else
-            $errCode = "0" . $errCode;
+            $errCode = "11111111111";
 
-        //bit nine - description FR
-        if(!array_key_exists("descriptionFr", $post)) {
-            $errCode = "1" . $errCode;
-        } else
-            $errCode = "0" . $errCode;
-
-        if(!array_key_exists("stage", $post))
-            $post["stage"] = "";
-        if(!array_key_exists("stageCriteria", $post))
-            $post["stageCriteria"] = "";
         return bindec($errCode);
     }
 }

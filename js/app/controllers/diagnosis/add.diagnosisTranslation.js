@@ -237,24 +237,26 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.add', ['ngAnimate', '
 
 				// For some reason the HTML text fields add a zero-width-space
 				// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
-				$scope.newDiagnosisTranslation.description_EN = $scope.newDiagnosisTranslation.description_EN.replace(/\u200B/g,'');
-				$scope.newDiagnosisTranslation.description_FR = $scope.newDiagnosisTranslation.description_FR.replace(/\u200B/g,'');
 
-				// Fill in the diagnosis from diagnosisList
+				var toSubmit = {
+					description_EN: $scope.newDiagnosisTranslation.description_EN.replace(/\u200B/g,''),
+					description_FR: $scope.newDiagnosisTranslation.description_FR.replace(/\u200B/g,''),
+					name_EN: $scope.newDiagnosisTranslation.name_EN,
+					name_FR: $scope.newDiagnosisTranslation.name_FR,
+					eduMat: ($scope.newDiagnosisTranslation.eduMat != null ? $scope.newDiagnosisTranslation.eduMat.serial : null),
+					diagnoses: []
+				};
+
 				angular.forEach($scope.diagnosisList, function (diagnosis) {
 					if (diagnosis.added)
-						$scope.newDiagnosisTranslation.diagnoses.push(diagnosis);
+						toSubmit.diagnoses.push(diagnosis.ID);
 				});
-
-				// Log who created diagnosis translation
-				var currentUser = Session.retrieveObject('user');
-				$scope.newDiagnosisTranslation.user = currentUser;
 
 				// Submit form
 				$.ajax({
 					type: 'POST',
 					url: 'diagnosis-translation/insert/diagnosis-translation',
-					data: $scope.newDiagnosisTranslation,
+					data: toSubmit,
 					success: function () {},
 					error: function (err) {
 						ErrorHandler.onError(err, $filter('translate')('DIAGNOSIS.ADD.ERROR_ADD'));
