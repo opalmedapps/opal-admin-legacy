@@ -22,6 +22,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			appointment: {available:false,open:false, show:false},
 			doctor: {available:false,open:false, show:false},
 			machine: {available:false,open:false, show:false},
+			study: {available:false,open:false, show:false},
 			diagnosis: {available:false,open:false, show:false}
 		};
 
@@ -70,6 +71,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		$scope.dxSearchField = "";
 		$scope.doctorSearchField = "";
 		$scope.machineSearchField = "";
+		$scope.studySearchField = "";
 		$scope.patientSearchField = "";
 
 		$scope.patientTriggerList = [];
@@ -78,6 +80,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		$scope.dxTriggerList = [];
 		$scope.doctorTriggerList = [];
 		$scope.machineTriggerList = [];
+		$scope.studyTriggerList = [];
 
 		// Date format for start and end frequency dates
 		$scope.format = 'yyyy-MM-dd';
@@ -187,6 +190,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 
 			$scope.doctorTriggerList = response.data.doctors;
 			$scope.machineTriggerList = response.data.machines;
+			$scope.studyTriggerList = response.data.studies;
 			$scope.patientTriggerList = response.data.patients;
 			$scope.appointmentStatusList = response.data.appointmentStatuses;
 			$scope.appointmentStatusList.forEach(function(entry) {
@@ -250,6 +254,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			angular.forEach($scope.dxTriggerList, function(item) {item.added = false;});
 			angular.forEach($scope.doctorTriggerList, function(item) {item.added = false;});
 			angular.forEach($scope.machineTriggerList, function(item) {item.added = false;});
+			angular.forEach($scope.studyTriggerList, function(item) {item.added = false;});
 
 			$scope.unique = false;
 			$scope.apptSelected = null;
@@ -339,8 +344,11 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 					open: false,
 					preview: false,
 				},
-
-
+				study: {
+					display: false,
+					open: false,
+					preview: false,
+				},
 			};
 
 			$scope.subModule = null;
@@ -396,6 +404,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 				diagnosis: {all:false, checked:false},
 				doctor: {all:false, checked:false},
 				machine: {all:false, checked:false},
+				study: {all:false, checked:false},
 				patient: {all:false, checked:false}
 			};
 
@@ -439,6 +448,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 					$scope.triggerSection.doctor.available = response.data["triggers"].indexOf("7") !== -1 ? true: false;
 					$scope.triggerSection.machine.available = response.data["triggers"].indexOf("8") !== -1 ? true: false;
 					$scope.publishDate.available = response.data["triggers"].indexOf("9") !== -1 ? true: false;
+					$scope.triggerSection.study.available = response.data["triggers"].indexOf("10") !== -1 ? true: false;
 					$scope.publicationList = response.data["publications"]; // Assign value
 				}).catch(function(err) {
 					ErrorHandler.onError(err, $filter('translate')('PUBLICATION.ADD.ERROR_MODULE'));
@@ -681,6 +691,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 						$scope.toSubmit.publishDateTime = tempDate;
 					}
 				}
+				
 				$.ajax({
 					type: "POST",
 					url: "publication/insert/publication",
@@ -723,6 +734,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		$scope.$watch('dxTriggerList',			function (nv) {$scope.changeTriggers(nv);}, true);
 		$scope.$watch('doctorTriggerList',		function (nv) {$scope.changeTriggers(nv);}, true);
 		$scope.$watch('machineTriggerList',		function (nv) {$scope.changeTriggers(nv);}, true);
+		$scope.$watch('studyTriggerList',		function (nv) {$scope.changeTriggers(nv);}, true);
 
 		$scope.changeTriggers = function(triggerList) {
 			triggerList = angular.copy(triggerList);

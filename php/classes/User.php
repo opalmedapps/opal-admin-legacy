@@ -54,18 +54,17 @@ class User extends Module {
         }
         $fieldString = substr($fieldString, 0, -1);
 
-        $ch = curl_init();
-        curl_setopt($ch,CURLOPT_URL, ACTIVE_DIRECTORY["url"]);
-        curl_setopt($ch,CURLOPT_POSTFIELDS,$fieldString);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        $requestResult = json_decode(curl_exec($ch),TRUE);
-        curl_close($ch);
+        $api = new ApiCall(MSSS_ACTIVE_DIRECTORY_CONFIG);
+        $api->setPostFields($fieldString);
+        $api->execute();
+        $requestResult = json_decode($api->getAnswer(), true);
 
         if(!$requestResult["authenticate"]) {
             HelpSetup::getModuleMethodName($moduleName, $methodeName);
             $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Wrong username and/or password.");
-        }
+        } else if (count($this->opalDB->authenticateUserAccess($username)) != 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Wrong username and/or password.");
 
         return $result;
     }
@@ -116,6 +115,7 @@ class User extends Module {
         $_SESSION["username"] = $result["username"];
         $_SESSION["language"] = $result["language"];
         $_SESSION["role"] = $result["role"];
+        $_SESSION["type"] = $result["type"];
         $_SESSION['sessionId'] = HelpSetup::makeSessionId();
         $_SESSION['lastActivity'] = time();
         $_SESSION['created'] = time();
@@ -433,12 +433,12 @@ class User extends Module {
         return true;
     }
 
-    /*
-     * insert a new user into the OAUser table and its role in OAUserRole table after sanitizing and validating the
-     * data. Depending if the AD system is active or not, the insertion is done differently.
-     * @params  $post (array) contains the username, password, confirmed password, role, language.
-     * @returns void
-     * */
+    /**
+     * Insert a new user into the OAUser table after sanitizing and validating the data. Depending if the AD system is
+     * active or not, the insertion is done differently. Also, if the user already exists but was deleted, the record
+     * will be undeleted and updated.
+     * @param $post array - contains all the user info
+     */
     public function insertUser($post) {
         $data = HelpSetup::arraySanitization($post);
         $this->checkWriteAccess(array("username"=>$data["username"], "roleId"=>$data["roleId"], "language"=>strtoupper($data["language"])));
@@ -455,26 +455,32 @@ class User extends Module {
         if($language != "FR" && $language != "EN")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Wrong language.");
 
-        if(!AD_LOGIN_ACTIVE || $type == 2)
-            $userId = $this->_insertUserWithPassword($type, $username, $password, $confirmPassword, $language, $roleId);
-        else
-            $userId = $this->_insertUserAD($type, $username, $language, $roleId);
+        $currentUser = $this->opalDB->isUserExists($username);
 
-        $role = $this->opalDB->getRoleDetails($roleId);
-        if(!is_array($role))
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid role.");
-        return $this->opalDB->insertUserRole($userId, $roleId);
+        if (count($currentUser) < 1)
+            $isInsert = true;
+        else if (count($currentUser) == 1 && $currentUser[0]["deleted"] == DELETED_RECORD)
+            $isInsert = false;
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicate usernames found.");
+
+        if (!AD_LOGIN_ACTIVE || $type == 2)
+            $this->_prepareUserWithPassword($type, $username, $password, $confirmPassword, $language, $roleId, $isInsert);
+        else
+            $this->_insertUpdateUser($type, $username, $language, HelpSetup::generateRandomString(), $roleId, $isInsert);
     }
 
-    /*
-     * Insert an user with a password.
-     * @params  $username (string) username (duh!)
-     *          $password (string) password
-     *          $confirmPassword (string) confirmation of the password
-     *          $language (string) language of the user (EN, FR)
-     * @return  userId (int) ID of the new user created
-     * */
-    protected function _insertUserWithPassword($type, $username, $password, $confirmPassword, $language, $roleId) {
+    /**
+     * Insert an user with a password because the AD system is inactive or N/A, or the user is a third party system.
+     * @param $type int - type of user (human/system)
+     * @param $username string - username of the user
+     * @param $password string - password requested for the user
+     * @param $confirmPassword string - confirmation of the password to make sure there's no typo 
+     * @param $language string - preferred language (en/fr)
+     * @param $roleId int - role of the user
+     * @param $isInsert boolean - if the process is an insert new user or update a deactivated user
+     */
+    protected function _prepareUserWithPassword($type, $username, $password, $confirmPassword, $language, $roleId, $isInsert = false) {
         if($password == "" || $confirmPassword == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data to create user.");
 
@@ -482,18 +488,23 @@ class User extends Module {
         if(count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
 
-        return $this->opalDB->insertUser($type, $username, hash("sha256", $password . USER_SALT), $language, $roleId);
+        $this->_insertUpdateUser($type, $username, $language, $password, $roleId, $isInsert);
     }
 
-    /*
-     * Insert an user without a password. But to make sure there is somethign in the password field, the username is
+    /**
+     * Insert or update an user
      * used by default.
-     * @params  $username (string) username (duh!)
-     *          $language (string) language of the user (EN, FR)
-     * @return  userId (int) ID of the new user created
-     * */
-    protected function _insertUserAD($type, $username, $language, $roleId) {
-        return $this->opalDB->insertUser($type, $username, hash("sha256", HelpSetup::generateRandomString() . USER_SALT), $language, $roleId);
+     * @param $type int - type of user (human/system)
+     * @param $username string - username of the user
+     * @param $language string - preferred language (en/fr)
+     * @param $roleId int - role of the user
+     * @param $isInsert boolean - if the process is an insert new user or update a deactivated user
+     */
+    protected function _insertUpdateUser($type, $username, $language, $password, $roleId, $isInsert = false) {
+        if($isInsert)
+            $this->opalDB->insertUser($type, $username, hash("sha256", $password . USER_SALT), $language, $roleId);
+        else
+            $this->opalDB->updateUser($type, $username, hash("sha256", $password . USER_SALT), $language, $roleId);
     }
 
     /*

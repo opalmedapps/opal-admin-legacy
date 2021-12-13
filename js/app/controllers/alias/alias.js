@@ -33,12 +33,15 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 			$(".bannerMessage").addClass('alert-' + className);
 		};
 
+		var arrValidationInsert = [
+			$filter('translate')('ALIAS.VALIDATION.ID'),
+		];
+
 		// Initialize a scope variable for a selected alias
 		$scope.currentAlias = {};
-
 		$scope.detailView = "list";
-
 		$scope.changesMade = false;
+		$scope.sourceDatabase = [];
 
 		// Templates for alias table
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents"' +
@@ -58,8 +61,8 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.editAlias(row.entity)"><i title="' + $filter('translate')('ALIAS.LIST.EDIT') + '" class="fa fa-pencil"></i></a></strong> ';
 		else
 			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.editAlias(row.entity)"><i title="' + $filter('translate')('ALIAS.LIST.VIEW') + '" class="fa fa-eye"></i></a></strong> ';
-		if($scope.deleteAccess)
-			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.deleteAlias(row.entity)"><i title="' + $filter('translate')('ALIAS.LIST.DELETE') + '" class="fa fa-trash"></i></a></strong>';
+		// if($scope.deleteAccess)
+		// 	cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.deleteAlias(row.entity)"><i title="' + $filter('translate')('ALIAS.LIST.DELETE') + '" class="fa fa-trash"></i></a></strong>';
 		cellTemplateOperations += '</div>';
 
 		var cellTemplateColor = '<div class="color-palette-sm" style="margin-top: 7px; margin-left: auto; margin-right: auto" ' +
@@ -105,7 +108,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 				{
 					field: 'source_db.name', enableColumnMenu: false, displayName: $filter('translate')('ALIAS.LIST.CLINICAL_DATABASE'), width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: 'Local', label: $filter('translate')('ALIAS.LIST.LOCAL') }, { value: 'Aria', label: $filter('translate')('ALIAS.LIST.ARIA') }, { value: 'MediVisit', label: $filter('translate')('ALIAS.LIST.MEDIVISIT') }]
+						selectOptions: $scope.sourceDatabase
 					}
 				},
 				{ field: 'color', displayName: $filter('translate')('ALIAS.LIST.COLOR'), enableColumnMenu: false, width: '10%', cellTemplate: cellTemplateColor, enableFiltering: false },
@@ -125,7 +128,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 		// Initialize list of existing aliases
 		$scope.aliasList = [];
 		$scope.aliasUpdates = {
-			updateList: []
+			data: []
 		};
 
 		// Initialize an object for deleting alias
@@ -137,6 +140,15 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 				$scope.detailView = view;
 			}
 		};
+
+		aliasCollectionService.getSourceDatabases().then(function (response) {
+
+			response.data.forEach(function (row) {
+				$scope.sourceDatabase.push({value: row.name, label: row.name});
+			});
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('ALIAS.LIST.ERROR_SOURCE_DB'));
+		});
 
 		function getAliasesList() {
 			// Call our API to get the list of existing aliases
@@ -212,7 +224,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 			alias.changed = 1;
 		};
 
-		var chartConfig = $scope.chartConfig = {
+		$scope.chartConfig = {
 			chart: {
 				type: 'spline',
 				zoomType: 'x',
@@ -239,7 +251,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 								if (series.visible) {
 									var points = series.points;
 									angular.forEach(points, function (point) {
-										timeInMilliSeconds = point.x.getTime();
+										var timeInMilliSeconds = point.x.getTime();
 										if (timeInMilliSeconds >= selection.min && timeInMilliSeconds <= selection.max) {
 											if (!cronSerials.has(point.cron_serial)) {
 												cronSerials.add(point.cron_serial);
@@ -290,7 +302,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 									$scope.aliasListLogs = response.data;
 								});
 							},
-							unselect: function (point) {
+							unselect: function () {
 								$scope.aliasListLogs = [];
 								$scope.gridApiLog.grid.refresh();
 
@@ -309,37 +321,34 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 			if ($scope.changesMade && $scope.writeAccess) {
 				angular.forEach($scope.aliasList, function (alias) {
 					if (alias.changed) {
-						$scope.aliasUpdates.updateList.push({
+						$scope.aliasUpdates.data.push({
 							serial: alias.serial,
 							update: alias.update
 						});
 					}
 				});
-				// Log who updated alias
-				var currentUser = Session.retrieveObject('user');
-				$scope.aliasUpdates.user = currentUser;
+
 				// Submit form
 				$.ajax({
 					type: "POST",
 					url: "alias/update/publish-flags",
 					data: $scope.aliasUpdates,
-					success: function (response) {
-						getAliasesList();
-						response = JSON.parse(response);
-						// Show success or failure depending on response
-						if (response.value) {
-							$scope.setBannerClass('success');
-							$scope.bannerMessage = $filter('translate')('ALIAS.LIST.SUCCESS_FLAGS');
-							$scope.showBanner();
-						}
-						else {
-							ErrorHandler.onError(response, $filter('translate')('ALIAS.LIST.ERROR_FLAGS'));
-						}
-						$scope.changesMade = false;
-						$scope.aliasUpdates.updateList = [];
+
+					success: function () {
+						$scope.setBannerClass('success');
+						$scope.bannerMessage = $filter('translate')('ALIAS.LIST.SUCCESS_FLAGS');
+						$scope.showBanner();
 					},
-					error: function(err) {
-						ErrorHandler.onError(err, $filter('translate')('ALIAS.LIST.ERROR_FLAGS'));
+					error: function (err) {
+						err.responseText = JSON.parse(err.responseText);
+						ErrorHandler.onError(err, $filter('translate')('ALIAS.LIST.ERROR_FLAGS'), arrValidationInsert);
+					},
+					complete: function () {
+						getAliasesList();
+						$scope.changesMade = false;
+						$scope.aliasUpdates = {
+							data: []
+						};
 					}
 				});
 			}
@@ -375,7 +384,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 		$scope.showAliasLog = function (alias) {
 
 			$scope.currentAlias = alias;
-			var modalInstance = $uibModal.open({
+			$uibModal.open({
 				templateUrl: 'templates/alias/log.alias.html',
 				controller: 'alias.log',
 				scope: $scope,
@@ -408,7 +417,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 
 		// Function for when the alias has been clicked for deletion
 		// Open a modal
-		$scope.deleteAlias = function (currentAlias) {
+/*		$scope.deleteAlias = function (currentAlias) {
 			if ($scope.deleteAccess) {
 				// Assign selected alias as the alias to delete
 				$scope.aliasToDelete = currentAlias;
@@ -425,5 +434,5 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 					getAliasesList();
 				});
 			}
-		};
+		};*/
 	});

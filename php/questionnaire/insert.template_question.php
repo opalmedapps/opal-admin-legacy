@@ -1,6 +1,5 @@
 <?php
-/* To insert a newly-created answer type into our database */
-include_once('questionnaire.inc');
+include_once("../config.php");
 
 // Construct array from FORM params
 $answerTypeObj = new TemplateQuestion(); // Object
