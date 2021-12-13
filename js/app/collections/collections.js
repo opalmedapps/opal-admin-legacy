@@ -98,19 +98,6 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		// Function to get existing color tags
-		aliasAPI.getExistingColorTags = function (type) {
-			return $http.post(
-				"alias/get/color-tags",
-				$.param({
-					type: type,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
 		// Function to get alias chart logs given a serial
 		aliasAPI.getAliasChartLogs = function (serial, type) {
 			return $http.post(
@@ -440,63 +427,10 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		// API to find patient given an SSN
-		patientAPI.findPatient = function (ssn, id) {
-			return $http.post(
-				"patient/find-patient",
-				$.param({
-					ssn: ssn,
-					id: id,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		// API to fetch security questions
-		patientAPI.fetchSecurityQuestions = function (lang) {
-			return $http.post(
-				"patient/get/security-questions",
-				$.param({
-					lang: lang,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		// API to check email existence
-		patientAPI.emailAlreadyInUse = function (email) {
-			return $http.post(
-				"patient/email-in-use",
-				$.param({
-					email: email,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
 		// API to get patient activity list
 		patientAPI.getPatientActivities = function () {
 			return $http.post(
 				"patient/get/patient-activities",
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		// API to get a patient's details
-		patientAPI.getPatientDetails = function (serial) {
-			return $http.post(
-				"patient/get/patient-details",
-				$.param({
-					serial: serial,
-				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
@@ -779,48 +713,47 @@ angular.module('opalAdmin.collections', [])
 	.factory('questionnaireCollectionService', function ($http) {
 		var questionnaireAPI = {};
 
-		questionnaireAPI.getQuestionnaires = function (OAUserId) {
+		questionnaireAPI.getQuestionnaires = function () {
 			return $http.post(
 				"questionnaire/get/questionnaires",
-				$.param({
-					OAUserId: OAUserId,
-				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
 		};
 
-		questionnaireAPI.getLibraries = function (OAUserId) {
+		questionnaireAPI.getPurposesRespondents = function () {
+			return $http.post(
+				"questionnaire/get/purposes-respondents",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		questionnaireAPI.getLibraries = function () {
 			return $http.post(
 				"library/get/libraries",
-				$.param({
-					OAUserId: OAUserId,
-				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
 		};
 
-		questionnaireAPI.getTemplatesQuestions = function (OAUserId) {
+		questionnaireAPI.getTemplatesQuestions = function () {
 			return $http.post(
 				"template-question/get/templates-questions",
-				$.param({
-					OAUserId: OAUserId,
-				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
 		};
 
-		questionnaireAPI.getTemplateQuestionDetails = function (templateQuestionId, OAUserId) {
+		questionnaireAPI.getTemplateQuestionDetails = function (templateQuestionId) {
 			return $http.post(
 				"template-question/get/template-question-details",
 				$.param({
-					OAUserId: OAUserId,
-					templateQuestionId: templateQuestionId,
+					templateQuestionId: templateQuestionId
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -828,36 +761,29 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		questionnaireAPI.getTemplateQuestionCategory = function (OAUserId) {
+		questionnaireAPI.getTemplateQuestionCategory = function () {
 			return $http.post(
 				"template-question/get/template-question-list",
-				$.param({
-					OAUserId: OAUserId,
-				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
 		};
 
-		questionnaireAPI.getQuestions = function (OAUserId) {
+		questionnaireAPI.getQuestions = function () {
 			return $http.post(
 				"question/get/questions",
-				$.param({
-					OAUserId: OAUserId,
-				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
 		};
 
-		questionnaireAPI.getQuestionDetails = function (questionId, OAUserId) {
+		questionnaireAPI.getQuestionDetails = function (questionId) {
 			return $http.post(
 				"question/get/question-details",
 				$.param({
-					questionId: questionId,
-					OAUserId: OAUserId,
+					questionId: questionId
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -865,24 +791,20 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		questionnaireAPI.getFinalizedQuestions = function (OAUserId) {
+		questionnaireAPI.getFinalizedQuestions = function () {
 			return $http.post(
 				"questionnaire/get/finalized-questions",
-				$.param({
-					OAUserId: OAUserId,
-				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
 		};
 
-		questionnaireAPI.getQuestionnaireDetails = function (questionnaireId, OAUserId) {
+		questionnaireAPI.getQuestionnaireDetails = function (questionnaireId) {
 			return $http.post(
 				"questionnaire/get/questionnaire-details",
 				$.param({
-					questionnaireId: questionnaireId,
-					OAUserId: OAUserId,
+					questionnaireId: questionnaireId
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -1057,12 +979,62 @@ angular.module('opalAdmin.collections', [])
 
 		};
 
-		studyAPI.getStudiesDetails = function (studyId, OAUserId) {
+		studyAPI.getStudiesDetails = function (studyId) {
 			return $http.post(
 				"study/get/study-details",
 				$.param({
-					OAUserId: OAUserId,
 					studyId: studyId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		studyAPI.getPatientsList = function () {
+			return $http.post(
+				"study/get/patients-list",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		studyAPI.getPatientConsentList = function (studyId) {
+			return $http.post(
+				"study/get/patients-consents",
+				$.param({
+					studyId: studyId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		studyAPI.getResearchPatient = function () {
+			return $http.post(
+				"study/get/research-patient",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		studyAPI.getConsentForms = function() {
+			return $http.post(
+				"study/get/consent-forms",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		studyAPI.consentFormPublished = function(consentId){
+			return $http.post(
+				"study/get/consent-published",
+				$.param({
+					consentId: consentId,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -1239,4 +1211,58 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		return installAPI;
+	})
+
+	//sms API service
+	.factory('smsCollectionService',function($http){
+
+		var smsAPI = {};
+
+		//Function to get all existing sms appointments in ORMS db
+		smsAPI.getSmsAppointments = function(){
+			return $http.post(
+				"sms/get/appointment",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		//Function to get all sms messages based on appointments type and speciality Code.
+		smsAPI.getSmsMessages = function (type, specialityCode) {
+			return $http.post(
+				"sms/get/messages",
+				$.param({
+					type: type,
+					specialityCode: specialityCode,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		//Function to get all existing speciality group in ORMS db
+		smsAPI.getSmsSpeciality = function(){
+			return $http.post(
+				"sms/get/speciality",
+				{
+					header : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		//Function to get all sms appointment types based on speciality Code
+		smsAPI.getSmsType = function(specialityCode){
+			return $http.post(
+				"sms/get/type",
+				$.param({
+					specialityCode: specialityCode,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+		return smsAPI;
 	});

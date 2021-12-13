@@ -214,4 +214,47 @@ class HelpSetup {
         $methodeName =  $debugBackTrace[count($debugBackTrace) - 1]["function"];
         $moduleName = $debugBackTrace[count($debugBackTrace) - 1]["class"];
     }
+
+    /**
+     * Validate the users email
+     * @param (str) email
+     * @return (mixed) filtered data for valid false for invalid
+     */
+    public static function validateEmail($email){
+        return filter_var($email, FILTER_VALIDATE_EMAIL);
+    }
+
+    /**
+     * Validate the users phone number (+xx optional, 10 digit number)
+     * @param (str) phone number
+     * @return (int) 1 for valid 0 for invalid
+     */
+    public static function validatePhone($phone){
+        return preg_match('/^(\+\d{0,2})?(\d{10})$/', $phone);
+    }
+
+    /**
+     * Validate the users phone extension (0 to 5 digits)
+     * @param (str) phone extension
+     * @return (int) 1 for valid 0 for invalid
+     */
+    public static function validatePhoneExt($phoneExt){
+        return preg_match('/^\d{0,6}$/', $phoneExt);
+    }
+
+    public static function filePutContents($dir, $contents){
+        $parts = explode('/', $dir);
+        $file = array_pop($parts);
+        $dir = '';
+        foreach($parts as $part)
+            if(!is_dir($dir .= "/$part")) {
+                echo "$dir $part\r\n";
+
+                if (mkdir($dir, 0774)) {
+                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot create folder");
+                }
+            }
+        if(file_put_contents("$dir/$file", $contents) == false)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot create file");
+    }
 }

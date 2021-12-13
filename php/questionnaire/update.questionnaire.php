@@ -1,5 +1,5 @@
 <?php
-include_once('questionnaire.inc');
+include_once("../config.php");
 
 $questionnaire = new Questionnaire();
 $questionnaireArray = $questionnaire->validateAndSanitize($_POST);
