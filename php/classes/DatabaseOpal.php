@@ -4027,11 +4027,11 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-    /*
-     * Insert a new notification
-     * @params  array of the notification infos
+    /** 
+     * Insert a new pushnotification
+     * @param  array of the pushnotification infos
      * @return  ID of the entry
-     * */
+     */
     function insertPushNotification($toInsert) {        
         return $this->_replaceRecordIntoTable(OPAL_PUSH_NOTIFICATION_TABLE, $toInsert);
     }
@@ -4044,6 +4044,39 @@ class DatabaseOpal extends DatabaseAccess {
     function getPatientAccessLevel($patientser){        
         return $this->_fetch(OPAL_GET_PATIENT_ACCESS_LEVEL, array(
             array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR)
+        ));
+    }
+
+    /** 
+    * Get Alias and alias expression information
+    * @param $expresionId - aliasExpressionSerNum
+    * @return array - data found if any
+    */
+    function getAliasExpressionDetail($expressionId){
+        return $this->_fetch(OPAL_GET_ALIAS_EXPRESSION_DETAIL, array(
+            array("parameter"=>":AliasExpressionSerNum","variable"=>$expressionId,"data_type"=>PDO::PARAM_INT)
+        ));
+    }
+
+    /** 
+     * Insert a new notification
+     * @param  array of the notification infos
+     * @return  ID of the entry
+     */
+    function insertNotification($toInsert) {        
+        return $this->_replaceRecordIntoTable(OPAL_NOTIFICATION_TABLE, $toInsert);
+    }
+
+    /** 
+     * Get Staff Serial Number
+     * @param  int source database serial number
+     * @param  int staff ID 
+     * @return  array Staff Detail
+     */
+    function getStaffDetail($sourceId,$staffId){
+        return $this->_fetch(OPAL_GET_STAFF_DETAIL, array(
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":StaffId","variable"=>$staffId,"data_type"=>PDO::PARAM_STR)
         ));
     }
 }
