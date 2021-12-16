@@ -1935,5 +1935,5 @@ AND AE.AliasSerNum = A.AliasSerNum;";
 
 const OPAL_GET_STAFF_DETAIL = "
     SELECT StaffSerNum, FirstName, LastName, LastUpdated
-     FROM Staff  WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum AND StaffId =:StaffId;
+     FROM ".OPAL_STAFF_TABLE." WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum AND StaffId =:StaffId;
 ";
