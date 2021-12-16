@@ -117,6 +117,7 @@ define("OPAL_PATIENT_ACTIVITY_LOG_TABLE","PatientActivityLog");
 define("OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE", "PatientDeviceIdentifier");
 define("OPAL_APPOINTMENT_CHECK_IN_TABLE", "AppointmentCheckin");
 define("OPAL_PUSH_NOTIFICATION_TABLE", "PushNotification");
+define("OPAL_STAFF_TABLE", "Staff");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
