@@ -231,38 +231,6 @@ abstract class OpalProject
         return $errCode;
     }
 
-    /**
-     * Updates the check-in for a particular appointment to checked and send the info to the push notification API. If
-     * the call returns an error, a code 502 (bad gateway) is returned to the caller to inform there's a problem with
-     * the push notification. Otherwise, a code 200 (all clear) is returned.
-     * @param $post array - contains the source name and the external appointment ID
-     */
-    protected function __updateAppointmentCheckIn(&$post) {
-        $errCode = $this->_validateAppointmentCheckIn($post, $source, $appointment, $patientInfo);
-        $errCode = bindec($errCode);
-        if ($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
-        
-        $rowCount = $this->opalDB->updateCheckInForAppointment($source["SourceDatabaseSerNum"], $post["appointment"]);
-        
-        if($rowCount >= 1) {
-            print_r("ROW COUNT > 1 \n\n");
-            $api = new ApiCall(PUSH_NOTIFICATION_CONFIG);
-            $api->setUrl(OPAL_CHECKIN_CALL, array(
-                "mrn"=>$patientInfo["mrn"],
-                "site"=>$patientInfo["site"],
-            ));
-
-            print_r("Execute API\n\n");
-            $api->execute();           
-
-            if($api->getError())
-                HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY, "Error from the Opal push notification server => ".$api->getError());
-            if($api->getHttpCode() != HTTP_STATUS_SUCCESS || strpos(strtolower($api->getBody()), 'error:') !== false)
-                HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY, "Error from the Opal push notification server => ".$api->getBody());
-        }
-    }
-
     protected function _notifyChange($data, $action, $dynamicKeys, $refTableId){
         
         $notificationControl = $this->opalDB->getNotificationControlDetails($data["PatientSerNum"],$action);        
