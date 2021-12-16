@@ -213,11 +213,11 @@ class Document extends Module
     /** 
      * Insert a new document after validation.
      * @param  $post - array - contains document details
-     * @return int 200 or error 400 with validation error
+     * @return void
      */
     public function insertDocument($post) {
         $this->checkWriteAccess($post);        
         $post = HelpSetup::arraySanitization($post);
-        return $this->_insertDocument($post);
+        $this->_insertDocument($post);
     }    
 }
