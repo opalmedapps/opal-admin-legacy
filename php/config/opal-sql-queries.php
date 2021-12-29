@@ -1936,12 +1936,10 @@ const OPAL_UPDATE_PATIENT_PASSWORD = "
 UPDATE " . OPAL_USERS_TABLE . " ut
 SET ut.Password = :Password WHERE ut.username = :Username AND ut.SessionId = 'opalAdmin';";
 
-const OPAL_DELETE_SECURITY_ANSWER = "
-DELETE " . OPAL_SECURITY_ANSWER_TABLE . " sat WHERE sat.PatientSerNum = :PatientSer;";
-
 const OPAL_INSERT_SECURITY_ANSWER ="
-INSERT INTO " . OPAL_SECURITY_ANSWER_TABLE . " (SecurityQuestionSerNum, PatientSerNum, AnswerText, CreationDate)
-Values (:QuestionSer, :PatientSer, SHA2(:Answer, 512), NOW())";
+UPDATE " . OPAL_SECURITY_ANSWER_TABLE . " 
+SET SecurityQuestionSerNum = :QuestionSer, AnswerText = SHA2(:Answer, 512)
+WHERE PatientSerNum = :PatientSer AND SecurityQuestionSerNum = :OldQuestionSer";
 
 const OPAL_UPDATE_PATIENT_ACCESS_LEVEL = "
 UPDATE " . OPAL_PATIENT_TABLE . " pt
