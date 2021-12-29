@@ -2676,6 +2676,8 @@
       "SUB_TITLE": "Outils pour patients",
       "REGISTRATION": "Enregistrement patient",
       "REGISTRATION_SUB": "Enregistrer un patient pour Opal.",
+      "MODIFICATION_TOOLS": "Outils de modification",
+      "MODIFICATION_TOOLS_SUB": "Modifier les informations du compte patient",
       "BACK": "Retour"
     },
     "LIST": {
@@ -2923,7 +2925,7 @@
       "EMAIL": {
         "TITLE": "Changer le courriel du patient",
         "DESCRIPTION": "changer le courriel du compte utilisateur",
-        "NEM_EMAIL": "Nouveau courriel :",
+        "NEW_EMAIL": "Nouveau courriel :",
         "EMAIL_CONFIRMED": "Confirmer le nouveau courriel :",
         "EMAIL_NOT_SAME": "Le courriel ne correspond pas",
         "EMAIL_NOT_VALID": "Le courriel n'est pas valide, veuillez réessayer",
@@ -2933,7 +2935,7 @@
       "PASSWORD": {
         "TITLE": "Changer le mot de passe du patient",
         "DESCRIPTION": "changer le mot de passe du compte utilisateur",
-        "NEM_PASSWORD": "Nouveau mot de passe :",
+        "NEW_PASSWORD": "Nouveau mot de passe :",
         "PASSWORD_CONFIRMED": "Confirmer le nouveau mot de passe :",
         "PASSWORD_NOT_SAME": "Le mot de passe ne correspond pas",
         "PASSWORD_MISSING_CAPITAL_LETTER": "Le mot de passe doit contenir au moins une majuscule",
@@ -2948,7 +2950,11 @@
         "TITLE": "Changer le niveau d'accès des patients",
         "DESCRIPTION": "changer le niveau d'accès du compte utilisateur",
         "CURRENT_LEVEL": "Niveau d'accès actuel :",
-        "CHOOSEN_LEVEL": "Choisissez parmi les suivants :"
+        "CHOOSEN_LEVEL": "Choisissez parmi les suivants :",
+        "FULL_ACCESS": "Accès à tout",
+        "NEED_TO_KNOW": "Accès minimum",
+        "SUBMIT": "Soumettre",
+        "CANCEL": "Annuler"
       },
       "SECURITY_ANSWER": {
         "TITLE": "Réinitialiser les questions de sécurité des patients",
@@ -2958,7 +2964,9 @@
         "SECOND_QUESTION": "Deuxième Question :",
         "SECOND_ANSWER": "Réponse :",
         "THIRD_QUESTION": "Troisième Question :",
-        "THIRD_ANSWER": "Réponse :"
+        "THIRD_ANSWER": "Réponse :",
+        "SUBMIT": "Soumettre",
+        "CANCEL": "Annuler"
       }
     }
   },

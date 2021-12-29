@@ -2659,6 +2659,8 @@
       "SUB_TITLE": "Patients Tools",
       "REGISTRATION": "Patient Registration",
       "REGISTRATION_SUB": "Register a patient to Opal.",
+      "MODIFICATION_TOOLS": "Patient Modification Tools",
+      "MODIFICATION_TOOLS_SUB": "Modify patient account information",
       "BACK": "Back"
     },
     "LIST": {
@@ -2905,7 +2907,7 @@
         "DESCRIPTION": "change the email of the user account",
         "NEW_EMAIL": "New email :",
         "EMAIL_CONFIRMED": " Confirm new email :",
-        "EMAIL_NOT_SAME": "The email not match ",
+        "EMAIL_NOT_SAME": "The email not match",
         "EMAIL_NOT_VALID": "The email is not valid, please try again",
         "SUBMIT": "Submit",
         "CANCEL": "Cancel"
@@ -2928,7 +2930,11 @@
         "TITLE": "Change Patient Access Level",
         "DESCRIPTION": "change the access level of the user account",
         "CURRENT_LEVEL": "Current access level :",
-        "CHOOSEN_LEVEL": "Select from following :"
+        "CHOOSEN_LEVEL": "Select from following :",
+        "FULL_ACCESS": "Full Access",
+        "NEED_TO_KNOW": "Need to Know",
+        "SUBMIT": "Submit",
+        "CANCEL": "Cancel"
       },
       "SECURITY_ANSWER": {
         "TITLE": "Reset Patient Security Questions",
@@ -2938,7 +2944,9 @@
         "SECOND_QUESTION": "Second Question :",
         "SECOND_ANSWER": "Answer :",
         "THIRD_QUESTION": "Third Question :",
-        "THIRD_ANSWER": "Answer :"
+        "THIRD_ANSWER": "Answer :",
+        "SUBMIT": "Submit",
+        "CANCEL": "Cancel"
       }
     }
   },
