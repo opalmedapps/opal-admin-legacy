@@ -4073,11 +4073,12 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-    function insertSecurityAnswers($questionser, $patientser, $answer){
+    function insertSecurityAnswers($questionser, $answer, $patientser, $oldquestionser){
         return $this->_execute(OPAL_INSERT_SECURITY_ANSWER, array(
             array("parameter"=>":QuestionSer","variable"=>$questionser,"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":Answer","variable"=>$answer,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":OldQuestionSer","variable"=>$oldquestionser,"data_type"=>PDO::PARAM_STR),
         ));
     }
 

@@ -820,12 +820,12 @@ class Patient extends Module {
 
         $errCode = "";
 
-        if(!array_key_exists("email", $post) || $post["email"] == "")
+        if(!array_key_exists("PatientSerNum", $post) || $post["PatientSerNum"] == "")
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
 
-        if(!array_key_exists("PatientSerNum", $post) || $post["PatientSerNum"] == "")
+        if(!array_key_exists("email", $post) || $post["email"] == "")
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
@@ -842,19 +842,19 @@ class Patient extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
         }
 
-        return $this->opalDB->updatePatientPassword($post["password"], $post["username"]);
+        return $this->opalDB->updatePatientPassword($post["password"], $post["uid"]);
     }
 
     public function _validatePatientPasswordParams($post){
 
         $errCode = "";
 
-        if(!array_key_exists("password", $post) || $post["password"] == "")
+        if(!array_key_exists("uid", $post) || $post["uid"] == "")
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
 
-        if(!array_key_exists("username", $post) || $post["username"] == "")
+        if(!array_key_exists("password", $post) || $post["password"] == "")
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
@@ -871,10 +871,7 @@ class Patient extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
         }
 
-        $response = $this->opalDB->deleteSecurityAnswers($post["PatientSerNum"]);
-        $response += $this->opalDB->insertSecurityAnswers($post["answer1"], $post["QuestionSerNum1"], $post["PatientSerNum"]);
-        $response += $this->opalDB->insertSecurityAnswers($post["answer2"], $post["QuestionSerNum2"], $post["PatientSerNum"]);
-        $response += $this->opalDB->insertSecurityAnswers($post["answer3"], $post["QuestionSerNum3"], $post["PatientSerNum"]);
+        $response = $this->opalDB->insertSecurityAnswers( $post["QuestionSerNum"], $post["Answer"], $post["PatientSerNum"], $post["OldQuestionSerNum"]);
         return $response;
     }
 
@@ -882,37 +879,22 @@ class Patient extends Module {
 
         $errCode = "";
 
-        if(!array_key_exists("answer1", $post) || $post["answer1"] == "")
+        if(!array_key_exists("QuestionSerNum", $post) || $post["QuestionSerNum"] == "")
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
 
-        if(!array_key_exists("QuestionSerNum1", $post) || $post["QuestionSerNum1"] == "")
-            $errCode = "1" . $errCode;
-        else
-            $errCode = "0" . $errCode;
-
-        if(!array_key_exists("answer2", $post) || $post["answer2"] == "")
-            $errCode = "1" . $errCode;
-        else
-            $errCode = "0" . $errCode;
-
-        if(!array_key_exists("QuestionSerNum2", $post) || $post["QuestionSerNum2"] == "")
-            $errCode = "1" . $errCode;
-        else
-            $errCode = "0" . $errCode;
-
-        if(!array_key_exists("answer3", $post) || $post["answer3"] == "")
-            $errCode = "1" . $errCode;
-        else
-            $errCode = "0" . $errCode;
-
-        if(!array_key_exists("QuestionSerNum3", $post) || $post["QuestionSerNum3"] == "")
+        if(!array_key_exists("Answer", $post) || $post["Answer"] == "")
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
 
         if(!array_key_exists("PatientSerNum", $post) || $post["PatientSerNum"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        if(!array_key_exists("OldQuestionSerNum", $post) || $post["OldQuestionSerNum"] == "")
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
