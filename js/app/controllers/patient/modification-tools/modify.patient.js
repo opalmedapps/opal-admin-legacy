@@ -868,10 +868,68 @@ angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstr
 		});
 	}
 
+	//Function to update email
+	$scope.updateEmail = function(appointment){
+		$scope.currentAppointment = appointment;
+		var modalInstance = $uibModal.open({
+			templateUrl: 'templates/patient/modification-tools/update.email.html',
+			controller: 'update.email',
+			scope: $scope,
+			windowClass: 'customModal',
+			backdrop: 'static',
+		});
 
-	//Remove whitespace from input
-	function strip(text) {
-		return text ? String(text).replace(/<[^>]+>/gm, '') : '';
-	}
+		modalInstance.result.then(function () {
+			//getSmsAppointmentList();
+		});
+	};
+
+	//Function to update password
+	$scope.updatePassword = function(appointment){
+		$scope.currentAppointment = appointment;
+		var modalInstance = $uibModal.open({
+			templateUrl: 'templates/patient/modification-tools/update.password.html',
+			controller: 'update.password',
+			scope: $scope,
+			windowClass: 'customModal',
+			backdrop: 'static',
+		});
+
+		modalInstance.result.then(function () {
+			//getSmsAppointmentList();
+		});
+	};
+
+	//Function to update access level
+	$scope.updateAccessLevel = function(appointment){
+		$scope.currentAppointment = appointment;
+		var modalInstance = $uibModal.open({
+			templateUrl: "templates/patient/modification-tools/update.accessLevel.html",
+			controller: 'update.accessLevel',
+			scope: $scope,
+			windowClass: 'customModal',
+			backdrop: 'static',
+		});
+
+		modalInstance.result.then(function () {
+			//getSmsAppointmentList();
+		});
+	};
+
+	//Function to update security questions
+	$scope.updateSecurityQuestion = function(appointment){
+		$scope.currentAppointment = appointment;
+		var modalInstance = $uibModal.open({
+			templateUrl: "templates/patient/modification-tools/update.securityAnswer.html",
+			controller: 'update.securityAnswer',
+			scope: $scope,
+			windowClass: 'customModal',
+			backdrop: 'static',
+		});
+
+		modalInstance.result.then(function () {
+			//getSmsAppointmentList();
+		});
+	};
 
 });
