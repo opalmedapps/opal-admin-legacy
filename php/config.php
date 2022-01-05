@@ -78,6 +78,10 @@ define( "UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
 define( "ADMIN_REGISTRATION_URL", $config['pathConfig']['registration_url'] );
 define( "CLINICAL_DOC_PATH", $config['pathConfig']['shared_drive_path'] . "clinical/documents/");
 
+// Define Firebase variables
+define( "FIREBASE_DATABASEURL", $config['firebaseConfig']["database"]["databaseURL"]);
+define( "FIREBASE_SERVICEACCOUNT", $config['firebaseConfig']["serviceAccount"]);
+
 define("ALIAS_TYPE_APPOINTMENT_TEXT", 'Appointment');
 define("ALIAS_TYPE_DOCUMENT_TEXT", 'Document');
 define("ALIAS_TYPE_TASK_TEXT", 'Task');
