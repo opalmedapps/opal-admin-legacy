@@ -2,6 +2,7 @@
 
 use Kreait\Firebase\Database;
 use Kreait\Firebase\Factory;
+use Kreait\Firebase\Exception\FirebaseException;
 
 class Firebase extends Module{
     private $firebase ;
@@ -11,23 +12,31 @@ class Firebase extends Module{
     public function __construct($guestStatus = false)
     {
         parent::__construct(MODULE_PATIENT, $guestStatus);
-        $this->firebase = (new Factory)
-            ->withServiceAccount( __DIR__.'/opal-f7ddc-42dc386426ff.json')
-            ->withDatabaseUri('https://opal-f7ddc.firebaseio.com/');
-        $this->database = $this->firebase->createDatabase();
-        $this->auth = $this->firebase->createAuth();
+        try {
+            $this->firebase = (new Factory)
+                ->withServiceAccount(__DIR__ . '/opal-f7ddc-42dc386426ff.json')
+                ->withDatabaseUri('https://opal-f7ddc.firebaseio.com/');
+            $this->database = $this->firebase->createDatabase();
+            $this->auth = $this->firebase->createAuth();
+        } catch (FirebaseException $err){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "An error occur during firebase connection: " . $err->getMessage());
+        }
     }
 
-    public function changeEmail($post){
+    public function updateEmail($post){
         $this->checkWriteAccess($post);
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validatePatientEmailParams($post);
         $errCode = bindec($errCode);
-        if($errCode != 0){
+        if ($errCode != 0){
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
         }
 
-        return $this->auth->changeUserEmail($post["uid"], $post["email"]);
+        try {
+            print_r($this->auth->changeUserEmail($post["uid"], $post["email"]));
+        } catch (Throwable $err){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "An error occur during updating email: " . $err->getMessage());
+        }
     }
 
     public function _validatePatientEmailParams($post){
@@ -47,7 +56,7 @@ class Firebase extends Module{
         return $errCode;
     }
 
-    public function changePassword($post){
+    public function updatePassword($post){
         $this->checkWriteAccess($post);
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validatePatientPasswordParams($post);
@@ -56,7 +65,11 @@ class Firebase extends Module{
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
         }
 
-        return $this->auth->changeUserPassword($post["uid"], $post["password"]);
+        try {
+            $this->auth->changeUserPassword($post["uid"], $post["password"]);
+        } catch (FirebaseException $err){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "An error occur during updating password: " . $err.getMessage());
+        }
     }
 
     public function _validatePatientPasswordParams($post){

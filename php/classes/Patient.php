@@ -783,7 +783,7 @@ class Patient extends Module {
     public function getPatientUsername($post){
         $this->checkWriteAccess($post);
         $post = HelpSetup::arraySanitization($post);
-        $errCode = $this->_validatePatientUsernameParams($post);
+        $errCode = $this->_validatePatientSerialNumber($post);
         $errCode = bindec($errCode);
         if($errCode != 0){
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
@@ -792,7 +792,7 @@ class Patient extends Module {
         return $this->opalDB->getPatientUsername($post["PatientSerNum"]);
     }
 
-    public function _validatePatientUsernameParams($post){
+    public function _validatePatientSerialNumber($post){
 
         $errCode = "";
 
@@ -931,5 +931,33 @@ class Patient extends Module {
         return $errCode;
 
         return $errCode;
+    }
+
+    public function getAllSecurityQuestions(){
+        $this->checkReadAccess();
+        return $this->opalDB->getAllSecurityQuestions();
+    }
+
+    public function getPatientSecurityQuestions($post){
+        $this->checkReadAccess();
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = "";
+
+        if(!array_key_exists("PatientSerNum", $post) || $post["PatientSerNum"] == "")
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
+        $errCode = bindec($errCode);
+        if($errCode != 0){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+        }
+
+        return $this->opalDB->getPatientSecurityQuestions($post["PatientSerNum"]);
+    }
+
+    public function getAllAccessLevel(){
+        $this->checkReadAccess();
+        return $this->opalDB->getAllAccessLevel();
     }
 }

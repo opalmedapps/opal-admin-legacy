@@ -8,7 +8,7 @@
     </div>
     <div class="modal-buttons col-xs-12 col-md-6">
         <form method="post" ng-submit="updateEmail()">
-            <input class="btn btn-primary submit" ng-class="{'disabled': (new_email.firstTime === null || new_email.secondTime === null || new_email.errorMessage !== null)}" type="submit" value="{{'PATIENTS.MODIFICATION_TOOLS.EMAIL.SUBMIT'|translate}}">
+            <input class="btn btn-primary submit" ng-class="{'disabled': (!validateInput(new_email.firstTime) || !validateInput(new_email.secondTime) || new_email.errorMessage !== null)}" type="submit" value="{{'PATIENTS.MODIFICATION_TOOLS.EMAIL.SUBMIT'|translate}}">
             <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'PATIENTS.MODIFICATION_TOOLS.EMAIL.CANCEL'|translate}}">
         </form>
     </div>
