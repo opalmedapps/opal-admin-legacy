@@ -14,8 +14,8 @@ class Firebase extends Module{
         parent::__construct(MODULE_PATIENT, $guestStatus);
         try {
             $this->firebase = (new Factory)
-                ->withServiceAccount(__DIR__ . '/opal-f7ddc-42dc386426ff.json')
-                ->withDatabaseUri('https://opal-f7ddc.firebaseio.com/');
+                ->withServiceAccount(FIREBASE_SERVICEACCOUNT)
+                ->withDatabaseUri(FIREBASE_DATABASEURL);
             $this->database = $this->firebase->createDatabase();
             $this->auth = $this->firebase->createAuth();
         } catch (FirebaseException $err){
@@ -33,7 +33,7 @@ class Firebase extends Module{
         }
 
         try {
-            print_r($this->auth->changeUserEmail($post["uid"], $post["email"]));
+            $this->auth->changeUserEmail($post["uid"], $post["email"]);
         } catch (Throwable $err){
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "An error occur during updating email: " . $err->getMessage());
         }
