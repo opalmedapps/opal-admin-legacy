@@ -40,7 +40,7 @@ angular.module('opalAdmin.controllers.update.password', ['ngAnimate', 'ui.bootst
                 type: "POST",
                 url: "firebase/update/password",
                 data: {
-                    uid: "b0tEHXqDqwN9s7qKQdX1SqdTIQm1",
+                    uid: $scope.puid,  //for test: "b0tEHXqDqwN9s7qKQdX1SqdTIQm1",
                     password: $scope.new_password.firstTime,
                 },
                 success: function () {
@@ -61,7 +61,7 @@ angular.module('opalAdmin.controllers.update.password', ['ngAnimate', 'ui.bootst
             type: "POST",
             url: "patient/update/password",
             data: {
-                uid: "b0tEHXqDqwN9s7qKQdX1SqdTIQm1",
+                uid: $scope.puid,
                 password: $scope.new_password.firstTime,
             },
             success: function () {},

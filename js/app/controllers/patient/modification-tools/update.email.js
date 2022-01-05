@@ -41,7 +41,7 @@ angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap
                 type: "POST",
                 url: "firebase/update/email",
                 data: {
-                    uid: "b0tEHXqDqwN9s7qKQdX1SqdTIQm1",
+                    uid: $scope.puid,
                     email: $scope.new_email.firstTime,
                 },
                 success: function () {
