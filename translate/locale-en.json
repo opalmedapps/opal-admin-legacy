@@ -2904,27 +2904,26 @@
       },
       "EMAIL": {
         "TITLE": "Change Patient Email",
-        "DESCRIPTION": "change the email of the user account",
+        "DESCRIPTION": "The email address will be used as the patient username when accessing Opal account.",
         "NEW_EMAIL": "New email :",
         "EMAIL_CONFIRMED": " Confirm new email :",
-        "EMAIL_NOT_SAME": "The email not match",
-        "EMAIL_NOT_VALID": "The email is not valid, please try again",
+        "EMAIL_NOT_SAME": "Email and email confirmation should match.",
+        "EMAIL_NOT_VALID": "The email is not valid! please try again.",
         "SUBMIT": "Submit",
-        "CANCEL": "Cancel"
+        "CANCEL": "Cancel",
+        "ERROR": "An error occurred while changing email."
       },
       "PASSWORD": {
         "TITLE": "Change Patient Password",
-        "DESCRIPTION": "change the password of the user account",
+        "DESCRIPTION": "The password should be at least 8 characters long and should contain at least one number, one capital letter, one lower-case letter and one special character.",
         "NEW_PASSWORD": "New password :",
         "PASSWORD_CONFIRMED": "Confirm new password :",
-        "PASSWORD_NOT_SAME": "The password not match",
-        "PASSWORD_MISSING_CAPITAL_LETTER": "Password must contains at least one capital letter",
-        "PASSWORD_MISSING_LOWER_LETTER": "Password must contains at least one lower case letter",
-        "PASSWORD_MISSING_SPECIAL_CHARACTER": "Password must contains at least one special character",
-        "PASSWORD_MISSING_NUMBER": "Password must contains at least one number",
-        "PASSWORD_TOO_SHORT": "Password is too short",
+        "PASSWORD_NOT_SAME": "Password and password confirmation should match.",
+        "PASSWORD_MISSING_CHARACTER": "Your password should be at least 8 characters long and should contain at least one number, one capital letter, one lower-case letter and one special character.",
+        "PASSWORD_TOO_SHORT": "Your password is too short",
         "SUBMIT": "Submit",
-        "CANCEL": "Cancel"
+        "CANCEL": "Cancel",
+        "ERROR": "An error occurred while changing password."
       },
       "ACCESS_LEVEL": {
         "TITLE": "Change Patient Access Level",
@@ -2934,7 +2933,8 @@
         "FULL_ACCESS": "Full Access",
         "NEED_TO_KNOW": "Need to Know",
         "SUBMIT": "Submit",
-        "CANCEL": "Cancel"
+        "CANCEL": "Cancel",
+        "ERROR": "An error occurred while changing access level."
       },
       "SECURITY_ANSWER": {
         "TITLE": "Reset Patient Security Questions",
@@ -2945,8 +2945,22 @@
         "SECOND_ANSWER": "Answer :",
         "THIRD_QUESTION": "Third Question :",
         "THIRD_ANSWER": "Answer :",
+        "ANSWER_TOO_SHORT": "Your security answer should be at least 3 characters long.",
+        "ANSWER_DUPLICATE": "Please select a different security answer.",
+        "ANSWER_MISSING": "Please provide an answer to the security question above.",
         "SUBMIT": "Submit",
-        "CANCEL": "Cancel"
+        "CANCEL": "Cancel",
+        "ERROR": "An error occurred while changing security question and answer."
+      },
+      "VALIDATION": {
+        "EMAIL": "Email is missing",
+        "PASSWORD": "Password is missing",
+        "PATIENTSERNUM": "Patient serial number is missing",
+        "USERID": "Patient user id is missing",
+        "QUESTION": "Security question is missing",
+        "ANSWER": "Security answer is missing",
+        "ACCESS_LEVEL": "Access level is missing",
+        "QUESTION_OLD": "Original security question is missing"
       }
     }
   },

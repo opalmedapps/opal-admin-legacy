@@ -73,4 +73,6 @@ php/trigger/test-qTrigger.php
 # ignore PHP error log
 php-error.log
 
+# ignore composer components
 /vendor/
+composer.lock
