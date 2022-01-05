@@ -2902,7 +2902,7 @@
       "MENU": {
         "TITLE": "Outils de modification des patients",
         "PSEARCH": "Recherche du patient :",
-        "PSITE": "Site de l'hôpital des patients",
+        "PNAME": "Nom de famille du patient",
         "PRAMQ": "RAMQ du patient",
         "PMRN": "MRN du patient",
         "SUBMIT": "Soumettre",

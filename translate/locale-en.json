@@ -2882,7 +2882,7 @@
       "MENU": {
         "TITLE": "Patient Modification Tools",
         "PSEARCH": "Search Patient",
-        "PSITE": "Patient Hospital Site",
+        "PNAME": "Patient last name",
         "PMRN": "Patient MRN",
         "PRAMQ": "Patient RAMQ",
         "SUBMIT": "Submit",
