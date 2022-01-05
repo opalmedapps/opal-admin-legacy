@@ -2927,24 +2927,23 @@
         "DESCRIPTION": "changer le courriel du compte utilisateur",
         "NEW_EMAIL": "Nouveau courriel :",
         "EMAIL_CONFIRMED": "Confirmer le nouveau courriel :",
-        "EMAIL_NOT_SAME": "Le courriel ne correspond pas",
+        "EMAIL_NOT_SAME": "Le courriel et la confirmation du courriel doivent correspondre.",
         "EMAIL_NOT_VALID": "Le courriel n'est pas valide, veuillez réessayer",
         "SUBMIT": "Soumettre",
-        "CANCEL": "Annuler"
+        "CANCEL": "Annuler",
+        "ERROR": "Une erreur s'est produite lors du changement d'e-mail."
       },
       "PASSWORD": {
         "TITLE": "Changer le mot de passe du patient",
         "DESCRIPTION": "changer le mot de passe du compte utilisateur",
         "NEW_PASSWORD": "Nouveau mot de passe :",
         "PASSWORD_CONFIRMED": "Confirmer le nouveau mot de passe :",
-        "PASSWORD_NOT_SAME": "Le mot de passe ne correspond pas",
-        "PASSWORD_MISSING_CAPITAL_LETTER": "Le mot de passe doit contenir au moins une majuscule",
-        "PASSWORD_MISSING_LOWER_LETTER": "Le mot de passe doit contenir au moins une lettre minicule",
-        "PASSWORD_MISSING_SPECIAL_CHARACTER": "Le mot de passe doit contenir au moins un caractère spécial",
-        "PASSWORD_MISSING_NUMBER": "Le mot de passe doit contenir au moins un chiffre",
-        "PASSWORD_TOO_SHORT": "Le mot de passe est trop court",
+        "PASSWORD_NOT_SAME": "Le mot de passe et la confirmation du mot de passe doivent correspondre.",
+        "PASSWORD_MISSING_CHARACTER": "Votre mot de passe doit comporter au moins 8 caractères et doit contenir au moins un chiffre, une majuscule, une minuscule et un caractère spécial.",
+        "PASSWORD_TOO_SHORT": "Votre mot de passe est trop court",
         "SUBMIT": "Soumettre",
-        "CANCEL": "Annuler"
+        "CANCEL": "Annuler",
+        "ERROR": "Une erreur s'est produite lors du changement du mot de passe."
       },
       "ACCESS_LEVEL": {
         "TITLE": "Changer le niveau d'accès des patients",
@@ -2954,7 +2953,8 @@
         "FULL_ACCESS": "Accès à tout",
         "NEED_TO_KNOW": "Accès minimum",
         "SUBMIT": "Soumettre",
-        "CANCEL": "Annuler"
+        "CANCEL": "Annuler",
+        "ERROR": "Une erreur s'est produite lors du changement du niveau d'accès."
       },
       "SECURITY_ANSWER": {
         "TITLE": "Réinitialiser les questions de sécurité des patients",
@@ -2965,8 +2965,22 @@
         "SECOND_ANSWER": "Réponse :",
         "THIRD_QUESTION": "Troisième Question :",
         "THIRD_ANSWER": "Réponse :",
+        "ANSWER_TOO_SHORT": "Votre réponse de sécurité doit comporter au moins 3 caractères.",
+        "ANSWER_DUPLICATE": "Veuillez choisir une réponse différente.",
+        "ANSWER_MISSING": "Veuillez répondre à la question de sécurité.",
         "SUBMIT": "Soumettre",
-        "CANCEL": "Annuler"
+        "CANCEL": "Annuler",
+        "ERROR": "Une erreur s'est produite lors du changement de la question de sécurité."
+      },
+      "VALIDATION": {
+        "EMAIL": "Courriel manquant",
+        "PASSWORD": "Mot de passe manquant",
+        "PATIENTSERNUM": "Numéro de série du patient manquant",
+        "USERID": "ID utilisateur du patient manquant",
+        "QUESTION": "Question de sécurité manquante",
+        "ANSWER": "Response de sécurité manquante",
+        "ACCESS_LEVEL": "Niveau d'accès manquant",
+        "QUESTION_OLD": "Question de sécurité origiinal manquante"
       }
     }
   },
