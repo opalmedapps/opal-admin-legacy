@@ -893,23 +893,27 @@ define("OPAL_DELETE_PATIENT_DIAGNOSIS","
 define("OPAL_GET_PATIENT_NAME", "
     SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
     CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
-    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang FROM ".OPAL_PATIENT_TABLE." WHERE LastName LIKE :name;
+    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang, 
+    (SELECT u.Username FROM Users u WHERE u.UserType = 'Patient' AND u.UserTypeSerNum = PatientSerNum LIMIT 1) AS puid 
+    FROM ".OPAL_PATIENT_TABLE." WHERE LastName LIKE :name;
 
 ");
 
 define("OPAL_GET_PATIENT_MRN", "
     SELECT p.PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(p.FirstName, 1, 1)), LOWER(SUBSTRING(p.FirstName, 2))) AS pname,
     CONCAT(UCASE(SUBSTRING(p.LastName, 1, 1)), LOWER(SUBSTRING(p.LastName, 2))) AS plname,
-    p.SSN AS pramq, p.Sex AS psex, p.Email AS pemail, p.Language AS plang FROM ".OPAL_PATIENT_TABLE." p
-    WHERE (SELECT COUNT(*) FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi WHERE phi.MRN LIKE :MRN
+    p.SSN AS pramq, p.Sex AS psex, p.Email AS pemail, p.Language AS plang, 
+    (SELECT u.Username FROM Users u WHERE u.UserType = 'Patient' AND u.UserTypeSerNum = PatientSerNum LIMIT 1) AS puid  
+    FROM ".OPAL_PATIENT_TABLE." p WHERE (SELECT COUNT(*) FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi WHERE phi.MRN LIKE :MRN
     AND phi.PatientSerNum = p.PatientSerNum) > 0;
 ");
 
 define("OPAL_GET_PATIENT_RAMQ", "
     SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
     CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
-    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :SSN;
-
+    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang, 
+    (SELECT u.Username FROM Users u WHERE u.UserType = 'Patient' AND u.UserTypeSerNum = PatientSerNum LIMIT 1) AS puid 
+    FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :SSN;
 ");
 
 define("OPAL_GET_DIAGNOSIS_REPORT", "
