@@ -177,6 +177,10 @@ RewriteRule ^email/get/email-types php/email/get.email_types.php [QSA,L]
 RewriteRule ^email/insert/email php/email/insert.email.php [QSA,L]
 RewriteRule ^email/update/email php/email/update.email.php [QSA,L]
 
+# Firebase Section
+RewriteRule ^firebase/update/email php/firebase/update.email.php [QSA,L]
+RewriteRule ^firebase/update/password php/firebase/update.password.php [QSA,L]
+
 # Hospital Map Section
 RewriteRule ^hospital-map/delete/hospital-map php/hospital-map/delete.hospital_map.php [QSA,L]
 RewriteRule ^hospital-map/generate-qr-code php/hospital-map/generate_QR_code.php [QSA,L]
@@ -239,6 +243,8 @@ RewriteRule ^notification/insert/notification php/notification/insert.notificati
 RewriteRule ^notification/update/notification php/notification/update.notification.php [QSA,L]
 
 # Patient Section
+RewriteRule ^patient/get/access-level php/patient/modification-tools/get.accessLevel.php [QSA,L]
+RewriteRule ^patient/get/all-security-questions php/patient/modification-tools/get.securityQuestions.php [QSA,L]
 RewriteRule ^patient/get/education-options php/patient/find_educ.php [QSA,L]
 RewriteRule ^patient/get/educ-report php/patient/get.education_report.php [QSA,L]
 RewriteRule ^patient/get/patient-activities php/patient/get.patient_activities.php [QSA,L]
@@ -249,6 +255,7 @@ RewriteRule ^patient/get/patient-mrn php/patient/find_mrn.php [QSA,L]
 RewriteRule ^patient/get/patient-name php/patient/find_name.php [QSA,L]
 RewriteRule ^patient/get/patient-ramq php/patient/find_ramq.php [QSA,L]
 RewriteRule ^patient/get/patient-report php/patient/get.patient_report.php [QSA,L]
+RewriteRule ^patient/get/patient-security-questions php/patient/modification-tools/get.patient.securityQuestions.php [QSA,L]
 RewriteRule ^patient/get/questionnaire-report php/patient/get.questionnaire_report.php [QSA,L]
 RewriteRule ^patient/get/questionnaire-options php/patient/find_qst.php [QSA,L]
 RewriteRule ^patient/update/email php/patient/modification-tools/update.email.php [QSA,L]
