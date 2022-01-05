@@ -4067,12 +4067,6 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-    function deleteSecurityAnswers($patientser){
-        return $this->_execute(OPAL_DELETE_SECURITY_ANSWER, array(
-            array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR),
-        ));
-    }
-
     function insertSecurityAnswers($questionser, $answer, $patientser, $oldquestionser){
         return $this->_execute(OPAL_INSERT_SECURITY_ANSWER, array(
             array("parameter"=>":QuestionSer","variable"=>$questionser,"data_type"=>PDO::PARAM_STR),
@@ -4087,6 +4081,20 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":AccessLevel","variable"=>$accesslevel,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR),
         ));
+    }
+
+    function getAllSecurityQuestions(){
+        return $this->_fetchAll(OPAL_GET_ALL_SECURITY_QUESTIONS, array());
+    }
+
+    function getPatientSecurityQuestions($patientser){
+        return $this->_fetchAll(OPAL_GET_PATIENT_SECURITY_QUESTIONS, array(
+            array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function getAllAccessLevel(){
+        return $this->_fetchAll(OPAL_GET_ALL_ACCESS_LEVEL, array());
     }
 
 }

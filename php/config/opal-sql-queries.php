@@ -1934,13 +1934,25 @@ SET pt.Email = :Email WHERE pt.PatientSerNum = :PatientSer;";
 
 const OPAL_UPDATE_PATIENT_PASSWORD = "
 UPDATE " . OPAL_USERS_TABLE . " ut
-SET ut.Password = :Password WHERE ut.username = :Username AND ut.SessionId = 'opalAdmin';";
+SET ut.Password = SHA2(:Password, 512)  WHERE ut.username = :Username;";
 
-const OPAL_INSERT_SECURITY_ANSWER ="
-UPDATE " . OPAL_SECURITY_ANSWER_TABLE . " 
-SET SecurityQuestionSerNum = :QuestionSer, AnswerText = SHA2(:Answer, 512)
-WHERE PatientSerNum = :PatientSer AND SecurityQuestionSerNum = :OldQuestionSer";
+const OPAL_INSERT_SECURITY_ANSWER = "
+UPDATE " . OPAL_SECURITY_ANSWER_TABLE . " sa
+SET sa.SecurityQuestionSerNum = :QuestionSer, sa.AnswerText = SHA2(:Answer, 512)
+WHERE sa.PatientSerNum = :PatientSer AND sa.SecurityQuestionSerNum = :OldQuestionSer";
 
 const OPAL_UPDATE_PATIENT_ACCESS_LEVEL = "
 UPDATE " . OPAL_PATIENT_TABLE . " pt
 SET pt.Accesslevel = :AccessLevel WHERE pt.PatientSerNum = :PatientSer;";
+
+const OPAL_GET_ALL_SECURITY_QUESTIONS = "
+SELECT SecurityQuestionSerNum, QuestionText_EN, QuestionText_FR 
+FROM " . OPAL_SECURITY_QUESTION_TABLE . " WHERE Active = 1;";
+
+const OPAL_GET_PATIENT_SECURITY_QUESTIONS = "
+SELECT SecurityQuestionSerNum
+FROM " . OPAL_SECURITY_ANSWER_TABLE . " WHERE PatientSerNum = :PatientSer;";
+
+const OPAL_GET_ALL_ACCESS_LEVEL = "
+SELECT Id, AccessLevelName_EN, AccessLevelName_FR 
+FROM " . OPAL_ACCESS_LEVEL_TABLE ;
