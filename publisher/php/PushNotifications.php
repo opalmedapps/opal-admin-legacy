@@ -33,12 +33,8 @@ class PushNotifications {
 
 		//validation and message prep
 		if(is_array($data)){
-			// Flag to identify when to use the utf8_encode because message coming
-			// from PERL alters the French characters
-			$wsFlag = (isset($data['encode'])? $data['encode'] :'Yes' );
-
 			// encode (UTF8) the title and body
-			$result = self::encodePayload($wsFlag, $data['mtitle'], $data['mdesc'] );
+			$result = self::encodePayload($data['mtitle'], $data['mdesc'] );
 			$wsTitle = $result[0];
 			$wsBody =  $result[1];
         }else{ //data not array error
@@ -110,12 +106,8 @@ class PushNotifications {
 		//validation and message prep
 		if(is_array($data)){
 
-			// Flag to identify when to use the utf8_encode because message coming
-			// from PERL alters the French characters
-			$wsFlag = (isset($data['encode'])? $data['encode'] :'Yes' );
-
 			// encode (UTF8) the title and body
-			$result = self::encodePayload($wsFlag, $data['mtitle'], $data['mdesc'] );
+			$result = self::encodePayload($data['mtitle'], $data['mdesc'] );
 			$wsTitle = $result[0];
 			$wsBody =  $result[1];
 
@@ -197,27 +189,30 @@ class PushNotifications {
 	// encode Payload
 	// **************************************************
 	/**
-	*	(encodePayload($inEncode, $inTitle, $inBody)) receive message,
+	*	(encodePayload($inTitle, $inBody)) receive message,
 	*	convert to utf8, and return message
-	*	Description: if inEncode is Yes then proceed to encode the title
-   	*				and message to utf8 and strip slashes. If not, then 
-    *				just strip slashes.
-	*   Requires: $inEncode -> either Yes or No
-	*				$inTitle -> title of the message
+	*	Description: if the title or messsage is not utf8 then proceed to
+	*				to encode the title and/or message to utf8.
+    *				Then proceed to strip slashes to the title and message
+	*   Requires: 	$inTitle -> title of the message
 	*				$inBody -> body of the message
 	**/
-	private static function encodePayload($inEncode, $inTitle, $inBody) {
+	private static function encodePayload($inTitle, $inBody) {
 	
-	// is inEncode equal Yes
-	if ($inEncode == 'Yes') {
-		// if yes, encode title and body with utf8 and strip slashes
-		$outTitle = stripslashes(utf8_encode($inTitle));
-		$outBody = stripslashes(utf8_encode($inBody));
-	} else {
-		// is no, strip slashes to title and body
-		$outTitle = stripslashes($inTitle);
-		$outBody = stripslashes($inBody);
-	}
+		$validUTF8inTitle = mb_check_encoding($inTitle, 'UTF-8');
+		$validUTF8inBody = mb_check_encoding($inBody, 'UTF-8');
+	
+		if ($validUTF8inTitle) {
+			$outTitle = stripslashes($inTitle);
+		} else {
+			$outTitle = stripslashes(utf8_encode($inTitle));
+		}
+	
+		if ($validUTF8inBody) {
+			$outBody = stripslashes($inBody);
+		} else {
+			$outBody = stripslashes(utf8_encode($inBody));
+		}
 
 	// return title and body in an array
 	return array($outTitle, $outBody);
