@@ -1,3 +1,7 @@
+Version 2.1.5.0:
+ - Merge branch 'OPAL-1192' into 'develop'
+ - Fix the push notificaiton for French characters
+
 Version 2.1.4.0:
  - Merge branch 'OPAL-1174' into 'develop'
  - Fixed issue with the iOS push notification. Created a function to encode the payload.
