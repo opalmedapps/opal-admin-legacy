@@ -20,13 +20,11 @@ define("SQL_OPAL_LIST_QUESTIONNAIRES_FROM_QUESTIONNAIRE_CONTROL",
 
 define("SQL_OPAL_GET_PUBLISHED_QUESTIONNAIRES",
     "SELECT DISTINCT
-    qc.QuestionnaireControlSerNum AS serial,
-    qc.QuestionnaireDBSerNum AS db_serial,
+    qc.QuestionnaireControlSerNum AS ID,
     qc.QuestionnaireName_EN AS name_EN,
-    qc.QuestionnaireName_FR AS name_FR,
-    qc.PublishFlag AS publish,
-    0 AS changed
-    FROM ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." qc;"
+    qc.QuestionnaireName_FR AS name_FR
+    FROM ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." qc
+    WHERE qc.PublishFlag = 1;"
 );
 
 define("SQL_OPAL_GET_FILTERS_BY_CONTROL_TABLE_SERNUM",
