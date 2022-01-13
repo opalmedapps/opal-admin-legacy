@@ -609,7 +609,7 @@ class Questionnaire extends QuestionnaireModule {
      */
     public function getPublishedQuestionnaires() {
         $this->checkReadAccess();
-        return $this->questionnaireDB->getPublishedQuestionnaires();
+        return $this->opalDB->getPublishedQuestionnaires();
     }
 
     /**
