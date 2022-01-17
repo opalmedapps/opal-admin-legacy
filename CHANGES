@@ -1,3 +1,7 @@
+Version 2.1.6.0:
+ - Merge branch 'OPAL-1194' into 'develop'
+ - Change where the API get the list of questionnaires for the clinical viewer
+
 Version 2.1.5.0:
  - Merge branch 'OPAL-1192' into 'develop'
  - Fix the push notificaiton for French characters
