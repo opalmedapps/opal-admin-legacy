@@ -206,6 +206,67 @@ sub getPostControlsMarkedForPublish
 
     return @postControlList;
 }
+# get post controls marked for publish from the cronControlPost table, by type
+sub getPostControlsMarkedForPublishModularCron
+{
+
+    my ($postType) = @_; # the type from args
+    my @postControlList = (); # initialize a list
+
+    $control_table = "";
+    if($postType eq 'Announcement'){
+        $control_table = "cronControlPost_Announcement";
+    }elsif($postType eq 'Treatment Team Message'){
+        $control_table = "cronControlPost_TreatmentTeamMessage";
+    }
+
+    my $info_sql = "
+        SELECT DISTINCT
+            ccp.cronControlPostSerNum as PostControlSerNum,
+            pc.PostType,
+            pc.PublishDate,
+            ccp.lastPublished
+        FROM
+            PostControl pc,
+            $control_table ccp
+        WHERE
+            ccp.publishFlag      = 2
+        AND pc.PostControlSerNum = ccp.cronControlPostSerNum
+    ";
+
+	# prepare query
+	my $query = $SQLDatabase->prepare($info_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+	while (my @data = $query->fetchrow_array()) {
+
+        my $postControl = new PostControl(); # new object
+
+        my $ser            = $data[0];
+        my $type           = $data[1];
+        my $publishdate    = $data[2];
+        my $lastpublished  = $data[3];
+
+        # set post control information
+        $postControl->setPostControlSer($ser);
+        $postControl->setPostControlType($type);
+        $postControl->setPostControlPublishDate($publishdate);
+        $postControl->setPostControlLastPublished($lastpublished);
+
+        # get all the filters
+        my $filters = Filter::getAllFiltersFromOurDB($ser, 'PostControl');
+
+        $postControl->setPostControlFilters($filters);
+
+        push(@postControlList, $postControl);
+    }
+
+    return @postControlList;
+}
 
 #======================================================================================
 # Subroutine to set/update the "last published" field to current time 
@@ -230,6 +291,110 @@ sub setPostControlLastPublishedIntoOurDB
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
+}
+
+
+#======================================================================================
+# Subroutine to set/update the "last published" field to current time for modular controllers
+#======================================================================================
+sub setPostControlLastPublishedModularControllers
+{
+    my ($current_datetime, $module) = @_; # our current datetime in args
+
+    $control_table = "";
+    if($module eq 'Announcement'){
+        $control_table = "cronControlPost_Announcement";
+    }elsif($module eq 'Treatment Team Message'){
+        $control_table = "cronControlPost_TreatmentTeamMessage";
+    }
+
+    my $update_sql = "
+        UPDATE $control_table CCP, PostControl PC
+        SET PC.LastPublished = '$current_datetime',
+            CCP.lastPublished = '$current_datetime',
+            CCP.publishFlag = 1
+        WHERE CCP.cronControlPostSerNum = PC.PostControlSerNum
+            AND CCP.publishFlag = 2
+        ;
+    ";
+    	
+    # prepare query
+	my $query = $SQLDatabase->prepare($update_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+}
+
+#======================================================================================
+# Subroutine to sync the master table to the slave table and then set the publish flag 
+# from 1 to 2. This will identify what is currently being process by the cron job vs what
+# have just been activated during the cron running
+#======================================================================================
+sub CheckPostControlsMarkedForPublishModularCron
+{
+	my ($module) = @_; # current datetime, cron module type,
+
+    $control_table = "";
+    if($module eq 'Announcement'){
+        $control_table = "cronControlPost_Announcement";
+    }elsif($module eq 'Treatment Team Message'){
+        $control_table = "cronControlPost_TreatmentTeamMessage";
+    }
+
+    # --------------------------------------------------
+    # First step is to make sure that the two tables have the same amount of records
+	my $insert_sql = "
+		INSERT INTO $control_table (cronControlPostSerNum, publishFlag, lastPublished, lastUpdated, sessionId)
+		SELECT PC.PostControlSerNum, PC.PublishFlag, PC.LastPublished, PC.LastUpdated, PC.SessionId
+		FROM PostControl PC
+		WHERE PC.PostType = '$module'
+			AND PC.PostControlSerNum NOT IN (SELECT cronControlPostSerNum FROM $control_table);
+    	";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($insert_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+    # --------------------------------------------------
+    # Second step is to sync the publish flag between the two tables
+    # PostControl is the master and cronControlPost is the slave
+	my $update_sql = "
+        UPDATE PostControl PC, $control_table CCP
+        SET CCP.publishFlag = PC.PublishFlag
+        WHERE PC.PostControlSerNum = CCP.cronControlPostSerNum
+            AND CCP.publishFlag <> PC.PublishFlag;
+    	";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($update_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+    # --------------------------------------------------
+    # Third step update the publish flag from 1 to 2
+	my $update2_sql = "
+        UPDATE $control_table
+        SET publishFlag = 2
+        WHERE publishFlag = 1;
+    	";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($update2_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
 }
 
 # exit smoothly for module

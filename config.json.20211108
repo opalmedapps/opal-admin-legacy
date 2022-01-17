@@ -1,0 +1,139 @@
+{
+	"_comment": "Configuration file used throughout opalAdmin",
+	
+	"databaseConfig": {
+	"_comment": "Define database credentials here",
+	
+	"opal": {
+		"host": "192.168.50.216",
+		"port": "3306",
+		"name": "OpalDB",
+		"username": "opalAdmin",
+		"password": "opalAdmin"
+	},
+	"opalGuest": {
+		"host": "192.168.50.216",
+		"port": "3306",
+		"name": "OpalDB",
+		"username": "opaladm",
+		"password": "opaladm"
+	},
+	"questionnaire": {
+		"host": "192.168.50.216",
+		"port": "3306",
+		"name": "QuestionnaireDB",
+		"username": "opalAdmin",
+		"password": "opalAdmin",
+		"enabled": 1
+	},	
+	"questionnaire2019": {
+		"host": "192.168.50.216",
+		"port": "3306",
+		"name": "QuestionnaireDB",
+		"username": "opaladm",
+		"password": "opaladm",
+		"enabled": 0
+	},
+	"aria": {
+		"host": "WNETVMAP265",
+		"port": "1433",
+	"name": "VARIAN",
+		"username": "orms_user",
+		"password": "ormsoropal",
+		"enabled": 0
+	},
+	"wrm": {
+		"host": "192.168.50.149",
+		"port": "3306",
+		"name": "OrmsDatabase",
+		"nameFED": "OrmsDatabase",
+		"username": "ormsadm",
+		"password": "ormsadm",
+		"enabled": 1
+	},
+	"mosaiq": {
+		"host": "MOSAIQ_DB_HOST_HERE",
+		"port": "MOSAIQ_DB_PORT_HERE",
+		"username": "MOSAIQ_DB_USERNAME_HERE",
+		"password": "MOSAIQ_DB_PASSWORD_HERE",
+		"enabled": 0
+	}
+	},
+	"pushNotificationConfig": {
+		"_comment": "Push notification FCM and APN credentials",
+	
+		"android": {
+			"_comment": "API access key from Google API's Console",
+	
+			"__apiKey": "AIzaSyC08_s4--jQSGJw6cdwlq67T_0ZCLBkCwA",
+			"apiKey": "AAAAl-nl1MU:APA91bFsA2zLepqkMleiuWE6F7XSogq_JquzB6ykOV0IbZkjZ7TX2H_-dAPuoMfrVH83b8kpN8Etol071ul5mnocugrp9poRO3r_-MCliVvwPQpHkT62zaVHDq_GH2bq8Nzo2i4-bdcM",
+			"androidURL": "https://fcm.googleapis.com/fcm/send"
+		},
+		"apple": {
+			"_comment": "Apple certificate private key passphrase and PEM file",
+	
+			"certificate" : {
+				"password": "",
+				"filename2": "pushCertMuhcOpalDev2.pem",
+				"filename": "development_com.hig.opalstaging.pem"
+			},
+			"appleURL": "ssl://gateway.sandbox.push.apple.com:2195"
+		}
+	},
+
+    "firebaseConfig": {
+        "database": {
+            "_comment": "API/database configs found in firebase",
+
+			"apiKey": "AIzaSyAMIDdcQR8EiY9gjj4cgxp6Vu3xwa78Ww8",
+			"authDomain": "opal-dev.firebaseapp.com",
+			"databaseURL": "https://opal-dev.firebaseio.com",
+			"projectId": "opal-dev",
+			"storageBucket": "opal-dev.appspot.com",
+			"messagingSenderId": "652464215237"
+        },
+		"serviceAccount": {
+			"_comment": "Firebase service account info. Found in Settings > Service Accounts",
+
+			"type": "service_account",
+		  	"project_id": "opal-dev",
+		  	"private_key_id": "517c09c1542c27e305f2fba9bc0afa537d6297ab",
+		  	"private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCuNgtMhO3vp6wQ\nJ2awuCO/s9MM9kQFzN1yzGCzHSOAD8WGI2zqzjTZ5kKMnsn4BGJB5e5ym+TaBlwZ\noa7eftNLJkuBXo0xQ55LHCIENxnJ8hn35yw1dPNkAVN0zrdiCB4eHXdRwyzeCBUV\noMlPCvgRHy1dZWd9Usob4+RCOERASFILyRuHAEdJum94qDRjSxFH/EYy7ZbIayz/\nSw+WxxLwmKw8KiFwTRs1d/OPgJp8kHoJxjwosQlmtG47InvAGbZIulCrgamf6DUE\nS4aVkEFJqMnEemQa9FwYVj5ykwup4XgqNJiujJo92KaIwbKgEhaEMHlyvwG6EXH+\nV7HBNV+ZAgMBAAECggEACDuDky0g9VdOGUFTZ/x7q/56db1Zf5Cr0lX4J96zo8Sb\nB/i6l+oAs19fO7fxQWgroIOWHhJh4S+1wHxUgC0sHPwFS2rFb1OLsm706JAWBuYK\n9h0ViL0rF0m8wONX5SkPC0tHLTT09NUa8fe0K6kQCfcYNLarClAUPvco/TwddZAh\nYOMxz97SfanzDjblI4cweFgAvHU9n5kOynOlmB3jY0WahdS9xXx5PYplqNnFyprP\njIVpV8tAUTroH2ynziXNop80eNkp3esMJpz/2C+NJa8CwFcKMWnS2mPeDGdW79mx\nQPz6qW/ElhLh0Ti7AMk+xgzv7dwoE3fN5qNaUgQqUQKBgQDZDXXecTHgAFhqU33M\n4USTxZWMqJxj3DFSVLIC6zL9uuJmfL8flbpSIY/oDwvGKsvGZId2dW4P2HLXar0p\nxboiC9b06BTxgidImtxVwEoZF5YcV2UX4C2xl9goB5mhqnIKCBMfet0CHd8ZElW0\nNrGPfVImhM4gVvjuumxLmlf4bQKBgQDNeJ2TS3u2hJ06cp9sL0FDG130xRc/QKYb\ng0xBA5J4eNVJg6HtQKOWkijAbOmoj4x61IfF2TyEoj3XGL3/AMVFA4jrgX3afw1g\n/cw6kl5uhTds6/wKzry5h0s3C+HpCBAH/b2l+Dem2gFU6gTQky7NWLn0dxFfD/L0\nTvmevmygXQKBgHbQknww1I99QOj7STr0+Vg26ZV02x8i8vDRohxM6b3RJovZr7m3\neaXp71+llNlmpeO1Nh4XTCdqYfsf1+rc7PYkKwgnXweRKrXo58IdH7K6oZZkFNfM\nBNdZep73AhdoOULahrVNyVuWRIDx825SHkKg5G5ndnpngZ8U96EvHQbFAoGBAJ74\nT+oTP58iEUeUQVYBZZvXA6WKC4drrFijCA9RBTTiQBrFljWqiibH5HGkkk9Q6N5r\nqrRfc9wmbnQJ943g+b+AkaGsKUQwgphlJGq4rgkSVqSWHAX8l7VvQLlRHzMdgtG7\n9sv/NIeKKfeZq6n4BgDoQc8rhCwpec6df7HbIM4dAoGAPUcMulrHjESCT3lNdwQl\nqdYidvZ4VMOU9Mutt02lmyJnreRrsgRaiR2KOPaQbaUEeZLTg27v9rNlZOF9bKqC\nj2POkwHAiYAaeTe+Gq1Isy6QqGOqAt3D/h+wr3ElRPpgyAb21WBuU14uFgkGlrN2\nWVHdqqzqumnDwrOXbHW7DEo=\n-----END PRIVATE KEY-----\n",
+		  	"client_email": "firebase-adminsdk-73h8x@opal-dev.iam.gserviceaccount.com",
+		  	"client_id": "113825254287105444494",
+		  	"auth_uri": "https://accounts.google.com/o/oauth2/auth",
+		  	"token_uri": "https://accounts.google.com/o/oauth2/token",
+		  	"auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+		  	"client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-73h8x%40opal-dev.iam.gserviceaccount.com"
+		}
+    },
+
+	"pathConfig": {
+		"_comment": "Leading slash REQUIRED!",
+	
+		"abs_path": "/var/www/html/opalAdmin/",
+		"relative_url": "/opalAdmin/",
+		"shared_drive_path": "/OpalDocuments/",
+		"registration_url": "https://192.168.50.216/opalsignup"
+	},
+	"clinicalDocumentPathConfig": {
+		"_comment": "Define where clinical documents are located. Has to be mounted. NO LEADING SLASH",
+	
+		"_aria": "/mnt/VarianFILEDATA/Documents/Files",
+		"mosaiq": "",
+		"office_path" : "/opt/libreoffice6.1/program/"
+	},
+	"login" : {
+	"activeDirectory": {
+		"_comment": "configuration of active directory login",
+		"url" : "https://fedauthfcp.rtss.qc.ca/fedauth/wsapi/login",
+		"settings" : {
+		"uid" : "%%USERNAME%%",
+		"pwd" : "%%PASSWORD%%",
+		"institution" : "06-ciusss-cusm"
+		},
+		"enabled": 1
+	},
+	"salt": "Zo4rU5Z1YyKJAASY0PT6EUg7BBYdlEhPaNLuxAwU8lqu1ElzHv0Ri7EM6irpx5w"
+	}
+}

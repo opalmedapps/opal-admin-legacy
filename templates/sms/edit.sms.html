@@ -1,0 +1,79 @@
+<!-- Modal title -->
+<div class="modal-header">
+    <div class="col-xs-12 col-md-6">
+        <h2 class="modal-title">
+            <span class="glyphicon glyphicon-pencil"></span>
+            {{'SMS.EDIT.TITLE'|translate}}
+        </h2>
+        <p class="text-danger">{{'SMS.EDIT.NOTE_MESSAGE'|translate}}</p>
+    </div>
+    <div class="modal-buttons col-xs-12 col-md-6">
+        <form method="post" ng-submit="updateAppointment()">
+            <input class="btn btn-primary submit" ng-class="{'disabled': (!changesDetected) || (appointment.active == 1 && appointment.type=='UNDEFINED')}" type="submit" value="{{'SMS.EDIT.SAVE'|translate}}">
+            <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'SMS.EDIT.CANCEL'|translate}}">
+        </form>
+    </div>
+</div>
+<div class="modal-body">
+    <uib-accordion close-others="false">
+        <!-- SECTION: Appointment information -->
+        <div uib-accordion-group is-open="infoSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'SMS.EDIT.DETAILS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': infoSection.open, 'glyphicon-chevron-right': !infoSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12">
+                    <label><strong>{{'SMS.EDIT.RESOURCE_NAME'|translate}}</strong></label> : {{appointment.resourceDescription}}&nbsp&nbsp&nbsp({{appointment.resourceCode}})
+                </div>
+                <div class="col-xs-12">
+                    <label><strong>{{'SMS.EDIT.APPOINTMENT_CODE'|translate}}</strong></label> : {{appointment.appointmentCode}}
+                </div>
+                <div class="col-xs-12">
+                    <label><strong>{{'SMS.EDIT.SPECIALITY'|translate}}</strong></label> : {{appointment.speciality}}
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Activation state -->
+        <div uib-accordion-group is-open="activationSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'SMS.EDIT.ACTIVATION'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': activationSection.open, 'glyphicon-chevron-right': !activationSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12">
+                    <label><strong>{{'SMS.EDIT.ENABLE'|translate}}</strong></label> :  <input type="checkbox" ng-disabled="appointment.type == 'UNDEFINED'"  ng-true-value="1" ng-false-value="0" ng-model="appointment.active">
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Type -->
+        <div uib-accordion-group is-open="typeSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'SMS.EDIT.TYPE'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': typeSection.open, 'glyphicon-chevron-right': !typeSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="alert alert-info" role="alert">
+                <strong>{{'SMS.EDIT.CURRENT_TYPE'|translate}}</strong><br>
+                <p>{{appointment.type}}
+</p>
+            </div>
+            <div>
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                    <input class="form-control" maxlength="100" type="text" ng-model="typeSearchField" placeholder="{{'SMS.EDIT.SEARCH'|translate}}" />
+                </div>
+                <ul class="list-items">
+                    <li ng-repeat="type in TypeList | filter: typeSearchField">
+                        <label>
+                            <input type="radio" ng-disabled="(type == 'UNDEFINED' && appointment.active == 1)" ng-model="appointment.type" value="{{type}}" /> {{type}}
+                        </label>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </uib-accordion>
+</div>

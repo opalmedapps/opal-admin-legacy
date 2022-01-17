@@ -49,7 +49,7 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 			var matcher = new RegExp($scope.filterValue, 'i');
 			renderableRows.forEach(function (row) {
 				var match = false;
-				['code', 'title'].forEach(function (field) {
+				['code', 'title_'+Session.retrieveObject('user').language].forEach(function (field) {
 					if (row.entity[field].match(matcher)) {
 						match = true;
 					}
@@ -67,27 +67,23 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.editStudy(row.entity)"<i title="'+$filter('translate')('STUDY.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong>';
 		else
 			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.editStudy(row.entity)"<i title="'+$filter('translate')('STUDY.LIST.VIEW')+'" class="fa fa-eye" aria-hidden="true"></i></a></strong>';
-		if($scope.deleteAccess)
-			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.deleteStudy(row.entity)"><i title="'+$filter('translate')('STUDY.LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong>';
 		cellTemplateOperations += '</div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editStudy(row.entity)">' +
-			'<strong><a href="">{{row.entity.title}}</a></strong></div>';
-		var cellTemplatePublication = '<div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==1">'+$filter('translate')('STUDY.LIST.ALIAS')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==6">'+$filter('translate')('STUDY.LIST.DIAGNOSTIC')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==9">'+$filter('translate')('STUDY.LIST.TEST')+'</div>';
-		var cellTemplateLocked = '<div class="ui-grid-cell-contents" ng-show="row.entity.locked > 0"><div class="fa fa-lock text-danger"></div></div>' +
-			'<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 0"><div class="fa fa-unlock text-success"></div></div>';
+			'<strong><a href="">{{row.entity.title_'+Session.retrieveObject('user').language+'}}</a></strong></div>';
 
 		// Data binding for main table
 		$scope.gridOptions = {
 			data: 'studiesList',
 			columnDefs: [
-				{ field: 'title', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.TITLE_2'), cellTemplate: cellTemplateName, sort: {direction: uiGridConstants.ASC, priority: 0}},
+				{ field: 'title_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.TITLE_2'), cellTemplate: cellTemplateName, sort: {direction: uiGridConstants.ASC, priority: 0}},
 				{ field: 'code', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.STUDY_ID'), width: '10%'},
-				{ field: 'investigator', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.INVESTIGATOR'), width: '15%'},
+				{ field: 'investigator', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.INVESTIGATOR'), width: '10%'},
+				{ field: 'combinedPhone', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.PHONE'), width: '20%'},
+				{ field: 'email', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.EMAIL'), width: '15%'},
 				{ field: 'startDate', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.START_DATE'), width: '10%'},
 				{ field: 'endDate', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.END_DATE'), width: '10%'},
-				{ field: 'creationDate', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.CREATION_DATE'), width: '15%'},
-				{ name: $filter('translate')('STUDY.LIST.OPERATIONS'), width: '10%', cellTemplate: cellTemplateOperations, enableColumnMenu: false, enableFiltering: false, sortable: false }
+				{ name: $filter('translate')('STUDY.LIST.OPERATIONS'), width: '8%', cellTemplate: cellTemplateOperations, enableColumnMenu: false, enableFiltering: false, sortable: false }
 			],
 			enableFiltering: true,
 			enableSorting: true,
@@ -104,6 +100,34 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 		function getstudiesList() {
 			studyCollectionService.getStudies(OAUserId).then(function (response) {
 				$scope.studiesList = response.data;
+				angular.forEach($scope.studiesList, function(value){
+					if(value.phone && value.phoneExt){ //add dashes for readability
+						if(value.phone.length === 10){
+							value.phone = value.phone.substr(0,3) + "-" + value.phone.substr(3,3) + "-" + value.phone.substr(6,4);
+						}else if(value.phone.length === 11){ 
+							value.phone = "+" + value.phone.substr(0,1) + " " + value.phone.substr(1,3) + "-" + value.phone.substr(4,3) + "-" + value.phone.substr(7,4);
+						}else if(value.phone.length === 12){
+							value.phone = "+" + value.phone.substr(0,2) + " " + value.phone.substr(2,3) + "-" + value.phone.substr(5,3) + "-" + value.phone.substr(8,4);
+						}else{
+							value.phone = value.phone;
+						}
+						value.combinedPhone = value.phone + " ext. " + value.phoneExt;
+					}else if(value.phone && !value.phoneExt){ //add dashes for readability
+						if(value.phone.length === 10){ 
+							value.phone = value.phone.substr(0,3) + "-" + value.phone.substr(3,3) + "-" + value.phone.substr(6,4);
+						}else if(value.phone.length === 11){ 
+							value.phone = "+" + value.phone.substr(0,1) + " " + value.phone.substr(1,3) + "-" + value.phone.substr(4,3) + "-" + value.phone.substr(7,4);
+						}else if(value.phone.length === 12){ 
+							value.phone = "+" + value.phone.substr(0,2) + " " + value.phone.substr(2,3) + "-" + value.phone.substr(5,3) + "-" + value.phone.substr(8,4);
+						}else{
+							value.phone = value.phone;
+						}
+						value.combinedPhone = value.phone;
+					}else{
+						value.combinedPhone = "N/A";
+					}
+					
+				});
 			}).catch(function(err) {
 				ErrorHandler.onError(err, $filter('translate')('STUDY.LIST.ERROR_PUBLICATION'));
 			});
@@ -122,27 +146,6 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 
 			// After update, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				getstudiesList();
-			});
-		};
-
-		// Function for when the custom code has been clicked for deletion
-		// Open a modal
-		$scope.deleteStudy = function (currentStudy) {
-			// Assign selected custom code as the custom code to delete
-			$scope.studyToDelete = currentStudy;
-
-			var modalInstance = $uibModal.open({
-				templateUrl: 'templates/study/delete.study.html',
-				controller: 'study.delete',
-				windowClass: 'deleteModal',
-				scope: $scope,
-				backdrop: 'static',
-			});
-
-			// After delete, refresh the custom code list
-			modalInstance.result.then(function () {
-				// Call our API to get the list of existing posts
 				getstudiesList();
 			});
 		};
