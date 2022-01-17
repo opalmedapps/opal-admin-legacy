@@ -159,5 +159,21 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 			$state.go('patients/report');
 		};
 
+		$scope.goToIndividual = function(){
+			$state.go('patients/report/individual');
+		};
+
+		$scope.goToGroup = function(){
+			$state.go('patient/report/group');
+		};
+
+		$scope.goToSMS = function(){
+			$state.go('sms');
+		};
+
+		$scope.goToSMSMessage = function(){
+			$state.go('sms/message');
+		};
+
 	});
 

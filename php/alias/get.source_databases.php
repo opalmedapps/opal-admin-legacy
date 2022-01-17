@@ -1,10 +1,8 @@
 <?php
-header('Content-Type: application/javascript');
+include_once("../config.php");
 
-include_once('alias.inc');
-
-$type = $_POST['type'];
-$alias = new Alias; // Object
+$alias = new Alias();
 $sourceDBList = $alias->getSourceDatabases();
 
+header('Content-Type: application/javascript');
 echo json_encode($sourceDBList);

@@ -131,7 +131,7 @@ controller('template.question.add', function ($scope, $state, $filter, $uibModal
 	};
 
 	// questionnaire API: retrieve data
-	questionnaireCollectionService.getTemplateQuestionCategory(OAUserId).then(function (response) {
+	questionnaireCollectionService.getTemplateQuestionCategory().then(function (response) {
 		$scope.atCatList = response.data;
 		$scope.atCatList.forEach(function(entry) {
 			if($scope.language.toUpperCase() === "FR")
@@ -182,11 +182,11 @@ controller('template.question.add', function ($scope, $state, $filter, $uibModal
 
 	$scope.updateSlider = function () {
 		var radiostep = new Array();
-		var increment = parseFloat($scope.newTemplateQuestion.options.increment);
-		var minValue = parseFloat($scope.newTemplateQuestion.options.minValue);
-		var maxValue = parseFloat($scope.newTemplateQuestion.options.maxValue);
+		var increment = 1;
+		var minValue = parseInt($scope.newTemplateQuestion.options.minValue);
+		var maxValue = parseInt($scope.newTemplateQuestion.options.maxValue);
 
-		if (minValue <= 0.0 || maxValue <= 0.0 || increment <= 0 || minValue >= maxValue || $scope.newTemplateQuestion.options.minCaption_EN === undefined || $scope.newTemplateQuestion.options.minCaption_FR === undefined || $scope.newTemplateQuestion.options.maxCaption_EN === undefined || $scope.newTemplateQuestion.options.maxCaption_FR === undefined)
+		if (minValue < 0 || maxValue < 0 || increment != 1 || minValue >= maxValue || $scope.newTemplateQuestion.options.minCaption_EN === undefined || $scope.newTemplateQuestion.options.minCaption_FR === undefined || $scope.newTemplateQuestion.options.maxCaption_EN === undefined || $scope.newTemplateQuestion.options.maxCaption_FR === undefined)
 			$scope.validSlider = false;
 		else {
 			$scope.newTemplateQuestion.options.maxValue = parseInt(maxValue);
@@ -194,6 +194,7 @@ controller('template.question.add', function ($scope, $state, $filter, $uibModal
 			for(var i = minValue; i <= maxValue; i += increment) {
 				radiostep.push({"description_EN":" " + i,"description_FR":" " + i});
 			}
+
 			radiostep[0]["description_EN"] += " " + $scope.newTemplateQuestion.options.minCaption_EN;
 			radiostep[0]["description_FR"] += " " + $scope.newTemplateQuestion.options.minCaption_FR;
 			radiostep[radiostep.length - 1]["description_EN"] += " " + $scope.newTemplateQuestion.options.maxCaption_EN;

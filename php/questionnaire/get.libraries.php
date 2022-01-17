@@ -5,7 +5,7 @@
  * Time: 1:45 PM
  */
 
-include_once('questionnaire.inc');
+include_once("../config.php");
 
 $questionLibrary = new Library();
 $result = $questionLibrary->getLibraries();

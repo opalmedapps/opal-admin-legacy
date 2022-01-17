@@ -8,11 +8,12 @@ class PushNotifications {
 	private static $passphrase = CERTIFICATE_PASSWORD;
 	//(iOS) Location of certificate file
 	private static $certificate_file = CERTIFICATE_FILE;
-
-	// Change the above three vriables as per your app.
-	public function __construct() {
-		exit('Init function is not allowed');
-	}
+	// iOS Location of cert key
+	private static $certificate_key = CERTIFICATE_KEY;
+	// (iOS) APNS topic (staging, preprod, prod)
+	private static $apns_topic = APNS_TOPIC;
+	// (iOS) APN Url target (development or sandbox)
+	private static $ios_url = IOS_URL;
 
 	// **************************************************
 	// Sends Push notification for Android users
@@ -24,21 +25,21 @@ class PushNotifications {
 	*                push notification to android device
 	*   Requires: $data must contain mtitle, and mdesc for the
 	*             push notification.
+	* 
 	**/
 	public static function android($data, $reg_id) {
 		// $url = 'https://fcm.googleapis.com/fcm/send';
 		$url = ANDROID_URL;
 
-		// Flag to identify when to use the utf8_encode because message coming
-		// from PERL alters the French characters
-		$wsFlag = (isset($data['encode'])? $data['encode'] :'Yes' );
-
-		if ($wsFlag == 'Yes') {
-			$wsTitle = utf8_encode($data['mtitle']);
-			$wsBody = utf8_encode($data['mdesc']);
-		} else {
-			$wsTitle = $data['mtitle'];
-			$wsBody = $data['mdesc'];
+		//validation and message prep
+		if(is_array($data)){
+			// encode (UTF8) the title and body
+			$result = self::encodePayload($data['mtitle'], $data['mdesc'] );
+			$wsTitle = $result[0];
+			$wsBody =  $result[1];
+        }else{ //data not array error
+			$response =  array("success"=>0,"failure"=>1,"error"=>"Request data invalid, unable to send push notification.");
+			return $response;
 		}
 
 		// Create a unique Post ID so that the push notification
@@ -75,6 +76,11 @@ class PushNotifications {
 		$response = self::useCurl($url, $headers, json_encode($fields));
 		$response = json_decode($response,true);
 
+		// **** Uncomment the below lines for troubleshooting
+		// $myfile = fopen("/var/www/html/opalAdmin/publisher/logs/PushNotification.log", "a");
+		// fwrite($myfile, print_r([$response, $message],true)."\n");
+		// fclose($myfile);
+
 		$data = array();
 		$data["success"] = $response["success"];
 		$data["failure"] = $response["failure"];
@@ -88,7 +94,7 @@ class PushNotifications {
 	// **************************************************
 	// Sends Push notification for iOS users
 	// **************************************************
-  /**
+	/**
 	*	(iOS($data, $devicetoken)) Consumes an array with message
 	*	to be sent and a registration id.
 	*	Description: Creates a connection to APN (Apple Push Notification
@@ -97,34 +103,17 @@ class PushNotifications {
 	*             push notification.
 	**/
 	public static function iOS($data, $devicetoken) {
-/* 		$response =  array("success"=>1,"failure"=>0);
-		return $response;
- */
+		//validation and message prep
+		if(is_array($data)){
 
-		$deviceToken = $devicetoken;
-		$ctx = stream_context_create();
-		// ck.pem is your certificate file
-		stream_context_set_option($ctx, 'ssl', 'local_cert', self::$certificate_file);
-		stream_context_set_option($ctx, 'ssl', 'passphrase', self::$passphrase);
-		// Open a connection to the APNS server
-		// $fp = stream_socket_client('ssl://gateway.sandbox.push.apple.com:2195', $err,
-		$fp = stream_socket_client(IOS_URL, $err,
-					$errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
-		if (!$fp) {
-			$response = array("success"=>0,"failure"=>1,"error"=>"Failed to connect: $err $errstr" . PHP_EOL);
+			// encode (UTF8) the title and body
+			$result = self::encodePayload($data['mtitle'], $data['mdesc'] );
+			$wsTitle = $result[0];
+			$wsBody =  $result[1];
+
+        }else{ //data not array error
+			$response =  array("success"=>0,"failure"=>1,"error"=>"Request data invalid, unable to send push notification.");
 			return $response;
-		}
-
-		// Flag to identify when to use the utf8_encode because message coming
-		// from PERL alters the French characters
-		$wsFlag = (isset($data['encode'])? $data['encode'] :'Yes' );
-
-		if ($wsFlag == 'Yes') {
-			$wsTitle = utf8_encode($data['mtitle']);
-			$wsBody = utf8_encode($data['mdesc']);
-		} else {
-			$wsTitle = $data['mtitle'];
-			$wsBody = $data['mdesc'];
 		}
 
 		// Create the payload body
@@ -136,26 +125,36 @@ class PushNotifications {
 			'sound' => 'default'
 		);
 		// Encode the payload as JSON
-		$payload = json_encode($body);
-		// Build the binary notification
+        $payload = json_encode($body);
+	
+		$apns_topic = self::$apns_topic;
+		$url = self::$ios_url . $devicetoken;    
+        $ch = curl_init($url);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+		curl_setopt($ch, CURLOPT_HTTP_VERSION,3);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, ["apns-topic: $apns_topic"]); //opal app bundle ID
+		curl_setopt($ch, CURLOPT_SSLCERT, self::$certificate_file); //pem file
+		//curl_setopt($ch, CURLOPT_SSLCERTPASSWD, self::$passphrase); //pem secret
+		curl_setopt($ch, CURLOPT_SSLKEY, self::$certificate_key); // cert key
+		//curl_setopt($ch, CURLOPT_SSLKEYPASSWD, ); if we add a password to the key file we'll specify that here
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+		$response = curl_exec($ch);
+		$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-		// echo 'Device Token :' .  $deviceToken . '<br />';
-		if (strlen($deviceToken) == 64) {
-			$msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
-			// Send it to the server
-			$result = fwrite($fp, $msg, strlen($msg));
-			// Close the connection to the server
-			fclose($fp);
-			if (!$result) {
-				$response =  array("success"=>0,"failure"=>1,"error"=>"Unable to send packets to APN socket");
-			} else {
-				$response =  array("success"=>1,"failure"=>0);
-			}
-			return $response;
-			}
+		// **** Uncomment the below lines for troubleshooting
+		// $myfile = fopen("/var/www/html/opalAdmin/publisher/logs/PushNotification.log", "a");
+		// fwrite($myfile, "http code: $httpcode");
+		// fwrite($myfile, print_r([$response,$body],true)."\n");
+		// fclose($myfile);
 
-		}
-
+        if ($httpcode != 200) {
+			$err = curl_error($ch);
+			$response =  array("success"=>0,"failure"=>1,"error"=>"$err");
+		} else {
+			$response =  array("success"=>1,"failure"=>0);
+        }
+		return $response;
+	}
 	// Curl
 	private static function useCurl($url, $headers, $fields = null) {
 		// Open connection
@@ -184,6 +183,40 @@ class PushNotifications {
 			curl_close($ch);
 			return $result;
 		}
-  }
+   }
+   
+	// **************************************************
+	// encode Payload
+	// **************************************************
+	/**
+	*	(encodePayload($inTitle, $inBody)) receive message,
+	*	convert to utf8, and return message
+	*	Description: if the title or messsage is not utf8 then proceed to
+	*				to encode the title and/or message to utf8.
+    *				Then proceed to strip slashes to the title and message
+	*   Requires: 	$inTitle -> title of the message
+	*				$inBody -> body of the message
+	**/
+	private static function encodePayload($inTitle, $inBody) {
+	
+		$validUTF8inTitle = mb_check_encoding($inTitle, 'UTF-8');
+		$validUTF8inBody = mb_check_encoding($inBody, 'UTF-8');
+	
+		if ($validUTF8inTitle) {
+			$outTitle = stripslashes($inTitle);
+		} else {
+			$outTitle = stripslashes(utf8_encode($inTitle));
+		}
+	
+		if ($validUTF8inBody) {
+			$outBody = stripslashes($inBody);
+		} else {
+			$outBody = stripslashes(utf8_encode($inBody));
+		}
+
+	// return title and body in an array
+	return array($outTitle, $outBody);
+   }
+
 }
 ?>

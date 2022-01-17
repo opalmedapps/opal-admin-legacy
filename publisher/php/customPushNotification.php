@@ -14,13 +14,13 @@
       /**
         *    sendPatientNotification($patientId, $message):
         *    Consumes a PatientId and the message.
-        *    Requires: - PatientId and message. The message is in an array.
+        *    Requires: - PatientId, Site, and message. The message is in an array.
         *    Returns:  Object containing keys of success, failure,
         *             responseDevices, which is an array containing, (success, failure,
         *             registrationId, deviceId) for each device, and Message array containing
         *             (title,description),  NotificationSerNum, and error if any.
         **/
-       public static function sendPatientNotification($patientId, $message)
+       public static function sendPatientNotification($patientId, $site, $message)
        {
            global $pdo;
 
@@ -28,13 +28,17 @@
             // If patient does not exist, exit with an error
             // otherwise get the patientId, Language
             
-            $sql = "SELECT PatientSerNum, Language
-                    FROM Patient 
-                    WHERE PatientId = :patientId";
+            $sql = "SELECT P.PatientSerNum, P.Language
+                    FROM Patient P, Patient_Hospital_Identifier PHI
+                    WHERE P.PatientSerNum = PHI.PatientSerNum
+                        and PHI.MRN = :patientId
+                        and PHI.Hospital_Identifier_Type_Code = :siteId
+                    ";
 
             try{
                 $s = $pdo->prepare($sql);
                 $s->bindValue(':patientId', $patientId);
+                $s->bindValue(':siteId', $site);
                 $s->execute();
                 $result = $s->fetchAll();
             }catch(PDOException $e)
