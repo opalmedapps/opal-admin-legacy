@@ -42,6 +42,8 @@ uploads/**
 
 # ignore log files
 publisher/logs/**
+/logs/**
+
 # except readme
 !publisher/logs/README.md
 
@@ -52,6 +54,7 @@ publisher/logs/**
 publisher/php/ykmTestNotification.php
 publisher/php/TestNotification.php
 publisher/php/test.php
+publisher/php/kaTestAPNscript.php
 
 # ignore npm-debug log
 npm-debug.log
@@ -63,3 +66,9 @@ publisher/modules/ym.pm
 publisher/modules/Document2.pm
 publisher/dataControl2.pl
 dbv/config.php
+
+# ignore trigger system test file
+php/trigger/test-qTrigger.php
+
+# ignore PHP error log
+php-error.log

@@ -19,7 +19,7 @@
                         <!-- Back button -->
                         <div class="row side-panel-menu">
                             <div class="col-xs-12 col-sm-5 col-md-12">
-                                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                                <div class="panel-container" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
                                     <div class="side-panel-info-sm">
                                         <div class="panel-content">
                                             <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
@@ -75,7 +75,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Type -->
-                            <div uib-accordion-group is-open="typeSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:typeSection.show}" ng-if="typeSection.show" is-disabled="!newEduMat.type_EN && !newEduMat.type_FR">
+                            <div uib-accordion-group is-open="typeSection.open" class="panel-container summary-box" ng-if="typeSection.show" is-disabled="!newEduMat.type_EN && !newEduMat.type_FR">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -105,7 +105,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Phase in treatment -->
-                            <div uib-accordion-group is-open="phaseSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: phaseSection.show}" is-disabled="!newEduMat.phase_in_tx" ng-if="phaseSection.show">
+                            <div uib-accordion-group is-open="phaseSection.open" class="panel-container summary-box" is-disabled="!newEduMat.phase_in_tx" ng-if="phaseSection.show">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -127,7 +127,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Single URL -->
-                            <div uib-accordion-group is-open="urlSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:urlSection.show}" is-disabled="!newEduMat.url_EN && !newEduMat.url_FR" ng-if="urlSection.show">
+                            <div uib-accordion-group is-open="urlSection.open" class="panel-container summary-box" is-disabled="!newEduMat.url_EN && !newEduMat.url_FR" ng-if="urlSection.show">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -157,7 +157,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Table of contents -->
-                            <div uib-accordion-group is-open="tocsSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:tocsSection.show}" is-disabled="!newEduMat.tocs.length" ng-if="tocsSection.show">
+                            <div uib-accordion-group is-open="tocsSection.open" class="panel-container summary-box" is-disabled="!newEduMat.tocs.length" ng-if="tocsSection.show">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -179,7 +179,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Supporting PDF -->
-                            <div uib-accordion-group is-open="shareUrlSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:shareUrlSection.open}" is-disabled="!newEduMat.share_url_EN && !newEduMat.share_url_FR" ng-if="newEduMat.share_url_EN || newEduMat.share_url_FR">
+                            <div uib-accordion-group is-open="shareUrlSection.open" class="panel-container summary-box" is-disabled="!newEduMat.share_url_EN && !newEduMat.share_url_FR" ng-if="newEduMat.share_url_EN || newEduMat.share_url_FR">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -208,178 +208,17 @@
                                     </p>
                                 </div>
                             </div>
-<!--                            &lt;!&ndash; SECTION: Patient trigger &ndash;&gt;
-                            <div uib-accordion-group is-open="triggerSection.patient.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(patientTriggerList)" ng-if="checkTriggers(patientTriggerList)">
-                                <uib-accordion-heading>
-                                    <div class="row" style="align-items: center">
-                                        <div class="col-md-2">
-                                            <span ng-if="checkTriggers(patientTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <strong>{{'EDUCATION.ADD.PATIENT_TRIGGERS'|translate}}</strong>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.patient.open, 'glyphicon-chevron-right': !triggerSection.patient.open}" ng-if="checkTriggers(patientTriggerList)"></i>
-                                        </div>
-                                    </div>
-                                </uib-accordion-heading>
-                                <div ng-if="checkTriggers(patientTriggerList) && !selectAll.patient.all" class="description">
-                                    <p>
-                                    <ul style="max-height: 100px; overflow-y: auto;">
-                                        <li ng-repeat="patient in patientTriggerList | filter: {added: 1} : 1">
-                                            {{patient.name}}
-                                        </li>
-                                    </ul>
-                                    </p>
-                                </div>
-                                <div ng-if="selectAll.patient.all" class="description">
-                                    <p>
-                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{'EDUCATION.ADD.SEND_ALL_PATIENTS'|translate}}
-                                    </p>
-                                </div>
-                            </div>
-                            &lt;!&ndash; SECTION: Demographic triggers &ndash;&gt;
-                            <div uib-accordion-group is-open="demoSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:demoSection.open}" is-disabled="!demoTrigger.sex && demoTrigger.age.min == 0 && demoTrigger.age.max == 130" ng-if="demoTrigger.sex || demoTrigger.age.min !== 0 || demoTrigger.age.max !== 130">
-                                <uib-accordion-heading>
-                                    <div class="row" style="align-items: center">
-                                        <div class="col-md-2">
-                                            <span ng-if="demoTrigger.sex || demoTrigger.age.min != 0 || demoTrigger.age.max != 130" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <strong>{{'EDUCATION.ADD.DEMO_TRIGGERS'|translate}}</strong>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':demoSection.open, 'glyphicon-chevron-right':!demoSection.open}" ng-if="demoTrigger.sex || demoTrigger.age.min != 0 || demoTrigger.age.max != 130"></i>
-                                        </div>
-                                    </div>
-                                </uib-accordion-heading>
-                                <div ng-if="demoTrigger.sex" class="description">
-                                    <p>
-                                        <strong>{{'EDUCATION.ADD.SEX'|translate}}</strong>
-                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{demoTrigger.sex_display}}
-                                    </p>
-                                </div>
-                                <div ng-if="demoTrigger.age.min != 0 || demoTrigger.age.max != 130" class="description">
-                                    <p>
-                                        <strong>{{'EDUCATION.ADD.AGE_GROUP'|translate}}</strong>
-                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{demoTrigger.age.min}} {{'EDUCATION.ADD.TO'|translate}} {{demoTrigger.age.max}}
-                                    </p>
-                                </div>
-                            </div>
-                            &lt;!&ndash; SECTION: Appointment triggers &ndash;&gt;
-                            <div uib-accordion-group is-open="triggerSection.appointment.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(appointmentTriggerList)" ng-if="checkTriggers(appointmentTriggerList)">
-                                <uib-accordion-heading>
-                                    <div class="row" style="align-items: center">
-                                        <div class="col-md-2">
-                                            <span ng-if="checkTriggers(appointmentTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <strong>{{'EDUCATION.ADD.APPT_TRIGGERS'|translate}}</strong>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.appointment.open, 'glyphicon-chevron-right': !triggerSection.appointment.open}" ng-if="checkTriggers(appointmentTriggerList)"></i>
-                                        </div>
-                                    </div>
-                                </uib-accordion-heading>
-                                <div ng-if="checkTriggers(appointmentTriggerList)" class="description">
-                                    <p>
-                                    <ul style="max-height: 100px; overflow-y: auto;">
-                                        <li ng-repeat="appointment in appointmentTriggerList | filter: {added: 1} : 1">
-                                            {{appointment.name_display}}
-                                        </li>
-                                    </ul>
-                                    </p>
-                                </div>
-                            </div>
-                            &lt;!&ndash; SECTION: Diagnosis triggers &ndash;&gt;
-                            <div uib-accordion-group is-open="triggerSection.diagnosis.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(dxTriggerList)" ng-if="checkTriggers(dxTriggerList)">
-                                <uib-accordion-heading>
-                                    <div class="row" style="align-items: center">
-                                        <div class="col-md-2">
-                                            <span ng-if="checkTriggers(dxTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <strong>{{'EDUCATION.ADD.DIAGNOSIS_TRIGGERS'|translate}}</strong>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.diagnosis.open, 'glyphicon-chevron-right': !triggerSection.diagnosis.open}" ng-if="checkTriggers(dxTriggerList)"></i>
-                                        </div>
-                                    </div>
-                                </uib-accordion-heading>
-                                <div ng-if="checkTriggers(dxTriggerList)" class="description">
-                                    <p>
-                                    <ul style="max-height: 100px; overflow-y: auto;">
-                                        <li ng-repeat="diagnosis in dxTriggerList | filter: {added: 1} : 1">
-                                            {{diagnosis.name_display}}
-                                        </li>
-                                    </ul>
-                                    </p>
-                                </div>
-                            </div>
-                            &lt;!&ndash; SECTION: Doctor triggers &ndash;&gt;
-                            <div uib-accordion-group is-open="triggerSection.doctor.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(doctorTriggerList)" ng-if="checkTriggers(doctorTriggerList)">
-                                <uib-accordion-heading>
-                                    <div class="row" style="align-items: center">
-                                        <div class="col-md-2">
-                                            <span ng-if="checkTriggers(doctorTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <strong>{{'EDUCATION.ADD.DOCTOR_TRIGGERS'|translate}}</strong>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.doctor.open, 'glyphicon-chevron-right': !triggerSection.doctor.open}" ng-if="checkTriggers(doctorTriggerList)"></i>
-                                        </div>
-                                    </div>
-                                </uib-accordion-heading>
-                                <div ng-if="checkTriggers(doctorTriggerList)" class="description">
-                                    <p>
-                                    <ul style="max-height: 100px; overflow-y: auto;">
-                                        <li ng-repeat="doctor in doctorTriggerList | filter: {added: 1} : 1">
-                                            {{doctor.name}}
-                                        </li>
-                                    </ul>
-                                    </p>
-                                </div>
-                            </div>
-                            &lt;!&ndash; SECTION: Treatment Machine triggers &ndash;&gt;
-                            <div uib-accordion-group is-open="triggerSection.machine.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(machineTriggerList)" ng-if="checkTriggers(machineTriggerList)">
-                                <uib-accordion-heading>
-                                    <div class="row" style="align-items: center">
-                                        <div class="col-md-2">
-                                            <span ng-if="checkTriggers(machineTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <strong>{{'EDUCATION.ADD.TREATMENT_MACHINE_TRIGGERS'|translate}}</strong>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.machine.open, 'glyphicon-chevron-right': !triggerSection.machine.open}" ng-if="checkTriggers(machineTriggerList)"></i>
-                                        </div>
-                                    </div>
-                                </uib-accordion-heading>
-                                <div ng-if="checkTriggers(machineTriggerList)" class="description">
-                                    <p>
-                                    <ul style="max-height: 100px; overflow-y: auto;">
-                                        <li ng-repeat="machine in machineTriggerList | filter: {added: 1} : 1">
-                                            {{machine.name}}
-                                        </li>
-                                    </ul>
-                                    </p>
-                                </div>
-                            </div>-->
                         </uib-accordion>
                         <!-- Submit button -->
                         <div class="panel-container">
-                            <a href="" ng-click="submitEduMat()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                            <a href="" ng-click="submitEduMat()" class="btn btn-md item-button-success" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
                                 <span style="font-size: 20px;"><strong>{{'EDUCATION.ADD.SUBMIT'|translate}}</strong></span>
                             </a>
                         </div>
                     </div>
                 </div>
                 <!-- Right detail panel view -->
-                <div class="col-xs-12 col-lg-10 animated fadeInRight">
+                <div class="col-xs-12 col-lg-10 fadeInRight">
                     <div class="row main-title">
                         <!-- Page title -->
                         <div class="col-xs-12 col-md-8 title-content">
@@ -399,7 +238,7 @@
                     </div>
                     <div class="row mobile-side-panel-menu">
                         <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
-                            <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                            <div class="panel-container" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
                                 <div class="side-panel-info-sm">
                                     <div class="panel-content">
                                         <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
@@ -421,7 +260,7 @@
                         </div>
                         <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkForm()">
                             <div class="panel-container">
-                                <a href="" ng-click="submitEduMat()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                                <a href="" ng-click="submitEduMat()" class="btn btn-md item-button-success" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
                                     <span style="font-size: 20px;"><strong>{{'EDUCATION.ADD.SUBMIT'|translate}}</strong></span>
                                 </a>
                             </div>
@@ -487,7 +326,7 @@
                             </div>
                         </div>
                         <!-- SECTION: Type -->
-                        <div class="row animated" ng-class="{fadeInUp:typeSection.show}" ng-if="typeSection.show">
+                        <div class="row" ng-if="typeSection.show">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -497,7 +336,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp:typeSection.show}" ng-if="typeSection.show">
+                        <div class="row" ng-if="typeSection.show">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span style="color:#d9534f"><strong>{{'EDUCATION.ADD.REQUIRED'|translate}}</strong></span>
@@ -505,7 +344,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp:typeSection.show}" ng-if="typeSection.show">
+                        <div class="row" ng-if="typeSection.show">
                             <div class="col-xs-12 col-md-6">
                                 <div class="panel" ng-class="(newEduMat.type_EN) ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>{{'EDUCATION.ADD.ENGLISH'|translate}}</strong>
@@ -544,7 +383,7 @@
                             </div>
                         </div>
                         <!-- SECTION: Phase in treatment -->
-                        <div class="row animated" ng-class="{fadeInUp:phaseSection.show}" ng-if="phaseSection.show">
+                        <div class="row" ng-if="phaseSection.show">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                 <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -554,7 +393,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp:phaseSection.show}" ng-if="phaseSection.show">
+                        <div class="row" ng-if="phaseSection.show">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span style="color:#d9534f"><strong>{{'EDUCATION.ADD.REQUIRED'|translate}}</strong></span>
@@ -562,9 +401,9 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp:phaseSection.show}" ng-if="phaseSection.show">
+                        <div class="row" ng-if="phaseSection.show">
                             <div ng-repeat="phase in phaseInTxs" class="col-xs-12 col-sm-4 col-md-3">
-                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: newEduMat.phase_in_tx.serial == phase.serial}" ng-click="phaseUpdate(phase)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                <div class="panel-container" style="cursor:pointer;" ng-class="{pulse: hover, active: newEduMat.phase_in_tx.serial == phase.serial}" ng-click="phaseUpdate(phase)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
                                     <div class="panel-info" ng-class="{active: newEduMat.phase_in_tx.serial == phase.serial}">
                                         <div class="panel-content" style="text-align:center">
                                             <span ng-hide="newEduMat.phase_in_tx.serial == phase.serial" style="font-size:30px;" class="glyphicon glyphicon-minus"></span>
@@ -576,7 +415,7 @@
                             </div>
                         </div>
                         <!-- SECTION: Single URL -->
-                        <div class="row animated" ng-class="{fadeInUp:urlSection.show}" ng-if="urlSection.show">
+                        <div class="row" ng-if="urlSection.show">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -586,7 +425,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp:urlSection.show}" ng-if="urlSection.show">
+                        <div class="row" ng-if="urlSection.show">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span style="color:#d9534f"><strong>{{'EDUCATION.ADD.REQUIRED'|translate}}</strong></span>
@@ -594,7 +433,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp:urlSection.show}" ng-if="urlSection.show">
+                        <div class="row" ng-if="urlSection.show">
                             <div class="col-xs-12 col-md-6">
                                 <div class="panel" ng-class="(newEduMat.url_EN) ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>{{'EDUCATION.ADD.ENGLISH'|translate}}</strong>
@@ -633,7 +472,7 @@
                             </div>
                         </div>
                         <!-- SECTION: Table of contents -->
-                        <div class="row animated" ng-class="{fadeInUp:tocsSection.show}" ng-if="tocsSection.show">
+                        <div class="row" ng-if="tocsSection.show">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                 <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -643,7 +482,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp:tocsSection.show}" ng-if="tocsSection.show">
+                        <div class="row" ng-if="tocsSection.show">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span style="color:#d9534f"><strong>{{'EDUCATION.ADD.REQUIRED'|translate}}</strong></span>
@@ -681,7 +520,8 @@
                                                 {{'EDUCATION.ADD.TYPE'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
-                                                <input class="form-control" type="text" ng-model="toc.type_EN" ng-change="tocUpdate()" typeahead-on-select="tocUpdate()" uib-typeahead="type for type in EduMatTypes_EN | filter:$viewValue" typeahead-min-length="0" placeholder="{{'EDUCATION.ADD.ENGLISH_TYPE'|translate}}" required="required">
+                                                 <input class="form-control" type="text" ng-model="toc.type_EN" ng-change="typeTocUpdate(toc, 'EN')" typeahead-on-select="typeTocUpdate(toc, 'EN')" uib-typeahead="type.EN as type.EN for type in EduMatTypes | filter:{EN:$viewValue}" typeahead-min-length="0" placeholder="{{'EDUCATION.ADD.ENGLISH_TYPE'|translate}}" required="required">
+
                                             </div>
                                         </div>
                                     </div>
@@ -716,16 +556,16 @@
                                                 {{'EDUCATION.ADD.TYPE'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
-                                                <input class="form-control" type="text" ng-model="toc.type_FR" ng-change="tocUpdate()" typeahead-on-select="tocUpdate()" uib-typeahead="type for type in EduMatTypes_FR | filter:$viewValue" typeahead-min-length="0" placeholder="{{'EDUCATION.ADD.FRENCH_TYPE'|translate}}" required="required">
+                                                <input class="form-control" type="text" ng-model="toc.type_FR" ng-change="typeTocUpdate(toc, 'FR')" typeahead-on-select="typeTocUpdate(toc, 'FR')" uib-typeahead="type.FR as type.FR for type in EduMatTypes | filter:{FR:$viewValue}" typeahead-min-length="0" placeholder="{{'EDUCATION.ADD.FRENCH_TYPE'|translate}}" required="required">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp:tocsSection.show}" ng-if="tocsSection.show">
+                        <div class="row" ng-if="tocsSection.show">
                             <div class="col-xs-3 col-md-2">
-                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hoverJ}" ng-click="addTOC()" ng-mouseenter="hoverJ=true" ng-mouseleave="hoverJ=false">
+                                <div class="panel-container" style="cursor:pointer;" ng-class="{pulse: hoverJ}" ng-click="addTOC()" ng-mouseenter="hoverJ=true" ng-mouseleave="hoverJ=false">
                                     <div class="panel-info">
                                         <div class="panel-content" style="text-align:center">
                                             <span style="font-size:30px;" class="glyphicon glyphicon-plus"></span>
@@ -736,7 +576,7 @@
                             </div>
                         </div>
                         <!-- SECTION: Supporting PDF -->
-                        <div class="row animated" ng-class="{fadeInUp:shareUrlSection.show}" ng-if="shareUrlSection.show">
+                        <div class="row" ng-if="shareUrlSection.show">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -746,7 +586,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp:shareUrlSection.show}" ng-if="shareUrlSection.show">
+                        <div class="row" ng-if="shareUrlSection.show">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span><strong>{{'EDUCATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
@@ -754,7 +594,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp:shareUrlSection.show}" ng-if="shareUrlSection.show">
+                        <div class="row" ng-if="shareUrlSection.show">
                             <div class="col-xs-12 col-md-6">
                                 <div class="panel">
                                     <div class="panel-body form-horizontal">
@@ -784,324 +624,6 @@
                                 </div>
                             </div>
                         </div>
-<!--                        &lt;!&ndash; SECTION: Patient triggers &ndash;&gt;
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
-                            <div class="col-xs-12 side-menu-title">
-                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                                <span style="background-color:#e6edfa; padding: 0 10px;">
-                                    <span class="fas fa-dot-circle"></span>
-                                    <h2>{{'EDUCATION.ADD.TRIGGER_PATIENT'|translate}}</h2>
-                                </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
-                            <div class="col-xs-12">
-                                <p style="margin-bottom: 10px;">
-                                    <span><strong>{{'EDUCATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
-                                    {{'EDUCATION.ADD.PATIENT_EXPLANATION'|translate}}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
-                            <div class="col-xs-12 col-lg-8">
-                                <div class="panel-container">
-                                    <div class="panel-info">
-                                        <div class="panel-content">
-                                            <div class="panel-input">
-                                                <div class="list-space">
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                                                        <input class="form-control" type="text" ng-model="patientSearchField" ng-change="searchPatient(patientSearchField)" placeholder="{{'EDUCATION.ADD.SEARCH'|translate}}"/>
-                                                    </div>
-                                                    <div style="padding: 10px;">
-                                                        <label>
-                                                            <input type="checkbox" ng-click="selectAllTriggers(patientTriggerList, searchPatientFilter, selectAll.patient)" ng-checked="selectAll.patient.checked"> {{'EDUCATION.ADD.SELECT_ALL'|translate}}
-                                                        </label>
-                                                    </div>
-                                                    <ul class="list-items">
-                                                        <li ng-repeat="patient in patientTriggerList | filter: searchPatientFilter">
-                                                            <label>
-                                                                <input type="checkbox" ng-click="selectTrigger(patient, selectAll.patient)" ng-checked="patient.added" /> {{patient.name}}
-                                                            </label>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        &lt;!&ndash; SECTION: Demographic triggers &ndash;&gt;
-                        <div class="row animated" ng-class="{fadeInUp:demoSection.show}" ng-if="demoSection.show">
-                            <div class="col-xs-12 side-menu-title">
-                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                                    <span style="background-color:#e6edfa; padding: 0 10px;">
-                                        <span class="fas fa-dot-circle"></span>
-                                        <h2>{{'EDUCATION.ADD.TRIGGER_DEMO'|translate}}</h2>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp:demoSection.show}" ng-if="demoSection.show">
-                            <div class="col-xs-12">
-                                <p style="margin-bottom: 10px;">
-                                    <span><strong>{{'EDUCATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
-                                    {{'EDUCATION.ADD.DEMO_EXPLANATION'|translate}}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp:demoSection.show}" ng-if="demoSection.show">
-                            <div class="col-xs-12 col-md-6">
-                                <div class="row">
-                                    <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">{{'EDUCATION.ADD.SEX'|translate}}</h2>
-                                </div>
-                                <div class="row">
-                                    <div ng-repeat="sex in sexes" class="col-xs-12 col-sm-6">
-                                        <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: demoTrigger.sex == sex.name}" ng-click="sexUpdate(sex)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                                            <div class="panel-info" ng-class="{active: demoTrigger.sex == sex.name}">
-                                                <div class="panel-content" style="text-align:center">
-                                                    <span style="font-size:30px;" class="fa fa-{{sex.icon}}"></span>
-                                                    <div class="option-panel-title">{{sex.name_display}}</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xs-12 col-md-6">
-                                <div class="row">
-                                    <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">{{'EDUCATION.ADD.AGE_GROUP'|translate}}</h2>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-                                        <div class="panel">
-                                            <div class="panel-body form-horizontal">
-                                                <div class="form-group">
-                                                    <label class="control-label col-xs-12 col-lg-2">
-                                                        {{'EDUCATION.ADD.MIN'|translate}}
-                                                    </label>
-                                                    <div class="col-xs-12 col-lg-10">
-                                                        <input class="form-control" ng-model="demoTrigger.age.min" type="number" ng-change="ageUpdate()" ng-max="demoTrigger.age.max" min="0">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-                                        <div class="panel">
-                                            <div class="panel-body form-horizontal">
-                                                <div class="form-group">
-                                                    <label class="control-label col-xs-12 col-lg-2">
-                                                        {{'EDUCATION.ADD.MAX'|translate}}
-                                                    </label>
-                                                    <div class="col-xs-12 col-lg-10">
-                                                        <input class="form-control" ng-model="demoTrigger.age.max" type="number" ng-change="ageUpdate()" max="130" ng-min="demoTrigger.age.min">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        &lt;!&ndash; SECTION: Appointment triggers &ndash;&gt;
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
-                            <div class="col-xs-12 side-menu-title">
-                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                                <span style="background-color:#e6edfa; padding: 0 10px;">
-                                    <span class="fas fa-dot-circle"></span>
-                                    <h2>{{'EDUCATION.ADD.TRIGGER_APPOINTMENT'|translate}}</h2>
-                                </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
-                            <div class="col-xs-12">
-                                <p style="margin-bottom: 10px;">
-                                    <span><strong>{{'EDUCATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
-                                    {{'EDUCATION.ADD.TA_EXPLANATION'|translate}}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
-                            <div class="col-xs-12 col-lg-8">
-                                <div class="panel-container">
-                                    <div class="panel-info">
-                                        <div class="panel-content">
-                                            <div class="panel-input">
-                                                <div class="list-space">
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                                                        <input class="form-control" type="text" ng-model="appointmentSearchField" ng-change="searchAppointment(appointmentSearchField)" placeholder="{{'EDUCATION.ADD.SEARCH'|translate}}"/>
-                                                    </div>
-                                                    <div style="padding: 10px;">
-                                                        <label>
-                                                            <input type="checkbox" ng-click="selectAllTriggers(appointmentTriggerList, searchAppointmentFilter, selectAll.appointment)" ng-checked="selectAll.appointment.checked"> {{'EDUCATION.ADD.SELECT_ALL'|translate}}
-                                                        </label>
-                                                    </div>
-                                                    <ul class="list-items">
-                                                        <li ng-repeat="appointment in appointmentTriggerList | filter: searchAppointmentFilter">
-                                                            <label>
-                                                                <input type="checkbox" ng-click="selectTrigger(appointment, selectAll.appointment)" ng-checked="appointment.added" /> {{appointment.name_display}}
-                                                            </label>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        &lt;!&ndash; SECTION: Diagnosis triggers &ndash;&gt;
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
-                            <div class="col-xs-12 side-menu-title">
-                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                                    <span style="background-color:#e6edfa; padding: 0 10px;">
-                                        <span class="fas fa-dot-circle"></span>
-                                        <h2>{{'EDUCATION.ADD.TRIGGER_DIAGNOSIS'|translate}}</h2>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
-                            <div class="col-xs-12">
-                                <p style="margin-bottom: 10px;">
-                                    <span><strong>{{'EDUCATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
-                                    {{'EDUCATION.ADD.DIAGNOSIS_EXPLANATION'|translate}}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
-                            <div class="col-xs-12 col-lg-8">
-                                <div class="panel-container">
-                                    <div class="panel-info">
-                                        <div class="panel-content">
-                                            <div class="panel-input">
-                                                <div class="list-space">
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                                                        <input class="form-control" type="text" ng-model="dxSearchField" ng-change="searchDiagnosis(dxSearchField)" placeholder="{{'EDUCATION.ADD.SEARCH'|translate}}"/>
-                                                    </div>
-                                                    <div style="padding: 10px;">
-                                                        <label>
-                                                            <input type="checkbox" ng-click="selectAllTriggers(dxTriggerList, searchDxFilter, selectAll.diagnosis)" ng-checked="selectAll.diagnosis.checked"> {{'EDUCATION.ADD.SELECT_ALL'|translate}}
-                                                        </label>
-                                                    </div>
-                                                    <ul class="list-items">
-                                                        <li ng-repeat="diagnosis in dxTriggerList | filter: searchDxFilter">
-                                                            <label>
-                                                                <input type="checkbox" ng-click="selectTrigger(diagnosis, selectAll.diagnosis)" ng-checked="diagnosis.added" /> {{diagnosis.name_display}}
-                                                            </label>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        &lt;!&ndash; SECTION: Doctor triggers &ndash;&gt;
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
-                            <div class="col-xs-12 side-menu-title">
-                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                                    <span style="background-color:#e6edfa; padding: 0 10px;">
-                                        <span class="fas fa-dot-circle"></span>
-                                        <h2>{{'EDUCATION.ADD.TRIGGER_DOCTOR'|translate}}</h2>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
-                            <div class="col-xs-12">
-                                <p style="margin-bottom: 10px;">
-                                    <span><strong>{{'EDUCATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
-                                    {{'EDUCATION.ADD.DOCTOR_EXPLANATION'|translate}}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
-                            <div class="col-xs-12 col-lg-8">
-                                <div class="panel-container">
-                                    <div class="panel-info">
-                                        <div class="panel-content">
-                                            <div class="panel-input">
-                                                <div class="list-space">
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                                                        <input class="form-control" type="text" ng-model="doctorSearchField" ng-change="searchDoctor(doctorSearchField)" placeholder="{{'EDUCATION.ADD.SEARCH'|translate}}"/>
-                                                    </div>
-                                                    <div style="padding: 10px;">
-                                                        <label>
-                                                            <input type="checkbox" ng-click="selectAllTriggers(doctorTriggerList, searchDoctorFilter, selectAll.doctor)" ng-checked="selectAll.doctor.checked"> {{'EDUCATION.ADD.SELECT_ALL'|translate}}
-                                                        </label>
-                                                    </div>
-                                                    <ul class="list-items">
-                                                        <li ng-repeat="doctor in doctorTriggerList | filter: searchDoctorFilter">
-                                                            <label>
-                                                                <input type="checkbox" ng-click="selectTrigger(doctor, selectAll.doctor)" ng-checked="doctor.added" /> {{doctor.name}}
-                                                            </label>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        &lt;!&ndash; SECTION: Treatment Machine triggers &ndash;&gt;
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
-                            <div class="col-xs-12 side-menu-title">
-                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                                    <span style="background-color:#e6edfa; padding: 0 10px;">
-                                        <span class="fas fa-dot-circle"></span>
-                                        <h2>{{'EDUCATION.ADD.TRIGGER_MACHINE'|translate}}</h2>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
-                            <div class="col-xs-12">
-                                <p style="margin-bottom: 10px;">
-                                    <span><strong>{{'EDUCATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
-                                    {{'EDUCATION.ADD.MACHINE_EXPLANATION'|translate}}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
-                            <div class="col-xs-12 col-lg-8">
-                                <div class="panel-container">
-                                    <div class="panel-info">
-                                        <div class="panel-content">
-                                            <div class="panel-input">
-                                                <div class="list-space">
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                                                        <input class="form-control" type="text" ng-model="machineSearchField" ng-change="searchMachine(machineSearchField)" placeholder="{{'EDUCATION.ADD.SEARCH'|translate}}"/>
-                                                    </div>
-                                                    <div style="padding: 10px;">
-                                                        <label>
-                                                            <input type="checkbox" ng-click="selectAllTriggers(machineTriggerList, searchMachineFilter, selectAll.machine)" ng-checked="selectAll.machine.checked"> {{'EDUCATION.ADD.SELECT_ALL'|translate}}
-                                                        </label>
-                                                    </div>
-                                                    <ul class="list-items">
-                                                        <li ng-repeat="machine in machineTriggerList | filter: searchMachineFilter">
-                                                            <label>
-                                                                <input type="checkbox" ng-click="selectTrigger(machine, selectAll.machine)" ng-checked="machine.added" /> {{machine.name}}
-                                                            </label>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>-->
                         <!-- END SECTION -->
                     </div>
                 </div>

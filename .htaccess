@@ -2,8 +2,8 @@
 # Apache/PHP settings:
 #
 php_value max_input_vars 1000000
-php_value post_max_size 1024M
-php_value upload_max_filesize 1024M
+php_value post_max_size 2048M
+php_value upload_max_filesize 2048M
 
 # Protect files and directories from prying eyes.
 <FilesMatch "\.(engine|inc|info|install|make|module|profile|test|po|sh|.*sql|theme|tpl(\.php)?|xtmpl)(~|\.sw[op]|\.bak|\.orig|\.save)?$|^(\..*|Entries.*|Repository|Root|Tag|Template|composer\.(json|lock))$|^#.*#$|\.php(~|\.sw[op]|\.bak|\.orig\.save)$">
@@ -74,7 +74,7 @@ AddHandler .php .py .jsp .asp .htm .shtml .sh
 # Force all URL request that are HTTP to be HTTPS
 # Disable for now until testing cann be done.
 # RewriteCond %{HTTPS} !=on
-# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE] 
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
 
 
 # Accesses to the OpalAdmin API
@@ -88,12 +88,10 @@ RewriteRule ^alert/update/alert php/alert/update.alert.php [QSA,L]
 RewriteRule ^alert/update/activation-flag php/alert/update.activation.flag.php [QSA,L]
 
 # Tasks/Appts/Docs Section (Alias)
-RewriteRule ^alias/delete/alias php/alias/delete.alias.php [QSA,L]
 RewriteRule ^alias/get/alias-chart-logs php/alias/get.alias_chart_logs.php [QSA,L]
 RewriteRule ^alias/get/alias-details php/alias/get.alias_details.php [QSA,L]
 RewriteRule ^alias/get/alias-list-logs php/alias/get.alias_list_logs.php [QSA,L]
 RewriteRule ^alias/get/aliases php/alias/get.aliases.php [QSA,L]
-RewriteRule ^alias/get/color-tags php/alias/get.color_tags.php [QSA,L]
 RewriteRule ^alias/get/educational-materials php/alias/get.educational.materials.php [QSA,L]
 RewriteRule ^alias/get/expressions php/alias/get.expressions.php [QSA,L]
 RewriteRule ^alias/get/hospital-maps php/alias/get.hospital.maps.php [QSA,L]
@@ -108,9 +106,24 @@ RewriteRule ^application/get/config config.json [QSA,L]
 RewriteRule ^application/get/source-databases php/application/get.source_databases.php [QSA,L]
 RewriteRule ^application/update/source-databases php/application/update.source_databases.php [QSA,L]
 
+# Appointment Section
+RewriteRule ^appointment/get/appointments php/appointment/get.appointments.php [QSA,L]
+RewriteRule ^appointment/update/appointment-check-in php/appointment/update.appointment.check.in.php [QSA,L]
+RewriteRule ^appointment/update/appointment-status php/appointment/update.appointment.status.php [QSA,L]
+RewriteRule ^appointment/update/appointment php/appointment/update.appointment.php [QSA,L]
+RewriteRule ^appointment/delete/appointment php/appointment/delete.appointment.php [QSA,L]
+
+RewriteRule ^api/public/v1/appointment php/appointment/get.appointments.php [QSA,L]
+
 # Audit Section
 RewriteRule ^audit/get/audit-details php/audit/get.audit.details.php [QSA,L]
 RewriteRule ^audit/get/audits php/audit/get.audits.php [QSA,L]
+
+# Cron Job section
+RewriteRule ^cron-job/update/resource-pending php/cron-job/update.resource.pending.php [QSA,L]
+RewriteRule ^cron-job/update/appointment-check-in php/cron-job/update.appointment.check.in.php [QSA,L]
+RewriteRule ^cron-job/update/appointment-pending php/cron-job/update.appointment.pending.php [QSA,L]
+RewriteRule ^cron-job/add/audit-system-backup php/cron-job/add.audit.system.backup.php [QSA,L]
 
 # Cron Logs Section
 RewriteRule ^cron/get/cron-chart-logs php/cron/get.cron_chart_logs.php [QSA,L]
@@ -184,6 +197,37 @@ RewriteRule ^install/write-configurations php/install/write_configurations.php [
 RewriteRule ^library/get/libraries php/questionnaire/get.libraries.php [QSA,L]
 RewriteRule ^library/insert/library php/questionnaire/insert.library.php [QSA,L]
 
+#Master Source Section
+#RewriteRule ^master-source/delete/appointments php/master-source/delete.appointments.php [QSA,L]
+#RewriteRule ^master-source/delete/diagnoses php/master-source/delete.diagnoses.php [QSA,L]
+#RewriteRule ^master-source/delete/documents php/master-source/delete.documents.php [QSA,L]
+#RewriteRule ^master-source/delete/tasks php/master-source/delete.tasks.php [QSA,L]
+#RewriteRule ^master-source/delete/test-results php/master-source/delete.test.results.php [QSA,L]
+RewriteRule ^master-source/get/aliases php/master-source/get.source.aliases.php [QSA,L]
+RewriteRule ^master-source/get/diagnoses php/master-source/get.source.diagnoses.php [QSA,L]
+RewriteRule ^master-source/get/test-results php/master-source/get.source.test.results.php [QSA,L]
+RewriteRule ^master-source/get/appointment-details php/master-source/get.source.appointment.details.php [QSA,L]
+RewriteRule ^master-source/get/appointment-exists php/master-source/is.source.appointment.exists.php [QSA,L]
+RewriteRule ^master-source/get/diagnosis-details php/master-source/get.source.diagnosis.details.php [QSA,L]
+RewriteRule ^master-source/get/diagnosis-exists php/master-source/is.source.diagnosis.exists.php [QSA,L]
+RewriteRule ^master-source/get/document-details php/master-source/get.source.document.details.php [QSA,L]
+RewriteRule ^master-source/get/document-exists php/master-source/is.source.document.exists.php [QSA,L]
+RewriteRule ^master-source/get/external-source-db php/master-source/get.external.source.db.php [QSA,L]
+RewriteRule ^master-source/get/task-details php/master-source/get.source.task.details.php [QSA,L]
+RewriteRule ^master-source/get/task-exists php/master-source/is.source.task.exists.php [QSA,L]
+RewriteRule ^master-source/get/test-result-details php/master-source/get.source.test.result.details.php [QSA,L]
+RewriteRule ^master-source/get/test-result-exists php/master-source/is.source.test.result.exists.php [QSA,L]
+RewriteRule ^master-source/insert/appointments php/master-source/insert.source.appointment.php [QSA,L]
+RewriteRule ^master-source/insert/diagnoses php/master-source/insert.source.diagnosis.php [QSA,L]
+RewriteRule ^master-source/insert/documents php/master-source/insert.source.document.php [QSA,L]
+RewriteRule ^master-source/insert/tasks php/master-source/insert.source.task.php [QSA,L]
+RewriteRule ^master-source/insert/test-results php/master-source/insert.source.test.results.php [QSA,L]
+#RewriteRule ^master-source/update/appointments php/master-source/update.source.appointment.php [QSA,L]
+#RewriteRule ^master-source/update/diagnoses php/master-source/update.source.diagnosis.php [QSA,L]
+#RewriteRule ^master-source/update/documents php/master-source/update.source.document.php [QSA,L]
+#RewriteRule ^master-source/update/tasks php/master-source/update.source.task.php [QSA,L]
+#RewriteRule ^master-source/update/test-results php/master-source/update.source.test.results.php [QSA,L]
+
 # Notification Section
 RewriteRule ^notification/delete/notification php/notification/delete.notification.php [QSA,L]
 RewriteRule ^notification/get/notification-chart-logs php/notification/get.notification_chart_logs.php [QSA,L]
@@ -195,16 +239,20 @@ RewriteRule ^notification/insert/notification php/notification/insert.notificati
 RewriteRule ^notification/update/notification php/notification/update.notification.php [QSA,L]
 
 # Patient Section
-RewriteRule ^patient/email-in-use php/patient/email_in_use.php [QSA,L]
-RewriteRule ^patient/find-patient php/patient/find_patient.php [QSA,L]
+RewriteRule ^patient/get/education-options php/patient/find_educ.php [QSA,L]
+RewriteRule ^patient/get/educ-report php/patient/get.education_report.php [QSA,L]
 RewriteRule ^patient/get/patient-activities php/patient/get.patient_activities.php [QSA,L]
-RewriteRule ^patient/get/patient-details php/patient/get.patient_details.php [QSA,L]
 RewriteRule ^patient/get/patients php/patient/get.patients.php [QSA,L]
-RewriteRule ^patient/get/security-questions php/patient/get.security_questions.php [QSA,L]
-RewriteRule ^patient/insert/patient php/patient/insert.patient.php [QSA,L]
-RewriteRule ^patient/toggle/block php/patient/toggle_block.php [QSA,L]
-RewriteRule ^patient/update/patient-publish-flags php/patient/update.patient_publish_flags.php [QSA,L]
-RewriteRule ^patient/update/patient php/patient/update.patient.php [QSA,L]
+RewriteRule ^patient/get/patient-exist php/patient/get.patient_exist.php [QSA,L]
+RewriteRule ^patient/get/patient-data php/patient/get.patient_data.php [QSA,L]
+RewriteRule ^patient/get/patient-mrn php/patient/find_mrn.php [QSA,L]
+RewriteRule ^patient/get/patient-name php/patient/find_name.php [QSA,L]
+RewriteRule ^patient/get/patient-ramq php/patient/find_ramq.php [QSA,L]
+RewriteRule ^patient/get/patient-report php/patient/get.patient_report.php [QSA,L]
+RewriteRule ^patient/get/questionnaire-report php/patient/get.questionnaire_report.php [QSA,L]
+RewriteRule ^patient/get/questionnaire-options php/patient/find_qst.php [QSA,L]
+RewriteRule ^patient/update/patient-data php/patient/update.patient_data.php [QSA,L]
+RewriteRule ^patient/update/publish-flags php/patient/update.publish_flags.php [QSA,L]
 
 # Post Section
 RewriteRule ^post/delete/post php/post/delete.post.php [QSA,L]
@@ -236,11 +284,24 @@ RewriteRule ^question/update/question php/questionnaire/update.question.php [QSA
 
 # Questionnaire Section
 RewriteRule ^questionnaire/delete/questionnaire php/questionnaire/delete.questionnaire.php [QSA,L]
+RewriteRule ^questionnaire/get/answered-questionnaires-patient php/questionnaire/get.answered.questionnaires.patient.php [QSA,L]
 RewriteRule ^questionnaire/get/finalized-questions php/questionnaire/get.finalizedQuestions.php [QSA,L]
+RewriteRule ^questionnaire/get/published-questionnaires php/questionnaire/get.published.questionnaires.php [QSA,L]
+RewriteRule ^questionnaire/get/purposes-respondents php/questionnaire/get.purposes.respondents.php [QSA,L]
+RewriteRule ^questionnaire/get/purposes php/questionnaire/get.purposes.php [QSA,L]
+RewriteRule ^questionnaire/get/chart-answers-patient php/questionnaire/get.chart.answers.questionnaire.patient.php [QSA,L]
+RewriteRule ^questionnaire/get/last-completed-questionnaire-list php/questionnaire/get.last.completed.questionnaire.list.php [QSA,L]
+RewriteRule ^questionnaire/get/last-completed-questionnaire php/questionnaire/get.last.completed.questionnaire.php [QSA,L]
+RewriteRule ^questionnaire/get/non-chart-answers-patient php/questionnaire/get.non.chart.answers.questionnaire.patient.php [QSA,L]
+RewriteRule ^questionnaire/get/patients-completed-questionaires php/questionnaire/get.patients.completed.questionnaires.php [QSA,L]
+RewriteRule ^questionnaire/get/questionnaires-list-orms php/questionnaire/get.questionnaire.list.orms.php [QSA,L]
 RewriteRule ^questionnaire/get/questionnaires php/questionnaire/get.questionnaires.php [QSA,L]
 RewriteRule ^questionnaire/get/questionnaire-details php/questionnaire/get.questionnaire_details.php [QSA,L]
 RewriteRule ^questionnaire/insert/questionnaire php/questionnaire/insert.questionnaire.php [QSA,L]
 RewriteRule ^questionnaire/update/questionnaire php/questionnaire/update.questionnaire.php [QSA,L]
+
+#Resources Section
+RewriteRule ^resource/insert/resource php/resource/insert.resource.php [QSA,L]
 
 # Roles Section
 RewriteRule ^role/delete/role php/role/delete.role.php [QSA,L]
@@ -250,9 +311,23 @@ RewriteRule ^role/get/roles php/role/get.roles.php [QSA,L]
 RewriteRule ^role/insert/role php/role/insert.role.php [QSA,L]
 RewriteRule ^role/update/role php/role/update.role.php [QSA,L]
 
+# SMS Section
+RewriteRule ^sms/get/appointment php/sms/get.sms.appointment.php [QSA,L]
+RewriteRule ^sms/get/messages php/sms/get.messages.php [QSA,L]
+RewriteRule ^sms/get/speciality php/sms/get.speciality.php [QSA,L]
+RewriteRule ^sms/get/type php/sms/get.sms.types.php [QSA,L]
+RewriteRule ^sms/update/activation php/sms/update.activation.state.php [QSA,L]
+RewriteRule ^sms/update/appointment-code php/sms/update.appointment.code.php [QSA,L]
+RewriteRule ^sms/update/message php/sms/update.sms.message.php [QSA,L]
+
 # Studies Section
-RewriteRule ^study/delete/study php/study/delete.study.php [QSA,L]
+RewriteRule ^study/get/patients-list php/study/get.patients.list.php [QSA,L]
+RewriteRule ^study/get/patients-consents php/study/get.patient.consents.php [QSA,L]
+RewriteRule ^study/get/consent-published php/study/get.consent.published.php [QSA,L]
+RewriteRule ^study/get/research-patient php/study/get.research.patient.php [QSA,L]
 RewriteRule ^study/get/study-details php/study/get.study.details.php [QSA,L]
+RewriteRule ^study/get/consent-forms php/study/get.consent.forms.php [QSA,L]
+RewriteRule ^study/get/studies-patient-consented php/study/get.studies.patient.consented.php [QSA,L]
 RewriteRule ^study/get/studies php/study/get.studies.php [QSA,L]
 RewriteRule ^study/insert/study php/study/insert.study.php [QSA,L]
 RewriteRule ^study/update/study php/study/update.study.php [QSA,L]
@@ -269,14 +344,17 @@ RewriteRule ^template-question/update/template-question php/questionnaire/update
 RewriteRule ^test-result/delete/test-result php/test-result/delete.test_result.php [QSA,L]
 RewriteRule ^test-result/get/get/educational-materials php/test-result/get.educational.materials.php [QSA,L]
 RewriteRule ^test-result/get/test-names php/test-result/get.test_names.php [QSA,L]
-RewriteRule ^test-result/get/test-result-chart-logs php/test-result/get.test_result_chart_logs.php [QSA,L]
+# RewriteRule ^test-result/get/test-result-chart-logs php/test-result/get.test_result_chart_logs.php [QSA,L]
 RewriteRule ^test-result/get/test-result-details php/test-result/get.test_result_details.php [QSA,L]
 RewriteRule ^test-result/get/test-result-groups php/test-result/get.test_result_groups.php [QSA,L]
-RewriteRule ^test-result/get/test-result-list-logs php/test-result/get.test_result_list_logs.php [QSA,L]
+# RewriteRule ^test-result/get/test-result-list-logs php/test-result/get.test_result_list_logs.php [QSA,L]
 RewriteRule ^test-result/get/test-results php/test-result/get.test_results.php [QSA,L]
 RewriteRule ^test-result/insert/test-result php/test-result/insert.test_result.php [QSA,L]
 RewriteRule ^test-result/update/test-result-publish-flags php/test-result/update.test_result_publish_flags.php [QSA,L]
 RewriteRule ^test-result/update/test-result php/test-result/update.test_result.php [QSA,L]
+
+# Trigger Section
+RewriteRule ^trigger/execute/questionnaire-triggers php/trigger/executeQuestionnaireTriggers.php
 
 # User Section
 RewriteRule ^user/delete/user php/user/delete.user.php [QSA,L]
@@ -293,3 +371,6 @@ RewriteRule ^user/update/password php/user/update.password.php [QSA,L]
 RewriteRule ^user/update/user php/user/update.user.php [QSA,L]
 RewriteRule ^user/username-in-use php/user/username_in_use.php [QSA,L]
 RewriteRule ^user/validate-login php/user/user.login.php [QSA,L]
+
+# Document section
+RewriteRule ^document/insert/document php/document/insert.document.php [QSA,L]

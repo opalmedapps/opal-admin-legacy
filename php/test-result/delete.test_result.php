@@ -1,16 +1,8 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To delete a test result */
-	include_once('test-result.inc');
+include_once("../config.php");
 
-	$testResult = new TestResult; // Object
+$testResult = new TestResult;
+$testResult->deleteTestResult($_POST);
 
-	// Retrieve FORM param
-	$serial = $_POST['serial'];
-	$user = $_POST['user'];
-
-	// Call function
-  $response = $testResult->deleteTestResult($serial, $user);
-  print json_encode($response); // Return response
-
-?>
+header('Content-Type: application/javascript');
+http_response_code(HTTP_STATUS_SUCCESS);

@@ -14,16 +14,14 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 	$scope.tocsComplete = true;
 
 	// Initialize lists to hold the distinct edu material types
-	$scope.EduMatTypes_EN = [];
-	$scope.EduMatTypes_FR = [];
+	$scope.EduMatTypes = [];
 
 	// Call our API to get the list of edu material types
+	// Call our API to get the list of edu material types
 	educationalMaterialCollectionService.getEducationalMaterialTypes().then(function (response) {
-		$scope.EduMatTypes_EN = response.data.EN;
-		$scope.EduMatTypes_FR = response.data.FR;
+		$scope.EduMatTypes = response.data;
 	}).catch(function(err) {
-		ErrorHandler.onError(err, $filter('translate')('EDUCATION.EDIT.ERROR_TYPE'));
-		$uibModalInstance.close();
+		ErrorHandler.onError(err, $filter('translate')('EDUCATION.ADD.ERROR_TYPES'));
 	});
 
 	$scope.bannerMessageModal = "";
@@ -87,6 +85,27 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 		$scope.changesMade = true;
 	};
 
+	$scope.typeTocUpdate = function(toc, language) {
+		if (language === 'EN') {
+			for (let i=0; i < $scope.EduMatTypes.length; i++) {
+				if (toc.type_EN.toLowerCase() === $scope.EduMatTypes[i].EN.toLowerCase()) {
+					toc.type_FR = $scope.EduMatTypes[i].FR;
+					break;
+				}
+			}
+		}
+		else if (language === 'FR') {
+			for (let i=0; i < $scope.EduMatTypes.length; i++) {
+				if (toc.type_FR.toLowerCase() === $scope.EduMatTypes[i].FR.toLowerCase()) {
+					toc.type_EN = $scope.EduMatTypes[i].EN;
+					break;
+				}
+			}
+		}
+
+		$scope.validateTOCs();
+	};
+
 	$scope.validateTOCs = function () {
 
 		$scope.setChangesMade();
@@ -105,7 +124,7 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 				}
 			});
 		}
-	}
+	};
 
 	// Function to validate english share url
 	$scope.validShareURLEN = { status: null, message: null };

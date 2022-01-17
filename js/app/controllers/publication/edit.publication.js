@@ -115,6 +115,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 		appointment: {available:false,open:false, show:false},
 		doctor: {available:false,open:false, show:false},
 		machine: {available:false,open:false, show:false},
+		study: {available:false,open:false, show:false},
 		diagnosis: {available:false,open:false, show:false}
 	};
 
@@ -151,6 +152,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 		diagnosis: {all:false, checked:false},
 		doctor: {all:false, checked:false},
 		machine: {all:false, checked:false},
+		study: {all:false, checked:false},
 		patient: {all:false, checked:false}
 	};
 
@@ -159,6 +161,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 	$scope.dxSearchField = "";
 	$scope.doctorSearchField = "";
 	$scope.machineSearchField = "";
+	$scope.studySearchField = "";
 	$scope.patientSearchField = "";
 
 	// Function to assign search fields when textbox changes
@@ -177,6 +180,10 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 	$scope.searchMachine = function (field) {
 		$scope.machineSearchField = field;
 		$scope.selectAll.machine.all = false;
+	};
+	$scope.searchStudy = function (field) {
+		$scope.studySearchField = field;
+		$scope.selectAll.study.all = false;
 	};
 	$scope.searchPatient = function (field) {
 		$scope.patientSearchField = field;
@@ -200,6 +207,10 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 		var keyword = new RegExp($scope.machineSearchField, 'i');
 		return !$scope.machineSearchField || keyword.test(Filter.name);
 	};
+	$scope.searchStudyFilter = function (Filter) {
+		var keyword = new RegExp($scope.studySearchField, 'i');
+		return !$scope.studySearchField || keyword.test(Filter.name);
+	};
 	$scope.searchPatientFilter = function (Filter) {
 		var keyword = new RegExp($scope.patientSearchField, 'i');
 		return !$scope.patientSearchField || keyword.test(Filter.name);
@@ -209,7 +220,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 	$scope.appointmentTriggerList = [];
 	$scope.dxTriggerList = [];
 	$scope.doctorTriggerList = [];
-	$scope.machineTriggerList = [];
+	$scope.studyTriggerList = [];
 	$scope.patientTriggerList = [];
 	$scope.appointmentStatusList = [];
 
@@ -247,6 +258,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 
 		$scope.doctorTriggerList = response.data.doctors;
 		$scope.machineTriggerList = response.data.machines;
+		$scope.studyTriggerList = response.data.studies;
 		$scope.patientTriggerList = response.data.patients;
 		$scope.appointmentStatusList = response.data.appointmentStatuses;
 		$scope.appointmentStatusList.forEach(function(entry) {
@@ -360,6 +372,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 			$scope.triggerSection.diagnosis.available = response.data["publicationSettings"].indexOf("6") !== -1 ? true: false;
 			$scope.triggerSection.doctor.available = response.data["publicationSettings"].indexOf("7") !== -1 ? true: false;
 			$scope.triggerSection.machine.available = response.data["publicationSettings"].indexOf("8") !== -1 ? true: false;
+			$scope.triggerSection.study.available = response.data["publicationSettings"].indexOf("10") !== -1 ? true: false;
 			$scope.publishDate.available = (response.data["publicationSettings"].indexOf("9") !== -1) ? true: false;
 			$scope.title.available = response.data["publication"]["unique"] !== "1" ? true: false; // Assign value
 
@@ -367,6 +380,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 			checkAdded($scope.dxTriggerList, $scope.selectAll.diagnosis);
 			checkAdded($scope.doctorTriggerList, $scope.selectAll.doctor);
 			checkAdded($scope.machineTriggerList, $scope.selectAll.machine);
+			checkAdded($scope.studyTriggerList, $scope.selectAll.study);
 			checkAdded($scope.patientTriggerList, $scope.selectAll.patient);
 			checkAdded($scope.appointmentStatusList);
 
@@ -509,6 +523,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 	$scope.$watch('dxTriggerList', function (nv) {$scope.changeTriggers(nv);}, true);
 	$scope.$watch('doctorTriggerList', function (nv) {$scope.changeTriggers(nv);}, true);
 	$scope.$watch('machineTriggerList', function (nv) {$scope.changeTriggers(nv);}, true);
+	$scope.$watch('studyTriggerList', function (nv) {$scope.changeTriggers(nv);}, true);
 
 	$scope.$watch('toSubmit', function() {
 		$scope.changesDetected = JSON.stringify($scope.toSubmit) != JSON.stringify($scope.oldData);
@@ -1400,7 +1415,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 						publish_time: oldPublishTime,
 					};
 				}
-			} else
+			} else {
 				$.ajax({
 					type: "POST",
 					url: "publication/update/publication",
@@ -1414,6 +1429,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 						$uibModalInstance.close();
 					}
 				});
+			}
 		}
 	};
 
