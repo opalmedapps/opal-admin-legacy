@@ -78,7 +78,8 @@ angular.module('opalAdmin', [
 		var authService = {};
 
 		authService.login = function (username, password) {
-			return $http.post(
+
+			let oaPromise = $http.post( // Log in to the old Opal Admin API
 				"user/validate-login",
 				$.param({
 					username: username,
@@ -87,7 +88,24 @@ angular.module('opalAdmin', [
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			)
+			); 
+			
+			return $http.post( // Log in to the new back end API
+				"http://127.0.0.1:8000/api/auth/login/",
+				{
+					"username": username,
+					"password": password,
+				},
+				{
+					"withCredentials": true
+				}
+			).then(
+				function (response) { return oaPromise; }, // Success
+				function (response) { 			  // Error
+					console.error('Unable to connect to the api-backend:', response.status);
+					return oaPromise;
+				}
+			);
 		};
 
 		authService.isAuthenticated = function () {
@@ -166,7 +184,8 @@ angular.module('opalAdmin', [
 			.state('protected-route', { url: '/protected', resolve: { auth: function resolveAuthentication(AuthResolver) { return AuthResolver.resolve(); } } })
 			.state('sms',{ url: '/sms', templateUrl: "templates/sms/sms.html", controller: "sms", data:{ requireLogin: false } })
 			.state('sms/message',{ url: '/sms/message', templateUrl: "templates/sms/add.sms.html", controller: "add.sms", data:{ requireLogin: false } })
-			.state('patient-administration',{ url: '/patient-administration', templateUrl: "templates/patient-administration/patient.administration.html", controller: "patient.administration", data:{ requireLogin: true } });
+			.state('patient-administration',{ url: '/patient-administration', templateUrl: "templates/patient-administration/patient.administration.html", controller: "patient.administration", data:{ requireLogin: true } })
+			.state('parking', { url: 'http://127.0.0.1:8000/admin/hospital_settings/', external: true, data: { requireLogin: true }});
 
 	}])
 
@@ -203,7 +222,7 @@ angular.module('opalAdmin', [
 			}
 		};
 	})
-	.run(function ($rootScope, AUTH_EVENTS, AuthService, $state) {
+	.run(function ($rootScope, AUTH_EVENTS, AuthService, $state, $window) {
 
 		$rootScope.$on('$stateChangeStart', function (event, next, toParams) {
 			var requireLogin = next.data.requireLogin;
@@ -228,6 +247,10 @@ angular.module('opalAdmin', [
 					// user is not allowed
 					$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
 				}
+			}
+			if (next.external) {
+				event.preventDefault();
+				$window.open(next.url, '_self');
 			}
 		});
 	})
