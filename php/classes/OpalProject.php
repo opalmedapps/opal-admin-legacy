@@ -4,7 +4,7 @@
  * OpalProject class
  *
  */
-require_once('/var/www/html/opalAdmin/publisher/php/HospitalPushNotification.php');
+require_once FRONTEND_ABS_PATH . 'publisher'. DIRECTORY_SEPARATOR .  'php'. DIRECTORY_SEPARATOR . 'HospitalPushNotification.php';
 
 abstract class OpalProject
 {
