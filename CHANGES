@@ -1,3 +1,7 @@
+Version 2.1.7.0:
+ - Merge branch 'OPAL-1193' into 'develop'
+ - OPAL-1193 - modified the add post to remove non-printable characters on the extended ascii table.
+
 Version 2.1.6.0:
  - Merge branch 'OPAL-1194' into 'develop'
  - Change where the API get the list of questionnaires for the clinical viewer
