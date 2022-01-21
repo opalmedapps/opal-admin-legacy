@@ -315,6 +315,7 @@ class Appointment extends Module
         $patientSite = null;
         $source = null;
         $action = null;
+        $toPublish = 0;
         $replacementMap = array();
 
         $errCode = $this->_validateInsertAppointment($post, $patientSite, $source);
@@ -378,7 +379,7 @@ class Appointment extends Module
             unset($toInsert["updatedBy"]);
             $toInsert["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];
             $toInsert["AliasExpressionSerNum"] = $aliasInfos[0]['AliasExpressionSerNum'];
-            
+            $toPublish = $aliasInfos[0]['AliasUpdate'];
             if ($SStartDateTime <> $OStartDateTime) {
                 //if difference is greater than an hour
 		        // 2019-06-12 : Change from 1 hour to 2 hours by John's request
@@ -404,7 +405,7 @@ class Appointment extends Module
             $toInsert["AppointmentSerNum"] = $this->opalDB->insertAppointment($toInsert);            
         }
         
-        if (!is_null($action)){
+        if (!is_null($action) && count($aliasInfos) > 0 && $toPublish == 1){
             $this->_notifyChange($toInsert, $action, $replacementMap,$post["sourceId"]);
         }
         return false;
