@@ -404,7 +404,7 @@ class Appointment extends Module
             $toInsert["AppointmentSerNum"] = $this->opalDB->insertAppointment($toInsert);            
         }
         
-        if (!is_null($action)){
+        if (!is_null($action) && count($aliasInfos) > 0){
             $this->_notifyChange($toInsert, $action, $replacementMap,$post["sourceId"]);
         }
         return false;
