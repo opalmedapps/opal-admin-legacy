@@ -349,8 +349,9 @@ class Appointment extends Module
         $appointment = $this->opalDB->findAppointment($source["SourceDatabaseSerNum"],$post["sourceId"]);
         $SStartDateTime = strtotime($post["scheduledTimestamp"]);
         $OStartDateTime = strtotime($post["scheduledTimestamp"]);
+        $countAppt = count($appointment) ;
 
-        if(count($appointment) == 0 ) {
+        if($countAppt == 0 ) {
             $action = 'AppointmentNew';                    
             setlocale(LC_TIME, 'fr_CA');                                        
             $replacementMap["\$newAppointmentDateFR"] =  strftime('%A %d %B %Y', $SStartDateTime);
@@ -384,7 +385,7 @@ class Appointment extends Module
                 //if difference is greater than an hour
 		        // 2019-06-12 : Change from 1 hour to 2 hours by John's request
                 $hourdiff = abs(round(($SStartDateTime - $OStartDateTime)/3600, 1));
-                print_r("Difference entre " . $appointment["ScheduledStartTime"] . " et " . $post["scheduledTimestamp"] . " est de " . $hourdiff ."\n\n");
+                print_r("Difference between " . $appointment["ScheduledStartTime"] . " and " . $post["scheduledTimestamp"] . " is " . $hourdiff ."\n\n");
                                 
                 if ($hourdiff >= 2) {
                     $action = 'AppointmentTimeChange';                    
@@ -402,7 +403,11 @@ class Appointment extends Module
                 }
             }
             
-            $toInsert["AppointmentSerNum"] = $this->opalDB->insertAppointment($toInsert);            
+            if( $countAppt == 0 ) {
+                $toInsert["AppointmentSerNum"] = $this->opalDB->insertAppointment($toInsert);
+            } else {
+                $this->opalDB->updateAppointments($toInsert);
+            }
         }
         
         if (!is_null($action) && count($aliasInfos) > 0 && $toPublish == 1){

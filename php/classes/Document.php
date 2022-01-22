@@ -190,7 +190,7 @@ class Document extends Module
         } else {
             $action = "UpdDocument";
             $toInsert["DocumentSerNum"] = $doc[0]["DocumentSerNum"];
-            $toInsert["DateAdded"]      = $doc[0]["DateAdded"];
+            $toInsert["DateAdded"]      = $doc[0]["DateAdded"];            
             $this->opalDB->updateDocument($toInsert);
         }
         
