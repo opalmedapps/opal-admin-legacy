@@ -1935,3 +1935,52 @@ const OPAL_GET_STAFF_DETAIL = "
     SELECT StaffSerNum, FirstName, LastName, LastUpdated
      FROM ".OPAL_STAFF_TABLE." WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum AND StaffId =:StaffId;
 ";
+
+const OPAL_UPDATE_APPOINTMENT = "
+UPDATE " .OPAL_APPOINTMENTS_TABLE. " SET 
+AliasExpressionSerNum = :AliasExpressionSerNum,    
+SourceDatabaseSerNum = :SourceDatabaseSerNum,
+AppointmentAriaSer = :AppointmentAriaSer ,
+PrioritySerNum = :PrioritySerNum,
+DiagnosisSerNum = :DiagnosisSerNum,
+Status = :Status,
+State = :State,
+ScheduledStartTime = :ScheduledStartTime,
+ScheduledEndTime = :ScheduledEndTime,
+ActualStartDate = :ActualStartDate,
+ActualEndDate = :ActualEndDate,
+Location = :Location,
+RoomLocation_EN = :RoomLocation_EN,
+RoomLocation_FR = :RoomLocation_FR,
+Checkin = :Checkin,
+ChangeRequest = :ChangeRequest,
+DateAdded = :DateAdded,
+ReadStatus = :ReadStatus,
+SessionId = :SessionId
+WHERE    AppointmentSerNum = :AppointmentSerNum AND PatientSerNum = :PatientSerNum;
+";
+
+const OPAL_UPDATE_DOCUMENT =
+"
+UPDATE " .OPAL_DOCUMENT_TABLE." SET
+SourceDatabaseSerNum = :SourceDatabaseSerNum,
+DocumentId = :DocumentId,          
+AliasExpressionSerNum = :AliasExpressionSerNum,
+ApprovedBySerNum = :ApprovedBySerNum,     
+ApprovedTimeStamp = :ApprovedTimeStamp,   
+AuthoredBySerNum = :AuthoredBySerNum,   
+DateOfService = :DateOfService,        
+Revised = :Revised,              
+ValidEntry = :ValidEntry,           
+ErrorReasonText = :ErrorReasonText,      
+OriginalFileName = :OriginalFileName,     
+FinalFileName = :FinalFileName,        
+CreatedBySerNum = :CreatedBySerNum,      
+CreatedTimeStamp = :CreatedTimeStamp,     
+TransferStatus = :TransferStatus,       
+TransferLog = :TransferLog,          
+ReadStatus = :ReadStatus,           
+SessionId = :SessionId,            
+DateAdded = :DateAdded
+WHERE DocumentSerNum = :DocumentSerNum AND PatientSerNum = :PatientSerNum;
+";
