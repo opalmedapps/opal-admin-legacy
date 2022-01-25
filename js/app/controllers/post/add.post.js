@@ -90,7 +90,7 @@ controller('post.add', function ($scope, $filter, $state, $sce, $uibModal, $loca
 	};
 
 	$scope.removeNonprintableChars = function(value) {
-		return value.replace(/[\u0000-\u0008,\u000A-\u001F,\u007F-\u00A0]+/g, "");
+		return value.replace(/[\u0000-\u0008,\u000A-\u001F,\u007F-\u00A0,\u200B]+/g, "");
 	};
 
 	// Function to toggle necessary changes when updating post name
