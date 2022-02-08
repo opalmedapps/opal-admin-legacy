@@ -328,20 +328,6 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		// Function to generate qrcode and return image path
-		hospitalMapAPI.generateQRCode = function (qrid, oldqrid) {
-			return $http.post(
-				"hospital-map/generate-qr-code",
-				$.param({
-					qrid: qrid,
-					oldqrid: oldqrid,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
 		return hospitalMapAPI;
 	})
 

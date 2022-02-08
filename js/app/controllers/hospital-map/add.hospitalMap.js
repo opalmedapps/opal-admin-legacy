@@ -153,27 +153,6 @@ controller('hospitalMap.add', function ($scope, $filter, $state, $sce, $uibModal
 		}
 	};
 
-	// Function to call api to generate qr code
-	// $scope.generateQRCode = function (qrid) {
-	//
-	// 	if (qrid) {
-	// 		hospitalMapCollectionService.generateQRCode(qrid, $scope.oldqrid).then(function (response) {
-	// 			$scope.newHosMap.qrcode = response.data.qrcode;
-	// 			$scope.newHosMap.qrpath = response.data.qrpath;
-	//
-	// 			$scope.oldqrid = qrid;
-	// 			$scope.qridUpdate();
-	// 		}).catch(function(err) {
-	// 			ErrorHandler.onError(err, $filter('translate')('HOSPITAL_MAPS.ADD.ERROR_QR'));
-	// 		});
-	// 	}
-	// 	else {
-	// 		$scope.hosMap.qrcode = "";
-	// 		$scope.hosMap.qrpath = "";
-	// 	}
-	//
-	// };
-
 	// Function to show map
 	$scope.showMapDisplay_EN = false;
 	$scope.showMapDisplay_FR = false;

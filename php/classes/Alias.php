@@ -137,7 +137,17 @@ class Alias extends Module {
         $result["deleted"] = $this->opalDB->getDeactivatedAliasExpressions($result["serial"]);
 
         $result["count"] = count($result["terms"]);
-        $result["hospitalMap"] = ($result["hospitalMapSer"] != "" ? $this->opalDB->getHospitalMapDetails($result["hospitalMapSer"]) : "");
+        if($result["hospitalMapSer"] != "") {
+            $temp = $this->opalDB->getHospitalMapDetails($result["hospitalMapSer"]);
+            if(count($temp) == 0)
+                $result["hospitalMap"] = "";
+            else if(count($temp) == 1)
+                $result["hospitalMap"] = $temp[0];
+            else
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates hospital maps found.");
+        }
+        else
+            $result["hospitalMap"] = "";
 
         // Unset unused values
         unset($result["checkin_possible"]);

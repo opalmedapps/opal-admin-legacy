@@ -179,7 +179,6 @@ RewriteRule ^email/update/email php/email/update.email.php [QSA,L]
 
 # Hospital Map Section
 RewriteRule ^hospital-map/delete/hospital-map php/hospital-map/delete.hospital_map.php [QSA,L]
-RewriteRule ^hospital-map/generate-qr-code php/hospital-map/generate_QR_code.php [QSA,L]
 RewriteRule ^hospital-map/get/hospital-map-details php/hospital-map/get.hospital_map_details.php [QSA,L]
 RewriteRule ^hospital-map/get/hospital-maps php/hospital-map/get.hospital_maps.php [QSA,L]
 RewriteRule ^hospital-map/insert/hospital-map php/hospital-map/insert.hospital_map.php [QSA,L]
