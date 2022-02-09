@@ -3755,14 +3755,6 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_updateRecordIntoTable(OPAL_UPDATE_RESOURCE, $toUpdate);
     }
 
-    /**
-     * Insert a resource only if it does not exists already.
-     * @param $toInsert
-     * @return int - number of row modified
-     */
-    function insertResource($toInsert) {
-        return $this->_insertRecordIntoTableConditional(OPAL_RESOURCE_TABLE, $toInsert);
-    }
 
     /**
      * Get a list of resources based on the list of resource code and source and add the appointmentId to the result.
@@ -4134,5 +4126,160 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":StaffId","variable"=>$staffId,"data_type"=>PDO::PARAM_STR)
         ));
+    }
+
+    /** 
+     * Get doctors resource
+     * @param  resourceId
+     * @return  array Doctor info
+     * */
+    function getDoctorResource($sourceId,$resourceId) {
+        return $this->_fetch(OPAL_GET_DOCTOR_RESOURCE, array(
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":ResourceId","variable"=>$resourceId,"data_type"=>PDO::PARAM_STR)
+        ));
+    }
+
+    /** 
+     * Insert a new notification
+     * @param  array of the notification infos
+     * @return  ID of the entry
+     */
+    function insertResource($toInsert) {        
+        return $this->_replaceRecordIntoTable(OPAL_RESOURCE_TABLE, $toInsert);
+    }
+
+    /**
+     * Update a resource
+     * @param $toUpdate - resource details
+     * @return int - number of row modified
+     */
+    function updateDoctorResource($toUpdate) {
+        $parameters = array(                        
+            array("parameter"=>":ResourceName","variable"=>$toUpdate['ResourceName'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":ResourceCode","variable"=>$toUpdate['ResourceCode'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":ResourceType","variable"=>$toUpdate['ResourceType'],"data_type"=>PDO::PARAM_STR),            
+            array("parameter"=>":ResourceSerNum","variable"=>$toUpdate['ResourceSerNum'],"data_type"=>PDO::PARAM_INT),
+        );
+        $totalupt = $this->_execute(OPAL_UPDATE_DOCTOR_RESOURCE,$parameters);        
+    }
+
+    /** 
+     * Get doctors information
+     * @param  resourceId
+     * @return  array Dcotor info
+     * */
+    function getDoctor($resourceId) {
+        return $this->_fetch(OPAL_GET_DOCTOR, array(            
+            array("parameter"=>":ResourceId","variable"=>$resourceId,"data_type"=>PDO::PARAM_INT),            
+        ));
+    }
+
+    /**
+     * Insert an doctor only if it does not exists already.
+     * @param $toInsert
+     * @return int - number of row modified
+     */
+    function insertDoctor($toInsert) {
+        return $this->_replaceRecordIntoTable(OPAL_DOCTOR_TABLE, $toInsert);
+    }
+
+    /**
+     * Insert an doctor only if it does not exists already.
+     * @param $toInsert
+     * @return int - number of row modified
+     */
+    function updateDoctor($toUpdate) {
+        $parameters = array(            
+            array("parameter"=>":ResourceSerNum","variable"=>$toUpdate['ResourceSerNum'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$toUpdate['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":DoctorAriaSer","variable"=>$toUpdate['DoctorAriaSer'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":FirstName","variable"=>$toUpdate['FirstName'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":LastName","variable"=>$toUpdate['LastName'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Role","variable"=>$toUpdate['Role'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Workplace","variable"=>$toUpdate['Workplace'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Email","variable"=>$toUpdate['Email'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Phone","variable"=>$toUpdate['Phone'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":Address","variable"=>$toUpdate['Address'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":ProfileImage","variable"=>$toUpdate['ProfileImage'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":BIO_EN","variable"=>$toUpdate['BIO_EN'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":BIO_FR","variable"=>$toUpdate['BIO_FR'],"data_type"=>PDO::PARAM_STR),            
+            array("parameter"=>":DoctorSerNum","variable"=>$toUpdate['DoctorSerNum'],"data_type"=>PDO::PARAM_INT),			            
+        );
+        $totalupt = $this->_execute(OPAL_UPDATE_DOCTOR,$parameters);
+    }
+
+    /** 
+     * Get patient doctors information
+     * @param  resourceId
+     * @return  array Dcotor info
+     * */
+    function getPatientDoctor($doctorSerNum,$patientSerNum) {        
+        return $this->_fetch(OPAL_GET_PATIENT_DOCTOR, array(            
+            array("parameter"=>":DoctorSerNum","variable"=>$doctorSerNum,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":PatientSerNum","variable"=>$patientSerNum,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+
+    /**
+     * Insert an patient doctor only if it does not exists already.
+     * @param $toInsert
+     * @return int - number of row modified
+     */
+    function insertPatientDoctor($toInsert) {
+        return $this->_replaceRecordIntoTable(OPAL_PATIENT_DOCTOR_TABLE, $toInsert);
+    }
+
+
+    /**
+     * Insert a patient doctor only if it does not exists already.
+     * @param $toInsert
+     * @return int - number of row modified
+     */
+    function updatePatientDoctor($toUpdate) {
+        $parameters = array(            
+            array("parameter"=>":OncologistFlag","variable"=>$toUpdate['OncologistFlag'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":PrimaryFlag","variable"=>$toUpdate['PrimaryFlag'],"data_type"=>PDO::PARAM_INT),        
+            array("parameter"=>":PatientDoctorSerNum","variable"=>$toUpdate['PatientDoctorSerNum'],"data_type"=>PDO::PARAM_INT),			            
+        );
+        $totalupt = $this->_execute(OPAL_UPDATE_PATIENT_DOCTOR,$parameters);
+    }
+    
+    /** 
+     * Get Staff information
+     * @param  resourceId
+     * @return  array Dcotor info
+     * */
+    function getStaff($staffId,$sourceId) {
+        return $this->_fetch(OPAL_GET_STAFF, array(            
+            array("parameter"=>":StaffId","variable"=>$staffId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Insert a staff only if it does not exists already.
+     * @param $toInsert
+     * @return int - number of row modified
+     */
+    function insertStaff($toInsert) {
+        return $this->_replaceRecordIntoTable(OPAL_STAFF_TABLE, $toInsert);
+    }
+
+    /**
+     * Update a Staff only if it does not exists already.
+     * @param $toInsert
+     * @return int - number of row modified
+     */
+    function updateStaff($toUpdate) {
+        $parameters = array(                                    
+            array("parameter"=>":FirstName","variable"=>$toUpdate['FirstName'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":LastName","variable"=>$toUpdate['LastName'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":LastUpdated","variable"=>$toUpdate['LastUpdated'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$toUpdate['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":StaffId","variable"=>$toUpdate['StaffId'],"data_type"=>PDO::PARAM_INT),
+        );
+        $totalupt = $this->_execute(OPAL_UPDATE_STAFF,$parameters);
     }
 }
