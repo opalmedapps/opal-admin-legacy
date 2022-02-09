@@ -1944,5 +1944,10 @@ const SQL_OPAL_UPDATE_HOSPITAL_MAP = "
 ";
 
 const SQL_OPAL_DELETE_HOSPITAL_MAP = "
-    DELETE FROM ".OPAL_HOSPITAL_MAP_TABLE." WHERE HospitalMapSerNum = :HospitalMapSerNum
+    DELETE FROM ".OPAL_HOSPITAL_MAP_TABLE." WHERE HospitalMapSerNum = :HospitalMapSerNum;
+";
+
+const SQL_OPAL_UPDATE_HOSPITAL_MAP_MH = "
+    UPDATE ".OPAL_HOSPITAL_MAP_TABLE." SET LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId WHERE
+    HospitalMapSerNum = :HospitalMapSerNum ORDER BY RevSerNum DESC LIMIT 1
 ";

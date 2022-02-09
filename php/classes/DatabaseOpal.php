@@ -4102,4 +4102,24 @@ class DatabaseOpal extends DatabaseAccess {
         $toUpdate["SessionId"] = $this->getSessionId();
         return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_HOSPITAL_MAP, $toUpdate);
     }
+
+    /**
+     * Delete a specific hospital map
+     * @param $id int - ID of the hospital map to delete
+     * @return int - number of records affected (should be 1 only)
+     */
+    function deleteHospitalMap($id) {
+        return $this->_execute(SQL_OPAL_DELETE_HOSPITAL_MAP, array(
+            array("parameter"=>":HospitalMapSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function updateHospitalMapMH($id) {
+        $toUpdate = array(
+            "HospitalMapSerNum"=>$id,
+            "LastUpdatedBy"=>$this->getOAUserId(),
+            "SessionId"=>$this->getSessionId(),
+        );
+        return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_HOSPITAL_MAP_MH, $toUpdate);
+    }
 }

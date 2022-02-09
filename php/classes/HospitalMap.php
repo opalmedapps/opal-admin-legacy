@@ -209,49 +209,4 @@ class HospitalMap extends Module {
 
         $this->opalDB->updateHospitalMap($toUpdate);
     }
-
-    public function deleteHospitalMap ($post) {
-        $this->checkDeleteAccess($post);
-        $hospitalMap = array();
-        $errCode = $this->_validateHospitalMapDetails($post, $hospitalMap);
-        $errCode = bindec($errCode);
-
-        if ($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
-
-        die();
-        $userSer = $user['id'];
-        $sessionId = $user['sessionid'];
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                DELETE FROM
-                    HospitalMap
-                WHERE
-                    HospitalMap.HospitalMapSerNum = $serial
-            ";
-
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-            $sql = "
-                UPDATE HospitalMapMH
-                SET
-                    HospitalMapMH.LastUpdatedBy = '$userSer',
-                    HospitalMapMH.SessionId = '$sessionId'
-                WHERE
-                    HospitalMapMH.HospitalMapSerNum = $serial
-                ORDER BY HospitalMapMH.RevSerNum DESC
-                LIMIT 1
-            ";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-        } catch( PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for hospital map. " . $e->getMessage());
-        }
-    }
 }
-
-?>
