@@ -44,11 +44,11 @@ class Document extends Module
     }
 
     /**
-     * Validate the input parameters for individual patient appointment
+     * Validate the input parameters for individual patient document
      * Validation code :     
      *                      1st bit source system invalid or missing
      *
-     * @param array<mixed> $post - appointment parameters
+     * @param array<mixed> $post - docuement parameters
      * @param array<mixed> &$patientSite (Reference) - patient parameters
      * @param array<mixed> &$source (Reference) - source parameters
      * @return string $errCode - error code.
@@ -147,6 +147,7 @@ class Document extends Module
     }
 
     protected function _insertDocument($post){
+        $today = strtotime(date("Y-m-d H:i:s"));
         $patientSite = null;
         $source = null;        
         $errCode = $this->_validateInsertDocument($post, $patientSite, $source);
@@ -195,8 +196,8 @@ class Document extends Module
         }
         
         $patientAccessLevel = $this->opalDB->getPatientAccessLevel($patientSite["PatientSerNum"]);
-        
-        if(array_key_exists("Accesslevel", $patientAccessLevel) && $patientAccessLevel["Accesslevel"] == 3){            
+        $creationDatetime = strtotime($post["creationDatetime"]);
+        if(array_key_exists("Accesslevel", $patientAccessLevel) && $patientAccessLevel["Accesslevel"] == 3 && $creationDatetime >= $today){            
             $this->_notifyChange($toInsert,$action,array(),$toInsert["DocumentSerNum"]);
         }
         

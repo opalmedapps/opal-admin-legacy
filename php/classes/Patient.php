@@ -706,7 +706,7 @@ class Patient extends Module {
         $patientData["PatientSerNum"] = $patientSerNum;
         $patientData["FirstName"] = $post["name"]["firstName"];
         $patientData["LastName"] = $post["name"]["lastName"];
-        $patientData["SSN"] = $post["ramq"];
+        //$patientData["SSN"] = $post["ramq"];
 
         if (array_key_exists("birthdate", $post) && !empty($post["birthdate"])){
             $patientData["DateOfBirth"] = $post["birthdate"];
@@ -715,12 +715,7 @@ class Patient extends Module {
             $to   = new DateTime('today');
             $age  =  $from->diff($to)->y;
 
-            $patientData["Age"] = $age;
-
-            if ($age > 13){
-                $patientData["BlockedStatus"]   = 1;
-                $patientData["StatusReasonTxt"] = "Patient passed 13 years of age";
-            }
+            $patientData["Age"] = $age;           
         }
 
         if (array_key_exists("alias", $post)){
@@ -731,7 +726,7 @@ class Patient extends Module {
             $patientData["Sex"] = $post["gender"];
         }
 
-        if (array_key_exists("email", $post) ){
+        /*if (array_key_exists("email", $post) ){
             if (!empty($post["email"])){
                 $patientData["Email"]    = $post["email"];
             } else {
@@ -749,7 +744,7 @@ class Patient extends Module {
 
         if (array_key_exists("language", $post) && !empty($post["language"])){
             $patientData["Language"] = $post["language"];
-        }
+        }*/
 
         if(array_key_exists("deceasedDateTime", $post) && $post["deceasedDateTime"] != ""){
             $patientData["StatusReasonTxt"] = "Deceased patient";
