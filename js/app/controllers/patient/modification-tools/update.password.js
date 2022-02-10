@@ -48,8 +48,11 @@ angular.module('opalAdmin.controllers.update.password', ['ngAnimate', 'ui.bootst
                 },
                 error: function (err) {
                     ErrorHandler.onError(err, $filter('translate')('PATIENTS.MODIFICATION_TOOLS.PASSWORD.ERROR'), arrValidationUpdate);
+                    $scope.setBannerClass('danger');
+                    $scope.$parent.bannerMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.PASSWORD.ERROR');
                 },
                 complete: function () {
+                    $scope.showBanner();
                     $uibModalInstance.close();
                 }
             });
@@ -62,11 +65,16 @@ angular.module('opalAdmin.controllers.update.password', ['ngAnimate', 'ui.bootst
             url: "patient/update/password",
             data: {
                 uid: $scope.puid,
-                password: $scope.new_password.firstTime,
+                password: CryptoJS.SHA512($scope.new_password.firstTime).toString(),
             },
-            success: function () {},
+            success: function () {
+                $scope.setBannerClass('success');
+                $scope.$parent.bannerMessage = "Successfully update patient password！";
+            },
             error: function (err) {
                 ErrorHandler.onError(err, $filter('translate')('PATIENTS.MODIFICATION_TOOLS.PASSWORD.ERROR'), arrValidationUpdate);
+                $scope.setBannerClass('danger');
+                $scope.$parent.bannerMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.PASSWORD.ERROR');
             },
         });
     }

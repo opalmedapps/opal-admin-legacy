@@ -2826,7 +2826,7 @@
       "INDIVIDUAL":{
         "TITLE": "Individual Patient Reports",
         "PSEARCH": "Search for patient",
-        "PSITE": "Patient Hospital Site",
+        "PNAME": "Patient last name",
         "PRAMQ": "Patient RAMQ",
         "PMRN": "Patient MRN",
         "SUBMIT": "Submit",
@@ -2927,7 +2927,7 @@
       },
       "ACCESS_LEVEL": {
         "TITLE": "Change Patient Access Level",
-        "DESCRIPTION": "change the access level of the user account",
+        "DESCRIPTION": "Change the access level of the user account.",
         "CURRENT_LEVEL": "Current access level :",
         "CHOOSEN_LEVEL": "Select from following :",
         "FULL_ACCESS": "Full Access",
@@ -2938,7 +2938,7 @@
       },
       "SECURITY_ANSWER": {
         "TITLE": "Reset Patient Security Questions",
-        "DESCRIPTION": "reset all security questions of the user account",
+        "DESCRIPTION": "Reset all security questions of the user account.",
         "FIRST_QUESTION": "First Question :",
         "FIRST_ANSWER": "Answer :",
         "SECOND_QUESTION": "Second Question :",
