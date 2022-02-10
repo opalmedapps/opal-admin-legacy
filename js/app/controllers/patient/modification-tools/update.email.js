@@ -40,7 +40,7 @@ angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap
         if($scope.new_email.firstTime !== null && $scope.new_email.secondTime !== null && $scope.new_email.errorMessage === null){
             $.ajax({
                 type: "POST",
-                url: "firebase/update/email",
+                url: "patient/update/external-email",
                 data: {
                     uid: $scope.puid,
                     email: $scope.new_email.firstTime,
