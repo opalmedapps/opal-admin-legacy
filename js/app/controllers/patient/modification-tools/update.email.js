@@ -9,6 +9,7 @@ angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap
         secondTime: null,
         errorMessage: null,
     };
+    console.log($scope);
 
     $scope.validateEmail = function(){
         if($scope.validateInput($scope.new_email.firstTime) && !$scope.new_email.firstTime.match(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/))
@@ -49,8 +50,11 @@ angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap
                 },
                 error: function (err) {
                     ErrorHandler.onError(err, $filter('translate')('PATIENTS.MODIFICATION_TOOLS.EMAIL.ERROR'), arrValidationUpdateFirebase);
+                    $scope.setBannerClass('danger');
+                    $scope.$parent.bannerMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.EMAIL.ERROR');
                 },
                 complete: function () {
+                    $scope.showBanner();
                     $uibModalInstance.close();
                 }
             });
@@ -65,9 +69,14 @@ angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap
                 email: $scope.new_email.firstTime,
                 PatientSerNum: $scope.psnum,
             },
-            success: function () {},
+            success: function () {
+                $scope.setBannerClass('success');
+                $scope.$parent.bannerMessage = "Successfully update patient email！";
+            },
             error: function (err) {
                 ErrorHandler.onError(err, $filter('translate')('PATIENTS.MODIFICATION_TOOLS.EMAIL.ERROR'), arrValidationUpdateDatabase);
+                $scope.setBannerClass('danger');
+                $scope.$parent.bannerMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.EMAIL.ERROR');
             },
         });
     }

@@ -1938,7 +1938,7 @@ SET pt.Email = :Email WHERE pt.PatientSerNum = :PatientSer;";
 
 const OPAL_UPDATE_PATIENT_PASSWORD = "
 UPDATE " . OPAL_USERS_TABLE . " ut
-SET ut.Password = SHA2(:Password, 512)  WHERE ut.username = :Username;";
+SET ut.Password = :Password  WHERE ut.username = :Username;";
 
 const OPAL_INSERT_SECURITY_ANSWER = "
 UPDATE " . OPAL_SECURITY_ANSWER_TABLE . " sa

@@ -126,45 +126,60 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
     ];
 
     $scope.updateSecurityQuestions = function (){
-        if ($scope.validateInput($scope.patientSecurityQuestions.firstAnswer)){
+        if ($scope.validateInput($scope.patientSecurityQuestions.firstAnswer)) {
             if($scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.secondQuestion
-                && $scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion){
+                && $scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
+                && $scope.patientSecurityQuestions.firstQuestion_old !== null) {
                 updateQuestion($scope.patientSecurityQuestions.firstQuestion, $scope.patientSecurityQuestions.firstAnswer, $scope.patientSecurityQuestions.firstQuestion_old);
+                $scope.patientSecurityQuestions.firstQuestion_old = null;
             }
             else if($scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.secondQuestion
-                && $scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion){
+                && $scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
+                && $scope.patientSecurityQuestions.secondQuestion_old !== null) {
                 updateQuestion($scope.patientSecurityQuestions.firstQuestion, $scope.patientSecurityQuestions.firstAnswer, $scope.patientSecurityQuestions.secondQuestion_old);
+                $scope.patientSecurityQuestions.secondQuestion_old = null;
             }
-            else {
+            else if($scope.patientSecurityQuestions.thirdQuestion_old !== null) {
                 updateQuestion($scope.patientSecurityQuestions.firstQuestion, $scope.patientSecurityQuestions.firstAnswer, $scope.patientSecurityQuestions.thirdQuestion_old);
+                $scope.patientSecurityQuestions.thirdQuestion_old = null;
             }
         }
 
-        if ($scope.validateInput($scope.patientSecurityQuestions.secondAnswer)){
+        if ($scope.validateInput($scope.patientSecurityQuestions.secondAnswer)) {
             if($scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.firstQuestion
-                && $scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion){
+                && $scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
+                && $scope.patientSecurityQuestions.firstQuestion_old !== null) {
                 updateQuestion($scope.patientSecurityQuestions.secondQuestion, $scope.patientSecurityQuestions.secondAnswer, $scope.patientSecurityQuestions.firstQuestion_old);
+                $scope.patientSecurityQuestions.firstQuestion_old = null;
             }
             else if($scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.firstQuestion
-                && $scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion){
+                && $scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
+                && $scope.patientSecurityQuestions.secondQuestion_old !== null) {
                 updateQuestion($scope.patientSecurityQuestions.secondQuestion, $scope.patientSecurityQuestions.secondAnswer, $scope.patientSecurityQuestions.secondQuestion_old);
+                $scope.patientSecurityQuestions.secondQuestion_old = null;
             }
-            else {
+            else if($scope.patientSecurityQuestions.thirdQuestion_old !== null) {
                 updateQuestion($scope.patientSecurityQuestions.secondQuestion, $scope.patientSecurityQuestions.secondAnswer, $scope.patientSecurityQuestions.thirdQuestion_old);
+                $scope.patientSecurityQuestions.thirdQuestion_old = null;
             }
         }
 
-        if ($scope.validateInput($scope.patientSecurityQuestions.thirdAnswer)){
+        if ($scope.validateInput($scope.patientSecurityQuestions.thirdAnswer)) {
             if($scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.secondQuestion
-                && $scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion){
+                && $scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
+                && $scope.patientSecurityQuestions.secondQuestion_old !== null) {
                 updateQuestion($scope.patientSecurityQuestions.thirdQuestion, $scope.patientSecurityQuestions.thirdAnswer, $scope.patientSecurityQuestions.firstQuestion_old);
+                $scope.patientSecurityQuestions.firstQuestion_old = null;
             }
             else if($scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.secondQuestion
-                && $scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion){
+                && $scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
+                && $scope.patientSecurityQuestions.secondQuestion_old !== null) {
                 updateQuestion($scope.patientSecurityQuestions.thirdQuestion, $scope.patientSecurityQuestions.thirdAnswer, $scope.patientSecurityQuestions.secondQuestion_old);
+                $scope.patientSecurityQuestions.secondQuestion_old = null;
             }
-            else {
+            else if($scope.patientSecurityQuestions.thirdQuestion_old !== null) {
                 updateQuestion($scope.patientSecurityQuestions.thirdQuestion, $scope.patientSecurityQuestions.thirdAnswer, $scope.patientSecurityQuestions.thirdQuestion_old);
+                $scope.patientSecurityQuestions.thirdQuestion_old = null;
             }
         }
     }
@@ -179,11 +194,17 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
                 PatientSerNum: $scope.psnum,
                 OldQuestionSerNum: question_old,
             },
-            success: function () {},
+            success: function () {
+                $scope.setBannerClass('success');
+                $scope.$parent.bannerMessage = "Successfully update patient security questions!";
+            },
             error: function (err) {
-                ErrorHandler.onError(err, $filter('translate')('PATIENTS.MODIFICATION_TOOLS.EMAIL.ERROR'), arrValidationUpdate);
+                ErrorHandler.onError(err, $filter('translate')('PATIENTS.MODIFICATION_TOOLS.SECURITY_ANSWER.ERROR'), arrValidationUpdate);
+                $scope.setBannerClass('danger');
+                $scope.$parent.bannerMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.SECURITY_ANSWER.ERROR');
             },
             complete: function () {
+                $scope.showBanner();
                 $uibModalInstance.close();
             }
         });

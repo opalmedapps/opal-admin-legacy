@@ -47,6 +47,26 @@ angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstr
 		}
 	};
 
+	$scope.bannerMessage = "";
+	// Function to show page banner
+	$scope.showBanner = function () {
+		$(".bannerMessage").slideDown(function () {
+			setTimeout(function () {
+				$(".bannerMessage").slideUp();
+			}, 3000);
+		});
+	};
+
+	// Function to set banner class
+	$scope.setBannerClass = function (classname) {
+		// Remove any classes starting with "alert-"
+		$(".bannerMessage").removeClass(function (index, css) {
+			return (css.match(/(^|\s)alert-\S+/g) || []).join(' ');
+		});
+		// Add class
+		$(".bannerMessage").addClass('alert-' + classname);
+	};
+
 
 	/**
 	 *  Main search function for finding desired patient
@@ -164,7 +184,6 @@ angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstr
 				}
 
 			}
-			console.log($scope);
 
 		});
 
@@ -237,104 +256,6 @@ angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstr
 		});
 	};
 
-	/**
-	 *  Generate the desired report based on user input
-	 *  @param psnum: selected patient serial number
-	 *  @param featureList: truthy/falsy variables for each report segment (user selected)
-	 */
-	$scope.fetchData = function () {
-		$.ajax({
-			type: "POST",
-			url: "patient/get/patient-data",
-			data: {
-				psnum: $scope.psnum,
-				diagnosis: $scope.featureList.diagnosis,
-				appointments: $scope.featureList.appointments,
-				questionnaires: $scope.featureList.questionnaires,
-				education: $scope.featureList.education,
-				testresults: $scope.featureList.testresults,
-				pattestresults: $scope.featureList.pattestresults,
-				notes: $scope.featureList.notifications,
-				treatplan: $scope.featureList.treatplan,
-				clinicalnotes: $scope.featureList.clinicalnotes,
-				treatingteam: $scope.featureList.treatingteam,
-				general: $scope.featureList.general,
-			},
-			success: function (response) {
-				populateTables(JSON.parse(response));
-			},
-			error: function (err) {
-				ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
-			}
-		});
-	};
-
-	/**
-	 * Populate tables for display in view
-	 * @param result: result of ajax query to db to retrieve selected patient records
-	 * @return none
-	 */
-	function populateTables(result) {
-
-		$scope.safeApply(function () {
-			if (result && (result !== null)) {
-				if (result.diagnosis) {
-					$scope.diagReport = result.diagnosis;
-					strip($scope.diagReport);
-				}
-				if (result.questionnaires) {
-					$scope.qstReport = result.questionnaires;
-					strip($scope.qstReport);
-				}
-				if (result.education) {
-					$scope.educReport = result.education;
-					strip($scope.educReport);
-				}
-				if (result.appointments) {
-					$scope.apptReport = result.appointments;
-					strip($scope.apptReport);
-				}
-				if (result.testresults) {
-					$scope.testReport = result.testresults;
-					strip($scope.testReport);
-				}
-				if (result.pattestresults) {
-					$scope.pattestReport = result.pattestresults;
-					strip($scope.pattestReport);
-				}
-				if (result.notes) {
-					$scope.noteReport = result.notes;
-					strip($scope.noteReport);
-				}
-				if (result.clinicalnotes) {
-					$scope.clinnoteReport = result.clinicalnotes;
-					strip($scope.clinnoteReport);
-				}
-				if (result.treatingteam) {
-					$scope.txteamReport = result.treatingteam;
-					for (var i = 0; i < $scope.txteamReport.length; i++) {
-						$scope.txteamReport[i].body = strip($scope.txteamReport[i].body);
-					}
-				}
-				if (result.general) {
-					$scope.generalReport = result.general;
-					for (var i = 0; i < $scope.generalReport.length; i++) {
-						$scope.generalReport[i].body = strip($scope.generalReport[i].body);
-					}
-				}
-				if (result.treatplan) {
-					$scope.txplanReport = result.treatplan;
-					strip($scope.txplanReport);
-				}
-				$scope.generateFinished = true; //finally we can show report segments
-
-			} else { //something went wrong, no result recieved
-				ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.SEARCH_FAIL'));
-			}
-
-		});
-	}
-
 	//Function to update email
 	$scope.updateEmail = function(appointment){
 		$scope.currentAppointment = appointment;
@@ -347,7 +268,7 @@ angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstr
 		});
 
 		modalInstance.result.then(function () {
-			//getSmsAppointmentList();
+			$scope.findPat();
 		});
 	};
 
@@ -363,7 +284,7 @@ angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstr
 		});
 
 		modalInstance.result.then(function () {
-			//getSmsAppointmentList();
+			$scope.findPat();
 		});
 	};
 
@@ -379,7 +300,7 @@ angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstr
 		});
 
 		modalInstance.result.then(function () {
-			//getSmsAppointmentList();
+			$scope.findPat();
 		});
 	};
 
@@ -395,7 +316,7 @@ angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstr
 		});
 
 		modalInstance.result.then(function () {
-			//getSmsAppointmentList();
+			$scope.findPat();
 		});
 	};
 
