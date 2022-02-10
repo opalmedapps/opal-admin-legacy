@@ -38,7 +38,7 @@ angular.module('opalAdmin.controllers.update.password', ['ngAnimate', 'ui.bootst
         if($scope.new_password.firstTime !== null && $scope.new_password.secondTime !== null && $scope.new_password.errorMessage === null){
             $.ajax({
                 type: "POST",
-                url: "firebase/update/password",
+                url: "patient/update/external-password",
                 data: {
                     uid: $scope.puid,  //for test: "b0tEHXqDqwN9s7qKQdX1SqdTIQm1",
                     password: $scope.new_password.firstTime,
