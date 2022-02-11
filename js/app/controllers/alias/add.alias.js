@@ -334,6 +334,7 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 			// Call our API service to get the list of alias expressions
 			aliasCollectionService.getExpressions($scope.newAlias.source_db.serial, $scope.newAlias.type.name).then(function (response) {
 
+				console.log(response.data);
 				$scope.termList = response.data; // Assign value
 
 
