@@ -3425,11 +3425,12 @@ class DatabaseOpal extends DatabaseAccess {
      * @return array - data found if any
      */
     function getAlias($aliasType,$typeCode,$typeDesc) {
-        return $this->_fetchAll(OPAL_GET_ALIAS_EXPRESSION, array(
+        $params = array(
             array("parameter"=>":AliasType","variable"=>$aliasType,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":ExpressionName","variable"=>$typeCode,"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":Description"   ,"variable"=>$typeDesc,"data_type"=>PDO::PARAM_STR)
-        ));
+            array("parameter"=>":Description"   ,"variable"=>$typeDesc . '%',"data_type"=>PDO::PARAM_STR)
+        );
+        return  $this->_fetchAll(OPAL_GET_ALIAS_EXPRESSION, $params );        
     }
 
     /**
@@ -3960,7 +3961,8 @@ class DatabaseOpal extends DatabaseAccess {
 			array("parameter"=>":PatientSerNum","variable"=>$toUpdate['PatientSerNum'],"data_type"=>PDO::PARAM_INT),
         );
 		
-        $totalupt = $this->_execute(OPAL_UPDATE_APPOINTMENT,$params );		
+        return $this->_execute(OPAL_UPDATE_APPOINTMENT,$params );
+
     }
 
     /* Get the latest dates of entries from the audit system table
@@ -4044,10 +4046,11 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":ReadStatus","variable"=>$toUpdate['ReadStatus'],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":SessionId","variable"=>$toUpdate['SessionId'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":DateAdded","variable"=>$toUpdate['DateAdded'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":LastUpdated","variable"=>$toUpdate['LastUpdated'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":DocumentSerNum","variable"=>$toUpdate['DocumentSerNum'],"data_type"=>PDO::PARAM_INT),			
             array("parameter"=>":PatientSerNum","variable"=>$toUpdate['PatientSerNum'],"data_type"=>PDO::PARAM_INT),
         );
-        $totalupt = $this->_execute(OPAL_UPDATE_DOCUMENT,$parameters);
+        return $this->_execute(OPAL_UPDATE_DOCUMENT,$parameters);
     }
 
     /**
@@ -4161,7 +4164,7 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":ResourceType","variable"=>$toUpdate['ResourceType'],"data_type"=>PDO::PARAM_STR),            
             array("parameter"=>":ResourceSerNum","variable"=>$toUpdate['ResourceSerNum'],"data_type"=>PDO::PARAM_INT),
         );
-        $totalupt = $this->_execute(OPAL_UPDATE_DOCTOR_RESOURCE,$parameters);        
+        return $this->_execute(OPAL_UPDATE_DOCTOR_RESOURCE,$parameters);        
     }
 
     /** 
@@ -4206,7 +4209,7 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":BIO_FR","variable"=>$toUpdate['BIO_FR'],"data_type"=>PDO::PARAM_STR),            
             array("parameter"=>":DoctorSerNum","variable"=>$toUpdate['DoctorSerNum'],"data_type"=>PDO::PARAM_INT),			            
         );
-        $totalupt = $this->_execute(OPAL_UPDATE_DOCTOR,$parameters);
+        return $this->_execute(OPAL_UPDATE_DOCTOR,$parameters);
     }
 
     /** 
@@ -4243,7 +4246,7 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":PrimaryFlag","variable"=>$toUpdate['PrimaryFlag'],"data_type"=>PDO::PARAM_INT),        
             array("parameter"=>":PatientDoctorSerNum","variable"=>$toUpdate['PatientDoctorSerNum'],"data_type"=>PDO::PARAM_INT),			            
         );
-        $totalupt = $this->_execute(OPAL_UPDATE_PATIENT_DOCTOR,$parameters);
+       return $this->_execute(OPAL_UPDATE_PATIENT_DOCTOR,$parameters);
     }
     
     /** 
@@ -4280,6 +4283,6 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$toUpdate['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":StaffId","variable"=>$toUpdate['StaffId'],"data_type"=>PDO::PARAM_INT),
         );
-        $totalupt = $this->_execute(OPAL_UPDATE_STAFF,$parameters);
+        return $this->_execute(OPAL_UPDATE_STAFF,$parameters);
     }
 }

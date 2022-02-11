@@ -1,7 +1,7 @@
 <?php
 include_once("../config.php");
 
-$staff = new Staff();
+$staff = new TriggerStaff();
 $staff->updateStaff($_POST);
 
 header('Content-Type: application/javascript');

@@ -706,7 +706,6 @@ class Patient extends Module {
         $patientData["PatientSerNum"] = $patientSerNum;
         $patientData["FirstName"] = $post["name"]["firstName"];
         $patientData["LastName"] = $post["name"]["lastName"];
-        //$patientData["SSN"] = $post["ramq"];
 
         if (array_key_exists("birthdate", $post) && !empty($post["birthdate"])){
             $patientData["DateOfBirth"] = $post["birthdate"];
@@ -724,27 +723,7 @@ class Patient extends Module {
 
         if (array_key_exists("gender", $post) && !empty($post["gender"])){
             $patientData["Sex"] = $post["gender"];
-        }
-
-        /*if (array_key_exists("email", $post) ){
-            if (!empty($post["email"])){
-                $patientData["Email"]    = $post["email"];
-            } else {
-                $patientData["Email"]    = null;
-            }
-        }
-
-        if (array_key_exists("phone", $post) ){
-            if(!empty($post["phone"])){
-                $patientData["TelNum"]   = $post["phone"];
-            } else {
-                $patientData["TelNum"]   = null;
-            }
-        }
-
-        if (array_key_exists("language", $post) && !empty($post["language"])){
-            $patientData["Language"] = $post["language"];
-        }*/
+        }       
 
         if(array_key_exists("deceasedDateTime", $post) && $post["deceasedDateTime"] != ""){
             $patientData["StatusReasonTxt"] = "Deceased patient";
