@@ -3936,6 +3936,41 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+/**
+     * update an appointment only if it does not exists already.
+     * @param $toInsert
+     * @return int - number of row modified
+     */
+    function updateAppointments($toUpdate) {
+        
+		$params = array(
+            array("parameter"=>":AliasExpressionSerNum","variable"=>$toUpdate['AliasExpressionSerNum'],"data_type"=>PDO::PARAM_INT),            
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$toUpdate['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":AppointmentAriaSer","variable"=>$toUpdate['AppointmentAriaSer'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":PrioritySerNum","variable"=>$toUpdate['PrioritySerNum'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":DiagnosisSerNum","variable"=>$toUpdate['DiagnosisSerNum'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":Status","variable"=>$toUpdate['Status'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":State","variable"=>$toUpdate['State'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":ScheduledStartTime","variable"=>$toUpdate['ScheduledStartTime'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":ScheduledEndTime","variable"=>$toUpdate['ScheduledEndTime'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":ActualStartDate","variable"=>$toUpdate['ActualStartDate'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":ActualEndDate","variable"=>$toUpdate['ActualEndDate'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Location","variable"=>$toUpdate['Location'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":RoomLocation_EN","variable"=>$toUpdate['RoomLocation_EN'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":RoomLocation_FR","variable"=>$toUpdate['RoomLocation_FR'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Checkin","variable"=>$toUpdate['Checkin'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":ChangeRequest","variable"=>$toUpdate['ChangeRequest'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":DateAdded","variable"=>$toUpdate['DateAdded'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":ReadStatus","variable"=>$toUpdate['ReadStatus'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SessionId","variable"=>$toUpdate['SessionId'],"data_type"=>PDO::PARAM_STR),             
+			array("parameter"=>":AppointmentSerNum","variable"=>$toUpdate['AppointmentSerNum'],"data_type"=>PDO::PARAM_INT),			
+			array("parameter"=>":PatientSerNum","variable"=>$toUpdate['PatientSerNum'],"data_type"=>PDO::PARAM_INT),
+        );
+		
+        $totalupt = $this->_execute(OPAL_UPDATE_APPOINTMENT,$params );		
+    }
+
+
     /* Get the latest dates of entries from the audit system table
      * @return array - list of records found
      */
@@ -3991,14 +4026,36 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_replaceRecordIntoTable(OPAL_DOCUMENT_TABLE, $toInsert);
     }
 
-
     /**
-     * Insert a document info only if it does not exists already.
-     * @param $toInsert
+     * Update  a document info
+     * @param $toUpdate
      * @return int - number of row modified
      */
-    function updateDocument($records) {
-        return $this->_replaceRecordIntoTable(OPAL_DOCUMENT_TABLE, $records);
+	function updateDocument($toUpdate) {        
+        $parameters = array(            
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$toUpdate['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":DocumentId","variable"=>$toUpdate['DocumentId'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":AliasExpressionSerNum","variable"=>$toUpdate['AliasExpressionSerNum'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":ApprovedBySerNum","variable"=>$toUpdate['ApprovedBySerNum'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":ApprovedTimeStamp","variable"=>$toUpdate['ApprovedTimeStamp'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":AuthoredBySerNum","variable"=>$toUpdate['AuthoredBySerNum'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":DateOfService","variable"=>$toUpdate['DateOfService'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Revised","variable"=>$toUpdate['Revised'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":ValidEntry","variable"=>$toUpdate['ValidEntry'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":ErrorReasonText","variable"=>$toUpdate['ErrorReasonText'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":OriginalFileName","variable"=>$toUpdate['OriginalFileName'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":FinalFileName","variable"=>$toUpdate['FinalFileName'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":CreatedBySerNum","variable"=>$toUpdate['CreatedBySerNum'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":CreatedTimeStamp","variable"=>$toUpdate['CreatedTimeStamp'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":TransferStatus","variable"=>$toUpdate['TransferStatus'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":TransferLog","variable"=>$toUpdate['TransferLog'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":ReadStatus","variable"=>$toUpdate['ReadStatus'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SessionId","variable"=>$toUpdate['SessionId'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":DateAdded","variable"=>$toUpdate['DateAdded'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":DocumentSerNum","variable"=>$toUpdate['DocumentSerNum'],"data_type"=>PDO::PARAM_INT),			
+            array("parameter"=>":PatientSerNum","variable"=>$toUpdate['PatientSerNum'],"data_type"=>PDO::PARAM_INT),
+        );
+        $totalupt = $this->_execute(OPAL_UPDATE_DOCUMENT,$parameters);
     }
 
 
