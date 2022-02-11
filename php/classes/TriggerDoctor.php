@@ -1,26 +1,18 @@
 <?php
 
 /**
- * Doctor class
+ * TriggerDoctor class
  */
-class Doctor extends Module
+class TriggerDoctor extends Trigger
 {
-
-    public function __construct($guestStatus = false)
-    {
-        parent::__construct(MODULE_TRIGGER, $guestStatus);
-    }
-
-
     /**
-     * Validate the input parameters 
+     * Validate input parameters 
      * Validation code :     
      *                      1st bit source system invalid or missing
      *
-     * @param array<mixed> $post - document parameters
-     * @param array<mixed> &$patientSite (Reference) - patient parameters
+     * @param array<mixed> &$post (Reference) - doctor parameters
      * @param array<mixed> &$source (Reference) - source parameters
-     * @return string $errCode - error code.
+     * @return string $errCode - error code
      */
     protected function _validateSourceExternalId(&$post,  &$source)
     {
@@ -45,11 +37,14 @@ class Doctor extends Module
     }
 
     /**
-     * Validate the input parameters for individual doctor
+     * Validate input parameters for individual doctor
      * Validation code :     
-     *                      1st bit source system invalid or missing
+     *                      1st bit invalid or missing source system
+     *                      2nd bit invalid or missing resource ID
+     *                      3rd bit invalid or missing first name
+     *                      4th bit invalid or missing last name 
      *
-     * @param array<mixed> $post - doctor parameters
+     * @param array<mixed> &$post (Reference) - doctor parameters
      * @param array<mixed> &$source (Reference) - source parameters
      * @return string $errCode - error code.
      */
@@ -60,21 +55,21 @@ class Doctor extends Module
         if (bindec($errCode) != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation" => $errCode)));
 
-        //bit 5
+        //bit 2
         if (!array_key_exists("resourceId", $post) || $post["resourceId"] == "") {
             $errCode = "1" . $errCode;
         } else {
             $errCode = "0" . $errCode;
         }
 
-        //bit 5
+        //bit 3
         if (!array_key_exists("firstName", $post) || $post["firstName"] == "") {
             $errCode = "1" . $errCode;
         } else {
             $errCode = "0" . $errCode;
         }
 
-        //bit 5
+        //bit 4
         if (!array_key_exists("lastName", $post) || $post["lastName"] == "") {
             $errCode = "1" . $errCode;
         } else {
@@ -85,13 +80,21 @@ class Doctor extends Module
     }
 
     /**
-     * Validate the input parameters for individual doctor
+     * Validate the input parameters of patient doctor
      * Validation code :     
-     *                      1st bit source system invalid or missing
+     *                      1st bit invalid or missing MRN
+     *                      2nd bit invalid or missing Site
+     *                      3rd bit Identifier MRN-site-patient does not exists
+     *                      4th bit invalid or missing source system
+     *                      5th bit invalid or missing resource ID
+     *                      6th bit invalid or missing doctor resource info
+     *                      7th bit invalid or missing Is an Oncologist Flag
+     *                      8th bit invalid or missing Is an Primary Oncologist Flag
      *
-     * @param array<mixed> $post - doctor parameters
+     * @param array<mixed> $post (Reference) - doctor parameters
      * @param array<mixed> &$patientSite (Reference) - patient parameters
      * @param array<mixed> &$source (Reference) - source parameters
+     * @param array<mixed> &$doctor (Reference) - source parameters
      * @return string $errCode - error code.
      */
     protected function _validatePatientDoctor(&$post, &$patientSite, &$source, &$doctor)
@@ -102,9 +105,7 @@ class Doctor extends Module
         $errCode = $errCode . $this->_validateSourceExternalId($post, $source);
 
         if (bindec($errCode) != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation" => $errCode)));
-
-                      
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation" => $errCode)));                     
 
         if (!array_key_exists("resourceId", $post) || $post["resourceId"] == "") {
             $errCode = "1" . $errCode;
@@ -166,7 +167,13 @@ class Doctor extends Module
         $this->_updatePatientDoctor($post);
     }
 
-
+    /** 
+     * This function insert or update a doctor resource informations after its validation.
+     * @param  $post : array - details of resource information to insert/update.
+     * @param array<mixed> $post (Reference) - resource parameters
+     * @param array<mixed> &$source (Reference) - source parameters
+     * @param array<mixed> &$resourceData (Reference) - resource infos
+     */
     protected function _updateResource(&$post, &$source, &$resourceData)
     {
         $resource = $this->opalDB->getDoctorResource($source["SourceDatabaseSerNum"], $post["resourceId"]);
@@ -194,6 +201,11 @@ class Doctor extends Module
         }        
     }
 
+    /** 
+     * This function insert or update a doctor informations after its validation.
+     * @param array<mixed> $post - details of doctor information to insert/update.
+     * @return void
+     */
     protected function _updateDoctor(&$post)
     {
 
@@ -245,7 +257,11 @@ class Doctor extends Module
         }
     }
 
-
+    /** 
+     * This function insert or update a patient doctor informations after its validation.
+     * @param array<mixed> $post - details of patient doctor information to insert/update.
+     * @return void
+     */
     protected function _updatePatientDoctor(&$post)
     {
         $source = null;
