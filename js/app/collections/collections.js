@@ -437,6 +437,7 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
+		// API to get access level list
 		patientAPI.getAllAccessLevel = function () {
 			return $http.post(
 				"patient/get/access-level",
@@ -446,6 +447,7 @@ angular.module('opalAdmin.collections', [])
 			);
 		}
 
+		// API to get published security question list
 		patientAPI.getAllSecurityQuestions = function () {
 			return $http.post(
 				"patient/get/all-security-questions",
@@ -455,6 +457,7 @@ angular.module('opalAdmin.collections', [])
 			);
 		}
 
+		// API to get patient answered security question list
 		patientAPI.getPatientSecurityQuestions = function (serial) {
 			return $http.post(
 				"patient/get/patient-security-questions",
