@@ -1,26 +1,19 @@
 <?php
 
 /**
- * Staff class
+ * TriggerStaff class
  */
-class Staff extends Module
+class TriggerStaff extends Trigger
 {
-
-    public function __construct($guestStatus = false)
-    {
-        parent::__construct(MODULE_TRIGGER, $guestStatus);
-    }
-
 
     /**
      * Validate the input parameters 
      * Validation code :     
      *                      1st bit source system invalid or missing
      *
-     * @param array<mixed> $post - document parameters
-     * @param array<mixed> &$patientSite (Reference) - patient parameters
+     * @param array<mixed> $post (Reference) - document parameters
      * @param array<mixed> &$source (Reference) - source parameters
-     * @return string $errCode - error code.
+     * @return string $errCode - error code
      */
     protected function _validateSourceExternalId(&$post,  &$source)
     {
@@ -44,12 +37,15 @@ class Staff extends Module
         return $errCode;
     }
 
-        /**
-     * Validate the input parameters for individual staff
+    /**
+     * Validate the input parameters for individual staff information
      * Validation code :     
-     *                      1st bit source system invalid or missing
+     *                      1st bit invalid or missing source system
+     *                      2nd bit invalid or missing user ID
+     *                      3rd bit invalid or missing first name
+     *                      4th bit invalid or missing last name
      *
-     * @param array<mixed> $post - staff parameters
+     * @param array<mixed> $post (Reference) - staff parameters
      * @param array<mixed> &$source (Reference) - source parameters
      * @return string $errCode - error code.
      */
@@ -96,6 +92,11 @@ class Staff extends Module
         $this->_updateStaff($post);
     }
 
+    /** 
+     * This function insert or update a staff informations after its validation.
+     * @param  $post : array - details of staff information to insert/update.
+     * @return  void
+     */
     protected function _updateStaff(&$post)
     {
 

@@ -1,7 +1,7 @@
 <?php
 include_once("../config.php");
 
-$doctor = new Doctor();
+$doctor = new TriggerDoctor();
 
 $result = $doctor->updateDoctor($_POST);
 header('Content-Type: application/javascript');

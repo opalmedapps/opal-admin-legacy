@@ -1678,7 +1678,7 @@ define("OPAL_GET_ALIAS_EXPRESSION","
     WHERE A.AliasSerNum = AE.AliasSerNum
     AND A.AliasType = :AliasType
     AND AE.ExpressionName = :ExpressionName
-    AND AE.Description = :Description;
+    AND AE.Description LIKE :Description;
 ");
 
 define("OPAL_DELETE_ALIAS_EXPRESSIONS","
@@ -1981,7 +1981,8 @@ TransferStatus = :TransferStatus,
 TransferLog = :TransferLog,          
 ReadStatus = :ReadStatus,           
 SessionId = :SessionId,            
-DateAdded = :DateAdded
+DateAdded = :DateAdded,
+LastUpdated = :LastUpdated
 WHERE DocumentSerNum = :DocumentSerNum AND PatientSerNum = :PatientSerNum;
 ";
 

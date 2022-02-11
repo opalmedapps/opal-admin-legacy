@@ -143,7 +143,7 @@ class Appointment extends Module
             }
 
         } else {
-            $errCode = "11";
+            $errCode = "11111111";
         }
         return $errCode;
     }
@@ -336,7 +336,7 @@ class Appointment extends Module
         $prevStartDateTime = strtotime($post["scheduledTimestamp"]);
         
         $aliasInfos = $this->opalDB->getAlias('Appointment',$post['appointmentTypeCode'], $post['appointmentTypeDescription']);
-        $countAlias = count($aliasInfos);
+        $countAlias = count($aliasInfos);       
 
         $toInsert = array(
             "PatientSerNum" => $patientSite["PatientSerNum"],
@@ -392,6 +392,7 @@ class Appointment extends Module
             $toInsert["appointmentTypeDescription"] = $post['appointmentTypeDescription'];            
             $toInsert["ID"] = $this->_insertAppointmentPending($toInsert, $source);
             $this->_insertAppointmentPendingMH($toInsert, $source);
+
         } else {
             $this->_updateAppointmentPending($toInsert);
             unset($toInsert["sourceName"]);
