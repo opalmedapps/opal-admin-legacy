@@ -190,7 +190,7 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 			url: "patient/update/security-answer",
 			data: {
 				QuestionSerNum: question,
-				Answer: answer.toUpperCase(),
+				Answer: CryptoJS.SHA512(answer.toUpperCase()).toString(),
 				PatientSerNum: $scope.psnum,
 				OldQuestionSerNum: question_old,
 			},

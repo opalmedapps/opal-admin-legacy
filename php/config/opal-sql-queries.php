@@ -1942,7 +1942,7 @@ SET ut.Password = :Password  WHERE ut.username = :Username;";
 
 const OPAL_INSERT_SECURITY_ANSWER = "
 UPDATE " . OPAL_SECURITY_ANSWER_TABLE . " sa
-SET sa.SecurityQuestionSerNum = :QuestionSer, sa.AnswerText = SHA2(:Answer, 512)
+SET sa.SecurityQuestionSerNum = :QuestionSer, sa.AnswerText = :Answer
 WHERE sa.PatientSerNum = :PatientSer AND sa.SecurityQuestionSerNum = :OldQuestionSer";
 
 const OPAL_UPDATE_PATIENT_ACCESS_LEVEL = "
