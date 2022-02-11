@@ -181,7 +181,7 @@ class Document extends Module
         if(count($aliasInfos) == 1) {            
             $toInsert["AliasExpressionSerNum"] = $aliasInfos[0]["AliasExpressionSerNum"];
         }
-
+		
         if (count($doc) == 0) {
             $toInsert["DateAdded"] = date("Y-m-d H:i:s");
             $action = "Document";
