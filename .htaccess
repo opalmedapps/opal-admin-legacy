@@ -177,10 +177,6 @@ RewriteRule ^email/get/email-types php/email/get.email_types.php [QSA,L]
 RewriteRule ^email/insert/email php/email/insert.email.php [QSA,L]
 RewriteRule ^email/update/email php/email/update.email.php [QSA,L]
 
-# Firebase Section
-RewriteRule ^firebase/update/email php/firebase/update.email.php [QSA,L]
-RewriteRule ^firebase/update/password php/firebase/update.password.php [QSA,L]
-
 # Hospital Map Section
 RewriteRule ^hospital-map/delete/hospital-map php/hospital-map/delete.hospital_map.php [QSA,L]
 RewriteRule ^hospital-map/generate-qr-code php/hospital-map/generate_QR_code.php [QSA,L]

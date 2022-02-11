@@ -4,46 +4,48 @@ angular.module('opalAdmin.controllers.update.password', ['ngAnimate', 'ui.bootst
 		$uibModalInstance.dismiss('cancel');
 	};
 
+	//Initialize the params field
 	$scope.new_password = {
 		firstTime: null,
 		secondTime: null,
 		errorMessage: null,
 	};
 
-	$scope.validatePassword = function(){
-		if($scope.validateInput($scope.new_password.firstTime) && $scope.new_password.firstTime.length < 8)
-        {
+	//Function to validate the password given by user
+	$scope.validatePassword = function() {
+		if($scope.validateInput($scope.new_password.firstTime) && $scope.new_password.firstTime.length < 8) {
 			$scope.new_password.errorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.PASSWORD.PASSWORD_TOO_SHORT');
 		}
-		else if($scope.validateInput($scope.new_password.firstTime)&& (!$scope.new_password.firstTime.match(/\W|_{1}/) || !$scope.new_password.firstTime.match(/[A-Z]/) || !$scope.new_password.firstTime.match(/\d/)))
-        {
+		else if($scope.validateInput($scope.new_password.firstTime)&& (!$scope.new_password.firstTime.match(/\W|_{1}/) || !$scope.new_password.firstTime.match(/[A-Z]/) || !$scope.new_password.firstTime.match(/\d/))) {
 			$scope.new_password.errorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.PASSWORD.PASSWORD_MISSING_CHARACTER');
 		}
-		else if($scope.validateInput($scope.new_password.firstTime) && $scope.validateInput($scope.new_password.secondTime) && $scope.new_password.firstTime !== $scope.new_password.secondTime)
-        {
+		else if(!$scope.validateInput($scope.new_password.firstTime) || !$scope.validateInput($scope.new_password.secondTime) || $scope.new_password.firstTime !== $scope.new_password.secondTime) {
 			$scope.new_password.errorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.PASSWORD.PASSWORD_NOT_SAME');
 		}
-		else
-        {
+		else {
 			$scope.new_password.errorMessage = null;
 		}
 	};
 
+	//Initialize the error messages
 	var arrValidationUpdate = [
 		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.USERID'),
 		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.PASSWORD'),
 	];
 
-	$scope.updatePassword = function(){
+	//Function to update the patient password
+	$scope.updatePassword = function() {
 		if($scope.new_password.firstTime !== null && $scope.new_password.secondTime !== null && $scope.new_password.errorMessage === null){
+			//Update patient password in the external database
 			$.ajax({
 				type: "POST",
 				url: "patient/update/external-password",
 				data: {
-					uid: $scope.puid,  //for test: "b0tEHXqDqwN9s7qKQdX1SqdTIQm1",
+					uid: $scope.puid,
 					password: $scope.new_password.firstTime,
 				},
 				success: function () {
+					//If success, update password in internal database
 					$scope.updatePasswordInDatabase();
 				},
 				error: function (err) {
@@ -59,7 +61,8 @@ angular.module('opalAdmin.controllers.update.password', ['ngAnimate', 'ui.bootst
 		}
 	};
 
-	$scope.updatePasswordInDatabase = function(){
+	//Function to update the password in internal database
+	$scope.updatePasswordInDatabase = function() {
 		$.ajax({
 			type: "POST",
 			url: "patient/update/password",
@@ -79,7 +82,8 @@ angular.module('opalAdmin.controllers.update.password', ['ngAnimate', 'ui.bootst
 		});
 	};
 
-	$scope.validateInput = function(input){
+	//function to validate input is not empty
+	$scope.validateInput = function(input) {
 		return (input !== undefined && input !== null && input !== "");
 	};
 

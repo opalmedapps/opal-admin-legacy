@@ -2,7 +2,7 @@
 
 include_once("../../config.php");
 
-$patientObj = new Patient();
+$patientObj = new Patient(); //Object
 $response = $patientObj->updatePatientSecurityAnswer($_POST);
 
 header('Content-Type: application/javascript');

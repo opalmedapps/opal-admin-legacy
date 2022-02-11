@@ -257,7 +257,7 @@ angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstr
 	};
 
 	//Function to update email
-	$scope.updateEmail = function(appointment){
+	$scope.updateEmail = function(appointment) {
 		$scope.currentAppointment = appointment;
 		var modalInstance = $uibModal.open({
 			templateUrl: 'templates/patient/modification-tools/update.email.html',
@@ -273,7 +273,7 @@ angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstr
 	};
 
 	//Function to update password
-	$scope.updatePassword = function(appointment){
+	$scope.updatePassword = function(appointment) {
 		$scope.currentAppointment = appointment;
 		var modalInstance = $uibModal.open({
 			templateUrl: 'templates/patient/modification-tools/update.password.html',
@@ -289,7 +289,7 @@ angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstr
 	};
 
 	//Function to update access level
-	$scope.updateAccessLevel = function(appointment){
+	$scope.updateAccessLevel = function(appointment) {
 		$scope.currentAppointment = appointment;
 		var modalInstance = $uibModal.open({
 			templateUrl: "templates/patient/modification-tools/update.accessLevel.html",
@@ -305,7 +305,7 @@ angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstr
 	};
 
 	//Function to update security questions
-	$scope.updateSecurityQuestion = function(appointment){
+	$scope.updateSecurityQuestion = function(appointment) {
 		$scope.currentAppointment = appointment;
 		var modalInstance = $uibModal.open({
 			templateUrl: "templates/patient/modification-tools/update.securityAnswer.html",

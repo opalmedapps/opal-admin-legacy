@@ -4041,33 +4041,47 @@ class DatabaseOpal extends DatabaseAccess {
      * @param $patientser string - patient ID
      * @return array - data found if any
      */
-    function getPatientAccessLevel($patientser){        
+    function getPatientAccessLevel($patientser) {
         return $this->_fetch(OPAL_GET_PATIENT_ACCESS_LEVEL, array(
             array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR)
         ));
     }
 
-    function getPatientUsername($patientser){
-        return $this->_fetch(OPAL_GET_PATIENT_USERNAME, array(
-            array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR)
-        ));
-    }
-
-    function updatePatientEmail($email, $patientser){
+    /**
+     * Update the email address of a given patient.
+     * @param $email string - new email
+     * @param $patientser string - patient ID
+     * @return int - number of row modified
+     */
+    function updatePatientEmail($email, $patientser) {
         return $this->_execute(OPAL_UPDATE_PATIENT_EMAIL, array(
             array("parameter"=>":Email","variable"=>$email,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR),
         ));
     }
 
-    function updatePatientPassword($password, $username){
+    /**
+     * Update the email address of a given patient.
+     * @param $password string - new password
+     * @param $username string - patient user name
+     * @return int - number of row modified
+     */
+    function updatePatientPassword($password, $username) {
         return $this->_execute(OPAL_UPDATE_PATIENT_PASSWORD, array(
             array("parameter"=>":Password","variable"=>$password,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":Username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
         ));
     }
 
-    function insertSecurityAnswers($questionser, $answer, $patientser, $oldquestionser){
+    /**
+     * Update the security question of a given patient.
+     * @param $questionser string - new security question number
+     * @param $answer string - new security question answer
+     * @param $patientser string - patient ID
+     * @param $oldquestionser string - old security question number
+     * @return int - number of row modified
+     */
+    function updateSecurityAnswers($questionser, $answer, $patientser, $oldquestionser) {
         return $this->_execute(OPAL_INSERT_SECURITY_ANSWER, array(
             array("parameter"=>":QuestionSer","variable"=>$questionser,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":Answer","variable"=>$answer,"data_type"=>PDO::PARAM_STR),
@@ -4076,24 +4090,44 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-    function updatePatientAccessLevel($accesslevel, $patientser){
+    /**
+     * Update the security question of a given patient.
+     * @param $accesslevel string - access level
+     * @param $patientser string - patient ID
+     * @return int - number of row modified
+     */
+    function updatePatientAccessLevel($accesslevel, $patientser) {
         return $this->_execute(OPAL_UPDATE_PATIENT_ACCESS_LEVEL, array(
             array("parameter"=>":AccessLevel","variable"=>$accesslevel,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR),
         ));
     }
 
-    function getAllSecurityQuestions(){
+    /**
+     * Get published security question list
+     * @return array - data found if any
+     */
+    function getAllSecurityQuestions() {
         return $this->_fetchAll(OPAL_GET_ALL_SECURITY_QUESTIONS, array());
     }
 
-    function getPatientSecurityQuestions($patientser){
+    /**
+     * Get patient security question list
+     * @param $patientser string - patient ID
+     * @return array - data found if any
+     */
+    function getPatientSecurityQuestions($patientser) {
         return $this->_fetchAll(OPAL_GET_PATIENT_SECURITY_QUESTIONS, array(
             array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
-    function getAllAccessLevel(){
+
+    /**
+     * Get published access level list
+     * @return array - data found if any
+     */
+    function getAllAccessLevel() {
         return $this->_fetchAll(OPAL_GET_ALL_ACCESS_LEVEL, array());
     }
 

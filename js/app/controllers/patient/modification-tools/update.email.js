@@ -4,19 +4,19 @@ angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap
 		$uibModalInstance.dismiss('cancel');
 	};
 
+	//Initialize the params field
 	$scope.new_email = {
 		firstTime: null,
 		secondTime: null,
 		errorMessage: null,
 	};
 
-	$scope.validateEmail = function(){
-		if($scope.validateInput($scope.new_email.firstTime) && !$scope.new_email.firstTime.match(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/))
-        {
+	//Function to validate the email given by user
+	$scope.validateEmail = function() {
+		if($scope.validateInput($scope.new_email.firstTime) && !$scope.new_email.firstTime.match(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/)) {
 			$scope.new_email.errorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.EMAIL.EMAIL_NOT_VALID');
 		}
-		else if($scope.validateInput($scope.new_email.firstTime) && $scope.validateInput($scope.new_email.secondTime) && $scope.new_email.firstTime !== $scope.new_email.secondTime)
-        {
+		else if($scope.validateInput($scope.new_email.firstTime) && $scope.validateInput($scope.new_email.secondTime) && $scope.new_email.firstTime !== $scope.new_email.secondTime) {
 			$scope.new_email.errorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.EMAIL.EMAIL_NOT_SAME');
 		}
 		else
@@ -25,18 +25,21 @@ angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap
 		}
 	};
 
+	//Initialize the error messages
 	var arrValidationUpdateDatabase = [
 		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.PATIENTSERNUM'),
 		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.EMAIL'),
 	];
 
-	var arrValidationUpdateFirebase = [
+	var arrValidationUpdateExternalDatabase = [
 		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.USERID'),
 		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.EMAIL'),
 	];
 
-	$scope.updateEmail = function(){
+	//Function to update the patient email
+	$scope.updateEmail = function() {
 		if($scope.new_email.firstTime !== null && $scope.new_email.secondTime !== null && $scope.new_email.errorMessage === null){
+			//Update patient password in the external database
 			$.ajax({
 				type: "POST",
 				url: "patient/update/external-email",
@@ -45,10 +48,11 @@ angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap
 					email: $scope.new_email.firstTime,
 				},
 				success: function () {
+					//If success, update email in internal database
 					$scope.updateEmailInDatabase();
 				},
 				error: function (err) {
-					ErrorHandler.onError(err, $filter('translate')('PATIENTS.MODIFICATION_TOOLS.EMAIL.ERROR'), arrValidationUpdateFirebase);
+					ErrorHandler.onError(err, $filter('translate')('PATIENTS.MODIFICATION_TOOLS.EMAIL.ERROR'), arrValidationUpdateExternalDatabase);
 					$scope.setBannerClass('danger');
 					$scope.$parent.bannerMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.EMAIL.ERROR');
 				},
@@ -60,7 +64,8 @@ angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap
 		}
 	};
 
-	$scope.updateEmailInDatabase = function(){
+	//Function to update email in internal database
+	$scope.updateEmailInDatabase = function() {
 		$.ajax({
 			type: "POST",
 			url: "patient/update/email",
@@ -80,7 +85,8 @@ angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap
 		});
 	};
 
-	$scope.validateInput = function(input){
+	//function to validate input is not empty
+	$scope.validateInput = function(input) {
 		return (input !== undefined && input !== null && input !== "");
 	};
 
