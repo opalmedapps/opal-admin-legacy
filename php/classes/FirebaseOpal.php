@@ -10,7 +10,9 @@ class FirebaseOpal extends HelpSetup
     private $database;
     private $auth;
 
-    /* constructor that connects to the firebase */
+    /**
+     * Constructor of the class
+     */
     function __construct() {
         $this->firebase = (new Factory)
             ->withServiceAccount(FIREBASE_SERVICEACCOUNT)
@@ -19,11 +21,23 @@ class FirebaseOpal extends HelpSetup
         $this->auth = $this->firebase->createAuth();
     }
 
-    function updateEmail($uid, $email){
+    /**
+     * Update the email address of a given patient in firebase.
+     * @param $uid string - patient user name
+     * @param $email string - new email
+     * @return array - user information
+     */
+    function updateEmail($uid, $email) {
         return $this->auth->changeUserEmail($uid, $email);
     }
 
-    function updatePassword($uid, $password){
+    /**
+     * Update the password of a given patient in firebase.
+     * @param $uid string - patient user name
+     * @param $password string - new password
+     * @return array - user information
+     */
+    function updatePassword($uid, $password) {
         return $this->auth->changeUserPassword($uid, $password);
     }
 }

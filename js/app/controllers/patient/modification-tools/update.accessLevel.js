@@ -4,12 +4,14 @@ angular.module('opalAdmin.controllers.update.accessLevel', ['ngAnimate', 'ui.boo
 		$uibModalInstance.dismiss('cancel');
 	};
 
+	//Initialize the params field
 	getAllAccessLevel();
 	$scope.accessLevel = {
 		value : null,
 		valid : false,
 	};
 
+	//Function to validate the access level chosen by user
 	$scope.validateAccessLevel = function () {
 		if($scope.accessLevel.value !== null && $scope.accessLevel.value !== undefined && $scope.accessLevel.value !== "") {
 			$scope.accessLevel.valid = true;
@@ -19,13 +21,15 @@ angular.module('opalAdmin.controllers.update.accessLevel', ['ngAnimate', 'ui.boo
 		}
 	};
 
+	//Initialize the error messages
 	var arrValidationUpdate = [
 		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.ACCESS_LEVEL'),
 		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.PATIENTSERNUM'),
     ];
 
+	//Function to update the patient access level
 	$scope.updateAccessLevel = function () {
-		if ($scope.accessLevel.valid === true){
+		if ($scope.accessLevel.valid === true) {
 			$.ajax({
 				type: "POST",
 				url: "patient/update/access-level",
@@ -49,10 +53,11 @@ angular.module('opalAdmin.controllers.update.accessLevel', ['ngAnimate', 'ui.boo
 		}
 	};
 
+	//Function to get the possible access level list in database
 	function getAllAccessLevel () {
-		patientCollectionService.getAllAccessLevel().then(function (response){
+		patientCollectionService.getAllAccessLevel().then(function (response) {
 			$scope.levelList = []
-			response.data.forEach(function (row){
+			response.data.forEach(function (row) {
 				var level = {
 					levelId: row.Id,
 					levelText: (Session.retrieveObject('user').language === "FR" ? row.AccessLevelName_FR : row.AccessLevelName_EN),

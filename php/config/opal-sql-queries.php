@@ -1928,10 +1928,6 @@ const OPAL_GET_PATIENT_ACCESS_LEVEL = "
 SELECT pt.Accesslevel
 FROM " . OPAL_PATIENT_TABLE . " pt WHERE pt.PatientSerNum = :PatientSer;";
 
-const OPAL_GET_PATIENT_USERNAME = "
-SELECT ut.Username 
-FROM " . OPAL_USERS_TABLE . " ut WHERE ut.PatientSerNum = :PatientSer AND ut.UserType = 'Patient';";
-
 const OPAL_UPDATE_PATIENT_EMAIL = "
 UPDATE " . OPAL_PATIENT_TABLE . " pt
 SET pt.Email = :Email WHERE pt.PatientSerNum = :PatientSer;";
