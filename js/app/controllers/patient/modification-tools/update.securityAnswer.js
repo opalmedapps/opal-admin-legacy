@@ -4,8 +4,10 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 		$uibModalInstance.dismiss('cancel');
 	};
 
+	//Initialize the params field
 	getPatientSecurityQuestions();
 
+	//Function to change the security questions
 	$scope.changeFirstQuestion = function() {
 
 		if ($scope.validateInput($scope.patientSecurityQuestions.firstAnswer)) {
@@ -43,7 +45,7 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
                 ||$scope.patientSecurityQuestions.secondAnswer === $scope.patientSecurityQuestions.thirdAnswer) {
 				$scope.patientSecurityQuestions.secondErrorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.SECURITY_ANSWER.ANSWER_DUPLICATE');
 			}
-			else{
+			else {
 				$scope.patientSecurityQuestions.secondErrorMessage = null;
 			}
 			$scope.patientSecurityQuestions.changeDetected = true;
@@ -70,7 +72,7 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
                 ||$scope.patientSecurityQuestions.thirdAnswer === $scope.patientSecurityQuestions.secondAnswer) {
 				$scope.patientSecurityQuestions.thirdErrorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.SECURITY_ANSWER.ANSWER_DUPLICATE');
 			}
-			else{
+			else {
 				$scope.patientSecurityQuestions.thirdErrorMessage = null;
 			}
 			$scope.patientSecurityQuestions.changeDetected = true;
@@ -87,6 +89,7 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 		else $scope.patientSecurityQuestions.thirdErrorMessage = null;
 	};
 
+	//Function to filter the chosen questions out to avoid choosing same question
 	$scope.firstFilter = function() {
 		return function (question) {
 			return question.questionSerNum !== $scope.patientSecurityQuestions.secondQuestion && question.questionSerNum !== $scope.patientSecurityQuestions.thirdQuestion;
@@ -105,19 +108,23 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 		};
 	};
 
+	//Function to validate the given question
 	$scope.validateQuestion = function(question) {
 		return ($scope.validateInput(question) && question !== $scope.patientSecurityQuestions.firstQuestion_old
             && question !== $scope.patientSecurityQuestions.secondQuestion_old && question !== $scope.patientSecurityQuestions.thirdQuestion_old);
 	};
 
+	//Function to check all error message
 	$scope.checkErrorMessage = function () {
 		return $scope.validateInput($scope.patientSecurityQuestions.firstErrorMessage) || $scope.validateInput($scope.patientSecurityQuestions.secondErrorMessage) || $scope.validateInput($scope.patientSecurityQuestions.thirdErrorMessage);
 	};
 
+	//function to validate input is not empty
 	$scope.validateInput = function(input) {
 		return (input !== null && input !== undefined && input !== '');
 	};
 
+	//Initialize the error messages
 	var arrValidationUpdate = [
 		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.QUESTION'),
 		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.ANSWER'),
@@ -125,7 +132,9 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.QUESTION_OLD'),
 	];
 
+	//Function to update the patient security questions
 	$scope.updateSecurityQuestions = function () {
+		//Validate first question and choose the correct spot
 		if ($scope.validateInput($scope.patientSecurityQuestions.firstAnswer)) {
 			if($scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.secondQuestion
                 && $scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
@@ -145,6 +154,7 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 			}
 		}
 
+		//Validate secoond question and choose the correct spot
 		if ($scope.validateInput($scope.patientSecurityQuestions.secondAnswer)) {
 			if($scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.firstQuestion
                 && $scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
@@ -164,6 +174,7 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 			}
 		}
 
+		//Validate third question and choose the correct spot
 		if ($scope.validateInput($scope.patientSecurityQuestions.thirdAnswer)) {
 			if($scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.secondQuestion
                 && $scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
@@ -184,6 +195,7 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 		}
 	};
 
+	//Function to update a security question and answer
 	function updateQuestion(question, answer, question_old) {
 		$.ajax({
 			type: "POST",
