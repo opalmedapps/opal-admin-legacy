@@ -124,6 +124,7 @@ define("OPAL_POST_PK","PostControlSerNum");
 define("OPAL_RESOURCE_PENDING_TABLE", "resourcePending");
 define("OPAL_RESOURCE_PENDING_ERROR_TABLE", "resourcePendingError");
 define("OPAL_RESOURCE_PENDING_MH_TABLE", "resourcePendingMH");
+define("OPAL_PATIENT_DOCTOR_TABLE", "PatientDoctor");
 
 // //Define Cronjob patient control table names
 // define("OPAL_CRON_CONTROL_PATIENT_DOCUMENT","cronControlPatient_Document");
