@@ -1678,7 +1678,7 @@ define("OPAL_GET_ALIAS_EXPRESSION","
     WHERE A.AliasSerNum = AE.AliasSerNum
     AND A.AliasType = :AliasType
     AND AE.ExpressionName = :ExpressionName
-    AND AE.Description = :Description;
+    AND AE.Description LIKE :Description;
 ");
 
 define("OPAL_DELETE_ALIAS_EXPRESSIONS","
@@ -1935,3 +1935,116 @@ const OPAL_GET_STAFF_DETAIL = "
     SELECT StaffSerNum, FirstName, LastName, LastUpdated
      FROM ".OPAL_STAFF_TABLE." WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum AND StaffId =:StaffId;
 ";
+
+const OPAL_UPDATE_APPOINTMENT = "
+UPDATE " .OPAL_APPOINTMENTS_TABLE. " SET 
+AliasExpressionSerNum = :AliasExpressionSerNum,    
+SourceDatabaseSerNum = :SourceDatabaseSerNum,
+AppointmentAriaSer = :AppointmentAriaSer ,
+PrioritySerNum = :PrioritySerNum,
+DiagnosisSerNum = :DiagnosisSerNum,
+Status = :Status,
+State = :State,
+ScheduledStartTime = :ScheduledStartTime,
+ScheduledEndTime = :ScheduledEndTime,
+ActualStartDate = :ActualStartDate,
+ActualEndDate = :ActualEndDate,
+Location = :Location,
+RoomLocation_EN = :RoomLocation_EN,
+RoomLocation_FR = :RoomLocation_FR,
+Checkin = :Checkin,
+ChangeRequest = :ChangeRequest,
+DateAdded = :DateAdded,
+ReadStatus = :ReadStatus,
+SessionId = :SessionId
+WHERE    AppointmentSerNum = :AppointmentSerNum AND PatientSerNum = :PatientSerNum;
+";
+
+const OPAL_UPDATE_DOCUMENT =
+"
+UPDATE " .OPAL_DOCUMENT_TABLE." SET
+SourceDatabaseSerNum = :SourceDatabaseSerNum,
+DocumentId = :DocumentId,          
+AliasExpressionSerNum = :AliasExpressionSerNum,
+ApprovedBySerNum = :ApprovedBySerNum,     
+ApprovedTimeStamp = :ApprovedTimeStamp,   
+AuthoredBySerNum = :AuthoredBySerNum,   
+DateOfService = :DateOfService,        
+Revised = :Revised,              
+ValidEntry = :ValidEntry,           
+ErrorReasonText = :ErrorReasonText,      
+OriginalFileName = :OriginalFileName,     
+FinalFileName = :FinalFileName,        
+CreatedBySerNum = :CreatedBySerNum,      
+CreatedTimeStamp = :CreatedTimeStamp,     
+TransferStatus = :TransferStatus,       
+TransferLog = :TransferLog,          
+ReadStatus = :ReadStatus,           
+SessionId = :SessionId,            
+DateAdded = :DateAdded,
+LastUpdated = :LastUpdated
+WHERE DocumentSerNum = :DocumentSerNum AND PatientSerNum = :PatientSerNum;
+";
+
+const OPAL_GET_DOCTOR_RESOURCE = "
+    SELECT ResourceSerNum,SourceDatabaseSerNum,ResourceAriaSer,ResourceCode,ResourceName,ResourceType
+     FROM ".OPAL_RESOURCE_TABLE." WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum 
+     AND (ResourceAriaSer =:ResourceId OR ResourceCode = :ResourceId);
+";
+
+const OPAL_GET_DOCTOR = " 
+SELECT DoctorSerNum,ResourceSerNum,SourceDatabaseSerNum,DoctorAriaSer,FirstName,LastName,
+Role,Workplace,Email,Phone,Address,ProfileImage,BIO_EN,BIO_FR
+FROM ".OPAL_DOCTOR_TABLE."  WHERE ResourceSernum = :ResourceId;
+";
+
+const OPAL_UPDATE_DOCTOR = "
+UPDATE " .OPAL_DOCTOR_TABLE." SET
+ResourceSerNum = :ResourceSerNum,
+SourceDatabaseSerNum = :SourceDatabaseSerNum,
+DoctorAriaSer = :DoctorAriaSer,
+FirstName = :FirstName,
+LastName = :LastName,
+Role = :Role,
+Workplace = :Workplace,
+Email = :Email,
+Phone = :Phone,
+Address = :Address,
+ProfileImage = :ProfileImage,
+BIO_EN = :BIO_EN,
+BIO_FR = :BIO_FR
+WHERE DoctorSerNum = :DoctorSerNum;
+";
+
+const OPAL_UPDATE_DOCTOR_RESOURCE = "
+    UPDATE ".OPAL_RESOURCE_TABLE." SET ResourceName = :ResourceName, ResourceCode = :ResourceCode, ResourceType = :ResourceType WHERE
+    ResourceSerNum = :ResourceSerNum;
+";
+
+
+const OPAL_GET_PATIENT_DOCTOR = " 
+SELECT PatientDoctorSerNum, PatientSerNum, DoctorSerNum, OncologistFlag, PrimaryFlag 
+FROM ".OPAL_PATIENT_DOCTOR_TABLE."  WHERE DoctorSerNum = :DoctorSerNum AND PatientSerNum = :PatientSerNum;
+";
+
+const OPAL_UPDATE_PATIENT_DOCTOR = "
+UPDATE " .OPAL_PATIENT_DOCTOR_TABLE." SET
+OncologistFlag = :OncologistFlag,
+PrimaryFlag = :PrimaryFlag
+WHERE PatientDoctorSerNum = :PatientDoctorSerNum;
+";
+
+const OPAL_GET_STAFF = " 
+SELECT StaffSerNum,SourceDatabaseSerNum,StaffId,FirstName,LastName,LastUpdated
+FROM ".OPAL_STAFF_TABLE."  WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum AND StaffId = :StaffId;
+";
+
+const OPAL_UPDATE_STAFF = "
+UPDATE " .OPAL_STAFF_TABLE." SET
+FirstName = :FirstName,
+LastName = :LastName,
+LastUpdated = :LastUpdated
+WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum
+AND StaffId = :StaffId;
+";
+

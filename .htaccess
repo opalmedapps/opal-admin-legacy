@@ -302,6 +302,7 @@ RewriteRule ^questionnaire/update/questionnaire php/questionnaire/update.questio
 
 #Resources Section
 RewriteRule ^resource/insert/resource php/resource/insert.resource.php [QSA,L]
+RewriteRule ^resource/update/staff php/resource/update.staff.php [QSA,L]
 
 # Roles Section
 RewriteRule ^role/delete/role php/role/delete.role.php [QSA,L]
@@ -374,3 +375,7 @@ RewriteRule ^user/validate-login php/user/user.login.php [QSA,L]
 
 # Document section
 RewriteRule ^document/insert/document php/document/insert.document.php [QSA,L]
+
+# Doctor section
+RewriteRule ^doctor/update/doctor php/doctor/update.doctor.php [QSA,L]
+RewriteRule ^doctor/update/patient-doctor php/doctor/update.patient.doctor.php [QSA,L]
