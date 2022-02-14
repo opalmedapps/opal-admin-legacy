@@ -123,7 +123,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		// Function for searching through expression names
 		$scope.searchTermsFilter = function (term) {
 			var keyword = new RegExp($scope.termFilter, 'i');
-			return ((!$scope.termFilter || keyword.test(term.name))
+			return ((!$scope.termFilter || keyword.test(term.externalId) || keyword.test(term.id) || keyword.test(term.description))
 				&& (($scope.clinicalCodeFilter == 'all') || ($scope.clinicalCodeFilter == 'current' && term.added)
 					|| ($scope.clinicalCodeFilter == 'other' && term.assigned && !term.added) || ($scope.clinicalCodeFilter == 'none' && !term.added && !term.assigned)));
 		};
