@@ -325,7 +325,7 @@ abstract class OpalProject
      * @param $post array - contains the source name and the external appointment ID
      */
     protected function _updateAppointmentCheckIn(&$post) {
-        
+        $today = strtotime(date("Y-m-d H:i:s"));
         $errCode = $this->_validateAppointmentCheckIn($post, $source, $appointment, $patientInfo);
         $errCode = bindec($errCode);
         if ($errCode != 0)
@@ -335,6 +335,7 @@ abstract class OpalProject
         
         if($rowCount >= 1) {
             $currentAppointment = $this->opalDB->findAppointment($source["SourceDatabaseSerNum"],$post["appointment"]);
+            $currentAppointment = $currentAppointment[0];
             $StartDateTime = strtotime(date("Y-m-d H:i:s"));
             $action = "CheckInNotification";
             $replacementMap = array();
@@ -343,7 +344,10 @@ abstract class OpalProject
             setlocale(LC_TIME, 'en_CA');        
             $replacementMap["\$getDateTime"] =  strftime('%l:%M %p', $StartDateTime);
                     
-            $this->_notifyChange($currentAppointment[0], $action, $replacementMap,$post["appointment"]);        
+            $scheduledStartTime = strtotime($currentAppointment["ScheduledStartTime"]);
+            if ($scheduledStartTime >= $today){
+                $this->_notifyChange($currentAppointment, $action, $replacementMap,$post["appointment"]);        
+            }            
         }        
     }
 }
