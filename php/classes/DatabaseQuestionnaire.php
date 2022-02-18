@@ -472,9 +472,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  array of libraries
      * */
     function getLibraries($arrLib) {
-        return $this->_fetchAll(str_replace("%%LIBRARIES_ID%%", implode(", ", $arrLib),SQL_QUESTIONNAIRE_GET_LIBRARIES),array(
-            array("parameter"=>":OAUserId","variable"=>$this->OAUserId,"data_type"=>PDO::PARAM_INT),
-        ));
+        return $this->_fetchAll(str_replace("%%LIBRARIES_ID%%", implode(", ", $arrLib),SQL_QUESTIONNAIRE_GET_LIBRARIES),array());
     }
 
     /*
