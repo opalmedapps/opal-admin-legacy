@@ -222,7 +222,7 @@ RewriteRule ^master-source/insert/diagnoses php/master-source/insert.source.diag
 RewriteRule ^master-source/insert/documents php/master-source/insert.source.document.php [QSA,L]
 RewriteRule ^master-source/insert/tasks php/master-source/insert.source.task.php [QSA,L]
 RewriteRule ^master-source/insert/test-results php/master-source/insert.source.test.results.php [QSA,L]
-#RewriteRule ^master-source/update/appointments php/master-source/update.source.appointment.php [QSA,L]
+RewriteRule ^master-source/update/appointments php/master-source/update.source.appointment.php [QSA,L]
 #RewriteRule ^master-source/update/diagnoses php/master-source/update.source.diagnosis.php [QSA,L]
 #RewriteRule ^master-source/update/documents php/master-source/update.source.document.php [QSA,L]
 #RewriteRule ^master-source/update/tasks php/master-source/update.source.task.php [QSA,L]
