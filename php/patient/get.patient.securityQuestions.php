@@ -1,5 +1,5 @@
 <?php
-include_once("../../config.php");
+include_once("../config.php");
 
 $patientObj = new Patient(); //Object
 $response = $patientObj->getPatientSecurityQuestions($_POST);

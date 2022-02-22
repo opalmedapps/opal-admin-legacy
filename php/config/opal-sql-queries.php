@@ -1947,7 +1947,7 @@ SET pt.Accesslevel = :AccessLevel WHERE pt.PatientSerNum = :PatientSer;";
 
 const OPAL_GET_ALL_SECURITY_QUESTIONS = "
 SELECT SecurityQuestionSerNum, QuestionText_EN, QuestionText_FR 
-FROM " . OPAL_SECURITY_QUESTION_TABLE . " WHERE Active = 1;";
+FROM " . OPAL_SECURITY_QUESTION_TABLE . " WHERE Active = " . ACTIVE_RECORD . ";";
 
 const OPAL_GET_PATIENT_SECURITY_QUESTIONS = "
 SELECT SecurityQuestionSerNum
@@ -1956,3 +1956,6 @@ FROM " . OPAL_SECURITY_ANSWER_TABLE . " WHERE PatientSerNum = :PatientSer;";
 const OPAL_GET_ALL_ACCESS_LEVEL = "
 SELECT Id, AccessLevelName_EN, AccessLevelName_FR 
 FROM " . OPAL_ACCESS_LEVEL_TABLE ;
+
+const OPAL_GET_PATIENT_BY_SERIAL_NUMBER = "
+SELECT * FROM " . OPAL_PATIENT_TABLE . " where PatientSerNum = :PatientSer;";

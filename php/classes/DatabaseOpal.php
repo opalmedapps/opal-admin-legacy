@@ -2861,14 +2861,12 @@ class DatabaseOpal extends DatabaseAccess {
      *
      * @return void
      */
-    function updatePatientLink($toUpdate) {
+    function updatePatientLink($identifier) {
 
-        while (($identifier = array_shift($toUpdate)) !== NULL) {
-            if (!empty($identifier["Patient_Hospital_Identifier_Id"])){
-                $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT_HOSPITAL_IDENTIFIER,$identifier);
-            } else {
-                $this->_insertRecordIntoTable(OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE,$identifier);
-            }
+        if (!empty($identifier["Patient_Hospital_Identifier_Id"])){
+            $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT_HOSPITAL_IDENTIFIER,$identifier);
+        } else {
+            $this->_insertRecordIntoTable(OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE,$identifier);
         }
         return ;
     }
@@ -4122,13 +4120,23 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-
     /**
      * Get published access level list
      * @return array - data found if any
      */
     function getAllAccessLevel() {
         return $this->_fetchAll(OPAL_GET_ALL_ACCESS_LEVEL, array());
+    }
+
+    /**
+     * Get the patient by their mrn
+     * @params  $mrn : string - target patient mrn
+     * @return  array - list of patient(s) matching search
+     */
+    function getPatientSerNum($patientser) {
+        return $this->_fetchAll(OPAL_GET_PATIENT_BY_SERIAL_NUMBER, array(
+            array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR),
+        ));
     }
 
 }
