@@ -7,18 +7,20 @@ use Kreait\Firebase\Exception\FirebaseException;
 class FirebaseOpal extends HelpSetup
 {
     private $firebase ;
-    private $database;
     private $auth;
 
     /**
      * Constructor of the class
      */
     function __construct() {
-        $this->firebase = (new Factory)
-            ->withServiceAccount(FIREBASE_SERVICEACCOUNT)
-            ->withDatabaseUri(FIREBASE_DATABASEURL);
-        $this->database = $this->firebase->createDatabase();
-        $this->auth = $this->firebase->createAuth();
+        try{
+            $this->firebase = (new Factory)
+                ->withServiceAccount(FIREBASE_SERVICEACCOUNT)
+                ->withDatabaseUri(FIREBASE_DATABASEURL);
+            $this->auth = $this->firebase->createAuth();
+        } catch (FirebaseException $err){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "An error occur during firebase connection: " . $err->getMessage());
+        }
     }
 
     /**
@@ -28,7 +30,11 @@ class FirebaseOpal extends HelpSetup
      * @return array - user information
      */
     function updateEmail($uid, $email) {
-        return $this->auth->changeUserEmail($uid, $email);
+        try {
+            return $this->auth->changeUserEmail($uid, $email);
+        } catch (Throwable $err) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "An error occur during updating email: " . $err->getMessage());
+        }
     }
 
     /**
@@ -38,6 +44,10 @@ class FirebaseOpal extends HelpSetup
      * @return array - user information
      */
     function updatePassword($uid, $password) {
-        return $this->auth->changeUserPassword($uid, $password);
+        try{
+            return $this->auth->changeUserPassword($uid, $password);
+        } catch (Throwable $err) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY, "An error occur during updating password: " . $err . getMessage());
+        }
     }
 }

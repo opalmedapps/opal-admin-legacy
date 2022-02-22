@@ -1,6 +1,6 @@
 <?php
 
-include_once("../../config.php");
+include_once("../config.php");
 
 $patientObj = new Patient(); //Object
 $patientObj->updateExternalPassword($_POST);
