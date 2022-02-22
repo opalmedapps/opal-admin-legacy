@@ -2659,7 +2659,7 @@
       "SUB_TITLE": "Patients Tools",
       "REGISTRATION": "Patient Registration",
       "REGISTRATION_SUB": "Register a patient to Opal.",
-      "MODIFICATION_TOOLS": "Patient Modification Tools",
+      "MODIFICATION_TOOLS": "Patient Administration",
       "MODIFICATION_TOOLS_SUB": "Modify patient account information",
       "BACK": "Back"
     },
@@ -2877,10 +2877,10 @@
       }
     },
     "MODIFICATION_TOOLS": {
-      "TITLE": "Patient Modification Tools",
+      "TITLE": "Patient Administration",
       "DESCRIPTION": "Modify patient account information",
       "MENU": {
-        "TITLE": "Patient Modification Tools",
+        "TITLE": "Patient Administration",
         "PSEARCH": "Search Patient",
         "PNAME": "Patient last name",
         "PMRN": "Patient MRN",

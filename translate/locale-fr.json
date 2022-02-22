@@ -2676,7 +2676,7 @@
       "SUB_TITLE": "Outils pour patients",
       "REGISTRATION": "Enregistrement patient",
       "REGISTRATION_SUB": "Enregistrer un patient pour Opal.",
-      "MODIFICATION_TOOLS": "Outils de modification",
+      "MODIFICATION_TOOLS": "Administration des patients",
       "MODIFICATION_TOOLS_SUB": "Modifier les informations du compte patient",
       "BACK": "Retour"
     },
@@ -2897,10 +2897,10 @@
       }
     },
     "MODIFICATION_TOOLS": {
-      "TITLE": "Outils de modification des patients",
+      "TITLE": "Administration des patients",
       "DESCRIPTION": "Modifier les informations du compte patient",
       "MENU": {
-        "TITLE": "Outils de modification des patients",
+        "TITLE": "Administration des patients",
         "PSEARCH": "Recherche du patient :",
         "PNAME": "Nom de famille du patient",
         "PRAMQ": "RAMQ du patient",

@@ -173,6 +173,17 @@ const CONSENT_STATUS_OPAL_CONSENTED = 2;
 const CONSENT_STATUS_OTHER_CONSENTED = 3;
 const CONSENT_STATUS_DECLINED = 4;
 
+// Define regular expression pattern constant
+const REGEX_CAPITAL_LETTER = '/[A-Z]/';
+const REGEX_LOWWER_CASE_LETTER = '/[a-z]/';
+const REGEX_SPECIAL_CHARACTER = '/[\'^£$%&*()}{@#~?><>,|=_+¬-]/';
+const REGEX_NUMBER = '/[0-9]/';
+const REGEX_MRN = '/^[0-9]*$/i';
+
+// Define patient information type constant array
+const PATIENT_LANGUAGE_ARRAY = array("EN", "FR");
+const PATIENT_SEX_ARRAY = array("Male", "Female", "Unknown", "Other");
+
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php";
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php";
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql.php";

@@ -4,19 +4,14 @@
  * Patient class
  *
  */
-use Kreait\Firebase\Exception\FirebaseException;
 
 class Patient extends Module {
 
-    protected $externalDB;
+    protected $firebaseDB;
 
     public function __construct($guestStatus = false) {
         parent::__construct(MODULE_PATIENT, $guestStatus);
-        try {
-            $this->externalDB = new FirebaseOpal();
-        } catch (FirebaseException $err){
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "An error occur during firebase connection: " . $err->getMessage());
-        }
+        $this->firebaseDB = new FirebaseOpal();
     }
 
     /**
@@ -39,7 +34,14 @@ class Patient extends Module {
 
     /**
      * Validate a list of publication flags for patient.
-     * @param $post - publish flag to validate
+     *
+     * @param $post : array - Contains the following information
+     *                          data : array - Contains the following information
+     *                              serial : patient serial number (mandatory)
+     *                              transfer : patient publish flag (mandatory)
+     *
+     *  1st bit invalid input format
+     *
      * @return string - string to convert in int for error code
      */
     protected function _validatePublishFlag(&$post) {
@@ -81,8 +83,13 @@ class Patient extends Module {
 
     /**
      * Validate the name search parameter for individual reports
-     * @param $post - patient last name
-     * @return $errCode - 1st bit for pname
+     *
+     * @param $post : array - Contains the following information
+     *                          pname : patient name
+     *
+     *  1st bit invalid patient name
+     *
+     * @return $errCode
      */
     protected function _validateName(&$post) {
         $errCode = "";
@@ -118,8 +125,13 @@ class Patient extends Module {
 
     /**
      * Validate the mrn search parameter for individual reports
-     * @param post - patient mrn
-     * @return $errCode - 1st bit for mrn
+     *
+     * @param $post : array - Contains the following information
+     *                          pmrn : patient mrn
+     *
+     *  1st bit invalid patient mrn
+     *
+     * @return $errCode
      */
     protected function _validateMRN(&$post) {
         $errCode = "";
@@ -155,8 +167,13 @@ class Patient extends Module {
 
     /**
      * Validate the ramq search parameter for individual reports
-     * @param $post - patient ramq
-     * @return $errCode - 1st bit for ramq
+     *
+     * @param $post : array - Contains the following information
+     *                          pramq : patient ramq
+     *
+     *  1st bit invalid patient ramq
+     *
+     * @return $errCode
      */
     protected function _validateRAMQ(&$post) {
         $errCode = "";
@@ -348,8 +365,13 @@ class Patient extends Module {
 
     /**
      * Validate the educational material search parameter for group reports
-     * @param $post - matType
-     * @return $errCode - 1st bit for matType
+     *
+     * @param $post : array - Contains the following information
+     *                          matType : material type
+     *
+     *  1st bit invalid material type
+     *
+     * @return $errCode
      */
     protected function _validateEducType(&$post) {
         $errCode = "";
@@ -365,7 +387,10 @@ class Patient extends Module {
 
     /**
      *  Generate list of available educational materials from DB
-     * @param $post : user selected material type
+     * @param $post : array - Contains the following information
+     *                          matType : material type
+     *
+     *  1st bit invalid material type
      * @return array of educational materials
      */
     public function findEducationalMaterialOptions($post) {
@@ -381,8 +406,15 @@ class Patient extends Module {
 
     /**
      * Validate the educational material report parameters
-     * @param $post array - contains type and name
-     * @return $errCode - validation of the data
+     *
+     * @param $post : array - Contains the following information
+     *                          type : material type
+     *                          name : material name
+     *
+     *  1st bit invalid material type
+     *  2nd bit invalid material name
+     *
+     * @return $errCode
      */
     protected function _validateEducReport(&$post) {
         $errCode = "";
@@ -406,8 +438,15 @@ class Patient extends Module {
 
     /**
      * Generate educational materials group report
-     * @param $post
-     * @return array
+     *
+     * @param $post : array - Contains the following information
+     *                          type : material type
+     *                          name : material name
+     *
+     *  1st bit invalid material type
+     *  2nd bit invalid material name
+     *
+     *  @return array of educational material report
      */
     public function getEducationalMaterialReport($post) {
         $this->checkReadAccess($post);
@@ -431,8 +470,13 @@ class Patient extends Module {
 
     /**
      * Validate the questionnaire name search parameter for group reports
-     * @param $post - qstName questionnaire name
-     * @return $errCode - 1st bit for qstName
+     *
+     * @param $post : array - Contains the following information
+     *                          qstName : questionnaire name
+     *
+     *  1st bit invalid questionnaire name
+     *
+     * @return $errCode
      */
     protected function _validateQstReport(&$post) {
         $errCode = "";
@@ -447,8 +491,13 @@ class Patient extends Module {
     }
 
     /**
-     *  Generate questionnaires report given user selected qName
-     * @param $post : questionnaire name
+     * Generate questionnaires report given user selected qName
+     *
+     * @param $post : array - Contains the following information
+     *                          qstName : questionnaire name
+     *
+     *  1st bit invalid questionnaire name
+     *
      * @return array: questionnaire report JSON object
      */
     public function getQuestionnaireReport($post) {
@@ -522,7 +571,7 @@ class Patient extends Module {
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
 
-        $pattern = "/^[0-9]*$/i";
+        $pattern = REGEX_MRN;
 
         $errCode = $this->_validatePatientExisitParams($post) . $errCode;
 
@@ -568,9 +617,9 @@ class Patient extends Module {
      * @return $errCode
      */
     protected function _validatePatientParams($post) {
-        $validLang = array("EN", "FR", "SN");
-        $validGender = array("Male", "Female", "Unknown", "Other");
-        $pattern = "/^[0-9]*$/i";
+        $validLang = PATIENT_LANGUAGE_ARRAY;
+        $validGender = PATIENT_SEX_ARRAY;
+        $pattern = REGEX_MRN;
         $errCode = "";
 
         if(!array_key_exists("mrns", $post) || $post["mrns"] == "" || count($post["mrns"]) <= 0)
@@ -617,6 +666,35 @@ class Patient extends Module {
                 $errCode = "0" . $errCode;
         }
 
+        $patientNotFound = true;
+        $idList = $post["mrns"];
+        $cptIDs = 0;
+        $lenIDs = count($idList);
+
+        // Looping patient Identifiers, if no patient found, then Patient does not exist with any identifiers
+        while (($identifier = array_shift($idList)) !== NULL) {
+            $mrn = str_pad($identifier["mrn"], 7, "0", STR_PAD_LEFT);
+            $retrievedPatient = $this->opalDB->getPatientSite($mrn, $identifier["site"]);
+            $patientNotFound = !boolVal(count($retrievedPatient)) && $patientNotFound;
+
+            if($patientNotFound) {
+                // Return element to Identifier List until Patient Id found
+                $idList = array_merge($idList, array($identifier));
+                $cptIDs = $cptIDs + 1;
+            }
+
+            // Patient does not exist with any identifiers
+            if($cptIDs > $lenIDs) {
+                break;
+            }
+        }
+
+        // Patient does not exist with any identifiers
+        if($patientNotFound)
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
+
         return $errCode;
     }
 
@@ -645,7 +723,10 @@ class Patient extends Module {
         HelpSetup::arraySanitization($post);
         $errCode = $this->_validatePatientParams($post);
 
-        $patientNotFound = true;
+        $errCode = bindec($errCode);
+        if($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
         $idList = $post["mrns"];
         $toBeInsertPatientIds = array();
         $patientSerNum = "";
@@ -656,7 +737,6 @@ class Patient extends Module {
         while (($identifier = array_shift($idList)) !== NULL) {
             $mrn = str_pad($identifier["mrn"], 7, "0", STR_PAD_LEFT);
             $retrievedPatient = $this->opalDB->getPatientSite($mrn, $identifier["site"]);
-            $patientNotFound = !boolVal(count($retrievedPatient)) && $patientNotFound;
 
             if(count($retrievedPatient) == 1) {
 
@@ -694,19 +774,8 @@ class Patient extends Module {
             }
         }
 
-        // Patient does not exist with any identifiers
-        if($patientNotFound)
-            $errCode = "1" . $errCode;
-        else
-            $errCode = "0" . $errCode;
-
-        $errCode = bindec($errCode);
-        if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
-
-
         // Get current patient demographic
-        $patientData = $this->opalDB->fetchTriggersData("SELECT * FROM Patient where PatientSerNum=" . $patientSerNum)[0];
+        $patientData = $this->opalDB->getPatientSerNum($patientSerNum)[0];
 
         //Update patient demographics
         $patientData["PatientSerNum"] = $patientSerNum;
@@ -772,16 +841,13 @@ class Patient extends Module {
 
         unset($patientData["LastUpdated"]);
 
-        try {
-            if(count($toBeInsertPatientIds) > 0) {
-                $this->opalDB->updatePatientLink($toBeInsertPatientIds);
+        if(count($toBeInsertPatientIds) > 0) {
+            while(($identifier = array_shift($toBeInsertPatientIds)) !== NULL) {
+                $this->opalDB->updatePatientLink($identifier);
             }
-
-            $this->opalDB->updatePatient($patientData);
-        } catch (Throwable $e) {
-            // Simply display error message
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode, "status" => "Error", "message" => $e->getMessage()));
         }
+
+        $this->opalDB->updatePatient($patientData);
 
         return false;
     }
@@ -852,7 +918,11 @@ class Patient extends Module {
      * @return int - number of row modified
      */
     public function updatePatientPassword($post) {
-        $this->checkWriteAccess($post);
+        $post2 = [];
+        $post2["uid"] = $post["uid"];
+        $post2["password"] = "PASSWORD HIDDEN";
+
+        $this->checkWriteAccess($post2);
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validatePatientPasswordParams($post);
         $errCode = bindec($errCode);
@@ -909,7 +979,13 @@ class Patient extends Module {
      * @return int - number of row modified
      */
     public function updatePatientSecurityAnswer($post) {
-        $this->checkWriteAccess($post);
+        $post2 = [];
+        $post2["QuestionSerNum"] = $post["QuestionSerNum"];
+        $post2["Answer"] = "ANSWER HIDDEN";
+        $post2["PatientSerNum"] = $post["PatientSerNum"];
+        $post2["OldQuestionSerNum"] = $post["OldQuestionSerNum"];
+
+        $this->checkWriteAccess($post2);
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validatePatientSecurityAnswerParams($post);
         $errCode = bindec($errCode);
@@ -1073,7 +1149,6 @@ class Patient extends Module {
      *  1st bit invalid uid
      *  2nd bit invalid email
      *
-     * @return array - User Information
      * @throws Exception
      */
     public function updateExternalEmail($post) {
@@ -1085,11 +1160,7 @@ class Patient extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
         }
 
-        try {
-            $this->externalDB->updateEmail($post["uid"], $post["email"]);
-        } catch (Throwable $err) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "An error occur during updating email: " . $err->getMessage());
-        }
+        $this->firebaseDB->updateEmail($post["uid"], $post["email"]);
     }
 
     /**
@@ -1130,13 +1201,12 @@ class Patient extends Module {
      *  1st bit invalid uid
      *  2nd bit invalid password
      *
-     * @return array - User Information
      * @throws Exception
      */
     public function updateExternalPassword($post) {
         $post2 = [];
         $post2["uid"] = $post["uid"];
-        $post2["password"] = "xxxxxxxxxxxxxxxx";
+        $post2["password"] = "PASSWORD HIDDEN";
 
         $this->checkWriteAccess($post2);
         $post = HelpSetup::arraySanitization($post);
@@ -1146,11 +1216,7 @@ class Patient extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
         }
 
-        try {
-            $this->externalDB->updatePassword($post["uid"], $post["password"]);
-        } catch (Throwable $err) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY, "An error occur during updating password: " . $err . getMessage());
-        }
+        $this->firebaseDB->updatePassword($post["uid"], $post["password"]);
     }
 
     /**
@@ -1175,8 +1241,8 @@ class Patient extends Module {
             $errCode = "0" . $errCode;
 
         if(!array_key_exists("password", $post) || $post["password"] == "" || !is_string($post["password"]) || strlen($post["password"]) < 8
-        || !preg_match('/[A-Z]/', $post["password"]) || !preg_match('/[a-z]/', $post["password"]) ||
-            !preg_match('/[\'^£$%&*()}{@#~?><>,|=_+¬-]/', $post["password"]) || !preg_match('/[0-9]/', $post["password"]))
+        || !preg_match(REGEX_CAPITAL_LETTER, $post["password"]) || !preg_match(REGEX_LOWWER_CASE_LETTER, $post["password"]) ||
+            !preg_match(REGEX_SPECIAL_CHARACTER, $post["password"]) || !preg_match(REGEX_NUMBER, $post["password"]))
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
