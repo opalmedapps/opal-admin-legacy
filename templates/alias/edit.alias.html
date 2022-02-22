@@ -36,7 +36,7 @@
                 <strong><span class="fa fa-lock"></span> {{'ALIAS.EDIT.PUBLISHED_CODE'|translate}}</strong>
                 <ul class="list-items">
                     <li ng-repeat="publishedAlias in alias.published">
-                        {{publishedAlias.externalId}} - {{publishedAlias.id}} | {{publishedAlias.description}}
+                        {{publishedAlias.externalId}} | {{publishedAlias.id}} | {{publishedAlias.description}}
                     </li>
                 </ul>
             </div>
@@ -45,7 +45,7 @@
                 <p>
                 <ul class="list-items">
                     <li ng-repeat="selectedTerm in termList | filter: {added: 1}">
-                        {{selectedTerm.externalId}} - {{selectedTerm.name}} | {{selectedTerm.description}}
+                        {{selectedTerm.externalId}} | {{selectedTerm.id}} | {{selectedTerm.description}}
                     </li>
                 </ul>
                 </p>
@@ -298,7 +298,7 @@
             <div class="alert alert-danger" role="alert">
                 <ul class="list-items">
                     <li ng-repeat="deletedAlias in alias.deleted">
-                        {{deletedAlias.externalId}} - {{deletedAlias.id}} | {{deletedAlias.description}}
+                        {{deletedAlias.externalId}} | {{deletedAlias.id}} | {{deletedAlias.description}}
                     </li>
                 </ul>
                 </p>
