@@ -123,7 +123,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		// Function for searching through expression names
 		$scope.searchTermsFilter = function (term) {
 			var keyword = new RegExp($scope.termFilter, 'i');
-			return ((!$scope.termFilter || keyword.test(term.name))
+			return ((!$scope.termFilter || keyword.test(term.externalId) || keyword.test(term.id) || keyword.test(term.description))
 				&& (($scope.clinicalCodeFilter == 'all') || ($scope.clinicalCodeFilter == 'current' && term.added)
 					|| ($scope.clinicalCodeFilter == 'other' && term.assigned && !term.added) || ($scope.clinicalCodeFilter == 'none' && !term.added && !term.assigned)));
 		};
@@ -218,14 +218,8 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 				// Loop within current alias' expressions (terms) 
 				angular.forEach($scope.alias.terms, function (selectedTerm) {
-
-					var selectedTermName = selectedTerm.id;
-					var selectedTermDesc = selectedTerm.description;
-					// Loop within each of the existing terms
 					angular.forEach($scope.termList, function (term) {
-						var termName = term.id; // get the id name
-						var termDesc = term.description;
-						if (selectedTermName == termName && selectedTermDesc == termDesc) { // If term is selected (from current alias)
+						if (term.masterSourceAliasId === selectedTerm.masterSourceAliasId) { // If term is selected (from current alias)
 							term.added = 1; // term added?
 							term.assigned = null; // remove self assigned alias
 						}
