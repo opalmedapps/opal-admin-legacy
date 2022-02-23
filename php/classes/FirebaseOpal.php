@@ -19,7 +19,7 @@ class FirebaseOpal extends HelpSetup
                 ->withDatabaseUri(FIREBASE_DATABASEURL);
             $this->auth = $this->firebase->createAuth();
         } catch (FirebaseException $err){
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "An error occur during firebase connection: " . $err->getMessage());
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY, "An error occur during external connection: " . $err->getMessage());
         }
     }
 
@@ -33,7 +33,7 @@ class FirebaseOpal extends HelpSetup
         try {
             return $this->auth->changeUserEmail($uid, $email);
         } catch (Throwable $err) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "An error occur during updating email: " . $err->getMessage());
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY, "An error occur during updating email: " . $err->getMessage());
         }
     }
 
@@ -47,7 +47,7 @@ class FirebaseOpal extends HelpSetup
         try{
             return $this->auth->changeUserPassword($uid, $password);
         } catch (Throwable $err) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY, "An error occur during updating password: " . $err . getMessage());
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY, "An error occur during updating password: " . $err->getMessage());
         }
     }
 }
