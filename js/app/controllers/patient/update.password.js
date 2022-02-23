@@ -16,7 +16,7 @@ angular.module('opalAdmin.controllers.update.password', ['ngAnimate', 'ui.bootst
 		if($scope.validateInput($scope.new_password.firstTime) && $scope.new_password.firstTime.length < 8) {
 			$scope.new_password.errorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.PASSWORD.PASSWORD_TOO_SHORT');
 		}
-		else if($scope.validateInput($scope.new_password.firstTime)&& (!$scope.new_password.firstTime.match(/\W|_{1}/) || !$scope.new_password.firstTime.match(/[A-Z]/) || !$scope.new_password.firstTime.match(/\d/))) {
+		else if($scope.validateInput($scope.new_password.firstTime)&& (!$scope.new_password.firstTime.match(/\W|_{1}/) || !$scope.new_password.firstTime.match(/[a-z]/) || !$scope.new_password.firstTime.match(/[A-Z]/) || !$scope.new_password.firstTime.match(/\d/))) {
 			$scope.new_password.errorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.PASSWORD.PASSWORD_MISSING_CHARACTER');
 		}
 		else if(!$scope.validateInput($scope.new_password.firstTime) || !$scope.validateInput($scope.new_password.secondTime) || $scope.new_password.firstTime !== $scope.new_password.secondTime) {

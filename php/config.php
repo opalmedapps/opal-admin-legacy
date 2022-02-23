@@ -176,7 +176,7 @@ const CONSENT_STATUS_DECLINED = 4;
 // Define regular expression pattern constant
 const REGEX_CAPITAL_LETTER = '/[A-Z]/';
 const REGEX_LOWWER_CASE_LETTER = '/[a-z]/';
-const REGEX_SPECIAL_CHARACTER = '/[\'^£$%&*()}{@#~?><>,|=_+¬-]/';
+const REGEX_SPECIAL_CHARACTER = '/\W|_{1}/';
 const REGEX_NUMBER = '/[0-9]/';
 const REGEX_MRN = '/^[0-9]*$/i';
 
