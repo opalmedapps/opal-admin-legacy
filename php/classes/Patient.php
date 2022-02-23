@@ -652,14 +652,16 @@ class Patient extends Module {
                 $errCode = "1" . $errCode;
             else
                 $errCode = "0" . $errCode;
-        }
+        } else
+            $errCode = "0" . $errCode;
 
         if(array_key_exists("gender", $post)) {
             if($post["gender"] != null && !in_array($post["gender"], PATIENT_SEX_ARRAY))
                 $errCode = "1" . $errCode;
             else
                 $errCode = "0" . $errCode;
-        }
+        } else
+            $errCode = "0" . $errCode;
 
         $patientNotFound = true;
         $idList = $post["mrns"];
