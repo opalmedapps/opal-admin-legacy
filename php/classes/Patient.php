@@ -571,12 +571,10 @@ class Patient extends Module {
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
 
-        $pattern = REGEX_MRN;
-
         $errCode = $this->_validatePatientExisitParams($post) . $errCode;
 
         if(array_key_exists("mrn", $post)) {
-            if(preg_match($pattern, $post["mrn"])) {
+            if(preg_match(REGEX_MRN, $post["mrn"])) {
                 $mrn = str_pad($post["mrn"], 7, "0", STR_PAD_LEFT);
                 $response['status'] = "Success";
                 $errCode = "0" . $errCode;
@@ -617,9 +615,6 @@ class Patient extends Module {
      * @return $errCode
      */
     protected function _validatePatientParams($post) {
-        $validLang = PATIENT_LANGUAGE_ARRAY;
-        $validGender = PATIENT_SEX_ARRAY;
-        $pattern = REGEX_MRN;
         $errCode = "";
 
         if(!array_key_exists("mrns", $post) || $post["mrns"] == "" || count($post["mrns"]) <= 0)
@@ -627,7 +622,7 @@ class Patient extends Module {
         else {
             $invalidValue = false;
             foreach ($post["mrns"] as $identifier) {
-                $invalidValue = !preg_match($pattern, $identifier["mrn"]);
+                $invalidValue = !preg_match(REGEX_MRN, $identifier["mrn"]);
             }
 
             if($invalidValue) {
@@ -653,14 +648,14 @@ class Patient extends Module {
             $errCode = "0" . $errCode;
 
         if(array_key_exists("language", $post)) {
-            if(!in_array($post["language"], $validLang))
+            if(!in_array($post["language"], PATIENT_LANGUAGE_ARRAY))
                 $errCode = "1" . $errCode;
             else
                 $errCode = "0" . $errCode;
         }
 
         if(array_key_exists("gender", $post)) {
-            if($post["gender"] != null && !in_array($post["gender"], $validGender))
+            if($post["gender"] != null && !in_array($post["gender"], PATIENT_SEX_ARRAY))
                 $errCode = "1" . $errCode;
             else
                 $errCode = "0" . $errCode;
@@ -843,7 +838,11 @@ class Patient extends Module {
 
         if(count($toBeInsertPatientIds) > 0) {
             while(($identifier = array_shift($toBeInsertPatientIds)) !== NULL) {
-                $this->opalDB->updatePatientLink($identifier);
+                if (!empty($identifier["Patient_Hospital_Identifier_Id"])) {
+                    $this->opalDB->updatePatientLink($identifier);
+                } else {
+                    $this->opalDB->insertPatientLink($identifier);
+                }
             }
         }
 
@@ -918,8 +917,7 @@ class Patient extends Module {
      * @return int - number of row modified
      */
     public function updatePatientPassword($post) {
-        $post2 = [];
-        $post2["uid"] = $post["uid"];
+        $post2 = $post;
         $post2["password"] = "PASSWORD HIDDEN";
 
         $this->checkWriteAccess($post2);
@@ -979,11 +977,8 @@ class Patient extends Module {
      * @return int - number of row modified
      */
     public function updatePatientSecurityAnswer($post) {
-        $post2 = [];
-        $post2["QuestionSerNum"] = $post["QuestionSerNum"];
+        $post2 = $post;
         $post2["Answer"] = "ANSWER HIDDEN";
-        $post2["PatientSerNum"] = $post["PatientSerNum"];
-        $post2["OldQuestionSerNum"] = $post["OldQuestionSerNum"];
 
         $this->checkWriteAccess($post2);
         $post = HelpSetup::arraySanitization($post);
@@ -1204,8 +1199,7 @@ class Patient extends Module {
      * @throws Exception
      */
     public function updateExternalPassword($post) {
-        $post2 = [];
-        $post2["uid"] = $post["uid"];
+        $post2 = $post;
         $post2["password"] = "PASSWORD HIDDEN";
 
         $this->checkWriteAccess($post2);

@@ -2842,8 +2842,6 @@ class DatabaseOpal extends DatabaseAccess {
         return $results;
     }
 
-
-
     /**
      * Update specific patient demographic information
      * @params $toUpdate - array of demographics fields to be update
@@ -2857,20 +2855,24 @@ class DatabaseOpal extends DatabaseAccess {
 
     /**
      * Update patient identifiers list
-     * @params $toUpdate - array of identifier information
+     * @params $identifier - identifier information
      *
      * @return void
      */
     function updatePatientLink($identifier) {
-
-        if (!empty($identifier["Patient_Hospital_Identifier_Id"])){
-            $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT_HOSPITAL_IDENTIFIER,$identifier);
-        } else {
-            $this->_insertRecordIntoTable(OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE,$identifier);
-        }
-        return ;
+        $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT_HOSPITAL_IDENTIFIER,$identifier);
     }
 
+    /**
+     * Update patient identifiers list
+     * @params $identifier - identifier information
+     *
+     * @return void
+     */
+
+    function insertPatientLink($identifier) {
+        $this->_insertRecordIntoTable(OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE,$identifier);
+    }
 
     /*
      * Get the list of all undeleted master diagnoses
