@@ -47,6 +47,7 @@ angular.module('opalAdmin.controllers.update.accessLevel', ['ngAnimate', 'ui.boo
 					$scope.$parent.bannerMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.ACCESS_LEVEL.ERROR');
 				},
 				complete: function () {
+					$scope.showBanner();
 					$uibModalInstance.close();
 				}
 			});
