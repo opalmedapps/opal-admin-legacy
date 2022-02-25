@@ -2,6 +2,16 @@
 
 OpalAdmin is the administrative tool for managing and tagging personal health information that is published to Opal. 
 
+## Using Docker
+
+This project contains a `Dockerfile` as well as a `docker-compose.yml` to run it within a Docker container. To do so, call `docker-compose up` from the project's root. Once the image is built and the container running, you can access it via `http://localhost:8082` from your browser.
+
+In order to access the database running on your machine (whether in a container or not) you need to change the host in your `config.json` to `host.docker.internal` (macOS and Windows).
+
+If port `8082` is already in use, change the port mapping in `docker-compose.yml`.
+
+To force a re-build of the image. You may call `docker-compose build` before running or `docker-compose up --build` to force a re-build when running the container.
+
 ## Prerequisites
 
 For opalAdmin to work, a Linux-based operating system with a local web server, MySQL, PHP (> 5.3, < 7), and perl are required.
@@ -101,30 +111,6 @@ You should be able to access data. Visit Tasks/Appts/Docs page and click on the 
 ## Editing Modules
 
 This project comes with pre-configured ARIA database queries to fetch the necessary clinical information. MosaiQ, however, is not set up. Thus, there are several manual configurations involved to fully set up another clinical database other than ARIA. 
-
-## Troubleshooting Installation Errors
-
- * First verify the integrity of your databases. It is a common issue with importing MySQL databases that capital letters get converted to lowercase. Table names in OpalDB and QuestionnaireDB should usually be capitalized. To fix this issue, drop your current copies of opaldb and questionnairedb, then go into your MySQL my.ini file (accesible through the XAMPP control panel if you can't find it). Scroll down to the [mysqld] code block and add 
-```
-lower_case_table_names = 2
-```
-then re-import your databases and verify that they are correctly capitalized. Database names and Table names should be Capitalized. Refresh your server and try again.
-
-* Check what branch you are on. When you first clone the repo, you will be in master by default. If so...
-
-```
-git fetch
-
-git pull
-
-git checkout staging
-```
-
-* Check what ports your server is listening on, and verify the ports you want to use are free using the Netstat tool.
-
-* Connect to your localhost using https, even if your web browser throws exceptions. There are security settings within opalAdmin that will require you to attempt a connection using https. Connect to https://localhost/opalAdmin/#/ instead of localhost/opalAdmin/#/ . Your browser might throw a security exception. Just click advanced > proceed anyway. 
-
-* If you are getting a 401 error from opalAdmin, then your database does not have the standard admin / 123456 login credentials. Try '1234' as the password, or ask a member of opal for help. They might try sending you their copy of OpalDB and let you use their login credentials for now.
 
 ## Troubleshooting Installation Errors
 

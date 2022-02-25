@@ -20,13 +20,11 @@ define("SQL_OPAL_LIST_QUESTIONNAIRES_FROM_QUESTIONNAIRE_CONTROL",
 
 define("SQL_OPAL_GET_PUBLISHED_QUESTIONNAIRES",
     "SELECT DISTINCT
-    qc.QuestionnaireControlSerNum AS serial,
-    qc.QuestionnaireDBSerNum AS db_serial,
+    qc.QuestionnaireControlSerNum AS ID,
     qc.QuestionnaireName_EN AS name_EN,
-    qc.QuestionnaireName_FR AS name_FR,
-    qc.PublishFlag AS publish,
-    0 AS changed
-    FROM ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." qc;"
+    qc.QuestionnaireName_FR AS name_FR
+    FROM ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." qc
+    WHERE qc.PublishFlag = 1;"
 );
 
 define("SQL_OPAL_GET_FILTERS_BY_CONTROL_TABLE_SERNUM",
@@ -1490,7 +1488,7 @@ define("OPAL_GET_ALIASES","
 ");
 
 define("OPAL_GET_ALIASES_UNPUBLISHED_EXPRESSION","
-    SELECT ae.ExpressionName AS id, ae.Description AS description, m.externalId, 1 AS added FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae
+    SELECT ae.masterSourceAliasId, ae.ExpressionName AS id, ae.Description AS description, m.externalId, 1 AS added FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae
     LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m ON m.ID = ae.masterSourceAliasId
     RIGHT JOIN ".OPAL_ALIAS_TABLE." al ON al.AliasSerNum = ae.AliasSerNum
     WHERE ae.AliasSerNum = :AliasSerNum
@@ -1548,21 +1546,34 @@ define("OPAL_GET_SOURCE_DATABASES","
     WHERE Enabled = ".ACTIVE_RECORD." ORDER BY SourceDatabaseSerNum
 ");
 
-define("OPAL_GET_ARIA_SOURCE_ALIASES","
-    SELECT m.ID AS masterSourceAliasId, m.description AS name, m.code AS id, m.description, m.externalId, a.AliasName_EN AS assigned
-    FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m
-    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = m.ID
-    LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
-    WHERE m.type = :type AND m.source = :source
-    AND CASE
-        WHEN a.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
-        WHEN a.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." app WHERE app.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
-        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
-    END
-    AND m.deleted = ".NON_DELETED_RECORD." ORDER BY m.code");
+//define("OPAL_GET_ARIA_SOURCE_ALIASES","
+//    SELECT m.ID AS masterSourceAliasId, m.description AS name, m.code AS id, m.description, m.externalId, a.AliasName_EN AS assigned
+//    FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m
+//    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = m.ID
+//    LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
+//    WHERE m.type = :type AND m.source = :source
+//    AND CASE
+//        WHEN a.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+//        WHEN a.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." app WHERE app.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+//        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+//    END
+//    AND m.deleted = ".NON_DELETED_RECORD." ORDER BY m.code");
+
+//define("OPAL_GET_SOURCE_ALIASES","
+//    SELECT m.ID AS masterSourceAliasId, CONCAT(m.code, ' (', m.description, ')') AS name, m.code AS id, m.description, m.externalId,
+//    a.AliasName_EN AS assigned FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m
+//    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = m.ID
+//    LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
+//    WHERE m.type = :type AND m.source = :source
+//    AND CASE
+//        WHEN a.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+//        WHEN a.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." app WHERE app.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+//        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+//    END
+//    AND m.deleted = ".NON_DELETED_RECORD." ORDER BY m.code");
 
 define("OPAL_GET_SOURCE_ALIASES","
-    SELECT m.ID AS masterSourceAliasId, CONCAT(m.code, ' (', m.description, ')') AS name, m.code AS id, m.description, m.externalId, 
+    SELECT m.ID AS masterSourceAliasId, m.code AS id, m.description, m.externalId, 
     a.AliasName_EN AS assigned FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m
     LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = m.ID
     LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
@@ -1684,7 +1695,7 @@ define("OPAL_GET_ALIAS_EXPRESSION","
     WHERE A.AliasSerNum = AE.AliasSerNum
     AND A.AliasType = :AliasType
     AND AE.ExpressionName = :ExpressionName
-    AND AE.Description = :Description;
+    AND AE.Description LIKE :Description;
 ");
 
 define("OPAL_DELETE_ALIAS_EXPRESSIONS","
@@ -1928,6 +1939,132 @@ const OPAL_GET_PATIENT_ACCESS_LEVEL = "
 SELECT pt.Accesslevel
 FROM " . OPAL_PATIENT_TABLE . " pt WHERE pt.PatientSerNum = :PatientSer;";
 
+const OPAL_GET_ALIAS_EXPRESSION_DETAIL = "
+SELECT ExpressionName, Description,
+    AliasType, AliasName_FR, AliasName_EN,
+    AliasDescription_FR, AliasDescription_EN
+FROM ".OPAL_ALIAS_EXPRESSION_TABLE." AE, ". OPAL_ALIAS_TABLE." A
+WHERE AE.AliasExpressionSerNum = :AliasExpressionSerNum
+AND AE.AliasSerNum = A.AliasSerNum;";
+
+
+const OPAL_GET_STAFF_DETAIL = "
+    SELECT StaffSerNum, FirstName, LastName, LastUpdated
+     FROM ".OPAL_STAFF_TABLE." WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum AND StaffId =:StaffId;
+";
+
+const OPAL_UPDATE_APPOINTMENT = "
+UPDATE " .OPAL_APPOINTMENTS_TABLE. " SET 
+AliasExpressionSerNum = :AliasExpressionSerNum,    
+SourceDatabaseSerNum = :SourceDatabaseSerNum,
+AppointmentAriaSer = :AppointmentAriaSer ,
+PrioritySerNum = :PrioritySerNum,
+DiagnosisSerNum = :DiagnosisSerNum,
+Status = :Status,
+State = :State,
+ScheduledStartTime = :ScheduledStartTime,
+ScheduledEndTime = :ScheduledEndTime,
+ActualStartDate = :ActualStartDate,
+ActualEndDate = :ActualEndDate,
+Location = :Location,
+RoomLocation_EN = :RoomLocation_EN,
+RoomLocation_FR = :RoomLocation_FR,
+Checkin = :Checkin,
+ChangeRequest = :ChangeRequest,
+DateAdded = :DateAdded,
+ReadStatus = :ReadStatus,
+SessionId = :SessionId
+WHERE    AppointmentSerNum = :AppointmentSerNum AND PatientSerNum = :PatientSerNum;
+";
+
+const OPAL_UPDATE_DOCUMENT =
+"
+UPDATE " .OPAL_DOCUMENT_TABLE." SET
+SourceDatabaseSerNum = :SourceDatabaseSerNum,
+DocumentId = :DocumentId,          
+AliasExpressionSerNum = :AliasExpressionSerNum,
+ApprovedBySerNum = :ApprovedBySerNum,     
+ApprovedTimeStamp = :ApprovedTimeStamp,   
+AuthoredBySerNum = :AuthoredBySerNum,   
+DateOfService = :DateOfService,        
+Revised = :Revised,              
+ValidEntry = :ValidEntry,           
+ErrorReasonText = :ErrorReasonText,      
+OriginalFileName = :OriginalFileName,     
+FinalFileName = :FinalFileName,        
+CreatedBySerNum = :CreatedBySerNum,      
+CreatedTimeStamp = :CreatedTimeStamp,     
+TransferStatus = :TransferStatus,       
+TransferLog = :TransferLog,          
+ReadStatus = :ReadStatus,           
+SessionId = :SessionId,            
+DateAdded = :DateAdded,
+LastUpdated = :LastUpdated
+WHERE DocumentSerNum = :DocumentSerNum AND PatientSerNum = :PatientSerNum;
+";
+
+const OPAL_GET_DOCTOR_RESOURCE = "
+    SELECT ResourceSerNum,SourceDatabaseSerNum,ResourceAriaSer,ResourceCode,ResourceName,ResourceType
+     FROM ".OPAL_RESOURCE_TABLE." WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum 
+     AND (ResourceAriaSer =:ResourceId OR ResourceCode = :ResourceId);
+";
+
+const OPAL_GET_DOCTOR = " 
+SELECT DoctorSerNum,ResourceSerNum,SourceDatabaseSerNum,DoctorAriaSer,FirstName,LastName,
+Role,Workplace,Email,Phone,Address,ProfileImage,BIO_EN,BIO_FR
+FROM ".OPAL_DOCTOR_TABLE."  WHERE ResourceSernum = :ResourceId;
+";
+
+const OPAL_UPDATE_DOCTOR = "
+UPDATE " .OPAL_DOCTOR_TABLE." SET
+ResourceSerNum = :ResourceSerNum,
+SourceDatabaseSerNum = :SourceDatabaseSerNum,
+DoctorAriaSer = :DoctorAriaSer,
+FirstName = :FirstName,
+LastName = :LastName,
+Role = :Role,
+Workplace = :Workplace,
+Email = :Email,
+Phone = :Phone,
+Address = :Address,
+ProfileImage = :ProfileImage,
+BIO_EN = :BIO_EN,
+BIO_FR = :BIO_FR
+WHERE DoctorSerNum = :DoctorSerNum;
+";
+
+const OPAL_UPDATE_DOCTOR_RESOURCE = "
+    UPDATE ".OPAL_RESOURCE_TABLE." SET ResourceName = :ResourceName, ResourceCode = :ResourceCode, ResourceType = :ResourceType WHERE
+    ResourceSerNum = :ResourceSerNum;
+";
+
+
+const OPAL_GET_PATIENT_DOCTOR = " 
+SELECT PatientDoctorSerNum, PatientSerNum, DoctorSerNum, OncologistFlag, PrimaryFlag 
+FROM ".OPAL_PATIENT_DOCTOR_TABLE."  WHERE DoctorSerNum = :DoctorSerNum AND PatientSerNum = :PatientSerNum;
+";
+
+const OPAL_UPDATE_PATIENT_DOCTOR = "
+UPDATE " .OPAL_PATIENT_DOCTOR_TABLE." SET
+OncologistFlag = :OncologistFlag,
+PrimaryFlag = :PrimaryFlag
+WHERE PatientDoctorSerNum = :PatientDoctorSerNum;
+";
+
+const OPAL_GET_STAFF = " 
+SELECT StaffSerNum,SourceDatabaseSerNum,StaffId,FirstName,LastName,LastUpdated
+FROM ".OPAL_STAFF_TABLE."  WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum AND StaffId = :StaffId;
+";
+
+const OPAL_UPDATE_STAFF = "
+UPDATE " .OPAL_STAFF_TABLE." SET
+FirstName = :FirstName,
+LastName = :LastName,
+LastUpdated = :LastUpdated
+WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum
+AND StaffId = :StaffId;
+";
+
 const OPAL_UPDATE_PATIENT_EMAIL = "
 UPDATE " . OPAL_PATIENT_TABLE . " pt
 SET pt.Email = :Email WHERE pt.PatientSerNum = :PatientSer;";
@@ -1959,3 +2096,4 @@ FROM " . OPAL_ACCESS_LEVEL_TABLE ;
 
 const OPAL_GET_PATIENT_BY_SERIAL_NUMBER = "
 SELECT * FROM " . OPAL_PATIENT_TABLE . " where PatientSerNum = :PatientSer;";
+

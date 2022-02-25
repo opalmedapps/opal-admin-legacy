@@ -57,9 +57,10 @@ class CronJob extends OpalProject {
      */
     public function updateResourcePending() {
         $this->_checkCronAccess();
-        $this->opalDB->updateResourcePendingLevelInProcess();
-
+        $out=$this->opalDB->updateResourcePendingLevelInProcess();
+        
         $resourcePending = $this->opalDB->getOldestResourcePendingInProcess();
+        
         $startTime = time();
         while(count($resourcePending) > 0 && (time() - $startTime) < 29) {
             $resourcePending = $resourcePending[0];
@@ -138,14 +139,25 @@ class CronJob extends OpalProject {
      * Update appointment in appointmentPending table.
      */
     public function updateAppointmentPending(){
+        $this->_checkCronAccess();
+        $replacementMap = array();
         $appointmentPendingList = $this->opalDB->getOldestAppointmentPendingInProcess();
         $startTime = time();
+                
         while(count($appointmentPendingList) > 0 && (time() - $startTime) < 29) {
+            $today = strtotime(date("Y-m-d H:i:s"));
             $appointmentPending = array_shift($appointmentPendingList);
             $appointmentPending["SourceDatabaseSerNum"] = $this->opalDB->getSourceId($appointmentPending["sourceName"])[0]['ID'];
-
+            $SStartDateTime = strtotime($appointmentPending["ScheduledStartTime"]);
             $aliasInfos = $this->opalDB->getAlias('Appointment',$appointmentPending['appointmentTypeCode'], $appointmentPending['appointmentTypeDescription']);
-            if(count($aliasInfos) == 1) {
+            $countAlias = count($aliasInfos);
+            $toPublish = 0;
+            if($countAlias == 1) {
+                $toPublish = $aliasInfos[0]['AliasUpdate'];
+            }
+            
+            if($countAlias == 1 && $toPublish == 1) {
+
                 unset($appointmentPending["Level"]);
                 unset($appointmentPending["updatedBy"]);
                 unset($appointmentPending["sourceName"]);
@@ -154,9 +166,21 @@ class CronJob extends OpalProject {
                 unset($appointmentPending["appointmentTypeDescription"]);
                 $appointmentPending["AliasExpressionSerNum"] = $aliasInfos[0]['AliasExpressionSerNum'];
                 
+                $action = 'AppointmentNew';                    
+                setlocale(LC_TIME, 'fr_CA');                                        
+                $replacementMap["\$newAppointmentDateFR"] =  strftime('%A %d %B %Y', $SStartDateTime);
+                $replacementMap["\$newAppointmentTimeFR"] =  strftime('%R', $SStartDateTime);
+                setlocale(LC_TIME, 'en_CA');
+                $replacementMap["\$newAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $SStartDateTime);
+                $replacementMap["\$newAppointmentTimeEN"] =  strftime('%l:%M %p', $SStartDateTime);
+
                 $this->opalDB->deleteAppointmentPending($appointmentPending["ID"]);
                 unset($appointmentPending["ID"]);
-                $this->opalDB->insertAppointment($appointmentPending);
+                $sourceId = $this->opalDB->insertAppointment($appointmentPending);
+                
+                if ($SStartDateTime >= $today) {
+                    $this->_notifyChange($appointmentPending, $action, $replacementMap,$sourceId);
+                }                
             }
         }
     }

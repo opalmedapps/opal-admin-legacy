@@ -1,22 +1,30 @@
 <?php
 
 /**
- * Document class
- *
+ * TriggerDocument class
  */
 
-class Document extends Module
+class TriggerDocument extends Trigger
 {
-    public function __construct($guestStatus = false)
-    {
-        parent::__construct(MODULE_TRIGGER, $guestStatus);
-    }
 
+    /**
+     * Validate the input parameters for patient document
+     * Validation code :     
+     *                      1st bit invalid or missing MRN
+     *                      2nd bit invalid or missing Site
+     *                      3rd bit Identifier MRN-site-patient does not exists
+     *                      4th bit invalid or missing source system
+     *
+     * @param array<mixed> $post (Reference) - document parameters
+     * @param array<mixed> &$patientSite (Reference) - patient parameters
+     * @param array<mixed> &$source (Reference) - source parameters
+     * @return string $errCode - error code.
+     */
     protected function _validateDocumentSourceExternalId(&$post, &$patientSite, &$source)  {
         $patientSite = array();
         $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
                 
-        // 4th bit - source
+        // 1st bit - source system
         if(!array_key_exists("sourceSystem", $post) || $post["sourceSystem"] == "") {
             $errCode = "1" . $errCode;
         } else {
@@ -33,6 +41,30 @@ class Document extends Module
         return $errCode;
     }
 
+    /**
+     * Validate the input parameters for individual patient document
+     * Validation code :     
+     *                       1st bit invalid or missing MRN
+     *                       2nd bit invalid or missing Site
+     *                       3rd bit Identifier MRN-site-patient does not exists
+     *                       4th bit invalid or missing source system
+     *                       5th bit invalid or missing document ID
+     *                       6th bit invalid or missing approval user (staff) ID
+     *                       7th bit invalid or missing approval date time
+     *                       8th bit invalid or missing author user (staff) ID 
+     *                       9th bit invalid or missing note description
+     *                      10th bit invalid or missing note date time
+     *                      11th bit invalid or missing revised flag
+     *                      12th bit invalid or missing valid entry flag
+     *                      13th bit invalid or missing file name
+     *                      14th bit invalid or missing creator user (staff) ID
+     *                      15th bit invalid or missing create date time 
+     *
+     * @param array<mixed> $post (Reference) - docuement parameters
+     * @param array<mixed> &$patientSite (Reference) - patient parameters
+     * @param array<mixed> &$source (Reference) - source parameters
+     * @return string $errCode - error code.
+     */    
     protected function _validateInsertDocument(&$post, &$patientSite, &$source) {
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateDocumentSourceExternalId($post, $patientSite, $source);
@@ -126,7 +158,13 @@ class Document extends Module
         return $errCode;
     }
 
+    /** 
+     * This function insert or update a document informations after its validation.
+     * @param  $post : array - details of document information to insert/update.
+     * @return  void
+     */
     protected function _insertDocument($post){
+        $yesterday = strtotime(date("Y-m-d H:i:s",strtotime("-1 hours")));
         $patientSite = null;
         $source = null;        
         $errCode = $this->_validateInsertDocument($post, $patientSite, $source);
@@ -134,21 +172,22 @@ class Document extends Module
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
            
-        $doc = $this->opalDB->getDocument($source["SourceDatabaseSerNum"], $post["documentId"]);        
+        $doc = $this->opalDB->getDocument($source["SourceDatabaseSerNum"], $post["documentId"]);    
+        $countDoc = count($doc);    
         $toInsert = array(
             "PatientSerNum" => $patientSite["PatientSerNum"],
             "SourceDatabaseSerNum" => $source["SourceDatabaseSerNum"],
             "DocumentId" => $post["documentId"],
-            "ApprovedBySerNum" => $post["appovalUserId"],
+            "ApprovedBySerNum" => $this->opalDB->getStaffDetail($source["SourceDatabaseSerNum"],$post["appovalUserId"])["StaffSerNum"],
             "ApprovedTimeStamp" => $post["approvalDatetime"],
-            "AuthoredBySerNum" => $post["authorUserId"],
+            "AuthoredBySerNum" => $this->opalDB->getStaffDetail($source["SourceDatabaseSerNum"],$post["authorUserId"])["StaffSerNum"],
             "DateOfService" => $post["noteDatetime"],
             "Revised" => $post["revised"],
             "ValidEntry" => $post["validEntry"],
             "ErrorReasonText" => $post["errorMessage"],
             "OriginalFileName" => $post["fileName"],
             "FinalFileName" => $post["fileName"],
-            "CreatedBySerNum" => $post["creationUserId"],
+            "CreatedBySerNum" => $this->opalDB->getStaffDetail($source["SourceDatabaseSerNum"],$post["creationUserId"])["StaffSerNum"],
             "CreatedTimeStamp" => $post["creationDatetime"],
             "TransferStatus" => "T",
             "TransferLog" => "Transfert Api",
@@ -157,30 +196,38 @@ class Document extends Module
             "SessionId" => $this->opalDB->getSessionId()
         );
 
-        $aliasInfos = $this->opalDB->getAlias('Document',$post['noteDescription'], $post['noteDescription']);        
-        if(count($aliasInfos) == 1) {            
+        $aliasInfos = $this->opalDB->getAlias('Document',$post['noteDescription'], $post['noteDescription']);
+        $countAlias = count($aliasInfos);
+        if($countAlias == 1) {            
             $toInsert["AliasExpressionSerNum"] = $aliasInfos[0]["AliasExpressionSerNum"];
         }
 
-        if (count($doc) == 0) {
+        if ($countDoc == 0) {
             $toInsert["DateAdded"] = date("Y-m-d H:i:s");
             $action = "Document";
             $id = $this->opalDB->insertDocument($toInsert);
             $toInsert["DocumentSerNum"] = $id;
         } else {
             $action = "UpdDocument";
-            $toInsert["DocumentSerNum"] = $doc[0]["DocumentSerNum"];
-            $toInsert["DateAdded"]      = $doc[0]["DateAdded"];
+            $doc["ApprovedBySerNum"] = $this->opalDB->getStaffDetail($source["SourceDatabaseSerNum"],$post["appovalUserId"])["StaffSerNum"];
+            $doc["ApprovedTimeStamp"] = $post["approvalDatetime"];
+            $doc["AuthoredBySerNum"] = $this->opalDB->getStaffDetail($source["SourceDatabaseSerNum"],$post["authorUserId"])["StaffSerNum"];
+            $doc["Revised"] = $post["revised"];
+            $doc["ValidEntry"] = $post["validEntry"];
+            $doc["AliasExpressionSerNum"] = $aliasInfos[0]["AliasExpressionSerNum"];
+            $doc["ErrorReasonText"] = $post["errorMessage"];
+            $doc["LastUpdated"] = $post["modifiedDatetime"];
+            $doc["SessionId"] = $this->opalDB->getSessionId();            
             $this->opalDB->updateDocument($toInsert);
         }
         
         $patientAccessLevel = $this->opalDB->getPatientAccessLevel($patientSite["PatientSerNum"]);
-        
-        if(array_key_exists("Accesslevel", $patientAccessLevel) && $patientAccessLevel["Accesslevel"] == 3){            
-            $this->_notifyDocumentChange($toInsert,$action);
+        $modifyDatetime = strtotime($post["modifiedDatetime"]);
+        if(array_key_exists("Accesslevel", $patientAccessLevel) && $patientAccessLevel["Accesslevel"] == 3 && $modifyDatetime >= $yesterday){            
+            $this->_notifyChange($toInsert,$action,array(),$toInsert["DocumentSerNum"]);
         }
         
-        if ($post["validEntry"] == "Y"  && array_key_exists("documentString", $post) && $post["documentString"] != "")  {
+        if (array_key_exists("documentString", $post) && $post["documentString"] != "")  {
             $filename = basename($post["fileName"]);
             $output_file = CLINICAL_DOC_PATH . $filename;
             $ifp = fopen ( $output_file, "w+") or die("Unable to open file!");
@@ -188,66 +235,17 @@ class Document extends Module
             fwrite ( $ifp, base64_decode( $data[0] ) );
             chmod($output_file, 0755);
             fclose( $ifp );
-        }        
+        }
     }
-    /*
+
+    /** 
      * Insert a new document after validation.
-     * @params  $post - array - contains document details
-     * @return  200 or error 400 with validation error
-     * */
+     * @param  $post - array - contains document details
+     * @return void
+     */
     public function insertDocument($post) {
         $this->checkWriteAccess($post);        
         $post = HelpSetup::arraySanitization($post);
-        return $this->_insertDocument($post);
-    }
-
-    protected function _notifyDocumentChange($data, $action){
-        $notificationControl = $this->opalDB->getNotificationControlDetails($data["PatientSerNum"],$action);
-        $controlser         = $notificationControl[0]["NotificationControlSerNum"];
-        $title              = $notificationControl[0]["Name"];
-        $message            = $notificationControl[0]["Message"];
-
-        $ptdIds = $this->opalDB->getPatientDeviceIdentifiers($data["PatientSerNum"]);       
-
-        if (count($ptdIds) == 0){
-            $toInsert = array( 
-                "SendStatus" => "W",
-                "SendLog" => "Patient has no device identifier! No push notification sent.",
-                "DateAdded" => date("Y-m-d H:i:s"),
-                "RefTableRowSerNum" => $data["DocumentSerNum"],
-                "NotificationControlSerNum" => $controlser,
-                "PatientSerNum"=>$data["PatientSerNum"],
-                "PatientDeviceIdentifierSerNum" => null
-            );            
-            $this->opalDB->insertPushNotification($toInsert);            
-        } else {
-            foreach($ptdIds as $ptdId) {
-                $ptdidser       = $ptdId["PatientDeviceIdentifierSerNum"];
-                $registrationId = $ptdId["RegistrationId"];
-                $deviceType     = $ptdId["DeviceType"];
-
-                $response = array("success" => 1);
-                $response = HospitalPushNotification::sendNotification($deviceType, $registrationId, $title, $message);                               
-                
-                if ($response["success"] == 1){
-                    $sendstatus = "T"; // successful
-                    $sendlog    = "Push notification successfully sent! Message: $message";
-                } else {
-                    $sendstatus = "F"; // failed
-                    $sendlog    = "Failed to send push notification! Message: " . $response['error'];
-                }
-
-                $toInsert = array( 
-                    "SendStatus" => $sendstatus,
-                    "SendLog" => $sendlog,
-                    "DateAdded" => date("Y-m-d H:i:s"),
-                    "RefTableRowSerNum" => $data["DocumentSerNum"],
-                    "NotificationControlSerNum" => $controlser,
-                    "PatientSerNum"=>$data["PatientSerNum"],
-                    "PatientDeviceIdentifierSerNum" => $ptdidser
-                );                
-                $this->opalDB->insertPushNotification($toInsert);
-            }
-        }
-    }
+        $this->_insertDocument($post);
+    }    
 }
