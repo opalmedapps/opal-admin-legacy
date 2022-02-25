@@ -2102,5 +2102,3 @@ FROM " . OPAL_ACCESS_LEVEL_TABLE ;
 
 const OPAL_GET_PATIENT_BY_SERIAL_NUMBER = "
 SELECT * FROM " . OPAL_PATIENT_TABLE . " where PatientSerNum = :PatientSer;";
-
-";
