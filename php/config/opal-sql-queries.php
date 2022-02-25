@@ -891,23 +891,27 @@ define("OPAL_DELETE_PATIENT_DIAGNOSIS","
 define("OPAL_GET_PATIENT_NAME", "
     SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
     CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
-    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang FROM ".OPAL_PATIENT_TABLE." WHERE LastName LIKE :name;
+    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang, 
+    (SELECT u.Username FROM Users u WHERE u.UserType = 'Patient' AND u.UserTypeSerNum = PatientSerNum LIMIT 1) AS puid 
+    FROM ".OPAL_PATIENT_TABLE." WHERE LastName LIKE :name;
 
 ");
 
 define("OPAL_GET_PATIENT_MRN", "
     SELECT p.PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(p.FirstName, 1, 1)), LOWER(SUBSTRING(p.FirstName, 2))) AS pname,
     CONCAT(UCASE(SUBSTRING(p.LastName, 1, 1)), LOWER(SUBSTRING(p.LastName, 2))) AS plname,
-    p.SSN AS pramq, p.Sex AS psex, p.Email AS pemail, p.Language AS plang FROM ".OPAL_PATIENT_TABLE." p
-    WHERE (SELECT COUNT(*) FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi WHERE phi.MRN LIKE :MRN
+    p.SSN AS pramq, p.Sex AS psex, p.Email AS pemail, p.Language AS plang, 
+    (SELECT u.Username FROM Users u WHERE u.UserType = 'Patient' AND u.UserTypeSerNum = PatientSerNum LIMIT 1) AS puid  
+    FROM ".OPAL_PATIENT_TABLE." p WHERE (SELECT COUNT(*) FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi WHERE phi.MRN LIKE :MRN
     AND phi.PatientSerNum = p.PatientSerNum) > 0;
 ");
 
 define("OPAL_GET_PATIENT_RAMQ", "
     SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
     CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
-    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :SSN;
-
+    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang, 
+    (SELECT u.Username FROM Users u WHERE u.UserType = 'Patient' AND u.UserTypeSerNum = PatientSerNum LIMIT 1) AS puid 
+    FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :SSN;
 ");
 
 define("OPAL_GET_DIAGNOSIS_REPORT", "
@@ -2066,3 +2070,35 @@ SELECT COUNT(*) AS total FROM " . OPAL_RESOURCE_TABLE . "
 WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum 
 AND ResourceCode = :ResourceCode;
 ";
+
+const OPAL_UPDATE_PATIENT_EMAIL = "
+UPDATE " . OPAL_PATIENT_TABLE . " pt
+SET pt.Email = :Email WHERE pt.PatientSerNum = :PatientSer;";
+
+const OPAL_UPDATE_PATIENT_PASSWORD = "
+UPDATE " . OPAL_USERS_TABLE . " ut
+SET ut.Password = :Password  WHERE ut.username = :Username;";
+
+const OPAL_INSERT_SECURITY_ANSWER = "
+UPDATE " . OPAL_SECURITY_ANSWER_TABLE . " sa
+SET sa.SecurityQuestionSerNum = :QuestionSer, sa.AnswerText = :Answer
+WHERE sa.PatientSerNum = :PatientSer AND sa.SecurityQuestionSerNum = :OldQuestionSer";
+
+const OPAL_UPDATE_PATIENT_ACCESS_LEVEL = "
+UPDATE " . OPAL_PATIENT_TABLE . " pt
+SET pt.Accesslevel = :AccessLevel WHERE pt.PatientSerNum = :PatientSer;";
+
+const OPAL_GET_ALL_SECURITY_QUESTIONS = "
+SELECT SecurityQuestionSerNum, QuestionText_EN, QuestionText_FR 
+FROM " . OPAL_SECURITY_QUESTION_TABLE . " WHERE Active = " . ACTIVE_RECORD . ";";
+
+const OPAL_GET_PATIENT_SECURITY_QUESTIONS = "
+SELECT SecurityQuestionSerNum
+FROM " . OPAL_SECURITY_ANSWER_TABLE . " WHERE PatientSerNum = :PatientSer;";
+
+const OPAL_GET_ALL_ACCESS_LEVEL = "
+SELECT Id, AccessLevelName_EN, AccessLevelName_FR 
+FROM " . OPAL_ACCESS_LEVEL_TABLE ;
+
+const OPAL_GET_PATIENT_BY_SERIAL_NUMBER = "
+SELECT * FROM " . OPAL_PATIENT_TABLE . " where PatientSerNum = :PatientSer;";

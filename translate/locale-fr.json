@@ -2676,6 +2676,8 @@
       "SUB_TITLE": "Outils pour patients",
       "REGISTRATION": "Enregistrement patient",
       "REGISTRATION_SUB": "Enregistrer un patient pour Opal.",
+      "MODIFICATION_TOOLS": "Administration des patients",
+      "MODIFICATION_TOOLS_SUB": "Modifier les informations du compte patient",
       "BACK": "Retour"
     },
     "LIST": {
@@ -2892,6 +2894,93 @@
         "PAT_MAL": "Patients de sexe masculin",
         "TOT_REG": "Nombre total d'enregistrements",
         "TIME": "Heure"
+      }
+    },
+    "MODIFICATION_TOOLS": {
+      "TITLE": "Administration des patients",
+      "DESCRIPTION": "Modifier les informations du compte patient",
+      "MENU": {
+        "TITLE": "Administration des patients",
+        "PSEARCH": "Recherche du patient :",
+        "PNAME": "Nom de famille du patient",
+        "PRAMQ": "RAMQ du patient",
+        "PMRN": "MRN du patient",
+        "SUBMIT": "Soumettre",
+        "RESET": "Réinitialiser",
+        "MULTIPLE": "Plusieurs patients ont été trouvés correspondant aux critères de recherche, veuillez sélectionner :",
+        "NONE": "Aucun patient ne correspond aux critères, veuillez réessayer",
+        "LAST": "Nom de famille",
+        "FIRST": "Prénom",
+        "SEX": "Sexe",
+        "SERIAL": "Numéro de série du patient",
+        "EMAIL": "Courriel",
+        "RAMQ": "RAMQ",
+        "LANG": "Langue de l'application Opal",
+        "OPTIONS": "Options",
+        "UPDATE_EMAIL": "Changer le courriel du patient",
+        "UPDATE_PASSWORD": "Changer le mot de passe du patient",
+        "UPDATE_ACCESS_LEVEL": "Changer le niveau d'accès des patients",
+        "UPDATE_SECURITY_QUESTION": "Réinitialiser les questions de sécurité des patients"
+      },
+      "EMAIL": {
+        "TITLE": "Changer le courriel du patient",
+        "DESCRIPTION": "changer le courriel du compte utilisateur",
+        "NEW_EMAIL": "Nouveau courriel :",
+        "EMAIL_CONFIRMED": "Confirmer le nouveau courriel :",
+        "EMAIL_NOT_SAME": "Le courriel et la confirmation du courriel doivent correspondre.",
+        "EMAIL_NOT_VALID": "Le courriel n'est pas valide, veuillez réessayer",
+        "SUBMIT": "Soumettre",
+        "CANCEL": "Annuler",
+        "ERROR": "Une erreur s'est produite lors du changement d'e-mail."
+      },
+      "PASSWORD": {
+        "TITLE": "Changer le mot de passe du patient",
+        "DESCRIPTION": "changer le mot de passe du compte utilisateur",
+        "NEW_PASSWORD": "Nouveau mot de passe :",
+        "PASSWORD_CONFIRMED": "Confirmer le nouveau mot de passe :",
+        "PASSWORD_NOT_SAME": "Le mot de passe et la confirmation du mot de passe doivent correspondre.",
+        "PASSWORD_MISSING_CHARACTER": "Votre mot de passe doit comporter au moins 8 caractères et doit contenir au moins un chiffre, une majuscule, une minuscule et un caractère spécial.",
+        "PASSWORD_TOO_SHORT": "Votre mot de passe est trop court",
+        "SUBMIT": "Soumettre",
+        "CANCEL": "Annuler",
+        "ERROR": "Une erreur s'est produite lors du changement du mot de passe."
+      },
+      "ACCESS_LEVEL": {
+        "TITLE": "Changer le niveau d'accès des patients",
+        "DESCRIPTION": "changer le niveau d'accès du compte utilisateur",
+        "CURRENT_LEVEL": "Niveau d'accès actuel :",
+        "CHOOSEN_LEVEL": "Choisissez parmi les suivants :",
+        "FULL_ACCESS": "Accès à tout",
+        "NEED_TO_KNOW": "Accès minimum",
+        "SUBMIT": "Soumettre",
+        "CANCEL": "Annuler",
+        "ERROR": "Une erreur s'est produite lors du changement du niveau d'accès."
+      },
+      "SECURITY_ANSWER": {
+        "TITLE": "Réinitialiser les questions de sécurité des patients",
+        "DESCRIPTION": "réinitialiser toutes les questions de sécurité du compte utilisateur",
+        "FIRST_QUESTION": "Première Question :",
+        "FIRST_ANSWER": "Réponse :",
+        "SECOND_QUESTION": "Deuxième Question :",
+        "SECOND_ANSWER": "Réponse :",
+        "THIRD_QUESTION": "Troisième Question :",
+        "THIRD_ANSWER": "Réponse :",
+        "ANSWER_TOO_SHORT": "Votre réponse de sécurité doit comporter au moins 3 caractères.",
+        "ANSWER_DUPLICATE": "Veuillez choisir une réponse différente.",
+        "ANSWER_MISSING": "Veuillez répondre à la question de sécurité.",
+        "SUBMIT": "Soumettre",
+        "CANCEL": "Annuler",
+        "ERROR": "Une erreur s'est produite lors du changement de la question de sécurité."
+      },
+      "VALIDATION": {
+        "EMAIL": "Courriel manquant",
+        "PASSWORD": "Mot de passe manquant",
+        "PATIENTSERNUM": "Numéro de série du patient manquant",
+        "USERID": "ID utilisateur du patient manquant",
+        "QUESTION": "Question de sécurité manquante",
+        "ANSWER": "Response de sécurité manquante",
+        "ACCESS_LEVEL": "Niveau d'accès manquant",
+        "QUESTION_OLD": "Question de sécurité origiinal manquante"
       }
     }
   },
