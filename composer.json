@@ -1,0 +1,7 @@
+{
+    "name": "integrator/opal-admin",
+    "description": "Libraries required for OpalAdmin",
+    "require": {
+        "kreait/firebase-php": "^5.22"
+    }
+}
