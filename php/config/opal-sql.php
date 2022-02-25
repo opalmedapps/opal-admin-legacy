@@ -117,6 +117,7 @@ define("OPAL_PATIENT_ACTIVITY_LOG_TABLE","PatientActivityLog");
 define("OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE", "PatientDeviceIdentifier");
 define("OPAL_APPOINTMENT_CHECK_IN_TABLE", "AppointmentCheckin");
 define("OPAL_PUSH_NOTIFICATION_TABLE", "PushNotification");
+define("OPAL_STAFF_TABLE", "Staff");
 define("OPAL_SECURITY_ANSWER_TABLE", "SecurityAnswer");
 define("OPAL_SECURITY_QUESTION_TABLE", "SecurityQuestion");
 define("OPAL_ACCESS_LEVEL_TABLE", "accesslevel");
@@ -126,6 +127,7 @@ define("OPAL_POST_PK","PostControlSerNum");
 define("OPAL_RESOURCE_PENDING_TABLE", "resourcePending");
 define("OPAL_RESOURCE_PENDING_ERROR_TABLE", "resourcePendingError");
 define("OPAL_RESOURCE_PENDING_MH_TABLE", "resourcePendingMH");
+define("OPAL_PATIENT_DOCTOR_TABLE", "PatientDoctor");
 
 // //Define Cronjob patient control table names
 // define("OPAL_CRON_CONTROL_PATIENT_DOCUMENT","cronControlPatient_Document");
