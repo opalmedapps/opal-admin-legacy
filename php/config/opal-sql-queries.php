@@ -2061,3 +2061,8 @@ WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum
 AND StaffId = :StaffId;
 ";
 
+const OPAL_GET_RESOURCE = "
+SELECT COUNT(*) AS total FROM " . OPAL_RESOURCE_TABLE . " 
+WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum 
+AND ResourceCode = :ResourceCode;
+";
