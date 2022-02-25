@@ -2065,6 +2065,12 @@ WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum
 AND StaffId = :StaffId;
 ";
 
+const OPAL_GET_RESOURCE = "
+SELECT COUNT(*) AS total FROM " . OPAL_RESOURCE_TABLE . " 
+WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum 
+AND ResourceCode = :ResourceCode;
+";
+
 const OPAL_UPDATE_PATIENT_EMAIL = "
 UPDATE " . OPAL_PATIENT_TABLE . " pt
 SET pt.Email = :Email WHERE pt.PatientSerNum = :PatientSer;";
@@ -2097,3 +2103,4 @@ FROM " . OPAL_ACCESS_LEVEL_TABLE ;
 const OPAL_GET_PATIENT_BY_SERIAL_NUMBER = "
 SELECT * FROM " . OPAL_PATIENT_TABLE . " where PatientSerNum = :PatientSer;";
 
+";
