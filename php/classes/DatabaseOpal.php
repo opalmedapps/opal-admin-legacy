@@ -3753,7 +3753,13 @@ class DatabaseOpal extends DatabaseAccess {
      * @return int - number of row modified
      */
     function updateResource($toUpdate) {
-        return $this->_updateRecordIntoTable(OPAL_UPDATE_RESOURCE, $toUpdate);
+        $parameters = array(                                                
+            array("parameter"=>":ResourceName","variable"=>$toUpdate['ResourceName'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":ResourceType","variable"=>$toUpdate['ResourceType'],"data_type"=>PDO::PARAM_STR),            
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$toUpdate['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":ResourceCode","variable"=>$toUpdate['ResourceCode'],"data_type"=>PDO::PARAM_STR),
+        );
+        return $this->_execute(OPAL_UPDATE_RESOURCE,$parameters);
     }
 
 
@@ -3782,7 +3788,6 @@ class DatabaseOpal extends DatabaseAccess {
         $dataSQL = substr($dataSQL, 0, -4);
         $dataSQL .= ")";
         $sql = str_replace("%%SOURCE_CODE_LIST%%", $dataSQL, OPAL_GET_RESOURCES_FOR_RESOURCE_APPOINTMENT);
-
         return $this->_fetchAll($sql, $dataToList);
     }
 
@@ -4141,11 +4146,11 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":ResourceId","variable"=>$resourceId,"data_type"=>PDO::PARAM_STR)
         ));
-    }
+    }    
 
     /** 
-     * Insert a new notification
-     * @param  array of the notification infos
+     * Insert a new resource
+     * @param  array of the resource infos
      * @return  ID of the entry
      */
     function insertResource($toInsert) {        
@@ -4284,5 +4289,18 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":StaffId","variable"=>$toUpdate['StaffId'],"data_type"=>PDO::PARAM_INT),
         );
         return $this->_execute(OPAL_UPDATE_STAFF,$parameters);
+    }
+
+    /** 
+     * Count resource occurence
+     * @param array of the resource fields
+     * @return int - Total of the entry
+     */
+    function countResource($content){
+        $params = array(                        
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$content['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":ResourceCode","variable"=>$content['ResourceCode'],"data_type"=>PDO::PARAM_STR),          
+        );
+        return $this->_fetch(OPAL_GET_RESOURCE,$params);
     }
 }
