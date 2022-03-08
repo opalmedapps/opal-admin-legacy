@@ -42,7 +42,7 @@ angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap
 			//Update patient password in the external database
 			$.ajax({
 				type: "POST",
-				url: "patient/update/external-email",
+				url: "patient-administration/update/external-email",
 				data: {
 					uid: $scope.puid,
 					email: $scope.new_email.firstTime,
@@ -68,14 +68,14 @@ angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap
 	$scope.updateEmailInDatabase = function() {
 		$.ajax({
 			type: "POST",
-			url: "patient/update/email",
+			url: "patient-administration/update/email",
 			data: {
 				email: $scope.new_email.firstTime,
 				PatientSerNum: $scope.psnum,
 			},
 			success: function () {
 				$scope.setBannerClass('success');
-				$scope.$parent.bannerMessage = "Successfully update patient email！";
+				$scope.$parent.bannerMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.EMAIL.SUCCESS');
 			},
 			error: function (err) {
 				ErrorHandler.onError(err, $filter('translate')('PATIENTS.MODIFICATION_TOOLS.EMAIL.ERROR'), arrValidationUpdateDatabase);

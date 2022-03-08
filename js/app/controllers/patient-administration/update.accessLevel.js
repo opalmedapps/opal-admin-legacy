@@ -32,14 +32,14 @@ angular.module('opalAdmin.controllers.update.accessLevel', ['ngAnimate', 'ui.boo
 		if ($scope.accessLevel.valid === true) {
 			$.ajax({
 				type: "POST",
-				url: "patient/update/access-level",
+				url: "patient-administration/update/access-level",
 				data: {
 					accessLevel: $scope.accessLevel.value,
 					PatientSerNum: $scope.psnum,
 				},
 				success: function () {
 					$scope.setBannerClass('success');
-					$scope.$parent.bannerMessage = "Successfully update patient access level!";
+					$scope.$parent.bannerMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.ACCESS_LEVEL.SUCCESS');
 				},
 				error: function (err) {
 					ErrorHandler.onError(err, $filter('translate')('PATIENTS.MODIFICATION_TOOLS.ACCESS_LEVEL.ERROR'), arrValidationUpdate);
