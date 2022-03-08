@@ -2911,6 +2911,7 @@
         "EMAIL_NOT_VALID": "The email is not valid! please try again.",
         "SUBMIT": "Submit",
         "CANCEL": "Cancel",
+        "SUCCESS" : "Successfully update patient email!",
         "ERROR": "An error occurred while changing email."
       },
       "PASSWORD": {
@@ -2923,6 +2924,7 @@
         "PASSWORD_TOO_SHORT": "Your password is too short",
         "SUBMIT": "Submit",
         "CANCEL": "Cancel",
+        "SUCCESS" : "Successfully updated patient password!",
         "ERROR": "An error occurred while changing password."
       },
       "ACCESS_LEVEL": {
@@ -2934,10 +2936,11 @@
         "NEED_TO_KNOW": "Need to Know",
         "SUBMIT": "Submit",
         "CANCEL": "Cancel",
+        "SUCCESS" : "Successfully update patient access level!",
         "ERROR": "An error occurred while changing access level."
       },
       "SECURITY_ANSWER": {
-        "TITLE": "Reset Patient Security Questions",
+        "TITLE": "Reset one or more security questions of the user account.",
         "DESCRIPTION": "Reset all security questions of the user account.",
         "FIRST_QUESTION": "First Question :",
         "FIRST_ANSWER": "Answer :",
@@ -2950,6 +2953,7 @@
         "ANSWER_MISSING": "Please provide an answer to the security question above.",
         "SUBMIT": "Submit",
         "CANCEL": "Cancel",
+        "SUCCESS" : "Successfully updated patient security questions!",
         "ERROR": "An error occurred while changing security question and answer."
       },
       "VALIDATION": {

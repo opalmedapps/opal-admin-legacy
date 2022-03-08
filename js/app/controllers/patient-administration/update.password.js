@@ -39,7 +39,7 @@ angular.module('opalAdmin.controllers.update.password', ['ngAnimate', 'ui.bootst
 			//Update patient password in the external database
 			$.ajax({
 				type: "POST",
-				url: "patient/update/external-password",
+				url: "patient-administration/update/external-password",
 				data: {
 					uid: $scope.puid,
 					password: $scope.new_password.firstTime,
@@ -65,14 +65,14 @@ angular.module('opalAdmin.controllers.update.password', ['ngAnimate', 'ui.bootst
 	$scope.updatePasswordInDatabase = function() {
 		$.ajax({
 			type: "POST",
-			url: "patient/update/password",
+			url: "patient-administration/update/password",
 			data: {
 				uid: $scope.puid,
 				password: CryptoJS.SHA512($scope.new_password.firstTime).toString(),
 			},
 			success: function () {
 				$scope.setBannerClass('success');
-				$scope.$parent.bannerMessage = "Successfully update patient password！";
+				$scope.$parent.bannerMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.PASSWORD.SUCCESS');
 			},
 			error: function (err) {
 				ErrorHandler.onError(err, $filter('translate')('PATIENTS.MODIFICATION_TOOLS.PASSWORD.ERROR'), arrValidationUpdate);

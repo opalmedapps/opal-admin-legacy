@@ -2931,6 +2931,7 @@
         "EMAIL_NOT_VALID": "Le courriel n'est pas valide, veuillez réessayer",
         "SUBMIT": "Soumettre",
         "CANCEL": "Annuler",
+        "SUCCESS" : "Le courriel du patient mis à jour avec succès!",
         "ERROR": "Une erreur s'est produite lors du changement d'e-mail."
       },
       "PASSWORD": {
@@ -2943,6 +2944,7 @@
         "PASSWORD_TOO_SHORT": "Votre mot de passe est trop court",
         "SUBMIT": "Soumettre",
         "CANCEL": "Annuler",
+        "SUCCESS" : "Le mot de passe du patient mis à jour avec succès!",
         "ERROR": "Une erreur s'est produite lors du changement du mot de passe."
       },
       "ACCESS_LEVEL": {
@@ -2954,10 +2956,11 @@
         "NEED_TO_KNOW": "Accès minimum",
         "SUBMIT": "Soumettre",
         "CANCEL": "Annuler",
+        "SUCCESS" : "Le niveau d'accès du patient mis à jour avec succès!",
         "ERROR": "Une erreur s'est produite lors du changement du niveau d'accès."
       },
       "SECURITY_ANSWER": {
-        "TITLE": "Réinitialiser les questions de sécurité des patients",
+        "TITLE": "Réinitialiser une ou plusieurs questions de sécurité du compte utilisateur.",
         "DESCRIPTION": "réinitialiser toutes les questions de sécurité du compte utilisateur",
         "FIRST_QUESTION": "Première Question :",
         "FIRST_ANSWER": "Réponse :",
@@ -2970,6 +2973,7 @@
         "ANSWER_MISSING": "Veuillez répondre à la question de sécurité.",
         "SUBMIT": "Soumettre",
         "CANCEL": "Annuler",
+        "SUCCESS" : "Les questions de sécurité du patient mis à jour avec succès!",
         "ERROR": "Une erreur s'est produite lors du changement de la question de sécurité."
       },
       "VALIDATION": {

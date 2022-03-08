@@ -199,7 +199,7 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 	function updateQuestion(question, answer, question_old) {
 		$.ajax({
 			type: "POST",
-			url: "patient/update/security-answer",
+			url: "patient-administration/update/security-answer",
 			data: {
 				QuestionSerNum: question,
 				Answer: CryptoJS.SHA512(answer.toUpperCase()).toString(),
@@ -208,7 +208,7 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 			},
 			success: function () {
 				$scope.setBannerClass('success');
-				$scope.$parent.bannerMessage = "Successfully update patient security questions!";
+				$scope.$parent.bannerMessage =  $filter('translate')('PATIENTS.MODIFICATION_TOOLS.SECURITY_ANSWER.SUCCESS');
 			},
 			error: function (err) {
 				ErrorHandler.onError(err, $filter('translate')('PATIENTS.MODIFICATION_TOOLS.SECURITY_ANSWER.ERROR'), arrValidationUpdate);
