@@ -32,20 +32,6 @@ define("MSSS_ACTIVE_DIRECTORY_CONFIG", $config["login"]["activeDirectory"]["conf
 define("AD_LOGIN_ACTIVE", ACTIVE_DIRECTORY["enabled"]);
 
 const LOCALHOST_ADDRESS = array('127.0.0.1','localhost','::1');
-const DEFAULT_API_CONFIG = array(
-    CURLOPT_COOKIESESSION=>true,
-    CURLOPT_RETURNTRANSFER=>true,
-    CURLOPT_FOLLOWLOCATION=>true,
-    CURLOPT_POST=>true,
-    CURLOPT_SSL_VERIFYPEER=>false,
-    CURLOPT_HEADER=>true,
-);
-
-const PUSH_NOTIFICATION_CONFIG = array(
-    CURLOPT_RETURNTRANSFER=>true,
-    CURLOPT_FOLLOWLOCATION=>true,
-    CURLOPT_HEADER=>true
-);
 
 const DEFAULT_CRON_OAUSERID = 23;
 const DEFAULT_CRON_USERNAME = "cronjob";
@@ -90,6 +76,82 @@ const RESOURCE_LEVEL_READY = 1;
 const RESOURCE_LEVEL_IN_PROCESS = 2;
 const APPOINTMENT_LEVEL_READY = 1;
 const APPOINTMENT_LEVEL_IN_PROCESS = 2;
+
+const DEFAULT_API_CONFIG = array(
+    CURLOPT_COOKIESESSION=>true,
+    CURLOPT_RETURNTRANSFER=>true,
+    CURLOPT_FOLLOWLOCATION=>true,
+    CURLOPT_POST=>true,
+    CURLOPT_SSL_VERIFYPEER=>false,
+    CURLOPT_HEADER=>true,
+);
+
+const PUSH_NOTIFICATION_CONFIG = array(
+    CURLOPT_RETURNTRANSFER=>true,
+    CURLOPT_FOLLOWLOCATION=>true,
+    CURLOPT_HEADER=>true
+);
+
+const APPLE_PUSH_NOTIFICATION_CONFIG = array(
+    CURLOPT_URL=> IOS_URL . "%%REGISTRATION_ID_HERE%%",
+    CURLOPT_HTTP_VERSION=>3,
+    CURLOPT_HTTPHEADER=>["apns-topic: ".APNS_TOPIC],
+    CURLOPT_SSLCERT=>CERTIFICATE_FILE,
+    CURLOPT_SSLKEY=>CERTIFICATE_KEY,
+    CURLOPT_SSLKEYPASSWD=>CERTIFICATE_PASSWORD,
+    CURLOPT_RETURNTRANSFER=>true,
+    CURLOPT_TIMEOUT=>5,
+    CURLOPT_CONNECTTIMEOUT=>5,
+);
+
+define("APPLE_PUSH_NOTIFICATION_POSTFIELDS_CONFIG", json_encode(array(
+    'aps' => array(
+        'alert' => array(
+            'title' => '%%TITLE_HERE%%',
+            'body' => '%%BODY_HERE%%',
+        ),
+        'sound' => 'default'
+    ))));
+
+define("ANDROID_PUSH_NOTIFICATION_POSTFIELDS_CONFIG", json_encode(array(
+    'registration_ids' => array("%%REGISTRATION_ID_HERE%%"),
+    'data' => array(
+        'notId' => date("His"),
+        'title' => "%%TITLE_HERE%%",
+        'body' => "%%BODY_HERE%%",
+        'channelId' => 'opal',
+        'payload' => array(
+            'aps' => array(
+                'category' => 'opal'
+            )
+        )
+    )
+)));
+
+const ANDROID_PUSH_NOTIFICATION_CONFIG = array(
+    CURLOPT_URL=>ANDROID_URL,
+    CURLOPT_POST=>true,
+    CURLOPT_HTTPHEADER=>array(
+        'Authorization: key=' . API_KEY,
+        'Content-Type: application/json'
+    ),
+    CURLOPT_RETURNTRANSFER=>true,
+    CURLOPT_SSL_VERIFYPEER=>false,
+    CURLOPT_TIMEOUT=>5,
+    CURLOPT_CONNECTTIMEOUT=>5,
+);
+
+const PUSH_NOTIFICATION_RESTRICTED = 1;
+const PUSH_NOTIFICATION_NON_RESTRICTED = 0;
+const PUSH_NOTIFICATION_DEFAULT_STATE = PUSH_NOTIFICATION_RESTRICTED;
+const PUSH_NOTIFICATION_DEFAULT_START_HOUR = "08:00:00";
+const PUSH_NOTIFICATION_DEFAULT_END_HOUR = "20:00:00";
+const APPLE_PHONE_DEVICE = 0;
+const ANDROID_PHONE_DEVICE = 1;
+const SUPPORTED_PHONE_DEVICES = array(APPLE_PHONE_DEVICE, ANDROID_PHONE_DEVICE);
+const MAX_PUSH_NOTIFICATION_PER_STATUS_TO_SEND = 100;
+const PUSH_NOTIFICATION_NO_STATUS = 0;
+const TIMEOUT_EXECUTION_TIME_IN_SECONDS = 25;
 
 /*
  * Module ID of each module in the opalAdmin
