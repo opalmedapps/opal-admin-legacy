@@ -260,7 +260,7 @@ angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstr
 	$scope.updateEmail = function(appointment) {
 		$scope.currentAppointment = appointment;
 		var modalInstance = $uibModal.open({
-			templateUrl: 'templates/patient/update.email.html',
+			templateUrl: 'templates/patient-administration/update.email.html',
 			controller: 'update.email',
 			scope: $scope,
 			windowClass: 'customModal',
@@ -276,7 +276,7 @@ angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstr
 	$scope.updatePassword = function(appointment) {
 		$scope.currentAppointment = appointment;
 		var modalInstance = $uibModal.open({
-			templateUrl: 'templates/patient/update.password.html',
+			templateUrl: 'templates/patient-administration/update.password.html',
 			controller: 'update.password',
 			scope: $scope,
 			windowClass: 'customModal',
@@ -292,7 +292,7 @@ angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstr
 	$scope.updateAccessLevel = function(appointment) {
 		$scope.currentAppointment = appointment;
 		var modalInstance = $uibModal.open({
-			templateUrl: "templates/patient/update.accessLevel.html",
+			templateUrl: "templates/patient-administration/update.accessLevel.html",
 			controller: 'update.accessLevel',
 			scope: $scope,
 			windowClass: 'customModal',
@@ -308,7 +308,7 @@ angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstr
 	$scope.updateSecurityQuestion = function(appointment) {
 		$scope.currentAppointment = appointment;
 		var modalInstance = $uibModal.open({
-			templateUrl: "templates/patient/update.securityAnswer.html",
+			templateUrl: "templates/patient-administration/update.securityAnswer.html",
 			controller: 'update.securityAnswer',
 			scope: $scope,
 			windowClass: 'customModal',
