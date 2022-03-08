@@ -4,7 +4,6 @@
  * Appointment class
  *
  */
-require_once(BACKEND_ABS_PATH . 'php/HospitalPushNotification.php');
 
 class Appointment extends Module
 {
