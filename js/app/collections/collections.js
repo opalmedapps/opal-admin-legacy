@@ -440,7 +440,7 @@ angular.module('opalAdmin.collections', [])
 		// API to get access level list
 		patientAPI.getAllAccessLevel = function () {
 			return $http.post(
-				"patient/get/access-level",
+				"patient-administration/get/access-level",
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
@@ -450,7 +450,7 @@ angular.module('opalAdmin.collections', [])
 		// API to get published security question list
 		patientAPI.getAllSecurityQuestions = function () {
 			return $http.post(
-				"patient/get/all-security-questions",
+				"patient-administration/get/all-security-questions",
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
@@ -460,7 +460,7 @@ angular.module('opalAdmin.collections', [])
 		// API to get patient answered security question list
 		patientAPI.getPatientSecurityQuestions = function (serial) {
 			return $http.post(
-				"patient/get/patient-security-questions",
+				"patient-administration/get/patient-security-questions",
 				$.param({
 					PatientSerNum: serial,
 				}),

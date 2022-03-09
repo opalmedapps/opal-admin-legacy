@@ -257,6 +257,9 @@ RewriteRule ^patient/update/publish-flags php/patient/update.publish_flags.php [
 # Patiant Administration Section
 RewriteRule ^patient-administration/get/access-level php/patient-administration/get.accessLevel.php [QSA,L]
 RewriteRule ^patient-administration/get/all-security-questions php/patient-administration/get.securityQuestions.php [QSA,L]
+RewriteRule ^patient-administration/get/patient-mrn php/patient-administration/find_mrn.php [QSA,L]
+RewriteRule ^patient-administration/get/patient-name php/patient-administration/find_name.php [QSA,L]
+RewriteRule ^patient-administration/get/patient-ramq php/patient-administration/find_ramq.php [QSA,L]
 RewriteRule ^patient-administration/get/patient-security-questions php/patient-administration/get.patient.securityQuestions.php [QSA,L]
 RewriteRule ^patient-administration/update/email php/patient-administration/update.email.php [QSA,L]
 RewriteRule ^patient-administration/update/password php/patient-administration/update.password.php [QSA,L]

@@ -120,6 +120,7 @@ define("MODULE_TRIGGER", 19);
 define("MODULE_MASTER_SOURCE", 20);
 define("MODULE_RESOURCE", 21);
 define("MODULE_SMS", 22);
+define("MODULE_PATIENT_ADMINISTRATION", 23);
 define("LOCAL_SOURCE_ONLY", -1);
 
 define("MODULE_PUBLICATION_TRIGGER",array(MODULE_QUESTIONNAIRE, MODULE_ALERT, MODULE_EDU_MAT, MODULE_POST));
@@ -248,6 +249,7 @@ require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TriggerDoctor.php");
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TriggerStaff.php");
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "FirebaseOpal.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "PatientAdministration.php");
 
 // Push Notification FCM and APN credientials.
 define( "API_KEY" , $config['pushNotificationConfig']['android']['apiKey'] );
