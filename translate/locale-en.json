@@ -2659,8 +2659,6 @@
       "SUB_TITLE": "Patients Tools",
       "REGISTRATION": "Patient Registration",
       "REGISTRATION_SUB": "Register a patient to Opal.",
-      "MODIFICATION_TOOLS": "Patient Administration",
-      "MODIFICATION_TOOLS_SUB": "Modify patient account information",
       "BACK": "Back"
     },
     "LIST": {
