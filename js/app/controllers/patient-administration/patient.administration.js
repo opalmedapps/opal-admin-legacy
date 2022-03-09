@@ -7,6 +7,7 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 		menu.description_display = (Session.retrieveObject('user').language === "FR" ? menu.description_FR : menu.description_EN);
 	});
 
+	console.log($scope.currentUser.language);
 	$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 0)) !== 0);
 	$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 1)) !== 0);
 	$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 2)) !== 0);
@@ -28,6 +29,7 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 	$scope.pfname = "";
 	$scope.psex = "";
 	$scope.pemail = "";
+	$scope.paccess = "";
 	$scope.pramq = "";
 	$scope.pmrn = "";
 	$scope.plang = "";
@@ -80,7 +82,7 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 			$.ajax({
 				type: "POST",
 				url: "patient-administration/get/patient-name",
-				data: {pname: $scope.searchName},
+				data: {pname: $scope.searchName, language: $scope.currentUser.language},
 				success: function (response) {
 					displayName(JSON.parse(response));
 				},
@@ -92,7 +94,7 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 			$.ajax({
 				type: "POST",
 				url: "patient-administration/get/patient-mrn",
-				data: {pmrn: $scope.searchMRN},
+				data: {pmrn: $scope.searchMRN, language: $scope.currentUser.language},
 				success: function (response) {
 					displayName(JSON.parse(response));
 				},
@@ -104,7 +106,7 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 			$.ajax({
 				type: "POST",
 				url: "patient-administration/get/patient-ramq",
-				data: {pramq: $scope.searchRAMQ},
+				data: {pramq: $scope.searchRAMQ, language: $scope.currentUser.language},
 				success: function (response) {
 					displayName(JSON.parse(response));
 				},
@@ -179,6 +181,9 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 				if ($scope.searchResult[0].pemail) {
 					$scope.pemail = $scope.searchResult[0].pemail.replace(/["']/g, "");
 				}
+				if ($scope.searchResult[0].paccess) {
+					$scope.paccess = $scope.searchResult[0].paccess.replace(/["']/g, "");
+				}
 				if ($scope.searchResult[0].puid) {
 					$scope.puid = $scope.searchResult[0].puid.replace(/["']/g, "");
 				}
@@ -217,6 +222,9 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 				if ($scope.selectedName.pemail) {
 					$scope.pemail = $scope.selectedName.pemail.replace(/["']/g, "");
 				}
+				if ($scope.searchResult[0].paccess) {
+					$scope.paccess = $scope.searchResult[0].paccess.replace(/["']/g, "");
+				}
 				if ($scope.selectedName.plang) {
 					$scope.plang = $scope.selectedName.plang.replace(/["']/g, "");
 				}
@@ -248,6 +256,7 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 			$scope.pramq = "";
 			$scope.psex = "";
 			$scope.pemail = "";
+			$scope.paccess = "";
 			$scope.plang = "";
 			$scope.puid = "";
 
