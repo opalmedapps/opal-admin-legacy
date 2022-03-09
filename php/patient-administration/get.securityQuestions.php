@@ -1,7 +1,7 @@
 <?php
 include_once("../config.php");
 
-$patientObj = new Patient(); //Object
+$patientObj = new PatientAdministration(); //Object
 $response = $patientObj->getAllSecurityQuestions();
 
 header('Content-Type: application/javascript');

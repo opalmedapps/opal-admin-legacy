@@ -179,7 +179,7 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 
 		// Function to go to Patient Tools page
 		$scope.goToPatientModificationTools = function () {
-			$state.go('patients/modification-tools');
+			$state.go('patients-administration');
 		};
 
 	});

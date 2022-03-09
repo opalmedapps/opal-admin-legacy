@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).controller('modify.patient', function ($scope, $rootScope, Session, ErrorHandler, MODULE, $uibModal, $filter) {
+angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).controller('patient.administration', function ($scope, $rootScope, Session, ErrorHandler, MODULE, $uibModal, $filter) {
 
 	$scope.navMenu = Session.retrieveObject('menu');
 	$scope.navSubMenu = Session.retrieveObject('subMenu')[MODULE.patient];
@@ -79,7 +79,7 @@ angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstr
 		} else if ($scope.searchName) { //find by name
 			$.ajax({
 				type: "POST",
-				url: "patient/get/patient-name",
+				url: "patient-administration/get/patient-name",
 				data: {pname: $scope.searchName},
 				success: function (response) {
 					displayName(JSON.parse(response));
@@ -91,7 +91,7 @@ angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstr
 		} else if ($scope.searchMRN) { //find by MRN
 			$.ajax({
 				type: "POST",
-				url: "patient/get/patient-mrn",
+				url: "patient-administration/get/patient-mrn",
 				data: {pmrn: $scope.searchMRN},
 				success: function (response) {
 					displayName(JSON.parse(response));
@@ -103,7 +103,7 @@ angular.module('opalAdmin.controllers.modify.patient', ['ngAnimate', 'ui.bootstr
 		} else  { //find my RAMQ
 			$.ajax({
 				type: "POST",
-				url: "patient/get/patient-ramq",
+				url: "patient-administration/get/patient-ramq",
 				data: {pramq: $scope.searchRAMQ},
 				success: function (response) {
 					displayName(JSON.parse(response));
