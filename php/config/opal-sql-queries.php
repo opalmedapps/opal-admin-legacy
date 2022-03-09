@@ -892,7 +892,6 @@ define("OPAL_GET_PATIENT_NAME", "
     SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
     CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
     SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang, 
-    (SELECT u.Username FROM ".OPAL_USERS_TABLE." u WHERE u.UserType = 'Patient' AND u.UserTypeSerNum = PatientSerNum LIMIT 1) AS puid 
     FROM ".OPAL_PATIENT_TABLE." WHERE LastName LIKE :name;
 
 ");
@@ -901,7 +900,6 @@ define("OPAL_GET_PATIENT_MRN", "
     SELECT p.PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(p.FirstName, 1, 1)), LOWER(SUBSTRING(p.FirstName, 2))) AS pname,
     CONCAT(UCASE(SUBSTRING(p.LastName, 1, 1)), LOWER(SUBSTRING(p.LastName, 2))) AS plname,
     p.SSN AS pramq, p.Sex AS psex, p.Email AS pemail, p.Language AS plang, 
-    (SELECT u.Username FROM ".OPAL_USERS_TABLE." u WHERE u.UserType = 'Patient' AND u.UserTypeSerNum = PatientSerNum LIMIT 1) AS puid
     FROM ".OPAL_PATIENT_TABLE." p WHERE (SELECT COUNT(*) FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi WHERE phi.MRN LIKE :MRN
     AND phi.PatientSerNum = p.PatientSerNum) > 0;
 ");
@@ -910,7 +908,6 @@ define("OPAL_GET_PATIENT_RAMQ", "
     SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
     CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
     SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang, 
-    (SELECT u.Username FROM ".OPAL_USERS_TABLE." u WHERE u.UserType = 'Patient' AND u.UserTypeSerNum = PatientSerNum LIMIT 1) AS puid 
     FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :SSN;
 ");
 
@@ -2102,3 +2099,38 @@ FROM " . OPAL_ACCESS_LEVEL_TABLE ;
 
 const OPAL_GET_PATIENT_BY_SERIAL_NUMBER = "
 SELECT * FROM " . OPAL_PATIENT_TABLE . " where PatientSerNum = :PatientSer;";
+
+const OPAL_GET_PATIENT_NAME_ADMINISTRATION = "
+SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
+CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
+SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang, 
+(SELECT u.Username FROM ".OPAL_USERS_TABLE." u WHERE u.UserType = 'Patient' AND u.UserTypeSerNum = PatientSerNum LIMIT 1) AS puid,
+CASE 
+    WHEN :lang = 'EN' THEN (SELECT al.AccessLevelName_EN FROM ".OPAL_ACCESS_LEVEL_TABLE." al WHERE al.ID = AccessLevel LIMIT 1) 
+    WHEN :lang = 'FR' THEN (SELECT al.AccessLevelName_FR FROM ".OPAL_ACCESS_LEVEL_TABLE." al WHERE al.ID = AccessLevel LIMIT 1) 
+END AS paccess
+FROM ".OPAL_PATIENT_TABLE." WHERE LastName LIKE :name;";
+
+const OPAL_GET_PATIENT_MRN_ADMINISTRATION = "
+SELECT p.PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(p.FirstName, 1, 1)), LOWER(SUBSTRING(p.FirstName, 2))) AS pname,
+CONCAT(UCASE(SUBSTRING(p.LastName, 1, 1)), LOWER(SUBSTRING(p.LastName, 2))) AS plname,
+p.SSN AS pramq, p.Sex AS psex, p.Email AS pemail, p.Language AS plang, 
+(SELECT u.Username FROM ".OPAL_USERS_TABLE." u WHERE u.UserType = 'Patient' AND u.UserTypeSerNum = PatientSerNum LIMIT 1) AS puid,
+CASE 
+    WHEN :lang = 'EN' THEN (SELECT al.AccessLevelName_EN FROM ".OPAL_ACCESS_LEVEL_TABLE." al WHERE al.ID = AccessLevel LIMIT 1) 
+    WHEN :lang = 'FR' THEN (SELECT al.AccessLevelName_FR FROM ".OPAL_ACCESS_LEVEL_TABLE." al WHERE al.ID = AccessLevel LIMIT 1) 
+END AS paccess
+FROM ".OPAL_PATIENT_TABLE." p WHERE (SELECT COUNT(*) FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi WHERE phi.MRN LIKE :MRN
+AND phi.PatientSerNum = p.PatientSerNum) > 0;";
+
+const OPAL_GET_PATIENT_RAMQ_ADMINISTRATION = "
+SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
+CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
+SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang, 
+(SELECT u.Username FROM ".OPAL_USERS_TABLE." u WHERE u.UserType = 'Patient' AND u.UserTypeSerNum = PatientSerNum LIMIT 1) AS puid,
+CASE 
+    WHEN :lang = 'EN' THEN (SELECT al.AccessLevelName_EN FROM ".OPAL_ACCESS_LEVEL_TABLE." al WHERE al.ID = AccessLevel LIMIT 1) 
+    WHEN :lang = 'FR' THEN (SELECT al.AccessLevelName_FR FROM ".OPAL_ACCESS_LEVEL_TABLE." al WHERE al.ID = AccessLevel LIMIT 1) 
+END AS paccess
+FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :SSN; ";
+

@@ -19,8 +19,10 @@ class PatientAdministration extends Module {
      *
      * @param $post : array - Contains the following information
      *                          pname : patient name
+     *                          language : current user language
      *
      *  1st bit invalid patient name
+     *  2nd bit invalid user language
      *
      * @return $errCode
      */
@@ -32,6 +34,11 @@ class PatientAdministration extends Module {
             } else {
                 $errCode = "0" . $errCode;
             }
+            if(!array_key_exists("language", $post) || ($post["language"] != "EN" && $post["language"] != "FR")) {
+                $errCode = "1" . $errCode;
+            } else {
+                $errCode = "0" . $errCode;
+            }
         }
         return $errCode;
     }
@@ -39,7 +46,10 @@ class PatientAdministration extends Module {
     /**
      * Search database for patient
      *
-     * @param $post : patient last name case insensitive
+     * @param $post : array - Contains the following information
+     *                          pname : patient name
+     *                          language : current user language
+     *
      * @return array : details for the given patient(s) matching search criteria
      * @error 422 with array (validation=>integer)
      */
@@ -51,7 +61,7 @@ class PatientAdministration extends Module {
         if($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        $results = $this->opalDB->getPatientName($post['pname']);
+        $results = $this->opalDB->getPatientNameAdministration($post['pname'], $post['language']);
         $this->_findOtherMRNS($results);
         return $results;
     }
@@ -61,8 +71,10 @@ class PatientAdministration extends Module {
      *
      * @param $post : array - Contains the following information
      *                          pmrn : patient mrn
+     *                          language : current user language
      *
      *  1st bit invalid patient mrn
+     *  2nd bit invalid user language
      *
      * @return $errCode
      */
@@ -74,44 +86,7 @@ class PatientAdministration extends Module {
             } else {
                 $errCode = "0" . $errCode;
             }
-        }
-        return $errCode;
-    }
-
-    /**
-     * Search database for patient
-     *
-     * @param $post : patient mrn
-     * @return array : details for the given patient(s) matching search criteria
-     *
-     */
-    public function findPatientByMRN($post) {
-        $this->checkReadAccess($post);
-        $post = HelpSetup::arraySanitization($post);
-        $errCode = $this->_validateMRN($post);
-        $errCode = bindec($errCode);
-        if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
-
-        $results = $this->opalDB->getPatientMRN($post['pmrn']);
-        $this->_findOtherMRNS($results);
-        return $results;
-    }
-
-    /**
-     * Validate the ramq search parameter for individual reports
-     *
-     * @param $post : array - Contains the following information
-     *                          pramq : patient ramq
-     *
-     *  1st bit invalid patient ramq
-     *
-     * @return $errCode
-     */
-    protected function _validateRAMQ(&$post) {
-        $errCode = "";
-        if(is_array($post)) {
-            if(!array_key_exists("pramq", $post) || $post["pramq"] == "") {
+            if(!array_key_exists("language", $post) || ($post["language"] != "EN" && $post["language"] != "FR")) {
                 $errCode = "1" . $errCode;
             } else {
                 $errCode = "0" . $errCode;
@@ -123,7 +98,62 @@ class PatientAdministration extends Module {
     /**
      * Search database for patient
      *
-     * @param $post : patient ramq
+     * @param $post : array - Contains the following information
+     *                          pmrn : patient mrn
+     *                          language : current user language
+     *
+     * @return array : details for the given patient(s) matching search criteria
+     *
+     */
+    public function findPatientByMRN($post) {
+        $this->checkReadAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = $this->_validateMRN($post);
+        $errCode = bindec($errCode);
+        if($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        $results = $this->opalDB->getPatientMRNAdministration($post['pmrn'], $post['language']);
+        $this->_findOtherMRNS($results);
+        return $results;
+    }
+
+    /**
+     * Validate the ramq search parameter for individual reports
+     *
+     * @param $post : array - Contains the following information
+     *                          pramq : patient ramq
+     *                          language : current user language
+     *
+     *  1st bit invalid patient ramq
+     *  2nd bit invalid user language
+     *
+     * @return $errCode
+     */
+    protected function _validateRAMQ(&$post) {
+        $errCode = "";
+        if(is_array($post)) {
+            if(!array_key_exists("pramq", $post) || $post["pramq"] == "") {
+                $errCode = "1" . $errCode;
+            } else {
+                $errCode = "0" . $errCode;
+            }
+            if(!array_key_exists("language", $post) || ($post["language"] != "EN" && $post["language"] != "FR")) {
+                $errCode = "1" . $errCode;
+            } else {
+                $errCode = "0" . $errCode;
+            }
+        }
+        return $errCode;
+    }
+
+    /**
+     * Search database for patient
+     *
+     * @param $post : array - Contains the following information
+     *                          pramq : patient ramq
+     *                          language : current user language
+     *
      * @return array : details for the given patient(s) matching search criteria
      *
      */
@@ -135,7 +165,7 @@ class PatientAdministration extends Module {
         if($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        $results = $this->opalDB->getPatientRAMQ($post['pramq']);
+        $results = $this->opalDB->getPatientRAMQAdministration($post['pramq'], $post['language']);
         $this->_findOtherMRNS($results);
         return $results;
     }

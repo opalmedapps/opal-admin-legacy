@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.update.accessLevel', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).controller('update.accessLevel', function ($scope, $filter, $uibModal, $uibModalInstance, patientCollectionService, $state, Session, ErrorHandler) {
+angular.module('opalAdmin.controllers.update.accessLevel', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).controller('update.accessLevel', function ($scope, $filter, $uibModal, $uibModalInstance, patientAdministrationCollectionService, $state, Session, ErrorHandler) {
 
 	$scope.cancel = function () {
 		$uibModalInstance.dismiss('cancel');
@@ -23,8 +23,8 @@ angular.module('opalAdmin.controllers.update.accessLevel', ['ngAnimate', 'ui.boo
 
 	//Initialize the error messages
 	var arrValidationUpdate = [
-		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.ACCESS_LEVEL'),
-		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.PATIENTSERNUM'),
+		$filter('translate')('PATIENT_ADMINISTRATION.VALIDATION.ACCESS_LEVEL'),
+		$filter('translate')('PATIENT_ADMINISTRATION.VALIDATION.PATIENTSERNUM'),
     ];
 
 	//Function to update the patient access level
@@ -39,12 +39,12 @@ angular.module('opalAdmin.controllers.update.accessLevel', ['ngAnimate', 'ui.boo
 				},
 				success: function () {
 					$scope.setBannerClass('success');
-					$scope.$parent.bannerMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.ACCESS_LEVEL.SUCCESS');
+					$scope.$parent.bannerMessage = $filter('translate')('PATIENT_ADMINISTRATION.ACCESS_LEVEL.SUCCESS');
 				},
 				error: function (err) {
-					ErrorHandler.onError(err, $filter('translate')('PATIENTS.MODIFICATION_TOOLS.ACCESS_LEVEL.ERROR'), arrValidationUpdate);
+					ErrorHandler.onError(err, $filter('translate')('PATIENT_ADMINISTRATION.ACCESS_LEVEL.ERROR'), arrValidationUpdate);
 					$scope.setBannerClass('danger');
-					$scope.$parent.bannerMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.ACCESS_LEVEL.ERROR');
+					$scope.$parent.bannerMessage = $filter('translate')('PATIENT_ADMINISTRATION.ACCESS_LEVEL.ERROR');
 				},
 				complete: function () {
 					$scope.showBanner();
@@ -56,7 +56,7 @@ angular.module('opalAdmin.controllers.update.accessLevel', ['ngAnimate', 'ui.boo
 
 	//Function to get the possible access level list in database
 	function getAllAccessLevel () {
-		patientCollectionService.getAllAccessLevel().then(function (response) {
+		patientAdministrationCollectionService.getAllAccessLevel().then(function (response) {
 			$scope.levelList = []
 			response.data.forEach(function (row) {
 				var level = {
