@@ -72,6 +72,15 @@ define("ALIAS_TYPE_TASK", 1);
 define("ALIAS_TYPE_APPOINTMENT", 2);
 define("ALIAS_TYPE_DOCUMENT", 3);
 
+// Push Notification FCM and APN credientials.
+define( "API_KEY" , $config['pushNotificationConfig']['android']['apiKey'] );
+define( "ANDROID_URL" , $config['pushNotificationConfig']['android']['androidURL'] );
+define( "CERTIFICATE_PASSWORD" , $config['pushNotificationConfig']['apple']['certificate']['password'] );
+define( "CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['filename'] );
+define( "APNS_TOPIC" , $config['pushNotificationConfig']['apple']['certificate']['topic'] );
+define( "CERTIFICATE_KEY" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['key'] );
+define( "IOS_URL" , $config['pushNotificationConfig']['apple']['appleURL'] );
+
 const RESOURCE_LEVEL_READY = 1;
 const RESOURCE_LEVEL_IN_PROCESS = 2;
 const APPOINTMENT_LEVEL_READY = 1;
@@ -291,15 +300,6 @@ require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "AppleApiCall.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Sms.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Document.php");
-
-// Push Notification FCM and APN credientials.
-define( "API_KEY" , $config['pushNotificationConfig']['android']['apiKey'] );
-define( "ANDROID_URL" , $config['pushNotificationConfig']['android']['androidURL'] );
-define( "CERTIFICATE_PASSWORD" , $config['pushNotificationConfig']['apple']['certificate']['password'] );
-define( "CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['filename'] );
-define( "APNS_TOPIC" , $config['pushNotificationConfig']['apple']['certificate']['topic'] );
-define( "CERTIFICATE_KEY" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['key'] );
-define( "IOS_URL" , $config['pushNotificationConfig']['apple']['appleURL'] );
 
 define("ACCESS_READ", 1);
 define("ACCESS_READ_WRITE", 3);

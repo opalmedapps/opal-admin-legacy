@@ -25,10 +25,6 @@ class AppleApiCall extends ApiCall {
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         if(curl_error($ch) || $httpcode != HTTP_STATUS_SUCCESS) {
-            echo "Apple Error\r\n";
-            echo "curl: ".curl_error($ch) . "\r\n";
-            echo "result: ". $result . "\r\n";
-            echo "code: ".$httpcode . "\r\n";
             if(curl_error($ch)) {
                 $this->answer = false;
                 $this->header = false;
