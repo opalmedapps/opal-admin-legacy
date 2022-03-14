@@ -3316,6 +3316,10 @@
     "500": {
       "MESSAGE": "Code 500. Erreur interne du serveur. Réponse du serveur:",
       "UNKNOWN": "Erreur inconnue. Veuillez réessayer plus tard."
+    },
+    "502": {
+      "MESSAGE": "Code 502. Erreur mauvaise passerelle. Réponse du serveur:",
+      "UNKNOWN": "Erreur inconnue. Veuillez réessayer plus tard."
     }
   },
   "PATIENT_REGISTRATION_TITLE": "Enregistrement Patient",
