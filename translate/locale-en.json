@@ -2886,6 +2886,7 @@
       "PRAMQ": "Patient RAMQ",
       "SUBMIT": "Submit",
       "RESET": "Reset",
+      "DB_ERROR": "An error occured while contacting the database: ",
       "MULTIPLE": "Multiple patients found matching search criteria, please select:",
       "NONE": "No Patients found matching criteria, please try again",
       "LAST": "Last Name",
@@ -3295,6 +3296,10 @@
     },
     "500": {
       "MESSAGE": "Code 500. Internal Server Error. Answer of the server:",
+      "UNKNOWN": "Unknown error. Please try again later."
+    },
+    "502": {
+      "MESSAGE": "Code 502. Bad Gateway Error. Answer of the server:",
       "UNKNOWN": "Unknown error. Please try again later."
     }
   },
