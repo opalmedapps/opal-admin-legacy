@@ -62,6 +62,7 @@ angular.module('opalAdmin', [
 		loginTimeoutError: 440,
 		httpToHttpsError: 497,
 		internalServerError: 500,
+		badGatewayError: 502,
 	})
 
 	.constant('USER_ROLES', {

@@ -86,7 +86,7 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 					displayName(JSON.parse(response));
 				},
 				error: function (err) {
-					ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
+					ErrorHandler.onError(err, $filter('translate')('PATIENT_ADMINISTRATION.MENU.DB_ERROR'));
 				}
 			});
 		} else if ($scope.searchMRN) { //find by MRN
@@ -98,7 +98,7 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 					displayName(JSON.parse(response));
 				},
 				error: function (err) {
-					ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
+					ErrorHandler.onError(err, $filter('translate')('PATIENT_ADMINISTRATION.MENU.DB_ERROR'));
 				}
 			});
 		} else  { //find my RAMQ
@@ -110,12 +110,63 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 					displayName(JSON.parse(response));
 				},
 				error: function (err) {
-					ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
+					ErrorHandler.onError(err, $filter('translate')('PATIENT_ADMINISTRATION.MENU.DB_ERROR'));
 				}
 			});
 
 		}
 	};
+
+	/**
+	 *  Function for refresh the current patient information in the right panel.
+	 */
+	$scope.refreshPat = function () {
+		$.ajax({
+			type: "POST",
+			url: "patient-administration/get/patient-ramq",
+			data: {pramq: $scope.pramq, language: $scope.currentUser.language},
+			success: function (response) {
+				refreshDisplay(JSON.parse(response));
+			},
+			error: function (err) {
+				ErrorHandler.onError(err, $filter('translate')('PATIENT_ADMINISTRATION.MENU.DB_ERROR'));
+			}
+		});
+	}
+
+	/**
+	 *  Process results of ajax patient updated data.
+	 *
+	 *  @param result: patient(s) info
+	 *  @return
+	 */
+	function refreshDisplay(result) {
+
+		$scope.safeApply(function () {
+			$scope.searchResult.forEach(function(patient){
+				if(patient.pramq == result[0].pramq) {
+					if (result[0].pemail) {
+						patient.pemail = result[0].pemail.replace(/["']/g, "");
+					}
+					if (result[0].paccess) {
+						patient.paccess = result[0].paccess.replace(/["']/g, "");
+					}
+				}
+			});
+			if($scope.searchResult.length > 1) {
+				$scope.selectedName = result[0];
+				$scope.displaySelection();
+			}
+			else {
+				if (result[0].pemail) {
+					$scope.pemail = result[0].pemail.replace(/["']/g, "");
+				}
+				if (result[0].paccess) {
+					$scope.paccess = result[0].paccess.replace(/["']/g, "");
+				}
+			}
+		});
+	}
 
 	/**
 	 *  Process results of ajax patient search
@@ -144,10 +195,10 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 						}
 						mrnList = mrnList.slice(0, -2) + ")";
 					} else
-						mrnList = "("+$filter('translate')('PATIENTS.REPORT.INDIVIDUAL.NO_MRN')+")";
+						mrnList = "("+$filter('translate')('PATIENT_ADMINISTRATION.MENU.NO_MRN')+")";
 
 					tmp = $scope.searchResult[i].plname + " " + $scope.searchResult[i].pname + " (" +
-						($scope.searchResult[i].pramq ? $scope.searchResult[i].pramq : $filter('translate')('PATIENTS.REPORT.INDIVIDUAL.NO_RAMQ'))
+						($scope.searchResult[i].pramq ? $scope.searchResult[i].pramq : $filter('translate')('PATIENT_ADMINISTRATION.MENU.NO_RAMQ'))
 						+ ") " + mrnList;
 					$scope.patOptions.push(tmp);$scope.searchResult[i].name_display = tmp;
 					tmp = "";
@@ -222,7 +273,7 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 					$scope.pemail = $scope.selectedName.pemail.replace(/["']/g, "");
 				}
 				if ($scope.searchResult[0].paccess) {
-					$scope.paccess = $scope.searchResult[0].paccess.replace(/["']/g, "");
+					$scope.paccess = $scope.selectedName.paccess.replace(/["']/g, "");
 				}
 				if ($scope.selectedName.plang) {
 					$scope.plang = $scope.selectedName.plang.replace(/["']/g, "");
@@ -276,7 +327,7 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 		});
 
 		modalInstance.result.then(function () {
-			$scope.findPat();
+			$scope.refreshPat();
 		});
 	};
 
@@ -292,7 +343,7 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 		});
 
 		modalInstance.result.then(function () {
-			$scope.findPat();
+			$scope.refreshPat();
 		});
 	};
 
@@ -308,7 +359,7 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 		});
 
 		modalInstance.result.then(function () {
-			$scope.findPat();
+			$scope.refreshPat();
 		});
 	};
 
@@ -324,7 +375,7 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 		});
 
 		modalInstance.result.then(function () {
-			$scope.findPat();
+			$scope.refreshPat();
 		});
 	};
 
