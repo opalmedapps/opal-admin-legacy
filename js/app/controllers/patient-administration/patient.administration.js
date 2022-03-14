@@ -272,7 +272,7 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 				if ($scope.selectedName.pemail) {
 					$scope.pemail = $scope.selectedName.pemail.replace(/["']/g, "");
 				}
-				if ($scope.searchResult[0].paccess) {
+				if ($scope.selectedName.paccess) {
 					$scope.paccess = $scope.selectedName.paccess.replace(/["']/g, "");
 				}
 				if ($scope.selectedName.plang) {
