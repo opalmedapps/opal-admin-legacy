@@ -18,7 +18,7 @@ class FirebaseOpal extends HelpSetup
                 ->withServiceAccount(FIREBASE_SERVICEACCOUNT)
                 ->withDatabaseUri(FIREBASE_DATABASEURL);
             $this->auth = $this->firebase->createAuth();
-        } catch (FirebaseException $err){
+        } catch (Throwable $err){
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY, "An error occur during external connection: " . $err->getMessage());
         }
     }

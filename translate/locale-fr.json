@@ -2906,6 +2906,7 @@
       "PMRN": "MRN du patient",
       "SUBMIT": "Soumettre",
       "RESET": "Réinitialiser",
+      "DB_ERROR": "Une erreur s'est produite lors de la prise de contact avec la base de données:",
       "MULTIPLE": "Plusieurs patients ont été trouvés correspondant aux critères de recherche, veuillez sélectionner :",
       "NONE": "Aucun patient ne correspond aux critères, veuillez réessayer",
       "LAST": "Nom de famille",
