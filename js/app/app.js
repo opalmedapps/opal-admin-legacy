@@ -50,6 +50,7 @@ angular.module('opalAdmin', [
 		alert: 17,
 		audit: 18,
 		sms: 22,
+		patient_administration: 23,
 	})
 
 	.constant('HTTP_CODE', {
