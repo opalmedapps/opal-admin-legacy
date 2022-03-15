@@ -204,6 +204,12 @@ class Patient extends Module {
         return $results;
     }
 
+    /**
+     * Search database for list of patient mrns for every patient in the input array
+     *
+     * @param &$data : array - Contains the patient information include the following
+     *                          psnum : patient serial number
+     */
     protected function _findOtherMRNS(&$data) {
         foreach ($data as &$item)
             $item["MRN"] = $this->opalDB->getMrnPatientSerNum($item["psnum"]);
