@@ -167,12 +167,19 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 			$state.go('patient/report/group');
 		};
 
+		// Function to go to SMS page
 		$scope.goToSMS = function(){
 			$state.go('sms');
 		};
 
+		// Function to go to SMS message page
 		$scope.goToSMSMessage = function(){
 			$state.go('sms/message');
+		};
+
+		// Function to go to Patient Tools page
+		$scope.goToPatientModificationTools = function () {
+			$state.go('patients-administration');
 		};
 
 	});
