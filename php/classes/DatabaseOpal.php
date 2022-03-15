@@ -2842,8 +2842,6 @@ class DatabaseOpal extends DatabaseAccess {
         return $results;
     }
 
-
-
     /**
      * Update specific patient demographic information
      * @params $toUpdate - array of demographics fields to be update
@@ -2857,22 +2855,24 @@ class DatabaseOpal extends DatabaseAccess {
 
     /**
      * Update patient identifiers list
-     * @params $toUpdate - array of identifier information
+     * @params $identifier - identifier information
      *
      * @return void
      */
-    function updatePatientLink($toUpdate) {
-
-        while (($identifier = array_shift($toUpdate)) !== NULL) {
-            if (!empty($identifier["Patient_Hospital_Identifier_Id"])){
-                $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT_HOSPITAL_IDENTIFIER,$identifier);
-            } else {
-                $this->_insertRecordIntoTable(OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE,$identifier);
-            }
-        }
-        return ;
+    function updatePatientLink($identifier) {
+        $this->_updateRecordIntoTable(OPAL_UPDATE_PATIENT_HOSPITAL_IDENTIFIER,$identifier);
     }
 
+    /**
+     * Update patient identifiers list
+     * @params $identifier - identifier information
+     *
+     * @return void
+     */
+
+    function insertPatientLink($identifier) {
+        $this->_insertRecordIntoTable(OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE,$identifier);
+    }
 
     /*
      * Get the list of all undeleted master diagnoses
@@ -3269,9 +3269,9 @@ class DatabaseOpal extends DatabaseAccess {
      * @return array
      */
     function getSourceAliasesByTypeAndSource($type, $source) {
-        if ($source == ARIA_SOURCE_DB)
-            $sqlQuery = OPAL_GET_ARIA_SOURCE_ALIASES;
-        else
+//        if ($source == ARIA_SOURCE_DB)
+//            $sqlQuery = OPAL_GET_ARIA_SOURCE_ALIASES;
+//        else
             $sqlQuery = OPAL_GET_SOURCE_ALIASES;
 
         return $this->_fetchAll($sqlQuery, array(
@@ -3753,7 +3753,13 @@ class DatabaseOpal extends DatabaseAccess {
      * @return int - number of row modified
      */
     function updateResource($toUpdate) {
-        return $this->_updateRecordIntoTable(OPAL_UPDATE_RESOURCE, $toUpdate);
+        $parameters = array(                                                
+            array("parameter"=>":ResourceName","variable"=>$toUpdate['ResourceName'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":ResourceType","variable"=>$toUpdate['ResourceType'],"data_type"=>PDO::PARAM_STR),            
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$toUpdate['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":ResourceCode","variable"=>$toUpdate['ResourceCode'],"data_type"=>PDO::PARAM_STR),
+        );
+        return $this->_execute(OPAL_UPDATE_RESOURCE,$parameters);
     }
 
 
@@ -3782,7 +3788,6 @@ class DatabaseOpal extends DatabaseAccess {
         $dataSQL = substr($dataSQL, 0, -4);
         $dataSQL .= ")";
         $sql = str_replace("%%SOURCE_CODE_LIST%%", $dataSQL, OPAL_GET_RESOURCES_FOR_RESOURCE_APPOINTMENT);
-
         return $this->_fetchAll($sql, $dataToList);
     }
 
@@ -4092,7 +4097,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @param $patientser string - patient ID
      * @return array - data found if any
      */
-    function getPatientAccessLevel($patientser){        
+    function getPatientAccessLevel($patientser) {
         return $this->_fetch(OPAL_GET_PATIENT_ACCESS_LEVEL, array(
             array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR)
         ));
@@ -4141,11 +4146,11 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":ResourceId","variable"=>$resourceId,"data_type"=>PDO::PARAM_STR)
         ));
-    }
+    }    
 
     /** 
-     * Insert a new notification
-     * @param  array of the notification infos
+     * Insert a new resource
+     * @param  array of the resource infos
      * @return  ID of the entry
      */
     function insertResource($toInsert) {        
@@ -4174,7 +4179,7 @@ class DatabaseOpal extends DatabaseAccess {
      * */
     function getDoctor($resourceId) {
         return $this->_fetch(OPAL_GET_DOCTOR, array(            
-            array("parameter"=>":ResourceId","variable"=>$resourceId,"data_type"=>PDO::PARAM_INT),            
+            array("parameter"=>":ResourceId","variable"=>$resourceId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
@@ -4216,7 +4221,8 @@ class DatabaseOpal extends DatabaseAccess {
      * Get patient doctors information
      * @param  resourceId
      * @return  array Dcotor info
-     * */
+     *
+     */
     function getPatientDoctor($doctorSerNum,$patientSerNum) {        
         return $this->_fetch(OPAL_GET_PATIENT_DOCTOR, array(            
             array("parameter"=>":DoctorSerNum","variable"=>$doctorSerNum,"data_type"=>PDO::PARAM_INT),
@@ -4285,4 +4291,151 @@ class DatabaseOpal extends DatabaseAccess {
         );
         return $this->_execute(OPAL_UPDATE_STAFF,$parameters);
     }
+
+    /**
+     * Count resource occurence
+     * @param array of the resource fields
+     * @return int - Total of the entry
+     */
+    function countResource($content){
+        $params = array(
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$content['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":ResourceCode","variable"=>$content['ResourceCode'],"data_type"=>PDO::PARAM_STR),
+        );
+        return $this->_fetch(OPAL_GET_RESOURCE,$params);
+    }
+
+    /**
+     * Update the email address of a given patient.
+     * @param $email string - new email
+     * @param $patientser string - patient ID
+     * @return int - number of row modified
+     */
+    function updatePatientEmail($email, $patientser) {
+        return $this->_execute(OPAL_UPDATE_PATIENT_EMAIL, array(
+            array("parameter"=>":Email","variable"=>$email,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Update the email address of a given patient.
+     * @param $password string - new password
+     * @param $username string - patient user name
+     * @return int - number of row modified
+     */
+    function updatePatientPassword($password, $username) {
+        return $this->_execute(OPAL_UPDATE_PATIENT_PASSWORD, array(
+            array("parameter"=>":Password","variable"=>$password,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get published access level list
+     * @return array - data found if any
+     */
+    function getAllAccessLevel() {
+        return $this->_fetchAll(OPAL_GET_ALL_ACCESS_LEVEL, array());
+    }
+
+    /**
+     * Get the patient by their mrn
+     * @params  $mrn : string - target patient mrn
+     * @return  array - list of patient(s) matching search
+     */
+    function getPatientSerNum($patientser) {
+        return $this->_fetchAll(OPAL_GET_PATIENT_BY_SERIAL_NUMBER, array(
+            array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Update the security question of a given patient.
+     * @param $questionser string - new security question number
+     * @param $answer string - new security question answer
+     * @param $patientser string - patient ID
+     * @param $oldquestionser string - old security question number
+     * @return int - number of row modified
+     */
+    function updateSecurityAnswers($questionser, $answer, $patientser, $oldquestionser) {
+        return $this->_execute(OPAL_INSERT_SECURITY_ANSWER, array(
+            array("parameter"=>":QuestionSer","variable"=>$questionser,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Answer","variable"=>$answer,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":OldQuestionSer","variable"=>$oldquestionser,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Update the security question of a given patient.
+     * @param $accesslevel string - access level
+     * @param $patientser string - patient ID
+     * @return int - number of row modified
+     */
+    function updatePatientAccessLevel($accesslevel, $patientser) {
+        return $this->_execute(OPAL_UPDATE_PATIENT_ACCESS_LEVEL, array(
+            array("parameter"=>":AccessLevel","variable"=>$accesslevel,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get published security question list
+     * @return array - data found if any
+     */
+    function getAllSecurityQuestions() {
+        return $this->_fetchAll(OPAL_GET_ALL_SECURITY_QUESTIONS, array());
+    }
+
+    /**
+     * Get patient security question list
+     * @param $patientser string - patient ID
+     * @return array - data found if any
+     */
+    function getPatientSecurityQuestions($patientser) {
+        return $this->_fetchAll(OPAL_GET_PATIENT_SECURITY_QUESTIONS, array(
+            array("parameter"=>":PatientSer","variable"=>$patientser,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /**
+     * Get the patient by their last name
+     * @param  $name string - target patient last name
+     * @param  $language string - current user language
+     * @return  array - list of patient(s) matching search
+     * */
+    function getPatientNameAdministration($plname, $language) {
+        return $this->_fetchAll(OPAL_GET_PATIENT_NAME_ADMINISTRATION, array(
+            array("parameter"=>":name","variable"=>'%'.$plname.'%',"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":lang","variable"=>$language,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get the patient by their mrn
+     * @param  $mrn string - target patient mrn
+     * @param  $language string - current user language
+     * @return  array - list of patient(s) matching search
+     * */
+    function getPatientMRNAdministration($pmrn, $language) {
+        return $this->_fetchAll(OPAL_GET_PATIENT_MRN_ADMINISTRATION, array(
+            array("parameter"=>":MRN","variable"=>'%'.$pmrn.'%',"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":lang","variable"=>$language,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get the patient by their ramq
+     * @param  $ssn string - target patient ramq
+     * @param  $language string - current user language
+     * @return  array - list of patient(s) matching search
+     * */
+    function getPatientRAMQAdministration($ssn, $language) {
+        return $this->_fetchAll(OPAL_GET_PATIENT_RAMQ_ADMINISTRATION, array(
+            array("parameter"=>":SSN","variable"=>'%'.$ssn.'%',"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":lang","variable"=>$language,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
 }

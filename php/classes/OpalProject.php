@@ -143,9 +143,12 @@ abstract class OpalProject
                 "ResourceName"=>$resource["name"],
                 "ResourceType"=>$resource["type"],
             );
-            $rowCount = $this->opalDB->updateResource($data);
-            if (intval($rowCount) <= 0)
+
+            $result = $this->opalDB->countResource($data);            
+            if (intval($result["total"]) <= 0)
                 $this->opalDB->insertResource($data);
+            else
+                $this->opalDB->updateResource($data);
         }
 
         $resourceAppointmentList = $this->opalDB->getResourceIds($resources, $sourceDatabaseId, $appointmentId);

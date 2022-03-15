@@ -78,6 +78,10 @@ define( "UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
 define( "ADMIN_REGISTRATION_URL", $config['pathConfig']['registration_url'] );
 define( "CLINICAL_DOC_PATH", $config['pathConfig']['shared_drive_path'] . "clinical/documents/");
 
+// Define Firebase variables
+define( "FIREBASE_DATABASEURL", $config['firebaseConfig']["database"]["databaseURL"]);
+define( "FIREBASE_SERVICEACCOUNT", $config['firebaseConfig']["serviceAccount"]);
+
 define("ALIAS_TYPE_APPOINTMENT_TEXT", 'Appointment');
 define("ALIAS_TYPE_DOCUMENT_TEXT", 'Document');
 define("ALIAS_TYPE_TASK_TEXT", 'Task');
@@ -116,6 +120,7 @@ define("MODULE_TRIGGER", 19);
 define("MODULE_MASTER_SOURCE", 20);
 define("MODULE_RESOURCE", 21);
 define("MODULE_SMS", 22);
+define("MODULE_PATIENT_ADMINISTRATION", 23);
 define("LOCAL_SOURCE_ONLY", -1);
 
 define("MODULE_PUBLICATION_TRIGGER",array(MODULE_QUESTIONNAIRE, MODULE_ALERT, MODULE_EDU_MAT, MODULE_POST));
@@ -169,6 +174,17 @@ const CONSENT_STATUS_OPAL_CONSENTED = 2;
 const CONSENT_STATUS_OTHER_CONSENTED = 3;
 const CONSENT_STATUS_DECLINED = 4;
 
+// Define regular expression pattern constant
+const REGEX_CAPITAL_LETTER = '/[A-Z]/';
+const REGEX_LOWWER_CASE_LETTER = '/[a-z]/';
+const REGEX_SPECIAL_CHARACTER = '/\W|_{1}/';
+const REGEX_NUMBER = '/[0-9]/';
+const REGEX_MRN = '/^[0-9]*$/i';
+
+// Define patient information type constant array
+const PATIENT_LANGUAGE_ARRAY = array("EN", "FR");
+const PATIENT_SEX_ARRAY = array("Male", "Female", "Unknown", "Other");
+
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php";
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php";
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql.php";
@@ -176,6 +192,9 @@ require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_S
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql-queries.php";
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."aria-sql.php";
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."orms-sql.php";
+
+// Include composer dependency
+require_once( FRONTEND_ABS_PATH . "vendor". DIRECTORY_SEPARATOR . "autoload.php");
 
 // Include the classes
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "OpalProject.php" );
@@ -229,6 +248,8 @@ require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TriggerDocument.php");
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TriggerDoctor.php");
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TriggerStaff.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "FirebaseOpal.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "PatientAdministration.php");
 
 // Push Notification FCM and APN credientials.
 define( "API_KEY" , $config['pushNotificationConfig']['android']['apiKey'] );

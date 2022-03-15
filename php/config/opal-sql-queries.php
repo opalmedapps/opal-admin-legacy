@@ -891,23 +891,24 @@ define("OPAL_DELETE_PATIENT_DIAGNOSIS","
 define("OPAL_GET_PATIENT_NAME", "
     SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
     CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
-    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang FROM ".OPAL_PATIENT_TABLE." WHERE LastName LIKE :name;
+    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang, 
+    FROM ".OPAL_PATIENT_TABLE." WHERE LastName LIKE :name;
 
 ");
 
 define("OPAL_GET_PATIENT_MRN", "
     SELECT p.PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(p.FirstName, 1, 1)), LOWER(SUBSTRING(p.FirstName, 2))) AS pname,
     CONCAT(UCASE(SUBSTRING(p.LastName, 1, 1)), LOWER(SUBSTRING(p.LastName, 2))) AS plname,
-    p.SSN AS pramq, p.Sex AS psex, p.Email AS pemail, p.Language AS plang FROM ".OPAL_PATIENT_TABLE." p
-    WHERE (SELECT COUNT(*) FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi WHERE phi.MRN LIKE :MRN
+    p.SSN AS pramq, p.Sex AS psex, p.Email AS pemail, p.Language AS plang, 
+    FROM ".OPAL_PATIENT_TABLE." p WHERE (SELECT COUNT(*) FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi WHERE phi.MRN LIKE :MRN
     AND phi.PatientSerNum = p.PatientSerNum) > 0;
 ");
 
 define("OPAL_GET_PATIENT_RAMQ", "
     SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
     CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
-    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :SSN;
-
+    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang, 
+    FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :SSN;
 ");
 
 define("OPAL_GET_DIAGNOSIS_REPORT", "
@@ -1484,7 +1485,7 @@ define("OPAL_GET_ALIASES","
 ");
 
 define("OPAL_GET_ALIASES_UNPUBLISHED_EXPRESSION","
-    SELECT ae.ExpressionName AS id, ae.Description AS description, m.externalId, 1 AS added FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae
+    SELECT ae.masterSourceAliasId, ae.ExpressionName AS id, ae.Description AS description, m.externalId, 1 AS added FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae
     LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m ON m.ID = ae.masterSourceAliasId
     RIGHT JOIN ".OPAL_ALIAS_TABLE." al ON al.AliasSerNum = ae.AliasSerNum
     WHERE ae.AliasSerNum = :AliasSerNum
@@ -1542,21 +1543,34 @@ define("OPAL_GET_SOURCE_DATABASES","
     WHERE Enabled = ".ACTIVE_RECORD." ORDER BY SourceDatabaseSerNum
 ");
 
-define("OPAL_GET_ARIA_SOURCE_ALIASES","
-    SELECT m.ID AS masterSourceAliasId, m.description AS name, m.code AS id, m.description, m.externalId, a.AliasName_EN AS assigned
-    FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m
-    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = m.ID
-    LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
-    WHERE m.type = :type AND m.source = :source
-    AND CASE
-        WHEN a.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
-        WHEN a.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." app WHERE app.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
-        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
-    END
-    AND m.deleted = ".NON_DELETED_RECORD." ORDER BY m.code");
+//define("OPAL_GET_ARIA_SOURCE_ALIASES","
+//    SELECT m.ID AS masterSourceAliasId, m.description AS name, m.code AS id, m.description, m.externalId, a.AliasName_EN AS assigned
+//    FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m
+//    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = m.ID
+//    LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
+//    WHERE m.type = :type AND m.source = :source
+//    AND CASE
+//        WHEN a.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+//        WHEN a.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." app WHERE app.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+//        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+//    END
+//    AND m.deleted = ".NON_DELETED_RECORD." ORDER BY m.code");
+
+//define("OPAL_GET_SOURCE_ALIASES","
+//    SELECT m.ID AS masterSourceAliasId, CONCAT(m.code, ' (', m.description, ')') AS name, m.code AS id, m.description, m.externalId,
+//    a.AliasName_EN AS assigned FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m
+//    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = m.ID
+//    LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
+//    WHERE m.type = :type AND m.source = :source
+//    AND CASE
+//        WHEN a.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+//        WHEN a.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." app WHERE app.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+//        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+//    END
+//    AND m.deleted = ".NON_DELETED_RECORD." ORDER BY m.code");
 
 define("OPAL_GET_SOURCE_ALIASES","
-    SELECT m.ID AS masterSourceAliasId, CONCAT(m.code, ' (', m.description, ')') AS name, m.code AS id, m.description, m.externalId, 
+    SELECT m.ID AS masterSourceAliasId, m.code AS id, m.description, m.externalId, 
     a.AliasName_EN AS assigned FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m
     LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = m.ID
     LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
@@ -2047,4 +2061,76 @@ LastUpdated = :LastUpdated
 WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum
 AND StaffId = :StaffId;
 ";
+
+const OPAL_GET_RESOURCE = "
+SELECT COUNT(*) AS total FROM " . OPAL_RESOURCE_TABLE . " 
+WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum 
+AND ResourceCode = :ResourceCode;
+";
+
+const OPAL_UPDATE_PATIENT_EMAIL = "
+UPDATE " . OPAL_PATIENT_TABLE . " pt
+SET pt.Email = :Email WHERE pt.PatientSerNum = :PatientSer;";
+
+const OPAL_UPDATE_PATIENT_PASSWORD = "
+UPDATE " . OPAL_USERS_TABLE . " ut
+SET ut.Password = :Password  WHERE ut.username = :Username;";
+
+const OPAL_INSERT_SECURITY_ANSWER = "
+UPDATE " . OPAL_SECURITY_ANSWER_TABLE . " sa
+SET sa.SecurityQuestionSerNum = :QuestionSer, sa.AnswerText = :Answer
+WHERE sa.PatientSerNum = :PatientSer AND sa.SecurityQuestionSerNum = :OldQuestionSer";
+
+const OPAL_UPDATE_PATIENT_ACCESS_LEVEL = "
+UPDATE " . OPAL_PATIENT_TABLE . " pt
+SET pt.Accesslevel = :AccessLevel WHERE pt.PatientSerNum = :PatientSer;";
+
+const OPAL_GET_ALL_SECURITY_QUESTIONS = "
+SELECT SecurityQuestionSerNum, QuestionText_EN, QuestionText_FR 
+FROM " . OPAL_SECURITY_QUESTION_TABLE . " WHERE Active = " . ACTIVE_RECORD . ";";
+
+const OPAL_GET_PATIENT_SECURITY_QUESTIONS = "
+SELECT SecurityQuestionSerNum
+FROM " . OPAL_SECURITY_ANSWER_TABLE . " WHERE PatientSerNum = :PatientSer;";
+
+const OPAL_GET_ALL_ACCESS_LEVEL = "
+SELECT Id, AccessLevelName_EN, AccessLevelName_FR 
+FROM " . OPAL_ACCESS_LEVEL_TABLE ;
+
+const OPAL_GET_PATIENT_BY_SERIAL_NUMBER = "
+SELECT * FROM " . OPAL_PATIENT_TABLE . " where PatientSerNum = :PatientSer;";
+
+const OPAL_GET_PATIENT_NAME_ADMINISTRATION = "
+SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
+CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
+SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang, 
+(SELECT u.Username FROM ".OPAL_USERS_TABLE." u WHERE u.UserType = 'Patient' AND u.UserTypeSerNum = PatientSerNum LIMIT 1) AS puid,
+CASE 
+    WHEN :lang = 'EN' THEN (SELECT al.AccessLevelName_EN FROM ".OPAL_ACCESS_LEVEL_TABLE." al WHERE al.ID = AccessLevel LIMIT 1) 
+    WHEN :lang = 'FR' THEN (SELECT al.AccessLevelName_FR FROM ".OPAL_ACCESS_LEVEL_TABLE." al WHERE al.ID = AccessLevel LIMIT 1) 
+END AS paccess
+FROM ".OPAL_PATIENT_TABLE." WHERE LastName LIKE :name;";
+
+const OPAL_GET_PATIENT_MRN_ADMINISTRATION = "
+SELECT p.PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(p.FirstName, 1, 1)), LOWER(SUBSTRING(p.FirstName, 2))) AS pname,
+CONCAT(UCASE(SUBSTRING(p.LastName, 1, 1)), LOWER(SUBSTRING(p.LastName, 2))) AS plname,
+p.SSN AS pramq, p.Sex AS psex, p.Email AS pemail, p.Language AS plang, 
+(SELECT u.Username FROM ".OPAL_USERS_TABLE." u WHERE u.UserType = 'Patient' AND u.UserTypeSerNum = PatientSerNum LIMIT 1) AS puid,
+CASE 
+    WHEN :lang = 'EN' THEN (SELECT al.AccessLevelName_EN FROM ".OPAL_ACCESS_LEVEL_TABLE." al WHERE al.ID = AccessLevel LIMIT 1) 
+    WHEN :lang = 'FR' THEN (SELECT al.AccessLevelName_FR FROM ".OPAL_ACCESS_LEVEL_TABLE." al WHERE al.ID = AccessLevel LIMIT 1) 
+END AS paccess
+FROM ".OPAL_PATIENT_TABLE." p WHERE (SELECT COUNT(*) FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi WHERE phi.MRN LIKE :MRN
+AND phi.PatientSerNum = p.PatientSerNum) > 0;";
+
+const OPAL_GET_PATIENT_RAMQ_ADMINISTRATION = "
+SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
+CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
+SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang, 
+(SELECT u.Username FROM ".OPAL_USERS_TABLE." u WHERE u.UserType = 'Patient' AND u.UserTypeSerNum = PatientSerNum LIMIT 1) AS puid,
+CASE 
+    WHEN :lang = 'EN' THEN (SELECT al.AccessLevelName_EN FROM ".OPAL_ACCESS_LEVEL_TABLE." al WHERE al.ID = AccessLevel LIMIT 1) 
+    WHEN :lang = 'FR' THEN (SELECT al.AccessLevelName_FR FROM ".OPAL_ACCESS_LEVEL_TABLE." al WHERE al.ID = AccessLevel LIMIT 1) 
+END AS paccess
+FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :SSN; ";
 
