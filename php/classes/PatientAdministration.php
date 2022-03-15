@@ -173,7 +173,7 @@ class PatientAdministration extends Module {
     /**
      * Search database for list of patient mrns for every patient in the input array
      *
-     * @param &$data : array - Contains the patient information include the following
+     * @param &$data : array - List of the patient information which contains the following
      *                          psnum : patient serial number
      */
     protected function _findOtherMRNS(&$data) {
