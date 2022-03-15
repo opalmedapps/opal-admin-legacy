@@ -15,36 +15,43 @@ class Patient extends Module {
      * Update the list of patients with their publication
      * @param $post
      */
-    public function updatePublishFlags($post){
+    public function updatePublishFlags($post) {
         $this->checkWriteAccess($post);
         HelpSetup::arraySanitization($post);
         $errCode = $this->_validatePublishFlag($post);
 
-        if ($errCode != 0)
+        if($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        foreach ($post["data"] as $item){
+        foreach ($post["data"] as $item) {
             $this->opalDB->updatePatientPublishFlag($item["serial"], $item["transfer"]);
         }
-           
+
     }
 
     /**
      * Validate a list of publication flags for patient.
-     * @param $post - publish flag to validate
+     *
+     * @param $post : array - Contains the following information
+     *                          data : array - Contains the following information
+     *                              serial : patient serial number (mandatory)
+     *                              transfer : patient publish flag (mandatory)
+     *
+     *  1st bit invalid input format
+     *
      * @return string - string to convert in int for error code
      */
     protected function _validatePublishFlag(&$post) {
         $errCode = "";
-        if (is_array($post) && array_key_exists("data", $post) && is_array($post["data"])) {
+        if(is_array($post) && array_key_exists("data", $post) && is_array($post["data"])) {
             $errFound = false;
             foreach ($post["data"] as $item) {
-                if (!array_key_exists("serial", $item) || $item["serial"] == ""|| !array_key_exists("transfer", $item) || $item["transfer"] == "") {
+                if(!array_key_exists("serial", $item) || $item["serial"] == "" || !array_key_exists("transfer", $item) || $item["transfer"] == "") {
                     $errFound = true;
                     break;
                 }
             }
-            if ($errFound)
+            if($errFound)
                 $errCode = "1" . $errCode;
             else
                 $errCode = "0" . $errCode;
@@ -73,15 +80,20 @@ class Patient extends Module {
 
     /**
      * Validate the name search parameter for individual reports
-     * @param $post - patient last name
-     * @return $errCode - 1st bit for pname
+     *
+     * @param $post : array - Contains the following information
+     *                          pname : patient name
+     *
+     *  1st bit invalid patient name
+     *
+     * @return $errCode
      */
-    protected function _validateName(&$post){
+    protected function _validateName(&$post) {
         $errCode = "";
-        if(is_array($post)){
-            if(!array_key_exists("pname", $post) || $post["pname"] == ""){
+        if(is_array($post)) {
+            if(!array_key_exists("pname", $post) || $post["pname"] == "") {
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
         }
@@ -91,17 +103,17 @@ class Patient extends Module {
     /**
      * Search database for patient
      *
-     * @param $post: patient last name case insensitive
+     * @param $post : patient last name case insensitive
      * @return array : details for the given patient(s) matching search criteria
      * @error 422 with array (validation=>integer)
      */
-    public function findPatientByName( $post ) {
+    public function findPatientByName($post) {
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateName($post);
         $errCode = bindec($errCode);
         if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         $results = $this->opalDB->getPatientName($post['pname']);
         $this->_findOtherMRNS($results);
@@ -110,15 +122,20 @@ class Patient extends Module {
 
     /**
      * Validate the mrn search parameter for individual reports
-     * @param post - patient mrn
-     * @return $errCode - 1st bit for mrn
+     *
+     * @param $post : array - Contains the following information
+     *                          pmrn : patient mrn
+     *
+     *  1st bit invalid patient mrn
+     *
+     * @return $errCode
      */
-    protected function _validateMRN(&$post){
+    protected function _validateMRN(&$post) {
         $errCode = "";
-        if(is_array($post)){
-            if(!array_key_exists("pmrn", $post) || $post["pmrn"] == ""){
+        if(is_array($post)) {
+            if(!array_key_exists("pmrn", $post) || $post["pmrn"] == "") {
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
         }
@@ -128,17 +145,17 @@ class Patient extends Module {
     /**
      * Search database for patient
      *
-     * @param $post: patient mrn
+     * @param $post : patient mrn
      * @return array : details for the given patient(s) matching search criteria
      *
      */
-    public function findPatientByMRN( $post ) {
+    public function findPatientByMRN($post) {
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateMRN($post);
         $errCode = bindec($errCode);
         if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         $results = $this->opalDB->getPatientMRN($post['pmrn']);
         $this->_findOtherMRNS($results);
@@ -147,15 +164,20 @@ class Patient extends Module {
 
     /**
      * Validate the ramq search parameter for individual reports
-     * @param $post - patient ramq
-     * @return $errCode - 1st bit for ramq
+     *
+     * @param $post : array - Contains the following information
+     *                          pramq : patient ramq
+     *
+     *  1st bit invalid patient ramq
+     *
+     * @return $errCode
      */
-    protected function _validateRAMQ(&$post){
+    protected function _validateRAMQ(&$post) {
         $errCode = "";
-        if(is_array($post)){
-            if(!array_key_exists("pramq", $post) || $post["pramq"] == ""){
+        if(is_array($post)) {
+            if(!array_key_exists("pramq", $post) || $post["pramq"] == "") {
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
         }
@@ -165,23 +187,29 @@ class Patient extends Module {
     /**
      * Search database for patient
      *
-     * @param $post: patient ramq
+     * @param $post : patient ramq
      * @return array : details for the given patient(s) matching search criteria
      *
      */
-    public function findPatientByRAMQ( $post ) {
+    public function findPatientByRAMQ($post) {
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateRAMQ($post);
         $errCode = bindec($errCode);
         if($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         $results = $this->opalDB->getPatientRAMQ($post['pramq']);
         $this->_findOtherMRNS($results);
         return $results;
     }
 
+    /**
+     * Search database for list of patient mrns for every patient in the input array
+     *
+     * @param &$data : array - List of the patient information which contains the following
+     *                          psnum : patient serial number
+     */
     protected function _findOtherMRNS(&$data) {
         foreach ($data as &$item)
             $item["MRN"] = $this->opalDB->getMrnPatientSerNum($item["psnum"]);
@@ -205,83 +233,83 @@ class Patient extends Module {
      * @param $post array - mrn & featureList
      * @return $errCode
      */
-    protected function _validatePatientReport(&$post){
+    protected function _validatePatientReport(&$post) {
         $errCode = "";
 
-        if(is_array($post)){
+        if(is_array($post)) {
             //bit 1
-            if(!array_key_exists("psnum", $post) || $post["psnum"] == ""){
+            if(!array_key_exists("psnum", $post) || $post["psnum"] == "") {
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
             //bit 2
-            if(!array_key_exists("diagnosis", $post) || $post["diagnosis"] == ""){
+            if(!array_key_exists("diagnosis", $post) || $post["diagnosis"] == "") {
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
             //bit 3
-            if(!array_key_exists("appointments", $post) || $post["appointments"] == ""){
+            if(!array_key_exists("appointments", $post) || $post["appointments"] == "") {
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
             //bit 4
-            if(!array_key_exists("questionnaires", $post) || $post["questionnaires"] == ""){
+            if(!array_key_exists("questionnaires", $post) || $post["questionnaires"] == "") {
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
             //bit 5
-            if(!array_key_exists("education", $post) || $post["education"] == ""){
+            if(!array_key_exists("education", $post) || $post["education"] == "") {
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
             //bit 6
-            if(!array_key_exists("testresults", $post) || $post["testresults"] == ""){
+            if(!array_key_exists("testresults", $post) || $post["testresults"] == "") {
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
             //bit 7
-            if(!array_key_exists("pattestresults", $post) || $post["pattestresults"] == ""){
+            if(!array_key_exists("pattestresults", $post) || $post["pattestresults"] == "") {
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
             //bit 8
-            if(!array_key_exists("notes", $post) || $post["notes"] == ""){
+            if(!array_key_exists("notes", $post) || $post["notes"] == "") {
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
             //bit 9
-            if(!array_key_exists("treatplan", $post) || $post["treatplan"] == ""){
+            if(!array_key_exists("treatplan", $post) || $post["treatplan"] == "") {
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
             //bit 10
-            if(!array_key_exists("general", $post) || $post["general"] == ""){
+            if(!array_key_exists("general", $post) || $post["general"] == "") {
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
             //bit 11
-            if(!array_key_exists("clinicalnotes", $post) || $post["clinicalnotes"] == ""){
+            if(!array_key_exists("clinicalnotes", $post) || $post["clinicalnotes"] == "") {
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
             //bit 12
-            if(!array_key_exists("treatingteam", $post) || $post["treatingteam"] == ""){
+            if(!array_key_exists("treatingteam", $post) || $post["treatingteam"] == "") {
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
-        }else{
+        } else {
             $errCode = "111111111111";
         }
         return $errCode;
@@ -289,50 +317,50 @@ class Patient extends Module {
 
     /**
      *  Generate the patient report given patient serial number & feature list
-     *  @param $post: array contains parameter to find
-     *  @return $resultArray: patient data report JSON object, keyed by report segment name
+     * @param $post : array contains parameter to find
+     * @return $resultArray: patient data report JSON object, keyed by report segment name
      */
-    public function getPatientReport($post){
+    public function getPatientReport($post) {
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validatePatientReport($post);
         $errCode = bindec($errCode);
-        if($errCode != 0){
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+        if($errCode != 0) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
         }
 
         $resultArray = array();
-        if($post['diagnosis'] === "true"){
+        if($post['diagnosis'] === "true") {
             $resultArray["diagnosis"] = $this->opalDB->getPatientDiagnosisReport($post['psnum']);
         }
-        if($post["appointments"] === "true"){
+        if($post["appointments"] === "true") {
             $resultArray["appointments"] = $this->opalDB->getPatientAppointmentReport($post['psnum']);
         }
-        if($post["questionnaires"] === "true"){
+        if($post["questionnaires"] === "true") {
             $resultArray["questionnaires"] = $this->opalDB->getPatientQuestionnaireReport($post['psnum']);
         }
-        if($post["education"] === "true"){
+        if($post["education"] === "true") {
             $resultArray["education"] = $this->opalDB->getPatientEducMaterialReport($post['psnum']);
         }
-        if($post["testresults"] === "true"){
+        if($post["testresults"] === "true") {
             $resultArray["testresults"] = $this->opalDB->getPatientLegacyTestReport($post['psnum']);
         }
-        if($post["pattestresults"] === "true"){
+        if($post["pattestresults"] === "true") {
             $resultArray["pattestresults"] = $this->opalDB->getPatientTestReport($post['psnum']);
         }
-        if($post["notes"] === "true"){
+        if($post["notes"] === "true") {
             $resultArray["notes"] = $this->opalDB->getPatientNotificationsReport($post['psnum']);
         }
-        if($post["treatplan"] === "true"){
+        if($post["treatplan"] === "true") {
             $resultArray["treatplan"] = $this->opalDB->getPatientTreatmentPlanReport($post['psnum']);
         }
-        if($post["clinicalnotes"] === "true"){
+        if($post["clinicalnotes"] === "true") {
             $resultArray["clinicalnotes"] = $this->opalDB->getPatientClinNoteReport($post['psnum']);
         }
-        if($post["treatingteam"] === "true"){
+        if($post["treatingteam"] === "true") {
             $resultArray["treatingteam"] = $this->opalDB->getPatientTxTeamReport($post['psnum']);
         }
-        if($post["general"] === "true"){
+        if($post["general"] === "true") {
             $resultArray["general"] = $this->opalDB->getPatientGeneralReport($post['psnum']);
         }
         return $resultArray;
@@ -340,15 +368,20 @@ class Patient extends Module {
 
     /**
      * Validate the educational material search parameter for group reports
-     * @param $post - matType
-     * @return $errCode - 1st bit for matType
+     *
+     * @param $post : array - Contains the following information
+     *                          matType : material type
+     *
+     *  1st bit invalid material type
+     *
+     * @return $errCode
      */
-    protected function _validateEducType(&$post){
+    protected function _validateEducType(&$post) {
         $errCode = "";
-        if(is_array($post)){
-            if(!array_key_exists("matType", $post) || $post["matType"] == ""){
+        if(is_array($post)) {
+            if (!array_key_exists("matType", $post) || $post["matType"] == "") {
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
         }
@@ -357,40 +390,50 @@ class Patient extends Module {
 
     /**
      *  Generate list of available educational materials from DB
-     *  @param $post: user selected material type
-     *  @return array of educational materials
+     * @param $post : array - Contains the following information
+     *                          matType : material type
+     *
+     *  1st bit invalid material type
+     * @return array of educational materials
      */
-    public function findEducationalMaterialOptions( $post ){
+    public function findEducationalMaterialOptions($post) {
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateEducType($post);
         $errCode = bindec($errCode);
-        if($errCode != 0){
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+        if($errCode != 0) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
         }
         return $this->opalDB->getEducMatOptions($post['matType']);
     }
 
     /**
      * Validate the educational material report parameters
-     * @param $post array - contains type and name
-     * @return $errCode - validation of the data
+     *
+     * @param $post : array - Contains the following information
+     *                          type : material type
+     *                          name : material name
+     *
+     *  1st bit invalid material type
+     *  2nd bit invalid material name
+     *
+     * @return $errCode
      */
-    protected function _validateEducReport(&$post){
+    protected function _validateEducReport(&$post) {
         $errCode = "";
-        if(is_array($post)){
-            if(!array_key_exists("type", $post) || $post["type"] == ""){
+        if(is_array($post)) {
+            if(!array_key_exists("type", $post) || $post["type"] == "") {
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
 
-            if(!array_key_exists("name", $post) || $post["name"] == ""){
+            if(!array_key_exists("name", $post) || $post["name"] == "") {
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
-        }else{
+        } else {
             $errCode = "11";
         }
         return $errCode;
@@ -398,16 +441,23 @@ class Patient extends Module {
 
     /**
      * Generate educational materials group report
-     * @param $post
-     * @return array
+     *
+     * @param $post : array - Contains the following information
+     *                          type : material type
+     *                          name : material name
+     *
+     *  1st bit invalid material type
+     *  2nd bit invalid material name
+     *
+     *  @return array of educational material report
      */
-    public function getEducationalMaterialReport( $post ){
+    public function getEducationalMaterialReport($post) {
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateEducReport($post);
         $errCode = bindec($errCode);
-        if($errCode != 0){
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+        if($errCode != 0) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
         }
         return $this->opalDB->getEducMatReport($post['type'], $post['name']);
     }
@@ -416,22 +466,27 @@ class Patient extends Module {
      * Generate list of questionnaires available in DB
      * @return array
      */
-    public function findQuestionnaireOptions(){
+    public function findQuestionnaireOptions() {
         $this->checkReadAccess();
         return $this->opalDB->getQstOptions();
     }
 
     /**
      * Validate the questionnaire name search parameter for group reports
-     * @param $post - qstName questionnaire name
-     * @return $errCode - 1st bit for qstName
+     *
+     * @param $post : array - Contains the following information
+     *                          qstName : questionnaire name
+     *
+     *  1st bit invalid questionnaire name
+     *
+     * @return $errCode
      */
-    protected function _validateQstReport(&$post){
+    protected function _validateQstReport(&$post) {
         $errCode = "";
-        if(is_array($post)){
-            if(!array_key_exists("qstName", $post) || $post["qstName"] == ""){
+        if(is_array($post)) {
+            if(!array_key_exists("qstName", $post) || $post["qstName"] == "") {
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
         }
@@ -439,26 +494,31 @@ class Patient extends Module {
     }
 
     /**
-     *  Generate questionnaires report given user selected qName
-     *  @param $post: questionnaire name
-     *  @return array: questionnaire report JSON object
+     * Generate questionnaires report given user selected qName
+     *
+     * @param $post : array - Contains the following information
+     *                          qstName : questionnaire name
+     *
+     *  1st bit invalid questionnaire name
+     *
+     * @return array: questionnaire report JSON object
      */
-    public function getQuestionnaireReport( $post ){
+    public function getQuestionnaireReport($post) {
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateQstReport($post);
         $errCode = bindec($errCode);
-        if($errCode != 0){
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+        if($errCode != 0) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
         }
         return $this->opalDB->getQstReport($post['qstName']);
     }
 
     /**
      *  Generate patient group report
-     *  @return array: patient group report JSON object
+     * @return array: patient group report JSON object
      */
-    public function getPatientGroupReport(){
+    public function getPatientGroupReport() {
         $this->checkReadAccess();
         return $this->opalDB->getDemoReport();
 
@@ -477,7 +537,7 @@ class Patient extends Module {
      *
      * @return $errCode
      */
-    protected function _validatePatientExisitParams($post){
+    protected function _validatePatientExisitParams($post) {
 
         $errCode = "";
 
@@ -505,8 +565,7 @@ class Patient extends Module {
      *  3nd bit invalid format
      *     * @return array $response : 0 / 1
      */
-    public function checkPatientExist ($post )
-    {
+    public function checkPatientExist($post) {
         $errCode = "";
         $response = array(
             'status' => '',
@@ -515,28 +574,26 @@ class Patient extends Module {
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
 
-        $pattern = "/^[0-9]*$/i";
-
         $errCode = $this->_validatePatientExisitParams($post) . $errCode;
 
-        if(array_key_exists("mrn", $post)){
-            if (preg_match($pattern,  $post["mrn"] )) {
-                $mrn = str_pad( $post["mrn"] ,7,"0",STR_PAD_LEFT);
-                $response['status']  = "Success";
+        if(array_key_exists("mrn", $post)) {
+            if(preg_match(REGEX_MRN, $post["mrn"])) {
+                $mrn = str_pad($post["mrn"], 7, "0", STR_PAD_LEFT);
+                $response['status'] = "Success";
                 $errCode = "0" . $errCode;
                 $patientSite = $this->opalDB->getPatientSite($mrn, $post["site"]);
-                $response['data']  = boolval(count($patientSite));
+                $response['data'] = boolval(count($patientSite));
 
             } else {
                 $errCode = "1" . $errCode;
-                $response['status']  = "Error";
+                $response['status'] = "Error";
                 $response['message'] = "Invalid MRN";
             }
         }
 
         $errCode = bindec($errCode);
-        if($errCode != 0){
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation"=>$errCode));
+        if($errCode != 0) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
         }
 
         return $response;
@@ -560,24 +617,20 @@ class Patient extends Module {
      *
      * @return $errCode
      */
-    protected function _validatePatientParams($post)
-    {
-        $validLang = array("EN", "FR", "SN");
-        $validGender = array("Male", "Female", "Unknown", "Other");
-        $pattern = "/^[0-9]*$/i";
+    protected function _validatePatientParams($post) {
         $errCode = "";
 
-        if (!array_key_exists("mrns", $post) || $post["mrns"] == "" || count($post["mrns"]) <= 0)
+        if(!array_key_exists("mrns", $post) || $post["mrns"] == "" || count($post["mrns"]) <= 0)
             $errCode = "1" . $errCode;
         else {
             $invalidValue = false;
             foreach ($post["mrns"] as $identifier) {
-                $invalidValue = !preg_match($pattern, $identifier["mrn"]);
+                $invalidValue = !preg_match(REGEX_MRN, $identifier["mrn"]);
             }
 
-            if ($invalidValue) {
+            if($invalidValue) {
                 $errCode = "1" . $errCode;
-             } else {
+            } else {
                 $errCode = "0" . $errCode;
             }
         }
@@ -597,19 +650,50 @@ class Patient extends Module {
         else
             $errCode = "0" . $errCode;
 
-        if(array_key_exists("language", $post)){
-            if (!in_array($post["language"], $validLang))
+        if(array_key_exists("language", $post)) {
+            if(!in_array($post["language"], PATIENT_LANGUAGE_ARRAY))
                 $errCode = "1" . $errCode;
             else
                 $errCode = "0" . $errCode;
+        } else
+            $errCode = "0" . $errCode;
+
+        if(array_key_exists("gender", $post)) {
+            if($post["gender"] != null && !in_array($post["gender"], PATIENT_SEX_ARRAY))
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+        } else
+            $errCode = "0" . $errCode;
+
+        $patientNotFound = true;
+        $idList = $post["mrns"];
+        $cptIDs = 0;
+        $lenIDs = count($idList);
+
+        // Looping patient Identifiers, if no patient found, then Patient does not exist with any identifiers
+        while (($identifier = array_shift($idList)) !== NULL) {
+            $mrn = str_pad($identifier["mrn"], 7, "0", STR_PAD_LEFT);
+            $retrievedPatient = $this->opalDB->getPatientSite($mrn, $identifier["site"]);
+            $patientNotFound = !boolVal(count($retrievedPatient)) && $patientNotFound;
+
+            if($patientNotFound) {
+                // Return element to Identifier List until Patient Id found
+                $idList = array_merge($idList, array($identifier));
+                $cptIDs = $cptIDs + 1;
+            }
+
+            // Patient does not exist with any identifiers
+            if($cptIDs > $lenIDs) {
+                break;
+            }
         }
 
-        if(array_key_exists("gender", $post)){
-            if ($post["gender"] != null && !in_array($post["gender"], $validGender))
-                $errCode = "1" . $errCode;
-            else
-                $errCode = "0" . $errCode;
-        }
+        // Patient does not exist with any identifiers
+        if($patientNotFound)
+            $errCode = "1" . $errCode;
+        else
+            $errCode = "0" . $errCode;
 
         return $errCode;
     }
@@ -633,13 +717,16 @@ class Patient extends Module {
      * @return  $errCode : int - error code coded on bitwise operation. If 0, no error.
      * @throws Exception
      */
-    public function updatePatient($post){
+    public function updatePatient($post) {
 
         $this->checkWriteAccess($post);
         HelpSetup::arraySanitization($post);
         $errCode = $this->_validatePatientParams($post);
 
-        $patientNotFound = true;
+        $errCode = bindec($errCode);
+        if($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
         $idList = $post["mrns"];
         $toBeInsertPatientIds = array();
         $patientSerNum = "";
@@ -648,109 +735,99 @@ class Patient extends Module {
 
         // Looping patient Identifiers
         while (($identifier = array_shift($idList)) !== NULL) {
-            $mrn = str_pad($identifier["mrn"] ,7,"0",STR_PAD_LEFT);
+            $mrn = str_pad($identifier["mrn"], 7, "0", STR_PAD_LEFT);
             $retrievedPatient = $this->opalDB->getPatientSite($mrn, $identifier["site"]);
-            $patientNotFound = !boolVal(count($retrievedPatient)) && $patientNotFound;
 
-            if (count($retrievedPatient) == 1) {
+            if(count($retrievedPatient) == 1) {
 
                 $patientIdArray = $retrievedPatient[0];
 
                 // Entry defined in Identifier List
-                $patientSerNum  = $patientIdArray["PatientSerNum"];
+                $patientSerNum = $patientIdArray["PatientSerNum"];
 
                 // Update entry status in Identifier List
-                $patientIdArray["Is_Active"]=$identifier["active"];
+                $patientIdArray["Is_Active"] = $identifier["active"];
             } else {
                 // Entry not found in Identifier List
-                if ($patientSerNum == ""){
+                if($patientSerNum == "") {
                     // Return element to Identifier List until Patient Id found
-                    $idList = array_merge($idList,array($identifier));
+                    $idList = array_merge($idList, array($identifier));
                     $cptIDs = $cptIDs + 1;
-                } else{
+                } else {
                     // Add new entry in Identifier List
                     $patientIdArray = array(
-                        "PatientSerNum"=>$patientSerNum,
-                        "Hospital_Identifier_Type_Code"=>$identifier["site"],
-                        "MRN"=>$mrn,
-                        "Is_Active"=>$identifier["active"]);
+                        "PatientSerNum" => $patientSerNum,
+                        "Hospital_Identifier_Type_Code" => $identifier["site"],
+                        "MRN" => $mrn,
+                        "Is_Active" => $identifier["active"]);
                 }
             }
 
             // Add value for update
-            if (!empty($patientIdArray)){
-                array_push($toBeInsertPatientIds,$patientIdArray);
+            if(!empty($patientIdArray)) {
+                array_push($toBeInsertPatientIds, $patientIdArray);
             }
 
             // Patient does not exist with any identifiers
-            if ($cptIDs > $lenIDs) {
+            if($cptIDs > $lenIDs) {
                 break;
             }
         }
 
-        // Patient does not exist with any identifiers
-        if ($patientNotFound)
-            $errCode = "1" . $errCode;
-        else
-            $errCode = "0" . $errCode;
-        
-        $errCode = bindec($errCode);
-        if ($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
-
-
         // Get current patient demographic
-        $patientData = $this->opalDB->fetchTriggersData("SELECT * FROM Patient where PatientSerNum=" . $patientSerNum)[0];
+        $patientData = $this->opalDB->getPatientSerNum($patientSerNum)[0];
 
         //Update patient demographics
         $patientData["PatientSerNum"] = $patientSerNum;
         $patientData["FirstName"] = $post["name"]["firstName"];
         $patientData["LastName"] = $post["name"]["lastName"];
 
-        if (array_key_exists("birthdate", $post) && !empty($post["birthdate"])){
+        if(array_key_exists("birthdate", $post) && !empty($post["birthdate"])) {
             $patientData["DateOfBirth"] = $post["birthdate"];
 
             $from = new DateTime($patientData["DateOfBirth"]);
-            $to   = new DateTime('today');
-            $age  =  $from->diff($to)->y;
+            $to = new DateTime('today');
+            $age = $from->diff($to)->y;
 
-            $patientData["Age"] = $age;           
+            $patientData["Age"] = $age;
         }
 
-        if (array_key_exists("alias", $post)){
+        if(array_key_exists("alias", $post)) {
             $patientData["Alias"] = $post["alias"];
         }
 
-        if (array_key_exists("gender", $post) && !empty($post["gender"])){
+        if(array_key_exists("gender", $post) && !empty($post["gender"])) {
             $patientData["Sex"] = $post["gender"];
-        }       
+        }
 
-        if(array_key_exists("deceasedDateTime", $post) && $post["deceasedDateTime"] != ""){
+        if(array_key_exists("deceasedDateTime", $post) && $post["deceasedDateTime"] != "") {
             $patientData["StatusReasonTxt"] = "Deceased patient";
             $patientData["BlockedStatus"] = 1;
-            $this->opalDB->updatePatientPublishFlag($patientSerNum,0);
+            $this->opalDB->updatePatientPublishFlag($patientSerNum, 0);
             $patientData["DeathDate"] = $post["deceasedDateTime"];
         }
 
-        if (array_key_exists("deceasedDateTime", $post) && $post["deceasedDateTime"] == null){
+        if(array_key_exists("deceasedDateTime", $post) && $post["deceasedDateTime"] == null) {
             $patientData["StatusReasonTxt"] = " ";
             $patientData["BlockedStatus"] = 0;
-            $this->opalDB->updatePatientPublishFlag($patientSerNum,0);
+            $this->opalDB->updatePatientPublishFlag($patientSerNum, 0);
         }
 
         unset($patientData["LastUpdated"]);
 
-        try {
-            if (count($toBeInsertPatientIds) > 0){
-                $this->opalDB->updatePatientLink($toBeInsertPatientIds);
+        if(count($toBeInsertPatientIds) > 0) {
+            while(($identifier = array_shift($toBeInsertPatientIds)) !== NULL) {
+                if (!empty($identifier["Patient_Hospital_Identifier_Id"])) {
+                    $this->opalDB->updatePatientLink($identifier);
+                } else {
+                    $this->opalDB->insertPatientLink($identifier);
+                }
             }
-
-            $this->opalDB->updatePatient($patientData);
-        } catch (Throwable $e) {
-            // Simply display error message
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array( "validation"=>$errCode, "status"=>"Error", "message"=>$e->getMessage() ));
         }
+
+        $this->opalDB->updatePatient($patientData);
 
         return false;
     }
+
 }

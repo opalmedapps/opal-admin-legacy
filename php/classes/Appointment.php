@@ -365,7 +365,6 @@ class Appointment extends Module
             $toPublish = $aliasInfos[0]['AliasUpdate'];
         }
 
-
         if($countAppt == 0 ) {
             $action = 'AppointmentNew';                    
             setlocale(LC_TIME, 'fr_CA');                                        
@@ -389,7 +388,8 @@ class Appointment extends Module
         if($countAlias == 0 || $toPublish == 0) {
             $toInsert["Level"]  = 1;
             $toInsert["appointmentTypeCode"] = $post['appointmentTypeCode'];
-            $toInsert["appointmentTypeDescription"] = $post['appointmentTypeDescription'];            
+            $toInsert["appointmentTypeDescription"] = $post['appointmentTypeDescription'];
+            
             $toInsert["ID"] = $this->_insertAppointmentPending($toInsert, $source);
             $this->_insertAppointmentPendingMH($toInsert, $source);
 

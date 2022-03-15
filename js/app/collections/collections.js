@@ -440,6 +440,47 @@ angular.module('opalAdmin.collections', [])
 		return patientAPI;
 	})
 
+	// Patient Administration API service
+	.factory('patientAdministrationCollectionService', function($http){
+
+		var patientAdministrationAPI = {};
+
+		// API to get access level list
+		patientAdministrationAPI.getAllAccessLevel = function () {
+			return $http.post(
+				"patient-administration/get/access-level",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		// API to get published security question list
+		patientAdministrationAPI.getAllSecurityQuestions = function () {
+			return $http.post(
+				"patient-administration/get/all-security-questions",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		// API to get patient answered security question list
+		patientAdministrationAPI.getPatientSecurityQuestions = function (serial) {
+			return $http.post(
+				"patient-administration/get/patient-security-questions",
+				$.param({
+					PatientSerNum: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		return patientAdministrationAPI;
+	})
+
 	// Test Result API service
 	.factory('testResultCollectionService', function ($http) {
 
