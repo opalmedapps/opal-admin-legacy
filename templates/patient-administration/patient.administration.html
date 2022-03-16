@@ -142,7 +142,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row animated fadeInRight" ng-show="foundPatient">
+                    <div class="row animated fadeInRight" ng-show="foundPatient&&writeAccess">
                         <!-- customize report section -->
                         <div class="col-xs-12" style="width: 25%">
                             <div class="panel-container animated" ng-class="{pulse: hoverEmail}" ng-mouseenter="hoverEmail=true" ng-mouseleave="hoverEmail=false" style="cursor:pointer;" ng-click="updateEmail()">

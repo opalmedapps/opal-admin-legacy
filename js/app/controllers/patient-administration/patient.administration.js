@@ -1,17 +1,14 @@
 angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).controller('patient.administration', function ($scope, $rootScope, Session, ErrorHandler, MODULE, $uibModal, $filter) {
 
 	$scope.navMenu = Session.retrieveObject('menu');
-	$scope.navSubMenu = Session.retrieveObject('subMenu')[MODULE.patient];
+	$scope.navSubMenu = Session.retrieveObject('subMenu')[MODULE.patient_administration];
 	angular.forEach($scope.navSubMenu, function (menu) {
 		menu.name_display = (Session.retrieveObject('user').language === "FR" ? menu.name_FR : menu.name_EN);
 		menu.description_display = (Session.retrieveObject('user').language === "FR" ? menu.description_FR : menu.description_EN);
 	});
 
-	$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 0)) !== 0);
-	$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 1)) !== 0);
-	$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 2)) !== 0);
-
-
+	$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient_administration]) & (1 << 0)) !== 0);
+	$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient_administration]) & (1 << 1)) !== 0);
 	$scope.foundPatient = false; //only show the report once patient is found/selected
 
 	// Initialize varibales for patient search parameters, patient identifiers, and patient report segments
