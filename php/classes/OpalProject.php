@@ -4,7 +4,6 @@
  * OpalProject class
  *
  */
-require_once FRONTEND_ABS_PATH . 'publisher'. DIRECTORY_SEPARATOR .  'php'. DIRECTORY_SEPARATOR . 'HospitalPushNotification.php';
 
 abstract class OpalProject
 {
@@ -274,15 +273,25 @@ abstract class OpalProject
                 $ptdidser       = $ptdId["PatientDeviceIdentifierSerNum"];
                 $registrationId = $ptdId["RegistrationId"];
                 $deviceType     = $ptdId["DeviceType"];
-                
-                $response = HospitalPushNotification::sendNotification($deviceType, $registrationId, $messageTitle, $message);                               
-                
-                if ($response["success"] == 1){
-                    $sendstatus = "T"; // successful
-                    $sendlog    = "Push notification successfully sent! Message: $message";
+
+
+                if (!in_array($deviceType, SUPPORTED_PHONE_DEVICES)) {
+                    $sendstatus = "F";
+                    $sendlog    = "Failed to send push notification! Message: Unsupported device type";
                 } else {
-                    $sendstatus = "F"; // failed
-                    $sendlog    = "Failed to send push notification! Message: " . $response['error'];
+                    if ($deviceType == APPLE_PHONE_DEVICE)
+                        $api = new AppleApiCall($registrationId, $messageTitle, $message);
+                    else
+                        $api = new AndroidApiCall($registrationId, $messageTitle, $message);
+
+                    $api->execute();
+                    if ($api->getError()) {
+                        $sendstatus = "F"; // failed
+                        $sendlog    = "Failed to send push notification! Message: " . $api->getError();
+                    } else {
+                        $sendstatus = "T"; // successful
+                        $sendlog = "Push notification successfully sent! Message: $message";
+                    }
                 }
 
                 $pushNotificationDetail = array( 
