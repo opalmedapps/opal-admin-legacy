@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).controller('update.securityAnswer', function ($scope, $filter, $uibModal, $uibModalInstance, patientCollectionService, $state, Session, ErrorHandler) {
+angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).controller('update.securityAnswer', function ($scope, $filter, $uibModal, $uibModalInstance, patientAdministrationCollectionService, $state, Session, ErrorHandler) {
 
 	$scope.cancel = function () {
 		$uibModalInstance.dismiss('cancel');
@@ -12,11 +12,11 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 
 		if ($scope.validateInput($scope.patientSecurityQuestions.firstAnswer)) {
 			if($scope.patientSecurityQuestions.firstAnswer.length < 3) {
-				$scope.patientSecurityQuestions.firstErrorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.SECURITY_ANSWER.ANSWER_TOO_SHORT');
+				$scope.patientSecurityQuestions.firstErrorMessage = $filter('translate')('PATIENT_ADMINISTRATION.SECURITY_ANSWER.ANSWER_TOO_SHORT');
 			}
 			else if ($scope.patientSecurityQuestions.firstAnswer === $scope.patientSecurityQuestions.secondAnswer
                 ||$scope.patientSecurityQuestions.firstAnswer === $scope.patientSecurityQuestions.thirdAnswer) {
-				$scope.patientSecurityQuestions.firstErrorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.SECURITY_ANSWER.ANSWER_DUPLICATE');
+				$scope.patientSecurityQuestions.firstErrorMessage = $filter('translate')('PATIENT_ADMINISTRATION.SECURITY_ANSWER.ANSWER_DUPLICATE');
 			}
 			else {
 				$scope.patientSecurityQuestions.firstErrorMessage = null;
@@ -24,7 +24,7 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 			$scope.patientSecurityQuestions.changeDetected = true;
 		}
 		else if ($scope.validateQuestion($scope.patientSecurityQuestions.firstQuestion)) {
-			$scope.patientSecurityQuestions.firstErrorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.SECURITY_ANSWER.ANSWER_MISSING');
+			$scope.patientSecurityQuestions.firstErrorMessage = $filter('translate')('PATIENT_ADMINISTRATION.SECURITY_ANSWER.ANSWER_MISSING');
 			$scope.patientSecurityQuestions.changeDetected = true;
 		}
 		else if (!$scope.validateQuestion($scope.patientSecurityQuestions.secondQuestion) && !$scope.validateQuestion($scope.patientSecurityQuestions.thirdQuestion)
@@ -39,11 +39,11 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 
 		if ($scope.validateInput($scope.patientSecurityQuestions.secondAnswer)) {
 			if($scope.patientSecurityQuestions.secondAnswer.length < 3) {
-				$scope.patientSecurityQuestions.secondErrorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.SECURITY_ANSWER.ANSWER_TOO_SHORT');
+				$scope.patientSecurityQuestions.secondErrorMessage = $filter('translate')('PATIENT_ADMINISTRATION.SECURITY_ANSWER.ANSWER_TOO_SHORT');
 			}
 			else if ($scope.patientSecurityQuestions.secondAnswer === $scope.patientSecurityQuestions.firstAnswer
                 ||$scope.patientSecurityQuestions.secondAnswer === $scope.patientSecurityQuestions.thirdAnswer) {
-				$scope.patientSecurityQuestions.secondErrorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.SECURITY_ANSWER.ANSWER_DUPLICATE');
+				$scope.patientSecurityQuestions.secondErrorMessage = $filter('translate')('PATIENT_ADMINISTRATION.SECURITY_ANSWER.ANSWER_DUPLICATE');
 			}
 			else {
 				$scope.patientSecurityQuestions.secondErrorMessage = null;
@@ -51,7 +51,7 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 			$scope.patientSecurityQuestions.changeDetected = true;
 		}
 		else if ($scope.validateQuestion($scope.patientSecurityQuestions.secondQuestion)) {
-			$scope.patientSecurityQuestions.secondErrorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.SECURITY_ANSWER.ANSWER_MISSING');
+			$scope.patientSecurityQuestions.secondErrorMessage = $filter('translate')('PATIENT_ADMINISTRATION.SECURITY_ANSWER.ANSWER_MISSING');
 			$scope.patientSecurityQuestions.changeDetected = true;
 		}
 		else if (!$scope.validateQuestion($scope.patientSecurityQuestions.firstQuestion) && !$scope.validateQuestion($scope.patientSecurityQuestions.thirdQuestion)
@@ -66,11 +66,11 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 
 		if ($scope.validateInput($scope.patientSecurityQuestions.thirdAnswer)) {
 			if($scope.patientSecurityQuestions.thirdAnswer.length < 3) {
-				$scope.patientSecurityQuestions.thirdErrorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.SECURITY_ANSWER.ANSWER_TOO_SHORT');
+				$scope.patientSecurityQuestions.thirdErrorMessage = $filter('translate')('PATIENT_ADMINISTRATION.SECURITY_ANSWER.ANSWER_TOO_SHORT');
 			}
 			else if ($scope.patientSecurityQuestions.thirdAnswer === $scope.patientSecurityQuestions.firstAnswer
                 ||$scope.patientSecurityQuestions.thirdAnswer === $scope.patientSecurityQuestions.secondAnswer) {
-				$scope.patientSecurityQuestions.thirdErrorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.SECURITY_ANSWER.ANSWER_DUPLICATE');
+				$scope.patientSecurityQuestions.thirdErrorMessage = $filter('translate')('PATIENT_ADMINISTRATION.SECURITY_ANSWER.ANSWER_DUPLICATE');
 			}
 			else {
 				$scope.patientSecurityQuestions.thirdErrorMessage = null;
@@ -78,7 +78,7 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 			$scope.patientSecurityQuestions.changeDetected = true;
 		}
 		else if ($scope.validateQuestion($scope.patientSecurityQuestions.thirdQuestion)) {
-			$scope.patientSecurityQuestions.thirdErrorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.SECURITY_ANSWER.ANSWER_MISSING');
+			$scope.patientSecurityQuestions.thirdErrorMessage = $filter('translate')('PATIENT_ADMINISTRATION.SECURITY_ANSWER.ANSWER_MISSING');
 			$scope.patientSecurityQuestions.changeDetected = true;
 		}
 		else if (!$scope.validateQuestion($scope.patientSecurityQuestions.firstQuestion) && !$scope.validateQuestion($scope.patientSecurityQuestions.secondQuestion)
@@ -126,10 +126,10 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 
 	//Initialize the error messages
 	var arrValidationUpdate = [
-		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.QUESTION'),
-		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.ANSWER'),
-		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.PATIENTSERNUM'),
-		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.QUESTION_OLD'),
+		$filter('translate')('PATIENT_ADMINISTRATION.VALIDATION.QUESTION'),
+		$filter('translate')('PATIENT_ADMINISTRATION.VALIDATION.ANSWER'),
+		$filter('translate')('PATIENT_ADMINISTRATION.VALIDATION.PATIENTSERNUM'),
+		$filter('translate')('PATIENT_ADMINISTRATION.VALIDATION.QUESTION_OLD'),
 	];
 
 	//Function to update the patient security questions
@@ -199,7 +199,7 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 	function updateQuestion(question, answer, question_old) {
 		$.ajax({
 			type: "POST",
-			url: "patient/update/security-answer",
+			url: "patient-administration/update/security-answer",
 			data: {
 				QuestionSerNum: question,
 				Answer: CryptoJS.SHA512(answer.toUpperCase()).toString(),
@@ -208,12 +208,12 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 			},
 			success: function () {
 				$scope.setBannerClass('success');
-				$scope.$parent.bannerMessage = "Successfully update patient security questions!";
+				$scope.$parent.bannerMessage =  $filter('translate')('PATIENT_ADMINISTRATION.SECURITY_ANSWER.SUCCESS');
 			},
 			error: function (err) {
-				ErrorHandler.onError(err, $filter('translate')('PATIENTS.MODIFICATION_TOOLS.SECURITY_ANSWER.ERROR'), arrValidationUpdate);
+				ErrorHandler.onError(err, $filter('translate')('PATIENT_ADMINISTRATION.SECURITY_ANSWER.ERROR'), arrValidationUpdate);
 				$scope.setBannerClass('danger');
-				$scope.$parent.bannerMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.SECURITY_ANSWER.ERROR');
+				$scope.$parent.bannerMessage = $filter('translate')('PATIENT_ADMINISTRATION.SECURITY_ANSWER.ERROR');
 			},
 			complete: function () {
 				$scope.showBanner();
@@ -223,7 +223,7 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 	}
 
 	function getPatientSecurityQuestions () {
-		patientCollectionService.getPatientSecurityQuestions($scope.psnum).then(function (response){
+		patientAdministrationCollectionService.getPatientSecurityQuestions($scope.psnum).then(function (response){
 
 			$scope.patientSecurityQuestions = {
 				firstQuestion_old: response.data[0].SecurityQuestionSerNum,
@@ -245,7 +245,7 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 	}
 
 	function getAllSecurityQuestions () {
-		patientCollectionService.getAllSecurityQuestions().then(function (response) {
+		patientAdministrationCollectionService.getAllSecurityQuestions().then(function (response) {
 			$scope.questionList = [];
 			response.data.forEach(function (row) {
 				var question = {

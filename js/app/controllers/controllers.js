@@ -96,7 +96,7 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.sms',
 	'opalAdmin.controllers.add.sms',
 	'opalAdmin.controllers.sms.edit',
-	'opalAdmin.controllers.modify.patient',
+	'opalAdmin.controllers.patient.administration',
 	'opalAdmin.controllers.update.email',
 	'opalAdmin.controllers.update.password',
 	'opalAdmin.controllers.update.securityAnswer',
