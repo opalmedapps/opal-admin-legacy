@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.update.password', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).controller('update.password', function ($scope, $filter, $uibModal, $uibModalInstance, patientCollectionService, $state, Session, ErrorHandler) {
+angular.module('opalAdmin.controllers.update.password', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).controller('update.password', function ($scope, $filter, $uibModal, $uibModalInstance, patientAdministrationCollectionService, $state, Session, ErrorHandler) {
 
 	$scope.cancel = function () {
 		$uibModalInstance.dismiss('cancel');
@@ -14,13 +14,13 @@ angular.module('opalAdmin.controllers.update.password', ['ngAnimate', 'ui.bootst
 	//Function to validate the password given by user
 	$scope.validatePassword = function() {
 		if($scope.validateInput($scope.new_password.firstTime) && $scope.new_password.firstTime.length < 8) {
-			$scope.new_password.errorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.PASSWORD.PASSWORD_TOO_SHORT');
+			$scope.new_password.errorMessage = $filter('translate')('PATIENT_ADMINISTRATION.PASSWORD.PASSWORD_TOO_SHORT');
 		}
 		else if($scope.validateInput($scope.new_password.firstTime)&& (!$scope.new_password.firstTime.match(/\W|_{1}/) || !$scope.new_password.firstTime.match(/[a-z]/) || !$scope.new_password.firstTime.match(/[A-Z]/) || !$scope.new_password.firstTime.match(/\d/))) {
-			$scope.new_password.errorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.PASSWORD.PASSWORD_MISSING_CHARACTER');
+			$scope.new_password.errorMessage = $filter('translate')('PATIENT_ADMINISTRATION.PASSWORD.PASSWORD_MISSING_CHARACTER');
 		}
 		else if(!$scope.validateInput($scope.new_password.firstTime) || !$scope.validateInput($scope.new_password.secondTime) || $scope.new_password.firstTime !== $scope.new_password.secondTime) {
-			$scope.new_password.errorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.PASSWORD.PASSWORD_NOT_SAME');
+			$scope.new_password.errorMessage = $filter('translate')('PATIENT_ADMINISTRATION.PASSWORD.PASSWORD_NOT_SAME');
 		}
 		else {
 			$scope.new_password.errorMessage = null;
@@ -29,8 +29,8 @@ angular.module('opalAdmin.controllers.update.password', ['ngAnimate', 'ui.bootst
 
 	//Initialize the error messages
 	var arrValidationUpdate = [
-		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.USERID'),
-		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.PASSWORD'),
+		$filter('translate')('PATIENT_ADMINISTRATION.VALIDATION.USERID'),
+		$filter('translate')('PATIENT_ADMINISTRATION.VALIDATION.PASSWORD'),
 	];
 
 	//Function to update the patient password
@@ -39,7 +39,7 @@ angular.module('opalAdmin.controllers.update.password', ['ngAnimate', 'ui.bootst
 			//Update patient password in the external database
 			$.ajax({
 				type: "POST",
-				url: "patient/update/external-password",
+				url: "patient-administration/update/external-password",
 				data: {
 					uid: $scope.puid,
 					password: $scope.new_password.firstTime,
@@ -49,9 +49,9 @@ angular.module('opalAdmin.controllers.update.password', ['ngAnimate', 'ui.bootst
 					$scope.updatePasswordInDatabase();
 				},
 				error: function (err) {
-					ErrorHandler.onError(err, $filter('translate')('PATIENTS.MODIFICATION_TOOLS.PASSWORD.ERROR'), arrValidationUpdate);
+					ErrorHandler.onError(err, $filter('translate')('PATIENT_ADMINISTRATION.PASSWORD.ERROR'), arrValidationUpdate);
 					$scope.setBannerClass('danger');
-					$scope.$parent.bannerMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.PASSWORD.ERROR');
+					$scope.$parent.bannerMessage = $filter('translate')('PATIENT_ADMINISTRATION.PASSWORD.ERROR');
 				},
 				complete: function () {
 					$scope.showBanner();
@@ -65,19 +65,19 @@ angular.module('opalAdmin.controllers.update.password', ['ngAnimate', 'ui.bootst
 	$scope.updatePasswordInDatabase = function() {
 		$.ajax({
 			type: "POST",
-			url: "patient/update/password",
+			url: "patient-administration/update/password",
 			data: {
 				uid: $scope.puid,
 				password: CryptoJS.SHA512($scope.new_password.firstTime).toString(),
 			},
 			success: function () {
 				$scope.setBannerClass('success');
-				$scope.$parent.bannerMessage = "Successfully update patient password！";
+				$scope.$parent.bannerMessage = $filter('translate')('PATIENT_ADMINISTRATION.PASSWORD.SUCCESS');
 			},
 			error: function (err) {
-				ErrorHandler.onError(err, $filter('translate')('PATIENTS.MODIFICATION_TOOLS.PASSWORD.ERROR'), arrValidationUpdate);
+				ErrorHandler.onError(err, $filter('translate')('PATIENT_ADMINISTRATION.PASSWORD.ERROR'), arrValidationUpdate);
 				$scope.setBannerClass('danger');
-				$scope.$parent.bannerMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.PASSWORD.ERROR');
+				$scope.$parent.bannerMessage = $filter('translate')('PATIENT_ADMINISTRATION.PASSWORD.ERROR');
 			},
 		});
 	};

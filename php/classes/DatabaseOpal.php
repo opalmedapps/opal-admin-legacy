@@ -4399,4 +4399,43 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /**
+     * Get the patient by their last name
+     * @param  $name string - target patient last name
+     * @param  $language string - current user language
+     * @return  array - list of patient(s) matching search
+     * */
+    function getPatientNameAdministration($plname, $language) {
+        return $this->_fetchAll(OPAL_GET_PATIENT_NAME_ADMINISTRATION, array(
+            array("parameter"=>":name","variable"=>'%'.$plname.'%',"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":lang","variable"=>$language,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get the patient by their mrn
+     * @param  $mrn string - target patient mrn
+     * @param  $language string - current user language
+     * @return  array - list of patient(s) matching search
+     * */
+    function getPatientMRNAdministration($pmrn, $language) {
+        return $this->_fetchAll(OPAL_GET_PATIENT_MRN_ADMINISTRATION, array(
+            array("parameter"=>":MRN","variable"=>'%'.$pmrn.'%',"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":lang","variable"=>$language,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
+     * Get the patient by their ramq
+     * @param  $ssn string - target patient ramq
+     * @param  $language string - current user language
+     * @return  array - list of patient(s) matching search
+     * */
+    function getPatientRAMQAdministration($ssn, $language) {
+        return $this->_fetchAll(OPAL_GET_PATIENT_RAMQ_ADMINISTRATION, array(
+            array("parameter"=>":SSN","variable"=>'%'.$ssn.'%',"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":lang","variable"=>$language,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
 }

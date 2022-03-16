@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).controller('update.email', function ($scope, $filter, $uibModal, $uibModalInstance, patientCollectionService, $state, Session, ErrorHandler) {
+angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).controller('update.email', function ($scope, $filter, $uibModal, $uibModalInstance, patientAdministrationCollectionService, $state, Session, ErrorHandler) {
 
 	$scope.cancel = function () {
 		$uibModalInstance.dismiss('cancel');
@@ -14,10 +14,10 @@ angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap
 	//Function to validate the email given by user
 	$scope.validateEmail = function() {
 		if($scope.validateInput($scope.new_email.firstTime) && !$scope.new_email.firstTime.match(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/)) {
-			$scope.new_email.errorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.EMAIL.EMAIL_NOT_VALID');
+			$scope.new_email.errorMessage = $filter('translate')('PATIENT_ADMINISTRATION.EMAIL.EMAIL_NOT_VALID');
 		}
 		else if($scope.validateInput($scope.new_email.firstTime) && $scope.validateInput($scope.new_email.secondTime) && $scope.new_email.firstTime !== $scope.new_email.secondTime) {
-			$scope.new_email.errorMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.EMAIL.EMAIL_NOT_SAME');
+			$scope.new_email.errorMessage = $filter('translate')('PATIENT_ADMINISTRATION.EMAIL.EMAIL_NOT_SAME');
 		}
 		else
         {
@@ -27,13 +27,13 @@ angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap
 
 	//Initialize the error messages
 	var arrValidationUpdateDatabase = [
-		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.PATIENTSERNUM'),
-		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.EMAIL'),
+		$filter('translate')('PATIENT_ADMINISTRATION.VALIDATION.PATIENTSERNUM'),
+		$filter('translate')('PATIENT_ADMINISTRATION.VALIDATION.EMAIL'),
 	];
 
 	var arrValidationUpdateExternalDatabase = [
-		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.USERID'),
-		$filter('translate')('PATIENTS.MODIFICATION_TOOLS.VALIDATION.EMAIL'),
+		$filter('translate')('PATIENT_ADMINISTRATION.VALIDATION.USERID'),
+		$filter('translate')('PATIENT_ADMINISTRATION.VALIDATION.EMAIL'),
 	];
 
 	//Function to update the patient email
@@ -42,7 +42,7 @@ angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap
 			//Update patient password in the external database
 			$.ajax({
 				type: "POST",
-				url: "patient/update/external-email",
+				url: "patient-administration/update/external-email",
 				data: {
 					uid: $scope.puid,
 					email: $scope.new_email.firstTime,
@@ -52,9 +52,9 @@ angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap
 					$scope.updateEmailInDatabase();
 				},
 				error: function (err) {
-					ErrorHandler.onError(err, $filter('translate')('PATIENTS.MODIFICATION_TOOLS.EMAIL.ERROR'), arrValidationUpdateExternalDatabase);
+					ErrorHandler.onError(err, $filter('translate')('PATIENT_ADMINISTRATION.EMAIL.ERROR'), arrValidationUpdateExternalDatabase);
 					$scope.setBannerClass('danger');
-					$scope.$parent.bannerMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.EMAIL.ERROR');
+					$scope.$parent.bannerMessage = $filter('translate')('PATIENT_ADMINISTRATION.EMAIL.ERROR');
 				},
 				complete: function () {
 					$scope.showBanner();
@@ -68,19 +68,19 @@ angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap
 	$scope.updateEmailInDatabase = function() {
 		$.ajax({
 			type: "POST",
-			url: "patient/update/email",
+			url: "patient-administration/update/email",
 			data: {
 				email: $scope.new_email.firstTime,
 				PatientSerNum: $scope.psnum,
 			},
 			success: function () {
 				$scope.setBannerClass('success');
-				$scope.$parent.bannerMessage = "Successfully update patient email！";
+				$scope.$parent.bannerMessage = $filter('translate')('PATIENT_ADMINISTRATION.EMAIL.SUCCESS');
 			},
 			error: function (err) {
-				ErrorHandler.onError(err, $filter('translate')('PATIENTS.MODIFICATION_TOOLS.EMAIL.ERROR'), arrValidationUpdateDatabase);
+				ErrorHandler.onError(err, $filter('translate')('PATIENT_ADMINISTRATION.EMAIL.ERROR'), arrValidationUpdateDatabase);
 				$scope.setBannerClass('danger');
-				$scope.$parent.bannerMessage = $filter('translate')('PATIENTS.MODIFICATION_TOOLS.EMAIL.ERROR');
+				$scope.$parent.bannerMessage = $filter('translate')('PATIENT_ADMINISTRATION.EMAIL.ERROR');
 			},
 		});
 	};
