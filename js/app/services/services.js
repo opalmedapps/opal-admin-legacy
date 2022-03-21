@@ -66,6 +66,13 @@ angular.module('opalAdmin.services', [])
 				}
 				alert(errMsg);
 			}
+			else if(response.status === HTTP_CODE.badGatewayError) {
+				if (response.responseText)
+					tempText = JSON.parse(response.responseText);
+				else
+					tempText = $filter('translate')('ERROR_HANDLER.502.UNKNOWN');
+				alert(clientErrMsg + " " + $filter('translate')('ERROR_HANDLER.502.MESSAGE') + "\r\n" + tempText);
+			}
 			else if(response.status === HTTP_CODE.forbiddenAccessError)
 				$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
 			// else if(response.status === HTTP_CODE.notAuthenticatedError)

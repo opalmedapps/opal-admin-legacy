@@ -1,0 +1,189 @@
+<div id="main">
+    <div id="top">
+        <div class="row">
+            <!-- Load side menu -->
+            <div id="side-panel-scrollbar" class="col-lg-2">
+                <div ng-include="'templates/side-panel-menu.html'"></div>
+            </div>
+
+            <div class="col-lg-10 animated fadeIn">
+                <div class="row main-title">
+                    <div class="col-xs-12 col-md-8 title-content">
+                        <span class="fa fa-address-card"></span>
+                        <h1><strong>{{'PATIENT_ADMINISTRATION.MENU.TITLE'|translate}}</strong></h1>
+                    </div>
+                    <!-- breadcrumbs -->
+                    <div class="col-md-4 title-breadcrumbs">
+                        <span><a ui-sref="home">{{'BREADCRUMBS.HOME'|translate}}</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>{{'PATIENTS.LIST.TITLE'|translate}}</strong></span>
+                    </div>
+                </div>
+            </div>
+            <div id="PatientReport" class="col-xs-12 col-lg-10 animated fadeInRight">
+                <div class="section-content">
+                    <div class="row">
+                        <div class="col-xs-12 side-menu-title">
+                            <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                <span style="background-color:#e6edfa; padding: 0 10px;">
+                                    <!-- <span class="fas fa-dot-circle"></span> -->
+                                    <h2>{{'PATIENT_ADMINISTRATION.MENU.PSEARCH'|translate}}</h2>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="panel">
+                                <!-- patient search  section-->
+                                <form class="panel-body form-horizontal" ng-submit="findPat()">
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-12 col-lg-4">
+                                            {{'PATIENT_ADMINISTRATION.MENU.PNAME'|translate}}
+                                        </label>
+                                        <div class=" col-xs-12 col-lg-10">
+                                            <input class="form-control" type="text" ng-model="searchName" ng-disabled="searchMRN || searchRAMQ" placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-12 col-lg-4">
+                                            {{'PATIENT_ADMINISTRATION.MENU.PRAMQ'|translate}}
+                                        </label>
+                                        <div class=" col-xs-12 col-lg-10">
+                                            <input class="form-control" type="text" ng-model="searchRAMQ" ng-disabled="searchMRN || searchName" placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-12 col-lg-4">
+                                            {{'PATIENT_ADMINISTRATION.MENU.PMRN'|translate}}
+                                        </label>
+                                        <div class=" col-xs-12 col-lg-10">
+                                            <input class="form-control" type="text" ng-model="searchMRN" ng-disabled="searchName || searchRAMQ" placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="save-add col-xs-12 col-sm-6 col-md-8">
+                                            <strong><input class="btn btn-md btn-outline item-button" value={{'PATIENTS.REPORT.INDIVIDUAL.SUBMIT'|translate}} type="submit" ng-disabled="!searchMRN && !searchRAMQ && !searchName"></strong>
+                                            <strong><input class="btn btn-md btn-outline item-button" value={{'PATIENTS.REPORT.INDIVIDUAL.RESET'|translate}} type="reset" ng-click="resetFieldValues()"></strong>
+                                        </div>
+                                        <!-- multiple or no patients found -->
+                                    </div>
+                                    <div class="form-group">
+                                        <div ng-show="searchResult.length > 1">
+                                            <div class="col-xs-12"><p>{{'PATIENT_ADMINISTRATION.MENU.MULTIPLE'|translate}}</p></div>
+                                            <div class="col-xs-12">
+                                                <select class="control-label col-xs-12" ng-model="selectedName" ng-options="x as x.name_display for x in searchResult" ng-change="displaySelection()"></select></div>
+                                        </div>
+                                        <div ng-show="noPatientFound">
+                                            <label class="control-label col-xs-12 col-lg-10">{{'PATIENT_ADMINISTRATION.MENU.NONE'|translate}}</label>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- patient selected section -->
+                        <div class="col-md-6">
+                            <div class="panel" ng-show="foundPatient">
+                                <div class="panel-body form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-xs-6 col-lg-4">
+                                            <label class="control-label">{{'PATIENT_ADMINISTRATION.MENU.LAST'|translate}}</label>
+                                        </div>
+                                        <div class="col-xs-6 col-lg-4">{{plname}}</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENT_ADMINISTRATION.MENU.FIRST'|translate}}</label>
+                                        <div class="col-xs-6 col-lg-4">{{pname}}</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENT_ADMINISTRATION.MENU.SEX'|translate}}</label>
+                                        <div class="col-xs-4 col-lg-2">{{psex}}</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENT_ADMINISTRATION.MENU.SERIAL'|translate}}</label>
+                                        <div class="col-xs-4 col-lg-2">{{psnum}}</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENT_ADMINISTRATION.MENU.EMAIL'|translate}}</label>
+                                        <div class="col-xs-4 col-lg-2">{{pemail}}</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENT_ADMINISTRATION.MENU.ACCESS'|translate}}</label>
+                                        <div class="col-xs-4 col-lg-2">{{paccess}}</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-6 col-lg-4">RAMQ</label>
+                                        <div ng-show="pramq" class="col-xs-4 col-lg-8">{{pramq}}</div>
+                                        <div ng-show="!pramq" class="col-xs-4 col-lg-8">{{'PATIENT_ADMINISTRATION.MENU.NO_RAMQ'|translate}}</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-6 col-lg-4">MRN</label>
+                                        <div ng-if="MRN.length > 0" class="col-xs-4 col-lg-8">
+                                            <div ng-repeat="result in MRN">
+                                                {{result.hospital}} - {{result.MRN}}
+                                            </div>
+                                        </div>
+                                        <div ng-if="MRN.length <= 0" class="col-xs-4 col-lg-8">
+                                            {{'PATIENT_ADMINISTRATION.MENU.NO_MRN'|translate}}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-6 col-lg-4">{{'PATIENT_ADMINISTRATION.MENU.LANG'|translate}}</label>
+                                        <div class="col-xs-4 col-lg-2">{{plang}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="foundPatient">
+                        <div class="col-xs-12 side-menu-title" >
+                            <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                <span style="background-color:#e6edfa; padding: 0 10px;">
+                                    <h2>{{'PATIENT_ADMINISTRATION.MENU.OPTIONS'|translate}}</h2>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row animated fadeInRight" ng-show="foundPatient&&writeAccess">
+                        <!-- customize report section -->
+                        <div class="col-xs-12" style="width: 25%">
+                            <div class="panel-container animated" ng-class="{pulse: hoverEmail}" ng-mouseenter="hoverEmail=true" ng-mouseleave="hoverEmail=false" style="cursor:pointer;" ng-click="updateEmail()">
+                                <div class="side-panel-info-sm" style="height: 70px; line-height:3">
+                                    <div class="panel-content" style="padding: 3px">
+                                        <h6 class="side-panel-title" style="display:inline-block;margin:0"><strong>{{'PATIENT_ADMINISTRATION.MENU.UPDATE_EMAIL'|translate}}</strong></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12" style="width: 25%">
+                            <div class="panel-container animated" ng-class="{pulse: hoverPassword}" ng-mouseenter="hoverPassword=true" ng-mouseleave="hoverPassword=false" style="cursor:pointer;" ng-click="updatePassword()">
+                                <div class="side-panel-info-sm" style="height: 70px; line-height:3">
+                                    <div class="panel-content" style="padding: 3px">
+                                        <h6 class="side-panel-title" style="display:inline-block;margin:0"><strong>{{'PATIENT_ADMINISTRATION.MENU.UPDATE_PASSWORD'|translate}}</strong></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12" style="width: 25%">
+                            <div class="panel-container animated" ng-class="{pulse: hoverAccessLevel}" ng-mouseenter="hoverAccessLevel=true" ng-mouseleave="hoverAccessLevel=false" style="cursor:pointer;" ng-click="updateAccessLevel()">
+                                <div class="side-panel-info-sm" style="height: 70px; line-height:3">
+                                    <div class="panel-content" style="padding: 3px">
+                                        <h6 class="side-panel-title" style="display:inline-block;margin:0"><strong>{{'PATIENT_ADMINISTRATION.MENU.UPDATE_ACCESS_LEVEL'|translate}}</strong></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12" style="width: 25%">
+                            <div class="panel-container animated" ng-class="{pulse: hoverSecurityQuestion}" ng-mouseenter="hoverSecurityQuestion=true" ng-mouseleave="hoverSecurityQuestion=false" style="cursor:pointer;" ng-click="updateSecurityQuestion()">
+                                <div class="side-panel-info-sm" style="height: 70px; line-height:3">
+                                    <div class="panel-content" style="padding: 3px">
+                                        <h6 class="side-panel-title" style="display:inline-block;margin:0"><strong>{{'PATIENT_ADMINISTRATION.MENU.UPDATE_SECURITY_QUESTION'|translate}}</strong></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bannerMessage alert-success">{{bannerMessage}}</div>
+</div>
