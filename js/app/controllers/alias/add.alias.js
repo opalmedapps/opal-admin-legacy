@@ -333,9 +333,7 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 
 			// Call our API service to get the list of alias expressions
 			aliasCollectionService.getExpressions($scope.newAlias.source_db.serial, $scope.newAlias.type.name).then(function (response) {
-
 				$scope.termList = response.data; // Assign value
-
 
 			}).catch(function(err) {
 				ErrorHandler.onError(err, $filter('translate')('ALIAS.ADD.ERROR_ALIAS'));
@@ -514,7 +512,7 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 	// Function for searching through the expression list
 	$scope.searchTermsFilter = function (term) {
 		var keyword = new RegExp($scope.termFilter, 'i');
-		return ((!$scope.termFilter || keyword.test(term.name))
+		return ((!$scope.termFilter || keyword.test(term.description) || keyword.test(term.externalId) || keyword.test(term.name))
 			&& (($scope.clinicalCodeFilter == 'all') || ($scope.clinicalCodeFilter == 'current' && term.added)
 				|| ($scope.clinicalCodeFilter == 'other' && term.assigned && !term.added) || ($scope.clinicalCodeFilter == 'none' && !term.added && !term.assigned)));
 	};

@@ -421,7 +421,7 @@ class DatabaseAccess extends HelpSetup
      *                              Array (
      *                                  "field1" => "enough data?"
      *                                  "field2" => "no more data!"
-        *                              "field3" => "data!"
+     *                                  "field3" => "data!"
      *                              )
      *                          )
      * @param array $fieldsCondition - contains the fields to check on conditions if they exists or not. If empty, check
@@ -455,6 +455,62 @@ class DatabaseAccess extends HelpSetup
 
         $finalSql =
             str_replace("%%TABLENAME%%", $tableName, str_replace("%%FIELDS%%", implode(",", $fieldsName), SQL_GENERAL_REPLACE_INTERSECTION_TABLE)
+                . implode(SQL_GENERAL_UNION_ALL, $sqlSubSet));
+
+        return $this->_execute($finalSql, $params);
+    }
+
+
+    /**
+     * This function build a SQL insert query with a table name and a list of records and launch its execution. The
+     * records will only be added if they do not exists already.
+     * @param $tableName string - name of the table
+     * @param $records array - array of records that contain arrays of data to insert and their field name. Each array
+     *                          must have the same structure and same order.
+     *                          example:
+     *                              Array (
+     *                              Array (
+     * 	                                "field1" => "data"
+     *                                  "field2" => "more data"
+     *                                  "field3" => "even more data"
+     *                              )
+     *                              Array (
+     *                                  "field1" => "enough data?"
+     *                                  "field2" => "no more data!"
+     *                                  "field3" => "data!"
+     *                              )
+     *                          )
+     * @param array $fieldsCondition - contains the fields to check on conditions if they exists or not. If empty, check
+     *                                  all fields
+     * @return int number of row counts modified
+     */
+    protected function _insertMultipleRecordsIntoTableConditional($tableName, $records, $fieldsCondition = array()) {
+        $sqlSubSet = array();
+        $cpt = 0;
+        $params = array();
+
+        foreach ($records as $record) {
+            $cpt++;
+            $fieldsName = array();
+            $subFieldsName = array();
+            $ids = array();
+            $conditions = array();
+            foreach($record as $key=>$value) {
+                array_push($fieldsName, "`$key`");
+                array_push($subFieldsName, "tblnm.$key");
+                array_push($ids, ":$key$cpt");
+                if(empty($fieldsCondition) || in_array($key, $fieldsCondition))
+                    array_push($conditions, "tblnm.$key = :".$key.$cpt);
+                array_push($params, array("parameter"=>":".$key.$cpt, "variable"=>$value));
+            }
+            $subSql = str_replace("%%VALUES%%", implode(", ", $ids), SQL_GENERAL_INSERT_INTERSECTION_TABLE_SUB_REQUEST);
+            $subSql = str_replace("%%FIELDS%%", implode(", ", $subFieldsName), $subSql);
+            $subSql = str_replace("%%CONDITIONS%%", implode(" AND ", $conditions), $subSql);
+            array_push($sqlSubSet, $subSql);
+        }
+
+        $finalSql =
+            str_replace("%%TABLENAME%%", $tableName, str_replace("%%FIELDS%%", implode(",", $fieldsName), SQL_GENERAL_INSERT_INTERSECTION_TABLE)
                 . implode(SQL_GENERAL_UNION_ALL, $sqlSubSet));
 
         return $this->_execute($finalSql, $params);

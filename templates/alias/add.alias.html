@@ -107,7 +107,7 @@
                                     <p>
                                     <ul style="max-height: 100px; overflow-y: auto;">
                                         <li ng-repeat="term in termList | filter: {added: 1}">
-                                            {{term.externalId}} - {{term.name}} | {{term.description}}
+                                            {{term.externalId}} | {{term.id}} | {{term.description}}
                                         </li>
                                     </ul>
                                     </p>
@@ -422,7 +422,7 @@
                                             <ul class="list-items">
                                                 <li ng-repeat="term in termList | filter: searchTermsFilter">
                                                     <label ng-class="{greenText: term.added, grayText: term.assigned && !term.added}">
-                                                        <input type="checkbox" ng-click="toggleTermSelection(term)" ng-checked="term.added" /> {{term.externalId}} - {{term.name}} | {{term.description}}
+                                                        <input type="checkbox" ng-click="toggleTermSelection(term)" ng-checked="term.added" /> {{term.externalId}} | {{term.id}} | {{term.description}}
                                                         <span ng-class="{redText: term.assigned && !term.added}" ng-if="term.assigned && !term.added"><em> --- {{'ALIAS.ADD.ASSIGN_TO'|translate}} {{term.assigned}}</em></span>
                                                         <span ng-class="{redText: term.assigned}" ng-if="term.assigned && term.added"><em> --- {{'ALIAS.ADD.WILL_REPLACE'|translate}} {{term.assigned}}</em></span>
                                                     </label>
