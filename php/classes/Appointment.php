@@ -441,7 +441,7 @@ class Appointment extends Module
      */
     protected function _updateAppointmentPending($toInsert) {
         $pendingAppointment = $this->opalDB->findPendingAppointment($toInsert["SourceDatabaseSerNum"],$toInsert["AppointmentAriaSer"]);
-        $this->opalDB->deleteAppointmentPending($pendingAppointment["AppointmentSerNum"]);
+        $this->opalDB->deleteAppointmentPending($pendingAppointment[0]["AppointmentSerNum"]);
     }
 
     /**
