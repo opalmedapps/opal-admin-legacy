@@ -456,7 +456,7 @@ class DatabaseAccess extends HelpSetup
         $finalSql =
             str_replace("%%TABLENAME%%", $tableName, str_replace("%%FIELDS%%", implode(",", $fieldsName), SQL_GENERAL_REPLACE_INTERSECTION_TABLE)
                 . implode(SQL_GENERAL_UNION_ALL, $sqlSubSet));
-
+		
         return $this->_execute($finalSql, $params);
     }
 

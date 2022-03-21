@@ -354,7 +354,7 @@ class Appointment extends Module
         $countAppt = count($appointment);
         $countAlias = count($aliasInfos);
         if($countAlias == 1) {
-            $toPublish = $aliasInfos[0]['AliasUpdate'];
+            $toPublish = (int) $aliasInfos[0]['AliasUpdate'];
         }
 
         if($countAppt == 0 ) {
@@ -377,8 +377,9 @@ class Appointment extends Module
         if($countAlias == 0 || $toPublish == 0) {
             $toInsert["Level"]  = 1;
             $toInsert["appointmentTypeCode"] = $post['appointmentTypeCode'];
-            $toInsert["appointmentTypeDescription"] = $post['appointmentTypeDescription'];            
+            $toInsert["appointmentTypeDescription"] = $post['appointmentTypeDescription'];			
             $toInsert["ID"] = $this->_insertAppointmentPending($toInsert, $source);
+			
             $this->_insertAppointmentPendingMH($toInsert, $source);
         } else {
             $this->_updateAppointmentPending($toInsert);
@@ -408,7 +409,7 @@ class Appointment extends Module
                     $replacementMap["\$newAppointmentTimeEN"] =  strftime('%l:%M %p', $SStartDateTime);
                 }
             }
-            
+
             if( $countAppt == 0 ) {
                 $toInsert["AppointmentSerNum"] = $this->opalDB->insertAppointment($toInsert);
             } else {
@@ -429,7 +430,7 @@ class Appointment extends Module
      */
     protected function _updateAppointmentPending($toInsert) {
         $pendingAppointment = $this->opalDB->findPendingAppointment($toInsert["SourceDatabaseSerNum"],$toInsert["AppointmentAriaSer"]);
-        $this->opalDB->deleteAppointmentPending($pendingAppointment["AppointmentSerNum"]);
+        $this->opalDB->deleteAppointmentPending($pendingAppointment[0]["AppointmentSerNum"]);
     }
 
     /**
@@ -448,6 +449,7 @@ class Appointment extends Module
         }
         unset($toInsert["SourceDatabaseSerNum"]);
         unset($toInsert["AppointmentSerNum"]);
+		
         return $this->opalDB->insertPendingAppointment($toInsert);
     }
 
