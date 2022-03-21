@@ -149,6 +149,7 @@ abstract class OpalProject
         }
 
         $resourceAppointmentList = $this->opalDB->getResourceIds($resources, $sourceDatabaseId, $appointmentId);
+		
         $resourceIdList = array();
         foreach ($resourceAppointmentList as $id)
             array_push($resourceIdList, intval($id["ResourceSerNum"]));
@@ -224,7 +225,7 @@ abstract class OpalProject
 
             } else
                 $errCode = "1" . $errCode;
-
+			
         } else
             $errCode .= "1111";
 
