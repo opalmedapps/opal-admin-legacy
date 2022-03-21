@@ -4,7 +4,6 @@
  * OpalProject class
  *
  */
-require_once FRONTEND_ABS_PATH . 'publisher'. DIRECTORY_SEPARATOR .  'php'. DIRECTORY_SEPARATOR . 'HospitalPushNotification.php';
 
 abstract class OpalProject
 {
@@ -143,9 +142,12 @@ abstract class OpalProject
                 "ResourceName"=>$resource["name"],
                 "ResourceType"=>$resource["type"],
             );
-            $rowCount = $this->opalDB->updateResource($data);
-            if (intval($rowCount) <= 0)
+
+            $result = $this->opalDB->countResource($data);            
+            if (intval($result["total"]) <= 0)
                 $this->opalDB->insertResource($data);
+            else
+                $this->opalDB->updateResource($data);
         }
 
         $resourceAppointmentList = $this->opalDB->getResourceIds($resources, $sourceDatabaseId, $appointmentId);
@@ -271,15 +273,25 @@ abstract class OpalProject
                 $ptdidser       = $ptdId["PatientDeviceIdentifierSerNum"];
                 $registrationId = $ptdId["RegistrationId"];
                 $deviceType     = $ptdId["DeviceType"];
-                
-                $response = HospitalPushNotification::sendNotification($deviceType, $registrationId, $messageTitle, $message);                               
-                
-                if ($response["success"] == 1){
-                    $sendstatus = "T"; // successful
-                    $sendlog    = "Push notification successfully sent! Message: $message";
+
+
+                if (!in_array($deviceType, SUPPORTED_PHONE_DEVICES)) {
+                    $sendstatus = "F";
+                    $sendlog    = "Failed to send push notification! Message: Unsupported device type";
                 } else {
-                    $sendstatus = "F"; // failed
-                    $sendlog    = "Failed to send push notification! Message: " . $response['error'];
+                    if ($deviceType == APPLE_PHONE_DEVICE)
+                        $api = new AppleApiCall($registrationId, $messageTitle, $message);
+                    else
+                        $api = new AndroidApiCall($registrationId, $messageTitle, $message);
+
+                    $api->execute();
+                    if ($api->getError()) {
+                        $sendstatus = "F"; // failed
+                        $sendlog    = "Failed to send push notification! Message: " . $api->getError();
+                    } else {
+                        $sendstatus = "T"; // successful
+                        $sendlog = "Push notification successfully sent! Message: $message";
+                    }
                 }
 
                 $pushNotificationDetail = array( 
@@ -325,7 +337,7 @@ abstract class OpalProject
      * @param $post array - contains the source name and the external appointment ID
      */
     protected function _updateAppointmentCheckIn(&$post) {
-        
+        $today = strtotime(date("Y-m-d H:i:s"));
         $errCode = $this->_validateAppointmentCheckIn($post, $source, $appointment, $patientInfo);
         $errCode = bindec($errCode);
         if ($errCode != 0)
@@ -335,6 +347,7 @@ abstract class OpalProject
         
         if($rowCount >= 1) {
             $currentAppointment = $this->opalDB->findAppointment($source["SourceDatabaseSerNum"],$post["appointment"]);
+            $currentAppointment = $currentAppointment[0];
             $StartDateTime = strtotime(date("Y-m-d H:i:s"));
             $action = "CheckInNotification";
             $replacementMap = array();
@@ -343,7 +356,10 @@ abstract class OpalProject
             setlocale(LC_TIME, 'en_CA');        
             $replacementMap["\$getDateTime"] =  strftime('%l:%M %p', $StartDateTime);
                     
-            $this->_notifyChange($currentAppointment[0], $action, $replacementMap,$post["appointment"]);        
+            $scheduledStartTime = strtotime($currentAppointment["ScheduledStartTime"]);
+            if ($scheduledStartTime >= $today){
+                $this->_notifyChange($currentAppointment, $action, $replacementMap,$post["appointment"]);        
+            }            
         }        
     }
 }

@@ -95,5 +95,10 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.alert.delete',
 	'opalAdmin.controllers.sms',
 	'opalAdmin.controllers.add.sms',
-	'opalAdmin.controllers.sms.edit'
+	'opalAdmin.controllers.sms.edit',
+	'opalAdmin.controllers.patient.administration',
+	'opalAdmin.controllers.update.email',
+	'opalAdmin.controllers.update.password',
+	'opalAdmin.controllers.update.securityAnswer',
+	'opalAdmin.controllers.update.accessLevel'
 ]);

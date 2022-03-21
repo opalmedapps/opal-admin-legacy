@@ -1,12 +1,8 @@
 <?php
-/**
- * User: Yves Ferdinand
- * Date: 7/11/2021
- */
 
 include_once("../config.php");
 
-$document = new Document();
+$document = new TriggerDocument();
 $document->insertDocument($_POST);
 
 header('Content-Type: application/javascript');
