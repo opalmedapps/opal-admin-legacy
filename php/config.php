@@ -32,20 +32,6 @@ define("MSSS_ACTIVE_DIRECTORY_CONFIG", $config["login"]["activeDirectory"]["conf
 define("AD_LOGIN_ACTIVE", ACTIVE_DIRECTORY["enabled"]);
 
 const LOCALHOST_ADDRESS = array('127.0.0.1','localhost','::1');
-const DEFAULT_API_CONFIG = array(
-    CURLOPT_COOKIESESSION=>true,
-    CURLOPT_RETURNTRANSFER=>true,
-    CURLOPT_FOLLOWLOCATION=>true,
-    CURLOPT_POST=>true,
-    CURLOPT_SSL_VERIFYPEER=>false,
-    CURLOPT_HEADER=>true,
-);
-
-const PUSH_NOTIFICATION_CONFIG = array(
-    CURLOPT_RETURNTRANSFER=>true,
-    CURLOPT_FOLLOWLOCATION=>true,
-    CURLOPT_HEADER=>true
-);
 
 const DEFAULT_CRON_OAUSERID = 23;
 const DEFAULT_CRON_USERNAME = "cronjob";
@@ -78,6 +64,10 @@ define( "UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
 define( "ADMIN_REGISTRATION_URL", $config['pathConfig']['registration_url'] );
 define( "CLINICAL_DOC_PATH", $config['pathConfig']['shared_drive_path'] . "clinical/documents/");
 
+// Define Firebase variables
+define( "FIREBASE_DATABASEURL", $config['firebaseConfig']["database"]["databaseURL"]);
+define( "FIREBASE_SERVICEACCOUNT", $config['firebaseConfig']["serviceAccount"]);
+
 define("ALIAS_TYPE_APPOINTMENT_TEXT", 'Appointment');
 define("ALIAS_TYPE_DOCUMENT_TEXT", 'Document');
 define("ALIAS_TYPE_TASK_TEXT", 'Task');
@@ -86,10 +76,95 @@ define("ALIAS_TYPE_TASK", 1);
 define("ALIAS_TYPE_APPOINTMENT", 2);
 define("ALIAS_TYPE_DOCUMENT", 3);
 
+// Push Notification FCM and APN credientials.
+define( "API_KEY" , $config['pushNotificationConfig']['android']['apiKey'] );
+define( "ANDROID_URL" , $config['pushNotificationConfig']['android']['androidURL'] );
+define( "CERTIFICATE_PASSWORD" , $config['pushNotificationConfig']['apple']['certificate']['password'] );
+define( "CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['filename'] );
+define( "APNS_TOPIC" , $config['pushNotificationConfig']['apple']['certificate']['topic'] );
+define( "CERTIFICATE_KEY" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['key'] );
+define( "IOS_URL" , $config['pushNotificationConfig']['apple']['appleURL'] );
+
 const RESOURCE_LEVEL_READY = 1;
 const RESOURCE_LEVEL_IN_PROCESS = 2;
 const APPOINTMENT_LEVEL_READY = 1;
 const APPOINTMENT_LEVEL_IN_PROCESS = 2;
+
+const DEFAULT_API_CONFIG = array(
+    CURLOPT_COOKIESESSION=>true,
+    CURLOPT_RETURNTRANSFER=>true,
+    CURLOPT_FOLLOWLOCATION=>true,
+    CURLOPT_POST=>true,
+    CURLOPT_SSL_VERIFYPEER=>false,
+    CURLOPT_HEADER=>true,
+);
+
+const PUSH_NOTIFICATION_CONFIG = array(
+    CURLOPT_RETURNTRANSFER=>true,
+    CURLOPT_FOLLOWLOCATION=>true,
+    CURLOPT_HEADER=>true
+);
+
+const APPLE_PUSH_NOTIFICATION_CONFIG = array(
+    CURLOPT_URL=> IOS_URL . "%%REGISTRATION_ID_HERE%%",
+    CURLOPT_HTTP_VERSION=>3,
+    CURLOPT_HTTPHEADER=>["apns-topic: ".APNS_TOPIC],
+    CURLOPT_SSLCERT=>CERTIFICATE_FILE,
+    CURLOPT_SSLKEY=>CERTIFICATE_KEY,
+    CURLOPT_SSLKEYPASSWD=>CERTIFICATE_PASSWORD,
+    CURLOPT_RETURNTRANSFER=>true,
+    CURLOPT_TIMEOUT=>5,
+    CURLOPT_CONNECTTIMEOUT=>5,
+);
+
+define("APPLE_PUSH_NOTIFICATION_POSTFIELDS_CONFIG", json_encode(array(
+    'aps' => array(
+        'alert' => array(
+            'title' => '%%TITLE_HERE%%',
+            'body' => '%%BODY_HERE%%',
+        ),
+        'sound' => 'default'
+    ))));
+
+define("ANDROID_PUSH_NOTIFICATION_POSTFIELDS_CONFIG", json_encode(array(
+    'registration_ids' => array("%%REGISTRATION_ID_HERE%%"),
+    'data' => array(
+        'notId' => date("His"),
+        'title' => "%%TITLE_HERE%%",
+        'body' => "%%BODY_HERE%%",
+        'channelId' => 'opal',
+        'payload' => array(
+            'aps' => array(
+                'category' => 'opal'
+            )
+        )
+    )
+)));
+
+const ANDROID_PUSH_NOTIFICATION_CONFIG = array(
+    CURLOPT_URL=>ANDROID_URL,
+    CURLOPT_POST=>true,
+    CURLOPT_HTTPHEADER=>array(
+        'Authorization: key=' . API_KEY,
+        'Content-Type: application/json'
+    ),
+    CURLOPT_RETURNTRANSFER=>true,
+    CURLOPT_SSL_VERIFYPEER=>false,
+    CURLOPT_TIMEOUT=>5,
+    CURLOPT_CONNECTTIMEOUT=>5,
+);
+
+const PUSH_NOTIFICATION_RESTRICTED = 1;
+const PUSH_NOTIFICATION_NON_RESTRICTED = 0;
+const PUSH_NOTIFICATION_DEFAULT_STATE = PUSH_NOTIFICATION_RESTRICTED;
+const PUSH_NOTIFICATION_DEFAULT_START_HOUR = "08:00:00";
+const PUSH_NOTIFICATION_DEFAULT_END_HOUR = "20:00:00";
+const APPLE_PHONE_DEVICE = 0;
+const ANDROID_PHONE_DEVICE = 1;
+const SUPPORTED_PHONE_DEVICES = array(APPLE_PHONE_DEVICE, ANDROID_PHONE_DEVICE);
+const MAX_PUSH_NOTIFICATION_PER_STATUS_TO_SEND = 100;
+const PUSH_NOTIFICATION_NO_STATUS = 0;
+const TIMEOUT_EXECUTION_TIME_IN_SECONDS = 25;
 
 /*
  * Module ID of each module in the opalAdmin
@@ -116,6 +191,7 @@ define("MODULE_TRIGGER", 19);
 define("MODULE_MASTER_SOURCE", 20);
 define("MODULE_RESOURCE", 21);
 define("MODULE_SMS", 22);
+define("MODULE_PATIENT_ADMINISTRATION", 23);
 define("LOCAL_SOURCE_ONLY", -1);
 
 define("MODULE_PUBLICATION_TRIGGER",array(MODULE_QUESTIONNAIRE, MODULE_ALERT, MODULE_EDU_MAT, MODULE_POST));
@@ -169,6 +245,17 @@ const CONSENT_STATUS_OPAL_CONSENTED = 2;
 const CONSENT_STATUS_OTHER_CONSENTED = 3;
 const CONSENT_STATUS_DECLINED = 4;
 
+// Define regular expression pattern constant
+const REGEX_CAPITAL_LETTER = '/[A-Z]/';
+const REGEX_LOWWER_CASE_LETTER = '/[a-z]/';
+const REGEX_SPECIAL_CHARACTER = '/\W|_{1}/';
+const REGEX_NUMBER = '/[0-9]/';
+const REGEX_MRN = '/^[0-9]*$/i';
+
+// Define patient information type constant array
+const PATIENT_LANGUAGE_ARRAY = array("EN", "FR");
+const PATIENT_SEX_ARRAY = array("Male", "Female", "Unknown", "Other");
+
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php";
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php";
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql.php";
@@ -176,6 +263,9 @@ require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_S
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql-queries.php";
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."aria-sql.php";
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."orms-sql.php";
+
+// Include composer dependency
+require_once( FRONTEND_ABS_PATH . "vendor". DIRECTORY_SEPARATOR . "autoload.php");
 
 // Include the classes
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "OpalProject.php" );
@@ -225,17 +315,14 @@ require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Trigger.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Appointment.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "ApiCall.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "AndroidApiCall.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "AppleApiCall.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Sms.php" );
-require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Document.php");
-
-// Push Notification FCM and APN credientials.
-define( "API_KEY" , $config['pushNotificationConfig']['android']['apiKey'] );
-define( "ANDROID_URL" , $config['pushNotificationConfig']['android']['androidURL'] );
-define( "CERTIFICATE_PASSWORD" , $config['pushNotificationConfig']['apple']['certificate']['password'] );
-define( "CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['filename'] );
-define( "APNS_TOPIC" , $config['pushNotificationConfig']['apple']['certificate']['topic'] );
-define( "CERTIFICATE_KEY" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['key'] );
-define( "IOS_URL" , $config['pushNotificationConfig']['apple']['appleURL'] );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TriggerDocument.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TriggerDoctor.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TriggerStaff.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "FirebaseOpal.php");
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "PatientAdministration.php");
 
 define("ACCESS_READ", 1);
 define("ACCESS_READ_WRITE", 3);
