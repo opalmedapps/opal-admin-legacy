@@ -891,7 +891,7 @@ define("OPAL_DELETE_PATIENT_DIAGNOSIS","
 define("OPAL_GET_PATIENT_NAME", "
     SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
     CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
-    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang, 
+    SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang 
     FROM ".OPAL_PATIENT_TABLE." WHERE LastName LIKE :name;
 
 ");
