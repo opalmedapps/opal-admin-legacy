@@ -3811,7 +3811,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return int - number of records affected
      */
     function insertResourcesForAppointment($records) {
-        return $this->_replaceMultipleRecordsIntoTableConditional(OPAL_RESOURCE_APPOINTMENT_TABLE, $records,
+        return $this->_insertMultipleRecordsIntoTableConditional(OPAL_RESOURCE_APPOINTMENT_TABLE, $records,
             array("ResourceSerNum", "AppointmentSerNum")
         );
     }

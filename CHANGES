@@ -1,5 +1,6 @@
 Version 2.1.9.0:
- - Merge branch 'develop' into 'staging'
+ - Merge branch 'OPAL-1225' into 'develop'
+ - OPAL-1225 - changed replace for insert for resource appointment pivot table
  - Merge branch 'OPAL-1225' into 'develop'
  - Merge branch 'OPAL-1231' into 'develop'
  - fix the access flaw
