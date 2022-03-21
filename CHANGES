@@ -1,3 +1,6 @@
+Version 2.1.9.3:
+ - fixed query in OPAL_GET_PATIENT_MRN and OPAL_GET_PATIENT_RAMQ
+
 Version 2.1.9.2:
  - remove the comma from OPAL_GET_PATIENT_NAME query
 
