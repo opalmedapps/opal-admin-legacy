@@ -50,6 +50,7 @@ angular.module('opalAdmin', [
 		alert: 17,
 		audit: 18,
 		sms: 22,
+		patient_administration: 23,
 	})
 
 	.constant('HTTP_CODE', {
@@ -62,6 +63,7 @@ angular.module('opalAdmin', [
 		loginTimeoutError: 440,
 		httpToHttpsError: 497,
 		internalServerError: 500,
+		badGatewayError: 502,
 	})
 
 	.constant('USER_ROLES', {
@@ -163,7 +165,8 @@ angular.module('opalAdmin', [
 			.state('user-activity', { url: '/user-activity', templateUrl: "templates/user/user-activity.html", controller: "userActivity", data: { requireLogin: true } })
 			.state('protected-route', { url: '/protected', resolve: { auth: function resolveAuthentication(AuthResolver) { return AuthResolver.resolve(); } } })
 			.state('sms',{ url: '/sms', templateUrl: "templates/sms/sms.html", controller: "sms", data:{ requireLogin: false } })
-			.state('sms/message',{ url: '/sms/message', templateUrl: "templates/sms/add.sms.html", controller: "add.sms", data:{ requireLogin: false } });
+			.state('sms/message',{ url: '/sms/message', templateUrl: "templates/sms/add.sms.html", controller: "add.sms", data:{ requireLogin: false } })
+			.state('patient-administration',{ url: '/patient-administration', templateUrl: "templates/patient-administration/patient.administration.html", controller: "patient.administration", data:{ requireLogin: true } });
 
 	}])
 

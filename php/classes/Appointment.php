@@ -4,7 +4,6 @@
  * Appointment class
  *
  */
-require_once(BACKEND_ABS_PATH . 'php/HospitalPushNotification.php');
 
 class Appointment extends Module
 {
@@ -143,7 +142,7 @@ class Appointment extends Module
             }
 
         } else {
-            $errCode = "11";
+            $errCode = "11111111";
         }
         return $errCode;
     }
@@ -203,6 +202,7 @@ class Appointment extends Module
      * */
     public function deleteAppointment($post)
     {
+        $today = strtotime(date("Y-m-d H:i:s"));
         $source = null;
         $this->checkWriteAccess($post);
         $post = HelpSetup::arraySanitization($post);
@@ -213,33 +213,37 @@ class Appointment extends Module
 
         $currentAppointment = $this->opalDB->findAppointment($source["SourceDatabaseSerNum"],$post["sourceId"]);
         $pendingAppointment = $this->opalDB->findPendingAppointment($source["SourceDatabaseName"],$post["sourceId"]);
+        $countAppt = count($currentAppointment);
+        $countPending = count($pendingAppointment);
 
-        if (count($currentAppointment) > 1){
+        if ($countAppt > 1){
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates appointment found.");                    
-        } else if (count($currentAppointment) == 1){
+        } else if ($countAppt == 1){
             $toUpdate = $currentAppointment[0];
             $toUpdate["Status"] = APPOINTMENT_STATUS_CODE_DELETED;
             $toUpdate["State"] = APPOINTMENT_STATE_CODE_DELETED;
             $toUpdate["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];
-            $OStartDateTime = strtotime($toUpdate["ScheduledStartTime"]); 
+            $prevStartDateTime = strtotime($toUpdate["ScheduledStartTime"]); 
 
             if ($post["status"] == "Cancelled" || $post["status"] == "Deleted"){
                 $action = "AppointmentCancelled";
                 $replacementMap = array();
                 setlocale(LC_TIME, 'fr_CA');                                        
-                $replacementMap["\$oldAppointmentDateFR"] =  strftime('%A %d %B %Y', $OStartDateTime);                
-                $replacementMap["\$oldAppointmentTimeFR"] =  strftime('%R', $OStartDateTime);
+                $replacementMap["\$oldAppointmentDateFR"] =  strftime('%A %d %B %Y', $prevStartDateTime);                
+                $replacementMap["\$oldAppointmentTimeFR"] =  strftime('%R', $prevStartDateTime);
 
                 setlocale(LC_TIME, 'en_CA');
-                $replacementMap["\$oldAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $OStartDateTime);
-                $replacementMap["\$oldAppointmentTimeEN"] =  strftime('%l:%M %p', $OStartDateTime);
+                $replacementMap["\$oldAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $prevStartDateTime);
+                $replacementMap["\$oldAppointmentTimeEN"] =  strftime('%l:%M %p', $prevStartDateTime);
                 
-                $this->_notifyChange($toUpdate,  $action, $replacementMap,$post["sourceId"]);
+                if ($prevStartDateTime >= $today){
+                    $this->_notifyChange($toUpdate,  $action, $replacementMap,$post["sourceId"]);
+                }                
             }
 
             $this->opalDB->deleteAppointment($toUpdate);
 
-        } else if(count($pendingAppointment) == 1) {
+        } else if($countPending == 1) {
             $toInsert = $pendingAppointment[0];
             $toInsert["Status"] = APPOINTMENT_STATUS_CODE_DELETED;
             $toInsert["State"] = APPOINTMENT_STATUS_CODE_DELETED;
@@ -250,7 +254,7 @@ class Appointment extends Module
             unset($toInsert["DateModified"]);
             $this->_insertAppointmentPendingMH($toInsert, $source);            
             
-        } else if (count($currentAppointment) < 1 && count($pendingAppointment) < 1) {
+        } else if ($countAppt == 0 && $countPending == 0) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, "Appointment not found.");
         }      
     }
@@ -312,6 +316,7 @@ class Appointment extends Module
      * @return int Appointment ID (new or updated)
      */
     protected function _replaceAppointment($post) {
+        $today = strtotime(date("Y-m-d H:i:s"));
         $patientSite = null;
         $source = null;
         $action = null;
@@ -321,6 +326,16 @@ class Appointment extends Module
         $errCode = $this->_validateInsertAppointment($post, $patientSite, $source);
         if($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>$errCode)));
+
+        
+        $appointment = $this->opalDB->findAppointment($source["SourceDatabaseSerNum"],$post["sourceId"]);
+        $countAppt = count($appointment);
+
+        $newStartDateTime = strtotime($post["scheduledTimestamp"]);
+        $prevStartDateTime = strtotime($post["scheduledTimestamp"]);
+        
+        $aliasInfos = $this->opalDB->getAlias('Appointment',$post['appointmentTypeCode'], $post['appointmentTypeDescription']);
+        $countAlias = count($aliasInfos);       
 
         $toInsert = array(
             "PatientSerNum" => $patientSite["PatientSerNum"],
@@ -345,67 +360,75 @@ class Appointment extends Module
             "SessionId" => $this->opalDB->getSessionId(),
         );
 
-        $aliasInfos = $this->opalDB->getAlias('Appointment',$post['appointmentTypeCode'], $post['appointmentTypeDescription']);
-        $appointment = $this->opalDB->findAppointment($source["SourceDatabaseSerNum"],$post["sourceId"]);
-        $SStartDateTime = strtotime($post["scheduledTimestamp"]);
-        $OStartDateTime = strtotime($post["scheduledTimestamp"]);
+        if($countAlias == 1) {
+            $toPublish = $aliasInfos[0]['AliasUpdate'];
+        }
 
-        if(count($appointment) == 0 ) {
+        if($countAppt == 0 ) {
             $action = 'AppointmentNew';                    
             setlocale(LC_TIME, 'fr_CA');                                        
-            $replacementMap["\$newAppointmentDateFR"] =  strftime('%A %d %B %Y', $SStartDateTime);
-            $replacementMap["\$newAppointmentTimeFR"] =  strftime('%R', $SStartDateTime);
+            $replacementMap["\$newAppointmentDateFR"] =  strftime('%A %d %B %Y', $newStartDateTime);
+            $replacementMap["\$newAppointmentTimeFR"] =  strftime('%R', $newStartDateTime);
             setlocale(LC_TIME, 'en_CA');
-            $replacementMap["\$newAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $SStartDateTime);
-            $replacementMap["\$newAppointmentTimeEN"] =  strftime('%l:%M %p', $SStartDateTime);
+            $replacementMap["\$newAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $newStartDateTime);
+            $replacementMap["\$newAppointmentTimeEN"] =  strftime('%l:%M %p', $newStartDateTime);    
             
         } else {
             $appointment = $appointment[0];
-            unset($toInsert["sourceName"]);
-            $toInsert["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];
-            $toInsert["AppointmentSerNum"] = $appointment["AppointmentSerNum"];            
-            $OStartDateTime = strtotime($appointment["ScheduledStartTime"]);
+            $prevStartDateTime = strtotime($appointment["ScheduledStartTime"]);
+            $arrObject = new ArrayObject($appointment);
+            $toInsert  = $arrObject->getArrayCopy();
+            $toInsert["Status"]  = $post["status"];
+            $toInsert["ScheduledStartTime"]  = $post["scheduledTimestamp"];
+            $toInsert["ScheduledEndTime"]  = $post["scheduledTimestamp"];
+            $toInsert["SessionId"] = $this->opalDB->getSessionId();
         }
         
-        if(count($aliasInfos) == 0) {
+        if($countAlias == 0 || $toPublish == 0) {
             $toInsert["Level"]  = 1;
             $toInsert["appointmentTypeCode"] = $post['appointmentTypeCode'];
-            $toInsert["appointmentTypeDescription"] = $post['appointmentTypeDescription'];            
+            $toInsert["appointmentTypeDescription"] = $post['appointmentTypeDescription'];
+            
             $toInsert["ID"] = $this->_insertAppointmentPending($toInsert, $source);
             $this->_insertAppointmentPendingMH($toInsert, $source);
+
         } else {
             $this->_updateAppointmentPending($toInsert);
             unset($toInsert["sourceName"]);
             unset($toInsert["updatedBy"]);
             $toInsert["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];
             $toInsert["AliasExpressionSerNum"] = $aliasInfos[0]['AliasExpressionSerNum'];
-            $toPublish = $aliasInfos[0]['AliasUpdate'];
-            if ($SStartDateTime <> $OStartDateTime) {
+            
+            if ($newStartDateTime <> $prevStartDateTime && $newStartDateTime >= $today) {
                 //if difference is greater than an hour
 		        // 2019-06-12 : Change from 1 hour to 2 hours by John's request
-                $hourdiff = abs(round(($SStartDateTime - $OStartDateTime)/3600, 1));
-                print_r("Difference entre " . $appointment["ScheduledStartTime"] . " et " . $post["scheduledTimestamp"] . " est de " . $hourdiff ."\n\n");
+                $hourdiff = abs(round(($newStartDateTime - $prevStartDateTime)/3600, 1));
+                print_r("Difference between " . $appointment["ScheduledStartTime"] . " and " . $post["scheduledTimestamp"] . " is " . $hourdiff ."\n\n");
                                 
                 if ($hourdiff >= 2) {
                     $action = 'AppointmentTimeChange';                    
                     setlocale(LC_TIME, 'fr_CA');                                        
-                    $replacementMap["\$oldAppointmentDateFR"] =  strftime('%A %d %B %Y', $OStartDateTime);
-                    $replacementMap["\$newAppointmentDateFR"] =  strftime('%A %d %B %Y', $SStartDateTime);
-                    $replacementMap["\$oldAppointmentTimeFR"] =  strftime('%R', $OStartDateTime);
-                    $replacementMap["\$newAppointmentTimeFR"] =  strftime('%R', $SStartDateTime);
+                    $replacementMap["\$oldAppointmentDateFR"] =  strftime('%A %d %B %Y', $prevStartDateTime);
+                    $replacementMap["\$newAppointmentDateFR"] =  strftime('%A %d %B %Y', $newStartDateTime);
+                    $replacementMap["\$oldAppointmentTimeFR"] =  strftime('%R', $prevStartDateTime);
+                    $replacementMap["\$newAppointmentTimeFR"] =  strftime('%R', $newStartDateTime);
 
                     setlocale(LC_TIME, 'en_CA');
-                    $replacementMap["\$oldAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $OStartDateTime);
-                    $replacementMap["\$newAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $SStartDateTime);
-                    $replacementMap["\$oldAppointmentTimeEN"] =  strftime('%l:%M %p', $OStartDateTime);
-                    $replacementMap["\$newAppointmentTimeEN"] =  strftime('%l:%M %p', $SStartDateTime);
+                    $replacementMap["\$oldAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $prevStartDateTime);
+                    $replacementMap["\$newAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $newStartDateTime);
+                    $replacementMap["\$oldAppointmentTimeEN"] =  strftime('%l:%M %p', $prevStartDateTime);
+                    $replacementMap["\$newAppointmentTimeEN"] =  strftime('%l:%M %p', $newStartDateTime);
                 }
             }
-            
-            $toInsert["AppointmentSerNum"] = $this->opalDB->insertAppointment($toInsert);            
+
+            if( $countAppt == 0 ) {
+                $toInsert["AppointmentSerNum"] = $this->opalDB->insertAppointment($toInsert);
+            } else {                
+                $this->opalDB->updateAppointments($toInsert);
+            }
         }
         
-        if (!is_null($action) && count($aliasInfos) > 0 && $toPublish == 1){
+        if (!is_null($action) && $countAlias == 1 && $toPublish == 1 && $newStartDateTime >= $today){
             $this->_notifyChange($toInsert, $action, $replacementMap,$post["sourceId"]);
         }
         return false;
@@ -418,7 +441,7 @@ class Appointment extends Module
      */
     protected function _updateAppointmentPending($toInsert) {
         $pendingAppointment = $this->opalDB->findPendingAppointment($toInsert["SourceDatabaseSerNum"],$toInsert["AppointmentAriaSer"]);
-        $this->opalDB->deleteAppointmentPending($pendingAppointment["AppointmentSerNum"]);
+        $this->opalDB->deleteAppointmentPending($pendingAppointment[0]["AppointmentSerNum"]);
     }
 
     /**
@@ -514,6 +537,7 @@ class Appointment extends Module
      * */
     public function updateAppointmentStatus($post)
     {
+        $today = strtotime(date("Y-m-d H:i:s"));
         $source = null;
         $this->checkWriteAccess($post);
         $post = HelpSetup::arraySanitization($post);
@@ -524,32 +548,36 @@ class Appointment extends Module
 
         $currentAppointment = $this->opalDB->findAppointment($source["SourceDatabaseSerNum"],$post["sourceId"]);
         $pendingAppointment = $this->opalDB->findPendingAppointment($source["SourceDatabaseName"],$post["sourceId"]);
+        $countAppointment = count($currentAppointment);
+        $countPending = count($pendingAppointment);
         
-        if (count($currentAppointment) > 1){
+        if ($countAppointment > 1){
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates appointment found.");                    
-        } else if (count($currentAppointment) == 1){
+        } else if ($countAppointment == 1){
             $toUpdate = $currentAppointment[0];
             $toUpdate["Status"] = $post["status"];
             $toUpdate["State"] = APPOINTMENT_STATE_CODE_ACTIVE;
             $toUpdate["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];            
-            $OStartDateTime = strtotime($toUpdate["ScheduledStartTime"]); 
+            $prevStartDateTime = strtotime($toUpdate["ScheduledStartTime"]); 
             if ($post["status"] == "Cancelled"){
                 $action = "AppointmentCancelled";
                 $replacementMap = array();
                 setlocale(LC_TIME, 'fr_CA');                                        
-                $replacementMap["\$oldAppointmentDateFR"] =  strftime('%A %d %B %Y', $OStartDateTime);                
-                $replacementMap["\$oldAppointmentTimeFR"] =  strftime('%R', $OStartDateTime);
+                $replacementMap["\$oldAppointmentDateFR"] =  strftime('%A %d %B %Y', $prevStartDateTime);                
+                $replacementMap["\$oldAppointmentTimeFR"] =  strftime('%R', $prevStartDateTime);
 
                 setlocale(LC_TIME, 'en_CA');
-                $replacementMap["\$oldAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $OStartDateTime);
-                $replacementMap["\$oldAppointmentTimeEN"] =  strftime('%l:%M %p', $OStartDateTime);
+                $replacementMap["\$oldAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $prevStartDateTime);
+                $replacementMap["\$oldAppointmentTimeEN"] =  strftime('%l:%M %p', $prevStartDateTime);
                 
-                $this->_notifyChange($toUpdate, $action, $replacementMap,$post["sourceId"]);
+                if ($prevStartDateTime >= $today){
+                    $this->_notifyChange($toUpdate, $action, $replacementMap,$post["sourceId"]);
+                }
             }
 
             return $this->opalDB->updateAppointment($toUpdate);
 
-        } else if(count($pendingAppointment) == 1) {
+        } else if($countPending == 1) {
             $toInsert = $pendingAppointment[0];
             $toInsert["Status"] = $post["status"];
             $toUpdate["State"] = APPOINTMENT_STATE_CODE_ACTIVE;
@@ -560,8 +588,8 @@ class Appointment extends Module
             unset($toInsert["DateModified"]);
             $this->_insertAppointmentPendingMH($toInsert, $source);            
             
-        } else if (count($currentAppointment) < 1 && count($pendingAppointment) < 1) {
+        } else if ($countAppointment < 1 && $countPending < 1) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, "Appointment not found.");
-        }      
+        }
     }
 }

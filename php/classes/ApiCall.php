@@ -3,13 +3,13 @@
 
 class ApiCall {
 
-    private $options;
-    private $answer;
-    private $answerInfo;
-    private $body;
-    private $header;
-    private $error;
-    private $phpSessionId;
+    protected $options;
+    protected $answer;
+    protected $answerInfo;
+    protected $body;
+    protected $header;
+    protected $error;
+    protected $phpSessionId;
 
     /**
      * ApiCall constructor.
@@ -283,7 +283,7 @@ class ApiCall {
 
         $this->answerInfo = curl_getinfo($ch);
 
-        if($result === false) {
+        if(curl_error($ch)) {
             $this->error = curl_error($ch);
             $this->answer = false;
             $this->phpSessionId = false;
