@@ -1,3 +1,129 @@
+Version 2.1.9.1:
+ - fix _updateAppointmentPending
+ - Version bump to 2.1.9.0
+ - Version bump to 2.1.9.0
+ - Merge branch 'OPAL-1225' into 'develop'
+ - Merge branch 'develop' into 'staging'
+ - OPAL-1225 - changed replace for insert for resource appointment pivot table
+
+Version 2.1.9.0:
+ - Merge branch 'OPAL-1225' into 'develop'
+ - OPAL-1225 - changed replace for insert for resource appointment pivot table
+ - Merge branch 'OPAL-1225' into 'develop'
+ - Merge branch 'OPAL-1231' into 'develop'
+ - fix the access flaw
+ - Merge branch 'OPAL-1231' of gitlab.com:opalmedapps/opalAdmin into develop
+ - change comment
+ - add comment
+ - code review
+ - bug fix(cont)
+ - bug fix
+ - code review
+ - refactor patient administration module final
+ - OPAL-1225 - updated config order and removed some trace.
+ - refactor patient administratration phase 2
+ - bug fix and code refactoring phase 1
+ - OPAL-1225 - changed API calls to new API module and removed HospitalPushNotification call of the class which deactivate the https validation
+ - Added API classes for Android and Apple push notifications
+ - Merge branch 'docker-add-composer' into 'staging'
+ - Add composer to Docker image
+ - Modified volume path in docker.compose.yml to make it work on windows systems
+ - Merge branch 'OPAL-1166' into 'staging'
+ - remove quote
+ - fix merge conflict cont
+ - fix merge conflict
+ - Merge branch 'DuplicateResource-FEYV6000' into 'staging'
+ - BugFix: Invalid duplicate resource error
+ - fix banner bug
+ - fix regex patterns
+ - code review cont.
+ - code review
+ - Merge branch 'OPAL-1215' into 'staging'
+ - OPAL-1215 removed console.log
+ - OPAL-1215 Comparison of the selected codes was done by code and description. Changed to masterSourceAlias ID instead. Updated listing of deactivated and unpublished to display code, id and description.
+ - code review
+ - Merge branch 'OPAL-1222' into 'staging'
+ - OPAL-1222 - displays only library a user is authorized to see
+ - Merge branch 'OPAL-1222' into 'staging'
+ - OPAL-1222 - fixed get library issue setting invalid number of parameters
+ - Merge branch 'release-202202' into 'staging'
+ - Merge branch 'release-202202' into 'develop'
+ - OPAL-1215 - changing of SQL underway
+ - more comments added
+ - ad comment and code format
+ - Release update after merge request
+ - OPAL-1215 - changing of SQL underway
+ - encode security answer
+ - fix indent and delete old file
+ - code review cont
+ - code review and bug fix
+ - Merge branch 'docker-window-support' into 'develop'
+ - Contain code OPAL12-11 checkIn Issue, OPAL -1070 Doctor, OPAL-1071 Patient Doctor. Patient History
+ - Modified volume path in docker.compose.yml to make it work on windows systems
+ - Merge branch 'OPAL-1205' into 'develop'
+ - OPAL-1205 - Added externalId and description to search box in a add/edit alias
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'OPAL-1198' into 'develop'
+ - OPAL-1198 - Changed the cleanup method for the unwanted characters as the same for edit.post.js
+ - Replace replaceIntoTable bu SQL Update for Appointment and Document
+ - Merge branch 'preproduction' into 'master'
+ - Merge branch 'staging' into 'preproduction'
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'preproduction' into 'master'
+ - Merge branch 'staging' into 'preproduction'
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'preproduction' into master
+ - Resync to PreProduction branch 0d4727f5
+ - Merge branch 'staging' into 'preproduction'
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'staging' into 'preproduction'
+ - Merge branch 'develop' into 'staging'
+ - corret the text
+ - Delete composer.lock
+ - remove hard coding for firebase init
+ - refactor search query for pulling username from db
+ - update config file
+ - frontend bug and password module bug fix
+ - complete security question template
+ - complete access level template
+ - add text and encryption
+ - debug and refactor email and password module
+ - change the backend functions
+ - change search page and email modal
+ - Add encrypt link and text. Modify menu button
+ - Merge branch 'staging' into 'preproduction'
+ - Merge branch 'develop' into 'staging'
+ - Revert "Add new file"
+ - Add new file
+ - Merge branch 'staging' into preproduction
+ - Merge branch 'develop' into staging
+ - Merge branch 'staging' into preproduction
+ - Merge branch 'develop' into 'staging'
+ - Initialize the main menu
+ - add encription and translate text
+ - rename the files
+ - start the front end of the main menu of the module
+ - build php scripts for modification tool
+ - add firebase package in project
+ - add new functions in Patient Class and opal db class
+ - Create firebase class
+ - Merge branch 'develop' into 'staging'
+ - create newfiles for patient modification tools add some queries
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'develop' into 'staging'
+ - Merge branch 'OPAL-1158' into 'staging'
+ - Merge branch 'OPAL-1153' into 'staging'
+ - Merge branch 'revert-bc849371' into 'master'
+ - Revert "Merge branch 'hotfix-replace-appointment' into 'master'"
+ - Merge branch 'hotfix-replace-appointment' into 'master'
+ - Update README.md
+ - Update README.md
+ - Update README.md
+ - Update README.md
+ - Merge branch 'staging' into 'preproduction'
+ - Merging Staging to PreProduction
+
 Version 2.1.8.0:
  - Merge branch 'errorNotification' into 'develop'
  - Error notification
