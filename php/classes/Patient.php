@@ -286,24 +286,18 @@ class Patient extends Module {
                 $errCode = "0" . $errCode;
             }
             //bit 9
-            if(!array_key_exists("treatplan", $post) || $post["treatplan"] == "") {
-                $errCode = "1" . $errCode;
-            } else {
-                $errCode = "0" . $errCode;
-            }
-            //bit 10
             if(!array_key_exists("general", $post) || $post["general"] == "") {
                 $errCode = "1" . $errCode;
             } else {
                 $errCode = "0" . $errCode;
             }
-            //bit 11
+            //bit 10
             if(!array_key_exists("clinicalnotes", $post) || $post["clinicalnotes"] == "") {
                 $errCode = "1" . $errCode;
             } else {
                 $errCode = "0" . $errCode;
             }
-            //bit 12
+            //bit 11
             if(!array_key_exists("treatingteam", $post) || $post["treatingteam"] == "") {
                 $errCode = "1" . $errCode;
             } else {
@@ -350,9 +344,6 @@ class Patient extends Module {
         }
         if($post["notes"] === "true") {
             $resultArray["notes"] = $this->opalDB->getPatientNotificationsReport($post['psnum']);
-        }
-        if($post["treatplan"] === "true") {
-            $resultArray["treatplan"] = $this->opalDB->getPatientTreatmentPlanReport($post['psnum']);
         }
         if($post["clinicalnotes"] === "true") {
             $resultArray["clinicalnotes"] = $this->opalDB->getPatientClinNoteReport($post['psnum']);
