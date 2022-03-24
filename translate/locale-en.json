@@ -2655,7 +2655,7 @@
   },
   "PATIENTS": {
     "MENU": {
-      "TITLE": "Patients",
+      "TITLE": "Patient Dashboard",
       "SUB_TITLE": "Patients Tools",
       "REGISTRATION": "Patient Registration",
       "REGISTRATION_SUB": "Register a patient to Opal.",
