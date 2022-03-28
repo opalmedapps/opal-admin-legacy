@@ -1384,7 +1384,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 				}
 			}
 
-			if ($scope.publishDate.available) {
+			if ($scope.publishDate.available && $scope.publishDateTimeActive) {
 				if (typeof $scope.toSubmit.publishDateTime !== "undefined") {
 					oldPublishTime = $scope.toSubmit.publishDateTime.publish_time;
 					oldPublishDate = $scope.toSubmit.publishDateTime.publish_date;
