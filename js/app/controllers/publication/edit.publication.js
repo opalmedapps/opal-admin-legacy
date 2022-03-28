@@ -432,10 +432,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 				$scope.preview.publish_date = $scope.toSubmit.publishDateTime.publish_date;
 				$scope.preview.publish_time = $scope.toSubmit.publishDateTime.publish_time;
 			}
-			if(!$scope.dateEntered || !$scope.publishDateTimeActive) {
-				delete $scope.toSubmit.publishDateTime;
-			}
-			else {
+			if($scope.dateEntered && $scope.publishDateTimeActive) {
 				$scope.validator.publishDateTime = {
 					completed: true,
 					mandatory: true,
