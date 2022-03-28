@@ -1384,7 +1384,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 				}
 			}
 
-			if ($scope.publishDate.available && $scope.publishDateTimeActive) {
+			if ($scope.publishDate.available) {
 				if (typeof $scope.toSubmit.publishDateTime !== "undefined") {
 					oldPublishTime = $scope.toSubmit.publishDateTime.publish_time;
 					oldPublishDate = $scope.toSubmit.publishDateTime.publish_date;
@@ -1398,7 +1398,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 				}
 			}
 
-			if (invalidDate) {
+			if (invalidDate && $scope.publishDateTimeActive) {
 				alert($filter('translate')('PUBLICATION.EDIT.ERROR_DATE'));
 				if ($scope.showFrequency) {
 					$scope.toSubmit.occurrence.start_date = oldOccurrenceStart_date;
