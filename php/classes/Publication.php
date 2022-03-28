@@ -659,7 +659,7 @@ class Publication extends Module
                         if(!HelpSetup::verifyDate($publication[$setting["internalName"]], true, $custom["dateTime"]))
                             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publishing date.");
                     }
-                    else if(isset($publication[$setting["internalName"]])) {
+                    else if(isset($publication[$setting["internalName"]]) && $publication["materialId"]["type"] != "Treatment Team Message") {
                         if(!HelpSetup::verifyDate($publication[$setting["internalName"]], true, $custom["dateTime"]))
                             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publishing date.");
 
@@ -1106,7 +1106,7 @@ class Publication extends Module
             $this->_updatePublicationPost($publication, $moduleDetails["controlTableName"]);
         }
         else if($moduleDetails["ID"] == MODULE_EDU_MAT) {
-            $this->_updateTriggers($publication, $moduleDetails["controlTableName"]);
+            $this->_($publication, $moduleDetails["controlTableName"]);
         }
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module");
