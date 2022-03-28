@@ -1102,7 +1102,6 @@ class Publication extends Module
             $this->_updatePublicationQuestionnaire($publication, $moduleDetails["controlTableName"]);
         }
         else if($moduleDetails["ID"] == MODULE_POST) {
-
             $postDetail = $this->opalDB->getPostDetails($publication["materialId"]["value"]);
             if($postDetail["type"] != "Announcement") $publication["publishDateTime"] = $postDetail["PublishDate"];
             $this->_updatePublicationPost($publication, $moduleDetails["controlTableName"]);
