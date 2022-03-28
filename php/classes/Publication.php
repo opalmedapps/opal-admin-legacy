@@ -1106,7 +1106,7 @@ class Publication extends Module
             $this->_updatePublicationPost($publication, $moduleDetails["controlTableName"]);
         }
         else if($moduleDetails["ID"] == MODULE_EDU_MAT) {
-            $this->_($publication, $moduleDetails["controlTableName"]);
+            $this->_updateTriggers($publication, $moduleDetails["controlTableName"]);
         }
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module");
