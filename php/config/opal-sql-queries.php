@@ -219,6 +219,7 @@ define("SQL_OPAL_GET_POST_DETAILS", "
     PostType AS type,
     PostName_EN AS name_EN,
     PostName_FR AS name_FR,
+    PublishDate,
     body_EN,
     body_FR,
     (SELECT COUNT(*) from ".OPAL_FILTERS_TABLE." f WHERE f.ControlTableSerNum = pc.PostControlSerNum and ControlTable = '".OPAL_POST_TABLE."') AS locked
