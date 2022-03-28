@@ -659,7 +659,7 @@ class Publication extends Module
                         if(!HelpSetup::verifyDate($publication[$setting["internalName"]], true, $custom["dateTime"]))
                             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publishing date.");
                     }
-                    else if(isset($publication[$setting["internalName"]]) && $publication["materialId"]["type"] != "Treatment Team Message") {
+                    else if(isset($publication[$setting["internalName"]])) {
                         if(!HelpSetup::verifyDate($publication[$setting["internalName"]], true, $custom["dateTime"]))
                             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publishing date.");
 
