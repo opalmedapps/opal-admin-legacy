@@ -382,38 +382,6 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- SECTION: Phase in treatment -->
-                        <div class="row" ng-if="phaseSection.show">
-                            <div class="col-xs-12 side-menu-title">
-                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                                <span style="background-color:#e6edfa; padding: 0 10px;">
-                                    <span class="fas fa-dot-circle"></span>
-                                    <h2>{{'EDUCATION.ADD.PHASE_IN_TREATMENT'|translate}}</h2>
-                                </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row" ng-if="phaseSection.show">
-                            <div class="col-xs-12">
-                                <p style="margin-bottom: 10px;">
-                                    <span style="color:#d9534f"><strong>{{'EDUCATION.ADD.REQUIRED'|translate}}</strong></span>
-                                    {{'EDUCATION.ADD.PHASE_EXPLANATION'|translate}}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row" ng-if="phaseSection.show">
-                            <div ng-repeat="phase in phaseInTxs" class="col-xs-12 col-sm-4 col-md-3">
-                                <div class="panel-container" style="cursor:pointer;" ng-class="{pulse: hover, active: newEduMat.phase_in_tx.serial == phase.serial}" ng-click="phaseUpdate(phase)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                                    <div class="panel-info" ng-class="{active: newEduMat.phase_in_tx.serial == phase.serial}">
-                                        <div class="panel-content" style="text-align:center">
-                                            <span ng-hide="newEduMat.phase_in_tx.serial == phase.serial" style="font-size:30px;" class="glyphicon glyphicon-minus"></span>
-                                            <span ng-show="newEduMat.phase_in_tx.serial == phase.serial" style="font-size:30px;" class="glyphicon glyphicon-ok"></span>
-                                            <div class="option-panel-title">{{phase.name_display}}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         <!-- SECTION: Single URL -->
                         <div class="row" ng-if="urlSection.show">
                             <div class="col-xs-12 side-menu-title">

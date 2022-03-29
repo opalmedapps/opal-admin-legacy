@@ -352,7 +352,7 @@ define("HTTP_STATUS_SESSION_TIMEOUT_ERROR",419);
 define("HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR",422);
 define("HTTP_STATUS_LOGIN_TIMEOUT_ERROR",440);
 define("HTTP_STATUS_HTTP_TO_HTTPS_ERROR",497);
-
+$ignoreSecuredConnection = true;
 if(!$ignoreSecuredConnection) {
     if($_SERVER["HTTPS"] != "on") {
         HelpSetup::returnErrorMessage(HTTP_STATUS_HTTP_TO_HTTPS_ERROR, "Connection not secured.");
