@@ -134,19 +134,6 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 			ErrorHandler.onError(err, $filter('translate')('EDUCATION.ADD.ERROR_TYPES'));
 		});
 
-		// Call our API to get the list of phase-in-treatments
-		educationalMaterialCollectionService.getPhasesInTreatment().then(function (response) {
-			$scope.phaseInTxs = response.data;
-			$scope.phaseInTxs.forEach(function(entry) {
-				if($scope.language.toUpperCase() === "FR")
-					entry.name_display = entry.name_FR;
-				else
-					entry.name_display = entry.name_EN;
-			});
-		}).catch(function(err) {
-			ErrorHandler.onError(err, $filter('translate')('EDUCATION.ADD.ERROR_PHASES'));
-		});
-
 		// Function to toggle necessary changes when updating titles
 		$scope.titleUpdate = function () {
 

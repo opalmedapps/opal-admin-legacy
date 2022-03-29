@@ -62,48 +62,6 @@ class EduMaterial extends Module {
 
     /**
      *
-     * Gets a list of distinct phases in treatment defined in the database
-     *
-     * @return array $phases : the phases in treatment
-     */
-    public function getPhasesInTreatment() {
-        $this->checkReadAccess();
-
-        $phases = array();
-        try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "
-                SELECT DISTINCT 
-                    p.PhaseInTreatmentSerNum,
-                    p.Name_EN,
-                    p.Name_FR
-                FROM
-                    PhaseInTreatment p
-            ";
-		    $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $phaseArray = array(
-                    'serial'    => $data[0],
-                    'name_EN'   => $data[1],
-                    'name_FR'   => $data[2]
-                );
-
-                array_push($phases, $phaseArray); 
-            }
-
-            return $phases;
-
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for educational material. " . $e->getMessage());
-		}
-    }
-
-    /**
-     *
      * Gets a list of educational material types
      *
      * @return array $types : the educational material types
@@ -268,7 +226,6 @@ class EduMaterial extends Module {
                         ShareURL_FR,
                         EducationalMaterialType_EN,
                         EducationalMaterialType_FR,
-                        PhaseInTreatmentSerNum,
                         DateAdded,
 						LastPublished,
 						LastUpdatedBy,
@@ -331,7 +288,6 @@ class EduMaterial extends Module {
                                 URL_FR,
                                 URLType_EN,
                                 URLType_FR,
-                                PhaseInTreatmentSerNum,
                                 ParentFlag,
                                 DateAdded,
 								LastPublished,
@@ -708,7 +664,6 @@ class EduMaterial extends Module {
                                     URL_FR,
                                     URLType_EN,
                                     URLType_FR,
-                                    PhaseInTreatmentSerNum,
                                     ParentFlag,
                                     DateAdded,
                                     LastUpdatedBy,
