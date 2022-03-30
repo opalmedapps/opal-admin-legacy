@@ -92,17 +92,30 @@ angular.module('opalAdmin.services', [])
 		};
 	})
 
-	.service('LogoutService', function (Session, $state, $http) {
+	.service('LogoutService', function (Session, $q, $state, $http) {
 		this.logLogout = function () {
 			var user = Session.retrieveObject('user');
-			$http.post(
+			var oaLogoutPromise = $http.post(
 				"user/logout",
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
+			
+			// Logout of new Opal Admin	
+			var newOALogoutPromise = $http.post(
+				"http://127.0.0.1:8000/api/auth/logout/",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				},
+				{
+					"withCredentials": true,
+				}
+                	);
+			$q.all([oaLogoutPromise, newOALogoutPromise]);
 		};
-		this.logout = function () {
+		
+		this.logout = function () {	
 			this.logLogout();
 			Session.destroy();
 			$state.go('login');
