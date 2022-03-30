@@ -136,7 +136,6 @@ class EduMaterial extends Module {
         $shareURL_FR    = $eduMatDetails['share_url_FR'];
         $type_EN        = $eduMatDetails['type_EN'];
         $type_FR        = $eduMatDetails['type_FR'];
-        $phaseSer       = $eduMatDetails['phase_in_tx']['serial'];
         $tocs           = $eduMatDetails['tocs'];
 		$triggers       = $eduMatDetails['triggers'];
 		$userSer 		= $eduMatDetails['user']['id'];
@@ -192,7 +191,7 @@ class EduMaterial extends Module {
                 $urlExt_FR = $this->extensionSearch($url_FR);
 
                 if (!in_array($urlExt_EN, $extensions) || !in_array($urlExt_FR, $extensions) ) {
-                    $response['message'] = "Allowable extensions for URLs are: " . implode(',', $extensions);
+                    $response['message'] = "Allowable extensions for URLs are: " . implode(',', $extensions)  . '--add-url'. $url_EN . '----' . $urlExt_EN;
                     return $response; // return error
                 }
             }
@@ -242,7 +241,6 @@ class EduMaterial extends Module {
                     \"$shareURL_FR\",
                     \"$type_EN\",
                     \"$type_FR\",
-                    '$phaseSer',
                     NOW(),
 					NOW(),
 					'$userSer',
@@ -303,7 +301,6 @@ class EduMaterial extends Module {
                             \"$tocURL_FR\",
                             ae_en.Type,
                             ae_fr.Type,
-                            '$phaseSer',
                             0,
                             NOW(),
 							NOW(),
@@ -368,7 +365,6 @@ class EduMaterial extends Module {
         $eduMatSer          = $eduMatDetails['serial'];
         $triggers           = $eduMatDetails['triggers'];
         $tocs               = $eduMatDetails['tocs'];
-		$phaseSer           = $eduMatDetails['phase_serial'];
 		$userSer 			= $eduMatDetails['user']['id'];
 		$sessionId 			= $eduMatDetails['user']['sessionid'];
 
@@ -678,7 +674,6 @@ class EduMaterial extends Module {
                                 \"$tocURL_FR\",
                                 ae_en.Type,
                                 ae_fr.Type,
-                                '$phaseSer',
                                 0,
                                 NOW(),
                                 '$userSer',
