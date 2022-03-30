@@ -1228,6 +1228,7 @@
       "RATING": "Note moyenne",
       "TYPE": "Type",
       "PUBLISH_FLAG": "Publier",
+      "PHASE_IN_TREATMENT": "Phase de traitement",
       "PRIOR": "Avant le traitement",
       "DURING": "Au cours du traitement",
       "AFTER": "Après le traitement",
@@ -1275,6 +1276,7 @@
       "FRENCH_URL": "URL français",
       "SEARCH": "Rechercher",
       "TYPE": "Type",
+      "PHASE_IN_TREATMENT": "Phase en traitement",
       "URL": "URL",
       "TABLE_CONTENTS": "Table des matières",
       "ITEMS": "Item(s)",
@@ -2670,7 +2672,7 @@
   },
   "PATIENTS": {
     "MENU": {
-      "TITLE": "Tableau de bord Patient",
+      "TITLE": "Patients",
       "SUB_TITLE": "Outils pour patients",
       "REGISTRATION": "Enregistrement patient",
       "REGISTRATION_SUB": "Enregistrer un patient pour Opal.",

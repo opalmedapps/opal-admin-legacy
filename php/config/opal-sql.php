@@ -50,6 +50,7 @@ define("OPAL_PATIENTS_FOR_PATIENTS_TABLE","PatientsForPatients");
 define("OPAL_EDUCATION_MATERIAL_TABLE","EducationalMaterial");
 define("OPAL_EDUCATION_MATERIAL_CONTROL_TABLE","EducationalMaterialControl");
 define("OPAL_EDUCATION_MATERIAL_TOC_TABLE","EducationalMaterialTOC");
+define("OPAL_PHASE_IN_TREATMENT_TABLE","PhaseInTreatment");
 define("OPAL_ANNOUNCEMENT_MH_TABLE","AnnouncementMH");
 define("OPAL_TXT_TEAM_MSG_MH_TABLE","TxTeamMessageMH");
 define("OPAL_PATIENTS_FOR_PATIENTS_MH_TABLE","PatientsForPatientsMH");
