@@ -104,28 +104,6 @@
                                     </p>
                                 </div>
                             </div>
-                            <!-- SECTION: Phase in treatment -->
-                            <div uib-accordion-group is-open="phaseSection.open" class="panel-container summary-box" is-disabled="!newEduMat.phase_in_tx" ng-if="phaseSection.show">
-                                <uib-accordion-heading>
-                                    <div class="row" style="align-items: center">
-                                        <div class="col-md-2">
-                                            <span ng-if="newEduMat.phase_in_tx" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <strong>{{'EDUCATION.ADD.PHASE_IN_TREATMENT'|translate}}</strong>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':phaseSection.open, 'glyphicon-chevron-right':!phaseSection.open}" ng-if="newEduMat.phase_in_tx"></i>
-                                        </div>
-                                    </div>
-                                </uib-accordion-heading>
-                                <div ng-if="newEduMat.phase_in_tx" class="description">
-                                    <p>
-                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{newEduMat.phase_in_tx.name_display}}
-                                    </p>
-                                </div>
-                            </div>
                             <!-- SECTION: Single URL -->
                             <div uib-accordion-group is-open="urlSection.open" class="panel-container summary-box" is-disabled="!newEduMat.url_EN && !newEduMat.url_FR" ng-if="urlSection.show">
                                 <uib-accordion-heading>
