@@ -77,7 +77,7 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 					field: 'name_' + Session.retrieveObject('user').language.toUpperCase(),
 					displayName: $filter('translate')('EDUCATION.LIST.TITLE_2'),
 					cellTemplate: cellTemplateName,
-					width: '45%',
+					width: '35%',
 					enableColumnMenu: false
 				},
 				{
@@ -92,13 +92,32 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 					field: 'type_' + Session.retrieveObject('user').language.toUpperCase(),
 					enableColumnMenu: false,
 					displayName: $filter('translate')('EDUCATION.LIST.TYPE'),
-					width: '20%'
+					width: '15%'
+				},
+				{
+					field: 'phase_' + Session.retrieveObject('user').language.toUpperCase(),
+					enableColumnMenu: false,
+					displayName: $filter('translate')('EDUCATION.LIST.PHASE_IN_TREATMENT'),
+					width: '20%',
+					filter: {
+						type: uiGridConstants.filter.SELECT,
+						selectOptions: [{
+							value: $filter('translate')('EDUCATION.LIST.PRIOR'),
+							label: $filter('translate')('EDUCATION.LIST.PRIOR')
+						}, {
+							value: $filter('translate')('EDUCATION.LIST.DURING'),
+							label: $filter('translate')('EDUCATION.LIST.DURING')
+						}, {
+							value: $filter('translate')('EDUCATION.LIST.AFTER'),
+							label: $filter('translate')('EDUCATION.LIST.AFTER')
+						}]
+					}
 				},
 				{
 					field: 'lastupdated',
 					enableColumnMenu: false,
 					displayName: $filter('translate')('EDUCATION.LIST.LAST_UPDATED'),
-					width: '15%'
+					width: '10%'
 				},
 				{
 					name: $filter('translate')('EDUCATION.LIST.OPERATIONS'),
