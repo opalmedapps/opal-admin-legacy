@@ -1204,7 +1204,6 @@
       "RATING": "Average Rating",
       "TYPE": "Type",
       "PUBLISH_FLAG": "Publish Flag",
-      "PHASE_IN_TREATMENT": "Phase In Treatment",
       "PRIOR": "Prior To Treatment",
       "DURING": "During Treatment",
       "AFTER": "After Treatment",
@@ -1252,7 +1251,6 @@
       "FRENCH_URL": "French URL",
       "SEARCH": "Search...",
       "TYPE": "Type",
-      "PHASE_IN_TREATMENT": "Phase In Treatment",
       "URL": "URL",
       "TABLE_CONTENTS": "Table Of Contents",
       "ITEMS": "Item(s)",
@@ -2655,7 +2653,7 @@
   },
   "PATIENTS": {
     "MENU": {
-      "TITLE": "Patients",
+      "TITLE": "Patient Dashboard",
       "SUB_TITLE": "Patients Tools",
       "REGISTRATION": "Patient Registration",
       "REGISTRATION_SUB": "Register a patient to Opal.",
