@@ -69,16 +69,15 @@ angular.module('opalAdmin', [
 	.constant('USER_ROLES', {
 		admin: '1',
 		registrant: '4',
-	})
+	})	
 
 
 	// Authentication and authorization service
-	.factory('AuthService', function ($http, Session, $q, USER_ROLES) {
+	.factory('AuthService', function ($rootScope, $http, Session, $q, USER_ROLES) {
 
 		var authService = {};
 
 		authService.login = function (username, password) {
-
 			let oaPromise = $http.post( // Log in to the old Opal Admin API
 				"user/validate-login",
 				$.param({
@@ -88,10 +87,10 @@ angular.module('opalAdmin', [
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			); 
-			
+			);
+
 			return $http.post( // Log in to the new back end API
-				"http://127.0.0.1:8000/api/auth/login/",
+				$rootScope.newOpalAdminHost + '/api/auth/login/',
 				{
 					"username": username,
 					"password": password,
@@ -185,7 +184,7 @@ angular.module('opalAdmin', [
 			.state('sms',{ url: '/sms', templateUrl: "templates/sms/sms.html", controller: "sms", data:{ requireLogin: false } })
 			.state('sms/message',{ url: '/sms/message', templateUrl: "templates/sms/add.sms.html", controller: "add.sms", data:{ requireLogin: false } })
 			.state('patient-administration',{ url: '/patient-administration', templateUrl: "templates/patient-administration/patient.administration.html", controller: "patient.administration", data:{ requireLogin: true } })
-			.state('parking', { url: 'http://127.0.0.1:8000/', external: true, data: { requireLogin: true }});
+			.state('parking', { url: 'http://do-not-change.external-opal-admin', external: true, data: { requireLogin: true }});
 
 	}])
 
@@ -241,6 +240,7 @@ angular.module('opalAdmin', [
 					$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
 				}
 			}
+
 			if (accessible !== undefined) {
 				if (!accessible) {
 					event.preventDefault();
@@ -248,7 +248,15 @@ angular.module('opalAdmin', [
 					$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
 				}
 			}
+
+			// open a page when a state has an external URL (e.g., new opalAdmin host)
+			// https://stackoverflow.com/questions/30220947/how-would-i-have-ui-router-go-to-an-external-link-such-as-google-com
 			if (next.external) {
+				if (next.url == 'http://do-not-change.external-opal-admin') {
+					// replace a placeholder with the newOpalAdmin host url
+					next.url = $rootScope.newOpalAdminHost;
+				}
+				
 				event.preventDefault();
 				$window.open(next.url, '_self');
 			}
