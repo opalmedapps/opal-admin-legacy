@@ -158,8 +158,9 @@ class Publication extends Module
         foreach ($triggersTemp as $key=>$item) {
             if (in_array($item["type"], $toIgnore))
                 continue;
-            else if(!array_key_exists($item["type"], $test) || !array_key_exists($item["id"], $test[$item["type"]]))
+            else if(!array_key_exists($item["type"], $test) || (!array_key_exists($item["id"], $test[$item["type"]]) && $item["id"] != 'ALL')) {
                 unset($triggersTemp[$key]);
+            }
         }
         $triggersTemp = array_values($triggersTemp);
         $results["triggers"] = $triggersTemp;
