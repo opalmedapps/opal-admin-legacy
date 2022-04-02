@@ -788,7 +788,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				general: $scope.featureList.general,
 			},
 			success: function (response) {
-				populateTables(JSON.parse(response));
+				populateTables(response);
 			},
 			error: function (err) {
 				ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
