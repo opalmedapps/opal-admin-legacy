@@ -182,7 +182,6 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 				url: "educational-material/update/educational-material",
 				data: $scope.eduMat,
 				success: function (response) {
-					response = JSON.parse(response);
 					// Show success or failure depending on response
 					if (response.value) {
 						$scope.setBannerClass('success');
