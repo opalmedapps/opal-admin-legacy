@@ -470,12 +470,6 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				enableColumnMenu: false
 			},
 			{
-				field: 'prioritycode',
-				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.PRIORITY'),
-				width: '15%',
-				enableColumnMenu: false
-			},
-			{
 				field: 'aliasexpressiondescription',
 				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.DESC_EXP'),
 				width: '10%',
