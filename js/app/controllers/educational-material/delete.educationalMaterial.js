@@ -13,7 +13,6 @@ controller('educationalMaterial.delete', function ($scope, $filter, $sce, $uibMo
 			url: "educational-material/delete/educational-material",
 			data: $scope.eduMatToDelete,
 			success: function (response) {
-				response = JSON.parse(response);
 				// Show success or failure depending on response
 				if (response.value) {
 					$scope.setBannerClass('success');
