@@ -99,7 +99,6 @@ angular.module('opalAdmin.controllers.installation', ['ui.bootstrap']).
 					url: 'install/check-opal-connection',
 					data: $scope.opal_setup,
 					success: function (response) {
-						response = JSON.parse(response);
 						if (response.value) {
 							$scope.installation.opal_setup = true;
 							$scope.opal_setup.message = "Connection OK!";
@@ -167,7 +166,6 @@ angular.module('opalAdmin.controllers.installation', ['ui.bootstrap']).
 					url: 'install/check-aria-connection',
 					data: $scope.clinical_setup.aria,
 					success: function (response) {
-						response = JSON.parse(response);
 						if (response.value) {
 							$scope.clinical_setup.aria.status = true;
 							$scope.clinical_setup.aria.message = "Connection OK!";
@@ -222,7 +220,6 @@ angular.module('opalAdmin.controllers.installation', ['ui.bootstrap']).
 					url: 'install/check-opal-connection',
 					data: $scope.clinical_setup.medivisit,
 					success: function (response) {
-						response = JSON.parse(response);
 						if (response.value) {
 							$scope.clinical_setup.medivisit.status = true;
 							$scope.clinical_setup.medivisit.message = "Connection OK!";
@@ -277,7 +274,6 @@ angular.module('opalAdmin.controllers.installation', ['ui.bootstrap']).
 					url: 'install/check-mosaiq-connection',
 					data: $scope.clinical_setup.mosaiq,
 					success: function (response) {
-						response = JSON.parse(response);
 						if (response.value) {
 							$scope.clinical_setup.mosaiq.status = true;
 							$scope.clinical_setup.mosaiq.message = "Connection OK!";
@@ -338,7 +334,6 @@ angular.module('opalAdmin.controllers.installation', ['ui.bootstrap']).
 				url: 'install/write-configurations',
 				data: $scope.configs,
 				success: function (response) {
-					response = JSON.parse(response);
 					if (response.value) {
 						steps.config_files.completed = true;
 						$scope.installation.config_files = true;
@@ -439,7 +434,6 @@ angular.module('opalAdmin.controllers.installation', ['ui.bootstrap']).
 					url: 'install/register-admin',
 					data: $scope.adminUser,
 					success: function (response) {
-						response = JSON.parse(response);
 						if (response.value) {
 							$scope.installation.site_account = true;
 							steps.site_account.completed = true;

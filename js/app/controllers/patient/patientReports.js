@@ -552,7 +552,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				url: "patient/get/patient-name",
 				data: {pname: $scope.searchName},
 				success: function (response) {
-					displayName(JSON.parse(response));
+					displayName(response);
 				},
 				error: function (err) {
 					ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
@@ -564,7 +564,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				url: "patient/get/patient-mrn",
 				data: {pmrn: $scope.searchMRN},
 				success: function (response) {
-					displayName(JSON.parse(response));
+					displayName(response);
 				},
 				error: function (err) {
 					ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
@@ -576,7 +576,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				url: "patient/get/patient-ramq",
 				data: {pramq: $scope.searchRAMQ},
 				success: function (response) {
-					displayName(JSON.parse(response));
+					displayName(response);
 				},
 				error: function (err) {
 					ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
@@ -794,7 +794,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				general: $scope.featureList.general,
 			},
 			success: function (response) {
-				populateTables(JSON.parse(response));
+				populateTables(response);
 			},
 			error: function (err) {
 				ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));

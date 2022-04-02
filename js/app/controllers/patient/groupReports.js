@@ -193,7 +193,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
             url: "patient/get/education-options",
             data: {matType: $scope.materialType},
             success: function(response){
-                prepareEducList(JSON.parse(response));
+                prepareEducList(response);
             },
             error: function(err){
                 ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
@@ -213,7 +213,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                 type: $scope.materialType, 
                 name: $scope.selectedMaterial},
             success: function(response){
-                prepareEducReport(JSON.parse(response));
+                prepareEducReport(response);
             },
             error: function(err){
                 ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
@@ -362,7 +362,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
             url:"patient/get/questionnaire-options",
             data: null,
             success: function(response){
-                prepareQstList(JSON.parse(response));
+                prepareQstList(response);
             },
             error: function(err){
                 ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
@@ -381,7 +381,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
             url: "patient/get/questionnaire-report",
             data: {qstName: $scope.selectedQuestionnaire},
             success: function(response){
-                prepareQstReport(JSON.parse(response));
+                prepareQstReport(response);
             },
             error: function(err){
                 ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.SEARCH_FAIL'));
@@ -550,7 +550,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
             url: "patient/get/patient-report",
             data: null,
             success: function(response){
-                preparePatientReport(JSON.parse(response));
+                preparePatientReport(response);
             },
             error: function(err){
                 ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
