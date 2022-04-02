@@ -472,7 +472,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 			{
 				field: 'aliasexpressiondescription',
 				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.DESC_EXP'),
-				width: '10%',
+				width: '15%',
 				enableColumnMenu: false
 			},
 			{
@@ -484,7 +484,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 			{
 				field: 'aliasdescription',
 				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.DESC_ALI'),
-				width: '10%',
+				width: '20%',
 				enableColumnMenu: false
 			},
 			{
