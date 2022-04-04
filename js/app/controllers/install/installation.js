@@ -98,6 +98,7 @@ angular.module('opalAdmin.controllers.installation', ['ui.bootstrap']).
 					type: "POST",
 					url: 'install/check-opal-connection',
 					data: $scope.opal_setup,
+					dataType: "json",
 					success: function (response) {
 						if (response.value) {
 							$scope.installation.opal_setup = true;
@@ -165,6 +166,7 @@ angular.module('opalAdmin.controllers.installation', ['ui.bootstrap']).
 					type: "POST",
 					url: 'install/check-aria-connection',
 					data: $scope.clinical_setup.aria,
+					dataType: "json",
 					success: function (response) {
 						if (response.value) {
 							$scope.clinical_setup.aria.status = true;
@@ -219,6 +221,7 @@ angular.module('opalAdmin.controllers.installation', ['ui.bootstrap']).
 					type: "POST",
 					url: 'install/check-opal-connection',
 					data: $scope.clinical_setup.medivisit,
+					dataType: "json",
 					success: function (response) {
 						if (response.value) {
 							$scope.clinical_setup.medivisit.status = true;
@@ -273,6 +276,7 @@ angular.module('opalAdmin.controllers.installation', ['ui.bootstrap']).
 					type: "POST",
 					url: 'install/check-mosaiq-connection',
 					data: $scope.clinical_setup.mosaiq,
+					dataType: "json",
 					success: function (response) {
 						if (response.value) {
 							$scope.clinical_setup.mosaiq.status = true;
@@ -333,6 +337,7 @@ angular.module('opalAdmin.controllers.installation', ['ui.bootstrap']).
 				type: "POST",
 				url: 'install/write-configurations',
 				data: $scope.configs,
+				dataType: "json",
 				success: function (response) {
 					if (response.value) {
 						steps.config_files.completed = true;
@@ -433,6 +438,7 @@ angular.module('opalAdmin.controllers.installation', ['ui.bootstrap']).
 					type: "POST",
 					url: 'install/register-admin',
 					data: $scope.adminUser,
+					dataType: "json",
 					success: function (response) {
 						if (response.value) {
 							$scope.installation.site_account = true;
