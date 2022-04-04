@@ -3970,41 +3970,6 @@ class DatabaseOpal extends DatabaseAccess {
 
     }
 
-/**
-     * update an appointment only if it does not exists already.
-     * @param $toInsert
-     * @return int - number of row modified
-     */
-    function updateAppointments($toUpdate) {
-
-		$params = array(
-            array("parameter"=>":AliasExpressionSerNum","variable"=>$toUpdate['AliasExpressionSerNum'],"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":SourceDatabaseSerNum","variable"=>$toUpdate['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":AppointmentAriaSer","variable"=>$toUpdate['AppointmentAriaSer'],"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":PrioritySerNum","variable"=>$toUpdate['PrioritySerNum'],"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":DiagnosisSerNum","variable"=>$toUpdate['DiagnosisSerNum'],"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":Status","variable"=>$toUpdate['Status'],"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":State","variable"=>$toUpdate['State'],"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":ScheduledStartTime","variable"=>$toUpdate['ScheduledStartTime'],"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":ScheduledEndTime","variable"=>$toUpdate['ScheduledEndTime'],"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":ActualStartDate","variable"=>$toUpdate['ActualStartDate'],"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":ActualEndDate","variable"=>$toUpdate['ActualEndDate'],"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":Location","variable"=>$toUpdate['Location'],"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":RoomLocation_EN","variable"=>$toUpdate['RoomLocation_EN'],"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":RoomLocation_FR","variable"=>$toUpdate['RoomLocation_FR'],"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":Checkin","variable"=>$toUpdate['Checkin'],"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":ChangeRequest","variable"=>$toUpdate['ChangeRequest'],"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":DateAdded","variable"=>$toUpdate['DateAdded'],"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":ReadStatus","variable"=>$toUpdate['ReadStatus'],"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":SessionId","variable"=>$toUpdate['SessionId'],"data_type"=>PDO::PARAM_STR),
-			array("parameter"=>":AppointmentSerNum","variable"=>$toUpdate['AppointmentSerNum'],"data_type"=>PDO::PARAM_INT),
-			array("parameter"=>":PatientSerNum","variable"=>$toUpdate['PatientSerNum'],"data_type"=>PDO::PARAM_INT),
-        );
-
-        $totalupt = $this->_execute(OPAL_UPDATE_APPOINTMENT,$params );
-    }
-
-
     /* Get the latest dates of entries from the audit system table
      * @return array - list of records found
      */
