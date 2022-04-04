@@ -180,6 +180,7 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 			$.ajax({
 				type: "POST",
 				url: "educational-material/update/educational-material",
+				dataType: "json",
 				data: $scope.eduMat,
 				success: function (response) {
 					// Show success or failure depending on response

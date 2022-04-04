@@ -551,6 +551,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				type: "POST",
 				url: "patient/get/patient-name",
 				data: {pname: $scope.searchName},
+				dataType: "json",
 				success: function (response) {
 					displayName(response);
 				},
@@ -563,6 +564,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				type: "POST",
 				url: "patient/get/patient-mrn",
 				data: {pmrn: $scope.searchMRN},
+				dataType: "json",
 				success: function (response) {
 					displayName(response);
 				},
@@ -575,6 +577,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				type: "POST",
 				url: "patient/get/patient-ramq",
 				data: {pramq: $scope.searchRAMQ},
+				dataType: "json",
 				success: function (response) {
 					displayName(response);
 				},
@@ -793,6 +796,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				treatingteam: $scope.featureList.treatingteam,
 				general: $scope.featureList.general,
 			},
+			dataType: "json",
 			success: function (response) {
 				populateTables(response);
 			},
