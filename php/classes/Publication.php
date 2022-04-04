@@ -146,6 +146,7 @@ class Publication extends Module
 
         // Because some doctors, appointments or patients can be removed from their tables but still being present in
         // the filter table, we must clean up the filters first before sending the data to the front end.
+        // Exception: The 'ALL' filter should not be removed in list.
         $triggersTemp = $this->opalDB->getTriggersDetails($publicationId, $module["controlTableName"]);
         $publicationSettings = $this->opalDB->getPublicationSettings();
         $test = array();
@@ -158,9 +159,8 @@ class Publication extends Module
         foreach ($triggersTemp as $key=>$item) {
             if (in_array($item["type"], $toIgnore))
                 continue;
-            else if(!array_key_exists($item["type"], $test) || (!array_key_exists($item["id"], $test[$item["type"]]) && $item["id"] != 'ALL')) {
+            else if(!array_key_exists($item["type"], $test) || (!array_key_exists($item["id"], $test[$item["type"]]) && $item["id"] != 'ALL'))
                 unset($triggersTemp[$key]);
-            }
         }
         $triggersTemp = array_values($triggersTemp);
         $results["triggers"] = $triggersTemp;
