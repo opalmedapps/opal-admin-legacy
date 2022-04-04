@@ -114,8 +114,7 @@ class Resource extends Module {
         if ($errCode != 0) {
             $this->opalDB->insertResourcePendingError($post["source"], $post["appointment"], json_encode($post["resources"]), json_encode(array("validation" => $errCode)));
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
-        }
-        
+        }        
         if (empty($appointment))
             $this->_insertResourcePending($post);
         else
