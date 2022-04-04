@@ -55,6 +55,7 @@ controller('email.edit', function ($scope, $uibModal, $uibModalInstance, $filter
 			$.ajax({
 				type: "POST",
 				url: "email/update/ema	il",
+				dataType: "json",
 				data: $scope.email,
 				success: function (response) {
 					// Show success or failure depending on response
