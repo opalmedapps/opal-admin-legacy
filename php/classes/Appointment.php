@@ -374,14 +374,7 @@ class Appointment extends Module
             $replacementMap["\$newAppointmentTimeEN"] =  strftime('%l:%M %p', $newStartDateTime);    
             
         } else {
-            $appointment = $appointment[0];
-            $prevStartDateTime = strtotime($appointment["ScheduledStartTime"]);
-            $arrObject = new ArrayObject($appointment);
-            $toInsert  = $arrObject->getArrayCopy();
-            $toInsert["Status"]  = $post["status"];
-            $toInsert["ScheduledStartTime"]  = $post["scheduledTimestamp"];
-            $toInsert["ScheduledEndTime"]  = $post["scheduledTimestamp"];
-            $toInsert["SessionId"] = $this->opalDB->getSessionId();
+            
         }
         
         if($countAlias == 0 || $toPublish == 0) {
@@ -393,9 +386,22 @@ class Appointment extends Module
             $this->_insertAppointmentPendingMH($toInsert, $source);
 
         } else {
-            $this->_updateAppointmentPending($toInsert);
+            
+            $this->_updateAppointmentPending($toInsert);            
             unset($toInsert["sourceName"]);
             unset($toInsert["updatedBy"]);
+            if($countAppt > 0 ) {            
+                $appointment = $appointment[0];
+                $prevStartDateTime = strtotime($appointment["ScheduledStartTime"]);
+                $arrObject = new ArrayObject($appointment);
+                $toInsert  = $arrObject->getArrayCopy();
+                $toInsert["Status"]  = $post["status"];
+                $toInsert["ScheduledStartTime"]  = $post["scheduledTimestamp"];
+                $toInsert["ScheduledEndTime"]  = $post["scheduledTimestamp"];
+                $toInsert["SessionId"] = $this->opalDB->getSessionId();
+            }
+            
+
             $toInsert["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];
             $toInsert["AliasExpressionSerNum"] = $aliasInfos[0]['AliasExpressionSerNum'];
             
