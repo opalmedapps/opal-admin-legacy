@@ -384,9 +384,9 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 				$.ajax({
 					type: "POST",
 					url: "educational-material/insert/educational-material",
+					dataType: "json",
 					data: $scope.newEduMat,
 					success: function (response) {
-						response = JSON.parse(response);
 						response.status = 500;
 						if (!response.value)
 							ErrorHandler.onError(response, $filter('translate')('EDUCATION.ADD.ERROR_INSERT') + " " + response.message);
