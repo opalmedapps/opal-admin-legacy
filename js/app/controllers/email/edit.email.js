@@ -55,9 +55,9 @@ controller('email.edit', function ($scope, $uibModal, $uibModalInstance, $filter
 			$.ajax({
 				type: "POST",
 				url: "email/update/ema	il",
+				dataType: "json",
 				data: $scope.email,
 				success: function (response) {
-					response = JSON.parse(response);
 					// Show success or failure depending on response
 					if (response.value) {
 						$scope.setBannerClass('success');
