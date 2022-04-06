@@ -219,6 +219,7 @@ define("SQL_OPAL_GET_POST_DETAILS", "
     PostType AS type,
     PostName_EN AS name_EN,
     PostName_FR AS name_FR,
+    PublishDate,
     body_EN,
     body_FR,
     (SELECT COUNT(*) from ".OPAL_FILTERS_TABLE." f WHERE f.ControlTableSerNum = pc.PostControlSerNum and ControlTable = '".OPAL_POST_TABLE."') AS locked
@@ -343,7 +344,7 @@ define("OPAL_UPDATE_EXTERNAL_ID_MASTER_SOURCE", "
 ");
 
 define("OPAL_GET_PATIENTS_TRIGGERS","
-    SELECT DISTINCT PatientSerNum AS id, 'Patient' AS type, 0 AS added, CONCAT(CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2)))) AS name
+    SELECT DISTINCT PatientSerNum AS id, 'Patient' AS type, '' AS added, CONCAT(CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2)))) AS name
     FROM ".OPAL_PATIENT_TABLE." ORDER BY LastName;
 ");
 
@@ -352,33 +353,33 @@ define("OPAL_GET_MRN_PATIENT_SERNUM","
 ");
 
 define("OPAL_GET_DIAGNOSIS_TRIGGERS","
-    SELECT DISTINCT DiagnosisTranslationSerNum AS id, Name_EN AS name, Name_FR AS name_FR, 'Diagnosis' AS type, 0 AS 'added'
+    SELECT DISTINCT DiagnosisTranslationSerNum AS id, Name_EN AS name, Name_FR AS name_FR, 'Diagnosis' AS type, '' AS 'added'
     FROM ".OPAL_DIAGNOSIS_TRANSLATION_TABLE." WHERE Name_EN != '';
 ");
 
 define("OPAL_GET_APPOINTMENTS_TRIGGERS","
-    SELECT DISTINCT AliasSerNum AS id, AliasName_EN AS name, AliasName_FR AS name_FR, AliasType AS 'type', 0 AS added
+    SELECT DISTINCT AliasSerNum AS id, AliasName_EN AS name, AliasName_FR AS name_FR, AliasType AS 'type', '' AS added
     FROM ".OPAL_ALIAS_TABLE." WHERE AliasType = 'Appointment' ORDER BY AliasSerNum;
 ");
 
 define("OPAL_GET_APPOINTMENT_STATUS_TRIGGERS","
-    SELECT DISTINCT Name AS name, Name AS id, 'AppointmentStatus' AS type, 0 AS added FROM ".OPAL_STATUS_ALIAS_TABLE."
+    SELECT DISTINCT Name AS name, Name AS id, 'AppointmentStatus' AS type, '' AS added FROM ".OPAL_STATUS_ALIAS_TABLE."
     UNION ALL
-    SELECT 'Checked In' AS name, 1 AS id, 'CheckedInFlag' AS type, 0 AS added;
+    SELECT 'Checked In' AS name, 1 AS id, 'CheckedInFlag' AS type, '' AS added;
 ");
 
 define("OPAL_GET_DOCTORS_TRIGGERS","
-    SELECT DISTINCT max(d.DoctorAriaSer) AS id, trim(d.LastName) AS LastName, trim(d.FirstName) AS FirstName, 'Doctor' AS type, 0 AS added
+    SELECT DISTINCT max(d.DoctorAriaSer) AS id, trim(d.LastName) AS LastName, trim(d.FirstName) AS FirstName, 'Doctor' AS type, '' AS added
     FROM ".OPAL_DOCTOR_TABLE." d WHERE d.ResourceSerNum > 0 GROUP BY d.LastName ORDER BY d.LastName, d.FirstName;
 ");
 
 define("OPAL_GET_TREATMENT_MACHINES_TRIGGERS","
-    SELECT DISTINCT ResourceAriaSer AS id, ResourceName AS name, 'Machine' AS 'type', 0 AS 'added' FROM ".OPAL_RESOURCE_TABLE."
+    SELECT DISTINCT ResourceAriaSer AS id, ResourceName AS name, 'Machine' AS 'type', '' AS 'added' FROM ".OPAL_RESOURCE_TABLE."
     WHERE ResourceName LIKE 'STX%' OR  ResourceName LIKE 'TB%' ORDER BY ResourceName;
 ");
 
 define("OPAL_GET_STUDIES_TRIGGERS","
-    SELECT DISTINCT ID AS id, CONCAT (code, ' ', title_EN) AS name, 'Study' AS 'type', 0 AS 'added' FROM ".OPAL_STUDY_TABLE." WHERE deleted = ".NON_DELETED_RECORD." ORDER BY code, title_EN;
+    SELECT DISTINCT ID AS id, CONCAT (code, ' ', title_EN) AS name, 'Study' AS 'type', '' AS 'added' FROM ".OPAL_STUDY_TABLE." WHERE deleted = ".NON_DELETED_RECORD." ORDER BY code, title_EN;
 ");
 
 define("OPAL_COUNT_CODE_MASTER_SOURCE","
