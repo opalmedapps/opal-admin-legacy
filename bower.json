@@ -40,5 +40,8 @@
     "highcharts-ng": "^1.2.0",
     "highcharts": "^9.1.0",
     "moment-timezone": "^0.5.16"
+  },
+  "resolutions": {
+    "angular": "1.8.2"
   }
 }
