@@ -16,7 +16,7 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "^1.8.2",
+    "angular": "1.8.2",
     "jquery": "^3.6.0",
     "angular-route": "^1.8.2",
     "angular-animate": "^1.8.2",
