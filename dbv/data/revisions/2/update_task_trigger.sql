@@ -1,4 +1,0 @@
-CREATE TRIGGER `update_task_trigger` AFTER UPDATE ON `Task`
- FOR EACH ROW BEGIN
-INSERT INTO `TaskMH`(`TaskSerNum`, `CronLogSerNum`, `PatientSerNum`, `AliasExpressionSerNum`, `SourceDatabaseSerNum`, `TaskAriaSer`, `Status`, `State`, `PrioritySerNum`, `DiagnosisSerNum`, `DueDateTime`, `CreationDate`, `CompletionDate`, `DateAdded`, `LastUpdated`, `ModificationAction`) VALUES (NEW.TaskSerNum, NEW.CronLogSerNum, NEW.PatientSerNum,NEW.AliasExpressionSerNum,NEW.SourceDatabaseSerNum,NEW.TaskAriaSer, NEW.Status, NEW.State, NEW.PrioritySerNum, NEW.DiagnosisSerNum, NEW.DueDateTime, NEW.CreationDate, NEW.CompletionDate, NEW.DateAdded,NULL, 'UPDATE');
-END

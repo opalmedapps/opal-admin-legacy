@@ -23,6 +23,7 @@
     "firebase": "^3.9.0",
     "firebase-admin": "^4.2.0",
     "npm": "^7.5.4",
+    "textangularjs": "^2.1.2",
     "validate-commit-message": "^3.0.1"
   }
 }

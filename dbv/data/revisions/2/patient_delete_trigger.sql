@@ -1,4 +1,0 @@
-CREATE TRIGGER `patient_delete_trigger` AFTER DELETE ON `Patient`
- FOR EACH ROW BEGIN
-INSERT INTO `PatientMH`(`PatientSerNum`, `PatientRevSerNum`, `SessionId`,`PatientAriaSer`, `PatientId`, `PatientId2`, `FirstName`, `LastName`, `Alias`, `Sex`, `DateOfBirth`, `TelNum`, `EnableSMS`, `Email`, `Language`, `SSN`, `AccessLevel`,`RegistrationDate`, `LastUpdated`, `ModificationAction`) VALUES (OLD.PatientSerNum,NULL,OLD.SessionId,OLD.PatientAriaSer,OLD.PatientId, OLD.PatientId2, OLD.FirstName,OLD.LastName,OLD.Alias, OLD.Sex, OLD.DateOfBirth, OLD.TelNum,OLD.EnableSMS,OLD.Email,OLD.Language,OLD.SSN, OLD.AccessLevel, OLD.RegistrationDate, NOW(), 'DELETE');
-END

@@ -1,4 +1,0 @@
-CREATE TRIGGER `alias_insert_trigger` AFTER INSERT ON `Alias`
- FOR EACH ROW BEGIN
-   INSERT INTO `AliasMH`(`AliasSerNum`, `AliasType`, `AliasUpdate`, `AliasName_FR`, `AliasName_EN`, `AliasDescription_FR`, `AliasDescription_EN`, `EducationalMaterialControlSerNum`, `SourceDatabaseSerNum`, `ColorTag`, `LastTransferred`, `LastUpdatedBy`, `SessionId`, `ModificationAction`, `DateAdded`) VALUES (NEW.AliasSerNum, NEW.AliasType, NEW.AliasUpdate, NEW.AliasName_FR, NEW.AliasName_EN, NEW.AliasDescription_FR, NEW.AliasDescription_EN, NEW.EducationalMaterialControlSerNum, NEW.SourceDatabaseSerNum, NEW.ColorTag, NEW.LastTransferred, NEW.LastUpdatedBy, NEW.SessionId, 'INSERT', NOW());
-END
