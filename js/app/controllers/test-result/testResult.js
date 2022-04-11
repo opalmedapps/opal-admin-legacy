@@ -32,7 +32,7 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 		if($scope.writeAccess) {
 			checkboxCellTemplate = '<div style="text-align: center; cursor: pointer;" ' +
 				'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
-				'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
+				'class="ui-grid-cell-contents"><input style="margin: 4px; pointer-events: none;" type="checkbox" ' +
 				'ng-checked="grid.appScope.updatePublishFlag(row.entity.publish)" ng-model="row.entity.publish"></div>';
 		} else {
 			checkboxCellTemplate = '<div style="text-align: center;" class="ui-grid-cell-contents">'+
