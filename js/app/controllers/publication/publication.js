@@ -80,7 +80,7 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 		if($scope.writeAccess)
 			cellTemplatePublish = '<div style="text-align: center; cursor: pointer;" ' +
 				'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
-				'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
+				'class="ui-grid-cell-contents"><input style="margin: 4px; pointer-events: none;" type="checkbox" ' +
 				'ng-checked="grid.appScope.updatePublishFlag(row.entity.publishFlag)" ng-model="row.entity.publishFlag"></div>';
 		else
 			cellTemplatePublish = '<div style="text-align: center;" class="ui-grid-cell-contents">'+
