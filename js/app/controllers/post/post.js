@@ -190,9 +190,6 @@ filter('deliberatelyTrustAsHtml', function ($sce) {
 						case "Announcement":
 							row.type_display = $filter('translate')('POSTS.LIST.ANNOUNCEMENT');
 							break;
-						case "Patients for Patients":
-							row.type_display = $filter('translate')('POSTS.LIST.PATIENTS_FOR_PATIENTS');
-							break;
 						default:
 							row.type_display = $filter('translate')('POSTS.LIST.NOT_TRANSLATED');
 						}
@@ -285,9 +282,6 @@ filter('deliberatelyTrustAsHtml', function ($sce) {
 										case "Announcement":
 											row.type = $filter('translate')('POSTS.LIST.ANNOUNCEMENT');
 											break;
-										case "Patients for Patients":
-											row.type = $filter('translate')('POSTS.LIST.PATIENTS_FOR_PATIENTS');
-											break;
 											// default:
 											// 	row.type = $filter('translate')('POSTS.LIST.NOT_TRANSLATED');
 										}
@@ -336,9 +330,6 @@ filter('deliberatelyTrustAsHtml', function ($sce) {
 												break;
 											case "Announcement":
 												row.type = $filter('translate')('POSTS.LIST.ANNOUNCEMENT');
-												break;
-											case "Patients for Patients":
-												row.type = $filter('translate')('POSTS.LIST.PATIENTS_FOR_PATIENTS');
 												break;
 												// default:
 												// 	row.type = $filter('translate')('POSTS.LIST.NOT_TRANSLATED');

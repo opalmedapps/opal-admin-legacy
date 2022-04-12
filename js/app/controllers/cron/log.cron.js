@@ -122,24 +122,6 @@ controller('cron.log', function ($scope, $filter, $uibModalInstance, cronCollect
 			};
 		}
 
-		if ($scope.cronListLogs.pfp && $scope.cronListLogs.pfp.length) {
-			$scope.gridPFPLogOptions = {
-				data: $scope.cronListLogs.pfp,
-				columnDefs: [
-					{ field: 'post_control_name', displayName: $filter('translate')('CRON.DETAILS.POST'), enableColumnMenu: false } ,
-					{ field: 'revision', displayName: $filter('translate')('CRON.DETAILS.REVISION_NO'), enableColumnMenu: false } ,
-					{ field: 'cron_serial', displayName: $filter('translate')('CRON.DETAILS.CRONLOGSER'), enableColumnMenu: false } ,
-					{ field: 'patient_serial', displayName: $filter('translate')('CRON.DETAILS.PATIENTSER'), enableColumnMenu: false } ,
-					{ field: 'read_status', displayName: $filter('translate')('CRON.DETAILS.READ_STATUS'), enableColumnMenu: false } ,
-					{ field: 'date_added', displayName: $filter('translate')('CRON.DETAILS.DATETIME_SENT'), enableColumnMenu: false } ,
-					{ field: 'mod_action', displayName: $filter('translate')('CRON.DETAILS.ACTION'), enableColumnMenu: false } 
-				],
-				rowHeight: 30,
-				useExternalFiltering: true,
-				enableColumnResizing: true
-			};
-		}
-
 		if ($scope.cronListLogs.educationalMaterial && $scope.cronListLogs.educationalMaterial.length) {
 			$scope.gridEducationalMaterialLogOptions = {
 				data: $scope.cronListLogs.educationalMaterial,

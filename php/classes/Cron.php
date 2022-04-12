@@ -261,8 +261,7 @@ class Cron extends Module {
         if(in_array(MODULE_POST, $moduleArr) && HelpSetup::validateReadModule(MODULE_POST))
             array_push($cronLogs,
                 array('name' => 'Announcement', 'data' => $this->opalDB->getCronLogAnnouncements()),
-                array('name' => 'Treatment Team Message', 'data' => $this->opalDB->getCronLogTTMs()),
-                array('name' => 'Patients for Patients', 'data' => $this->opalDB->getCronLogPFP())
+                array('name' => 'Treatment Team Message', 'data' => $this->opalDB->getCronLogTTMs())
             );
 
         if(in_array(MODULE_EDU_MAT, $moduleArr) && HelpSetup::validateReadModule(MODULE_EDU_MAT))
@@ -307,7 +306,6 @@ class Cron extends Module {
         if(in_array(MODULE_POST, $moduleArr) && HelpSetup::validateReadModule(MODULE_POST)) {
             $cronLogs['announcement'] = (!empty($contents['Announcement'])) ? $this->opalDB->getAnnouncementChartLogsByIds($contents['Announcement']) : array();
             $cronLogs['txTeamMessage'] = (!empty($contents['Treatment Team Message'])) ? $this->opalDB->getTTMChartLogsByIds($contents['Treatment Team Message']) : array();
-            $cronLogs['pfp'] = (!empty($contents['Patients for Patients'])) ? $this->opalDB->getPFPChartLogsByIds($contents['Patients for Patients']) : array();
         }
         if(in_array(MODULE_EMAIL, $moduleArr) && HelpSetup::validateReadModule(MODULE_EMAIL)) {
             $cronLogs['email'] = (!empty($contents['Email'])) ? $this->opalDB->getEmailsLogs($contents['Email']) : array();

@@ -738,8 +738,6 @@ sub getPatientsMarkedForUpdateModularCron {
         $control_table = "cronControlPatient_Announcement";
     }elsif($cronType eq 'LegacyQuestionnaire'){
         $control_table = "cronControlPatient_LegacyQuestionnaire";
-    }elsif($cronType eq 'Patients for Patients'){
-        $control_table = "cronControlPatient_PatientsForPatients";
     }elsif($cronType eq 'Treatment Team Message'){
         $control_table = "cronControlPatient_TreatmentTeamMessage";
     }
@@ -869,8 +867,6 @@ sub getPatientsMarkedForUpdateModularCronLegacy {
         $control_table = "cronControlPatient_Announcement";
     }elsif($cronType eq 'LegacyQuestionnaire'){
         $control_table = "cronControlPatient_LegacyQuestionnaire";
-    }elsif($cronType eq 'Patients for Patients'){
-        $control_table = "cronControlPatient_PatientsForPatients";
     }elsif($cronType eq 'Treatment Team Message'){
         $control_table = "cronControlPatient_TreatmentTeamMessage";
     }
@@ -1051,8 +1047,6 @@ sub setPatientLastTransferredModularCron
         $control_table = "cronControlPatient_Announcement";
     }elsif($cronType eq 'LegacyQuestionnaire'){
         $control_table = "cronControlPatient_LegacyQuestionnaire";
-    }elsif($cronType eq 'Patients for Patients'){
-        $control_table = "cronControlPatient_PatientsForPatients";
     }elsif($cronType eq 'Treatment Team Message'){
         $control_table = "cronControlPatient_TreatmentTeamMessage";
     }

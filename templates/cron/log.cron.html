@@ -75,18 +75,6 @@
             </div>
         </div>
 
-        <!-- SECTION: Patients for Patients Logs -->
-        <div uib-accordion-group is-open="pfpLogSection.open" ng-if="cronListLogs.pfp.length">
-            <uib-accordion-heading>
-                <div>
-                    <strong>{{'CRON.DETAILS.PATIENTS_FOR_PATIENTS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': pfpLogSection.open, 'glyphicon-chevron-right': !pfpLogSection.open}"></i>
-                </div>
-            </uib-accordion-heading>
-            <div id="data-table">
-                <div class="gridStyle" ui-grid="gridPFPLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (cronListLogs.pfp.length*gridPFPLogOptions.rowHeight)+32+'px'}"></div>
-            </div>
-        </div>
-
         <!-- SECTION: Educational Material Logs -->
         <div uib-accordion-group is-open="educationalMaterialLogSection.open" ng-if="cronListLogs.educationalMaterial.length">
             <uib-accordion-heading>

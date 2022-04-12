@@ -615,16 +615,6 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Get all the chart logs for a list of patients for patients
-     * @params  $ids (array) list of IDs of the patients for patients
-     * @return  array of records found
-     * */
-    function getPFPChartLogsByIds($ids) {
-        $sqlFetch = str_replace("%%CRON_LOG_IDS%%", implode(", ", $ids), SQL_OPAL_GET_PFP_CHART_PER_IDS);
-        return $this->_fetchAll($sqlFetch, array());
-    }
-
-    /*
     * Update questionnaireControl table with changes made by user
     * @params  SerNum of the QuestionnaireControl table updated
     * @return  Total of records modified.
@@ -1666,15 +1656,6 @@ class DatabaseOpal extends DatabaseAccess {
      * */
     function getCronLogTTMs() {
         return $this->_fetchAll(OPAL_GET_CRON_LOG_TTMS, array());
-    }
-
-    /*
-     * Get the cron log patients for patients
-     * @params  void
-     * @return  array - list of cron log patients for patients
-     * */
-    function getCronLogPFP() {
-        return $this->_fetchAll(OPAL_GET_CRON_LOG_PFP, array());
     }
 
     /*

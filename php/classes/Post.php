@@ -78,8 +78,7 @@ class Post extends Module {
     }
 
     /*
-     * Returns all the chart list from a list of cron IDs depending if it is announcement, treatment team message or
-     * patients for patients.
+     * Returns all the chart list from a list of cron IDs depending if it is announcement or treatment team message
      * @params  $serials (array) list of serials to look for
      *          $type (string) type of post
      * @return  array of chrat log value
@@ -90,8 +89,6 @@ class Post extends Module {
             return  $this->opalDB->getAnnouncementChartLogsByIds($serials);
         else if ($type == "Treatment Team Message")
             return $this->opalDB->getTTMChartLogsByIds($serials);
-        else if ($type == "Patients for Patients")
-            return $this->opalDB->getPFPChartLogsByIds($serials);
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Unknown type of post.");
     }

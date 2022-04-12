@@ -26,11 +26,6 @@ controller('post.edit', function ($scope, $filter, $sce, $state, $uibModal, $uib
 			name: 'Treatment Team Message',
 			name_display: $filter('translate')('POSTS.ADD.TREATMENT_TEAM_MESSAGE'),
 			icon: 'user-md'
-		},
-		{
-			name: 'Patients for Patients',
-			name_display: $filter('translate')('POSTS.ADD.PATIENTS_FOR_PATIENTS'),
-			icon: 'users'
 		}
 	];
 
