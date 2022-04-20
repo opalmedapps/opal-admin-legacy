@@ -79,8 +79,9 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 				type: "POST",
 				url: "patient-administration/get/patient-name",
 				data: {pname: $scope.searchName, language: $scope.currentUser.language},
+				dataType: "json",
 				success: function (response) {
-					displayName(JSON.parse(response));
+					displayName(response);
 				},
 				error: function (err) {
 					ErrorHandler.onError(err, $filter('translate')('PATIENT_ADMINISTRATION.MENU.DB_ERROR'));
@@ -91,8 +92,9 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 				type: "POST",
 				url: "patient-administration/get/patient-mrn",
 				data: {pmrn: $scope.searchMRN, language: $scope.currentUser.language},
+				dataType: "json",
 				success: function (response) {
-					displayName(JSON.parse(response));
+					displayName(response);
 				},
 				error: function (err) {
 					ErrorHandler.onError(err, $filter('translate')('PATIENT_ADMINISTRATION.MENU.DB_ERROR'));
@@ -103,8 +105,9 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 				type: "POST",
 				url: "patient-administration/get/patient-ramq",
 				data: {pramq: $scope.searchRAMQ, language: $scope.currentUser.language},
+				dataType: "json",
 				success: function (response) {
-					displayName(JSON.parse(response));
+					displayName(response);
 				},
 				error: function (err) {
 					ErrorHandler.onError(err, $filter('translate')('PATIENT_ADMINISTRATION.MENU.DB_ERROR'));
@@ -122,8 +125,9 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 			type: "POST",
 			url: "patient-administration/get/patient-ramq",
 			data: {pramq: $scope.pramq, language: $scope.currentUser.language},
+			dataType: "json",
 			success: function (response) {
-				refreshDisplay(JSON.parse(response));
+				refreshDisplay(response);
 			},
 			error: function (err) {
 				ErrorHandler.onError(err, $filter('translate')('PATIENT_ADMINISTRATION.MENU.DB_ERROR'));
