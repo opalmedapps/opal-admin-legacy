@@ -675,10 +675,11 @@ class Questionnaire extends QuestionnaireModule {
             $errCode = bindec($errCode);
 
             if ($errCode == 0) {
-                foreach ($this->opalDB->getLastCompletedQuestionnaire($patientSite["PatientSerNum"]) as $q) {
-                    $questionnaireDetails = $this->questionnaireDB->getQuestionnaireDetails($q["questionnaireDBId"]);
-                    if ($questionnaireDetails["purpose"] == PURPOSE_CLINICAL || $questionnaireDetails["purpose"] == PURPOSE_RESEARCH) {
-                        array_push($patientQuestionnaires, $q);
+                foreach ($this->opalDB->getLastCompletedQuestionnaire($patientSite["PatientSerNum"]) as &$q) {
+                    $questionnaireDetails = $this->questionnaireDB->getQuestionnairePurpose($q["questionnaireDBId"]);
+                    if ($questionnaireDetails["purposeId"] == PURPOSE_CLINICAL || $questionnaireDetails["purposeId"] == PURPOSE_RESEARCH) {
+                        array_push($patientQuestionnaires,$q);
+                        break;
                     }
                 }
             }
