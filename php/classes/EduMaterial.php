@@ -62,48 +62,6 @@ class EduMaterial extends Module {
 
     /**
      *
-     * Gets a list of distinct phases in treatment defined in the database
-     *
-     * @return array $phases : the phases in treatment
-     */
-    public function getPhasesInTreatment() {
-        $this->checkReadAccess();
-
-        $phases = array();
-        try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "
-                SELECT DISTINCT 
-                    p.PhaseInTreatmentSerNum,
-                    p.Name_EN,
-                    p.Name_FR
-                FROM
-                    PhaseInTreatment p
-            ";
-		    $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $phaseArray = array(
-                    'serial'    => $data[0],
-                    'name_EN'   => $data[1],
-                    'name_FR'   => $data[2]
-                );
-
-                array_push($phases, $phaseArray); 
-            }
-
-            return $phases;
-
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for educational material. " . $e->getMessage());
-		}
-    }
-
-    /**
-     *
      * Gets a list of educational material types
      *
      * @return array $types : the educational material types
@@ -178,7 +136,6 @@ class EduMaterial extends Module {
         $shareURL_FR    = $eduMatDetails['share_url_FR'];
         $type_EN        = $eduMatDetails['type_EN'];
         $type_FR        = $eduMatDetails['type_FR'];
-        $phaseSer       = $eduMatDetails['phase_in_tx']['serial'];
         $tocs           = $eduMatDetails['tocs'];
 		$triggers       = $eduMatDetails['triggers'];
 		$userSer 		= $eduMatDetails['user']['id'];
@@ -234,7 +191,7 @@ class EduMaterial extends Module {
                 $urlExt_FR = $this->extensionSearch($url_FR);
 
                 if (!in_array($urlExt_EN, $extensions) || !in_array($urlExt_FR, $extensions) ) {
-                    $response['message'] = "Allowable extensions for URLs are: " . implode(',', $extensions);
+                    $response['message'] = "Allowable extensions for URLs are: " . implode(',', $extensions)  . '--add-url'. $url_EN . '----' . $urlExt_EN;
                     return $response; // return error
                 }
             }
@@ -268,7 +225,6 @@ class EduMaterial extends Module {
                         ShareURL_FR,
                         EducationalMaterialType_EN,
                         EducationalMaterialType_FR,
-                        PhaseInTreatmentSerNum,
                         DateAdded,
 						LastPublished,
 						LastUpdatedBy,
@@ -285,7 +241,6 @@ class EduMaterial extends Module {
                     \"$shareURL_FR\",
                     \"$type_EN\",
                     \"$type_FR\",
-                    '$phaseSer',
                     NOW(),
 					NOW(),
 					'$userSer',
@@ -331,7 +286,6 @@ class EduMaterial extends Module {
                                 URL_FR,
                                 URLType_EN,
                                 URLType_FR,
-                                PhaseInTreatmentSerNum,
                                 ParentFlag,
                                 DateAdded,
 								LastPublished,
@@ -347,7 +301,6 @@ class EduMaterial extends Module {
                             \"$tocURL_FR\",
                             ae_en.Type,
                             ae_fr.Type,
-                            '$phaseSer',
                             0,
                             NOW(),
 							NOW(),
@@ -412,7 +365,6 @@ class EduMaterial extends Module {
         $eduMatSer          = $eduMatDetails['serial'];
         $triggers           = $eduMatDetails['triggers'];
         $tocs               = $eduMatDetails['tocs'];
-		$phaseSer           = $eduMatDetails['phase_serial'];
 		$userSer 			= $eduMatDetails['user']['id'];
 		$sessionId 			= $eduMatDetails['user']['sessionid'];
 
@@ -708,7 +660,6 @@ class EduMaterial extends Module {
                                     URL_FR,
                                     URLType_EN,
                                     URLType_FR,
-                                    PhaseInTreatmentSerNum,
                                     ParentFlag,
                                     DateAdded,
                                     LastUpdatedBy,
@@ -723,7 +674,6 @@ class EduMaterial extends Module {
                                 \"$tocURL_FR\",
                                 ae_en.Type,
                                 ae_fr.Type,
-                                '$phaseSer',
                                 0,
                                 NOW(),
                                 '$userSer',
