@@ -891,3 +891,7 @@ define("GET_ANSWERS_NON_CHART_TYPE", "
 		AND B.answerSectionId = aSec.ID
 		AND aSec.answerQuestionnaireId = :answerQuestionnaireId;
 ");
+
+const SQL_GET_QUESTIONNAIRE_PURPOSE_ID = "
+    SELECT purposeId FROM " .QUESTIONNAIRE_TABLE. " WHERE ID = :questionnaireId
+";
