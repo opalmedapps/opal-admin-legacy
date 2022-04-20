@@ -800,7 +800,7 @@ ul.no-list {
 }
 
 .render-html-iphone4 {
-    width: 320px;
+    max-width: 320px;
     height: 480px;
     word-wrap: break-word;
     border: 1px solid #000;
