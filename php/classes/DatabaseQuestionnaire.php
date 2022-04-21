@@ -1370,4 +1370,16 @@ class DatabaseQuestionnaire extends DatabaseAccess
             array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    /**
+     * Get the purpose of a specific question
+     * @param $questionnaireId - ID of the questionnaire
+     * @return array - the purpose Id of the questionnaire
+     */
+    function getQuestionnairePurpose($questionnaireId) {
+        return $this->_fetch(SQL_GET_QUESTIONNAIRE_PURPOSE_ID, array(
+            array("parameter"=>":questionnaireId","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
 }
