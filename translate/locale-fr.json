@@ -2796,18 +2796,6 @@
           "DATE": "Date d'envoi",
           "STATUS": "Statut de consultation"
         },
-        "TREATMENT_PLAN":{
-          "TITLE": "Planification du traitement",
-          "DESC": "Description du diagnostic",
-          "TYPE": "Type d'alias",
-          "DESC_EXP": "Description de l'expression",
-          "NAME": "Nom d'alias",
-          "DESC_ALI": "Description de l'alias",
-          "TASK_STATUS": "Statut des tâches",
-          "TASK_STATE": "État des tâches",
-          "TASK_DUE": "Tâche à accomplir",
-          "TASK_COMPLETE": "Tâche complétée"
-        },
         "GENERAL":{
           "TITLE": "Général"
         },

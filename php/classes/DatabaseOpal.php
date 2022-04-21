@@ -2248,17 +2248,6 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Get patient treatment plan report
-     * @params $pnum : int - target patient ser num
-     * @return array - patient tx plan details
-     */
-    function getPatientTreatmentPlanReport($pnum){
-        return $this->_fetchAll(OPAL_GET_TREATMENT_PLAN_REPORT, array(
-            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
-        ));
-    }
-
-    /**
      * Get patient clinnotes  report
      * @params $pnum : int - target patient ser num
      * @return array - patient clinnote details

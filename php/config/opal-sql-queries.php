@@ -1075,18 +1075,6 @@ define("OPAL_GET_NOTIFICATIONS_REPORT", "
     AND p.PatientSerNum = :pnum;
 ");
 
-define("OPAL_GET_TREATMENT_PLAN_REPORT", "
-    SELECT d.Description_EN AS diagnosisdescription, a.AliasType AS aliastype,
-    ae.Description AS aliasexpressiondescription, a.AliasName_EN AS aliasname, a.AliasDescription_EN AS aliasdescription,
-    t.Status AS taskstatus, t.State AS taskstate, t.DueDateTime AS taskdue, t.CompletionDate AS taskcompletiondate
-    FROM ".OPAL_TASK_TABLE." t, ".OPAL_PATIENT_TABLE." p, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_ALIAS_TABLE." a,
-    ".OPAL_DIAGNOSIS_TABLE." d
-    WHERE t.PatientSerNum = p.PatientSerNum
-    AND ae.AliasExpressionSerNum = t.AliasExpressionSerNum AND ae.AliasSerNum = a.AliasSerNum
-    AND t.DiagnosisSerNum = d.DiagnosisSerNum
-    AND p.PatientSerNum = :pnum;
-");
-
 define("OPAL_GET_CLINICAL_NOTES_REPORT", "
     SELECT d.OriginalFileName AS originalname, d.FinalFileName AS finalname, d.CreatedTimeStamp AS created,
     d.ApprovedTimeStamp AS approved, ae.ExpressionName AS aliasexpressionname
