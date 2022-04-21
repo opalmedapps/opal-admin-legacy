@@ -154,10 +154,9 @@
                                         <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.testresults"> {{'PATIENTS.REPORT.COLUMNS.LEGACY_LAB_TESTS.TITLE'|translate}}</label>
                                         <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.pattestresults"> {{'PATIENTS.REPORT.COLUMNS.LAB_TESTS.TITLE'|translate}}</label>
                                         <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.notifications"> {{'PATIENTS.REPORT.COLUMNS.NOTES.TITLE'|translate}}</label>
-                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.treatplan"> {{'PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.TITLE'|translate}}</label>
+                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.clinicalnotes"> {{'PATIENTS.REPORT.COLUMNS.CLINICAL_NOTES.TITLE'|translate}}</label>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.clinicalnotes"> {{'PATIENTS.REPORT.COLUMNS.CLINICAL_NOTES.TITLE'|translate}}</label>
                                         <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.treatingteam"> {{'PATIENTS.REPORT.COLUMNS.TREATMENT_TEAM.TITLE'|translate}}</label>
                                         <label class="control-label col-xs-3"><input type="checkbox" ng-model="featureList.general"> {{'PATIENTS.REPORT.COLUMNS.GENERAL.TITLE'|translate}}</label>
                                     </div>
@@ -211,12 +210,6 @@
                         <div class="col-xs-12">
                             <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.NOTES.TITLE'|translate}}</h2>
                             <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="noteGridOptions" ui-grid-resize-columns ng-style="{'height':{{noteReport.length * 30 + 90}}}"></div>
-                        </div>
-                    </div>
-                    <div class="row" ng-if="featureList.treatplan && generateFinished">
-                        <div class="col-xs-12">
-                            <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.TITLE'|translate}}</h2>
-                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="txplanGridOptions" ui-grid-resize-columns ng-style="{'height':{{txplanReport.length * 30 + 90}}}"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.clinicalnotes && generateFinished">
