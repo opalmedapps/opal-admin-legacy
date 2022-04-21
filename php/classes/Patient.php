@@ -225,10 +225,9 @@ class Patient extends Module {
      *  6th bit test results (legacy)
      *  7th bit patient test results
      *  8th bit notifications
-     *  9th bit treatment planning
-     *  10th bit general
-     *  11th bit clinical notes
-     *  12 bit treating team messages
+     *  9th bit general
+     *  10th bit clinical notes
+     *  11th bit treating team messages
      *
      * @param $post array - mrn & featureList
      * @return $errCode
@@ -286,31 +285,25 @@ class Patient extends Module {
                 $errCode = "0" . $errCode;
             }
             //bit 9
-            if(!array_key_exists("treatplan", $post) || $post["treatplan"] == "") {
-                $errCode = "1" . $errCode;
-            } else {
-                $errCode = "0" . $errCode;
-            }
-            //bit 10
             if(!array_key_exists("general", $post) || $post["general"] == "") {
                 $errCode = "1" . $errCode;
             } else {
                 $errCode = "0" . $errCode;
             }
-            //bit 11
+            //bit 10
             if(!array_key_exists("clinicalnotes", $post) || $post["clinicalnotes"] == "") {
                 $errCode = "1" . $errCode;
             } else {
                 $errCode = "0" . $errCode;
             }
-            //bit 12
+            //bit 11
             if(!array_key_exists("treatingteam", $post) || $post["treatingteam"] == "") {
                 $errCode = "1" . $errCode;
             } else {
                 $errCode = "0" . $errCode;
             }
         } else {
-            $errCode = "111111111111";
+            $errCode = "11111111111";
         }
         return $errCode;
     }
@@ -350,9 +343,6 @@ class Patient extends Module {
         }
         if($post["notes"] === "true") {
             $resultArray["notes"] = $this->opalDB->getPatientNotificationsReport($post['psnum']);
-        }
-        if($post["treatplan"] === "true") {
-            $resultArray["treatplan"] = $this->opalDB->getPatientTreatmentPlanReport($post['psnum']);
         }
         if($post["clinicalnotes"] === "true") {
             $resultArray["clinicalnotes"] = $this->opalDB->getPatientClinNoteReport($post['psnum']);
