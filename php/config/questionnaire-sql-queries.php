@@ -613,7 +613,7 @@ define("SQL_QUESTIONNAIRE_GET_CONSENT_FORM_TITLE","
 );
 
 define("SQL_GET_QUESTIONNAIRE_LIST_ORMS","
-    SELECT :MRN AS patientId, MAX(CAST(DATE_FORMAT(Q.CompletionDate, '%Y-%m-%d') AS CHAR(30))) AS completionDate,
+    SELECT :MRN AS patientId, Q.CompletionDate AS completionDate,
     CASE WHEN DATEDIFF(CAST(DATE_FORMAT(NOW(), '%Y-%m-%d') AS CHAR(30)), MAX(CAST(DATE_FORMAT(Q.CompletionDate, '%Y-%m-%d') AS CHAR(30)))) <= 3650 THEN 'New'
     ELSE 'Old' END AS status, QC.QuestionnaireDBSerNum AS questionnaireDBId, QC.QuestionnaireName_EN AS name_EN,
     QC.QuestionnaireName_FR AS name_FR, COUNT(*) AS total, PHI.Hospital_Identifier_Type_Code AS site, qDB_q.visualization,
@@ -925,3 +925,7 @@ WHERE A.deleted = ".NON_DELETED_RECORD."
     AND aSec.answerQuestionnaireId = :answerQuestionnaireId
 ;
 ");
+
+const SQL_GET_QUESTIONNAIRE_PURPOSE_ID = "
+    SELECT purposeId FROM " .QUESTIONNAIRE_TABLE. " WHERE ID = :questionnaireId
+";
