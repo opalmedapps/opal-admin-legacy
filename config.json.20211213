@@ -1,0 +1,152 @@
+{
+	"_comment": "Configuration file used throughout opalAdmin",
+
+	"databaseConfig": {
+		"_comment": "Define database credentials here",
+
+		"opal": {
+			"host": "localhost",
+			"port": "3306",
+			"name": "OpalDB",
+			"username": "opalAdmin",
+			"password": "nChs2Gfs1FeubVK0"
+		},
+		"questionnaire": {
+			"host": "localhost",
+			"port": "3306",
+			"name": "QuestionnaireDB",
+			"username": "opalAdmin",
+			"password": "nChs2Gfs1FeubVK0",
+			"enabled": 1
+		},
+		"questionnaire2019": {
+			 "host": "localhost",
+			 "port": "3306",
+			 "name": "QuestionnaireDB",
+			 "username": "opalAdmin",
+			 "password": "nChs2Gfs1FeubVK0",
+			 "enabled": 1
+		},
+		"opalGuest": {
+			"host": "localhost",
+			"port": "3306",
+			"name": "OpalDB",
+			"username": "guest",
+			"password": "Vud2l6SobIle"
+		},
+		"aria": {
+			"host": "WNETVMAP265",
+			"port": "1433",
+			"username": "orms_user",
+			"password": "ormsoropal",
+			"enabled": 1
+		},
+		"wrm": {
+			"host": "localhost",
+			"port": "3306",
+			"name": "WaitRoomManagementFED",
+			"nameFED": "WaitRoomManagementFED",
+			"username": "ormsadm",
+			"password": "aklw3hrq3asdf923k",
+			"enabled": 1
+		},
+		"mosaiq": {
+			"host": "MOSAIQ_DB_HOST_HERE",
+			"port": "MOSAIQ_DB_PORT_HERE",
+			"username": "MOSAIQ_DB_USERNAME_HERE",
+			"password": "MOSAIQ_DB_PASSWORD_HERE",
+			"enabled": 0
+		}
+	},
+	"pushNotificationConfig": {
+		"_comment": "Push notification FCM and APN credentials",
+
+		"android": {
+			"_comment": "API access key from Google API's Console",
+
+			"apiKey": "AAAAbutiWrU:APA91bFLYB8GgHwveA9FPQCSsG_lTwGXLY3x7wl-VnIs4FxZJDEEewJrA2UrKKX79Oh58aRUiHYGXSiRPnuIbpQo85UzYyIPzIa7c1mNp5R6NoZiH9xRJ1ubuJ9c-0d-tt55-NFYskY5",
+			"androidURL": "https://fcm.googleapis.com/fcm/send"
+		},
+		"apple": {
+			"_comment": "Apple certificate private key passphrase and PEM file",
+
+			"certificate" : {
+				"password": "opal123!@#",
+				"filename": "2021-10-12_preprod_Certificates.crt",
+				"key": "2021-10-12_preprod_Certificates.key",
+                "topic": "com.hig.opalpreprod"
+			},
+            "appleURL": "https://api.sandbox.push.apple.com/3/device/"
+		}
+	},
+
+	"firebaseConfig": {
+		"database": {
+			"_comment": "API/database configs found in firebase",
+			"_comment2" : "**** YM 2018-11-28: brilliant-inferno-7679.firebaseio.com used to be pre-production, but now production ****",
+
+			"apiKey": "AIzaSyAGBV2Zwr0SYKy_J92jceof-OFeeFmm0Gw",
+			"authDomain": "opal-prod.firebaseapp.com",
+			"databaseURL": "https://opal-prod.firebaseio.com",
+			"projectId": "opal-prod",
+			"storageBucket": "opal-prod.appspot.com",
+			"messagingSenderId": "476395494069"
+		},
+		"serviceAccount": {
+			"_comment": "Firebase service account info. Found in Settings > Service Accounts",
+
+			"type": "service_account",
+			"project_id": "opal-prod",
+			"private_key_id": "0b9442eaea7071dbf2ea1b74a4c8b36e7806aa0d",
+			"private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDD1LY+Zteh+PPG\nX/8qiNuEZDcobpTzVPYIjoDAXCzQuRm+jy4BeKCFjPeM7fPc8doD1amAtq02r7JS\ndB/BN+euydJM3ypXuMFerELRMIofG246UC6nlU7H4zp4Mijnboq+n5wNP5z/Dwhx\n4+Md5oNJO71BqFigL8o6tucjcVhv1eBD9vKv80WNPYsgXdTaxMKrto1th38IrEZ5\nQFLP9TR4M9IJsRL22EMWnSzaJRXLV0y2KkSEtUiuiF51Qi17uQsM8dX8xrlHqFT+\nG4NHME0RJFYQQqLHLCR7CzT95GOCNbzMK4BGhlzv9firnGhunphxkMF19g9ohs7p\nNtUEIwi3AgMBAAECggEALKWK1ShCQjHNdi09shdYoNLuRmALwnxcyW+fx/tb1kxV\nI75l+Tzkr/4HFFDN19Il59jnF6rOS9j7uVOzR6x0vENUGGWKtEwxfeGdLC86VkQ9\nObs9H8TpHKZgFrYs4DKyHCqse9LEetwVC04u4grDZMdjaxwz9HVg0EkR4mE9jeVZ\nbIuaE52MDrUY80urCxMpHAxJX4JAh4fPy5DHHb2mCJVfxJtDPGbEmJXSDenToPeB\nM65ArmHSsyUFCvVpkIaz8cpvLFhR257E3u+LQLb+QrAsJO3pajJOdA9cRIBnnKi/\nbBxucGDLHRMcy6aSTCN4LmM0IrOLCANFr9S1TEnkWQKBgQDjEKzf0zpP+YGZThqG\n6Pp1ov/M800PknHlPI+XIgNVGAi1VfztMR35emD6/dQaaKD18NnzpHV01++DuXIa\n6uiIMtEVZZP3JhV7s/0cEou+PW4qWixcAlip8om+1JbxAuo6a1BL2HjQZhGb2MOr\nfhKte3dsxgaATxmlEzx5uMpG7wKBgQDcyRzZBj5OZrr7gOtt+Kyl9AkYxRLh0H+g\nt/+ywKrMU+tnXrrKGvvdspHv2Y9Ue7dfZPBLLUF2W8fON88AVADPmgQ5xV+GT4PQ\ndld9GzrI5dk6jkJfRJQBTIh7Dij+arHAgbzpdP8fau/AAT8TxvEermOChV1USaS3\nIBlmeVaauQKBgQDBaoXnjtUgJKfJf+dGvhQCuprs6N7egd805pZlpZpzFKruVFXD\ncdBXn3AWvLq82B0sAkKVsKRAqGOksAXLeggjZC4H7OPSZgVsvw++pumUXl2GBBO/\nOFxwP2IoRIxithnxM1JNmRKoahlbyJQ8c4LTddVvuWr2RurQW4drJAZhzwKBgBBu\nEux/j3FsKav/qwVzBP4QjADA4afWSTkfmDKoLc2ozRLTNNlHasjTuhJ8QTNLRZke\nvNcLVhzFtbe95XSjy6+nSXs3GeW30xpXRCl2Nkiu+hxma8AFLXJvTJTDt/8+1115\nCiLhZv7iiVbjgNsq6dSbq6IR5KEaHdzW0a0TiINZAoGBAJyrdcfWPr9ccSp4O7k8\nKXhUK7a5UBOxXLAA6w4TAwjIu6+zuHh7lXMM+znTcVMsttiiaCX8mlUMg9MOxXZG\nzaI90UpdMr3ZONMTRPxOlk6pb8wmC3BPq5HwMkV7EEeSGX1mmjTbc82D3H6x8MnM\nyaW/ZrPR35sFhrkJDr6xSmPU\n-----END PRIVATE KEY-----\n",
+			"client_email": "firebase-adminsdk-k5e5q@opal-prod.iam.gserviceaccount.com",
+			"client_id": "101699805303830510148",
+			"auth_uri": "https://accounts.google.com/o/oauth2/auth",
+			"token_uri": "https://oauth2.googleapis.com/token",
+			"auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+			"client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-k5e5q%40opal-prod.iam.gserviceaccount.com"
+		}
+
+	},
+
+	"pathConfig": {
+		"_comment": "Leading slash REQUIRED!",
+
+		"abs_path": "/var/www/html/opalAdmin/",
+		"relative_url": "/opalAdmin/",
+		"shared_drive_path": "/OpalDocuments/",
+		"registration_url": "https://lxkvmap176/opalsignup"
+	},
+	"clinicalDocumentPathConfig": {
+		"_comment": "Define where clinical documents are located. Has to be mounted. NO LEADING SLASH",
+
+		"_aria": "/mnt/VarianFILEDATA/Documents/Files",
+		"aria": "/mnt/VarianFILEDATA",
+		"mosaiq": "",
+		"office_path" : "/opt/libreoffice6.1/program/"
+	},
+	"login" : {
+		"activeDirectory": {
+			"_comment": "configuration of active directory login",
+			"url" : "https://fedauthfcp.rtss.qc.ca/fedauth/wsapi/login",
+			"settings" : {
+				"uid" : "%%USERNAME%%",
+				"pwd" : "%%PASSWORD%%",
+				"institution" : "06-ciusss-cusm"
+			},
+			"enabled": 1
+		},
+		"salt": "Zo4rU5Z1YyKJAASY0PT6EUg7BBYdlEhPaNLuxAwU8lqu1ElzHv0Ri7EM6irpx5w"
+	},
+    "cronConfigurations" : {
+        "_comment" : "adminEmails define who receives error emails if cron crashes. wsDate is the search range, in hours, for cron tasks",
+        "adminEmails" : {
+            "to" : "ackeem.berry@gmail.com",
+            "from" : "opal@muhc.mcgill.ca",
+            "cc" : "yickmo@gmail.com"
+        },
+        "wsDate" : "-24",
+        "smtp" : "172.25.123.208" 
+    }
+
+}

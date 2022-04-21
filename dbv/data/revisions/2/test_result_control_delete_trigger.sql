@@ -1,4 +1,0 @@
-CREATE TRIGGER `test_result_control_delete_trigger` AFTER DELETE ON `TestResultControl`
- FOR EACH ROW BEGIN
-   INSERT INTO `TestResultControlMH`(`TestResultControlSerNum`, `Name_EN`, `Name_FR`, `Description_EN`, `Description_FR`, `Group_EN`, `Group_FR`, `SourceDatabaseSerNum`, `EducationalMaterialControlSerNum`, `PublishFlag`, `DateAdded`, `LastPublished`, `LastUpdatedBy`, `URL_EN`, `URL_FR`, `SessionId`, `ModificationAction`) VALUES (OLD.TestResultControlSerNum, OLD.Name_EN, OLD.Name_FR, OLD.Description_EN, OLD.Description_FR, OLD.Group_EN, OLD.Group_FR, OLD.SourceDatabaseSerNum, OLD.EducationalMaterialControlSerNum, OLD.PublishFlag, NOW(), OLD.LastPublished, OLD.LastUpdatedBy, OLD.URL_EN, OLD.URL_FR, OLD.SessionId, 'DELETE');
-END

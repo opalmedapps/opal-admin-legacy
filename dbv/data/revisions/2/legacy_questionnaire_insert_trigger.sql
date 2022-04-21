@@ -1,5 +1,0 @@
-CREATE TRIGGER `legacy_questionnaire_insert_trigger` AFTER INSERT ON `Questionnaire`
- FOR EACH ROW BEGIN
-INSERT INTO QuestionnaireMH (`QuestionnaireSerNum`, `CronLogSerNum`, `QuestionnaireControlSerNum`, `PatientSerNum`, `PatientQuestionnaireDBSerNum`, `CompletedFlag`, `CompletionDate`, `DateAdded`, ModificationAction) VALUES (NEW.QuestionnaireSerNum, NEW.CronLogSerNum, NEW.QuestionnaireControlSerNum, NEW.PatientSerNum, NEW.PatientQuestionnaireDBSerNum, NEW.CompletedFlag, NEW.CompletionDate, NOW(), 'INSERT');
-INSERT INTO `Notification` (`CronLogSerNum`, `PatientSerNum`, `NotificationControlSerNum`,`RefTableRowSerNum`, `DateAdded`, `ReadStatus`) SELECT  NEW.CronLogSerNum, NEW.PatientSerNum,ntc.NotificationControlSerNum,NEW.QuestionnaireSerNum,NOW(),0 FROM NotificationControl ntc WHERE ntc.NotificationType = 'LegacyQuestionnaire';
-END

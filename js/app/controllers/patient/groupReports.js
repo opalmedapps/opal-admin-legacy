@@ -192,8 +192,9 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
             type: "POST",
             url: "patient/get/education-options",
             data: {matType: $scope.materialType},
+            dataType: "json",
             success: function(response){
-                prepareEducList(JSON.parse(response));
+                prepareEducList(response);
             },
             error: function(err){
                 ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
@@ -212,8 +213,9 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
             data: {
                 type: $scope.materialType, 
                 name: $scope.selectedMaterial},
+            dataType: "json",
             success: function(response){
-                prepareEducReport(JSON.parse(response));
+                prepareEducReport(response);
             },
             error: function(err){
                 ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
@@ -361,8 +363,9 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
             type:"POST",
             url:"patient/get/questionnaire-options",
             data: null,
+            dataType: "json",
             success: function(response){
-                prepareQstList(JSON.parse(response));
+                prepareQstList(response);
             },
             error: function(err){
                 ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
@@ -380,8 +383,9 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
             type: "POST",
             url: "patient/get/questionnaire-report",
             data: {qstName: $scope.selectedQuestionnaire},
+            dataType: "json",
             success: function(response){
-                prepareQstReport(JSON.parse(response));
+                prepareQstReport(response);
             },
             error: function(err){
                 ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.SEARCH_FAIL'));
@@ -549,8 +553,9 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
             type: "POST",
             url: "patient/get/patient-report",
             data: null,
+            dataType: "json",
             success: function(response){
-                preparePatientReport(JSON.parse(response));
+                preparePatientReport(response);
             },
             error: function(err){
                 ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
