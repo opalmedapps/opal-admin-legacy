@@ -651,7 +651,7 @@ class Questionnaire extends QuestionnaireModule {
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        return $this->opalDB->getLastCompletedQuestionnaire($patientSite["PatientSerNum"])[0];
+        return $this->opalDB->getCompletedQuestionnaire($patientSite["PatientSerNum"])[0];
     }
 
     /**
@@ -675,7 +675,7 @@ class Questionnaire extends QuestionnaireModule {
             $errCode = bindec($errCode);
 
             if ($errCode == 0) {
-                $questionnaires = $this->opalDB->getLastCompletedQuestionnaire($patientSite["PatientSerNum"]);
+                $questionnaires = $this->opalDB->getCompletedQuestionnaire($patientSite["PatientSerNum"]);
                 if (sizeof($questionnaires) == 0) array_push($patientQuestionnaires,$questionnaires);
                 foreach ($questionnaires as &$q) {
                     $questionnaireDetails = $this->questionnaireDB->getQuestionnairePurpose($q["questionnaireDBId"]);

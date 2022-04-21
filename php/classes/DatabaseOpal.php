@@ -3517,12 +3517,12 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Get the last completed questionnaire from a specific patient on a site.
+     * Get all completed questionnaires from a specific patient on a site.
      * @param $patientId - internal patient ID found
      * @return array - last answered questionnaire found (if any)
      */
-    function getLastCompletedQuestionnaire($patientId) {
-        return $this->_fetchAll(OPAL_GET_LAST_COMPLETED_QUESTIONNAIRE, array(
+    function getCompletedQuestionnaire($patientId) {
+        return $this->_fetchAll(OPAL_GET_COMPLETED_QUESTIONNAIRE, array(
             array("parameter"=>":PatientSerNum","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
         ));
     }
