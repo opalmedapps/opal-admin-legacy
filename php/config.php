@@ -208,6 +208,7 @@ define("HUMAN_USER", 1);
 define("SYSTEM_USER", 2);
 const USER_ACCESS_DENIED = "0";
 
+define("PURPOSE_CLINICAL", 1);
 define("PURPOSE_RESEARCH", 2);
 define("PURPOSE_CONSENT", 4);
 define("RESPONDENT_PATIENT", 1);
