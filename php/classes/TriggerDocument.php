@@ -51,14 +51,14 @@ class TriggerDocument extends Trigger
      *                       5th bit invalid or missing document ID
      *                       6th bit invalid or missing approval user (staff) ID
      *                       7th bit invalid or missing approval date time
-     *                       8th bit invalid or missing author user (staff) ID 
+     *                       8th bit invalid or missing author user (staff) ID
      *                       9th bit invalid or missing note description
      *                      10th bit invalid or missing note date time
      *                      11th bit invalid or missing revised flag
      *                      12th bit invalid or missing valid entry flag
      *                      13th bit invalid or missing file name
      *                      14th bit invalid or missing creator user (staff) ID
-     *                      15th bit invalid or missing create date time 
+     *                      15th bit invalid or missing create date time
      *
      * @param array<mixed> $post (Reference) - docuement parameters
      * @param array<mixed> &$patientSite (Reference) - patient parameters
@@ -158,7 +158,7 @@ class TriggerDocument extends Trigger
         return $errCode;
     }
 
-    /** 
+    /**
      * This function insert or update a document informations after its validation.
      * @param  $post : array - details of document information to insert/update.
      * @return  void
@@ -172,8 +172,8 @@ class TriggerDocument extends Trigger
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
            
-        $doc = $this->opalDB->getDocument($source["SourceDatabaseSerNum"], $post["documentId"]);    
-        $countDoc = count($doc);    
+        $doc = $this->opalDB->getDocument($source["SourceDatabaseSerNum"], $post["documentId"]);
+        $countDoc = count($doc);
         $toInsert = array(
             "PatientSerNum" => $patientSite["PatientSerNum"],
             "SourceDatabaseSerNum" => $source["SourceDatabaseSerNum"],
@@ -198,7 +198,7 @@ class TriggerDocument extends Trigger
 
         $aliasInfos = $this->opalDB->getAlias('Document',$post['noteDescription'], $post['noteDescription']);
         $countAlias = count($aliasInfos);
-        if($countAlias == 1) {            
+        if($countAlias == 1) {
             $toInsert["AliasExpressionSerNum"] = $aliasInfos[0]["AliasExpressionSerNum"];
         }
 
@@ -217,13 +217,13 @@ class TriggerDocument extends Trigger
             $doc["AliasExpressionSerNum"] = $aliasInfos[0]["AliasExpressionSerNum"];
             $doc["ErrorReasonText"] = $post["errorMessage"];
             $doc["LastUpdated"] = $post["modifiedDatetime"];
-            $doc["SessionId"] = $this->opalDB->getSessionId();            
+            $doc["SessionId"] = $this->opalDB->getSessionId();
             $this->opalDB->updateDocument($toInsert);
         }
         
         $patientAccessLevel = $this->opalDB->getPatientAccessLevel($patientSite["PatientSerNum"]);
         $modifyDatetime = strtotime($post["modifiedDatetime"]);
-        if(array_key_exists("Accesslevel", $patientAccessLevel) && $patientAccessLevel["Accesslevel"] == 3 && $modifyDatetime >= $yesterday){            
+        if(array_key_exists("Accesslevel", $patientAccessLevel) && $patientAccessLevel["Accesslevel"] == 3 && $modifyDatetime >= $yesterday){
             $this->_notifyChange($toInsert,$action,array(),$toInsert["DocumentSerNum"]);
         }
         
@@ -238,7 +238,7 @@ class TriggerDocument extends Trigger
         }
     }
 
-    /** 
+    /**
      * Insert a new document after validation.
      * @param  $post - array - contains document details
      * @return void

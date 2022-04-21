@@ -158,8 +158,9 @@ class Publication extends Module
         foreach ($triggersTemp as $key=>$item) {
             if (in_array($item["type"], $toIgnore))
                 continue;
-            else if(!array_key_exists($item["type"], $test) || !array_key_exists($item["id"], $test[$item["type"]]))
+            else if(!array_key_exists($item["type"], $test) || (!array_key_exists($item["id"], $test[$item["type"]]) && $item["id"] != 'ALL')) {
                 unset($triggersTemp[$key]);
+            }
         }
         $triggersTemp = array_values($triggersTemp);
         $results["triggers"] = $triggersTemp;
@@ -651,7 +652,6 @@ class Publication extends Module
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Publication setting " . $setting["internalName"] . " not found.");
                 break;
             }
-
             if($setting["custom"] != "") {
                 $custom = json_decode($setting["custom"], true);
                 if (array_key_exists("dateTime", $custom)) {
@@ -1103,6 +1103,8 @@ class Publication extends Module
             $this->_updatePublicationQuestionnaire($publication, $moduleDetails["controlTableName"]);
         }
         else if($moduleDetails["ID"] == MODULE_POST) {
+            $postDetail = $this->opalDB->getPostDetails($publication["materialId"]["value"]);
+            if($postDetail["type"] != "Announcement") $publication["publishDateTime"] = $postDetail["PublishDate"];
             $this->_updatePublicationPost($publication, $moduleDetails["controlTableName"]);
         }
         else if($moduleDetails["ID"] == MODULE_EDU_MAT) {

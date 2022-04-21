@@ -1,4 +1,0 @@
-CREATE TRIGGER `insert_test_result_trigger` AFTER INSERT ON `TestResult`
- FOR EACH ROW BEGIN
-INSERT INTO `TestResultMH`(`TestResultSerNum`, `CronLogSerNum`, `TestResultGroupSerNum`, `TestResultExpressionSerNum`, `PatientSerNum`, `SourceDatabaseSerNum`, `TestResultAriaSer`, `ComponentName`, `FacComponentName`, `AbnormalFlag`, `TestDate`, `MaxNorm`, `MinNorm`, `ApprovedFlag`, `TestValue`, `TestValueString`, `UnitDescription`, `ValidEntry`, `DateAdded`, `ReadStatus`, `ModificationAction`) VALUES (NEW.TestResultSerNum, NEW.CronLogSerNum, NEW.TestResultGroupSerNum, NEW.TestResultExpressionSerNum, NEW.PatientSerNum, NEW.SourceDatabaseSerNum, NEW.TestResultAriaSer, NEW.ComponentName, NEW.FacComponentName, NEW.AbnormalFlag, NEW.TestDate, NEW.MaxNorm, NEW.MinNorm, NEW.ApprovedFlag, NEW.TestValue, NEW.TestValueString, NEW.UnitDescription, NEW.ValidEntry, NEW.DateAdded, NEW.ReadStatus, 'INSERT');
-END

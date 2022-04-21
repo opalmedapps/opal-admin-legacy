@@ -50,7 +50,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 
 		var checkboxCellTemplate;
 		if($scope.writeAccess)
-			checkboxCellTemplate = '<div style="text-align: center; cursor: pointer;" ng-click="grid.appScope.checkAliasUpdate(row.entity)" class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ng-checked="grid.appScope.updateVal(row.entity.update)" ng-model="row.entity.update"></div>';
+			checkboxCellTemplate = '<div style="text-align: center; cursor: pointer;" ng-click="grid.appScope.checkAliasUpdate(row.entity)" class="ui-grid-cell-contents"><input style="margin: 4px; pointer-events: none;" type="checkbox" ng-checked="grid.appScope.updateVal(row.entity.update)" ng-model="row.entity.update"></div>';
 		else
 			checkboxCellTemplate = '<div style="text-align: center;" class="ui-grid-cell-contents"><i ng-class="row.entity.update == 1 ? \'fa-check text-success\' : \'fa-times text-danger\'" class="fa"></i></div>';
 
@@ -208,7 +208,6 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 		// Function for when the alias "Update" checkbox has been modified
 		// for the selected alias in the table row
 		$scope.checkAliasUpdate = function (alias) {
-
 			$scope.changesMade = true;
 			alias.update = parseInt(alias.update);
 			// If the "Update" column has been checked
