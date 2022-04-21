@@ -1748,7 +1748,7 @@ define("OPAL_GET_COUNT_ALIASES", "
     SELECT COUNT(*) AS total from ".OPAL_ALIAS_TABLE." WHERE AliasSerNum IN (%%LISTIDS%%);
 ");
 
-const OPAL_GET_LAST_COMPLETED_QUESTIONNAIRE = "
+const OPAL_GET_COMPLETED_QUESTIONNAIRE = "
     SELECT Q.QuestionnaireControlSerNum AS questionnaireControlId, QC.QuestionnaireDBSerNum AS questionnaireDBId, Q.CompletionDate AS completionDate, Q.LastUpdated AS lastUpdated
     FROM ".OPAL_QUESTIONNAIRE_TABLE." Q INNER JOIN ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." QC ON Q.QuestionnaireControlSerNum = QC.QuestionnaireControlSerNum 
     AND Q.CompletedFlag = " . OPAL_QUESTIONNAIRE_COMPLETED_FLAG . " AND Q.PatientSerNum = :PatientSerNum ORDER BY Q.LastUpdated DESC;
