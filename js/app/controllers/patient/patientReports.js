@@ -787,6 +787,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				treatingteam: $scope.featureList.treatingteam,
 				general: $scope.featureList.general,
 			},
+			dataType: "json",
 			success: function (response) {
 				populateTables(response);
 			},
