@@ -2779,19 +2779,6 @@
           "DATE": "Date Sent",
           "STATUS": "Read Status"
         },
-        "TREATMENT_PLAN":{
-          "TITLE": "Treatment Planning",
-          "DESC": "Diagnosis Description",
-          "TYPE": "Alias Type",
-          "PRIORITY": "Priority",
-          "DESC_EXP": "Expression Description",
-          "NAME": "Alias Name",
-          "DESC_ALI": "Alias Description",
-          "TASK_STATUS": "Task Status",
-          "TASK_STATE": "Task State",
-          "TASK_DUE": "Task Due",
-          "TASK_COMPLETE": "Task Complete"
-        },
         "GENERAL":{
           "TITLE": "General"
         },
