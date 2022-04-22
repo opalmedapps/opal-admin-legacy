@@ -13,8 +13,6 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 		$rootScope.siteLanguage = null;
 
-		$rootScope.firebaseConfig = null;
-
 		$scope.configs = null;
 		$scope.sourceDatabases = null;
 
@@ -23,13 +21,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 		// Call our collection service to get configs
 		applicationCollectionService.getConfigs().then(function (response) {
-			// Assign value
 			$scope.configs = response.data;
-			$rootScope.firebaseConfig = $scope.configs.firebaseConfig.database;
-			// initialize firebase variable
-			if (!firebase.apps.length) {
-				firebase.initializeApp($rootScope.firebaseConfig);
-			}
 
 			// Call our collection service to get enabled flags in the source database table
 			var updateNeeded = false;
@@ -38,7 +30,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 				$scope.sourceDatabases = response.data;
 
 				// Loop keys (i.e. source databases) and compare enabled flag
-				for (sourceDatabase in $scope.sourceDatabases) {
+				for (let sourceDatabase in $scope.sourceDatabases) {
 					if ($scope.sourceDatabases.hasOwnProperty(sourceDatabase)) {
 						if (typeof($scope.configs.databaseConfig[sourceDatabase]) !== "undefined" && $scope.sourceDatabases[sourceDatabase].enabled != $scope.configs.databaseConfig[sourceDatabase].enabled) {
 							$scope.sourceDatabases[sourceDatabase].update = 1;
