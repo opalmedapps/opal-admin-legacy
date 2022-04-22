@@ -77,8 +77,16 @@ AddHandler .php .py .jsp .asp .htm .shtml .sh
 # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
 
 
-# Accesses to the OpalAdmin API
+# Security
+<FilesMatch "package\.json|package-lock\.json|bower\.json|composer\.json|composer\.lock|readme\.md|README\.md|HISTORY\.md">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+RewriteRule ^bower_components/angularjs-dropdown-multiselect/docs/?$ - [F,L]
+RewriteRule ^bower_components/angular-multiple-date-picker/docs/?$ - [F,L]
 
+
+# Accesses to the OpalAdmin API
 # Alerts Section
 RewriteRule ^alert/delete/alert php/alert/delete.alert.php [QSA,L]
 RewriteRule ^alert/get/alert-details php/alert/get.alert.details.php [QSA,L]
