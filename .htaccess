@@ -77,11 +77,9 @@ AddHandler .php .py .jsp .asp .htm .shtml .sh
 # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
 
 
-# Security
-# Header always edit Set-Cookie (.*) "$1; HTTPOnly; Secure"
+# Additional security to lock down specific files and folder
 <FilesMatch "package\.json|package-lock\.json|bower\.json|composer\.json|composer\.lock|\.md">
-    Order Deny,Allow
-    Deny from all
+  Require all denied
 </FilesMatch>
 RewriteRule ^bower_components/angularjs-dropdown-multiselect/docs/?$ - [F,L]
 RewriteRule ^bower_components/angular-multiple-date-picker/docs/?$ - [F,L]
