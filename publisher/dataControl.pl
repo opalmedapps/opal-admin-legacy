@@ -248,7 +248,7 @@ use TxTeamMessage;
 use PatientsForPatients; # custom PatientsForPatients.pm
 use EducationalMaterialControl;
 use EducationalMaterial;
-use Priority;
+# use Priority;
 use PatientLocation;
 use Questionnaire;
 use LegacyQuestionnaire;
@@ -270,7 +270,7 @@ my @TaskList = ();
 my @ApptList = ();
 my @DocList = ();
 my @DiagnosisList = ();
-my @PriorityList = ();
+# my @PriorityList = ();
 my @TRList = ();
 my @RAList = ();
 my @PLList = ();
@@ -450,41 +450,43 @@ print "Finished patient doctor list\n" if $verbose;
 ##########################################################################################
 #
 # Data Retrieval PRIORITIES - get list of priority info updated since last update
+# Base on ticket QSCCD-63, the functionality will be done by OIE
 #
 ##########################################################################################
-print "\n--- Start getPrioritiesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@PriorityList = Priority::getPrioritiesFromSourceDB(\@patientList, $global_patientInfo_sql);
-print "--- End getPrioritiesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Got priority list\n" if $verbose;
+# print "\n--- Start getPrioritiesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# @PriorityList = Priority::getPrioritiesFromSourceDB(\@patientList, $global_patientInfo_sql);
+# print "--- End getPrioritiesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Got priority list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each priority. Various functions are done.
+# Base on ticket QSCCD-63, the functionality will be done by OIE
 #=========================================================================================
-print "-- Start Loop over each priority: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-foreach my $Priority (@PriorityList) {
+# print "-- Start Loop over each priority: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+#foreach my $Priority (@PriorityList) {
 
 	# check if priority exists in our database
-	my $PriorityExists = $Priority->inOurDatabase();
+#	my $PriorityExists = $Priority->inOurDatabase();
 
-	if ($PriorityExists) { # priority exists
+#	if ($PriorityExists) { # priority exists
 
-		my $ExistingPriority = dclone($PriorityExists); # reassign variable
+#		my $ExistingPriority = dclone($PriorityExists); # reassign variable
 
 		# compare our retrieve Priority with existing Priority
 		# update is done on the original (existing) Priority
-		my $UpdatedPriority = $Priority->compareWith($ExistingPriority);
+#		my $UpdatedPriority = $Priority->compareWith($ExistingPriority);
 
 		# after updating our Priority object, update the database
-		$UpdatedPriority->updateDatabase();
+#		$UpdatedPriority->updateDatabase();
 
-	} else { # priority DNE
+#	} else { # priority DNE
 
 		# insert Priority into our database
-		$Priority->insertPriorityIntoOurDB();
-	}
-}
-print "-- End Loop over each priority: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished priority list\n" if $verbose;
+#		$Priority->insertPriorityIntoOurDB();
+#	}
+#}
+#print "-- End Loop over each priority: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+#print "Finished priority list\n" if $verbose;
 
 ##########################################################################################
 #

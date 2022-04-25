@@ -12,6 +12,8 @@
 # There exists various subroutines that use the Database.pm module to update the
 # MySQL database and check if a priority exists already in this database.
 
+# Base on ticket QSCCD-63, the module will be label as removal
+
 package Priority; # Declare package name
 
 

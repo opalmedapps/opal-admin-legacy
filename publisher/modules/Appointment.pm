@@ -29,7 +29,7 @@ use Data::Dumper;
 use Patient; # Our patient module
 use Alias; # Our alias module
 use Resource; # Resource.pm
-use Priority; # Priority.pm
+# use Priority; # Priority.pm Base on ticket QSCCD-63, the functionality will be disable
 use Diagnosis; # Diagnosis.pm
 use PushNotification; # PushNotification.pm
 
@@ -192,13 +192,14 @@ sub setApptActualEndDate
 
 #====================================================================================
 # Subroutine to set the Appointment Priority serial
+# Base on ticket QSCCD-63, the functionality will be disable
 #====================================================================================
-sub setApptPrioritySer
-{
-	my ($appointment, $priorityser) = @_; # appt object with provided serial in arguments
-	$appointment->{_priorityser} = $priorityser; # set the appt serial
-	return $appointment->{_priorityser};
-}
+#sub setApptPrioritySer
+#{
+#	my ($appointment, $priorityser) = @_; # appt object with provided serial in arguments
+#	$appointment->{_priorityser} = $priorityser; # set the appt serial
+#	return $appointment->{_priorityser};
+#}
 
 #====================================================================================
 # Subroutine to set the Appointment Diagnosis serial
@@ -593,7 +594,7 @@ sub getApptInfoFromSourceDB
 
 	# when we retrieve query results
 	my ($expressionname, $startdatetime, $enddatetime);
-	my ($priorityser, $diagnosisser);
+	# my ($priorityser, $diagnosisser);
     my ($status, $state, $actualstartdate, $actualenddate);
 
     ######################################
@@ -645,7 +646,7 @@ sub getApptInfoFromSourceDB
             $actualstartdate    = $data[5];
             $actualenddate      = $data[6];
 
-    		$priorityser	= Priority::getClosestPriority($patientSer, $startdatetime);
+    		# $priorityser	= Priority::getClosestPriority($patientSer, $startdatetime);
 	    	$diagnosisser	= Diagnosis::getClosestDiagnosis($patientSer, $startdatetime);
 
     		# Search through alias expression list to find associated
@@ -663,7 +664,7 @@ sub getApptInfoFromSourceDB
 	    	$appointment->setApptAliasExpressionSer($expressionSer);
 		    $appointment->setApptStartDateTime($startdatetime);
     		$appointment->setApptEndDateTime($enddatetime);
-	    	$appointment->setApptPrioritySer($priorityser);
+	    	# $appointment->setApptPrioritySer($priorityser);
 		    $appointment->setApptDiagnosisSer($diagnosisser);
     		$appointment->setApptState($state);
 	    	$appointment->setApptStatus($status);
@@ -771,7 +772,7 @@ sub inOurDatabase
 
 	# Other appt variables, if appt exists
 	my ($ser, $patientser, $aliasexpressionser, $startdatetime, $enddatetime);
-    my ($priorityser, $diagnosisser, $sourcedbser);
+    # my ($priorityser, $diagnosisser, $sourcedbser);
     my ($status, $state, $actualstartdate, $actualenddate, $cronlogser);
 
 		# Default the scheduled start and end time to 1970-01-01 00:00:00
@@ -814,14 +815,14 @@ sub inOurDatabase
 		$enddatetime		= $data[3];
 		$ser			    = $data[4];
 		$patientser		    = $data[5];
-        $priorityser        = $data[6];
-        $diagnosisser       = $data[7];
-        $sourcedbser        = $data[8];
-        $status             = $data[9];
-        $state              = $data[10];
-        $actualstartdate    = $data[11];
-        $actualenddate      = $data[12];
-        $cronlogser 		= $data[13];
+        #$priorityser        = $data[6];
+        $diagnosisser       = $data[6];
+        $sourcedbser        = $data[7];
+        $status             = $data[8];
+        $state              = $data[9];
+        $actualstartdate    = $data[10];
+        $actualenddate      = $data[11];
+        $cronlogser 		= $data[12];
 	}
 
 	if ($ApptSourceUIDInDB) {
@@ -834,7 +835,7 @@ sub inOurDatabase
 		$ExistingAppt->setApptEndDateTime($enddatetime); # set the appt end datetime
 		$ExistingAppt->setApptSer($ser); # set the serial
 		$ExistingAppt->setApptPatientSer($patientser);
-        $ExistingAppt->setApptPrioritySer($priorityser);
+        #$ExistingAppt->setApptPrioritySer($priorityser);
         $ExistingAppt->setApptDiagnosisSer($diagnosisser);
         $ExistingAppt->setApptSourceDatabaseSer($sourcedbser);
 		$ExistingAppt->setApptStatus($status); # set the appt status
@@ -862,7 +863,7 @@ sub insertApptIntoOurDB
 	my $aliasexpressionser	= $appointment->getApptAliasExpressionSer();
 	my $startdatetime	    = $appointment->getApptStartDateTime();
 	my $enddatetime		    = $appointment->getApptEndDateTime();
-    my $priorityser         = $appointment->getApptPrioritySer();
+    #my $priorityser         = $appointment->getApptPrioritySer();
     my $diagnosisser        = $appointment->getApptDiagnosisSer();
 	my $status		        = $appointment->getApptStatus();
 	my $state		        = $appointment->getApptState();
@@ -903,7 +904,7 @@ sub insertApptIntoOurDB
 			'$enddatetime',
             '$actualstartdate',
             '$actualenddate',
-            '$priorityser',
+            # '$priorityser',
             '$diagnosisser',
             NOW(),
 			NULL
@@ -939,7 +940,7 @@ sub updateDatabase
 	my $aliasexpressionser	= $appointment->getApptAliasExpressionSer();
 	my $startdatetime	    = $appointment->getApptStartDateTime();
 	my $enddatetime		    = $appointment->getApptEndDateTime();
-    my $priorityser         = $appointment->getApptPrioritySer();
+    # my $priorityser         = $appointment->getApptPrioritySer();
     my $diagnosisser        = $appointment->getApptDiagnosisSer();
 	my $status				= $appointment->getApptStatus();
 	my $state				= $appointment->getApptState();
@@ -959,7 +960,7 @@ sub updateDatabase
 			ScheduledEndTime	    = '$enddatetime',
             ActualStartDate         = '$actualstartdate',
             ActualEndDate           = '$actualenddate',
-            PrioritySerNum          = '$priorityser',
+            # PrioritySerNum          = '$priorityser',
             DiagnosisSerNum         = '$diagnosisser',
             ReadStatus              = 0,
             CronLogSerNum 			= '$cronlogser'
