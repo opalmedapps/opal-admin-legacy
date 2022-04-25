@@ -78,7 +78,8 @@ AddHandler .php .py .jsp .asp .htm .shtml .sh
 
 
 # Security
-<FilesMatch "package\.json|package-lock\.json|bower\.json|composer\.json|composer\.lock|readme\.md|README\.md|HISTORY\.md">
+# Header always edit Set-Cookie (.*) "$1; HTTPOnly; Secure"
+<FilesMatch "package\.json|package-lock\.json|bower\.json|composer\.json|composer\.lock|\.md">
     Order Deny,Allow
     Deny from all
 </FilesMatch>
