@@ -10,6 +10,7 @@
 # and compare task information between two task objects.
 # There exists various subroutines that use the Database.pm module to update the
 # MySQL database and check if a task exists already in this database.
+# Base on ticket QSCCD-63, the module is marked as reviewed
 
 package Task; # Declare package name
 

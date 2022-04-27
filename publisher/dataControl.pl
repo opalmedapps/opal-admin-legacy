@@ -231,7 +231,7 @@ use lib dirname($0) . '/modules'; # specify where are modules are -- $0 = this s
 use Configs;
 use Database;
 use Patient;
-use Task;
+# use Task;
 use Appointment;
 use ResourceAppointment;
 use Document;
@@ -266,7 +266,7 @@ my $cronLogSer = Cron::setCronLog("Started", $start_datetime);
 my @registeredPatients = ();
 my @patientList = ();
 my @PDList = ();
-my @TaskList = ();
+# my @TaskList = ();
 my @ApptList = ();
 my @DocList = ();
 my @DiagnosisList = ();
@@ -489,42 +489,44 @@ print "Finished priority list\n" if $verbose;
 ##########################################################################################
 #
 # Data Retrieval TASKS - get list of patients with tasks updated since last update
+# # Base on ticket QSCCD-64, the functionality will be done by OIE
 #
 ##########################################################################################
-print "\n--- Start getTasksFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@TaskList = Task::getTasksFromSourceDB($cronLogSer, \@patientList, $global_patientInfo_sql);
-print "--- End getTasksFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Got task list\n" if $verbose;
+# print "\n--- Start getTasksFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# @TaskList = Task::getTasksFromSourceDB($cronLogSer, \@patientList, $global_patientInfo_sql);
+# print "--- End getTasksFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Got task list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each task. Various functions are done.
+# Base on ticket QSCCD-64, the functionality will be done by OIE
 #=========================================================================================
-print "-- Start Loop over each task: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-foreach my $Task (@TaskList) {
+# print "-- Start Loop over each task: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# foreach my $Task (@TaskList) {
 
 	# check if task exists in our database
-	my $TaskExists = $Task->inOurDatabase();
+	# my $TaskExists = $Task->inOurDatabase();
 
-	if ($TaskExists) { # task exists
+	# if ($TaskExists) { # task exists
 
-		my $ExistingTask = dclone($TaskExists); # reassign variable
+		# my $ExistingTask = dclone($TaskExists); # reassign variable
 
 		# compare our retrieve Task with existing Task
 		# update is done on the original (existing) Task
-		my $UpdatedTask = $Task->compareWith($ExistingTask);
+		# my $UpdatedTask = $Task->compareWith($ExistingTask);
 
 		# after updating our Task object, update the database
-		$UpdatedTask->updateDatabase();
+		# $UpdatedTask->updateDatabase();
 
-	} else { # task DNE
+	# } else { # task DNE
 
 		# insert Task into our database
-		$Task = $Task->insertTaskIntoOurDB();
-	}
+		# $Task = $Task->insertTaskIntoOurDB();
+	# }
 
-}
-print "-- End Loop over each task: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished task list\n" if $verbose;
+# }
+# print "-- End Loop over each task: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Finished task list\n" if $verbose;
 ##########################################################################################
 #
 # Data Retrieval APPOINTMENTS - get list of patients with appointments updated since last update
