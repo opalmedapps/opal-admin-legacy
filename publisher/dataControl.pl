@@ -265,7 +265,7 @@ my $cronLogSer = Cron::setCronLog("Started", $start_datetime);
 #-----------------------------------------------------------------------
 my @registeredPatients = ();
 my @patientList = ();
-my @PDList = ();
+# my @PDList = ();
 my @TaskList = ();
 my @ApptList = ();
 my @DocList = ();
