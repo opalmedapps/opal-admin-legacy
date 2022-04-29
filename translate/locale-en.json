@@ -1606,7 +1606,7 @@
   },
   "ALIAS": {
     "LIST": {
-      "TITLE": "Appointments / Documents",
+      "TITLE": "Tasks / Appointments / Documents",
       "ADD": "Add",
       "SAVE": "Save Changes",
       "SEARCH": "Search...",
@@ -1620,6 +1620,7 @@
       "TYPE": "Type",
       "APPOINTMENT": "Appointment",
       "DOCUMENT": "Document",
+      "TASK": "Task",
       "PUBLISH": "Publish Flag",
       "NUMBER": "# of assigned codes",
       "CLINICAL_DATABASE": "Clinical Database",
