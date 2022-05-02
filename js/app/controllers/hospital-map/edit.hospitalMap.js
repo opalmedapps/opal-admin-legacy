@@ -57,13 +57,9 @@ controller('hospitalMap.edit', function ($scope, $filter, $sce, $state, $uibModa
 
 	// Function to check necessary form fields are complete
 	$scope.checkForm = function () {
-		if ($scope.hosMap.name_EN && $scope.hosMap.name_FR && $scope.hosMap.description_EN
+		return !!($scope.hosMap.name_EN && $scope.hosMap.name_FR && $scope.hosMap.description_EN
 			&& $scope.hosMap.description_FR && $scope.hosMap.url_EN
-			&& $scope.hosMap.url_FR && $scope.changesMade) {
-			return true;
-		}
-		else
-			return false;
+			&& $scope.hosMap.url_FR && $scope.changesMade);
 	};
 
 	$scope.setChangesMade = function () {
