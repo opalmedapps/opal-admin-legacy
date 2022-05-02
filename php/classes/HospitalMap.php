@@ -137,7 +137,7 @@ class HospitalMap extends Module {
      * Validation code :    Error validation code is coded as an int of 2 bits (value from 0 to 3). Bit informations
      *                      are coded from right to left:
      *                      1: serial missing
-     *                      2: english title missing
+     *                      2: no hospital map found
      *
      * @return string - contains the error code
      */
