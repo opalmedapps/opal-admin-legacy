@@ -19,6 +19,16 @@ controller('hospitalMap.add', function ($scope, $filter, $state, $sce, $uibModal
 		['html', 'insertLink']
 	];
 
+	var arrValidationInsert = [
+		$filter('translate')('HOSPITAL_MAPS.VALIDATION.NAME_EN'),
+		$filter('translate')('HOSPITAL_MAPS.VALIDATION.NAME_FR'),
+		$filter('translate')('HOSPITAL_MAPS.VALIDATION.DESCRIPTION_EN'),
+		$filter('translate')('HOSPITAL_MAPS.VALIDATION.DESCRIPTION_FR'),
+		$filter('translate')('HOSPITAL_MAPS.VALIDATION.URL_EN'),
+		$filter('translate')('HOSPITAL_MAPS.VALIDATION.URL_FR'),
+		$filter('translate')('HOSPITAL_MAPS.VALIDATION.HOSPITAL_MAP_ID'),
+	];
+
 	// Default boolean
 	$scope.titleDescriptionSection = {open: false, show: true};
 	$scope.urlSection = {open: false, show: false};
@@ -70,8 +80,6 @@ controller('hospitalMap.add', function ($scope, $filter, $state, $sce, $uibModal
 		url_EN: "",
 		url_FR: ""
 	};
-
-	$scope.oldqrid = "";
 
 	// Function to toggle necessary changes when updating title and description
 	$scope.titleDescriptionUpdate = function () {
@@ -190,7 +198,8 @@ controller('hospitalMap.add', function ($scope, $filter, $state, $sce, $uibModal
 					$state.go('hospital-map');
 				},
 				error: function (err) {
-					ErrorHandler.onError(err, $filter('translate')('HOSPITAL_MAPS.ADD.ERROR_ADD'));
+					err.responseText = JSON.parse(err.responseText);
+					ErrorHandler.onError(err, $filter('translate')('HOSPITAL_MAPS.ADD.ERROR_ADD'), arrValidationInsert);
 					$state.go('hospital-map');
 				}
 			});
