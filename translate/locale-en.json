@@ -1115,6 +1115,15 @@
       "SUCCESS": "The hospital map has being successfully deleted.",
       "ERROR": "An error occurred while deleting the hospital map."
     },
+    "VALIDATION": {
+      "NAME_EN": "English name missing.",
+      "NAME_FR": "French name missing.",
+      "DESCRIPTION_EN": "English description missing.",
+      "DESCRIPTION_FR": "French description missing.",
+      "URL_EN": "English URL missing.",
+      "URL_FR": "French URL missing.",
+      "HOSPITAL_MAP_ID": "Hospital Map ID invalid or missing."
+    },
     "ADD": {
       "BACK": "Back to Hospital Maps",
       "SUMMARY": "Summary",

@@ -254,7 +254,7 @@ class Study extends Module {
                 }
             } else
                 $errCode = "0" . $errCode;
-            // //14th bit
+            // 14th bit
             if(array_key_exists("consent_form", $post) && $post["consent_form"] != ""){
                 $curConsent = $this->getConsentFormByStudyId(intval($post["ID"]));
                 if(count($this->getConsentPublished($curConsent[0]["consentQuestionnaireId"])) == 1){ //the current consent form for this study is published

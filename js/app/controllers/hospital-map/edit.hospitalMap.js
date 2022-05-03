@@ -14,6 +14,16 @@ controller('hospitalMap.edit', function ($scope, $filter, $sce, $state, $uibModa
 		['html', 'insertLink']
 	];
 
+	var arrValidationInsert = [
+		$filter('translate')('HOSPITAL_MAPS.VALIDATION.NAME_EN'),
+		$filter('translate')('HOSPITAL_MAPS.VALIDATION.NAME_FR'),
+		$filter('translate')('HOSPITAL_MAPS.VALIDATION.DESCRIPTION_EN'),
+		$filter('translate')('HOSPITAL_MAPS.VALIDATION.DESCRIPTION_FR'),
+		$filter('translate')('HOSPITAL_MAPS.VALIDATION.URL_EN'),
+		$filter('translate')('HOSPITAL_MAPS.VALIDATION.URL_FR'),
+		$filter('translate')('HOSPITAL_MAPS.VALIDATION.HOSPITAL_MAP_ID'),
+	];
+
 	/* Function for the "Processing" dialog */
 	var processingModal;
 	$scope.showProcessingModal = function () {
@@ -33,7 +43,6 @@ controller('hospitalMap.edit', function ($scope, $filter, $sce, $state, $uibModa
 	// Call our API to get the current map details
 	hospitalMapCollectionService.getHospitalMapDetails($scope.currentHosMap.serial).then(function (response) {
 		$scope.hosMap = response.data;
-		// $scope.$parent.oldqrid = response.data.qrid;
 		$scope.mapURL_EN = response.data.url_EN;
 		$scope.mapURL_FR = response.data.url_FR;
 
@@ -46,43 +55,11 @@ controller('hospitalMap.edit', function ($scope, $filter, $sce, $state, $uibModa
 		$uibModalInstance.close();
 	});
 
-	// Function to call api to generate qr code
-	// $scope.generateQRCode = function (qrid) {
-	// 	if (qrid && $scope.changesMade) {
-	// 		hospitalMapCollectionService.generateQRCode(qrid, $scope.$parent.oldqrid).then(function (response) {
-	// 			$scope.hosMap.qrcode = response.data.qrcode;
-	// 			$scope.hosMap.qrpath = response.data.qrpath;
-	//
-	// 			$scope.$parent.oldqrid = qrid;
-	//
-	// 		}).catch(function(err) {
-	// 			ErrorHandler.onError(err, $filter('translate')('HOSPITAL_MAPS.EDIT.ERROR_QR'));
-	// 		});
-	// 	}
-	// 	else if (!qrid) {
-	// 		$scope.hosMap.qrcode = "";
-	// 		$scope.hosMap.qrpath = "";
-	// 	}
-	//
-	// };
-	// // Function to show map
-	// $scope.showMap = function (url, language) {
-	// 	if (language === 'EN')
-	// 		$scope.mapURL_EN = url;
-	// 	else if (language === 'FR')
-	// 		$scope.mapURL_FR = url;
-	// };
-
-
 	// Function to check necessary form fields are complete
 	$scope.checkForm = function () {
-		if ($scope.hosMap.name_EN && $scope.hosMap.name_FR && $scope.hosMap.description_EN
+		return !!($scope.hosMap.name_EN && $scope.hosMap.name_FR && $scope.hosMap.description_EN
 			&& $scope.hosMap.description_FR && $scope.hosMap.url_EN
-			&& $scope.hosMap.url_FR && $scope.changesMade) {
-			return true;
-		}
-		else
-			return false;
+			&& $scope.hosMap.url_FR && $scope.changesMade);
 	};
 
 	$scope.setChangesMade = function () {
@@ -109,12 +86,13 @@ controller('hospitalMap.edit', function ($scope, $filter, $sce, $state, $uibModa
 				success: function () {
 					$scope.$parent.bannerMessage = $filter('translate')('HOSPITAL_MAPS.EDIT.SUCCESS');
 					$scope.showBanner();
-					$scope.$parent.updatedHosMap = true;
-					$uibModalInstance.close();
 				},
 				error: function (err) {
-					ErrorHandler.onError(err, $filter('translate')('HOSPITAL_MAPS.EDIT.ERROR_UPDATE'));
-					$state.go('hospital-map');
+					err.responseText = JSON.parse(err.responseText);
+					ErrorHandler.onError(err, $filter('translate')('HOSPITAL_MAPS.EDIT.ERROR_UPDATE'), arrValidationInsert);
+				},
+				complete: function () {
+					$uibModalInstance.close();
 				}
 			});
 		}

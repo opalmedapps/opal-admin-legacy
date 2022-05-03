@@ -1139,6 +1139,15 @@
       "SUCCESS": "La carte a été supprimée avec succès.",
       "ERROR": "Une erreur s'est produite lors de la suppression de la carte."
     },
+    "VALIDATION": {
+      "NAME_EN": "English name missing.",
+      "NAME_FR": "French name missing.",
+      "DESCRIPTION_EN": "English description missing.",
+      "DESCRIPTION_FR": "French description missing.",
+      "URL_EN": "English URL missing.",
+      "URL_FR": "French URL missing.",
+      "HOSPITAL_MAP_ID": "Hospital Map ID invalid or missing."
+    },
     "ADD": {
       "BACK": "Retour",
       "SUMMARY": "Sommaire",
