@@ -2123,3 +2123,20 @@ CASE
 END AS paccess
 FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :SSN; ";
 
+
+
+const SQL_OPAL_UPDATE_HOSPITAL_MAP = "
+    UPDATE ".OPAL_HOSPITAL_MAP_TABLE." SET MapUrl = :MapUrl, MapURL_EN = :MapURL_EN, MapURL_FR = :MapURL_FR,
+    MapName_EN = :MapName_EN, MapName_FR = :MapName_FR, MapDescription_EN = :MapDescription_EN,
+    MapDescription_FR = :MapDescription_FR, LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId
+    WHERE HospitalMapSerNum = :HospitalMapSerNum;
+";
+
+const SQL_OPAL_DELETE_HOSPITAL_MAP = "
+    DELETE FROM ".OPAL_HOSPITAL_MAP_TABLE." WHERE HospitalMapSerNum = :HospitalMapSerNum;
+";
+
+const SQL_OPAL_UPDATE_HOSPITAL_MAP_MH = "
+    UPDATE ".OPAL_HOSPITAL_MAP_TABLE." SET LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId WHERE
+    HospitalMapSerNum = :HospitalMapSerNum ORDER BY RevSerNum DESC LIMIT 1
+";

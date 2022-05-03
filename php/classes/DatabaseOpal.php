@@ -1615,7 +1615,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  array - list of hospital maps details
      * */
     function getHospitalMapDetails($hpId) {
-        return $this->_fetch(OPAL_GET_HOSPITAL_MAP_DETAILS, array(
+        return $this->_fetchAll(OPAL_GET_HOSPITAL_MAP_DETAILS, array(
             array("parameter"=>":HospitalMapSerNum","variable"=>$hpId,"data_type"=>PDO::PARAM_INT),
         ));
     }
@@ -4103,7 +4103,7 @@ class DatabaseOpal extends DatabaseAccess {
     /** 
      * Insert a new notification
      * @param  array of the notification infos
-     * @return  ID of the entry
+     * @return  array - ID of the entry
      */
     function insertNotification($toInsert) {        
         return $this->_replaceRecordIntoTable(OPAL_NOTIFICATION_TABLE, $toInsert);
@@ -4424,4 +4424,47 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+
+    /**
+     * Add a new hospital map in the specific table.
+     * @param $toInsert array - contains the data on the hospital map to insert.
+     * @return int - ID of last record inserted
+     */
+    function insertHospitalMap($toInsert) {
+        $toInsert["DateAdded"] = date("Y-m-d H:i:s");
+        $toInsert["LastUpdatedBy"] = $this->getOAUserId();
+        $toInsert["SessionId"] = $this->getSessionId();
+        return $this->_insertRecordIntoTable(OPAL_HOSPITAL_MAP_TABLE, $toInsert);
+    }
+
+    /**
+     * Update a specific hospital map
+     * @param $toUpdate - hospital map to update
+     * @return int - total records modified (should be 1 only)
+     */
+    function updateHospitalMap($toUpdate) {
+        $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
+        $toUpdate["SessionId"] = $this->getSessionId();
+        return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_HOSPITAL_MAP, $toUpdate);
+    }
+
+    /**
+     * Delete a specific hospital map
+     * @param $id int - ID of the hospital map to delete
+     * @return int - number of records affected (should be 1 only)
+     */
+    function deleteHospitalMap($id) {
+        return $this->_execute(SQL_OPAL_DELETE_HOSPITAL_MAP, array(
+            array("parameter"=>":HospitalMapSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function updateHospitalMapMH($id) {
+        $toUpdate = array(
+            "HospitalMapSerNum"=>$id,
+            "LastUpdatedBy"=>$this->getOAUserId(),
+            "SessionId"=>$this->getSessionId(),
+        );
+        return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_HOSPITAL_MAP_MH, $toUpdate);
+    }
 }
