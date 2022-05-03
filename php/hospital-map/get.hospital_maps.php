@@ -1,9 +1,8 @@
 <?php
-header('Content-Type: application/javascript');
-/* To get a list of existing hospital maps */
-include_once('hospital-map.inc');
+include_once("../config.php");
 
-$hosMap = new HospitalMap; // Object
+$hosMap = new HospitalMap(); // Object
 $existingHosMapList = $hosMap->getHospitalMaps();
 
+header('Content-Type: application/javascript');
 echo json_encode($existingHosMapList);

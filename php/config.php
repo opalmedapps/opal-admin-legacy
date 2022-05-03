@@ -257,6 +257,10 @@ const REGEX_MRN = '/^[0-9]*$/i';
 const PATIENT_LANGUAGE_ARRAY = array("EN", "FR");
 const PATIENT_SEX_ARRAY = array("Male", "Female", "Unknown", "Other");
 
+const QR_CODE_NAME_PATH = FRONTEND_ABS_PATH.'images' . DIRECTORY_SEPARATOR . 'hospital-maps' . DIRECTORY_SEPARATOR . 'qrCodes' . DIRECTORY_SEPARATOR .'%%FILENAME%%.png';
+
+require_once FRONTEND_ABS_PATH . 'php'. DIRECTORY_SEPARATOR. 'lib'.DIRECTORY_SEPARATOR.'phpqrcode'.DIRECTORY_SEPARATOR.'qrlib.php';
+
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php";
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php";
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql.php";
