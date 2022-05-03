@@ -13,12 +13,7 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get configs
 		applicationAPI.getConfigs = function () {
-			return $http.post(
-				"application/get/config",
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
+			return $http.get("application/get/config");
 		};
 
 		// Function to get the app version and build
