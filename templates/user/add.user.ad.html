@@ -291,7 +291,7 @@
                                                 {{'USERS.ADD.PASSWORD'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-md-7">
-                                                <input type="password" class="form-control" required="required" ng-model="toSubmit.password.value">
+                                                <input type="password" class="form-control" required="required"  autocomplete="off" ng-model="toSubmit.password.value">
                                                 <p style="margin-bottom: 0;"><em><small>{{'USERS.ADD.PASSWORD_REQUIREMENTS'|translate}}</small></em></p>
                                                 <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validator.password.valid, 'glyphicon-remove': !validator.password.valid}" aria-hidden="true"></span>
                                             </div>
@@ -304,7 +304,7 @@
                                                 {{'USERS.ADD.RETYPE'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-md-7">
-                                                <input type="password" class="form-control" required="required" ng-model="toSubmit.password.confirm">
+                                                <input type="password" class="form-control" required="required"  autocomplete="off"  ng-model="toSubmit.password.confirm">
                                                 <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validator.password.valid && validator.password.completed, 'glyphicon-remove': !validator.password.valid || !validator.password.completed}" aria-hidden="true"></span>
                                             </div>
                                             <em class="control-label col-xs-12 col-md-3 has-error" ng-show="!validator.password.valid || !validator.password.completed" style="text-align:left">
