@@ -33,7 +33,7 @@ my $SQLDatabase		= $Database::targetDatabase;
 
 # global vars
 my $ipaddress = Net::Address::IP::Local->public;
-my $thisURL = 'http://' . $ipaddress . $Configs::BACKEND_REL_URL . 'php/sendPushNotification.php';
+my $thisURL = 'https://' . $ipaddress . $Configs::BACKEND_REL_URL . 'php/sendPushNotification.php';
 
 #====================================================================================
 # Constructor for our notification class
