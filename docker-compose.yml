@@ -2,14 +2,15 @@ version: '3'
 
 services:
   app:
+    container_name: opalAdmin
     build: .
     image: opalmedapps/opaladmin
     ports:
       - 8082:80
     volumes:
-      - .:/var/www/html
+      - .:/var/www/html/opalAdmin
       # don't overwrite existing content in these directories
       # needed if you want to manage these through the Docker image build process only
-      - /var/www/html/node_modules
-      - /var/www/html/bower_components
-      - /var/www/html/vendor
+      - /var/www/html/opalAdmin/node_modules
+      - /var/www/html/opalAdmin/bower_components
+      - /var/www/html/opalAdmin/vendor
