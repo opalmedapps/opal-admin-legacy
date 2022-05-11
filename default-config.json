@@ -95,7 +95,8 @@
 		"_comment": "Leading slash REQUIRED!",
 
 		"abs_path": "ABS_PATH_HERE",
-		"relative_url": "RELATIVE_URL_HERE"
+		"relative_url": "RELATIVE_URL_HERE",
+		"registration_url": "PATH_TO_REGISTRATION_WEB_APP"
 	},
 	"clinicalDocumentPathConfig": {
 		"_comment": "Define where clinical documents are located. Has to be mounted. Leading slash REQUIRED!",
