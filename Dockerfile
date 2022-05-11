@@ -42,6 +42,8 @@ RUN /tmp/install-composer.sh
 RUN rm /tmp/install-composer.sh
 RUN mv /tmp/composer.phar /usr/local/bin/composer
 
+WORKDIR /var/www/html/opalAdmin
+
 # Parent needs to be owned by www-data to satisfy npm
 RUN chown -R www-data:www-data /var/www/
 
