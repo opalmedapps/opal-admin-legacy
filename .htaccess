@@ -75,12 +75,6 @@ Options +FollowSymLinks
 # Disallow script execution
 AddHandler .php .py .jsp .asp .htm .shtml .sh
 
-
-# Force all URL request that are HTTP to be HTTPS
-RewriteCond %{HTTPS} !=on
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
-
-
 # Additional security to lock down files and folders
 <FilesMatch "package\.json|package-lock\.json|bower\.json|composer\.json|composer\.lock|\.md">
   Require all denied
