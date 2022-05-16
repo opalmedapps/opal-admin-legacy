@@ -358,13 +358,6 @@ define("HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR",422);
 define("HTTP_STATUS_LOGIN_TIMEOUT_ERROR",440);
 define("HTTP_STATUS_HTTP_TO_HTTPS_ERROR",497);
 
-if(!$ignoreSecuredConnection) {
-    if($_SERVER["HTTPS"] != "on") {
-        HelpSetup::returnErrorMessage(HTTP_STATUS_HTTP_TO_HTTPS_ERROR, "Connection not secured.");
-        exit();
-    }
-}
-
 define("ABVR_FRENCH_LANGUAGE", "FR");
 define("ABVR_ENGLISH_LANGUAGE", "EN");
 // all language abbreviations in opal admin
