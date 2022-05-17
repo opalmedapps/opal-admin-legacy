@@ -43,7 +43,7 @@ const NOT_CHECKED_IN = 0;
 
 const LIMIT_DAYS_AUDIT_SYSTEM_BACKUP = 5;
 
-define("OPAL_CHECKIN_CALL", "http://" . $_SERVER['HTTP_HOST'] . "/opalAdmin/publisher/php/OpalCheckIn.php");
+define("OPAL_CHECKIN_CALL", "https://" . $_SERVER['HTTP_HOST'] . "/opalAdmin/publisher/php/OpalCheckIn.php");
 
 // DEFINE MOSAIQ SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MicrosoftSQL (MSSQL) setup.
@@ -208,6 +208,7 @@ define("HUMAN_USER", 1);
 define("SYSTEM_USER", 2);
 const USER_ACCESS_DENIED = "0";
 
+define("PURPOSE_CLINICAL", 1);
 define("PURPOSE_RESEARCH", 2);
 define("PURPOSE_CONSENT", 4);
 define("RESPONDENT_PATIENT", 1);
@@ -255,6 +256,10 @@ const REGEX_MRN = '/^[0-9]*$/i';
 // Define patient information type constant array
 const PATIENT_LANGUAGE_ARRAY = array("EN", "FR");
 const PATIENT_SEX_ARRAY = array("Male", "Female", "Unknown", "Other");
+
+const QR_CODE_NAME_PATH = FRONTEND_ABS_PATH.'images' . DIRECTORY_SEPARATOR . 'hospital-maps' . DIRECTORY_SEPARATOR . 'qrCodes' . DIRECTORY_SEPARATOR .'%%FILENAME%%.png';
+
+require_once FRONTEND_ABS_PATH . 'php'. DIRECTORY_SEPARATOR. 'lib'.DIRECTORY_SEPARATOR.'phpqrcode'.DIRECTORY_SEPARATOR.'qrlib.php';
 
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php";
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php";
@@ -352,13 +357,6 @@ define("HTTP_STATUS_SESSION_TIMEOUT_ERROR",419);
 define("HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR",422);
 define("HTTP_STATUS_LOGIN_TIMEOUT_ERROR",440);
 define("HTTP_STATUS_HTTP_TO_HTTPS_ERROR",497);
-
-if(!$ignoreSecuredConnection) {
-    if($_SERVER["HTTPS"] != "on") {
-        HelpSetup::returnErrorMessage(HTTP_STATUS_HTTP_TO_HTTPS_ERROR, "Connection not secured.");
-        exit();
-    }
-}
 
 define("ABVR_FRENCH_LANGUAGE", "FR");
 define("ABVR_ENGLISH_LANGUAGE", "EN");

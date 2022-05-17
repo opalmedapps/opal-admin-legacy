@@ -1115,6 +1115,15 @@
       "SUCCESS": "The hospital map has being successfully deleted.",
       "ERROR": "An error occurred while deleting the hospital map."
     },
+    "VALIDATION": {
+      "NAME_EN": "English name missing.",
+      "NAME_FR": "French name missing.",
+      "DESCRIPTION_EN": "English description missing.",
+      "DESCRIPTION_FR": "French description missing.",
+      "URL_EN": "English URL missing.",
+      "URL_FR": "French URL missing.",
+      "HOSPITAL_MAP_ID": "Hospital Map ID invalid or missing."
+    },
     "ADD": {
       "BACK": "Back to Hospital Maps",
       "SUMMARY": "Summary",
@@ -1204,7 +1213,6 @@
       "RATING": "Average Rating",
       "TYPE": "Type",
       "PUBLISH_FLAG": "Publish Flag",
-      "PHASE_IN_TREATMENT": "Phase In Treatment",
       "PRIOR": "Prior To Treatment",
       "DURING": "During Treatment",
       "AFTER": "After Treatment",
@@ -1252,7 +1260,6 @@
       "FRENCH_URL": "French URL",
       "SEARCH": "Search...",
       "TYPE": "Type",
-      "PHASE_IN_TREATMENT": "Phase In Treatment",
       "URL": "URL",
       "TABLE_CONTENTS": "Table Of Contents",
       "ITEMS": "Item(s)",
@@ -2780,19 +2787,6 @@
           "DESC": "Body",
           "DATE": "Date Sent",
           "STATUS": "Read Status"
-        },
-        "TREATMENT_PLAN":{
-          "TITLE": "Treatment Planning",
-          "DESC": "Diagnosis Description",
-          "TYPE": "Alias Type",
-          "PRIORITY": "Priority",
-          "DESC_EXP": "Expression Description",
-          "NAME": "Alias Name",
-          "DESC_ALI": "Alias Description",
-          "TASK_STATUS": "Task Status",
-          "TASK_STATE": "Task State",
-          "TASK_DUE": "Task Due",
-          "TASK_COMPLETE": "Task Complete"
         },
         "GENERAL":{
           "TITLE": "General"

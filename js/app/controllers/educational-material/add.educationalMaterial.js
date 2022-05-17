@@ -34,7 +34,6 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 		// Default boolean variables
 		$scope.titleSection = {open:false, show:true};
 		$scope.typeSection = {open:false, show:false};
-		$scope.phaseSection = {open:false, show:false};
 		$scope.urlSection = {open:false, show:false};
 		$scope.tocsSection = {open:false, show:false};
 		$scope.shareUrlSection = {open:false, show:false};
@@ -53,7 +52,6 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 			title: { completed: false },
 			url: { completed: false },
 			type: { completed: false },
-			phase: { completed: false },
 			tocs: { completed: false }
 		};
 
@@ -66,7 +64,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 		$scope.numOfCompletedSteps = 0;
 
 		// Default total number of steps
-		$scope.stepTotal = 5;
+		$scope.stepTotal = 4;
 
 		// Progress for progress bar on default steps and total
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -89,9 +87,6 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 			return numberOfTrues;
 		}
 
-		// Initialize a list of "phase in treatment" types
-		$scope.phaseInTxs = [];
-
 		// Initialize the new edu material object
 		$scope.newEduMat = {
 			name_EN: null,
@@ -102,7 +97,6 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 			share_url_FR: null,
 			type_EN: "",
 			type_FR: "",
-			phase_in_tx: null,
 			tocs: [],
 		};
 
@@ -132,19 +126,6 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 			$scope.EduMatTypes = response.data;
 		}).catch(function(err) {
 			ErrorHandler.onError(err, $filter('translate')('EDUCATION.ADD.ERROR_TYPES'));
-		});
-
-		// Call our API to get the list of phase-in-treatments
-		educationalMaterialCollectionService.getPhasesInTreatment().then(function (response) {
-			$scope.phaseInTxs = response.data;
-			$scope.phaseInTxs.forEach(function(entry) {
-				if($scope.language.toUpperCase() === "FR")
-					entry.name_display = entry.name_FR;
-				else
-					entry.name_display = entry.name_EN;
-			});
-		}).catch(function(err) {
-			ErrorHandler.onError(err, $filter('translate')('EDUCATION.ADD.ERROR_PHASES'));
 		});
 
 		// Function to toggle necessary changes when updating titles
@@ -243,7 +224,8 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 
 			if ($scope.newEduMat.type_EN && $scope.newEduMat.type_FR) {
 
-				$scope.phaseSection.show = true;
+				$scope.urlSection.show = true;
+				$scope.tocsSection.show = true;
 
 				// Toggle step completion
 				steps.type.completed = true;
@@ -259,24 +241,6 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
-		};
-
-		// Function to toggle necessary changes when updating the phase in treatment
-		$scope.phaseUpdate = function (phase) {
-
-			$scope.newEduMat.phase_in_tx = phase;
-
-			$scope.phaseSection.open = true;
-
-			$scope.urlSection.show = true;
-			$scope.tocsSection.show = true;
-
-			// Toggle boolean
-			steps.phase.completed = true;
-			// Count the number of completed steps
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			// Change progress bar
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 		};
 
 		// Function to toggle necessary changes when updating the share URL
@@ -384,9 +348,9 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 				$.ajax({
 					type: "POST",
 					url: "educational-material/insert/educational-material",
+					dataType: "json",
 					data: $scope.newEduMat,
 					success: function (response) {
-						response = JSON.parse(response);
 						response.status = 500;
 						if (!response.value)
 							ErrorHandler.onError(response, $filter('translate')('EDUCATION.ADD.ERROR_INSERT') + " " + response.message);

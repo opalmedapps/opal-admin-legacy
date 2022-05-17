@@ -13,12 +13,7 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get configs
 		applicationAPI.getConfigs = function () {
-			return $http.post(
-				"application/get/config",
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
+			return $http.get("application/get/config");
 		};
 
 		// Function to get the app version and build
@@ -251,16 +246,6 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		// Function to get phases in treatment
-		educationalMaterialAPI.getPhasesInTreatment = function () {
-			return $http.post(
-				"educational-material/get/phases-in-treatment",
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
 		// Function to get parent educational materials
 		educationalMaterialAPI.getParentEducationalMaterials = function () {
 			return $http.post(
@@ -321,20 +306,6 @@ angular.module('opalAdmin.collections', [])
 				"hospital-map/get/hospital-map-details",
 				$.param({
 					serial: serial,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		// Function to generate qrcode and return image path
-		hospitalMapAPI.generateQRCode = function (qrid, oldqrid) {
-			return $http.post(
-				"hospital-map/generate-qr-code",
-				$.param({
-					qrid: qrid,
-					oldqrid: oldqrid,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},

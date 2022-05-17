@@ -1,230 +1,212 @@
 <?php
-include(FRONTEND_ABS_PATH.'php' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'phpqrcode' . DIRECTORY_SEPARATOR . 'qrlib.php');
 
-/**
- * HospitalMap class
- *
- */
+
 class HospitalMap extends Module {
 
+    /**
+     * Construct
+     * @param $guestStatus boolean - default false. Determine is the user is a guest (not logged in) or not
+     */
     public function __construct($guestStatus = false) {
         parent::__construct(MODULE_HOSPITAL_MAP, $guestStatus);
     }
 
-    public function generateQRCode($qrid, $oldqrid) {
-        $this->checkWriteAccess(array($qrid, $oldqrid));
-        return $this->_generateQRCode($qrid, $oldqrid);
+    /**
+     * Validate and sanitize an hospital map.
+     * @param $post array - data for the hospital map to validate
+     * @param boolean $isAnUpdate - if the validation must include the ID of the hospital map or not
+     * @param array $hospitalMap - if $isAnUpdate is setup to true, returns the current hospital map if it exists
+     * Validation code :    Error validation code is coded as an int of 7 bits (value from 0 to 127). Bit information
+     *                      are coded from right to left:
+     *                      1: english name missing
+     *                      2: french name missing
+     *                      3: english description missing
+     *                      4: french description missing
+     *                      5: english URL missing
+     *                      6: french URL missing
+     *                      7: hospital map ID is missing or invalid if it is an update
+     *
+     * @return string $errCode - contains the invalid entries with an error code.
+     */
+    protected function _validateHospitalMap(&$post, $isAnUpdate = false, &$hospitalMap = array()) {
+        $post = HelpSetup::arraySanitization($post);
+        $errCode = "";
+
+        if (is_array($post)) {
+
+            if (!array_key_exists("name_EN", $post) || $post["name_EN"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            // 2nd bit
+            if (!array_key_exists("name_FR", $post) || $post["name_FR"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            // 3rd bit
+            if (!array_key_exists("description_EN", $post) || $post["description_EN"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            // 4th bit
+            if (!array_key_exists("description_FR", $post) || $post["description_FR"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            // 5th bit
+            if (!array_key_exists("url_EN", $post) || $post["url_EN"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            // 6th bit
+            if (!array_key_exists("url_FR", $post) || $post["url_FR"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
+
+            // 7th bit
+            if($isAnUpdate) {
+                if (!array_key_exists("serial", $post) || $post["serial"] == "")
+                    $errCode = "1" . $errCode;
+                else {
+                    $hospitalMap = $this->opalDB->getHospitalMapDetails($post["serial"]);
+                    if (count($hospitalMap) < 1)
+                        $errCode = "1" . $errCode;
+                    else if (count($hospitalMap) == 1) {
+                        $hospitalMap = $hospitalMap[0];
+                        $errCode = "0" . $errCode;
+                    }
+                    else
+                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates hospital maps found.");
+                }
+            } else
+                $errCode = "0" . $errCode;
+
+        } else
+            $errCode .= "1111111";
+
+        return $errCode;
     }
 
     /**
-     *
-     * Generates a QRCode
-     *
-     * @param string $qrid : the string to QR-ify
-     * @param string $oldqrid : the previous string that was QR'ed
-     * @return array : qrcode with path
+     * Add new hospital map after vadlidatin its informations. In case of error in the validation, returns error 400
+     * with error validation.
+     * @param $post array - contains the details of the hospital map
      */
-    protected function _generateQRCode($qrid, $oldqrid) {
-        if($oldqrid) {
-            $oldQRPath = FRONTEND_ABS_PATH.'images' . DIRECTORY_SEPARATOR . 'hospital-maps' . DIRECTORY_SEPARATOR . 'qrCodes' . DIRECTORY_SEPARATOR .$oldqrid.'.png';
-            if(file_exists($oldQRPath)) {
-                unlink($oldQRPath);
-            }
-        }
-        $qrPath = FRONTEND_ABS_PATH.'images' . DIRECTORY_SEPARATOR . 'hospital-maps' . DIRECTORY_SEPARATOR . 'qrCodes' . DIRECTORY_SEPARATOR .$qrid.'.png';
-        $qrCode = '';
+    public function insertHospitalMap($post) {
+        $this->checkWriteAccess($post);
+        $errCode = $this->_validateHospitalMap($post);
+        $errCode = bindec($errCode);
 
-        if(!file_exists($qrPath)) {
-            QRcode::png($qrid,$qrPath);
-        }
-        $type = pathinfo($qrPath, PATHINFO_EXTENSION);
-        $data = file_get_contents($qrPath);
-        $qrCode = 'data:image/'.$type.';base64,'.base64_encode($data);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        $qrArray = array(
-            'qrcode'    => $qrCode,
-            'qrpath'    => $qrPath
+        $toInsert = array(
+            "MapName_EN"=>$post["name_EN"],
+            "MapName_FR"=>$post["name_FR"],
+            "MapDescription_EN"=>$post["description_EN"],
+            "MapDescription_FR"=>$post["description_FR"],
+            "MapUrl"=>$post["url_EN"],
+            "MapURL_EN"=>$post["url_EN"],
+            "MapURL_FR"=>$post["url_FR"],
         );
-        return $qrArray;
+
+        $this->opalDB->insertHospitalMap($toInsert);
     }
 
     /**
-     *
-     * Inserts hospital map info
-     *
-     * @param array $hosMapDetails : the hospital map details
-	 * @return void
-     */
-    public function insertHospitalMap ($hosMapDetails) {
-        $this->checkWriteAccess($hosMapDetails);
-
-        $name_EN            = $hosMapDetails['name_EN'];
-        $name_FR            = $hosMapDetails['name_FR'];
-        $description_EN     = $hosMapDetails['description_EN'];
-        $description_FR     = $hosMapDetails['description_FR'];
-        $url_EN             = $hosMapDetails['url_EN'];
-        $url_FR             = $hosMapDetails['url_FR'];
-        $qrid               = $hosMapDetails['qrid'];
-        $userSer            = $hosMapDetails['user']['id'];
-        $sessionId          = $hosMapDetails['user']['sessionid'];
-
-		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $qrPath = 'qrCodes/'.$qrid.'.png';
-            $sql = "
-                INSERT INTO
-                    HospitalMap (
-                        MapUrl,
-                        MapURL_EN,
-                        MapURL_FR,
-                        QRMapAlias,
-                        QRImageFileName,
-                        MapName_EN,
-                        MapDescription_EN,
-                        MapName_FR,
-                        MapDescription_FR,
-                        DateAdded,
-                        LastUpdatedBy,
-                        SessionId
-                    )
-                VALUES (
-                    \"$url_EN\",
-                    \"$url_EN\",
-                    \"$url_FR\",
-                    \"$qrid\",
-                    \"$qrPath\",
-                    \"$name_EN\",
-                    \"$description_EN\",
-                    \"$name_FR\",
-                    \"$description_FR\",
-                    NOW(),
-                    '$userSer',
-                    '$sessionId'
-                )
-            ";
-		    $query = $host_db_link->prepare( $sql );
-			$query->execute();
-        } catch( PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for hospital map. " . $e->getMessage());
-		}
-
-    }
-
-    /**
-     * Gets a list of existing hospital maps
+     * Get the complete list of the hospital maps in Opal
+     * TODO : pagination system
+     * @return array - contains the list of hospital mal
      */
     public function getHospitalMaps() {
         $this->checkReadAccess();
         return $this->opalDB->getHospitalMaps();
-	}
-
-    /*
-     * Gets details on a particular hospital map
-     */
-    public function getHospitalMapDetails($serial) {
-        $this->checkReadAccess($serial);
-        $hosMapDetails = $this->opalDB->getHospitalMapDetails(intval($serial));
-//        $qr = $this->_generateQRCode($hosMapDetails['qrid'], null);
-//        $hosMapDetails['qrcode'] = $qr['qrcode'];
-//        $hosMapDetails['qrpath'] = $qr['qrpath'];
-
-        return $hosMapDetails;
-	}
+    }
 
     /**
+     * Validate the hospital map ID to insure it is neither empty or invalid. An error code is returned if the info
+     * provided by the user is missing or invalid.
+     * @param $post array - contains the ID of the hospital map
+     * @param $hospitalMap array - will contain the hospital map if found
+     * Validation code :    Error validation code is coded as an int of 2 bits (value from 0 to 3). Bit informations
+     *                      are coded from right to left:
+     *                      1: serial missing
+     *                      2: no hospital map found
      *
-     * Updates hospital map's details
-     *
-     * @param array $hosMapDetails : the hospital map details
-	 * @return void
+     * @return string - contains the error code
      */
-    public function updateHospitalMap ($hosMapDetails) {
-        $this->checkWriteAccess($hosMapDetails);
+    protected function _validateHospitalMapDetails(&$post, &$hospitalMap) {
+        $errCode = "";
+        $post = HelpSetup::arraySanitization($post);
+        if (is_array($post)) {
+            $post["serial"] = intval(strip_tags($post["serial"]));
+            if (!array_key_exists("serial", $post) || $post["serial"] == "")
+                $errCode = "11" . $errCode;
+            else {
+                $errCode = "0" . $errCode;
+                $post["serial"] = intval(strip_tags($post["serial"]));
+                $hospitalMap = $this->opalDB->getHospitalMapDetails($post["serial"]);
+                if (count($hospitalMap) < 1)
+                    $errCode = "1" . $errCode;
+                else if (count($hospitalMap) == 1) {
+                    $errCode = "0" . $errCode;
+                    $hospitalMap = $hospitalMap[0];
+                }
+                else
+                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates hospital maps found.");
+            }
+        } else
+            $errCode = "11";
 
-        $name_EN            = $hosMapDetails['name_EN'];
-        $name_FR            = $hosMapDetails['name_FR'];
-        $description_EN     = $hosMapDetails['description_EN'];
-        $description_FR     = $hosMapDetails['description_FR'];
-        $url_EN             = $hosMapDetails['url_EN'];
-        $url_FR             = $hosMapDetails['url_FR'];
-        $qrid               = $hosMapDetails['qrid'];
-        $serial             = $hosMapDetails['serial'];
-        $userSer            = $hosMapDetails['user']['id'];
-        $sessionId          = $hosMapDetails['user']['sessionid'];
-
-		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $qrPath = 'qrCodes/'.$qrid.'.png';
-            $sql = "
-                UPDATE
-                    HospitalMap
-                SET
-                    HospitalMap.MapURL_EN           = \"$url_EN\",
-                    HospitalMap.MapURL_FR           = \"$url_FR\",
-                    HospitalMap.QRMapAlias          = \"$qrid\",
-                    HospitalMap.QRImageFileName     = \"$qrPath\",
-                    HospitalMap.MapName_EN          = \"$name_EN\",
-                    HospitalMap.MapDescription_EN   = \"$description_EN\",
-                    HospitalMap.MapName_FR          = \"$name_FR\",
-                    HospitalMap.MapDescription_FR   = \"$description_FR\",
-                    HospitalMap.LastUpdatedBy       = '$userSer',
-                    HospitalMap.SessionId           = '$sessionId'
-                WHERE
-                    HospitalMap.HospitalMapSerNum   = $serial
-            ";
-
-	        $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-	    } catch( PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for hospital map. " . $e->getMessage());
-		}
-	}
+        return $errCode;
+    }
 
     /**
-     *
-     * Deletes a hospital map from the database
-     *
-     * @param integer $serial : the hospital map serial number
-     * @param object $user : the current user in session
-	 * @return void
+     * Get the details of a specified hospital map
+     * @param $post - containts hospital map ID
+     * @return array $hospitalMap - contains hospital map found
      */
-    public function deleteHospitalMap ($serial, $user) {
-        $this->checkDeleteAccess(array($serial, $user));
-        $userSer = $user['id'];
-        $sessionId = $user['sessionid'];
-        try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                DELETE FROM
-                    HospitalMap
-                WHERE
-                    HospitalMap.HospitalMapSerNum = $serial
-            ";
+    public function getHospitalMapDetails($post) {
+        $this->checkReadAccess($post);
+        $hospitalMap = array();
 
-	        $query = $host_db_link->prepare( $sql );
-            $query->execute();
+        $errCode = $this->_validateHospitalMapDetails($post, $hospitalMap);
+        $errCode = bindec($errCode);
 
-            $sql = "
-                UPDATE HospitalMapMH
-                SET
-                    HospitalMapMH.LastUpdatedBy = '$userSer',
-                    HospitalMapMH.SessionId = '$sessionId'
-                WHERE
-                    HospitalMapMH.HospitalMapSerNum = $serial
-                ORDER BY HospitalMapMH.RevSerNum DESC
-                LIMIT 1
-            ";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
-        } catch( PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for hospital map. " . $e->getMessage());
-		}
-	}
+        return $hospitalMap;
+    }
+
+    /**
+     * Update an hospital map after its validation
+     * @param $post array - contains the details of the hospital map
+     */
+    public function updateHospitalMap($post) {
+        $this->checkWriteAccess($post);
+        $hospitalMap = array();
+        $errCode = $this->_validateHospitalMap($post, true, $hospitalMap);
+        if ($errCode != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
+
+        $toUpdate = array(
+            "HospitalMapSerNum"=>$post["serial"],
+            "MapName_EN"=>$post["name_EN"],
+            "MapName_FR"=>$post["name_FR"],
+            "MapDescription_EN"=>$post["description_EN"],
+            "MapDescription_FR"=>$post["description_FR"],
+            "MapUrl"=>$post["url_EN"],
+            "MapURL_EN"=>$post["url_EN"],
+            "MapURL_FR"=>$post["url_FR"],
+        );
+
+        $this->opalDB->updateHospitalMap($toUpdate);
+    }
 }
-
-?>

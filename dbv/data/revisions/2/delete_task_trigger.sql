@@ -1,4 +1,0 @@
-CREATE TRIGGER `delete_task_trigger` AFTER DELETE ON `Task`
- FOR EACH ROW BEGIN
-INSERT INTO `TaskMH`(`TaskSerNum`, `CronLogSerNum`, `PatientSerNum`, `AliasExpressionSerNum`, `SourceDatabaseSerNum`, `TaskAriaSer`, `Status`, `State`, `PrioritySerNum`, `DiagnosisSerNum`, `DueDateTime`, `CreationDate`, `CompletionDate`, `DateAdded`, `LastUpdated`, `ModificationAction`) VALUES (OLD.TaskSerNum, OLD.CronLogSerNum, OLD.PatientSerNum,OLD.AliasExpressionSerNum,OLD.SourceDatabaseSerNum,OLD.TaskAriaSer, OLD.Status, OLD.State, OLD.PrioritySerNum, OLD.DiagnosisSerNum, OLD.DueDateTime, OLD.CreationDate, OLD.CompletionDate, OLD.DateAdded,NULL, 'DELETE');
-END

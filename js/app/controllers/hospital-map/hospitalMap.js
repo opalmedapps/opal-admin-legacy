@@ -81,8 +81,6 @@ angular.module('opalAdmin.controllers.hospitalMap', ['ngAnimate', 'ngSanitize', 
 		// Initialize an object for deleting map
 		$scope.hosMapToDelete = {};
 
-		$scope.oldqrid = "";
-		$scope.updatedHosMap = false;
 		getHospitalMapsList();
 
 		function getHospitalMapsList() {

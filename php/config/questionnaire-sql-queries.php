@@ -613,7 +613,7 @@ define("SQL_QUESTIONNAIRE_GET_CONSENT_FORM_TITLE","
 );
 
 define("SQL_GET_QUESTIONNAIRE_LIST_ORMS","
-    SELECT :MRN AS patientId, MAX(CAST(DATE_FORMAT(Q.CompletionDate, '%Y-%m-%d') AS CHAR(30))) AS completionDate,
+    SELECT :MRN AS patientId, Q.CompletionDate AS completionDate,
     CASE WHEN DATEDIFF(CAST(DATE_FORMAT(NOW(), '%Y-%m-%d') AS CHAR(30)), MAX(CAST(DATE_FORMAT(Q.CompletionDate, '%Y-%m-%d') AS CHAR(30)))) <= 3650 THEN 'New'
     ELSE 'Old' END AS status, QC.QuestionnaireDBSerNum AS questionnaireDBId, QC.QuestionnaireName_EN AS name_EN,
     QC.QuestionnaireName_FR AS name_FR, COUNT(*) AS total, PHI.Hospital_Identifier_Type_Code AS site, qDB_q.visualization,
@@ -839,55 +839,93 @@ define("SQL_GET_QUESTION_OPTIONS", "
 ");
 
 define("GET_ANSWERS_NON_CHART_TYPE", "
-	SELECT B.Answer AS answer
-	FROM ".ANSWER_SECTION_TABLE." aSec,
-		(SELECT A.answerSectionId,
-			(SELECT CONVERT(atb.value, CHAR(516))
-			FROM ".ANSWER_TEXT_BOX_TABLE." atb
-			WHERE atb.answerId = A.ID
-			UNION
-			SELECT CONVERT(asldr.value, CHAR(516))
-			FROM ".ANSWER_SLIDER_TABLE." asldr
-			WHERE asldr.answerId = A.ID
-			UNION
-			SELECT CONVERT(adt.value, CHAR(516))
-			FROM ".ANSWER_DATE_TABLE." adt
-			WHERE adt.answerId = A.ID
-			UNION
-			SELECT CONVERT(atm.value, CHAR(516))
-			FROM ".ANSWER_TIME_TABLE." atm
-			WHERE atm.answerId = A.ID
-			UNION
-			SELECT CONVERT(getDisplayName(rbOpt.description, :languageId), CHAR(516))
-			FROM ".ANSWER_RADIO_BUTTON_TABLE." aRB, ".RADIO_BUTTON_OPTION_TABLE." rbOpt
-			WHERE aRB.answerId = A.ID
-				AND rbOpt.ID = aRB.value) AS answer
-		FROM ".ANSWER_TABLE." A
-		WHERE A.deleted = ".NON_DELETED_RECORD."
-			AND A.questionId = :questionId
-			AND A.sectionId = :sectionId
-			AND A.typeId IN (".SLIDERS.",".TEXT_BOX.",".RADIO_BUTTON.",".TIME.",".DATE.")
-	UNION
-	SELECT A.answerSectionId, CONVERT(getDisplayName(cOpt.description, :languageId), CHAR(516)) AS answer
-	FROM ".ANSWER_TABLE." A, ".ANSWER_CHECKBOX_TABLE." aC, ".CHECKBOX_OPTION_TABLE." cOpt
-	WHERE A.deleted = ".NON_DELETED_RECORD."
-		AND A.questionId = :questionId
-		AND A.sectionId = :sectionId
-		AND aC.answerId = A.ID
-		AND cOpt.ID = aC.value
-		AND A.typeId = ".CHECKBOXES."
-	UNION
-	SELECT A.answerSectionId, CONVERT(getDisplayName(lOpt.description, :languageId), CHAR(516)) AS answer
-	FROM ".ANSWER_TABLE." A, ".ANSWER_LABEL_TABLE." aL, ".LABEL_OPTION_TABLE." lOpt
-	WHERE A.deleted = ".NON_DELETED_RECORD."
-		AND A.questionId = :questionId
-		AND A.sectionId = :sectionId
-		AND aL.answerId = A.ID
-		AND lOpt.ID = aL.value
-		AND A.typeId = ".LABEL."
-	) B
-	WHERE
-		aSec.sectionId = :sectionId
-		AND B.answerSectionId = aSec.ID
-		AND aSec.answerQuestionnaireId = :answerQuestionnaireId;
+SELECT CONVERT(getDisplayName(cOpt.description, :languageId), CHAR(516)) AS answer
+FROM ".ANSWER_TABLE." A, ".ANSWER_SECTION_TABLE." aSec, ".ANSWER_CHECKBOX_TABLE." aC, ".CHECKBOX_OPTION_TABLE." cOpt
+WHERE A.deleted = ".NON_DELETED_RECORD."
+    AND A.questionId = :questionId
+    AND A.sectionId = :sectionId
+    AND aC.answerId = A.ID
+    AND cOpt.ID = aC.value
+    AND A.typeId = ".CHECKBOXES."
+    AND A.answerSectionId = aSec.ID
+    AND aSec.answerQuestionnaireId = :answerQuestionnaireId
+
+UNION
+
+SELECT CONVERT(asldr.value, CHAR(516))
+FROM ".ANSWER_TABLE." A, ".ANSWER_SECTION_TABLE." aSec, ".ANSWER_SLIDER_TABLE." asldr
+WHERE A.deleted = ".NON_DELETED_RECORD."
+    AND A.questionId = :questionId
+    AND A.sectionId = :sectionId
+    AND asldr.answerId = A.ID
+    AND A.typeId = ".SLIDERS."
+    AND A.answerSectionId = aSec.ID
+    AND aSec.answerQuestionnaireId = :answerQuestionnaireId
+
+UNION
+
+SELECT CONVERT(atb.value, CHAR(516))
+FROM ".ANSWER_TABLE." A, ".ANSWER_SECTION_TABLE." aSec, ".ANSWER_TEXT_BOX_TABLE." atb
+WHERE A.deleted = ".NON_DELETED_RECORD."
+    AND A.questionId = :questionId
+    AND A.sectionId = :sectionId
+    AND atb.answerId = A.ID
+    AND A.typeId = ".TEXT_BOX."
+    AND A.answerSectionId = aSec.ID
+    AND aSec.answerQuestionnaireId = :answerQuestionnaireId
+
+UNION
+
+SELECT CONVERT(getDisplayName(rbOpt.description, :languageId), CHAR(516))
+FROM ".ANSWER_TABLE." A, ".ANSWER_SECTION_TABLE." aSec, ".ANSWER_RADIO_BUTTON_TABLE." aRB, ".RADIO_BUTTON_OPTION_TABLE." rbOpt
+WHERE A.deleted = ".NON_DELETED_RECORD."
+    AND A.questionId = :questionId
+    AND A.sectionId = :sectionId
+    AND aRB.answerId = A.ID
+    AND rbOpt.ID = aRB.value
+    AND A.typeId = ".RADIO_BUTTON."
+    AND A.answerSectionId = aSec.ID
+    AND aSec.answerQuestionnaireId = :answerQuestionnaireId
+                    
+UNION
+    
+SELECT CONVERT(getDisplayName(lOpt.description, :languageId), CHAR(516))
+FROM ".ANSWER_TABLE." A, ".ANSWER_SECTION_TABLE." aSec, ".ANSWER_LABEL_TABLE." aL, ".LABEL_OPTION_TABLE." lOpt
+WHERE A.deleted = ".NON_DELETED_RECORD."
+    AND A.questionId = :questionId
+    AND A.sectionId = :sectionId
+    AND aL.answerId = A.ID
+    AND lOpt.ID = aL.value
+    AND A.typeId = ".LABEL."
+    AND A.answerSectionId = aSec.ID
+    AND aSec.answerQuestionnaireId = :answerQuestionnaireId
+        
+UNION
+
+SELECT CONVERT(atm.value, CHAR(516))
+FROM ".ANSWER_TABLE." A, ".ANSWER_SECTION_TABLE." aSec, ".ANSWER_TIME_TABLE." atm
+WHERE A.deleted = ".NON_DELETED_RECORD."
+    AND A.questionId = :questionId
+    AND A.sectionId = :sectionId
+    AND atm.answerId = A.ID
+    AND A.typeId = ".TIME."
+    AND A.answerSectionId = aSec.ID
+    AND aSec.answerQuestionnaireId = :answerQuestionnaireId
+        
+UNION
+
+SELECT CONVERT(adt.value, CHAR(516))
+FROM ".ANSWER_TABLE." A, ".ANSWER_SECTION_TABLE." aSec, ".ANSWER_DATE_TABLE." adt
+WHERE A.deleted = ".NON_DELETED_RECORD."
+    AND A.questionId = :questionId
+    AND A.sectionId = :sectionId
+    AND adt.answerId = A.ID
+    AND A.typeId = ".DATE."
+    AND A.answerSectionId = aSec.ID
+    AND aSec.answerQuestionnaireId = :answerQuestionnaireId
+;
 ");
+
+const SQL_GET_QUESTIONNAIRE_PURPOSE_ID = "
+    SELECT purposeId FROM " .QUESTIONNAIRE_TABLE. " WHERE ID = :questionnaireId
+";

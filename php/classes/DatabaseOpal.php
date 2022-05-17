@@ -99,7 +99,6 @@ class DatabaseOpal extends DatabaseAccess {
         $sqlModule = str_replace("%%POSTCONTROL%%", OPAL_POST_TABLE, $sqlModule);
         $sqlModule = str_replace("%%MODULE%%", OPAL_MODULE_TABLE, $sqlModule);
         $sqlModule = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_CONTROL_TABLE, $sqlModule);
-        $sqlModule = str_replace("%%PHASEINTREATMENT%%", OPAL_PHASE_IN_TREATMENT_TABLE, $sqlModule);
 
         return $this->_fetchAll($sqlModule, array());
     }
@@ -196,7 +195,6 @@ class DatabaseOpal extends DatabaseAccess {
         $sqlFetchPerModule = str_replace("%%ANNOUNCEMENT%%", OPAL_ANNOUNCEMENT_TABLE, $sqlFetchPerModule);
         $sqlFetchPerModule = str_replace("%%PATIENTSFORPATIENTS%%", OPAL_PATIENTS_FOR_PATIENTS_TABLE, $sqlFetchPerModule);
         $sqlFetchPerModule = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_CONTROL_TABLE, $sqlFetchPerModule);
-        $sqlFetchPerModule = str_replace("%%PHASEINTREATMENT%%", OPAL_PHASE_IN_TREATMENT_TABLE, $sqlFetchPerModule);
         $sqlFetchPerModule = str_replace(":OAUserId", intval($this->getOAUserId()), $sqlFetchPerModule);
 
         $result["publications"] = $this->_fetchAll($sqlFetchPerModule, array());
@@ -231,7 +229,6 @@ class DatabaseOpal extends DatabaseAccess {
         $sqlFetchDetails = str_replace("%%ANNOUNCEMENT%%", OPAL_ANNOUNCEMENT_TABLE, $sqlFetchDetails);
         $sqlFetchDetails = str_replace("%%PATIENTSFORPATIENTS%%", OPAL_PATIENTS_FOR_PATIENTS_TABLE, $sqlFetchDetails);
         $sqlFetchDetails = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_CONTROL_TABLE, $sqlFetchDetails);
-        $sqlFetchDetails = str_replace("%%PHASEINTREATMENT%%", OPAL_PHASE_IN_TREATMENT_TABLE, $sqlFetchDetails);
 
         return $this->_fetch($sqlFetchDetails,  array(array("parameter"=>":ID","variable"=>$publicationId,"data_type"=>PDO::PARAM_INT)));
     }
@@ -1618,7 +1615,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  array - list of hospital maps details
      * */
     function getHospitalMapDetails($hpId) {
-        return $this->_fetch(OPAL_GET_HOSPITAL_MAP_DETAILS, array(
+        return $this->_fetchAll(OPAL_GET_HOSPITAL_MAP_DETAILS, array(
             array("parameter"=>":HospitalMapSerNum","variable"=>$hpId,"data_type"=>PDO::PARAM_INT),
         ));
     }
@@ -2246,17 +2243,6 @@ class DatabaseOpal extends DatabaseAccess {
      */
     function getPatientNotificationsReport($pnum){
         return $this->_fetchAll(OPAL_GET_NOTIFICATIONS_REPORT, array(
-            array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
-        ));
-    }
-
-    /**
-     * Get patient treatment plan report
-     * @params $pnum : int - target patient ser num
-     * @return array - patient tx plan details
-     */
-    function getPatientTreatmentPlanReport($pnum){
-        return $this->_fetchAll(OPAL_GET_TREATMENT_PLAN_REPORT, array(
             array("parameter"=>":pnum","variable"=>$pnum,"data_type"=>PDO::PARAM_STR),
         ));
     }
@@ -3430,7 +3416,7 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":ExpressionName","variable"=>$typeCode,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":Description"   ,"variable"=>$typeDesc . '%',"data_type"=>PDO::PARAM_STR)
         );
-        return  $this->_fetchAll(OPAL_GET_ALIAS_EXPRESSION, $params );        
+        return  $this->_fetchAll(OPAL_GET_ALIAS_EXPRESSION, $params );
     }
 
     /**
@@ -3517,12 +3503,12 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Get the last completed questionnaire from a specific patient on a site.
+     * Get all completed questionnaires from a specific patient on a site.
      * @param $patientId - internal patient ID found
      * @return array - last answered questionnaire found (if any)
      */
-    function getLastCompletedQuestionnaire($patientId) {
-        return $this->_fetch(OPAL_GET_LAST_COMPLETED_QUESTIONNAIRE, array(
+    function getCompletedQuestionnaire($patientId) {
+        return $this->_fetchAll(OPAL_GET_COMPLETED_QUESTIONNAIRE, array(
             array("parameter"=>":PatientSerNum","variable"=>$patientId,"data_type"=>PDO::PARAM_INT),
         ));
     }
@@ -3628,7 +3614,7 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_replaceRecordIntoTable(OPAL_APPOINTMENTS_TABLE, $toInsert);
     }
 
-    
+
     /**
      * Insert pending appointment.
      * @param $toInsert
@@ -3753,9 +3739,9 @@ class DatabaseOpal extends DatabaseAccess {
      * @return int - number of row modified
      */
     function updateResource($toUpdate) {
-        $parameters = array(                                                
+        $parameters = array(
             array("parameter"=>":ResourceName","variable"=>$toUpdate['ResourceName'],"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":ResourceType","variable"=>$toUpdate['ResourceType'],"data_type"=>PDO::PARAM_STR),            
+            array("parameter"=>":ResourceType","variable"=>$toUpdate['ResourceType'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$toUpdate['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":ResourceCode","variable"=>$toUpdate['ResourceCode'],"data_type"=>PDO::PARAM_STR),
         );
@@ -3941,9 +3927,9 @@ class DatabaseOpal extends DatabaseAccess {
      * @return int - number of row modified
      */
     function updateAppointments($toUpdate) {
-        
+
 		$params = array(
-            array("parameter"=>":AliasExpressionSerNum","variable"=>$toUpdate['AliasExpressionSerNum'],"data_type"=>PDO::PARAM_INT),            
+            array("parameter"=>":AliasExpressionSerNum","variable"=>$toUpdate['AliasExpressionSerNum'],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$toUpdate['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":AppointmentAriaSer","variable"=>$toUpdate['AppointmentAriaSer'],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":PrioritySerNum","variable"=>$toUpdate['PrioritySerNum'],"data_type"=>PDO::PARAM_INT),
@@ -3961,11 +3947,11 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":ChangeRequest","variable"=>$toUpdate['ChangeRequest'],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":DateAdded","variable"=>$toUpdate['DateAdded'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":ReadStatus","variable"=>$toUpdate['ReadStatus'],"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":SessionId","variable"=>$toUpdate['SessionId'],"data_type"=>PDO::PARAM_STR),             
-			array("parameter"=>":AppointmentSerNum","variable"=>$toUpdate['AppointmentSerNum'],"data_type"=>PDO::PARAM_INT),			
+            array("parameter"=>":SessionId","variable"=>$toUpdate['SessionId'],"data_type"=>PDO::PARAM_STR),
+			array("parameter"=>":AppointmentSerNum","variable"=>$toUpdate['AppointmentSerNum'],"data_type"=>PDO::PARAM_INT),
 			array("parameter"=>":PatientSerNum","variable"=>$toUpdate['PatientSerNum'],"data_type"=>PDO::PARAM_INT),
         );
-		
+
         return $this->_execute(OPAL_UPDATE_APPOINTMENT,$params );
 
     }
@@ -4030,8 +4016,8 @@ class DatabaseOpal extends DatabaseAccess {
      * @param $toUpdate
      * @return int - number of row modified
      */
-	function updateDocument($toUpdate) {        
-        $parameters = array(            
+	function updateDocument($toUpdate) {
+        $parameters = array(
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$toUpdate['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":DocumentId","variable"=>$toUpdate['DocumentId'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":AliasExpressionSerNum","variable"=>$toUpdate['AliasExpressionSerNum'],"data_type"=>PDO::PARAM_INT),
@@ -4052,7 +4038,7 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":SessionId","variable"=>$toUpdate['SessionId'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":DateAdded","variable"=>$toUpdate['DateAdded'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":LastUpdated","variable"=>$toUpdate['LastUpdated'],"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":DocumentSerNum","variable"=>$toUpdate['DocumentSerNum'],"data_type"=>PDO::PARAM_INT),			
+            array("parameter"=>":DocumentSerNum","variable"=>$toUpdate['DocumentSerNum'],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":PatientSerNum","variable"=>$toUpdate['PatientSerNum'],"data_type"=>PDO::PARAM_INT),
         );
         return $this->_execute(OPAL_UPDATE_DOCUMENT,$parameters);
@@ -4117,7 +4103,7 @@ class DatabaseOpal extends DatabaseAccess {
     /** 
      * Insert a new notification
      * @param  array of the notification infos
-     * @return  ID of the entry
+     * @return  array - ID of the entry
      */
     function insertNotification($toInsert) {        
         return $this->_replaceRecordIntoTable(OPAL_NOTIFICATION_TABLE, $toInsert);
@@ -4136,7 +4122,7 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-    /** 
+    /**
      * Get doctors resource
      * @param  resourceId
      * @return  array Doctor info
@@ -4146,14 +4132,14 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":ResourceId","variable"=>$resourceId,"data_type"=>PDO::PARAM_STR)
         ));
-    }    
+    }
 
-    /** 
+    /**
      * Insert a new resource
      * @param  array of the resource infos
      * @return  ID of the entry
      */
-    function insertResource($toInsert) {        
+    function insertResource($toInsert) {
         return $this->_replaceRecordIntoTable(OPAL_RESOURCE_TABLE, $toInsert);
     }
 
@@ -4163,22 +4149,22 @@ class DatabaseOpal extends DatabaseAccess {
      * @return int - number of row modified
      */
     function updateDoctorResource($toUpdate) {
-        $parameters = array(                        
+        $parameters = array(
             array("parameter"=>":ResourceName","variable"=>$toUpdate['ResourceName'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":ResourceCode","variable"=>$toUpdate['ResourceCode'],"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":ResourceType","variable"=>$toUpdate['ResourceType'],"data_type"=>PDO::PARAM_STR),            
+            array("parameter"=>":ResourceType","variable"=>$toUpdate['ResourceType'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":ResourceSerNum","variable"=>$toUpdate['ResourceSerNum'],"data_type"=>PDO::PARAM_INT),
         );
-        return $this->_execute(OPAL_UPDATE_DOCTOR_RESOURCE,$parameters);        
+        return $this->_execute(OPAL_UPDATE_DOCTOR_RESOURCE,$parameters);
     }
 
-    /** 
+    /**
      * Get doctors information
      * @param  resourceId
      * @return  array Dcotor info
      * */
     function getDoctor($resourceId) {
-        return $this->_fetch(OPAL_GET_DOCTOR, array(            
+        return $this->_fetch(OPAL_GET_DOCTOR, array(
             array("parameter"=>":ResourceId","variable"=>$resourceId,"data_type"=>PDO::PARAM_INT),
         ));
     }
@@ -4198,7 +4184,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return int - number of row modified
      */
     function updateDoctor($toUpdate) {
-        $parameters = array(            
+        $parameters = array(
             array("parameter"=>":ResourceSerNum","variable"=>$toUpdate['ResourceSerNum'],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$toUpdate['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":DoctorAriaSer","variable"=>$toUpdate['DoctorAriaSer'],"data_type"=>PDO::PARAM_INT),
@@ -4211,20 +4197,20 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":Address","variable"=>$toUpdate['Address'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":ProfileImage","variable"=>$toUpdate['ProfileImage'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":BIO_EN","variable"=>$toUpdate['BIO_EN'],"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":BIO_FR","variable"=>$toUpdate['BIO_FR'],"data_type"=>PDO::PARAM_STR),            
-            array("parameter"=>":DoctorSerNum","variable"=>$toUpdate['DoctorSerNum'],"data_type"=>PDO::PARAM_INT),			            
+            array("parameter"=>":BIO_FR","variable"=>$toUpdate['BIO_FR'],"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":DoctorSerNum","variable"=>$toUpdate['DoctorSerNum'],"data_type"=>PDO::PARAM_INT),
         );
         return $this->_execute(OPAL_UPDATE_DOCTOR,$parameters);
     }
 
-    /** 
+    /**
      * Get patient doctors information
      * @param  resourceId
      * @return  array Dcotor info
      *
      */
-    function getPatientDoctor($doctorSerNum,$patientSerNum) {        
-        return $this->_fetch(OPAL_GET_PATIENT_DOCTOR, array(            
+    function getPatientDoctor($doctorSerNum,$patientSerNum) {
+        return $this->_fetch(OPAL_GET_PATIENT_DOCTOR, array(
             array("parameter"=>":DoctorSerNum","variable"=>$doctorSerNum,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":PatientSerNum","variable"=>$patientSerNum,"data_type"=>PDO::PARAM_INT),
         ));
@@ -4247,21 +4233,21 @@ class DatabaseOpal extends DatabaseAccess {
      * @return int - number of row modified
      */
     function updatePatientDoctor($toUpdate) {
-        $parameters = array(            
+        $parameters = array(
             array("parameter"=>":OncologistFlag","variable"=>$toUpdate['OncologistFlag'],"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":PrimaryFlag","variable"=>$toUpdate['PrimaryFlag'],"data_type"=>PDO::PARAM_INT),        
-            array("parameter"=>":PatientDoctorSerNum","variable"=>$toUpdate['PatientDoctorSerNum'],"data_type"=>PDO::PARAM_INT),			            
+            array("parameter"=>":PrimaryFlag","variable"=>$toUpdate['PrimaryFlag'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":PatientDoctorSerNum","variable"=>$toUpdate['PatientDoctorSerNum'],"data_type"=>PDO::PARAM_INT),
         );
        return $this->_execute(OPAL_UPDATE_PATIENT_DOCTOR,$parameters);
     }
-    
-    /** 
+
+    /**
      * Get Staff information
      * @param  resourceId
      * @return  array Dcotor info
      * */
     function getStaff($staffId,$sourceId) {
-        return $this->_fetch(OPAL_GET_STAFF, array(            
+        return $this->_fetch(OPAL_GET_STAFF, array(
             array("parameter"=>":StaffId","variable"=>$staffId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
         ));
@@ -4282,7 +4268,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return int - number of row modified
      */
     function updateStaff($toUpdate) {
-        $parameters = array(                                    
+        $parameters = array(
             array("parameter"=>":FirstName","variable"=>$toUpdate['FirstName'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":LastName","variable"=>$toUpdate['LastName'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":LastUpdated","variable"=>$toUpdate['LastUpdated'],"data_type"=>PDO::PARAM_STR),
@@ -4438,4 +4424,47 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+
+    /**
+     * Add a new hospital map in the specific table.
+     * @param $toInsert array - contains the data on the hospital map to insert.
+     * @return int - ID of last record inserted
+     */
+    function insertHospitalMap($toInsert) {
+        $toInsert["DateAdded"] = date("Y-m-d H:i:s");
+        $toInsert["LastUpdatedBy"] = $this->getOAUserId();
+        $toInsert["SessionId"] = $this->getSessionId();
+        return $this->_insertRecordIntoTable(OPAL_HOSPITAL_MAP_TABLE, $toInsert);
+    }
+
+    /**
+     * Update a specific hospital map
+     * @param $toUpdate - hospital map to update
+     * @return int - total records modified (should be 1 only)
+     */
+    function updateHospitalMap($toUpdate) {
+        $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
+        $toUpdate["SessionId"] = $this->getSessionId();
+        return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_HOSPITAL_MAP, $toUpdate);
+    }
+
+    /**
+     * Delete a specific hospital map
+     * @param $id int - ID of the hospital map to delete
+     * @return int - number of records affected (should be 1 only)
+     */
+    function deleteHospitalMap($id) {
+        return $this->_execute(SQL_OPAL_DELETE_HOSPITAL_MAP, array(
+            array("parameter"=>":HospitalMapSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function updateHospitalMapMH($id) {
+        $toUpdate = array(
+            "HospitalMapSerNum"=>$id,
+            "LastUpdatedBy"=>$this->getOAUserId(),
+            "SessionId"=>$this->getSessionId(),
+        );
+        return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_HOSPITAL_MAP_MH, $toUpdate);
+    }
 }

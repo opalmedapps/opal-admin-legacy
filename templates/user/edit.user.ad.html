@@ -50,7 +50,7 @@
                         {{'USERS.EDIT.PASSWORD'|translate}}
                     </label>
                     <div class="col-xs-12 col-md-7">
-                        <input type="password" class="form-control" ng-change="validatePassword(user.password)" ng-model="user.password">
+                        <input type="password" class="form-control" autocomplete="off" ng-change="validatePassword(user.password)" ng-model="user.password">
                         <p style="margin-bottom: 0;"><em><small>{{'USERS.EDIT.PASSWORD_REQUIREMENTS'|translate}}</small></em></p>
                         <span ng-show="validPassword.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validPassword.status == 'valid', 'glyphicon-remove': validPassword.status == 'invalid', 'glyphicon-warning-sign': validPassword.status == 'warning'}" aria-hidden="true"></span>
                     </div>
@@ -63,7 +63,7 @@
                         {{'USERS.EDIT.CONFIRM'|translate}}
                     </label>
                     <div class="col-xs-12 col-md-7">
-                        <input type="password" class="form-control" required="required" ng-change="validateConfirmPassword(user.confirmPassword)" ng-model="user.confirmPassword" ng-disabled="user.password.length < 6 || !user.password">
+                        <input type="password" class="form-control" required="required" autocomplete="off"  ng-change="validateConfirmPassword(user.confirmPassword)" ng-model="user.confirmPassword" ng-disabled="user.password.length < 6 || !user.password">
                         <span ng-show="validConfirmPassword.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validConfirmPassword.status == 'valid', 'glyphicon-remove': validConfirmPassword.status == 'invalid', 'glyphicon-warning-sign': validConfirmPassword.status == 'warning'}" aria-hidden="true"></span>
                     </div>
                     <em class="control-label col-xs-12 col-md-3" ng-show="validConfirmPassword.status == 'invalid' || validConfirmPassword.status == 'warning'" ng-class="{'has-success': validConfirmPassword.status == 'valid', 'has-error': validConfirmPassword.status == 'invalid', 'has-warning': validConfirmPassword.status == 'warning'}" style="text-align:left">

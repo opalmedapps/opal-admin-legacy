@@ -1,15 +1,8 @@
 <?php
+include_once("../config.php");
 
-	/* To delete a hospital map */
-	include_once('hospital-map.inc');
+$hosMap = new HospitalMap(); // Object
+$hosMap->deleteHospitalMap($_POST);
 
-	$hosMap = new HospitalMap; // Object
-
-	// Retrieve FORM param
-	$serial = $_POST['serial'];
-	$user 	= $_POST['user'];
-
-	// Call function
-	$hosMap->deleteHospitalMap($serial, $user);
-
-?>
+header('Content-Type: application/javascript');
+http_response_code(HTTP_STATUS_SUCCESS);
