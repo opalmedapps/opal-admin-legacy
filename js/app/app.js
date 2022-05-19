@@ -69,16 +69,17 @@ angular.module('opalAdmin', [
 	.constant('USER_ROLES', {
 		admin: '1',
 		registrant: '4',
-	})
+	})	
 
 
 	// Authentication and authorization service
-	.factory('AuthService', function ($http, Session, $q, USER_ROLES) {
+	.factory('AuthService', function ($rootScope, $http, Session, $q, USER_ROLES) {
 
 		var authService = {};
 
 		authService.login = function (username, password) {
-			return $http.post(
+			// Log in to the old Opal Admin API
+			let oaPromise = $http.post(
 				"user/validate-login",
 				$.param({
 					username: username,
@@ -87,7 +88,32 @@ angular.module('opalAdmin', [
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			)
+			);
+
+			/*
+				Log in to the new back end API.
+
+				$http.post config should include 'withCredentials' option so the request includes authentication info.
+
+				https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#requests_with_credentials
+			*/
+			return $http.post(
+				$rootScope.newOpalAdminHost + '/api/auth/login/',
+				{
+					"username": username,
+					"password": password,
+				},
+				{
+					"headers": {'Content-Type': 'application/json'},
+					'withCredentials': true
+				}
+			).then(
+				function (response) { return oaPromise; }, // Success
+				function (response) { // Error
+					console.error('Unable to connect to the api-backend:', response.status);
+					return oaPromise;
+				}
+			);
 		};
 
 		authService.isAuthenticated = function () {
@@ -166,7 +192,8 @@ angular.module('opalAdmin', [
 			.state('protected-route', { url: '/protected', resolve: { auth: function resolveAuthentication(AuthResolver) { return AuthResolver.resolve(); } } })
 			.state('sms',{ url: '/sms', templateUrl: "templates/sms/sms.html", controller: "sms", data:{ requireLogin: false } })
 			.state('sms/message',{ url: '/sms/message', templateUrl: "templates/sms/add.sms.html", controller: "add.sms", data:{ requireLogin: false } })
-			.state('patient-administration',{ url: '/patient-administration', templateUrl: "templates/patient-administration/patient.administration.html", controller: "patient.administration", data:{ requireLogin: true } });
+			.state('patient-administration',{ url: '/patient-administration', templateUrl: "templates/patient-administration/patient.administration.html", controller: "patient.administration", data:{ requireLogin: true } })
+			.state('hospital-settings', { url: 'http://do-not-change.external-opal-admin', external: true, data: { requireLogin: true }});
 
 	}])
 
@@ -203,16 +230,15 @@ angular.module('opalAdmin', [
 			}
 		};
 	})
-	.run(function ($rootScope, AUTH_EVENTS, AuthService, $state) {
+	.run(function ($rootScope, $transitions, AUTH_EVENTS, AuthService, $state, $window) {
 
-		$rootScope.$on('$stateChangeStart', function (event, next, toParams) {
-			var requireLogin = next.data.requireLogin;
-			var authorizedRoles = next.data.authorizedRoles;
-			var installAccess = next.data.installAccess;
-			var accessible = next.data.accessible;
+		$transitions.onStart({}, function (transition) {
+			var requireLogin = transition.to().data.requireLogin;
+			var authorizedRoles = transition.to().data.authorizedRoles;
+			var installAccess = transition.to().data.installAccess;
+			var accessible = transition.to().data.accessible;
 
 			if (!AuthService.isAuthorized(authorizedRoles) && requireLogin) {
-				event.preventDefault();
 
 				if (AuthService.isAuthenticated()) {
 					// user is not allowed
@@ -222,12 +248,23 @@ angular.module('opalAdmin', [
 					$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
 				}
 			}
+
 			if (accessible !== undefined) {
 				if (!accessible) {
-					event.preventDefault();
 					// user is not allowed
 					$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
 				}
+			}
+
+			// open a page when a state has an external URL (e.g., new opalAdmin host)
+			// https://stackoverflow.com/questions/30220947/how-would-i-have-ui-router-go-to-an-external-link-such-as-google-com
+			if (transition.to().external) {
+				if (transition.to().url == 'http://do-not-change.external-opal-admin') {
+					// replace a placeholder with the newOpalAdmin host url
+					transition.to().url = $rootScope.newOpalAdminHost;
+				}
+				
+				$window.open(transition.to().url, '_self');
 			}
 		});
 	})
