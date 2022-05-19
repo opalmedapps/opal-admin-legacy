@@ -92,9 +92,32 @@ angular.module('opalAdmin.services', [])
 		};
 	})
 
-	.service('LogoutService', function (Session, $state, $http) {
+	.service('LogoutService', function ($rootScope, Session, $q, $state, $http, $cookies) {
 		this.logLogout = function () {
 			var user = Session.retrieveObject('user');
+
+			/*
+				Logout of new Opal Admin.
+
+				The post request should include X-CSRFTOKEN header for successful logout (required by Django's backend).
+			*/
+			$http.post(
+                                $rootScope.newOpalAdminHost + '/api/auth/logout/',
+                                null,
+                                {
+                                        'headers': {
+                                                'Content-Type': 'application/json',
+						'x-csrftoken': $cookies.get('csrftoken')
+                                        },
+                                        'withCredentials': true
+                                }
+                        ).then(
+				function (response) {},
+				function (response) { console.error('Unable to logout using api-backend:', response.status); }
+			);
+
+			
+			// Logout of old Opal Admin
 			$http.post(
 				"user/logout",
 				{
@@ -102,7 +125,8 @@ angular.module('opalAdmin.services', [])
 				}
 			);
 		};
-		this.logout = function () {
+		
+		this.logout = function () {	
 			this.logLogout();
 			Session.destroy();
 			$state.go('login');
