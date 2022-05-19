@@ -104,6 +104,6 @@
 		"aria": "CLINICAL_PATH_ARIA_HERE",
 		"mosaiq": "CLINICAL_PATH_MOSAIQ_HERE",
 		"office_path" : "OFFICE_PATH_HERE"
-	}
-
+	},
+	"newOpalAdminHost": "http://127.0.0.1:8000"
 }
