@@ -564,13 +564,14 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
     }
 
 
-    // Helper function to clean patient list
+    // Helper function to clean patient list and generate diagnosis breakdown chart.
     function preparePatientReport(inp){
 
         $scope.safeApply( function() {
             if(inp && (inp !== null)){
                 $scope.patientReport = inp;
-                for(var i = 0; i < $scope.patientReport.length; i++){
+                $scope.diagnosisdata = [];
+                for(let i = 0; i < $scope.patientReport.length; i++){
                     if($scope.patientReport[i].pname){
                         $scope.patientReport[i].pname = $scope.patientReport[i].pname.replace(/["']/g, "");
                     }else{
@@ -618,6 +619,10 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                     }
                     if($scope.patientReport[i].diagdesc){
                         $scope.patientReport[i].diagdesc = $scope.patientReport[i].diagdesc.replace(/["']/g, "");
+                        if($scope.diagnosisdata.some(x => (x.name && x.name == $scope.patientReport[i].diagdesc)))
+                            $scope.diagnosisdata.find(x => (x.name && x.name == $scope.patientReport[i].diagdesc)).y += 1;
+                        else
+                            $scope.diagnosisdata.push({name: $scope.patientReport[i].diagdesc, y: 1.0});
                     }else{
                         $scope.patientReport[i].diagdesc = "N/A";
                     }
@@ -628,10 +633,10 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                     }
                  }
                 $scope.patientReportLength = $scope.patientReport.length;
+                $scope.diagnosisdata.forEach(x => x.y = x.y/$scope.patientReportLength*100);
+                $scope.diagnosisdata.sort((a,b) => {return a.name.localeCompare(b.name)});
                 refresh(); 
                 prepareDemoStats();
-    
-    
             }else{
                 ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.SEARCH_FAIL'));
             }
@@ -755,6 +760,49 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
             },{
                 name:  $filter('translate')('PATIENTS.REPORT.GROUP.PAT_MAL'),
                 data: $scope.malePlotData
+            }]
+        });
+
+        Highcharts.chart("plot2", {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: "Diagnosis Breakdown"
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            accessibility: {
+                point: {
+                    valueSuffix: '%'
+                }
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.percentage:.1f} %'
+                    },
+                    showInLegend: true
+                }
+            },
+            legend: {
+                align: 'right',
+                layout: 'vertical',
+                verticalAlign: 'top',
+                x: -40,
+                y: 40
+            },
+            series: [{
+                name: 'Diagnosis',
+                colorByPoint: true,
+                data: $scope.diagnosisdata
             }]
         });
 
