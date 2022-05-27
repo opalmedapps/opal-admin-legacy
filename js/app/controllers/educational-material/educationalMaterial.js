@@ -290,6 +290,7 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 				function initRater() {
 					let number = Math.round(Number(attrs.number));
 					number = number < 0 ? 0 : number;
+					number = number > 5 ? 5 : number;
 					for (let i = 0; i < number; i++) {
 						scope.rate.push({'Icon': 'glyphicon-star'});
 					}
