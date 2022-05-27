@@ -288,11 +288,13 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 				initRater();
 
 				function initRater() {
-					var number = Math.round(Number(attrs.number));
-					for (var i = 0; i < number; i++) {
+					let number = Math.round(Number(attrs.number));
+					number = number < 0 ? 0 : number;
+					number = number > 5 ? 5 : number;
+					for (let i = 0; i < number; i++) {
 						scope.rate.push({'Icon': 'glyphicon-star'});
 					}
-					for (var j = number; j < 5; j++) {
+					for (let j = number; j < 5; j++) {
 						scope.rate.push({'Icon': 'glyphicon-star-empty'});
 					}
 				}
