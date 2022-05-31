@@ -2,7 +2,9 @@
 
 OpalAdmin is the administrative tool for managing and tagging personal health information that is published to Opal. 
 
-## Using Docker
+## Docker Installation
+
+Note: A docker installation installs all the Prerequisites in the container many of the server/local machine steps are done for you.
 
 This project contains a `Dockerfile` as well as a `docker-compose.yml` to run it within a Docker container. To do so, call `docker-compose up` from the project's root. Once the image is built and the container running, you can access it via `http://localhost:8082/opalAdmin` from your browser.
 
@@ -11,6 +13,8 @@ In order to access the database running on your machine (whether in a container 
 If port `8082` is already in use, change the port mapping in `docker-compose.yml`.
 
 To force a re-build of the image. You may call `docker-compose build` before running or `docker-compose up --build` to force a re-build when running the container.
+
+## Server/Local Machine Installation
 
 ## Prerequisites
 
@@ -26,10 +30,10 @@ On your server, navigate into your web server directory (i.e. the "localhost" di
 
 ### Step 2
 
-Clone this project from Gitlab
+Clone this project from Gitlab using ssh
 
 ```
-git clone https://gitlab.com/akimosupremo/opalAdmin.git
+git clone git@gitlab.com:opalmedapps/opalAdmin.git
 ```
 
 
@@ -87,7 +91,7 @@ On the DBV page, run all revisions by selecting all revisions and clicking *Run 
 
 Visit the opalAdmin site:
 
-http://youdomain/opalAdmin/
+http://<your host IP>/opalAdmin/
 
 Username: admin -- Password: 123456
 
