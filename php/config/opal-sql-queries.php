@@ -1470,7 +1470,7 @@ define("OPAL_GET_ALIASES","
     a.LastUpdated AS lastupdated, (SELECT COUNT(*) FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae WHERE ae.AliasSerNum = a.AliasSerNum)
     AS count FROM ".OPAL_ALIAS_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." sd ON
     sd.SourceDatabaseSerNum = a.SourceDatabaseSerNum WHERE a.SourceDatabaseSerNum = sd.SourceDatabaseSerNum AND
-    sd.Enabled = ".ACTIVE_RECORD.";
+    sd.Enabled = ".ACTIVE_RECORD." AND a.AliasType != 'Task';
 ");
 
 define("OPAL_GET_ALIASES_UNPUBLISHED_EXPRESSION","
