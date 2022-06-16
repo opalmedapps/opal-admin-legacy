@@ -100,7 +100,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 				{
 					field: 'type_display', displayName: $filter('translate')('ALIAS.LIST.TYPE'), width: '10%', enableColumnMenu: false, filter: {
 						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: $filter('translate')('ALIAS.LIST.APPOINTMENT'), label: $filter('translate')('ALIAS.LIST.APPOINTMENT') }, { value: $filter('translate')('ALIAS.LIST.DOCUMENT'), label: $filter('translate')('ALIAS.LIST.DOCUMENT') }, { value: $filter('translate')('ALIAS.LIST.TASK'), label: $filter('translate')('ALIAS.LIST.TASK') }]
+						selectOptions: [{ value: $filter('translate')('ALIAS.LIST.APPOINTMENT'), label: $filter('translate')('ALIAS.LIST.APPOINTMENT') }, { value: $filter('translate')('ALIAS.LIST.DOCUMENT'), label: $filter('translate')('ALIAS.LIST.DOCUMENT') }]
 					}
 				},
 				{ field: 'update', displayName: $filter('translate')('ALIAS.LIST.PUBLISH'), enableColumnMenu: false, width: '5%', cellTemplate: checkboxCellTemplate, enableFiltering: false },
@@ -157,9 +157,6 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 					switch (row.type) {
 					case "Appointment":
 						row.type_display = $filter('translate')('ALIAS.LIST.APPOINTMENT');
-						break;
-					case "Task":
-						row.type_display = $filter('translate')('ALIAS.LIST.TASK');
 						break;
 					case "Document":
 						row.type_display = $filter('translate')('ALIAS.LIST.DOCUMENT');

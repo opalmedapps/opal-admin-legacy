@@ -58,10 +58,6 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 	// Initialize the list of alias types
 	$scope.aliasTypes = [
 		{
-			name: 'Task',
-			name_display: $filter('translate')('ALIAS.ADD.TASK'),
-			icon: 'th-list'
-		}, {
 			name: 'Appointment',
 			name_display: $filter('translate')('ALIAS.ADD.APPOINTMENT'),
 			icon: 'calendar'
