@@ -198,9 +198,6 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			case "Appointment":
 				response.data.type_display = $filter('translate')('ALIAS.EDIT.APPOINTMENT');
 				break;
-			case "Task":
-				response.data.type_display = $filter('translate')('ALIAS.EDIT.TASK');
-				break;
 			case "Document":
 				response.data.type_display = $filter('translate')('ALIAS.EDIT.DOCUMENT');
 				break;
