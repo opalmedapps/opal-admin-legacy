@@ -236,9 +236,9 @@ use Appointment;
 use ResourceAppointment;
 use Document;
 use Alias;
-use Doctor;
+# use Doctor;
 use Diagnosis;
-use PatientDoctor;
+# use PatientDoctor;
 use TestResult;
 use TestResultControl;
 use Cron;
@@ -265,7 +265,7 @@ my $cronLogSer = Cron::setCronLog("Started", $start_datetime);
 #-----------------------------------------------------------------------
 my @registeredPatients = ();
 my @patientList = ();
-my @PDList = ();
+# my @PDList = ();
 my @TaskList = ();
 my @ApptList = ();
 my @DocList = ();
@@ -371,41 +371,43 @@ print "Got global patientInfo list\n" if $verbose;
 ##########################################################################################
 #
 # Data Retrieval PATIENTDOCTORS - get list of patient-doctor info updated since last update
+# Base on ticket QSCCD-61, the functionality will be done by OIE
 #
 ##########################################################################################
-print "\n--- Start getPatientDoctorsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@PDList = PatientDoctor::getPatientDoctorsFromSourceDB(@patientList);
-print "--- End getPatientDoctorsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Got patient doctor list\n" if $verbose;
+# print "\n--- Start getPatientDoctorsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# @PDList = PatientDoctor::getPatientDoctorsFromSourceDB(@patientList);
+# print "--- End getPatientDoctorsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Got patient doctor list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each PD. Various functions are done.
+# Base on ticket QSCCD-61, the functionality will be done by OIE
 #=========================================================================================
-print "-- Start Loop over each PD: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-foreach my $PatientDoctor (@PDList) {
+# print "-- Start Loop over each PD: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# foreach my $PatientDoctor (@PDList) {
 
 	# check if patient exists in our database
-	my $PDExists = $PatientDoctor->inOurDatabase();
+# 	my $PDExists = $PatientDoctor->inOurDatabase();
 
-	if ($PDExists) { # patientdoctor exists
+# 	if ($PDExists) { # patientdoctor exists
 
-		my $ExistingPD = dclone($PDExists); # reassign variable
+# 		my $ExistingPD = dclone($PDExists); # reassign variable
 
 		# compare our retrieve PatientDoctor with existing PD
 		# update is done on the original (existing) PD
-		my $UpdatedPD = $PatientDoctor->compareWith($ExistingPD);
+# 		my $UpdatedPD = $PatientDoctor->compareWith($ExistingPD);
 
 		# after updating our PatientDoctor object, update the database
-		$UpdatedPD->updateDatabase();
+# 		$UpdatedPD->updateDatabase();
 
-	} else { # patient doctor DNE
+# 	} else { # patient doctor DNE
 
 		# insert PatientDoctor into our database
-		$PatientDoctor->insertPatientDoctorIntoOurDB();
-	}
-}
-print "-- End Loop over each PD: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished patient doctor list\n" if $verbose;
+# 		$PatientDoctor->insertPatientDoctorIntoOurDB();
+#	}
+# }
+# print "-- End Loop over each PD: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Finished patient doctor list\n" if $verbose;
 
 # ##########################################################################################
 # #

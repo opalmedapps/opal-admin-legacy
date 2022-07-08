@@ -11,6 +11,8 @@
 # There exists various subroutines that use the Database.pm module to update the
 # MySQL database and check if a doctor exists already in this database.
 
+# Base on ticket QSCCD-61, THis module is label for removal 2022-Apr-22 DZY
+
 package Doctor; # Declare package name
 
 use Exporter; # To export subroutines and variables
