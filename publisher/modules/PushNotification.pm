@@ -34,6 +34,9 @@ my $SQLDatabase		= $Database::targetDatabase;
 # global vars
 my $ipaddress = Net::Address::IP::Local->public;
 my $thisURL = 'https://' . $ipaddress . $Configs::BACKEND_REL_URL . 'php/sendPushNotification.php';
+my $statusSuccess = 'T';
+my $statusWarning = 'W';
+my $statusFailure = 'F';
 
 #====================================================================================
 # Constructor for our notification class
@@ -205,6 +208,22 @@ sub sendPushNotification
 
     my ($sendstatus, $sendlog); # initialize
 
+    # special case for replacing the $patientName wildcard
+    if (index($message, '$patientName') != -1) {
+        # query the patient's first name
+        my $firstName;
+        try {
+            $firstName = Patient::getPatientFirstNameFromSer($patientser);
+        } catch {
+            $sendlog = "An error occurred while querying the patient's first name: $_";
+            insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusFailure, $sendlog);
+        };
+        if (!defined $firstName) { return; }  # Return if catch block was used
+
+        # add $patientName as a wildcard for replacement
+        $dynamicKeys{'\$patientName'} = $firstName;
+    }
+
     # loop through potential wildcard keys to execute a string replace
     for my $key (keys %dynamicKeys) {
         $message =~ s/$key/$dynamicKeys{$key}/g;
@@ -214,39 +233,8 @@ sub sendPushNotification
     my @PTDIDs  = getPatientDeviceIdentifiers($patientser);
 
     if (!@PTDIDs) { # not identifiers listed
-        $sendstatus     = "W"; # warning
         $sendlog        = "Patient has no device identifier! No push notification sent.";
-
-        my $insert_sql = "
-            INSERT INTO
-                PushNotification (
-                    PatientDeviceIdentifierSerNum,
-                    PatientSerNum,
-                    NotificationControlSerNum,
-                    RefTableRowSerNum,
-                    DateAdded,
-                    SendStatus,
-                    SendLog
-                )
-            VALUES (
-                NULL,
-                '$patientser',
-                '$controlser',
-                '$reftablerowser',
-                NOW(),
-                \"$sendstatus\",
-                \"$sendlog\"
-            )
-        ";
-        #print "$insert_sql\n";
-        # prepare query
-	    my $query = $SQLDatabase->prepare($insert_sql)
-		    or die "Could not prepare query: " . $SQLDatabase->errstr;
-
-    	# execute query
-	    $query->execute()
-		    or die "Could not execute query: " . $query->errstr;
-
+        insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusWarning, $sendlog);
     }
 
     foreach my $PTDID (@PTDIDs) {
@@ -276,58 +264,60 @@ sub sendPushNotification
         try {
             $returnStatus = decode_json($response->content);
         } catch {
-            $sendstatus = "F"; # failed
+            $sendstatus = $statusFailure;
             $sendlog    = "Failed to send push notification! Message: 'Push Notification Timed Out'->{'error'}";
         };
 
         print "\n***** End Push Notification *****\n";
 
         if ($returnStatus->{'success'} eq 1) {
-
-            $sendstatus = "T"; # successful
+            $sendstatus = $statusSuccess;
             $sendlog    = "Push notification successfully sent! Message: $message";
-
         }
         if ($returnStatus->{'success'} eq 0) {
-
-            $sendstatus = "F"; # failed
+            $sendstatus = $statusFailure;
             $sendlog    = "Failed to send push notification! Message: $returnStatus->{'error'}";
-
         }
-
-        my $insert_sql = "
-            INSERT INTO
-                PushNotification (
-                    PatientDeviceIdentifierSerNum,
-                    PatientSerNum,
-                    NotificationControlSerNum,
-                    RefTableRowSerNum,
-                    DateAdded,
-                    SendStatus,
-                    SendLog
-                )
-            VALUES (
-                '$ptdidser',
-                '$patientser',
-                '$controlser',
-                '$reftablerowser',
-                NOW(),
-                \"$sendstatus\",
-                \"$sendlog\"
-            )
-        ";
-
-        #print "$insert_sql\n";
-        # prepare query
-	    my $query = $SQLDatabase->prepare($insert_sql)
-		    or die "Could not prepare query: " . $SQLDatabase->errstr;
-
-    	# execute query
-	    $query->execute()
-		    or die "Could not execute query: " . $query->errstr;
-
+        insertPushNotificationInDB($ptdidser, $patientser, $controlser, $reftablerowser, $sendstatus, $sendlog);
     }
+}
 
+#====================================================================================
+# Subroutine to insert a record into the PushNotification table
+#====================================================================================
+sub insertPushNotificationInDB
+{
+    my ($ptdidser, $patientser, $controlser, $reftablerowser, $sendstatus, $sendlog) = @_; # args
+
+    my $insert_sql = "
+        INSERT INTO
+            PushNotification (
+                PatientDeviceIdentifierSerNum,
+                PatientSerNum,
+                NotificationControlSerNum,
+                RefTableRowSerNum,
+                DateAdded,
+                SendStatus,
+                SendLog
+            )
+        VALUES (
+            $ptdidser,
+            '$patientser',
+            '$controlser',
+            '$reftablerowser',
+            NOW(),
+            \"$sendstatus\",
+            \"$sendlog\"
+        );
+    ";
+
+    # prepare query
+    my $query = $SQLDatabase->prepare($insert_sql)
+        or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+    # execute query
+    $query->execute()
+        or die "Could not execute query: " . $query->errstr;
 }
 
 #====================================================================================
