@@ -35,7 +35,7 @@ my $json;
 {
     local $/; # Enable 'slurp' mode
     open my $file_handler, "<", $config_file
-        or die "Could not open config file: $!";
+        or die "Could not open config file at $config_file: $!";
     $json = <$file_handler>;
     close $file_handler;
 }

@@ -1111,6 +1111,37 @@ sub getPatientAccessLevelFromSer
 }
 
 #======================================================================================
+# Subroutine to get a patient's first name from the DB based on their PatientSerNum
+#======================================================================================
+sub getPatientFirstNameFromSer
+{
+    my ($patientSerNum) = @_; # get PatientSerNum from args
+
+    my $sql = "
+        SELECT
+            p.FirstName
+        FROM
+            Patient p
+        WHERE
+            p.PatientSerNum = $patientSerNum
+    ";
+
+    # prepare query
+    my $query = $SQLDatabase->prepare($sql)
+        or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+    # execute query
+    $query->execute()
+        or die "Could not execute query: " . $query->errstr;
+
+    while (my @data = $query->fetchrow_array()) {
+        $firstName = $data[0];
+    }
+
+    return $firstName;
+}
+
+#======================================================================================
 # Subroutine to check if our patient exists in our MySQL db
 #	@return: patient object (if exists) .. NULL otherwise
 #======================================================================================

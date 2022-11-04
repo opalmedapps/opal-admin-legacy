@@ -9,6 +9,11 @@ abstract class OpalProject
 {
     protected $opalDB;
 
+    // Notification statuses
+    protected string $statusSuccess = 'T';
+    protected string $statusWarning = 'W';
+    protected string $statusFailure = 'F';
+
     public function __construct($sessionInfo, $guestStatus) {
         $this->opalDB = new DatabaseOpal(
             OPAL_DB_HOST,
@@ -243,6 +248,22 @@ abstract class OpalProject
         
         $this->_insertNotification($data,$controlser,$refTableId);
 
+        // Special case for replacing the $patientName wildcard
+        if (str_contains($messageTemplate, '$patientName')) {
+            try {
+                $patient = $this->opalDB->getPatientSerNum($data['PatientSerNum'])[0];
+                $firstName = $patient['FirstName'];
+            } catch (Exception $e) {
+                $sendlog = "An error occurred while querying the patient's first name: $e";
+                $pushNotificationDetail = $this->_buildNotification($this->statusFailure, $sendlog, $refTableId, $controlser, $data['PatientSerNum'], null);
+                $this->opalDB->insertPushNotification($pushNotificationDetail);
+                return;
+            }
+
+            // Add $patientName as a wildcard for replacement
+            $dynamicKeys['$patientName'] = $firstName;
+        }
+
         $patterns           = array();
         $replacements       = array();
         $indice             = 0;
@@ -258,15 +279,8 @@ abstract class OpalProject
 
         $ptdIds = $this->opalDB->getPatientDeviceIdentifiers($data["PatientSerNum"]);
         if (count($ptdIds) == 0){
-            $pushNotificationDetail = array( 
-                "SendStatus" => "W",
-                "SendLog" => "Patient has no device identifier! No push notification sent.",
-                "DateAdded" => date("Y-m-d H:i:s"),
-                "RefTableRowSerNum" => $refTableId,
-                "NotificationControlSerNum" => $controlser,
-                "PatientSerNum"=>$data["PatientSerNum"],
-                "PatientDeviceIdentifierSerNum" => null
-            );    
+            $sendlog = "Patient has no device identifier! No push notification sent.";
+            $pushNotificationDetail = $this->_buildNotification($this->statusWarning, $sendlog, $refTableId, $controlser, $data["PatientSerNum"], null);
             $this->opalDB->insertPushNotification($pushNotificationDetail);        
         } else {
             
@@ -277,7 +291,7 @@ abstract class OpalProject
 
 
                 if (!in_array($deviceType, SUPPORTED_PHONE_DEVICES)) {
-                    $sendstatus = "F";
+                    $sendstatus = $this->statusFailure;
                     $sendlog    = "Failed to send push notification! Message: Unsupported device type";
                 } else {
                     if ($deviceType == APPLE_PHONE_DEVICE)
@@ -287,27 +301,30 @@ abstract class OpalProject
 
                     $api->execute();
                     if ($api->getError()) {
-                        $sendstatus = "F"; // failed
+                        $sendstatus = $this->statusFailure;
                         $sendlog    = "Failed to send push notification! Message: " . $api->getError();
                     } else {
-                        $sendstatus = "T"; // successful
+                        $sendstatus = $this->statusSuccess;
                         $sendlog = "Push notification successfully sent! Message: $message";
                     }
                 }
 
-                $pushNotificationDetail = array( 
-                    "SendStatus" => $sendstatus,
-                    "SendLog" => $sendlog,
-                    "DateAdded" => date("Y-m-d H:i:s"),
-                    "RefTableRowSerNum" => $refTableId,
-                    "NotificationControlSerNum" => $controlser,
-                    "PatientSerNum"=>$data["PatientSerNum"],
-                    "PatientDeviceIdentifierSerNum" => $ptdidser
-                );
-                
+                $pushNotificationDetail = $this->_buildNotification($sendstatus, $sendlog, $refTableId, $controlser, $data["PatientSerNum"], $ptdidser);
                 $this->opalDB->insertPushNotification($pushNotificationDetail);
             }
         }
+    }
+
+    protected function _buildNotification($sendstatus, $sendlog, $refTableId, $controlser, $patientSerNum, $ptdidser) {
+        return array(
+            "SendStatus" => $sendstatus,
+            "SendLog" => $sendlog,
+            "DateAdded" => date("Y-m-d H:i:s"),
+            "RefTableRowSerNum" => $refTableId,
+            "NotificationControlSerNum" => $controlser,
+            "PatientSerNum" => $patientSerNum,
+            "PatientDeviceIdentifierSerNum" => $ptdidser
+        );
     }
 
     protected function _insertNotification($data, $controlser,$refTableId){
