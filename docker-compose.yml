@@ -6,7 +6,7 @@ services:
     build: .
     image: opalmedapps/opaladmin
     ports:
-      - 8082:80
+      - 8082:8080
     volumes:
       - .:/var/www/html/opalAdmin
       # don't overwrite existing content in these directories
