@@ -34,6 +34,10 @@ RUN a2enmod rewrite
 # Install and enable PHP extensions
 RUN docker-php-ext-install pdo pdo_mysql zip
 
+# Change default port to 8080 to allow non-root user to bind port
+# Binding port 80 on CentOS seems to be forbidden for non-root users
+RUN sed -ri -e 's!Listen 80!Listen 8080!g' /etc/apache2/ports.conf
+
 # Install composer
 # see: https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md
 # see: https://getcomposer.org/download/
@@ -56,3 +60,5 @@ COPY --from=dependencies --chown=www-data:www-data /app/bower_components ./bower
 COPY --chown=www-data:www-data . .
 
 RUN composer install
+
+EXPOSE 8080
