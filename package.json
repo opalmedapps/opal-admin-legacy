@@ -4,7 +4,7 @@
   "description": "Administrative tool for Opal",
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/akimosupremo/opalAdmin.git"
+    "url": "git+https://gitlab.com/opalmedapps/opalAdmin.git"
   },
   "keywords": [
     "opalAdmin"
@@ -12,9 +12,9 @@
   "author": "Ackeem B.",
   "license": "ISC",
   "bugs": {
-    "url": "https://gitlab.com/akimosupremo/opalAdmin/issues"
+    "url": "https://gitlab.com/opalmedapps/opalAdmin/issues"
   },
-  "homepage": "https://gitlab.com/akimosupremo/opalAdmin#README",
+  "homepage": "https://gitlab.com/opalmedapps/opalAdmin#README",
   "dependencies": {
     "angular-ui-grid": "^4.8.2",
     "crypto-js": "^4.0.0",

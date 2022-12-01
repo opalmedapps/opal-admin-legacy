@@ -94,8 +94,8 @@
 	"pathConfig": {
 		"_comment": "Leading slash REQUIRED!",
 
-		"abs_path": "ABS_PATH_HERE",
-		"relative_url": "RELATIVE_URL_HERE",
+		"abs_path": "/var/www/html/",
+		"relative_url": "/",
 		"registration_url": "PATH_TO_REGISTRATION_WEB_APP"
 	},
 	"clinicalDocumentPathConfig": {
