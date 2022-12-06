@@ -63,8 +63,6 @@ RUN a2enmod headers rewrite
 # Install and enable PHP extensions
 RUN docker-php-ext-install pdo pdo_mysql
 
-WORKDIR /var/www/html/opalAdmin
-
 # Change default port to 8080 to allow non-root user to bind port
 # Binding port 80 on CentOS seems to be forbidden for non-root users
 RUN sed -ri -e 's!Listen 80!Listen 8080!g' /etc/apache2/ports.conf
