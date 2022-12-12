@@ -16,7 +16,6 @@ package Database; # Declare package name
 use Configs; # Custom Config.pm to get constants (i.e. configurations)
 use Exporter; # To export subroutines and variables
 use DBI;
-use DBD::Sybase;
 
 # Create a database object
 our $databaseObject = new Database(
