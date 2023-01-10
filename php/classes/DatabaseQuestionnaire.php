@@ -192,6 +192,21 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $updatedEntries["OAUserId"]=$this->getOAUserId();
         return $this->_updateRecordIntoTable(SQL_QUESTIONNAIRE_UPDATE_QUESTIONNAIRE, $updatedEntries);
     }
+    /*
+     * Update a "QuestionnaireDB.answerQuestionnaire.respondentDisplayName" field
+     * filtered by the username field
+     * @param   $username              (string) Firebase username
+     * @param   $respondentDisplayName (string) Respondent's concatenated name
+     * @return  total modified records
+     * */
+    function updateAnswerQuestionnaireRespondent(
+        string $username,
+        string $respondentDisplayName
+    ){
+        $updatedEntries["username"] = $username;
+        $updatedEntries["respondentDisplayName"] = $respondentDisplayName;
+        return $this->_updateRecordIntoTable(SQL_QUESTIONNAIRE_UPDATE_QUESTIONNAIRE_RESPONDENT_NAME, $updatedEntries);
+    }
 
     /*
      * This function looks into the definition table of the questionnaire and returns the ID of the requested table

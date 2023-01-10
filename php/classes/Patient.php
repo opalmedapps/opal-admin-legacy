@@ -79,6 +79,20 @@ class Patient extends Module {
     }
 
     /**
+     * Get patient's Firebase username searched by a site code and MRN
+     *
+     * @param $mrns : list of dictionaries containing patient's site codes and MRNs
+     * @return array - list of the Firebase username(s) matching search
+     */
+    public function getPatientFirebaseUsername($mrns) {
+        $this->checkReadAccess();
+        $siteCode = $mrns[0]['site'];
+        $mrn = $mrns[0]['mrn'];
+        $usernames = $this->opalDB->getPatientFirebaseUsername($siteCode, $mrn);
+        return isset($usernames[0]['username']) ? $usernames[0]['username'] : null;
+    }
+
+    /**
      * Validate the name search parameter for individual reports
      *
      * @param $post : array - Contains the following information
