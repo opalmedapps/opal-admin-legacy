@@ -47,7 +47,7 @@
 	},
 	"pushNotificationConfig": {
 		"_comment": "Push notification FCM and APN credentials",
-
+		"url": "PUSH NOTIFICATION API URL",
 		"android": {
 			"_comment": "API access key from Google API's Console",
 
@@ -59,7 +59,9 @@
 
 			"certificate" : {
 				"password": "APPLE_CERTIFICATE_PASSWORD_HERE",
-				"filename": "APPLE_CERTIFICATE_FILENAME_HERE"
+				"filename": "APPLE_CERTIFICATE_FILENAME_HERE",
+				"key": "APPLE_CERTIFICATE_KEY_HERE",
+				"topic": "APP_TOPIC_NAME_HERE"
 			},
 			"appleURL": "APPLE_APNS_SERVER_URL"
 		}
