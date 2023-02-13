@@ -1562,6 +1562,11 @@ footer {
     text-align: left;
 }
 
+.form-horizontal .control-label.required::after {
+    content: " *";
+    color:#d9534f;
+  }
+
 .operations {
 
 }
