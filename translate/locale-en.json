@@ -1321,7 +1321,8 @@
       "ERROR_TRIGGERS": "An error occurred while getting the triggers list.",
       "ERROR_TYPES": "An error occurred while getting the educational material types.",
       "ERROR_PHASES": "An error occurred while getting the phases in treatment.",
-      "ERROR_INSERT": "An error occurred while creating the education material."
+      "ERROR_INSERT": "An error occurred while creating the education material.",
+      "ERROR_DUPLICATE_TYPE": "Educational material type and corresponding translation already exists, please use existing type."
     },
     "EDIT": {
       "TITLE": "Edit Educational Material",
