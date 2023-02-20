@@ -189,7 +189,7 @@
                         </uib-accordion>
                         <!-- Submit button -->
                         <div class="panel-container">
-                            <a href="" ng-click="submitEduMat()" class="btn btn-md item-button-success" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                            <a href="" ng-click="submitEduMat($event)" class="btn btn-md item-button-success" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
                                 <span style="font-size: 20px;"><strong>{{'EDUCATION.ADD.SUBMIT'|translate}}</strong></span>
                             </a>
                         </div>
@@ -238,7 +238,7 @@
                         </div>
                         <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkForm()">
                             <div class="panel-container">
-                                <a href="" ng-click="submitEduMat()" class="btn btn-md item-button-success" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                                <a href="" ng-click="submitEduMat($event)" class="btn btn-md item-button-success" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
                                     <span style="font-size: 20px;"><strong>{{'EDUCATION.ADD.SUBMIT'|translate}}</strong></span>
                                 </a>
                             </div>
@@ -336,6 +336,7 @@
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
                                                 <input class="form-control" type="text" ng-model="newEduMat.type_EN" ng-change="typeUpdate(newEduMat.type_EN, 'EN')" typeahead-on-select="typeUpdate(newEduMat.type_EN, 'EN')" uib-typeahead="type.EN as type.EN for type in EduMatTypes | filter:{EN:$viewValue}" typeahead-min-length="0" placeholder="{{'EDUCATION.ADD.ENGLISH_TYPE'|translate}}" required="required">
+                                                <span style="color:#d9534f; display:block; text-align:left;" ng-show="invalidEduMatType"><span class="glyphicon glyphicon-warning-sign"></span>  {{'EDUCATION.ADD.ERROR_DUPLICATE_TYPE'|translate}}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -354,6 +355,7 @@
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
                                                 <input class="form-control" type="text" ng-model="newEduMat.type_FR" ng-change="typeUpdate(newEduMat.type_FR, 'FR')" typeahead-on-select="typeUpdate(newEduMat.type_FR, 'FR')" uib-typeahead="type.FR as type.FR for type in EduMatTypes | filter:{FR:$viewValue}" typeahead-min-length="0" placeholder="{{'EDUCATION.ADD.FRENCH_TYPE'|translate}}" required="required">
+                                                <span style="color:#d9534f; display:block; text-align:left;" ng-show="invalidEduMatType"><span class="glyphicon glyphicon-warning-sign"></span>  {{'EDUCATION.ADD.ERROR_DUPLICATE_TYPE'|translate}}</span>
                                             </div>
                                         </div>
                                     </div>
