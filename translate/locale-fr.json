@@ -1344,7 +1344,8 @@
       "ERROR_TRIGGERS": "Une erreur s'est produite lors de l'obtention de la liste des déclencheurs.",
       "ERROR_TYPES": "Une erreur s'est produite lors de l'obtention des types de matériels éducatifs.",
       "ERROR_PHASES": "Une erreur s'est produite lors de l'obtention des phases de traitement.",
-      "ERROR_INSERT": "Une erreur s'est produite lors de la création du matériel éducatif."
+      "ERROR_INSERT": "Une erreur s'est produite lors de la création du matériel éducatif.",
+      "ERROR_DUPLICATE_TYPE": "Le type de matériel éducatif et la traduction correspondante existent déjà, veuillez utiliser le type existant."
     },
     "EDIT": {
       "TITLE": "Modifier le matériel éducatif",
