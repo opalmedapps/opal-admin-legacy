@@ -96,7 +96,7 @@ const our $FTP_LOCAL_DIR        =>  $BACKEND_SHARED_URL . 'clinical/documents'; 
 const our $OFFICE_PATH_DIR      => $config->{'clinicalDocumentPathConfig'}{'office_path'}; # Location where office is installed
 
 #DEFINE PUSH NOTIFICATION URL HERE
-const our $PUSH_NOTIFICATION_URL     => $config->{'pushNotificationConfig'}{'url'}
+const our $PUSH_NOTIFICATION_URL     => $config->{'pushNotificationConfig'}{'url'};
 
 #======================================================================================
 # Subroutine to return source database credentials
