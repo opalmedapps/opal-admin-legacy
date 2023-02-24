@@ -3117,6 +3117,7 @@ class DatabaseOpal extends DatabaseAccess {
         foreach ($toInsert as &$item) {
             $item["createdBy"] = $this->getUsername();
             $item["updatedBy"] = $this->getUsername();
+            $item["deletedBy"] = "";
         }
         return $this->_replaceMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_ALIAS_TABLE, $toInsert);
     }
