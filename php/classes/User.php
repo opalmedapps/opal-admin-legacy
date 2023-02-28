@@ -50,7 +50,7 @@ class User extends Module {
 
         $fieldString = "";
         foreach($settingsAD as $key=>$value) {
-            $fieldString .= $key.'='.$value.'&';
+            $fieldString .= $key.'='.urlencode($value).'&';
         }
         $fieldString = substr($fieldString, 0, -1);
 
