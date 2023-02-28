@@ -259,12 +259,12 @@ angular.module('opalAdmin', [
 			// open a page when a state has an external URL (e.g., new opalAdmin host)
 			// https://stackoverflow.com/questions/30220947/how-would-i-have-ui-router-go-to-an-external-link-such-as-google-com
 			if (transition.to().external) {
-				if (transition.to().url == 'http://do-not-change.external-opal-admin') {
-					// replace a placeholder with the newOpalAdmin host url
-					transition.to().url = $rootScope.newOpalAdminHost;
-				}
-				
+				// replace a placeholder with the newOpalAdmin host url
+				transition.to().url = $rootScope.newOpalAdminHost;
 				$window.open(transition.to().url, '_self');
+				// abort the initial transition
+				// see: https://ui-router.github.io/guide/transitionhooks#aborting-a-transition
+				return false;
 			}
 		});
 	})
