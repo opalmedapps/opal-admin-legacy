@@ -414,6 +414,7 @@ class Alias extends Module {
 
         $toInsert = array(
             "AliasType"=>$post["type"],
+            "AliasUpdate"=>$post['alias_update'] ?? 0,
             "AliasName_FR"=>$post["name_FR"],
             "AliasName_EN"=>$post["name_EN"],
             "AliasDescription_FR"=>$post["description_FR"],
