@@ -485,7 +485,7 @@ class Appointment extends Module
             $toInsert["action"] = "UPDATE";
         } else {
             $toInsert["action"] = "INSERT";
-            $toInsert["AppointmentPendingId"] = $toInsert["ID"]
+            $toInsert["AppointmentPendingId"] = $toInsert["ID"];
             $toInsert["PendingDate"] = date("Y-m-d H:i:s");
         }
 
