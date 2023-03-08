@@ -2705,9 +2705,12 @@
         "GROUP_DESC": "Used for group reporting statistics"
       },
       "SEARCH":{
-        "DB_ERROR": "An error occured while contacting the database: ",
+        "DB_ERROR": "An error occurred while contacting the database: ",
         "SEARCH_FAIL": "No results returned based on search parameters",
         "UNKNOWN": "Something really wrong happened: "
+      },
+      "GENERAL": {
+        "UNPUBLISHED": "This item is unpublished and may not be visible to the patient"
       },
       "COLUMNS":{
         "DIAGNOSIS":{
@@ -2761,7 +2764,8 @@
           "RESULT": "Test Result",
           "DATE_TEST": "Testing Time",
           "DATE_RESULT": "Result Time",
-          "DATE_OPAL": "Added to Opal"
+          "DATE_OPAL": "Added to Opal",
+          "WARNINGS": "Warnings"
         },
         "NOTES":{
           "TITLE": "Notifications",
