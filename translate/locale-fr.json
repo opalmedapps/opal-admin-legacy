@@ -2727,6 +2727,9 @@
         "SEARCH_FAIL": "Aucun résultat obtenu sur la base des paramètres de recherche",
         "UNKNOWN": "Quelque chose de vraiment mal est arrivé : "
       },
+      "GENERAL": {
+        "UNPUBLISHED": "Cet article n'est pas publié et pourrait ne pas être visible au patient"
+      },
       "COLUMNS":{
         "DIAGNOSIS":{
           "TITLE": "Diagnostic",
@@ -2779,7 +2782,8 @@
           "RESULT": "Résultat du test",
           "DATE_TEST": "Temps de test",
           "DATE_RESULT": "Temps de résultat",
-          "DATE_OPAL": "Ajouté à Opal"
+          "DATE_OPAL": "Ajouté à Opal",
+          "WARNINGS": "Avertissements"
         },
         "NOTES":{
           "TITLE": "Notifications",
