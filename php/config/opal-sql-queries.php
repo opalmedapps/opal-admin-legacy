@@ -1074,6 +1074,7 @@ define("OPAL_GET_TEST_REPORT", "
 	else ptr.TestValue
 	end as testvalue,
 	ptr.UnitDescription as description,
+	(SELECT tc.PublishFlag FROM TestControl tc WHERE te.TestControlSerNum = tc.TestControlSerNum) as publishflag,
 	ptr.DateAdded as dateadded,
 	ptr.CollectedDateTime as datecollected,
 	ptr.ResultDateTime as resultdate
