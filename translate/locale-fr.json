@@ -1322,7 +1322,7 @@
       "INCOMPLETE": "Incomplet",
       "COMPLETE": "Complet",
       "TITLE_EXPLANATION": "Veuillez assigner un titre anglais et français.",
-      "TYPE_EXPLANATION": "Veuillez spécifier le type de matériel éducatif. Choisissez dans la liste des types existants (sur le focus du champ de texte) ou spécifiez un nouveau type.",
+      "TYPE_EXPLANATION": "Veuillez spécifier le type de matériel éducatif. Cliquez sur le champ de texte, spécifiez un nouveau type ou choisissez dans la liste des types existants.",
       "PHASE_EXPLANATION": "Veuillez assigner la phase de traitement pour laquelle ce matériel éducatif doit être publié.",
       "URL_EXPLANATION": "Veuillez préciser l'emplacement du matériel pédagogique pour les versions anglaise et française. Si vous avez plusieurs matériels pédagogiques, allez à la section <b>Table des matières</b>.",
       "TABLE_EXPLANATION": "Pour plus d'un matériel éducatif dans une table des matières, veuillez attribuer le titre, l'URL et le type respectifs pour les versions anglaise et française.",
@@ -1344,7 +1344,8 @@
       "ERROR_TRIGGERS": "Une erreur s'est produite lors de l'obtention de la liste des déclencheurs.",
       "ERROR_TYPES": "Une erreur s'est produite lors de l'obtention des types de matériels éducatifs.",
       "ERROR_PHASES": "Une erreur s'est produite lors de l'obtention des phases de traitement.",
-      "ERROR_INSERT": "Une erreur s'est produite lors de la création du matériel éducatif."
+      "ERROR_INSERT": "Une erreur s'est produite lors de la création du matériel éducatif.",
+      "ERROR_DUPLICATE_TYPE": "Le type de matériel éducatif et la traduction correspondante existent déjà, veuillez utiliser le type existant."
     },
     "EDIT": {
       "TITLE": "Modifier le matériel éducatif",
@@ -2726,6 +2727,9 @@
         "SEARCH_FAIL": "Aucun résultat obtenu sur la base des paramètres de recherche",
         "UNKNOWN": "Quelque chose de vraiment mal est arrivé : "
       },
+      "GENERAL": {
+        "UNPUBLISHED": "Cet article n'est pas publié et pourrait ne pas être visible au patient"
+      },
       "COLUMNS":{
         "DIAGNOSIS":{
           "TITLE": "Diagnostic",
@@ -2778,7 +2782,8 @@
           "RESULT": "Résultat du test",
           "DATE_TEST": "Temps de test",
           "DATE_RESULT": "Temps de résultat",
-          "DATE_OPAL": "Ajouté à Opal"
+          "DATE_OPAL": "Ajouté à Opal",
+          "WARNINGS": "Avertissements"
         },
         "NOTES":{
           "TITLE": "Notifications",

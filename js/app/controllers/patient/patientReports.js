@@ -248,13 +248,16 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		enableFiltering: true,
 		enableColumnResizing: true,
 	};
+	let cellTemplateWarnings = `<div style="text-align:center; padding-top: 5px;"><strong>
+		<i ng-if="row.entity.publishflag !== '1'" title="${$filter('translate')('PATIENTS.REPORT.GENERAL.UNPUBLISHED')}" class="fa fa-warning" aria-hidden="true"></i>
+	</strong></div>`;
 	$scope.pattestGridOptions = {
 		data: 'pattestReport',
 		columnDefs: [
 			{
 				field: 'groupname',
 				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LAB_TESTS.GROUP'),
-				width: '10%',
+				width: '9%',
 				enableColumnMenu: false
 			},
 			{
@@ -296,19 +299,26 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 			{
 				field: 'datecollected',
 				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LAB_TESTS.DATE_TEST'),
-				width: '12%',
+				width: '11%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'resultdate',
 				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LAB_TESTS.DATE_RESULT'),
-				width: '12%',
+				width: '11%',
 				enableColumnMenu: false
 			},
 			{
 				field: 'dateadded',
 				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LAB_TESTS.DATE_OPAL'),
-				width: '12%',
+				width: '11%',
+				enableColumnMenu: false
+			},
+			{
+				field: 'warnings',
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.LAB_TESTS.WARNINGS'),
+				cellTemplate: cellTemplateWarnings,
+				width: '4%',
 				enableColumnMenu: false
 			},
 		],

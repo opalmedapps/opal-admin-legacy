@@ -57,6 +57,7 @@ RUN cpanm --notest install \
       Net::HTTP \
       JSON \
       LWP::UserAgent \
+      LWP::Protocol::https \
       MIME::Lite \
       Net::Address::IP::Local \
       Storable \

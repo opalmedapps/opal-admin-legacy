@@ -95,6 +95,9 @@ const our $MOSAIQ_FTP_DIR       => $config->{'clinicalDocumentPathConfig'}{'mosa
 const our $FTP_LOCAL_DIR        =>  $BACKEND_SHARED_URL . 'clinical/documents'; # PDF directory
 const our $OFFICE_PATH_DIR      => $config->{'clinicalDocumentPathConfig'}{'office_path'}; # Location where office is installed
 
+#DEFINE PUSH NOTIFICATION URL HERE
+const our $PUSH_NOTIFICATION_URL     => $config->{'pushNotificationConfig'}{'url'};
+
 #======================================================================================
 # Subroutine to return source database credentials
 #======================================================================================
@@ -188,6 +191,14 @@ sub fetchFTPCredentials
 
     return $ftpCredentials;
 
+}
+
+#======================================================================================
+# Subroutine to return PUSH NOTIFICATION URL HERE
+#======================================================================================
+sub fetchPushNotificationUrl
+{
+    return $PUSH_NOTIFICATION_URL;
 }
 
 1; # end module

@@ -47,7 +47,7 @@
 	},
 	"pushNotificationConfig": {
 		"_comment": "Push notification FCM and APN credentials",
-
+		"url": "PUSH NOTIFICATION API URL",
 		"android": {
 			"_comment": "API access key from Google API's Console",
 
@@ -59,7 +59,9 @@
 
 			"certificate" : {
 				"password": "APPLE_CERTIFICATE_PASSWORD_HERE",
-				"filename": "APPLE_CERTIFICATE_FILENAME_HERE"
+				"filename": "APPLE_CERTIFICATE_FILENAME_HERE",
+				"key": "APPLE_CERTIFICATE_KEY_HERE",
+				"topic": "APP_TOPIC_NAME_HERE"
 			},
 			"appleURL": "APPLE_APNS_SERVER_URL"
 		}
@@ -96,7 +98,8 @@
 
 		"abs_path": "/var/www/html/",
 		"relative_url": "/",
-		"registration_url": "PATH_TO_REGISTRATION_WEB_APP"
+		"registration_url": "PATH_TO_REGISTRATION_WEB_APP",
+		"shared_drive_path": "PATH_TO_SHARED_DRIVE"
 	},
 	"clinicalDocumentPathConfig": {
 		"_comment": "Define where clinical documents are located. Has to be mounted. Leading slash REQUIRED!",
