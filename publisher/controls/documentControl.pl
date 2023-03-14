@@ -100,8 +100,8 @@ if (-e $monitor_log) { # file exists
 			# email error
 			my $mime = MIME::Lite->new(
 				'From'		=> "opal\@muhc.mcgill.ca",
-				'To'		=> "yickmo\@gmail.com",
-				# 'Cc'			=> "yickmo\@gmail.com",
+				'To'		=> "gregormitchell\@gmail.com",
+				# 'Cc'			=> "someone\@gmail.com",
 				'Subject'	=> "Potential hanging script - Opal documentControl.pl",
 				'Type'		=> 'text/html',
 				'Data'		=> \@logs,
@@ -153,8 +153,8 @@ if (-e $monitor_log) { # file exists
 				# email error
 				my $mime = MIME::Lite->new(
 					'From'		=> "opal\@muhc.mcgill.ca",
-					'To'		=> "yickmo\@gmail.com",
-					# 'Cc'			=> "yickmo\@gmail.com",
+					'To'		=> "gregormitchell\@gmail.com",
+					# 'Cc'			=> "someone\@gmail.com",
 					'Subject'	=> "Script crash - Opal documentControl.pl",
 					'Type'		=> 'text/html',
 					'Data'		=> \@logs,
