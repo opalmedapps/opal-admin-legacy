@@ -512,9 +512,12 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * */
     function insertQuestionnaire($toInsert) {
         $toInsert["OAUserId"] = $this->OAUserId;
+        $toInsert["logo"] = "";
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
         $toInsert["createdBy"] = $this->username;
         $toInsert["updatedBy"] = $this->username;
+        $toInsert["deletedBy"] = "";
+        $toInsert["legacyName"] = "";
         return $this->_replaceRecordIntoTable(QUESTIONNAIRE_TABLE, $toInsert);
     }
 
@@ -527,6 +530,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
         $toInsert["createdBy"] = $this->username;
         $toInsert["updatedBy"] = $this->username;
+        $toInsert["deletedBy"] = "";
         return $this->_replaceRecordIntoTable(SECTION_TABLE, $toInsert);
     }
 

@@ -344,8 +344,18 @@ define("OPAL_UPDATE_EXTERNAL_ID_MASTER_SOURCE", "
 ");
 
 define("OPAL_GET_PATIENTS_TRIGGERS","
-    SELECT DISTINCT PatientSerNum AS id, 'Patient' AS type, '' AS added, CONCAT(CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2)))) AS name
-    FROM ".OPAL_PATIENT_TABLE." ORDER BY LastName;
+    SELECT 
+        DISTINCT `p`.PatientSerNum AS id,
+        'Patient' AS type,
+        '' AS added,
+        CONCAT(
+            CONCAT(UCASE(SUBSTRING(`p`.LastName, 1, 1)), LOWER(SUBSTRING(`p`.LastName, 2))), 
+            ', ', 
+            CONCAT(UCASE(SUBSTRING(`p`.FirstName, 1, 1)), LOWER(SUBSTRING(`p`.FirstName, 2)))
+        ) AS name
+    FROM ".OPAL_PATIENT_TABLE." `p`
+    JOIN ".OPAL_PATIENT_CONTROL_TABLE." `pc` ON `pc`.PatientSerNum = `p`.PatientSerNum 
+    ORDER BY LastName;
 ");
 
 define("OPAL_GET_MRN_PATIENT_SERNUM","
@@ -1064,6 +1074,7 @@ define("OPAL_GET_TEST_REPORT", "
 	else ptr.TestValue
 	end as testvalue,
 	ptr.UnitDescription as description,
+	(SELECT tc.PublishFlag FROM TestControl tc WHERE te.TestControlSerNum = tc.TestControlSerNum) as publishflag,
 	ptr.DateAdded as dateadded,
 	ptr.CollectedDateTime as datecollected,
 	ptr.ResultDateTime as resultdate
