@@ -108,5 +108,6 @@
 		"mosaiq": "CLINICAL_PATH_MOSAIQ_HERE",
 		"office_path" : "OFFICE_PATH_HERE"
 	},
-	"newOpalAdminHost": "http://127.0.0.1:8000"
+	"newOpalAdminHost": "http://host.docker.internal:8000",
+	"newOpalAdminToken": ""
 }

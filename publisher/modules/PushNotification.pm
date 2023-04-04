@@ -14,11 +14,13 @@ package PushNotification; # Declaring package name
 use Database; # Our custom database module
 use Configs; # Configs.pm
 use NotificationControl; # NotificationControl.pm
+use Api; # Api.pm
 
 use Time::Piece; # perl module
 use Array::Utils qw(:all);
 use POSIX; # perl module
 use LWP::UserAgent; # for post requests
+use Storable qw(dclone);
 use JSON;
 use Net::Address::IP::Local;
 use Cwd;
@@ -247,45 +249,80 @@ sub sendPushNotification
         my $registrationid  = $PTDID->{registrationid};
         my $devicetype      = $PTDID->{devicetype};
 
-        print "\n***** Start Push Notification *****\n";
-        print "PatientSerNum: $patientser\n";
-        print "DeviceType: $devicetype\n";
-        print "Title: $title\n";
+        ($sendstatus, $sendlog) = postNotification($title, $message, $devicetype, $registrationid);
 
-        # system command to call PHP push notification script
-        my $browser = LWP::UserAgent->new;
-        # Uncomment the line below to skip the ssl verification
-        # $browser->ssl_opts(verify_hostname => 0, SSL_verify_mode => 0x00);
-        my $response = $browser->post($thisURL,
-            [
-                'message_title'     => $title,
-                'message_text'      => $message,
-                'device_type'       => $devicetype,
-                'registration_id'   => $registrationid
-            ]
-        );
-
-        # json decode
-        try {
-            $returnStatus = decode_json($response->content);
-        } catch {
-            $sendstatus = $statusFailure;
-            $sendlog    = "Failed to send push notification! Message: 'Push Notification Timed Out'->{'error'}";
-        };
-
-        print "\n***** End Push Notification *****\n";
-
-        if ($returnStatus->{'success'} eq 1) {
-            $sendstatus = $statusSuccess;
-            $sendlog    = "Push notification successfully sent! Message: $message";
-        }
-        if ($returnStatus->{'success'} eq 0) {
-            $sendstatus = $statusFailure;
-            $sendlog    = "Failed to send push notification! Message: $returnStatus->{'error'}";
-        }
         insertPushNotificationInDB($ptdidser, $patientser, $controlser, $reftablerowser, $sendstatus, $sendlog);
     }
+
+    # get a list of the patient caregivers' device information
+    my apiResponse = Api::apiPatientCaregivers($patientser);
+    apiResponse = decode_json(apiResponse);
+
+    if (exists(apiResponse->{'caregivers'})) {
+        @caregivers = dclone(apiResponse->{'caregivers'});
+        foreach $caregiver (@caregivers) {
+            @devices = dclone($caregiver->{'devices'});
+            foreach $device (@devices) {
+                $deviceType = $device->{'type'};
+                $push_token = $device->{'push_token'};
+                if ($deviceType != 'WEB') {
+                    $deviceType = $deviceType == 'IOS' ? 0 : 1;
+                    postNotification($title, $message, $deviceType, $push_token);
+                }
+            }
+        }
+    }
 }
+
+#====================================================================================
+# Subroutine to post notifications
+#====================================================================================
+sub postNotification
+{
+    my ($title, $message, $devicetype, $registrationid) = @_; # args
+
+    my ($sendstatus, $sendlog); # initialize
+
+    print "\n***** Start Push Notification *****\n";
+    print "PatientSerNum: $patientser\n";
+    print "DeviceType: $devicetype\n";
+    print "Title: $title\n";
+
+    # system command to call PHP push notification script
+    my $browser = LWP::UserAgent->new;
+    # Uncomment the line below to skip the ssl verification
+    # $browser->ssl_opts(verify_hostname => 0, SSL_verify_mode => 0x00);
+    my $response = $browser->post($thisURL,
+        [
+            'message_title'     => $title,
+            'message_text'      => $message,
+            'device_type'       => $devicetype,
+            'registration_id'   => $registrationid
+        ]
+    );
+
+    # json decode
+    try {
+        $returnStatus = decode_json($response->content);
+    } catch {
+        $sendstatus = $statusFailure;
+        $sendlog    = "Failed to send push notification! Message: 'Push Notification Timed Out'->{'error'}";
+    };
+
+    print "\n***** End Push Notification *****\n";
+
+    if ($returnStatus->{'success'} eq 1) {
+        $sendstatus = $statusSuccess;
+        $sendlog    = "Push notification successfully sent! Message: $message";
+    }
+    if ($returnStatus->{'success'} eq 0) {
+        $sendstatus = $statusFailure;
+        $sendlog    = "Failed to send push notification! Message: $returnStatus->{'error'}";
+    }
+
+    return ($sendstatus, $sendlog);
+}
+
 
 #====================================================================================
 # Subroutine to insert a record into the PushNotification table
