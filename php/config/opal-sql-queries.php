@@ -1578,8 +1578,13 @@ define("OPAL_GET_SOURCE_DATABASES","
 //    AND m.deleted = ".NON_DELETED_RECORD." ORDER BY m.code");
 
 define("OPAL_GET_SOURCE_ALIASES","
-    SELECT m.ID AS masterSourceAliasId, m.code AS id, m.description, m.externalId, 
-    a.AliasName_EN AS assigned FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m
+    SELECT 
+        m.ID AS masterSourceAliasId, 
+        m.code AS id, m.description, 
+        m.externalId, 
+        ae.AliasExpressionSerNum,
+        a.AliasName_EN AS assigned 
+    FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m
     LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = m.ID
     LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
     WHERE m.type = :type AND m.source = :source
