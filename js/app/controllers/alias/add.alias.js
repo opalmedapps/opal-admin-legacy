@@ -466,9 +466,11 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 	$scope.submitAlias = function () {
 
 		if ($scope.checkForm()) {
-			var toSubmit = {
+			let toSubmit = {
 				"checkin_details" : $scope.newAlias.checkin_details,
 				"color" : $scope.newAlias.color,
+				// For some reason the HTML text fields add a zero-width-space
+				// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
 				"description_EN" : $scope.newAlias.description_EN.replace(/\u200B/g,''),
 				"description_FR" : $scope.newAlias.description_FR.replace(/\u200B/g,''),
 				"eduMat" : (typeof $scope.newAlias.eduMatSer !== "undefined" ? $scope.newAlias.eduMatSer: null),
@@ -482,14 +484,25 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 
 			angular.forEach($scope.termList, function (term) {
 				if (term.added)
-					toSubmit.terms.push(term.masterSourceAliasId);
+					toSubmit.terms.push(term);
 			});
+
+
+			if ($scope.newAlias.type.name == "Appointment") {
+				toSubmit.checkin_details.instruction_EN = $scope.newAlias.checkin_details.instruction_EN.replace(/\u200B/g,'');
+				toSubmit.checkin_details.instruction_FR = $scope.newAlias.checkin_details.instruction_FR.replace(/\u200B/g,'');
+			}
+
+			// Log who created this alias
+			const currentUser = Session.retrieveObject('user');
+			toSubmit.user = currentUser;
 
 			// Submit form
 			$.ajax({
 				type: "POST",
 				url: "alias/insert/alias",
 				data: toSubmit,
+				dataType: 'json',
 				success: function () {},
 				error: function (err) {
 					err.responseText = JSON.parse(err.responseText);

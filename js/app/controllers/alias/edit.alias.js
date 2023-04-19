@@ -347,7 +347,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		// Submit changes
 		$scope.updateAlias = function () {
 			if ($scope.checkForm()) {
-				var toSubmit = {
+				let toSubmit = {
 					"id": $scope.currentAlias.serial,
 					"checkin_details" : $scope.alias.checkin_details,
 					"color" : $scope.alias.color,
@@ -364,12 +364,24 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 				angular.forEach($scope.termList, function (term) {
 					if (term.added)
-						toSubmit.terms.push(term.masterSourceAliasId);
+						toSubmit.terms.push(term);
 				});
+
+
+				if ($scope.alias.type.name == "Appointment") {
+					toSubmit.checkin_details.instruction_EN = $scope.alias.checkin_details.instruction_EN.replace(/\u200B/g,'');
+					toSubmit.checkin_details.instruction_FR = $scope.alias.checkin_details.instruction_FR.replace(/\u200B/g,'');
+				}
+
+				// Log who created this alias
+				const currentUser = Session.retrieveObject('user');
+				toSubmit.user = currentUser;
+				
 				$.ajax({
 					type: "POST",
 					url: "alias/update/alias",
 					data: toSubmit,
+					dataType: 'json',
 					success: function () {
 						$scope.setBannerClass('success');
 						$scope.$parent.bannerMessage = $filter('translate')('ALIAS.EDIT.SUCCESS_EDIT');
