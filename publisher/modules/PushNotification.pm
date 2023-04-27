@@ -14,6 +14,7 @@ package PushNotification; # Declaring package name
 use Database; # Our custom database module
 use Configs; # Configs.pm
 use NotificationControl; # NotificationControl.pm
+use Api; # Api.pm
 
 use Time::Piece; # perl module
 use Array::Utils qw(:all);
@@ -232,13 +233,36 @@ sub sendPushNotification
         $message =~ s/$key/$dynamicKeys{$key}/g;
     }
 
+    # get a list of the patient caregivers' device information
+    my $apiResponse = Api::apiPatientCaregivers($patientser);
+    $apiResponse = decode_json($apiResponse);
+
+    # get caregiver's username array
+    my @usernames = ();
+    if (exists($apiResponse->{'caregivers'})) {
+        my $caregivers = $apiResponse->{'caregivers'};
+        foreach $caregiver (@{ $caregivers }) {  # anonymous array traverse
+            push @usernames, $caregiver->{'username'};
+        }
+    }
+    if (!@usernames) {
+        $sendlog        = "Patient has no related caregivers.";
+        insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusWarning, $sendlog);
+        return;
+    }
+    # convert username array to string for the query
+    my $usernameStrs = join(',', @usernames);
+
     # get a list of the patient's device information
-    my @PTDIDs  = getPatientDeviceIdentifiers($patientser);
+    my @PTDIDs  = getPatientDeviceIdentifiers($patientser, $usernameStrs);
 
     if (!@PTDIDs) { # not identifiers listed
         $sendlog        = "Patient has no device identifier! No push notification sent.";
         insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusWarning, $sendlog);
+        return;
     }
+
+    print "\n***** Push notification to patient caregivers *****\n";
 
     foreach my $PTDID (@PTDIDs) {
 
@@ -247,45 +271,60 @@ sub sendPushNotification
         my $registrationid  = $PTDID->{registrationid};
         my $devicetype      = $PTDID->{devicetype};
 
-        print "\n***** Start Push Notification *****\n";
-        print "PatientSerNum: $patientser\n";
-        print "DeviceType: $devicetype\n";
-        print "Title: $title\n";
+        ($sendstatus, $sendlog) = postNotification($title, $message, $devicetype, $registrationid);
 
-        # system command to call PHP push notification script
-        my $browser = LWP::UserAgent->new;
-        # Uncomment the line below to skip the ssl verification
-        # $browser->ssl_opts(verify_hostname => 0, SSL_verify_mode => 0x00);
-        my $response = $browser->post($thisURL,
-            [
-                'message_title'     => $title,
-                'message_text'      => $message,
-                'device_type'       => $devicetype,
-                'registration_id'   => $registrationid
-            ]
-        );
-
-        # json decode
-        try {
-            $returnStatus = decode_json($response->content);
-        } catch {
-            $sendstatus = $statusFailure;
-            $sendlog    = "Failed to send push notification! Message: 'Push Notification Timed Out'->{'error'}";
-        };
-
-        print "\n***** End Push Notification *****\n";
-
-        if ($returnStatus->{'success'} eq 1) {
-            $sendstatus = $statusSuccess;
-            $sendlog    = "Push notification successfully sent! Message: $message";
-        }
-        if ($returnStatus->{'success'} eq 0) {
-            $sendstatus = $statusFailure;
-            $sendlog    = "Failed to send push notification! Message: $returnStatus->{'error'}";
-        }
         insertPushNotificationInDB($ptdidser, $patientser, $controlser, $reftablerowser, $sendstatus, $sendlog);
     }
 }
+
+#====================================================================================
+# Subroutine to post notifications
+#====================================================================================
+sub postNotification
+{
+    my ($title, $message, $devicetype, $registrationid) = @_; # args
+
+    my ($sendstatus, $sendlog); # initialize
+
+    print "\n***** Start Push Notification *****\n";
+    print "DeviceType: $devicetype\n";
+    print "Title: $title\n";
+
+    # system command to call PHP push notification script
+    my $browser = LWP::UserAgent->new;
+    # Uncomment the line below to skip the ssl verification
+    # $browser->ssl_opts(verify_hostname => 0, SSL_verify_mode => 0x00);
+    my $response = $browser->post($thisURL,
+        [
+            'message_title'     => $title,
+            'message_text'      => $message,
+            'device_type'       => $devicetype,
+            'registration_id'   => $registrationid
+        ]
+    );
+
+    # json decode
+    try {
+        $returnStatus = decode_json($response->content);
+    } catch {
+        $sendstatus = $statusFailure;
+        $sendlog    = "Failed to send push notification! Message: 'Push Notification Timed Out'->{'error'}";
+    };
+
+    print "\n***** End Push Notification *****\n";
+
+    if ($returnStatus->{'success'} eq 1) {
+        $sendstatus = $statusSuccess;
+        $sendlog    = "Push notification successfully sent! Message: $message";
+    }
+    if ($returnStatus->{'success'} eq 0) {
+        $sendstatus = $statusFailure;
+        $sendlog    = "Failed to send push notification! Message: $returnStatus->{'error'}";
+    }
+
+    return ($sendstatus, $sendlog);
+}
+
 
 #====================================================================================
 # Subroutine to insert a record into the PushNotification table
@@ -330,7 +369,7 @@ sub insertPushNotificationInDB
 #====================================================================================
 sub getPatientDeviceIdentifiers
 {
-    my ($patientser) = @_; # patient serial from args
+    my ($patientser, $usernameStrs) = @_; # patient serial from args
 
     # initialize list
     my @PTDIDs = ();
@@ -347,6 +386,7 @@ sub getPatientDeviceIdentifiers
         WHERE
             ptdid.PatientSerNum = '$patientser'
             AND ptdid.DeviceType in ('0', '1')
+            AND FIND_IN_SET(Username, '$usernameStrs')
             AND IfNull(RegistrationId, '') <> ''
     ";
 

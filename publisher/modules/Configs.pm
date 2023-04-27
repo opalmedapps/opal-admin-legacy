@@ -97,6 +97,9 @@ const our $OFFICE_PATH_DIR      => $config->{'clinicalDocumentPathConfig'}{'offi
 
 #DEFINE PUSH NOTIFICATION URL HERE
 const our $PUSH_NOTIFICATION_URL     => $config->{'pushNotificationConfig'}{'url'};
+#NEW BACKEND API URL AND TOKEN
+const our $NEW_BACKEND_HOST     => $config->{'newOpalAdminHost'};
+const our $NEW_BACKEND_TOKEN     => $config->{'newOpalAdminToken'};
 
 #======================================================================================
 # Subroutine to return source database credentials
@@ -199,6 +202,22 @@ sub fetchFTPCredentials
 sub fetchPushNotificationUrl
 {
     return $PUSH_NOTIFICATION_URL;
+}
+
+#======================================================================================
+# Subroutine to return NEW BACKEND URL
+#======================================================================================
+sub fetchNewBackendHost
+{
+    return $NEW_BACKEND_HOST;
+}
+
+#======================================================================================
+# Subroutine to return NEW BACKEND TOKEN
+#======================================================================================
+sub fetchNewBackendToken
+{
+    return $NEW_BACKEND_TOKEN;
 }
 
 1; # end module
