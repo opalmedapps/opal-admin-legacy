@@ -482,12 +482,14 @@ sub insertEducationalMaterialIntoOurDB
                 PatientSerNum,
                 CronLogSerNum,
                 EducationalMaterialControlSerNum,
+                ReadStatus,
                 DateAdded
             )
         VALUES (
             '$patientser',
             '$cronlogser',
             '$edumatcontrolser',
+            0,
             NOW()
         )
     ";
