@@ -12,7 +12,7 @@ WORKDIR /app
 # allow to cache by not copying the whole application code in (yet)
 # see: https://stackoverflow.com/questions/35774714/how-to-cache-the-run-npm-install-instruction-when-docker-build-a-dockerfile
 COPY package.json ./
-COPY package.json package-lock.json .npmrc ./
+COPY package-lock.json ./
 RUN npm ci
 
 COPY bower.json ./
