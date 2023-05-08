@@ -76,3 +76,6 @@ php-error.log
 # ignore composer components
 /vendor/
 # composer.lock
+
+# ignore certs folder used for storing SSL certificate
+certs/*

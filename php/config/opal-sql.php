@@ -8,6 +8,15 @@ define( "OPAL_DB_NAME", $config['databaseConfig']['opal']['name'] );
 define( "OPAL_DB_DSN", "mysql:host=" . OPAL_DB_HOST . ";port=" . OPAL_DB_PORT . ";dbname=" . OPAL_DB_NAME . ";charset=utf8" );
 define( "OPAL_DB_USERNAME", $config['databaseConfig']['opal']['username'] );
 define( "OPAL_DB_PASSWORD", $config['databaseConfig']['opal']['password'] );
+// Enable SSL if specified
+define( "OPAL_DB_OPTS", array());
+if( $config['use_ssl'] == 1){
+    define( "OPAL_DB_OPTS", array(
+        PDO::MYSQL_ATTR_SSL_CA => $config['ssl_ca'],
+        PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => true
+    ));
+}
+
 
 // DEFINE OPAL SERVER/DATABASE CREDENTIALS FOR GUEST ACCOUNT HERE
 // NOTE: This works for a MySQL setup.
