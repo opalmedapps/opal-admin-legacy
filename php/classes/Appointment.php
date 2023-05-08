@@ -110,7 +110,7 @@ class Appointment extends Module
             $errCode = $this->_validateAppointmentSourceExternalId($post, $patientSite, $source);
 
             //bit 4
-            if(!array_key_exists("sourceId", $post) || $post["sourceId"] == ""){
+            if(!array_key_exists("sourceId", $post) || $post["sourceId"] == "" || $post["sourceId"] == "undefined"){
                 $errCode = "1" . $errCode;
             } else {
                 $errCode = "0" . $errCode;
