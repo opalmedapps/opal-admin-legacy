@@ -364,7 +364,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 				angular.forEach($scope.termList, function (term) {
 					if (term.added)
-						toSubmit.terms.push(term);
+						toSubmit.terms.push(term.masterSourceAliasId);
 				});
 
 
@@ -388,7 +388,9 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 						$scope.showBanner();
 					},
 					error: function (err) {
-						err.responseText = JSON.parse(err.responseText);
+						if (err.responseText && typeof err.responseText == 'string') {
+							err.responseText = JSON.parse(err.responseText);
+						}
 						ErrorHandler.onError(err, $filter('translate')('ALIAS.EDIT.ERROR_EDIT'), arrValidationInsert);
 					},
 					complete: function () {
