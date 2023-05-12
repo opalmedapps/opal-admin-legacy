@@ -484,7 +484,7 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 
 			angular.forEach($scope.termList, function (term) {
 				if (term.added)
-					toSubmit.terms.push(term);
+					toSubmit.terms.push(term.masterSourceAliasId);
 			});
 
 
@@ -505,7 +505,9 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 				dataType: 'json',
 				success: function () {},
 				error: function (err) {
-					err.responseText = JSON.parse(err.responseText);
+					if (err.responseText && typeof err.responseText == 'string') {
+						err.responseText = JSON.parse(err.responseText);
+					}
 					ErrorHandler.onError(err, $filter('translate')('ALIAS.ADD.ERROR_ADD'), arrValidationInsert);
 				},
 				complete: function() {
