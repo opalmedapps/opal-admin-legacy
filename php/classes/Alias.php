@@ -375,8 +375,8 @@ class Alias extends Module {
         foreach($aliasExpressions as $item) {
             $tempArray = array(
                 "AliasSerNum"=>$aliasId,
-                "masterSourceAliasId"=>$item['masterSourceAliasId'],  // masterSourceAlias.ID
-                "ExpressionName"=>$item['id'],  // masterSourceAlias.code
+                "masterSourceAliasId"=>$item['ID'],  // masterSourceAlias.ID
+                "ExpressionName"=>$item['code'],  // masterSourceAlias.code
                 "Description"=>$item['description']
             );
 
