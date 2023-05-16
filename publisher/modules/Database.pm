@@ -21,7 +21,9 @@ use DBI;
 our $databaseObject = new Database(
         $Configs::OPAL_DB_DSN,
         $Configs::OPAL_DB_USERNAME,
-        $Configs::OPAL_DB_PASSWORD
+        $Configs::OPAL_DB_PASSWORD,
+		$Configs::USE_SSL,
+		$Configs::OPAL_DB_SSL_DSN
     );
 
 # Connect to our MySQL database
@@ -37,6 +39,8 @@ sub new
 		_dsn		=> shift,
 		_user		=> shift,
 		_password	=> shift,
+		_usessl		=> shift,
+		_ssldsn		=> shift
 	};
 
 	# bless associates an object with a class so Perl knows which package to search for
@@ -64,6 +68,7 @@ sub connectToSourceDatabase
 	        )
 		    or die "Could not connect to the source database: " . DBI->errstr;
 	}
+
 
 	return $db_connect;
 }
@@ -105,13 +110,23 @@ sub sourceDatabaseIsEnabled
 #======================================================================================
 sub connectToTargetDatabase
 {
-	my ($database) = @_; # database object	
-	my $db_connect = DBI->connect_cached(
+	my ($database) = @_; # database object
+	my $db_connect;
+	if ( $database->{_usessl} == 1 ){
+		$db_connect = DBI->connect_cached(
+            $database->{_ssldsn},
+            $database->{_user},
+            $database->{_password}
+        )
+		or die "Could not connect over SSL to the OpalDB: " . DBI->errstr;
+	} else {
+		$db_connect = DBI->connect_cached(
             $database->{_dsn},
             $database->{_user},
             $database->{_password}
         )
-		or die "Could not connect to the MySQL db: " . DBI->errstr;
+		or die "Could not connect to the OpalDB: " . DBI->errstr;
+	}
 	return $db_connect;
 }
 

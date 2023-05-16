@@ -109,5 +109,7 @@
 		"office_path" : "OFFICE_PATH_HERE"
 	},
 	"newOpalAdminHost": "http://host.docker.internal:8000",
-	"newOpalAdminToken": ""
+	"newOpalAdminToken": "",
+	"use_ssl": 0,
+	"ssl_ca": "/var/www/html/certs/ca.pem"
 }

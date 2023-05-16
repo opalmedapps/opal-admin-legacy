@@ -5,6 +5,30 @@
  *
  */
 class Application {
+	private $host_db_link;
+	public function __construct() {
+		// Setup class-wide database connection with or without SSL
+        if(USE_SSL == 1){
+            $this->$host_db_link = new PDO(
+                OPAL_DB_DSN,
+                OPAL_DB_USERNAME,
+                OPAL_DB_PASSWORD,
+                array(
+                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
+                    PDO::MYSQL_ATTR_SSL_CA => SSL_CA,
+                    PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => true,
+                )
+            );
+        }else{
+            $this->$host_db_link = new PDO(
+                OPAL_DB_DSN,
+                OPAL_DB_USERNAME,
+                OPAL_DB_PASSWORD,
+                array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
+            );
+        }
+		$this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+    }
 
 	/**
 	 *
@@ -15,8 +39,7 @@ class Application {
 	public function getApplicationBuild () {
 		$build = array();
 		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			$sql = "
 				SELECT DISTINCT
 					bt.Name
@@ -24,7 +47,7 @@ class Application {
 					BuildType bt
 				LIMIT 1
 			";
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
@@ -62,8 +85,6 @@ class Application {
 	public function getSourceDatabases () {
 		$sourceDatabases = array();
 		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-      $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			$sql = "
 				SELECT DISTINCT
 					sd.SourceDatabaseSerNum,
@@ -72,7 +93,7 @@ class Application {
 				FROM
 					SourceDatabase sd
 			";
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 	    $query->execute();
 
       while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -118,9 +139,6 @@ class Application {
 							'message'   => ''
 					);
 			try {
-				$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-				$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
 				foreach ($sourceDatabaseDetails as $sourceDatabase => $details) {
 					$enabledFlag = $details['enabled'];
 					$serial = $details['serial'];
@@ -132,7 +150,7 @@ class Application {
 						WHERE
 							SourceDatabase.SourceDatabaseSerNum = $serial
 					";
-					$query = $host_db_link->prepare( $sql );
+					$query = $this->$host_db_link->prepare( $sql );
 					$query->execute();
 				}
 				$response['value'] = 1; // Success
