@@ -45,6 +45,10 @@ const LIMIT_DAYS_AUDIT_SYSTEM_BACKUP = 5;
 
 define("OPAL_CHECKIN_CALL", "https://" . $_SERVER['HTTP_HOST'] . "/opalAdmin/publisher/php/OpalCheckIn.php");
 
+// Define SSL setting for database connection strings and path to cert file
+define ("USE_SSL", $config['use_ssl']);
+define ("SSL_CA", $config['ssl_ca']);
+
 // DEFINE MOSAIQ SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MicrosoftSQL (MSSQL) setup.
 define( "MOSAIQ_DB_HOST", $config['databaseConfig']['mosaiq']['host'] );
