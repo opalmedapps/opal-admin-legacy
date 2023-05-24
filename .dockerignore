@@ -1,6 +1,7 @@
 .*
 
 !.htaccess
+!.npmrc
 
 # node
 node_modules
