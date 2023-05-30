@@ -251,10 +251,10 @@ sub sendPushNotification
         return;
     }
     # convert username array to string for the query
-    my $usernameStrs = join(',', @usernames);
+    my $usernamesStr = join(',', @usernames);
 
     # get a list of the patient's device information
-    my @PTDIDs  = getPatientDeviceIdentifiers($patientser, $usernameStrs);
+    my @PTDIDs  = getPatientDeviceIdentifiers($usernamesStr);
 
     if (!@PTDIDs) { # not identifiers listed
         $sendlog        = "Patient has no device identifier! No push notification sent.";
@@ -369,7 +369,7 @@ sub insertPushNotificationInDB
 #====================================================================================
 sub getPatientDeviceIdentifiers
 {
-    my ($patientser, $usernameStrs) = @_; # patient serial from args
+    my ($usernamesStr) = @_; # patient serial from args
 
     # initialize list
     my @PTDIDs = ();
@@ -384,9 +384,8 @@ sub getPatientDeviceIdentifiers
         FROM
             PatientDeviceIdentifier ptdid
         WHERE
-            ptdid.PatientSerNum = '$patientser'
             AND ptdid.DeviceType in ('0', '1')
-            AND FIND_IN_SET(Username, '$usernameStrs')
+            AND FIND_IN_SET(Username, '$usernamesStr')
             AND IfNull(RegistrationId, '') <> ''
     ";
 
