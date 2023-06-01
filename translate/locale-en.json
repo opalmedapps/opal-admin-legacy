@@ -2662,7 +2662,7 @@
   },
   "PATIENTS": {
     "MENU": {
-      "TITLE": "Patient Dashboard",
+      "TITLE": "Patient",
       "SUB_TITLE": "Patients Tools",
       "REGISTRATION": "Patient Registration",
       "REGISTRATION_SUB": "Register a patient to Opal.",
