@@ -40,7 +40,7 @@
     "DIAGNOSIS_TRANSLATION": "Importation et alias de diagnostics",
     "CRON_LOGS": "Journal des tâches cron",
     "PATIENTS": "Patients",
-    "PATIENT_REGISTRATION": "Enregistrement patient",
+    "PATIENT_REGISTRATION": "Inscription à Opal",
     "PATIENT_REGISTRATION_SUB": "Enregistrer de nouveaux patients.",
     "PATIENT_ACTIVITY": "Activité des patients",
     "PATIENT_ACTIVITY_SUB": "Liste des sessions des patients, heure de connexion / déconnexion et activités de l'appli.",
@@ -2681,8 +2681,8 @@
     "MENU": {
       "TITLE": "Patient",
       "SUB_TITLE": "Outils pour patients",
-      "REGISTRATION": "Enregistrement patient",
-      "REGISTRATION_SUB": "Enregistrer un patient pour Opal.",
+      "REGISTRATION": "Inscription à Opal",
+      "REGISTRATION_SUB": "Enregistrer un patient ou un proche aidant afin qu'il puisse utiliser Opal.",
       "BACK": "Retour"
     },
     "LIST": {
@@ -3320,7 +3320,7 @@
       "UNKNOWN": "Erreur inconnue. Veuillez réessayer plus tard."
     }
   },
-  "PATIENT_REGISTRATION_TITLE": "Enregistrement Patient",
+  "PATIENT_REGISTRATION_TITLE": "Inscription à Opal",
   "PATIENT_REGISTRATION_SEARCH_HEADER": "Recherche",
   "PATIENT_REGISTRATION_SEARCH_DESCRIPTION": "Veuillez entrer un numéro de carte soleil de 12 caractères avec l'identifiant dur patient pour lancer le processus d'incription.",
   "MEDICARE_CARD_NUMBER": "Numéro d'assurance-maladie",
