@@ -40,7 +40,7 @@
     "DIAGNOSIS_TRANSLATION": "Diagnosis Import and Aliasing",
     "CRON_LOGS": "Cron Logs",
     "PATIENTS": "Patients",
-    "PATIENT_REGISTRATION": "Patient registration",
+    "PATIENT_REGISTRATION": "Opal Registration",
     "PATIENT_ACTIVITY": "Patient Activity",
     "USERS": "Users",
     "PROFILE": "Profile",
@@ -2664,8 +2664,8 @@
     "MENU": {
       "TITLE": "Patient",
       "SUB_TITLE": "Patients Tools",
-      "REGISTRATION": "Patient Registration",
-      "REGISTRATION_SUB": "Register a patient to Opal.",
+      "REGISTRATION": "Opal Registration",
+      "REGISTRATION_SUB": "Register a patient or caregiver so they can use Opal.",
       "BACK": "Back"
     },
     "LIST": {
@@ -3301,7 +3301,7 @@
       "UNKNOWN": "Unknown error. Please try again later."
     }
   },
-  "PATIENT_REGISTRATION_TITLE": "Patient Registration",
+  "PATIENT_REGISTRATION_TITLE": "Opal Registration",
   "PATIENT_REGISTRATION_SEARCH_HEADER": "Registration Search",
   "PATIENT_REGISTRATION_SEARCH_DESCRIPTION": "Please enter a valid <strong>12-character</strong> Medicare card number along with the <strong>patient ID</strong> to start the registration process.",
   "MEDICARE_CARD_NUMBER": "Medicare card number",
