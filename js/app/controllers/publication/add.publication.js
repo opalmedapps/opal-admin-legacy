@@ -159,7 +159,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		$scope.moduleList = [];
 
 		/* Function for the "Processing" dialog */
-		var processingModal;
+		var processingModal = null;
 		$scope.showProcessingModal = function () {
 
 			processingModal = $uibModal.open({
@@ -454,8 +454,10 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 					ErrorHandler.onError(err, $filter('translate')('PUBLICATION.ADD.ERROR_MODULE'));
 					$state.go('publication');
 				}).finally(function() {
-					processingModal.close(); // hide modal
-					processingModal = null; // remove reference
+					if (processingModal) {
+						processingModal.close(); // hide modal
+						processingModal = null; // remove reference
+					}
 				});
 			}
 
