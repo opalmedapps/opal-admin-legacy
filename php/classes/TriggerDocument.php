@@ -173,14 +173,16 @@ class TriggerDocument extends Trigger
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
            
         $doc = $this->opalDB->getDocument($source["SourceDatabaseSerNum"], $post["documentId"]);
+        $approvedBySerNum = $this->opalDB->getStaffDetail($source["SourceDatabaseSerNum"],$post["appovalUserId"])["StaffSerNum"];
+        $authoredBySerNum = $this->opalDB->getStaffDetail($source["SourceDatabaseSerNum"],$post["authorUserId"])["StaffSerNum"];
         $countDoc = count($doc);
         $toInsert = array(
             "PatientSerNum" => $patientSite["PatientSerNum"],
             "SourceDatabaseSerNum" => $source["SourceDatabaseSerNum"],
             "DocumentId" => $post["documentId"],
-            "ApprovedBySerNum" => $this->opalDB->getStaffDetail($source["SourceDatabaseSerNum"],$post["appovalUserId"])["StaffSerNum"],
+            "ApprovedBySerNum" => $approvedBySerNum ?? 0,
             "ApprovedTimeStamp" => $post["approvalDatetime"],
-            "AuthoredBySerNum" => $this->opalDB->getStaffDetail($source["SourceDatabaseSerNum"],$post["authorUserId"])["StaffSerNum"],
+            "AuthoredBySerNum" => $authoredBySerNum ?? 0,
             "DateOfService" => $post["noteDatetime"],
             "Revised" => $post["revised"],
             "ValidEntry" => $post["validEntry"],
@@ -209,9 +211,9 @@ class TriggerDocument extends Trigger
             $toInsert["DocumentSerNum"] = $id;
         } else {
             $action = "UpdDocument";
-            $doc["ApprovedBySerNum"] = $this->opalDB->getStaffDetail($source["SourceDatabaseSerNum"],$post["appovalUserId"])["StaffSerNum"];
+            $doc["ApprovedBySerNum"] = $approvedBySerNum ?? 0;
             $doc["ApprovedTimeStamp"] = $post["approvalDatetime"];
-            $doc["AuthoredBySerNum"] = $this->opalDB->getStaffDetail($source["SourceDatabaseSerNum"],$post["authorUserId"])["StaffSerNum"];
+            $doc["AuthoredBySerNum"] = $authoredBySerNum ?? 0;
             $doc["Revised"] = $post["revised"];
             $doc["ValidEntry"] = $post["validEntry"];
             $doc["AliasExpressionSerNum"] = $aliasInfos[0]["AliasExpressionSerNum"];
