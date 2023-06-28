@@ -52,6 +52,28 @@
             </div>
 
         </div>
+        <!-- SECTION: Short Name -->
+        <div uib-accordion-group is-open="shortNameSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.SHORT_NAME'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': shortNameSection.open, 'glyphicon-chevron-right': !shortNameSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ENGLISH_TITLE'|translate}}</span>
+                        <textarea class="form-control" rows="1" ng-model="questionnaire.short_name_EN" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PLACEHOLDER_ENGLISH_SHORT_NAME'|translate}}" ng-change="setChangesMade()" ng-disabled="questionnaire.readOnly || questionnaire.final"></textarea>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.FRENCH_TITLE'|translate}}</span>
+                        <textarea class="form-control" rows="1" ng-model="questionnaire.short_name_FR" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PLACEHOLDER_FRENCH_SHORT_NAME'|translate}}" ng-change="setChangesMade()" ng-disabled="questionnaire.readOnly || questionnaire.final"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- SECTION: Description -->
         <div uib-accordion-group is-open="descriptionSection.open">
             <uib-accordion-heading>
