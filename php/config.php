@@ -5,6 +5,7 @@
 */
 session_start();
 
+
 // Set the time ze for the Eastern Time Zone (ET)
 date_default_timezone_set("America/Toronto");
 
@@ -22,6 +23,14 @@ $abspath 	= str_replace('php', '', $pathname);
 // Specify location of config file
 $json = file_get_contents($abspath . 'config.json');
 
+#$dotenv = Dotenv::createImmutable(__DIR__);
+// don't fail if the .env file is not there
+#$dotenv->safeload();
+
+// Ensure that the following environment variables are set
+#$dotenv->required('DATABASE_HOST')->notEmpty();
+// $_ENV = parseData($_ENV);
+#echo $_ENV["DATABASE_HOST"] .  " -------------------------------------------------------------------";
 // Decode json to variable
 $config = json_decode($json, true);
 
@@ -383,3 +392,68 @@ const APPOINTMENT_STATUS_CODE_COMPLETED = "Completed";
 const APPOINTMENT_STATUS_CODE_DELETED = "Deleted";
 const APPOINTMENT_STATE_CODE_ACTIVE = "Active";
 const APPOINTMENT_STATE_CODE_DELETED = "Deleted";
+
+use Dotenv\Dotenv;
+#require_once( "ammar/PycharmProjects/opalAdmin/vendor". DIRECTORY_SEPARATOR . "vlucas". DIRECTORY_SEPARATOR . "phpdotenv" . DIRECTORY_SEPARATOR . "src" . DIRECTORY_SEPARATOR . "Dotenv.php" );
+
+Config::__init();
+
+
+/** @psalm-immutable */
+class Config
+{
+    private static Config $self;
+
+    private function __construct(
+        public EnvironmentConfig $environment,
+        public SystemConfig $system,
+        public DatabaseConfig $ormsDb,
+        public DatabaseConfig $logDb,
+        public ?OpalInterfaceEngineConfig $oie,
+        public ?SmsConfig $sms
+    ) {}
+
+    public static function getApplicationSettings(): Config
+    {
+        return self::$self;
+    }
+
+    public static function __init(): void
+    {
+        $dotenv = Dotenv::createImmutable(__DIR__ );
+        // don't fail if the .env file is not there
+        $dotenv->safeload();
+
+        // Ensure that the following environment variables are set
+        $dotenv->required('DATABASE_HOST')->notEmpty();
+
+        $_ENV = self::_parseData($_ENV);
+
+        //create required configs
+        $environment = new EnvironmentConfig(
+            databaseHost:                       $_ENV["DATABASE_HOST"],
+        );
+
+
+        self::$self = new self(
+            environment:        $environment,
+        );
+    }
+
+    /**
+     * Function to convert all empty strings in an assoc array into nulls
+     * @param array<string|string[]> $arr
+     * @return mixed[]
+     */
+    private static function _parseData(array $arr): array
+    {
+        foreach($arr as &$val)
+        {
+            $val = is_array($val) ? self::_parseData($val) : $val;
+            $val = ($val !== "") ? $val : null;
+        }
+
+        return $arr;
+    }
+}
+
