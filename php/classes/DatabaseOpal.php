@@ -4207,7 +4207,7 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":Role","variable"=>$toUpdate['Role'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":Workplace","variable"=>$toUpdate['Workplace'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":Email","variable"=>$toUpdate['Email'],"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":Phone","variable"=>$toUpdate['Phone'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":Phone","variable"=>$toUpdate['git '],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":Address","variable"=>$toUpdate['Address'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":ProfileImage","variable"=>$toUpdate['ProfileImage'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":BIO_EN","variable"=>$toUpdate['BIO_EN'],"data_type"=>PDO::PARAM_STR),
@@ -4262,7 +4262,7 @@ class DatabaseOpal extends DatabaseAccess {
      * */
     function getStaff($staffId,$sourceId) {
         return $this->_fetch(OPAL_GET_STAFF, array(
-            array("parameter"=>":StaffId","variable"=>$staffId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":StaffId","variable"=>$staffId,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
         ));
     }
@@ -4287,7 +4287,7 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":LastName","variable"=>$toUpdate['LastName'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":LastUpdated","variable"=>$toUpdate['LastUpdated'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$toUpdate['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":StaffId","variable"=>$toUpdate['StaffId'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":StaffId","variable"=>$toUpdate['StaffId'],"data_type"=>PDO::PARAM_STR),
         );
         return $this->_execute(OPAL_UPDATE_STAFF,$parameters);
     }
