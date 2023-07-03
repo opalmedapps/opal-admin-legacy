@@ -42,6 +42,10 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		$scope.goToPatientMenu = function () {
 			$state.go('patients/menu');
 		};
+		// Function to go to hospital settings page
+		$scope.goToHospitalSettingsMenu = function () {
+			$state.go('hospital-settings');
+		};
 		// Function to go to patient registration page
 		$scope.goToPatientRegistration = function () {
 			$state.go('patients-register');
@@ -125,7 +129,7 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		// Function to close the navbar on selection of a menu page
 		$scope.closeNav = function () {
 			$(".navbar-collapse").collapse('hide');
-		}
+		};
 
 		// Function to set dropdown active for publishing tools
 		$scope.currentActivePublishingTool = function () {
@@ -135,7 +139,7 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 				return true;
 			}
 			else return false;
-		}
+		};
 		// Function to set dropdown active for administration menu
 		$scope.currentActiveAdministration = function () {
 			var adminstrationPages = ['diagnosis-translation','cron','patients','patients-register',
@@ -144,7 +148,7 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 				return true;
 			}
 			else return false;
-		}
+		};
 		// Function to set dropdown active for profile menu
 		$scope.currentActiveProfile = function () {
 			var profilePages = ['account'];
@@ -152,7 +156,7 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 				return true;
 			}
 			else return false;
-		}
+		};
 
 		// Function to go to report page
 		$scope.goToReport = function () {
