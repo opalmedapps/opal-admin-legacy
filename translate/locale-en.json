@@ -2683,6 +2683,8 @@
       "SUB_TITLE": "Patients Tools",
       "REGISTRATION": "Opal Registration",
       "REGISTRATION_SUB": "Register a patient or caregiver so they can use Opal.",
+      "RELATIONSHIP_TYPE": "Manage relationship types",
+      "RELATIONSHIP_TYPE_SUB": "The <strong>Relationship Types</strong> button links to the Relationship Types page in Opal Admin v2.0",
       "BACK": "Back"
     },
     "LIST": {
