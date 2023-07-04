@@ -5,7 +5,7 @@
 			<div class="row">
 				<!-- Load side menu -->
 				<div class="home-side-panel col-xs-12">
-					<div ng-include="'templates/questionnaire/menu-side.html'"></div>
+					<div ng-include="'templates/patient/menu-side.html'"></div>
 				</div>
 				<div id="side-panel-scrollbar" class="col-lg-2">
 					<div ng-include="'templates/side-panel-menu.html'"></div>
@@ -48,6 +48,25 @@
 											</div>
 											<div class="panel-description">
 												<p>{{'PATIENTS.MENU.REGISTRATION_SUB'|translate}}</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</a>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<a href="{{configs.newOpalAdminHost}}/patients/relationship-types/">
+								<div class="panel-container animated" ng-class="{pulse: hoverMenuRegistration}" ng-mouseenter="hoverMenuRegistration=true" ng-mouseleave="hoverMenuRegistration=false" style="cursor:pointer;">
+									<div class="panel-info">
+										<div class="panel-content">
+											<div class="icon-home clearfix">
+												<span class="fa fa-users"></span>
+											</div>
+											<div class="panel-title">
+												<h1>{{'PATIENTS.MENU.RELATIONSHIP_TYPE'|translate}}</h1>
+											</div>
+											<div class="panel-description">
+												<p ng-bind-html="'PATIENTS.MENU.RELATIONSHIP_TYPE_SUB'|translate"></p>
 											</div>
 										</div>
 									</div>
