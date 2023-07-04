@@ -2700,6 +2700,8 @@
       "SUB_TITLE": "Outils pour patients",
       "REGISTRATION": "Inscription à Opal",
       "REGISTRATION_SUB": "Enregistrer un patient ou un proche aidant afin qu'il puisse utiliser Opal.",
+      "RELATIONSHIP_TYPE": "Gérer types de relations avec le proche aidant",
+      "RELATIONSHIP_TYPE_SUB": "Le bouton <strong>Types de relations</strong> renvoie à la page Types de relations dans Opal Admin v2.0",
       "BACK": "Retour"
     },
     "LIST": {
