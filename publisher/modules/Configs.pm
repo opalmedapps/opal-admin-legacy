@@ -8,6 +8,7 @@ package Configs; # define package name
 
 use strict;
 use warnings;
+use Env;
 
 use Const::Fast;
 use Cwd 'abs_path';
@@ -28,82 +29,67 @@ $path_name =~ s/publisher\/controls\/patientsForPatientsControl.pl//g;
 $path_name =~ s/publisher\/controls\/legacyQuestionnaireControl.pl//g;
 $path_name =~ s/publisher\/controls\/educationalMaterialControl.pl//g;
 
-my $config_file = $path_name . 'config.json';
-
-# Get contents of config file
-my $json;
-{
-    local $/; # Enable 'slurp' mode
-    open my $file_handler, "<", $config_file
-        or die "Could not open config file at $config_file: $!";
-    $json = <$file_handler>;
-    close $file_handler;
-}
-# configurations in hash form
-my $config = decode_json($json);
-
-# DEFINE ARIA SERVER/DATABASE CREDENTIALS HERE
+# DEFINE ARIA SERVER/DATABASE SETTINGS FROM ENV FILE
 # NOTE: This works for a MicrosoftSQL (MSSQL) setup.
-const our $ARIA_DB_HOST     => $config->{'databaseConfig'}{'aria'}{'host'};
-const our $ARIA_DB_PORT     => $config->{'databaseConfig'}{'aria'}{'port'};
-const our $ARIA_DB_NAME     => $config->{'databaseConfig'}{'aria'}{'name'};
+const our $ARIA_DB_HOST     => $ENV{'ARIA_DB_HOST'};
+const our $ARIA_DB_PORT     => $ENV{'ARIA_DB_PORT'};
+const our $ARIA_DB_NAME     => $ENV{'ARIA_DB_NAME'};
 const our $ARIA_DB_DSN      => 'DBI:Sybase:server=' . $ARIA_DB_HOST . ';port=' . $ARIA_DB_PORT;
-const our $ARIA_DB_USERNAME => $config->{'databaseConfig'}{'aria'}{'username'};
-const our $ARIA_DB_PASSWORD => $config->{'databaseConfig'}{'aria'}{'password'};
+const our $ARIA_DB_USERNAME => $ENV{'ARIA_DB_USER'};
+const our $ARIA_DB_PASSWORD => $ENV{'ARIA_DB_PASSWORD'};
 
-# DEFINE OPAL DATABASE CREDENTIALS HERE
+# DEFINE OPAL DATABASE SETTINGS FROM ENV FILE
 # NOTE: This works for a MySQL setup.
-const our $OPAL_DB_NAME         => $config->{'databaseConfig'}{'opal'}{'name'};
-const our $OPAL_DB_HOST         => $config->{'databaseConfig'}{'opal'}{'host'};
-const our $OPAL_DB_PORT         => $config->{'databaseConfig'}{'opal'}{'port'};
+const our $OPAL_DB_NAME         => $ENV{'OPAL_DB_NAME'};
+const our $OPAL_DB_HOST         => $ENV{'OPAL_DB_HOST'};
+const our $OPAL_DB_PORT         => $ENV{'OPAL_DB_PORT'};
 const our $OPAL_DB_DSN          => 'DBI:mysql:database=' . $OPAL_DB_NAME . ';host=' . $OPAL_DB_HOST . ';port=' . $OPAL_DB_PORT;
-const our $OPAL_DB_USERNAME     => $config->{'databaseConfig'}{'opal'}{'username'};
-const our $OPAL_DB_PASSWORD     => $config->{'databaseConfig'}{'opal'}{'password'};
-const our $USE_SSL              => $config->{'use_ssl'};
-const our $SSL_CA               => $config->{'ssl_ca'};
+const our $OPAL_DB_USERNAME     => $ENV{'OPAL_DB_USER'};
+const our $OPAL_DB_PASSWORD     => $ENV{'OPAL_DB_PASSWORD'};
+const our $USE_SSL              => $ENV{'USE_SSL'};
+const our $SSL_CA               => $ENV{'SSL_CA'};
 const our $OPAL_DB_SSL_DSN      => 'DBI:mysql:database=' . $OPAL_DB_NAME . ';host=' . $OPAL_DB_HOST . ';port=' . $OPAL_DB_PORT . ';mysql_ssl=1;mysql_ssl_ca_file=' . $SSL_CA;
 
-
-# DEFINE: WRM DATABASE CREDENTIALS HERE
+# DEFINE: WRM DATABASE SETTINGS FROM ENV FILE
 # NOTE: This works for a MySQL setup.
-const our $WRM_DB_HOST             => $config->{'databaseConfig'}{'wrm'}{'host'};
-const our $WRM_DB_PORT             => $config->{'databaseConfig'}{'wrm'}{'port'};
-const our $WRM_DB_NAME             => $config->{'databaseConfig'}{'wrm'}{'name'};
+const our $WRM_DB_HOST             => $ENV{'WRM_DB_HOST'};
+const our $WRM_DB_PORT             => $ENV{'WRM_DB_PORT'};
+const our $WRM_DB_NAME             => $ENV{'WRM_DB_NAME'};
 const our $WRM_DB_DSN              => 'DBI:mysql:database=' . $WRM_DB_NAME . ';host=' . $WRM_DB_HOST . ';port=' . $WRM_DB_PORT;
-const our $WRM_DB_USERNAME         => $config->{'databaseConfig'}{'wrm'}{'username'};
-const our $WRM_DB_PASSWORD         => $config->{'databaseConfig'}{'wrm'}{'password'};
+const our $WRM_DB_USERNAME         => $ENV{'WRM_DB_USER'};
+const our $WRM_DB_PASSWORD         => $ENV{'WRM_DB_PASSWORD'};
 
 # DEFINE MOSAIQ SERVER/DATABASE CREDENTIALS HERE
 # NOTE: This works for a MicrosoftSQL (MSSQL) setup.
-const our $MOSAIQ_DB_HOST     => $config->{'databaseConfig'}{'mosaiq'}{'host'};
-const our $MOSAIQ_DB_PORT     => $config->{'databaseConfig'}{'mosaiq'}{'port'};
+const our $MOSAIQ_DB_HOST     => $ENV{'MOSAIQ_DB_HOST'};
+const our $MOSAIQ_DB_PORT     => $ENV{'MOSAIQ_DB_PORT'};
 const our $MOSAIQ_DB_DSN      => 'DBI:Sybase:host=' . $MOSAIQ_DB_HOST . ';port=' . $MOSAIQ_DB_PORT;
-const our $MOSAIQ_DB_USERNAME => $config->{'databaseConfig'}{'mosaiq'}{'username'};
-const our $MOSAIQ_DB_PASSWORD => $config->{'databaseConfig'}{'mosaiq'}{'password'};
+const our $MOSAIQ_DB_USERNAME => $ENV{'MOSAIQ_DB_USER'};
+const our $MOSAIQ_DB_PASSWORD => $ENV{'MOSAIQ_DB_PASSWORD'};
 
 # Environment-specific variables
-const our $FRONTEND_ABS_PATH    => $config->{'pathConfig'}{'abs_path'};
-const our $FRONTEND_REL_URL     => $config->{'pathConfig'}{'relative_url'};
+const our $FRONTEND_ABS_PATH    => $ENV{'ABS_PATH'};
+const our $FRONTEND_REL_URL     => $ENV{'RELATIVE_URL'};
 const our $BACKEND_ABS_PATH     => $FRONTEND_ABS_PATH . 'publisher/'; # absolute path of this project (include trailing slash)
 const our $BACKEND_REL_URL      => $FRONTEND_REL_URL . 'publisher/'; # relative path of this project from http host (include trailing slash)
 
 # YM 2019-01-07 : Production use shared folder
-const our $BACKEND_SHARED_URL => $config->{'pathConfig'}{'shared_drive_path'};
+const our $BACKEND_SHARED_URL => $ENV{'SHARED_DRIVE_PATH'};
 
 # DEFINE FTP CREDENTIALS HERE
 # NOTE: This is for sending clinical documents
-const our $ARIA_FTP_DIR         => $config->{'clinicalDocumentPathConfig'}{'aria'}; # clinical aria document directory
-const our $MOSAIQ_FTP_DIR       => $config->{'clinicalDocumentPathConfig'}{'mosaiq'}; # clinical mosaiq document directory
+const our $ARIA_FTP_DIR         => $ENV{'ARIA_DOCUMENT_PATH'}; # clinical aria document directory
+const our $MOSAIQ_FTP_DIR       => $ENV{'MOSAIQ_DOCUMENT_PATH'}; # clinical mosaiq document directory
 # const our $FTP_LOCAL_DIR        =>  $BACKEND_ABS_PATH . 'clinical/documents'; # PDF directory
 # YM 2019-01-07 : Production use shared folder
 const our $FTP_LOCAL_DIR        =>  $BACKEND_SHARED_URL . 'clinical/documents'; # PDF directory
-const our $OFFICE_PATH_DIR      => $config->{'clinicalDocumentPathConfig'}{'office_path'}; # Location where office is installed
+const our $OFFICE_PATH_DIR      => $ENV{'OFFICE_DOCUMENT_PATH'}; # Location where office is installed
 
 #DEFINE PUSH NOTIFICATION URL HERE
-const our $PUSH_NOTIFICATION_URL     => $config->{'pushNotificationConfig'}{'url'};
+const our $PUSH_NOTIFICATION_URL     => $ENV{'PUSH_NOTIFICATION_URL'};
 #NEW BACKEND API URL AND TOKEN
-const our $NEW_BACKEND_HOST     => $config->{'newOpalAdminHost'};
-const our $NEW_BACKEND_TOKEN     => $config->{'newOpalAdminToken'};
+const our $NEW_BACKEND_HOST     => $ENV{'NEW_OPALADMIN_HOST'};
+const our $NEW_BACKEND_TOKEN     => $ENV{'NEW_OPALADMIN_TOKEN'};
 
 #======================================================================================
 # Subroutine to return source database credentials
