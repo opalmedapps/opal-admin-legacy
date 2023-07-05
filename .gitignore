@@ -1,7 +1,7 @@
 # ignore configuration file
 config.json
 
-# ignore env file
+# dotenv environment variables file
 .env
 
 # ignore clinical documents
