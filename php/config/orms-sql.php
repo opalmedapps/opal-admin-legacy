@@ -1,14 +1,18 @@
 <?php
+
+// use config file to get the env variables
+use config;
+
 // DEFINE Waiting Room Management SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MySQL setup.
-define( "WRM_DB_ENABLED", (intval($config['databaseConfig']['wrm']['enabled']) == 0?false:true));
-define( "WRM_DB_HOST", $config['databaseConfig']['wrm']['host'] );
-define( "WRM_DB_PORT", $config['databaseConfig']['wrm']['port'] );
-define( "WRM_DB_NAME", $config['databaseConfig']['wrm']['name'] );
-define( "WRM_DB_NAME_FED", $config['databaseConfig']['wrm']['nameFED'] );
+define( "WRM_DB_ENABLED", (intval(config::getApplicationSettings()->environment->wrmDbEnabled) == 0?false:true));
+define( "WRM_DB_HOST", config::getApplicationSettings()->environment->wrmDbHost);
+define( "WRM_DB_PORT", config::getApplicationSettings()->environment->wrmDbPort);
+define( "WRM_DB_NAME", config::getApplicationSettings()->environment->wrmDbName);
+define( "WRM_DB_NAME_FED", config::getApplicationSettings()->environment->wrmFedDbName);
 define( "WRM_DB_DSN", "mysql:host=" . WRM_DB_HOST . ";port=" . WRM_DB_PORT . ";dbname=" . WRM_DB_NAME . ";charset=utf8" );
-define( "WRM_DB_USERNAME", $config['databaseConfig']['wrm']['username'] );
-define( "WRM_DB_PASSWORD", $config['databaseConfig']['wrm']['password'] );
+define( "WRM_DB_USERNAME", config::getApplicationSettings()->environment->wrmDbUser);
+define( "WRM_DB_PASSWORD", config::getApplicationSettings()->environment->wrmDbPassword);
 define( "WRM_API_URL", $config['databaseConfig']['wrm']['api']['url'] );
 define( "WRM_API_METHOD", $config['databaseConfig']['wrm']['api']['method'] );
 define( "WRM_API_CONFIG", $config['databaseConfig']['wrm']['api']['config'] );
