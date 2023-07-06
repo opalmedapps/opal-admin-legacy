@@ -4,6 +4,9 @@ config.json
 # dotenv environment variables file
 .env
 
+# ignore the firebase-admin-key configs
+/config/firebase/
+
 # ignore clinical documents
 publisher/clinical/documents/**
 # except readme
