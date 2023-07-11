@@ -98,7 +98,9 @@
       "MANAGE_QUESTIONS": "Gérer les questions",
       "MANAGE_QUESTIONS_SUB": "Afficher et modifier toutes les questions stockées dans la banque de données.",
       "PUBLICATION_TOOLS": "Outils de publication",
-      "PUBLICATION_TOOLS_SUB": "Publier et envoyer des questionnaires aux patients."
+      "PUBLICATION_TOOLS_SUB": "Publier et envoyer des questionnaires aux patients.",
+      "EXPORT_REPORTS": "Exportation de Rapports",
+      "EXPORT_REPORTS_SUB": "Exporter un questionnaire rempli sous forme de fichier PDF ou CSV."
     },
     "QUESTION_LIST" : {
       "TITLE": "Gérer les questions",
