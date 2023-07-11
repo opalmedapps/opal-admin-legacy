@@ -52,35 +52,37 @@
                         </div>
                         <uib-accordion class="side-navbar">
                             <!-- SECTION: Title -->
-                            <div uib-accordion-group is-open="titleDescriptionSection.open" class="panel-container summary-box" class="panel-container summary-box animated" ng-class="{fadeInUp: titleDescriptionSection.show}"  ng-if="titleDescriptionSection.show" is-disabled="!newQuestionnaire.name_EN && !newQuestionnaire.name_FR && !newQuestionnaire.short_name_EN && !newQuestionnaire.short_name_FR && !newQuestionnaire.description_EN && !newQuestionnaire.description_FR">
+                            <div uib-accordion-group is-open="titleDescriptionSection.open" class="panel-container summary-box" class="panel-container summary-box animated" ng-class="{fadeInUp: titleDescriptionSection.show}"  ng-if="titleDescriptionSection.show" is-disabled="!newQuestionnaire.name_EN && !newQuestionnaire.name_FR && !newQuestionnaire.description_EN && !newQuestionnaire.description_FR">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
-                                            <span ng-if="newQuestionnaire.title_EN && newQuestionnaire.title_FR && newQuestionnaire.short_name_EN && newQuestionnaire.short_name_FR && newQuestionnaire.description_EN && newQuestionnaire.description_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                            <span ng-if="newQuestionnaire.title_EN && newQuestionnaire.title_FR && newQuestionnaire.description_EN && newQuestionnaire.description_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
                                             <strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.TITLE_DESCRIPTION'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleDescriptionSection.open, 'glyphicon-chevron-right': !titleDescriptionSection.open}" ng-if="newQuestionnaire.title_EN || newQuestionnaire.title_FR || newQuestionnaire.short_name_EN || newQuestionnaire.short_name_FR || newQuestionnaire.description_EN || newQuestionnaire.description_FR"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleDescriptionSection.open, 'glyphicon-chevron-right': !titleDescriptionSection.open}" ng-if="newQuestionnaire.title_EN || newQuestionnaire.title_FR || newQuestionnaire.description_EN || newQuestionnaire.description_FR"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
-                                <div ng-if="newQuestionnaire.title_EN || newQuestionnaire.short_name_EN || newQuestionnaire.description_EN" class="description">
-                                    <p ng-if="newQuestionnaire.title_EN || newQuestionnaire.short_name_EN" style="margin-bottom:5px;">
+                                <div ng-if="newQuestionnaire.title_EN || newQuestionnaire.description_EN" class="description">
+                                    <p ng-if="newQuestionnaire.title_EN" style="margin-bottom:5px;">
                                         <strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.ENGLISH_TITLE'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        <span ng-if="newQuestionnaire.title_EN">{{newQuestionnaire.title_EN}} |</span> 
-                                        <span ng-if="newQuestionnaire.short_name_EN">{{newQuestionnaire.short_name_EN}}</span>
+                                        {{newQuestionnaire.title_EN}}
+                                        <!--span ng-if="newQuestionnaire.title_EN">{{newQuestionnaire.title_EN}} |</span> 
+                                        <span ng-if="newQuestionnaire.short_name_EN">{{newQuestionnaire.short_name_EN}}</span-->
                                     </p>
                                     <p ng-if="newQuestionnaire.description_EN" style="padding-left:10px; font-size:10px;"><em>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.SEE_DESCRIPTION'|translate}}</em></p>
                                 </div>
-                                <div ng-if="newQuestionnaire.title_FR || newQuestionnaire.short_name_FR || newQuestionnaire.description_FR" class="description">
-                                    <p ng-if="newQuestionnaire.title_FR || newQuestionnaire.short_name_FR" style="margin-bottom:5px;">
+                                <div ng-if="newQuestionnaire.title_FR || newQuestionnaire.description_FR" class="description">
+                                    <p ng-if="newQuestionnaire.title_FR" style="margin-bottom:5px;">
                                         <strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.FRENCH_TITLE'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        <span ng-if="newQuestionnaire.title_FR">{{newQuestionnaire.title_FR}} |</span> 
-                                        <span ng-if="newQuestionnaire.short_name_FR">{{newQuestionnaire.short_name_FR}}</span>
+                                        {{newQuestionnaire.title_FR}}
+                                        <!--span ng-if="newQuestionnaire.title_FR">{{newQuestionnaire.title_FR}} |</span> 
+                                        <span ng-if="newQuestionnaire.short_name_FR">{{newQuestionnaire.short_name_FR}}</span-->
                                     </p>
                                     <p ng-if="newQuestionnaire.description_FR" style="padding-left:10px; font-size:10px;"><em>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.SEE_DESCRIPTION'|translate}}</em></p>
                                 </div>
@@ -269,10 +271,10 @@
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-md-6">
-                                <div class="panel" ng-class="(newQuestionnaire.title_EN && newQuestionnaire.short_name_EN && newQuestionnaire.description_EN) ? 'panel-success': 'panel-danger'">
+                                <div class="panel" ng-class="(newQuestionnaire.title_EN && newQuestionnaire.description_EN) ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.ENGLISH'|translate}}</strong>
-                                        <span ng-hide="newQuestionnaire.title_EN && newQuestionnaire.short_name_EN && newQuestionnaire.description_EN" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.INCOMPLETE'|translate}}</em></span>
-                                        <span ng-show="newQuestionnaire.title_EN && newQuestionnaire.short_name_EN && newQuestionnaire.description_EN" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.COMPLETE'|translate}}</em></span>
+                                        <span ng-hide="newQuestionnaire.title_EN && newQuestionnaire.description_EN" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="newQuestionnaire.title_EN && newQuestionnaire.description_EN" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body form-horizontal">
                                         <div class="form-group">
@@ -283,14 +285,14 @@
                                                 <input class="form-control" type="text" ng-model="newQuestionnaire.title_EN" ng-change="titleDescriptionUpdate()" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.PLACEHOLDER_ENGLISH_TITLE'|translate}}" required="required">
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <!--div class="form-group">
                                             <label class="control-label col-xs-12 col-lg-2">
                                                 {{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.SHORT_NAME'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
                                                 <input class="form-control" type="text" ng-model="newQuestionnaire.short_name_EN" ng-change="titleDescriptionUpdate()" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.PLACEHOLDER_ENGLISH_SHORT_NAME'|translate}}" required="required">
                                             </div>
-                                        </div>
+                                        </div-->
                                         <div class="form-group">
                                             <label class="control-label col-xs-12 col-lg-2">
                                                 {{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.DESCRIPTION'|translate}}
@@ -303,10 +305,10 @@
                                 </div>
                             </div>
                             <div class="col-xs-12 col-md-6">
-                                <div class="panel" ng-class="(newQuestionnaire.title_FR && newQuestionnaire.short_name_FR && newQuestionnaire.description_FR) ? 'panel-success': 'panel-danger'">
+                                <div class="panel" ng-class="(newQuestionnaire.title_FR && newQuestionnaire.description_FR) ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>Français</strong>
-                                        <span ng-hide="newQuestionnaire.title_FR && newQuestionnaire.short_name_FR && newQuestionnaire.description_FR" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.INCOMPLETE'|translate}}</em></span>
-                                        <span ng-show="newQuestionnaire.title_FR && newQuestionnaire.short_name_FR && newQuestionnaire.description_FR" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.COMPLETE'|translate}}</em></span>
+                                        <span ng-hide="newQuestionnaire.title_FR && newQuestionnaire.description_FR" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="newQuestionnaire.title_FR && newQuestionnaire.description_FR" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body form-horizontal">
                                         <div class="form-group">
@@ -317,14 +319,14 @@
                                                 <input class="form-control" type="text" ng-model="newQuestionnaire.title_FR" ng-change="titleDescriptionUpdate()" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.PLACEHOLDER_FRENCH_TITLE'|translate}}" required="required">
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <!--div class="form-group">
                                             <label class="control-label col-xs-12 col-lg-2">
                                                 {{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.SHORT_NAME'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
                                                 <input class="form-control" type="text" ng-model="newQuestionnaire.short_name_FR" ng-change="titleDescriptionUpdate()" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.PLACEHOLDER_FRENCH_SHORT_NAME'|translate}}" required="required">
                                             </div>
-                                        </div>
+                                        </div-->
                                         <div class="form-group">
                                             <label class="control-label col-xs-12 col-lg-2">
                                                 {{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.DESCRIPTION'|translate}}
