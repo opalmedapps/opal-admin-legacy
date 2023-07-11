@@ -96,7 +96,9 @@
       "MANAGE_QUESTIONS": "Manage Questions",
       "MANAGE_QUESTIONS_SUB": "View and edit all the questions stored in the question bank.",
       "PUBLICATION_TOOLS": "Publication Tools",
-      "PUBLICATION_TOOLS_SUB": "Publish and send questionnaires to patients."
+      "PUBLICATION_TOOLS_SUB": "Publish and send questionnaires to patients.",
+      "EXPORT_REPORTS": "Export Reports",
+      "EXPORT_REPORTS_SUB": "Export a completed questionnaire as a PDF or CSV file."
     },
     "QUESTION_LIST" : {
       "TITLE": "Manage Questions",
