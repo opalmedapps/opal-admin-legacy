@@ -2,6 +2,7 @@
     "name": "integrator/opal-admin",
     "description": "Libraries required for OpalAdmin",
     "require": {
-        "kreait/firebase-php": "^5.22"
+        "kreait/firebase-php": "^5.22",
+        "phpmailer/phpmailer": "6.8.0"
     }
 }

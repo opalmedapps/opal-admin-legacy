@@ -184,4 +184,20 @@ class CronJob extends OpalProject {
             }
         }
     }
+
+    /**
+     * 
+     */
+    public function CheckMissingMrn(){
+        $this->_checkCronAccess();
+        $patientList = $this->opalDB->getPatientWithNoMRN();
+        $recipients = array("yickkuan.mo@muhc.mcgill.ca", "zeyu.dou@muhc.mcgill.ca");
+
+        if (count($patientList) > 0)
+        {
+            $emailContent = "Hello";
+            $mailer = new OpalMailer();
+            $mailer->sendViaSMTP("Patient missing mrns", $emailContent, $recipients, "opal@muhc.mcgill.ca");
+        }
+    }
 }

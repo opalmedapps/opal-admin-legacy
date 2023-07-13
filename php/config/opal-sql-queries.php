@@ -2164,3 +2164,9 @@ const SQL_OPAL_UPDATE_HOSPITAL_MAP_MH = "
     UPDATE ".OPAL_HOSPITAL_MAP_TABLE." SET LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId WHERE
     HospitalMapSerNum = :HospitalMapSerNum ORDER BY RevSerNum DESC LIMIT 1
 ";
+
+const SQL_OPAL_GET_PATIENT_WITH_NO_MRN = "
+    SELECT P.SSN FROM" .OPAL_PATIENT_TABLE. "P
+    WHERE (SELECT COUNT(*) FROM" .OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE. "phi WHERE P.PatientSerNum = phi.PatientSerNum) = 0
+    AND P.LastUpdated > CURDATE()-1;
+";

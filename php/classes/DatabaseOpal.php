@@ -4481,5 +4481,12 @@ class DatabaseOpal extends DatabaseAccess {
         );
         return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_HOSPITAL_MAP_MH, $toUpdate);
     }
+
+    /**
+     * Get the patient with no mrn in database
+     */
+    function getPatientWithNoMRN() {
+        return $this->_fetchAll(SQL_OPAL_GET_PATIENT_WITH_NO_MRN, array());
+    }
 }
 
