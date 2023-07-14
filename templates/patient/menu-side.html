@@ -47,6 +47,16 @@
             </div>
         </a>
     </div>
+    <div class="col-md-12" ng-repeat="menu in navSubMenu">
+        <div class="panel-container animated" ng-class="{pulse: hoverSideMenu, active: currentPage == '{{menu.url}}'}" ng-mouseenter="hoverSideMenu=true" ng-mouseleave="hoverSideMenu=false" style="cursor:pointer;" ui-sref="{{menu.url}}">
+            <div class="side-panel-info-sm" ng-class="{active: currentPage == '{{menu.url}}'}">
+                <div class="panel-content">
+                    <span style="font-size: 23px;vertical-align:middle" class="{{menu.iconClass}}" aria-hidden="true"></span>
+                    <h6 class="side-panel-title" style="display:inline-block;margin:0"><strong>{{menu.name_display}}</strong></h6>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="col-md-12">
         <a href="{{configs.newOpalAdminHost}}/patients/relationship-types/">
             <div class="panel-container animated" ng-class="{pulse: hoverSideMenu}" ng-mouseenter="hoverSideMenu=true" ng-mouseleave="hoverSideMenu=false" style="cursor:pointer;">
@@ -58,15 +68,5 @@
                 </div>
             </div>
         </a>
-    </div>
-    <div class="col-md-12" ng-repeat="menu in navSubMenu">
-        <div class="panel-container animated" ng-class="{pulse: hoverSideMenu, active: currentPage == '{{menu.url}}'}" ng-mouseenter="hoverSideMenu=true" ng-mouseleave="hoverSideMenu=false" style="cursor:pointer;" ui-sref="{{menu.url}}">
-            <div class="side-panel-info-sm" ng-class="{active: currentPage == '{{menu.url}}'}">
-                <div class="panel-content">
-                    <span style="font-size: 23px;vertical-align:middle" class="{{menu.iconClass}}" aria-hidden="true"></span>
-                    <h6 class="side-panel-title" style="display:inline-block;margin:0"><strong>{{menu.name_display}}</strong></h6>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
