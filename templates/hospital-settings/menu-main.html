@@ -37,7 +37,7 @@
 					<div class="row">
 						<div class="col-xs-12 col-sm-6 col-md-4">
 							<a href="{{configs.newOpalAdminHost}}/hospital-settings/institutions/">
-								<div class="panel-container animated" ng-class="{pulse: hoverMenuRegistration}" ng-mouseenter="hoverMenuRegistration=true" ng-mouseleave="hoverMenuRegistration=false" style="cursor:pointer;">
+								<div class="panel-container animated" ng-class="{pulse: hoverMenu}" ng-mouseenter="hoverMenu=true" ng-mouseleave="hoverMenu=false" style="cursor:pointer;">
 									<div class="panel-info">
 										<div class="panel-content">
 											<div class="icon-home clearfix">
@@ -47,7 +47,7 @@
 												<h1>{{'HOSPITAL_SETTINGS.MENU.INSTITUTION'|translate}}</h1>
 											</div>
 											<div class="panel-description">
-												<p ng-bind-html="'HOSPITAL_SETTINGS.MENU.INSTITUTION_SUB'|translate"></p>
+												<p>{{'HOSPITAL_SETTINGS.MENU.INSTITUTION_SUB'|translate}}</p>
 											</div>
 										</div>
 									</div>
@@ -66,7 +66,7 @@
 												<h1>{{'HOSPITAL_SETTINGS.MENU.SITE'|translate}}</h1>
 											</div>
 											<div class="panel-description">
-												<p ng-bind-html="'HOSPITAL_SETTINGS.MENU.SITE_SUB'|translate"></p>
+												<p>{{'HOSPITAL_SETTINGS.MENU.SITE_SUB'|translate}}</p>
 											</div>
 										</div>
 									</div>

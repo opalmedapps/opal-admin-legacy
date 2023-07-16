@@ -341,8 +341,6 @@ define("SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_DETAILS",
     "SELECT q.*,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS title_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS title_FR,
-    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.nickname AND d.languageId = ".ENGLISH_LANGUAGE.") AS short_name_EN,
-    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.nickname AND d.languageId = ".FRENCH_LANGUAGE.") AS short_name_FR,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS description_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR,
     q.purposeId AS purpose, q.respondentId AS respondent 
