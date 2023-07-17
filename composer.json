@@ -3,6 +3,6 @@
     "description": "Libraries required for OpalAdmin",
     "require": {
         "kreait/firebase-php": "^5.22",
-        "vlucas/phpdotenv": "*"
+        "vlucas/phpdotenv": "5.5.0"
     }
 }
