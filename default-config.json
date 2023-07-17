@@ -1,0 +1,19 @@
+{
+"login" : {
+		"activeDirectory": {
+		  "_comment": "configuration of active directory login",
+		  "url" : "https://fedauthfcp.rtss.qc.ca/fedauth/wsapi/login",
+		  "settings" : {
+			"uid" : "%%USERNAME%%",
+			"pwd" : "%%PASSWORD%%",
+			"institution" : "06-ciusss-cusm"
+		  },
+		  "config": {
+		    "10002": "https://fedauthfcp.rtss.qc.ca/fedauth/wsapi/login",
+		    "19913": 1
+		  },
+		  "enabled": 0
+		},
+		"salt": "Zo4rU5Z1YyKJAASY0PT6EUg7BBYdlEhPaNLuxAwU8lqu1ElzHv0Ri7EM6irpx5w"
+	  }
+}
