@@ -5,12 +5,12 @@ use config;
 
 // DEFINE OPAL SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MySQL setup.
-define( "OPAL_DB_HOST", config::getApplicationSettings()->environment->opalDbHost);
-define( "OPAL_DB_PORT", config::getApplicationSettings()->environment->opalDbPort);
-define( "OPAL_DB_NAME", config::getApplicationSettings()->environment->opalDbName);
+define( "OPAL_DB_HOST", $_ENV["OPAL_DB_HOST"]);
+define( "OPAL_DB_PORT", $_ENV["OPAL_DB_PORT"]);
+define( "OPAL_DB_NAME", $_ENV["OPAL_DB_NAME"]);
 define( "OPAL_DB_DSN", "mysql:host=" . OPAL_DB_HOST . ";port=" . OPAL_DB_PORT . ";dbname=" . OPAL_DB_NAME . ";charset=utf8" );
-define( "OPAL_DB_USERNAME", config::getApplicationSettings()->environment->opalDbUser);
-define( "OPAL_DB_PASSWORD", config::getApplicationSettings()->environment->opalDbPassword);
+define( "OPAL_DB_USERNAME", $_ENV["OPAL_DB_USER"]);
+define( "OPAL_DB_PASSWORD", $_ENV["OPAL_DB_PASSWORD"]);
 
 //Definition of all the tables from the opalDB database
 define("OPAL_OAUSER_TABLE","OAUser");

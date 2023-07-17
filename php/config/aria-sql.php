@@ -13,18 +13,16 @@ use config;
 
 // DEFINE ARIA SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MicrosoftSQL (MSSQL) setup.
-// NOT USED
-// define( "ARIA_DB_ENABLED", (intval($config['databaseConfig']['aria']['enabled']) == 0?false:true));
-define( "ARIA_DB_HOST", config::getApplicationSettings()->environment->ariaDbHost);
-define( "ARIA_DB_PORT", config::getApplicationSettings()->environment->ariaDbPort);
-define( "ARIA_DB_NAME", config::getApplicationSettings()->environment->ariaDbName);
+define( "ARIA_DB_HOST", $_ENV["ARIA_DB_HOST"]);
+define( "ARIA_DB_PORT", $_ENV["ARIA_DB_PORT"]);
+define( "ARIA_DB_NAME", $_ENV["ARIA_DB_NAME"]);
 if(in_array($_SERVER['REMOTE_ADDR'], LOCALHOST_ADDRESS))
     define( "ARIA_DB_DSN", "odbc:Driver={SQL Server};Server=" . ARIA_DB_HOST);
 else
     # define( "ARIA_DB_DSN", "dblib:host=" . ARIA_DB_HOST . ":" . ARIA_DB_PORT . "\\database" . ";charset=utf8");
     define( "ARIA_DB_DSN", "odbc:DRIVER=FreeTDS;SERVER=" . ARIA_DB_HOST . ";PORT=" . ARIA_DB_PORT . ";DATABASE=" . ARIA_DB_NAME);
-define( "ARIA_DB_USERNAME", config::getApplicationSettings()->environment->ariaDbUser);
-define( "ARIA_DB_PASSWORD", config::getApplicationSettings()->environment->ariaDbPassword);
+define( "ARIA_DB_USERNAME", $_ENV["ARIA_DB_USER"]);
+define( "ARIA_DB_PASSWORD", $_ENV["ARIA_DB_PASSWORD"]);
 
 //	act.ActivityRevCount,
 define("ARIA_GET_ALIASES_QT", "

@@ -4,233 +4,99 @@ require_once __DIR__."/../vendor/autoload.php";
 use Dotenv\Dotenv;
 
 
-/** @psalm-immutable */
-class Config
-{
-    private static Config $self;
 
-    private function __construct(
-        public EnvironmentConfig $environment
-    ) {}
+$dotenv = Dotenv::createImmutable(__DIR__ . '/..');
+// don't fail if the .env file is not there
+$dotenv->safeload();
 
-    public static function getApplicationSettings(): Config
-    {
-        return self::$self;
-    }
+// Ensure that the following environment variables are set
+// Opal Database Settings
+$dotenv->required('OPAL_DB_HOST')->notEmpty();
+$dotenv->required('OPAL_DB_PORT')->notEmpty();
+$dotenv->required('OPAL_DB_NAME')->notEmpty();
+$dotenv->required('OPAL_DB_USER')->notEmpty();
+$dotenv->required('OPAL_DB_PASSWORD')->notEmpty();
+// Questionnaire Database Settings
+$dotenv->required('QUESTIONNAIRE_DB_HOST')->notEmpty();
+$dotenv->required('QUESTIONNAIRE_DB_PORT')->notEmpty();
+$dotenv->required('QUESTIONNAIRE_DB_NAME')->notEmpty();
+$dotenv->required('QUESTIONNAIRE_DB_USER')->notEmpty();
+$dotenv->required('QUESTIONNAIRE_DB_PASSWORD')->notEmpty();
+$dotenv->required('QUESTIONNAIRE_DB_ENABLED')->notEmpty();
+// Aria Database Settings
+$dotenv->required('ARIA_DB_HOST')->notEmpty();
+$dotenv->required('ARIA_DB_PORT')->notEmpty();
+$dotenv->required('ARIA_DB_NAME')->notEmpty();
+$dotenv->required('ARIA_DB_USER')->notEmpty();
+$dotenv->required('ARIA_DB_PASSWORD')->notEmpty();
+$dotenv->required('ARIA_DB_ENABLED')->notEmpty();
+// WRM Database Settings
+$dotenv->required('WRM_DB_HOST')->notEmpty();
+$dotenv->required('WRM_DB_PORT')->notEmpty();
+$dotenv->required('WRM_DB_NAME')->notEmpty();
+$dotenv->required('WRM_DB_USER')->notEmpty();
+$dotenv->required('WRM_DB_PASSWORD')->notEmpty();
+$dotenv->required('WRM_DB_ENABLED')->notEmpty();
+$dotenv->required('FEDERATED_WRM_DB_NAME')->notEmpty();
+// MOSAIQ Database Settings
+$dotenv->required('MOSAIQ_DB_HOST')->notEmpty();
+$dotenv->required('MOSAIQ_DB_PORT')->notEmpty();
+$dotenv->required('MOSAIQ_DB_USER')->notEmpty();
+$dotenv->required('MOSAIQ_DB_PASSWORD')->notEmpty();
+$dotenv->required('MOSAIQ_DB_ENABLED')->notEmpty();
+// New OpalAdmin Settings
+$dotenv->required('NEW_OPALADMIN_HOST')->notEmpty();
+$dotenv->required('NEW_OPALADMIN_TOKEN')->notEmpty();
+// SSL configurations
+$dotenv->required('USE_SSL')->notEmpty();
+$dotenv->required('SSL_CA')->notEmpty();
+// Puhs notification configurations
+$dotenv->required('PUSH_NOTIFICATION_URL')->notEmpty();
+$dotenv->required('PUSH_NOTIFICATION_ANDROID_API_KEY')->notEmpty();
+$dotenv->required('PUSH_NOTIFICATION_ANDROID_URL')->notEmpty();
+$dotenv->required('APPLE_CERT_PASSWORD')->notEmpty();
+$dotenv->required('APPLE_CERT_FILENAME')->notEmpty();
+$dotenv->required('APPLE_CERT_KEY')->notEmpty();
+$dotenv->required('APPLE_URL')->notEmpty();
+$dotenv->required('APPLE_TOPIC')->notEmpty();
+// Firebase settings
+$dotenv->required('FIREBASE_DATABASE_URL')->notEmpty();
+$dotenv->required('FIREBASE_ADMIN_KEY_PATH')->notEmpty();
+// Path configurations
+$dotenv->required('ABS_PATH')->notEmpty();
+$dotenv->required('RELATIVE_URL')->notEmpty();
+$dotenv->required('SHARED_DRIVE_PATH')->notEmpty();
+$dotenv->required('REGISTRATION_URL')->notEmpty();
+// Path configurations for clinical document
+$dotenv->required('ARIA_DOCUMENT_PATH')->notEmpty();
+$dotenv->required('MOSAIQ_DOCUMENT_PATH')->notEmpty();
+$dotenv->required('OFFICE_DOCUMENT_PATH')->notEmpty();
 
-    public static function __init(): void
-    {
-        $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
-        // don't fail if the .env file is not there
-        $dotenv->safeload();
-
-        // Ensure that the following environment variables are set
-        // Opal Database Settings
-        $dotenv->required('OPAL_DB_HOST')->notEmpty();
-        $dotenv->required('OPAL_DB_PORT')->notEmpty();
-        $dotenv->required('OPAL_DB_NAME')->notEmpty();
-        $dotenv->required('OPAL_DB_USER')->notEmpty();
-        $dotenv->required('OPAL_DB_PASSWORD')->notEmpty();
-        // Questionnaire Database Settings
-        $dotenv->required('QUESTIONNAIRE_DB_HOST')->notEmpty();
-        $dotenv->required('QUESTIONNAIRE_DB_PORT')->notEmpty();
-        $dotenv->required('QUESTIONNAIRE_DB_NAME')->notEmpty();
-        $dotenv->required('QUESTIONNAIRE_DB_USER')->notEmpty();
-        $dotenv->required('QUESTIONNAIRE_DB_PASSWORD')->notEmpty();
-        $dotenv->required('QUESTIONNAIRE_DB_ENABLED')->notEmpty();
-        // Aria Database Settings
-        $dotenv->required('ARIA_DB_HOST')->notEmpty();
-        $dotenv->required('ARIA_DB_PORT')->notEmpty();
-        $dotenv->required('ARIA_DB_NAME')->notEmpty();
-        $dotenv->required('ARIA_DB_USER')->notEmpty();
-        $dotenv->required('ARIA_DB_PASSWORD')->notEmpty();
-        $dotenv->required('ARIA_DB_ENABLED')->notEmpty();
-        // WRM Database Settings
-        $dotenv->required('WRM_DB_HOST')->notEmpty();
-        $dotenv->required('WRM_DB_PORT')->notEmpty();
-        $dotenv->required('WRM_DB_NAME')->notEmpty();
-        $dotenv->required('WRM_DB_USER')->notEmpty();
-        $dotenv->required('WRM_DB_PASSWORD')->notEmpty();
-        $dotenv->required('WRM_DB_ENABLED')->notEmpty();
-        $dotenv->required('FEDERATED_WRM_DB_NAME')->notEmpty();
-        // MOSAIQ Database Settings
-        $dotenv->required('MOSAIQ_DB_HOST')->notEmpty();
-        $dotenv->required('MOSAIQ_DB_PORT')->notEmpty();
-        $dotenv->required('MOSAIQ_DB_USER')->notEmpty();
-        $dotenv->required('MOSAIQ_DB_PASSWORD')->notEmpty();
-        $dotenv->required('MOSAIQ_DB_ENABLED')->notEmpty();
-        // New OpalAdmin Settings
-        $dotenv->required('NEW_OPALADMIN_HOST')->notEmpty();
-        $dotenv->required('NEW_OPALADMIN_TOKEN')->notEmpty();
-        // SSL configurations
-        $dotenv->required('USE_SSL')->notEmpty();
-        $dotenv->required('SSL_CA')->notEmpty();
-        // Puhs notification configurations
-        $dotenv->required('PUSH_NOTIFICATION_URL')->notEmpty();
-        $dotenv->required('PUSH_NOTIFICATION_ANDROID_API_KEY')->notEmpty();
-        $dotenv->required('PUSH_NOTIFICATION_ANDROID_URL')->notEmpty();
-        $dotenv->required('APPLE_CERT_PASSWORD')->notEmpty();
-        $dotenv->required('APPLE_CERT_FILENAME')->notEmpty();
-        $dotenv->required('APPLE_CERT_KEY')->notEmpty();
-        $dotenv->required('APPLE_URL')->notEmpty();
-        $dotenv->required('APPLE_TOPIC')->notEmpty();
-        // Firebase settings
-        $dotenv->required('FIREBASE_DATABASE_URL')->notEmpty();
-        $dotenv->required('FIREBASE_ADMIN_KEY_PATH')->notEmpty();
-        // Path configurations
-        $dotenv->required('ABS_PATH')->notEmpty();
-        $dotenv->required('RELATIVE_URL')->notEmpty();
-        $dotenv->required('SHARED_DRIVE_PATH')->notEmpty();
-        $dotenv->required('REGISTRATION_URL')->notEmpty();
-        // Path configurations for clinical document
-        $dotenv->required('ARIA_DOCUMENT_PATH')->notEmpty();
-        $dotenv->required('MOSAIQ_DOCUMENT_PATH')->notEmpty();
-        $dotenv->required('OFFICE_DOCUMENT_PATH')->notEmpty();
-
-        $_ENV = self::_parseData($_ENV);
-
-        // initialize required configs
-        $environment = new EnvironmentConfig(
-            opalDbHost: $_ENV["OPAL_DB_HOST"],
-            opalDbPort: $_ENV["OPAL_DB_PORT"],
-            opalDbName: $_ENV["OPAL_DB_NAME"],
-            opalDbUser: $_ENV["OPAL_DB_USER"],
-            opalDbPassword: $_ENV["OPAL_DB_PASSWORD"],
-            questionnaireDbHost: $_ENV['QUESTIONNAIRE_DB_HOST'],
-            questionnaireDbPort: $_ENV['QUESTIONNAIRE_DB_PORT'],
-            questionnaireDbName: $_ENV['QUESTIONNAIRE_DB_NAME'],
-            questionnaireDbUser: $_ENV['QUESTIONNAIRE_DB_USER'],
-            questionnaireDbPassword: $_ENV['QUESTIONNAIRE_DB_PASSWORD'],
-            questionnaireDbEnabled: $_ENV['QUESTIONNAIRE_DB_ENABLED'],
-            ariaDbHost: $_ENV['ARIA_DB_HOST'],
-            ariaDbPort: $_ENV['ARIA_DB_PORT'],
-            ariaDbName: $_ENV['ARIA_DB_NAME'],
-            ariaDbUser: $_ENV['ARIA_DB_USER'],
-            ariaDbPassword: $_ENV['ARIA_DB_PASSWORD'],
-            ariaDbEnabled: $_ENV['ARIA_DB_ENABLED'],
-            wrmDbHost: $_ENV['WRM_DB_HOST'],
-            wrmDbName: $_ENV['WRM_DB_NAME'],
-            wrmDbPort: $_ENV['WRM_DB_PORT'],
-            wrmDbUser: $_ENV['WRM_DB_USER'],
-            wrmDbPassword: $_ENV['WRM_DB_PASSWORD'],
-            wrmDbEnabled: $_ENV['WRM_DB_ENABLED'],
-            wrmFedDbName: $_ENV['FEDERATED_WRM_DB_NAME'],
-            mosaiqDbHost: $_ENV['MOSAIQ_DB_HOST'],
-            mosaiqDbPort: $_ENV['MOSAIQ_DB_PORT'],
-            mosaiqDbUser: $_ENV['MOSAIQ_DB_USER'],
-            mosaiqDbPassword: $_ENV['MOSAIQ_DB_PASSWORD'],
-            mosaiqDbEnabled: $_ENV['MOSAIQ_DB_ENABLED'],
-            newOpaladminHost: $_ENV['NEW_OPALADMIN_HOST'],
-            newOpaladminToken: $_ENV['NEW_OPALADMIN_TOKEN'],
-            useSsl: $_ENV['USE_SSL'],
-            sslCa: $_ENV['SSL_CA'],
-            pushNotificationUrl: $_ENV['PUSH_NOTIFICATION_URL'],
-            pushNotificationAndroidApiKey: $_ENV['PUSH_NOTIFICATION_ANDROID_API_KEY'],
-            pushNotificationAndroidUrl: $_ENV['PUSH_NOTIFICATION_ANDROID_URL'],
-            appleCertPassword: $_ENV['APPLE_CERT_PASSWORD'],
-            appleCertFilename: $_ENV['APPLE_CERT_FILENAME'],
-            appleCertKey: $_ENV['APPLE_CERT_KEY'],
-            appleTopic: $_ENV['APPLE_TOPIC'],
-            appleUrl: $_ENV['APPLE_URL'],
-            firebaseDatabaseUrl: $_ENV['FIREBASE_DATABASE_URL'],
-            firebaseAdminKeyPath: $_ENV['FIREBASE_ADMIN_KEY_PATH'],
-            absPath: $_ENV['ABS_PATH'],
-            relativeUrl: $_ENV['RELATIVE_URL'],
-            sharedDrivePath: $_ENV['SHARED_DRIVE_PATH'],
-            registrationUrl: $_ENV['REGISTRATION_URL'],
-            ariaDocumentPath: $_ENV['ARIA_DOCUMENT_PATH'],
-            mosaiqDocumentPath: $_ENV['MOSAIQ_DOCUMENT_PATH'],
-            officeDocumentPath: $_ENV['OFFICE_DOCUMENT_PATH']
-        );
-
-        self::$self = new self(
-            environment: $environment,
-        );
-    }
-
-    /**
-     * Function to convert all empty strings in an assoc array into nulls
-     * @param array<string|string[]> $arr
-     * @return mixed[]
-     */
-    private static function _parseData(array $arr): array
-    {
-        foreach($arr as &$val)
-        {
-            $val = is_array($val) ? self::_parseData($val) : $val;
-            $val = ($val !== "") ? $val : null;
-        }
-
-        return $arr;
-    }
-}
-
-/** @psalm-immutable */
-class EnvironmentConfig
-{
-    public function __construct(
-        public string $opalDbHost,
-        public string $opalDbPort,
-        public string $opalDbName,
-        public string $opalDbUser,
-        public string $opalDbPassword,
-        public string $questionnaireDbHost,
-        public string $questionnaireDbPort,
-        public string $questionnaireDbName,
-        public string $questionnaireDbUser,
-        public string $questionnaireDbPassword,
-        public string $questionnaireDbEnabled,
-        public string $ariaDbHost,
-        public string $ariaDbPort,
-        public string $ariaDbName,
-        public string $ariaDbUser,
-        public string $ariaDbPassword,
-        public string $ariaDbEnabled,
-        public string $wrmDbHost,
-        public string $wrmDbName,
-        public string $wrmDbPort,
-        public string $wrmDbUser,
-        public string $wrmDbPassword,
-        public string $wrmDbEnabled,
-        public string $wrmFedDbName,
-        public string $mosaiqDbHost,
-        public string $mosaiqDbPort,
-        public string $mosaiqDbUser,
-        public string $mosaiqDbPassword,
-        public string $mosaiqDbEnabled,
-        public string $newOpaladminHost,
-        public string $newOpaladminToken,
-        public string $useSsl,
-        public string $sslCa,
-        public string $pushNotificationUrl,
-        public string $pushNotificationAndroidApiKey,
-        public string $pushNotificationAndroidUrl,
-        public string $appleCertPassword,
-        public string $appleCertFilename,
-        public string $appleCertKey,
-        public string $appleTopic,
-        public string $appleUrl,
-        public string $firebaseDatabaseUrl,
-        public string $firebaseAdminKeyPath,
-        public string $absPath,
-        public string $relativeUrl,
-        public string $sharedDrivePath,
-        public string $registrationUrl,
-        public string $ariaDocumentPath,
-        public string $mosaiqDocumentPath,
-        public string $officeDocumentPath
-    ) {}
-}
 
 /*
 * PHP global settings:
 */
 session_start();
-// initialize environment variables from .env file
-Config::__init();
 
 // Set the time ze for the Eastern Time Zone (ET)
 date_default_timezone_set("America/Toronto");
+
+// Get directory path of this file
+$pathname 	= __DIR__;
+// Strip php directory
+$abspath 	= str_replace('php', '', $pathname);
+
+// Specify location of config file
+$json = file_get_contents($abspath . 'config.json');
+
+$config = json_decode($json, true);
+
+// set the active directory settings
+define("USER_SALT", $config["login"]["salt"]);
+define("ACTIVE_DIRECTORY", $config["login"]["activeDirectory"]);
+define("ACTIVE_DIRECTORY_SETTINGS", $config["login"]["activeDirectory"]["settings"]);
+define("MSSS_ACTIVE_DIRECTORY_CONFIG", $config["login"]["activeDirectory"]["config"]);
+define("AD_LOGIN_ACTIVE", ACTIVE_DIRECTORY["enabled"]);
 
 // Turn on all errors except for notices
 error_reporting(E_ALL & ~E_NOTICE ^ E_WARNING);
@@ -253,31 +119,31 @@ const LIMIT_DAYS_AUDIT_SYSTEM_BACKUP = 5;
 define("OPAL_CHECKIN_CALL", "https://" . $_SERVER['HTTP_HOST'] . "/opalAdmin/publisher/php/OpalCheckIn.php");
 
 // Define SSL setting for database connection strings and path to cert file
-define ("USE_SSL", Config::getApplicationSettings()->environment->useSsl);
-define ("SSL_CA", Config::getApplicationSettings()->environment->sslCa);
+define ("USE_SSL", $_ENV["USE_SSL"]);
+define ("SSL_CA", $_ENV["SSL_CA"]);
 
 // DEFINE MOSAIQ SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MicrosoftSQL (MSSQL) setup.
-define( "MOSAIQ_DB_HOST", Config::getApplicationSettings()->environment->mosaiqDbHost);
-define( "MOSAIQ_DB_PORT", Config::getApplicationSettings()->environment->mosaiqDbPort);
+define( "MOSAIQ_DB_HOST", $_ENV["MOSAIQ_DB_HOST"]);
+define( "MOSAIQ_DB_PORT", $_ENV["MOSAIQ_DB_PORT"]);
 define( "MOSAIQ_DB_DSN", "dblib:host=" . MOSAIQ_DB_HOST . ":" . MOSAIQ_DB_PORT . "\\database" . ";charset=utf8" );
-define( "MOSAIQ_DB_USERNAME", Config::getApplicationSettings()->environment->mosaiqDbUser);
-define( "MOSAIQ_DB_PASSWORD", Config::getApplicationSettings()->environment->mosaiqDbPassword);
+define( "MOSAIQ_DB_USERNAME", $_ENV["MOSAIQ_DB_USER"]);
+define( "MOSAIQ_DB_PASSWORD", $_ENV["MOSAIQ_DB_PASSWORD"]);
 
 // Environment-specific variables
-define( "FRONTEND_ABS_PATH", str_replace("/", DIRECTORY_SEPARATOR, Config::getApplicationSettings()->environment->absPath ));
-define( "FRONTEND_REL_URL", str_replace("/", DIRECTORY_SEPARATOR, Config::getApplicationSettings()->environment->relativeUrl));
+define( "FRONTEND_ABS_PATH", str_replace("/", DIRECTORY_SEPARATOR, $_ENV["ABS_PATH"]));
+define( "FRONTEND_REL_URL", str_replace("/", DIRECTORY_SEPARATOR, $_ENV["RELATIVE_URL"]));
 define( "BACKEND_ABS_PATH", FRONTEND_ABS_PATH . "publisher/" );
 define( "BACKEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", BACKEND_ABS_PATH) );
 define( "FRONTEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", FRONTEND_ABS_PATH) );
 define( "UPLOAD_ABS_PATH", FRONTEND_ABS_PATH . "uploads/" );
 define( "UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
-define( "ADMIN_REGISTRATION_URL", Config::getApplicationSettings()->environment->registrationUrl);
-define( "CLINICAL_DOC_PATH", Config::getApplicationSettings()->environment->sharedDrivePath . "clinical/documents/");
+define( "ADMIN_REGISTRATION_URL", $_ENV["REGISTRATION_URL"]);
+define( "CLINICAL_DOC_PATH", $_ENV["SHARED_DRIVE_PATH"] . "clinical/documents/");
 
 // Define Firebase variables
-define( "FIREBASE_DATABASEURL", Config::getApplicationSettings()->environment->firebaseDatabaseUrl);
-define( "FIREBASE_SERVICEACCOUNT", Config::getApplicationSettings()->environment->firebaseAdminKeyPath);
+define( "FIREBASE_DATABASEURL", $_ENV["FIREBASE_DATABASE_URL"]);
+define( "FIREBASE_SERVICEACCOUNT", $_ENV["FIREBASE_ADMIN_KEY_PATH"]);
 
 define("ALIAS_TYPE_APPOINTMENT_TEXT", 'Appointment');
 define("ALIAS_TYPE_DOCUMENT_TEXT", 'Document');
@@ -288,13 +154,13 @@ define("ALIAS_TYPE_APPOINTMENT", 2);
 define("ALIAS_TYPE_DOCUMENT", 3);
 
 // Push Notification FCM and APN credientials.
-define( "API_KEY" , Config::getApplicationSettings()->environment->pushNotificationAndroidApiKey);
-define( "ANDROID_URL" , Config::getApplicationSettings()->environment->pushNotificationAndroidUrl);
-define( "CERTIFICATE_PASSWORD" , Config::getApplicationSettings()->environment->appleCertPassword);
-define( "CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . Config::getApplicationSettings()->environment->appleCertFilename);
-define( "APNS_TOPIC" , Config::getApplicationSettings()->environment->appleTopic);
-define( "CERTIFICATE_KEY" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . Config::getApplicationSettings()->environment->appleCertKey);
-define( "IOS_URL" , Config::getApplicationSettings()->environment->appleUrl);
+define( "API_KEY" , $_ENV["PUSH_NOTIFICATION_ANDROID_API_KEY"]);
+define( "ANDROID_URL" , $_ENV["PUSH_NOTIFICATION_ANDROID_URL"]);
+define( "CERTIFICATE_PASSWORD" , $_ENV["APPLE_CERT_PASSWORD"]);
+define( "CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $_ENV["APPLE_CERT_FILENAME"]);
+define( "APNS_TOPIC" , $_ENV["APPLE_TOPIC"]);
+define( "CERTIFICATE_KEY" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $_ENV["APPLE_CERT_KEY"]);
+define( "IOS_URL" , $_ENV["APPLE_URL"]);
 
 const RESOURCE_LEVEL_READY = 1;
 const RESOURCE_LEVEL_IN_PROCESS = 2;
