@@ -23,32 +23,12 @@ $dotenv->required('QUESTIONNAIRE_DB_NAME')->notEmpty();
 $dotenv->required('QUESTIONNAIRE_DB_USER')->notEmpty();
 $dotenv->required('QUESTIONNAIRE_DB_PASSWORD')->notEmpty();
 $dotenv->required('QUESTIONNAIRE_DB_ENABLED')->notEmpty();
-// Aria Database Settings
-$dotenv->required('ARIA_DB_HOST')->notEmpty();
-$dotenv->required('ARIA_DB_PORT')->notEmpty();
-$dotenv->required('ARIA_DB_NAME')->notEmpty();
-$dotenv->required('ARIA_DB_USER')->notEmpty();
-$dotenv->required('ARIA_DB_PASSWORD')->notEmpty();
-$dotenv->required('ARIA_DB_ENABLED')->notEmpty();
-// WRM Database Settings
-$dotenv->required('WRM_DB_HOST')->notEmpty();
-$dotenv->required('WRM_DB_PORT')->notEmpty();
-$dotenv->required('WRM_DB_NAME')->notEmpty();
-$dotenv->required('WRM_DB_USER')->notEmpty();
-$dotenv->required('WRM_DB_PASSWORD')->notEmpty();
-$dotenv->required('WRM_DB_ENABLED')->notEmpty();
-$dotenv->required('FEDERATED_WRM_DB_NAME')->notEmpty();
-// MOSAIQ Database Settings
-$dotenv->required('MOSAIQ_DB_HOST')->notEmpty();
-$dotenv->required('MOSAIQ_DB_PORT')->notEmpty();
-$dotenv->required('MOSAIQ_DB_USER')->notEmpty();
-$dotenv->required('MOSAIQ_DB_PASSWORD')->notEmpty();
-$dotenv->required('MOSAIQ_DB_ENABLED')->notEmpty();
 // New OpalAdmin Settings
-$dotenv->required('NEW_OPALADMIN_HOST')->notEmpty();
+$dotenv->required('NEW_OPALADMIN_HOST_INTERNAL')->notEmpty();
+$dotenv->required('NEW_OPALADMIN_HOST_EXTERNAL')->notEmpty();
 $dotenv->required('NEW_OPALADMIN_TOKEN')->notEmpty();
 // SSL configurations
-$dotenv->required('USE_SSL')->notEmpty();
+$dotenv->required('DATABASE_USE_SSL')->notEmpty();
 $dotenv->required('SSL_CA')->notEmpty();
 // Puhs notification configurations
 $dotenv->required('PUSH_NOTIFICATION_URL')->notEmpty();
@@ -71,6 +51,11 @@ $dotenv->required('REGISTRATION_URL')->notEmpty();
 $dotenv->required('ARIA_DOCUMENT_PATH')->notEmpty();
 $dotenv->required('MOSAIQ_DOCUMENT_PATH')->notEmpty();
 $dotenv->required('OFFICE_DOCUMENT_PATH')->notEmpty();
+// Active Directory configurations
+$dotenv->required('FEDAUTH_INSTITUTION')->notEmpty();
+$dotenv->required('FEDAUTH_API_ENDPOINT')->notEmpty();
+$dotenv->required('AD_ENABLED')->notEmpty();
+$dotenv->required('AD_SALT')->notEmpty();
 
 
 /*
@@ -81,22 +66,16 @@ session_start();
 // Set the time ze for the Eastern Time Zone (ET)
 date_default_timezone_set("America/Toronto");
 
-// Get directory path of this file
-$pathname 	= __DIR__;
-// Strip php directory
-$abspath 	= str_replace('php', '', $pathname);
-
-// Specify location of config file
-$json = file_get_contents($abspath . 'config.json');
-
-$config = json_decode($json, true);
-
 // set the active directory settings
-define("USER_SALT", $config["login"]["salt"]);
-define("ACTIVE_DIRECTORY", $config["login"]["activeDirectory"]);
-define("ACTIVE_DIRECTORY_SETTINGS", $config["login"]["activeDirectory"]["settings"]);
-define("MSSS_ACTIVE_DIRECTORY_CONFIG", $config["login"]["activeDirectory"]["config"]);
-define("AD_LOGIN_ACTIVE", ACTIVE_DIRECTORY["enabled"]);
+define("USER_SALT", $_ENV["AD_SALT"]);
+define("ACTIVE_DIRECTORY", $_ENV["FEDAUTH_API_ENDPOINT"]);
+define("ACTIVE_DIRECTORY_SETTINGS", [
+// just a placeholder
+"uid" => "%%USERNAME%%",
+"pwd" => "%%PASSWORD%%",
+"institution" => $_ENV["FEDAUTH_INSTITUTION"],
+]);
+define("AD_LOGIN_ACTIVE", $_ENV["AD_ENABLED"]);
 
 // Turn on all errors except for notices
 error_reporting(E_ALL & ~E_NOTICE ^ E_WARNING);
@@ -116,19 +95,9 @@ const NOT_CHECKED_IN = 0;
 
 const LIMIT_DAYS_AUDIT_SYSTEM_BACKUP = 5;
 
-define("OPAL_CHECKIN_CALL", "https://" . $_SERVER['HTTP_HOST'] . "/opalAdmin/publisher/php/OpalCheckIn.php");
-
 // Define SSL setting for database connection strings and path to cert file
-define ("USE_SSL", $_ENV["USE_SSL"]);
+define ("USE_SSL", $_ENV["DATABASE_USE_SSL"]);
 define ("SSL_CA", $_ENV["SSL_CA"]);
-
-// DEFINE MOSAIQ SERVER/DATABASE CREDENTIALS HERE
-// NOTE: This works for a MicrosoftSQL (MSSQL) setup.
-define( "MOSAIQ_DB_HOST", $_ENV["MOSAIQ_DB_HOST"]);
-define( "MOSAIQ_DB_PORT", $_ENV["MOSAIQ_DB_PORT"]);
-define( "MOSAIQ_DB_DSN", "dblib:host=" . MOSAIQ_DB_HOST . ":" . MOSAIQ_DB_PORT . "\\database" . ";charset=utf8" );
-define( "MOSAIQ_DB_USERNAME", $_ENV["MOSAIQ_DB_USER"]);
-define( "MOSAIQ_DB_PASSWORD", $_ENV["MOSAIQ_DB_PASSWORD"]);
 
 // Environment-specific variables
 define( "FRONTEND_ABS_PATH", str_replace("/", DIRECTORY_SEPARATOR, $_ENV["ABS_PATH"]));
@@ -312,9 +281,9 @@ define("LEGACY_CHECKBOX", 4);
 define("LEGACY_YESNO", 9);
 define("DEFAULT_TYPE", TEXT_BOX);
 
-define("ARIA_SOURCE_DB", 1);
-define("ORMS_SOURCE_DB", 2);
-define("MOSAIQ_SOURCE_DB", 3);
+// define("ARIA_SOURCE_DB", 1);
+// define("ORMS_SOURCE_DB", 2);
+// define("MOSAIQ_SOURCE_DB", 3);
 define("LOCAL_SOURCE_DB", -1);
 
 // Definition of patient consent status for studies
@@ -343,8 +312,6 @@ require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_S
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql.php";
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql-queries.php";
 require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql-queries.php";
-require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."aria-sql.php";
-require_once FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."orms-sql.php";
 
 // Include composer dependency
 require_once( FRONTEND_ABS_PATH . "vendor". DIRECTORY_SEPARATOR . "autoload.php");
@@ -365,7 +332,6 @@ require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "CrontabManager.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Patient.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TestResult.php" );
-require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Install.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Email.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "QuestionnaireModule.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Questionnaire.php");
@@ -391,15 +357,12 @@ require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseAccess.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseQuestionnaire.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseOpal.php" );
-require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseAria.php" );
-require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseOrms.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseDisconnected.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Trigger.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Appointment.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "ApiCall.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "AndroidApiCall.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "AppleApiCall.php" );
-require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Sms.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TriggerDocument.php");
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TriggerDoctor.php");
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TriggerStaff.php");
