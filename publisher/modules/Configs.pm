@@ -29,15 +29,6 @@ $path_name =~ s/publisher\/controls\/patientsForPatientsControl.pl//g;
 $path_name =~ s/publisher\/controls\/legacyQuestionnaireControl.pl//g;
 $path_name =~ s/publisher\/controls\/educationalMaterialControl.pl//g;
 
-# DEFINE ARIA SERVER/DATABASE SETTINGS FROM ENV FILE
-# NOTE: This works for a MicrosoftSQL (MSSQL) setup.
-const our $ARIA_DB_HOST     => $ENV{'ARIA_DB_HOST'};
-const our $ARIA_DB_PORT     => $ENV{'ARIA_DB_PORT'};
-const our $ARIA_DB_NAME     => $ENV{'ARIA_DB_NAME'};
-const our $ARIA_DB_DSN      => 'DBI:Sybase:server=' . $ARIA_DB_HOST . ';port=' . $ARIA_DB_PORT;
-const our $ARIA_DB_USERNAME => $ENV{'ARIA_DB_USER'};
-const our $ARIA_DB_PASSWORD => $ENV{'ARIA_DB_PASSWORD'};
-
 # DEFINE OPAL DATABASE SETTINGS FROM ENV FILE
 # NOTE: This works for a MySQL setup.
 const our $OPAL_DB_NAME         => $ENV{'OPAL_DB_NAME'};
@@ -49,23 +40,6 @@ const our $OPAL_DB_PASSWORD     => $ENV{'OPAL_DB_PASSWORD'};
 const our $USE_SSL              => $ENV{'USE_SSL'};
 const our $SSL_CA               => $ENV{'SSL_CA'};
 const our $OPAL_DB_SSL_DSN      => 'DBI:mysql:database=' . $OPAL_DB_NAME . ';host=' . $OPAL_DB_HOST . ';port=' . $OPAL_DB_PORT . ';mysql_ssl=1;mysql_ssl_ca_file=' . $SSL_CA;
-
-# DEFINE: WRM DATABASE SETTINGS FROM ENV FILE
-# NOTE: This works for a MySQL setup.
-const our $WRM_DB_HOST             => $ENV{'WRM_DB_HOST'};
-const our $WRM_DB_PORT             => $ENV{'WRM_DB_PORT'};
-const our $WRM_DB_NAME             => $ENV{'WRM_DB_NAME'};
-const our $WRM_DB_DSN              => 'DBI:mysql:database=' . $WRM_DB_NAME . ';host=' . $WRM_DB_HOST . ';port=' . $WRM_DB_PORT;
-const our $WRM_DB_USERNAME         => $ENV{'WRM_DB_USER'};
-const our $WRM_DB_PASSWORD         => $ENV{'WRM_DB_PASSWORD'};
-
-# DEFINE MOSAIQ SERVER/DATABASE CREDENTIALS HERE
-# NOTE: This works for a MicrosoftSQL (MSSQL) setup.
-const our $MOSAIQ_DB_HOST     => $ENV{'MOSAIQ_DB_HOST'};
-const our $MOSAIQ_DB_PORT     => $ENV{'MOSAIQ_DB_PORT'};
-const our $MOSAIQ_DB_DSN      => 'DBI:Sybase:host=' . $MOSAIQ_DB_HOST . ';port=' . $MOSAIQ_DB_PORT;
-const our $MOSAIQ_DB_USERNAME => $ENV{'MOSAIQ_DB_USER'};
-const our $MOSAIQ_DB_PASSWORD => $ENV{'MOSAIQ_DB_PASSWORD'};
 
 # Environment-specific variables
 const our $FRONTEND_ABS_PATH    => $ENV{'ABS_PATH'};
@@ -88,7 +62,7 @@ const our $OFFICE_PATH_DIR      => $ENV{'OFFICE_DOCUMENT_PATH'}; # Location wher
 #DEFINE PUSH NOTIFICATION URL HERE
 const our $PUSH_NOTIFICATION_URL     => $ENV{'PUSH_NOTIFICATION_URL'};
 #NEW BACKEND API URL AND TOKEN
-const our $NEW_BACKEND_HOST     => $ENV{'NEW_OPALADMIN_HOST'};
+const our $NEW_BACKEND_HOST     => $ENV{'NEW_OPALADMIN_HOST_INTERNAL'};
 const our $NEW_BACKEND_TOKEN     => $ENV{'NEW_OPALADMIN_TOKEN'};
 
 #======================================================================================
