@@ -281,9 +281,6 @@ define("LEGACY_CHECKBOX", 4);
 define("LEGACY_YESNO", 9);
 define("DEFAULT_TYPE", TEXT_BOX);
 
-// define("ARIA_SOURCE_DB", 1);
-// define("ORMS_SOURCE_DB", 2);
-// define("MOSAIQ_SOURCE_DB", 3);
 define("LOCAL_SOURCE_DB", -1);
 
 // Definition of patient consent status for studies
