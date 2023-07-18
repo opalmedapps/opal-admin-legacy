@@ -10,9 +10,9 @@
      * Filter config to only include enabled state of databases and AD login.
      */
     $restrictedConfig = array();
-    $restrictedConfig['login']['activeDirectory']['enabled'] =  $config['login']['activeDirectory']['enabled'];
+    $restrictedConfig['login']['activeDirectory']['enabled'] =  $_ENV["AD_ENABLED"];
     $restrictedConfig['pathConfig']['registration_url'] =  $_ENV["REGISTRATION_URL"];
-    $restrictedConfig['newOpalAdminHost']=  $_ENV["NEW_OPALADMIN_HOST"];
+    $restrictedConfig['newOpalAdminHost']=  $_ENV["NEW_OPALADMIN_HOST_INTERNAL"];
 
     // opaldb always enabled
     $restrictedConfig['databaseConfig']['opal']['enabled'] = 1;
@@ -20,15 +20,6 @@
     // Check if the database is enabled in the environment file to include it in the api service
     if ($_ENV["QUESTIONNAIRE_DB_ENABLED"] == 1){
         $restrictedConfig['databaseConfig']['questionnaire2019']['enabled'] = $_ENV["QUESTIONNAIRE_DB_ENABLED"];
-    }
-    if ($_ENV["ARIA_DB_ENABLED"] == 1){
-        $restrictedConfig['databaseConfig']['aria']['enabled'] = $_ENV["ARIA_DB_ENABLED"];
-    }
-    if ($_ENV["WRM_DB_ENABLED"] == 1){
-        $restrictedConfig['databaseConfig']['wrm']['enabled'] = $_ENV["WRM_DB_ENABLED"];
-    }
-    if ($_ENV["MOSAIQ_DB_ENABLED"]== 1){
-        $restrictedConfig['databaseConfig']['mosaiq']['enabled'] = $_ENV["MOSAIQ_DB_ENABLED"];
     }
     
     header('Content-Type: application/json');
