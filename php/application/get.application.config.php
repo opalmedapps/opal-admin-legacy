@@ -12,7 +12,7 @@
     $restrictedConfig = array();
     $restrictedConfig['login']['activeDirectory']['enabled'] =  $_ENV["AD_ENABLED"];
     $restrictedConfig['pathConfig']['registration_url'] =  $_ENV["REGISTRATION_URL"];
-    $restrictedConfig['newOpalAdminHost']=  $_ENV["NEW_OPALADMIN_HOST_INTERNAL"];
+    $restrictedConfig['newOpalAdminHost']=  $_ENV["NEW_OPALADMIN_HOST_EXTERNAL"];
 
     // opaldb always enabled
     $restrictedConfig['databaseConfig']['opal']['enabled'] = 1;

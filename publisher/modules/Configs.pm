@@ -37,7 +37,7 @@ const our $OPAL_DB_PORT         => $ENV{'OPAL_DB_PORT'};
 const our $OPAL_DB_DSN          => 'DBI:mysql:database=' . $OPAL_DB_NAME . ';host=' . $OPAL_DB_HOST . ';port=' . $OPAL_DB_PORT;
 const our $OPAL_DB_USERNAME     => $ENV{'OPAL_DB_USER'};
 const our $OPAL_DB_PASSWORD     => $ENV{'OPAL_DB_PASSWORD'};
-const our $USE_SSL              => $ENV{'USE_SSL'};
+const our $USE_SSL              => $ENV{'DATABASE_USE_SSL'};
 const our $SSL_CA               => $ENV{'SSL_CA'};
 const our $OPAL_DB_SSL_DSN      => 'DBI:mysql:database=' . $OPAL_DB_NAME . ';host=' . $OPAL_DB_HOST . ';port=' . $OPAL_DB_PORT . ';mysql_ssl=1;mysql_ssl_ca_file=' . $SSL_CA;
 

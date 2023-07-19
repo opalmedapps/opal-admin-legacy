@@ -100,19 +100,19 @@ define ("USE_SSL", $_ENV["DATABASE_USE_SSL"]);
 define ("SSL_CA", $_ENV["SSL_CA"]);
 
 // Environment-specific variables
-define( "FRONTEND_ABS_PATH", str_replace("/", DIRECTORY_SEPARATOR, $_ENV["ABS_PATH"]));
-define( "FRONTEND_REL_URL", str_replace("/", DIRECTORY_SEPARATOR, $_ENV["RELATIVE_URL"]));
-define( "BACKEND_ABS_PATH", FRONTEND_ABS_PATH . "publisher/" );
-define( "BACKEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", BACKEND_ABS_PATH) );
-define( "FRONTEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", FRONTEND_ABS_PATH) );
-define( "UPLOAD_ABS_PATH", FRONTEND_ABS_PATH . "uploads/" );
-define( "UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
-define( "ADMIN_REGISTRATION_URL", $_ENV["REGISTRATION_URL"]);
-define( "CLINICAL_DOC_PATH", $_ENV["SHARED_DRIVE_PATH"] . "clinical/documents/");
+define("FRONTEND_ABS_PATH", str_replace("/", DIRECTORY_SEPARATOR, $_ENV["ABS_PATH"]));
+define("FRONTEND_REL_URL", str_replace("/", DIRECTORY_SEPARATOR, $_ENV["RELATIVE_URL"]));
+define("BACKEND_ABS_PATH", FRONTEND_ABS_PATH . "publisher/" );
+define("BACKEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", BACKEND_ABS_PATH) );
+define("FRONTEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", FRONTEND_ABS_PATH) );
+define("UPLOAD_ABS_PATH", FRONTEND_ABS_PATH . "uploads/" );
+define("UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
+define("ADMIN_REGISTRATION_URL", $_ENV["REGISTRATION_URL"]);
+define("CLINICAL_DOC_PATH", $_ENV["SHARED_DRIVE_PATH"] . "clinical/documents/");
 
 // Define Firebase variables
-define( "FIREBASE_DATABASEURL", $_ENV["FIREBASE_DATABASE_URL"]);
-define( "FIREBASE_SERVICEACCOUNT", $_ENV["FIREBASE_ADMIN_KEY_PATH"]);
+define("FIREBASE_DATABASEURL", $_ENV["FIREBASE_DATABASE_URL"]);
+define("FIREBASE_SERVICEACCOUNT", $_ENV["FIREBASE_ADMIN_KEY_PATH"]);
 
 define("ALIAS_TYPE_APPOINTMENT_TEXT", 'Appointment');
 define("ALIAS_TYPE_DOCUMENT_TEXT", 'Document');
@@ -123,13 +123,13 @@ define("ALIAS_TYPE_APPOINTMENT", 2);
 define("ALIAS_TYPE_DOCUMENT", 3);
 
 // Push Notification FCM and APN credientials.
-define( "API_KEY" , $_ENV["PUSH_NOTIFICATION_ANDROID_API_KEY"]);
-define( "ANDROID_URL" , $_ENV["PUSH_NOTIFICATION_ANDROID_URL"]);
-define( "CERTIFICATE_PASSWORD" , $_ENV["APPLE_CERT_PASSWORD"]);
-define( "CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $_ENV["APPLE_CERT_FILENAME"]);
-define( "APNS_TOPIC" , $_ENV["APPLE_TOPIC"]);
-define( "CERTIFICATE_KEY" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $_ENV["APPLE_CERT_KEY"]);
-define( "IOS_URL" , $_ENV["APPLE_URL"]);
+define("API_KEY" , $_ENV["PUSH_NOTIFICATION_ANDROID_API_KEY"]);
+define("ANDROID_URL" , $_ENV["PUSH_NOTIFICATION_ANDROID_URL"]);
+define("CERTIFICATE_PASSWORD" , $_ENV["APPLE_CERT_PASSWORD"]);
+define("CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $_ENV["APPLE_CERT_FILENAME"]);
+define("APNS_TOPIC" , $_ENV["APPLE_TOPIC"]);
+define("CERTIFICATE_KEY" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $_ENV["APPLE_CERT_KEY"]);
+define("IOS_URL" , $_ENV["APPLE_URL"]);
 
 const RESOURCE_LEVEL_READY = 1;
 const RESOURCE_LEVEL_IN_PROCESS = 2;
@@ -416,4 +416,3 @@ const APPOINTMENT_STATUS_CODE_COMPLETED = "Completed";
 const APPOINTMENT_STATUS_CODE_DELETED = "Deleted";
 const APPOINTMENT_STATE_CODE_ACTIVE = "Active";
 const APPOINTMENT_STATE_CODE_DELETED = "Deleted";
-
