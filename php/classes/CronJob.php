@@ -195,7 +195,11 @@ class CronJob extends OpalProject {
 
         if (count($patientList) > 0)
         {
-            $emailContent = "Hello";
+            $emailContent = "Hello Yick,\n\n Until yesterday, we have these patient who has no mrn in our database:\n";
+            foreach($patientList as $ramq){
+                $emailContent .= $ramq."\n";
+            }
+            $emailContent .= "Please create ticket for Zeyu and Limin. Thank you!\n\nOpal Cron";
             $mailer = new OpalMailer();
             $mailer->sendViaSMTP("Patient missing mrns", $emailContent, $recipients, "opal@muhc.mcgill.ca");
         }
