@@ -30,7 +30,7 @@ $dotenv->required('NEW_OPALADMIN_TOKEN')->notEmpty();
 // SSL configurations
 $dotenv->required('DATABASE_USE_SSL')->notEmpty();
 $dotenv->required('SSL_CA')->notEmpty();
-// Puhs notification configurations
+// Push notification configurations
 $dotenv->required('PUSH_NOTIFICATION_URL')->notEmpty();
 $dotenv->required('PUSH_NOTIFICATION_ANDROID_API_KEY')->notEmpty();
 $dotenv->required('PUSH_NOTIFICATION_ANDROID_URL')->notEmpty();
@@ -55,7 +55,7 @@ $dotenv->required('OFFICE_DOCUMENT_PATH')->notEmpty();
 $dotenv->required('FEDAUTH_INSTITUTION')->notEmpty();
 $dotenv->required('FEDAUTH_API_ENDPOINT')->notEmpty();
 $dotenv->required('AD_ENABLED')->notEmpty();
-$dotenv->required('AD_SALT')->notEmpty();
+$dotenv->required('LOGIN_LEGACY_SALT')->notEmpty();
 
 
 /*
@@ -67,7 +67,7 @@ session_start();
 date_default_timezone_set("America/Toronto");
 
 // set the active directory settings
-define("USER_SALT", $_ENV["AD_SALT"]);
+define("USER_SALT", $_ENV["LOGIN_LEGACY_SALT"]);
 define("ACTIVE_DIRECTORY", $_ENV["FEDAUTH_API_ENDPOINT"]);
 define("ACTIVE_DIRECTORY_SETTINGS", [
 // just a placeholder
