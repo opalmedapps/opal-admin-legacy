@@ -4,7 +4,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-class OpalMailer extends HelpSetup
+class OpalMailer
 {
     private $host;
     private $username;
@@ -29,6 +29,8 @@ class OpalMailer extends HelpSetup
      * Update the email address of a given patient in firebase.
      * @param $subject - email subject
      * @param $message - email message
+     * @param $recipients - email recipients
+     * @param $sender - email sender
      * @return array - void
      */
     public function sendViaSMTP($subject, $message, $recipientes, $sender){
@@ -50,7 +52,7 @@ class OpalMailer extends HelpSetup
         // Content
         $mail->setFrom(
             $sender,
-            'ORMS',
+            'OpalAdmin Cron',
         );
         foreach($recipientes as $email)
         {

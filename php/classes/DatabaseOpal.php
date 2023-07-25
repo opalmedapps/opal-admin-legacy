@@ -4483,10 +4483,10 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Get the patient with no mrn in database
+     * Get the patients with no mrn in database
      */
     function getPatientWithNoMRN() {
-        return $this->_fetchAll(SQL_OPAL_GET_PATIENT_WITH_NO_MRN, array());
+        return $this->_fetchAll(SQL_OPAL_GET_PATIENTS_WITH_NO_MRN, array());
     }
 }
 
