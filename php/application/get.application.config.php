@@ -1,9 +1,5 @@
 <?php
 
-    function filter_credentials($key) {
-        return $key == 'enabled';
-    }
-
     include_once('../config.php');
 
     /**
