@@ -16,9 +16,9 @@ class OpalMailer
      */
     function __construct() {
         try{
-            $this->host = "smtp.example.com";
-            $this->username = "example@muhc.mcgill.ca";
-            $this->password = "AuthorizationCode";
+            $this->host = "lxkvmbe95.muhcad.muhcfrd.ca";
+            $this->username = "registration@opalmedapps.ca";
+            $this->password = "5WY[,V&s*{)v5lFps9";
             $this->port = "587";
         } catch (Throwable $err){
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY, "An error occur during email creation: " . $err->getMessage());
