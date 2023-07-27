@@ -186,9 +186,9 @@ class CronJob extends OpalProject {
     }
 
     /**
-     * Check the patient with no MRN in databse
+     * Find patients who do not have MRNs and notify $recipients about such patients
      */
-    public function checkMissingMRN(){
+    public function findPatientsWithMissingMRNs(){
         $this->_checkCronAccess();
         $patientList = $this->opalDB->getPatientWithNoMRN();
         $recipients = array("yickkuan.mo@muhc.mcgill.ca", "zeyu.dou@muhc.mcgill.ca");
