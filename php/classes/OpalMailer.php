@@ -15,14 +15,10 @@ class OpalMailer
      * Constructor of the class
      */
     function __construct() {
-        try{
-            $this->host = "lxkvmbe95.muhcad.muhcfrd.ca";
-            $this->username = "registration@opalmedapps.ca";
-            $this->password = "5WY[,V&s*{)v5lFps9";
-            $this->port = "587";
-        } catch (Throwable $err){
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY, "An error occur during email creation: " . $err->getMessage());
-        }
+        $this->host = "lxkvmbe95.muhcad.muhcfrd.ca";
+        $this->username = "registration@opalmedapps.ca";
+        $this->password = "5WY[,V&s*{)v5lFps9";
+        $this->port = "587";
     }
 
     /**
