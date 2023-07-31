@@ -46,7 +46,6 @@ $dotenv->required('FIREBASE_ADMIN_KEY_PATH')->notEmpty();
 $dotenv->required('ABS_PATH')->notEmpty();
 $dotenv->required('RELATIVE_URL')->notEmpty();
 $dotenv->required('SHARED_DRIVE_PATH')->notEmpty();
-$dotenv->required('REGISTRATION_URL')->notEmpty();
 // Path configurations for clinical document
 $dotenv->required('ARIA_DOCUMENT_PATH')->notEmpty();
 $dotenv->required('MOSAIQ_DOCUMENT_PATH')->notEmpty();
@@ -75,7 +74,15 @@ define("ACTIVE_DIRECTORY_SETTINGS", [
 "pwd" => "%%PASSWORD%%",
 "institution" => $_ENV["FEDAUTH_INSTITUTION"],
 ]);
+
+// this variable is used in ApiCall in User.php
+define("MSSS_ACTIVE_DIRECTORY_CONFIG", [
+"10002" => $_ENV["FEDAUTH_API_ENDPOINT"],
+"19913" => 1,
+]);
+
 define("AD_LOGIN_ACTIVE", $_ENV["AD_ENABLED"]);
+define("REGISTRATION_PATH", $_ENV["NEW_OPALADMIN_HOST_EXTERNAL"] . '/patients/access-request/');
 
 // Turn on all errors except for notices
 error_reporting(E_ALL & ~E_NOTICE ^ E_WARNING);
@@ -107,7 +114,6 @@ define("BACKEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", BACKEND_ABS_PATH)
 define("FRONTEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", FRONTEND_ABS_PATH) );
 define("UPLOAD_ABS_PATH", FRONTEND_ABS_PATH . "uploads/" );
 define("UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
-define("ADMIN_REGISTRATION_URL", $_ENV["REGISTRATION_URL"]);
 define("CLINICAL_DOC_PATH", $_ENV["SHARED_DRIVE_PATH"] . "clinical/documents/");
 
 // Define Firebase variables
