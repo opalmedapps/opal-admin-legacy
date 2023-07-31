@@ -150,7 +150,8 @@ class User extends Module {
                 $temp["menu"] = array();
                 foreach($menuList as $menu) {
                     if(intval($menu["subModuleMenu"]) && $menu["subModule"] != "") {
-                        $subMenu[$menu["ID"]] = json_decode(str_replace("%%REGISTRATION_URL%%", ADMIN_REGISTRATION_URL, $menu["subModule"]));
+                        // REGISTRATION_PATH is a global variable defined in config.php
+                        $subMenu[$menu["ID"]] = json_decode(str_replace("%%REGISTRATION_URL%%", REGISTRATION_PATH ,$menu["subModule"]));
                     }
                     if(((intval($menu["operation"]) >> 0) & 1) && ((intval($userAccess[$menu["ID"]]["access"]) >> 0) & 1)) {
                         array_push($temp["menu"], array("ID"=>$menu["ID"], "operation"=>$menu["operation"], "name_EN"=>$menu["name_EN"], "name_FR"=>$menu["name_FR"], "description_EN"=>$menu["description_EN"], "description_FR"=>$menu["description_FR"], "iconClass"=>$menu["iconClass"], "url"=>$menu["url"]));

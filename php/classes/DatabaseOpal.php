@@ -1469,8 +1469,7 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Get access level for a specific combo or role/module. If ORMS is not active or present, deactivate SMS if it's
-     * not already.
+     * Get access level for a specific combo or role/module.
      * @param $roleId
      * @return array - access levels for a specific role
      */
@@ -1478,10 +1477,6 @@ class DatabaseOpal extends DatabaseAccess {
         $result = $this->_fetchAll(OPAL_GET_USER_ACCESS, array(
             array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_INT),
         ));
-        if(!WRM_DB_ENABLED)
-            foreach ($result as &$item)
-                if($item["ID"] == MODULE_SMS && $item["access"] != USER_ACCESS_DENIED)
-                    $item["access"] =  USER_ACCESS_DENIED;
         return $result;
     }
 

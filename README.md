@@ -59,13 +59,13 @@ npm install
 
 ### Step 4
 
-Setup the configuration file by running the executable bash script located in the project's root:
+Setup the environment file by running the executable bash script located in the project's root:
 
 ```
-bash ./makeconfigs.sh
+bash ./make_env_file.sh
 ```
 
-This will copy **./default-config.json** to **./config.json** and set preliminary configurations.
+This will copy **./.env.sample** to **./.env** and set preliminary configurations.
 
 ### Step 5
 
@@ -73,9 +73,28 @@ Create an empty Opal database using your favourite tool. **Note:** Keep track of
 
 ### Step 6
 
-Open the **config.json** file using your favourite editor and replace the default Opal credentials with your local credentials.
+Open the **.env** file using your favourite editor and replace the default Opal credentials with your local credentials.
 
 ### Step 7
+
+**your Firebase Configurations**
+
+Get firebase web configuration:
+- Go to [Firebase Console](https://console.firebase.google.com/u/0/)
+- Click on Settings (gear icon) in the left panel, then click on Project Settings. 
+- In the General tab, scroll down to Your apps and select the html </> icon (Web). 
+- Type Opal Local as the app nickname (don’t enable Firebase Hosting). 
+- Click Register app (if this is the first time, otherwise, move to next step). 
+- Copy and paste the code on the screen into a new file and call it `firebase-admin-key.json`.
+  - Make sure to protect your private key; once you’ve downloaded it, you can’t download it again, you can only generate a new one. 
+  - If you’re setting up your listener using Docker, you’ll need to copy the private key to another folder. See the listener README for
+  details. 
+
+Copy the `firebase-admin-key.json` file to `config/firebase/`
+
+If your database is being run with secure transport required (SSL/TLS traffic encryption), also update the values for the SSL environment variables: `DATABASE_USE_SSL=1` and `SSL_CA=/var/www/html/certs/ca.pem` after copying the `ca.pem` file into the certs directory. Detailed instructions on how to generate SSL certificates can be found either in the [documentation repository](https://gitlab.com/opalmedapps/docs/-/blob/main/docs/guides/self_signed_certificates.md) or in the [db-docker README](https://gitlab.com/opalmedapps/db-docker).
+
+### Step 8
 
 Visit opalAdmin's database version control page in your web browser at:
 
@@ -83,17 +102,19 @@ http://localhost:8091/dbv
 
 Username: dbv -- Password: dbv
 
-### Step 8
+### Step 9
 
 On the DBV page, run all revisions by selecting all revisions and clicking *Run selected revisions*
 
-### Step 9
+### Step 10
 
 Visit the opalAdmin site:
 
-http://<your host IP>/
+`http://<your host IP>/`
 
-Username: admin -- Password: 123456
+`Username: admin` 
+
+`Password: 123456`
 
 ## Configuring the clinical databases
 
