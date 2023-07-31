@@ -1,22 +1,16 @@
 <?php
 
+// use config file to get the env variables
+use config;
+
 // DEFINE OPAL SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MySQL setup.
-define( "OPAL_DB_HOST", $config['databaseConfig']['opal']['host'] );
-define( "OPAL_DB_PORT", $config['databaseConfig']['opal']['port'] );
-define( "OPAL_DB_NAME", $config['databaseConfig']['opal']['name'] );
+define( "OPAL_DB_HOST", $_ENV["OPAL_DB_HOST"]);
+define( "OPAL_DB_PORT", $_ENV["OPAL_DB_PORT"]);
+define( "OPAL_DB_NAME", $_ENV["OPAL_DB_NAME"]);
 define( "OPAL_DB_DSN", "mysql:host=" . OPAL_DB_HOST . ";port=" . OPAL_DB_PORT . ";dbname=" . OPAL_DB_NAME . ";charset=utf8" );
-define( "OPAL_DB_USERNAME", $config['databaseConfig']['opal']['username'] );
-define( "OPAL_DB_PASSWORD", $config['databaseConfig']['opal']['password'] );
-
-// DEFINE OPAL SERVER/DATABASE CREDENTIALS FOR GUEST ACCOUNT HERE
-// NOTE: This works for a MySQL setup.
-define( "OPAL_DB_HOST_GUEST", $config['databaseConfig']['opalGuest']['host'] );
-define( "OPAL_DB_PORT_GUEST", $config['databaseConfig']['opalGuest']['port'] );
-define( "OPAL_DB_NAME_GUEST", $config['databaseConfig']['opalGuest']['name'] );
-define( "OPAL_DB_DSN_GUEST", "mysql:host=" . OPAL_DB_HOST_GUEST . ";port=" . OPAL_DB_PORT_GUEST . ";dbname=" . OPAL_DB_NAME_GUEST . ";charset=utf8" );
-define( "OPAL_DB_USERNAME_GUEST", $config['databaseConfig']['opalGuest']['username'] );
-define( "OPAL_DB_PASSWORD_GUEST", $config['databaseConfig']['opalGuest']['password'] );
+define( "OPAL_DB_USERNAME", $_ENV["OPAL_DB_USER"]);
+define( "OPAL_DB_PASSWORD", $_ENV["OPAL_DB_PASSWORD"]);
 
 //Definition of all the tables from the opalDB database
 define("OPAL_OAUSER_TABLE","OAUser");

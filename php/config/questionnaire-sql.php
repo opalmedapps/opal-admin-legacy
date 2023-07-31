@@ -1,13 +1,16 @@
 <?php
 
+// use config file to get the env variables
+use config;
+
 // DEFINE QUESTIONNAIRE 2019 SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MySQL setup.
-define( "QUESTIONNAIRE_DB_2019_HOST", $config['databaseConfig']['questionnaire2019']['host'] );
-define( "QUESTIONNAIRE_DB_2019_PORT", $config['databaseConfig']['questionnaire2019']['port'] );
-define( "QUESTIONNAIRE_DB_2019_NAME", $config['databaseConfig']['questionnaire2019']['name'] );
+define( "QUESTIONNAIRE_DB_2019_HOST",  $_ENV["QUESTIONNAIRE_DB_HOST"]);
+define( "QUESTIONNAIRE_DB_2019_PORT", $_ENV["QUESTIONNAIRE_DB_PORT"]);
+define( "QUESTIONNAIRE_DB_2019_NAME", $_ENV["QUESTIONNAIRE_DB_NAME"]);
 define( "QUESTIONNAIRE_DB_2019_DSN", "mysql:host=" . QUESTIONNAIRE_DB_2019_HOST . ";port=" . QUESTIONNAIRE_DB_2019_PORT . ";dbname=" . QUESTIONNAIRE_DB_2019_NAME . ";charset=utf8" );
-define( "QUESTIONNAIRE_DB_2019_USERNAME", $config['databaseConfig']['questionnaire2019']['username'] );
-define( "QUESTIONNAIRE_DB_2019_PASSWORD", $config['databaseConfig']['questionnaire2019']['password'] );
+define( "QUESTIONNAIRE_DB_2019_USERNAME", $_ENV["QUESTIONNAIRE_DB_USER"]);
+define( "QUESTIONNAIRE_DB_2019_PASSWORD", $_ENV["QUESTIONNAIRE_DB_PASSWORD"]);
 define("FRENCH_LANGUAGE","1");
 define("ENGLISH_LANGUAGE","2");
 
