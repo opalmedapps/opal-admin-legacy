@@ -126,7 +126,7 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 			});
 		}
 		$scope.testResult = response.data;
-
+		$scope.testResult.interpretability = parseInt(response.data.interpretability);
 		// Call our API service to get the list of test names
 		testResultCollectionService.getTestNames().then(function (response) {
 			if (response.data.length <= 0) {
@@ -213,6 +213,17 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 	$scope.showTOCs = false;
 	$scope.toggleTOCDisplay = function () {
 		$scope.showTOCs = !$scope.showTOCs;
+	};
+
+	// Function to toggle necessary changes when updating interpretability
+	$scope.interpretabilityUpdate = function () {
+		// interpretability checkbox is unchecked
+		if ($scope.testResult.interpretability) {
+			$scope.testResult.interpretability = 0;
+		}
+		else {
+			$scope.testResult.interpretability = 1;
+		}
 	};
 
 /*	// Function to add an additional link to the test result
