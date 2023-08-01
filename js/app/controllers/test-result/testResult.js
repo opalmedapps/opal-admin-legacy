@@ -40,6 +40,10 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 				+'</div>';
 		}
 
+		var checkboxCellTemplate2 = '<div style="text-align: center;" class="ui-grid-cell-contents">'+
+			'<i ng-class="row.entity.interpretability == 0 ? \'fa-check text-success\' : \'fa-times text-danger\'" class="fa"></i>' +
+			+'</div>';
+
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">';
 
 		// if($scope.readAccess)
@@ -79,6 +83,7 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 				{ field: 'name_'+Session.retrieveObject('user').language.toUpperCase(), displayName: $filter('translate')('TEST.LIST.NAME'), cellTemplate: cellTemplateName, enableColumnMenu: false },
 				{ field: 'group_'+Session.retrieveObject('user').language.toUpperCase(), displayName: $filter('translate')('TEST.LIST.TEST_GROUP'), cellTemplate: cellTemplateGroupName, width: '15%', enableColumnMenu: false },
 				{ field: 'publish', displayName: $filter('translate')('TEST.LIST.PUBLISH'), width: '15%', cellTemplate: checkboxCellTemplate, enableColumnMenu: false },
+				{ field: 'interpretability', displayName: $filter('translate')('TEST.LIST.INTERPRETABLE'), width: '15%', cellTemplate: checkboxCellTemplate2, enableColumnMenu: false },
 				{ name: $filter('translate')('TEST.LIST.OPERATIONS'), cellTemplate: cellTemplateOperations, sortable: false, width: '15%', enableColumnMenu: false }
 			],
 			useExternalFiltering: true,
@@ -128,7 +133,6 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 
 		// Function for when the publish flag checkbox has been modified
 		$scope.checkPublishFlag = function (testResult) {
-
 			$scope.changesMade = true;
 			testResult.publish = parseInt(testResult.publish);
 			// If the "publish" column has been checked
@@ -141,6 +145,12 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 				testResult.publish = 1; // set publish to "true"
 			}
 			testResult.changed = 1; // flag change
+		};
+
+		// When this function is called, we set the "interpretable" field to checked
+		// or unchecked based on value in the argument
+		$scope.updateInterpretable = function (value) {
+			return (parseInt(value) === 1);
 		};
 
 		// Function to submit changes when publish flags have been modified
