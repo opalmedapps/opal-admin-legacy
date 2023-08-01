@@ -154,6 +154,28 @@
                                     </p>
                                 </div>
                             </div>
+                            <!-- SECTION: Interpretability -->
+                            <div uib-accordion-group is-open="interpretabilitySection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: interpretabilitySection.show}" is-disabled="!newTestResult.interpretability" ng-if="interpretabilitySection.show">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="newTestResult.interpretability" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'TEST.ADD.INTERPRETABILITY'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': interpretabilitySection.open, 'glyphicon-chevron-right': !interpretabilitySection.open}" ng-if="newTestResult.interpretability"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="newTestResult.interpretability" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{'TEST.ADD.INTERPRETABILITY_OPTION'|translate}}
+                                    </p>
+                                </div>
+                            </div>
                             <!-- SECTION: Additional Links -->
 <!--                            <div uib-accordion-group is-open="additionalLinksSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:additionalLinksSection.show}" is-disabled="!newTestResult.additional_links.length" ng-if="additionalLinksSection.show">
                                 <uib-accordion-heading>
@@ -458,6 +480,30 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <!-- SECTION: Interpretability -->
+                    <div class="row animated" ng-class="{fadeInUp: interpretabilitySection.show}" ng-if="interpretabilitySection.show">
+                        <div class="col-xs-12 side-menu-title">
+                            <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                <span style="background-color:#e6edfa; padding: 0 10px;">
+                                    <span class="fas fa-dot-circle"></span>
+                                    <h2>{{'TEST.ADD.INTERPRETABILITY'|translate}}</h2>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row animated" ng-class="{fadeInUp: interpretabilitySection.show}" ng-if="interpretabilitySection.show">
+                        <div class="col-xs-12">
+                            <p style="margin-bottom: 10px;">
+                                <span><strong>{{'TEST.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
+                                {{'TEST.ADD.INTERPRETABILITY_EXPLANATION'|translate}}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row animated" ng-class="{fadeInUp: interpretabilitySection.show}" ng-if="interpretabilitySection.show">
+                        <div class="col-xs-12 col-lg-8">
+                            <input type="checkbox" ng-model="newTestResult.interpretability" ng-click="interpretabilityUpdate()" /> <strong>{{'TEST.ADD.INTERPRETABILITY_OPTION'|translate}}</strong>
                         </div>
                     </div>
                     <!-- SECTION: Additional Links -->
