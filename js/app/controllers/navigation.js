@@ -46,6 +46,10 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		$scope.goToHospitalSettingsMenu = function () {
 			$state.go('hospital-settings');
 		};
+		// Function to go to clinician page
+		$scope.goToClinicianMenu = function () {
+			$state.go('clinician');
+		};
 		// Function to go to patient registration page
 		$scope.goToPatientRegistration = function () {
 			$state.go('patients-register');

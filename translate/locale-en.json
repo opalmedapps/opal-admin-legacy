@@ -2685,6 +2685,15 @@
       "BACK": "Back"
     }
   },
+  "CLINICIANS": {
+    "MENU": {
+      "TITLE": "Clinician Dashboard",
+      "SUB_TITLE": "Clinician Dashboard Tools",
+      "CLINICAL_AREA": "Clinical Area",
+      "CLINICAL_AREA_SUB": "Connect to the ORMS clinical area of interest.",
+      "BACK": "Back"
+    }
+  },
   "PATIENTS": {
     "MENU": {
       "TITLE": "Patient",
