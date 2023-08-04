@@ -237,6 +237,10 @@ sub sendPushNotification
     my $apiResponse = Api::apiPatientCaregivers($patientser);
     $apiResponse = decode_json($apiResponse);
 
+    if ($apiResponse->{'data_access'} != 'ALL') {
+        return;
+    }
+
     # get caregiver's username array
     my @usernames = ();
     if (exists($apiResponse->{'caregivers'})) {
