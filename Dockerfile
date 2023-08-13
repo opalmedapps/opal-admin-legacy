@@ -4,7 +4,7 @@ FROM node:16.18.1-alpine3.16 as js-dependencies
 # Install dependencies for bower
 RUN apk add --no-cache git
 
-RUN npm install -g bower
+RUN npm install -g bower@1.8.14
 
 WORKDIR /app
 

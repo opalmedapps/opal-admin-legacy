@@ -35,6 +35,8 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 	$scope.titleDescriptionSection = {open: false, show: false};
 	$scope.testGroupSection = {open: false, show: false};
 	$scope.educationalMaterialSection = {open: false, show: false};
+	$scope.interpretabilitySection = {open: false, show: false};
+	$scope.isChecked = false;
 	// $scope.additionalLinksSection = {open: false, show: false};
 
 	// completed steps boolean object; used for progress bar
@@ -89,6 +91,7 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 		group_EN: "",
 		group_FR: "",
 		eduMat: null,
+		interpretability: 0,
 		tests: [],
 		// additional_links: []
 	};
@@ -213,6 +216,7 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 		if ($scope.newTestResult.group_EN && $scope.newTestResult.group_FR) {
 
 			$scope.educationalMaterialSection.show = true;
+			$scope.interpretabilitySection.show = true;
 			// $scope.additionalLinksSection.show = true;
 
 			// Toggle step completion
@@ -249,6 +253,24 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 		}
 		else {
 			$scope.newTestResult.eduMat = eduMat;
+		}
+	};
+
+	// Function to toggle necessary changes when updating interpretability
+	$scope.interpretabilityUpdate = function () {
+
+		// Toggle booleans
+		$scope.interpretabilitySection.open = true;
+
+		// interpretability section is checked
+		if (!$scope.isChecked) {
+			$scope.newTestResult.interpretability = 1;
+			$scope.isChecked = true;
+		}
+		else {
+			$scope.isChecked = false;
+			$scope.newTestResult.interpretability = 0;
+			$scope.interpretabilitySection.open = false;
 		}
 	};
 

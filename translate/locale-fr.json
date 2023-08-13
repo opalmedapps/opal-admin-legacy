@@ -1902,6 +1902,7 @@
       "NAME": "Nom",
       "TEST_GROUP": "Groupe de tests",
       "PUBLISH": "Publier",
+      "INTERPRETABLE": "Interprétable",
       "OPERATIONS": "Opérations",
       "SUCCESS_FLAGS": "Les publications ont été mises à jour!",
       "ERROR_FLAGS": "Une erreur s'est produite lors de la mise à jour des options de publication.",
@@ -1954,6 +1955,7 @@
       "SEE_DESCRIPTION": "Voir la description entrée",
       "GROUP": "Groupe",
       "EDUCATIONAL_MATERIAL": "Matériel éducatif",
+      "INTERPRETABILITY": "Interprétabilité",
       "LINKS": "Liens additionnels",
       "ITEMS": "Item(s)",
       "SUBMIT": "Soumettre",
@@ -1984,6 +1986,8 @@
       "TEST_GROUP_FR": "Groupe de test FR",
       "TEST_GROUP_EXPLANATION": "Veuillez assigner un groupe de test anglais et français.",
       "EDUCATION_EXPLANATION": "L'attribution d'un matériel pédagogique fournira une description enrichie du résultat de laboratoire.",
+      "INTERPRETABILITY_EXPLANATION": "Veuillez cocher cette case si ce résultat de laboratoire nécessite généralement l'interprétation d'un clinicien avant d'être partagé avec un patient ou son proche aidant.",
+      "INTERPRETABILITY_OPTION": "Interprétation clinicienne recommandée",
       "LINKS_EXPLANATION": "Veuillez fournir des liens supplémentaires pour plus d'informations sur ce résultat de laboratoire.",
       "URL": "URL",
       "ADD": "Ajouter",
@@ -2040,6 +2044,8 @@
       "ATTACHED_EDUCATION": "Matériel éducatif joint",
       "CURRENT_EDUCATION": "Matériel éducatif actuel",
       "NONE": "Aucun",
+      "INTERPRETABILITY": "Interprétabilité",
+      "INTERPRETABILITY_OPTION": "Interprétation clinicienne recommandée",
       "LINKS": "Liens additionnels",
       "ADD_LINK": "Ajouter un autre lien",
       "ERROR_EDUCATION": "Une erreur s'est produite lors de l'obtention de la liste des matériels éducatifs.",
@@ -2696,6 +2702,15 @@
       "BACK": "Retour"
     }
   },
+  "CLINICIANS": {
+    "MENU": {
+      "TITLE": "Tableau de bord du clinicien",
+      "SUB_TITLE": "Outils du tableau de bord du clinicien",
+      "CLINICAL_AREA": "Domaine clinique",
+      "CLINICAL_AREA_SUB": "Connecter au domaine d'intérêt clinique ORMS.",
+      "BACK": "Retour"
+    }
+  },
   "PATIENTS": {
     "MENU": {
       "TITLE": "Patient",
@@ -2704,6 +2719,8 @@
       "REGISTRATION_SUB": "Enregistrer un patient ou un proche aidant afin qu'il puisse utiliser Opal.",
       "RELATIONSHIP_TYPE": "Types de relations",
       "RELATIONSHIP_TYPE_SUB": "Gérer types de relations avec le proche aidant.",
+      "CAREGIVER_ACCESS": "Gestion d'accès des proches aidants",
+      "CAREGIVER_ACCESS_SUB": "Gérer l'accès aux patients par leurs soignants.",
       "BACK": "Retour"
     },
     "LIST": {
