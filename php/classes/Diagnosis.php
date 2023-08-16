@@ -119,6 +119,7 @@ class Diagnosis extends Module {
             "Description_EN"=>$validatedPost["description_EN"],
             "Description_FR"=>$validatedPost["description_FR"],
             "EducationalMaterialControlSerNum"=>$validatedPost['eduMat'],
+            'DiagnosisCode' => '',
         );
 
         $diagnosisId = $this->opalDB->insertDiagnosisTranslation($toInsert);
