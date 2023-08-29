@@ -34,7 +34,7 @@ $dotenv->required('SSL_CA')->notEmpty();
 $dotenv->required('PUSH_NOTIFICATION_URL')->notEmpty();
 $dotenv->required('PUSH_NOTIFICATION_ANDROID_API_KEY')->notEmpty();
 $dotenv->required('PUSH_NOTIFICATION_ANDROID_URL')->notEmpty();
-$dotenv->required('APPLE_CERT_PASSWORD')->notEmpty();
+$dotenv->required('APPLE_CERT_PASSWORD');
 $dotenv->required('APPLE_CERT_FILENAME')->notEmpty();
 $dotenv->required('APPLE_CERT_KEY')->notEmpty();
 $dotenv->required('APPLE_URL')->notEmpty();
@@ -47,9 +47,10 @@ $dotenv->required('ABS_PATH')->notEmpty();
 $dotenv->required('RELATIVE_URL')->notEmpty();
 $dotenv->required('SHARED_DRIVE_PATH')->notEmpty();
 // Path configurations for clinical document
-$dotenv->required('ARIA_DOCUMENT_PATH')->notEmpty();
-$dotenv->required('MOSAIQ_DOCUMENT_PATH')->notEmpty();
-$dotenv->required('OFFICE_DOCUMENT_PATH')->notEmpty();
+// Disabled since most likely unused.
+// $dotenv->required('ARIA_DOCUMENT_PATH')->notEmpty();
+// $dotenv->required('MOSAIQ_DOCUMENT_PATH')->notEmpty();
+// $dotenv->required('OFFICE_DOCUMENT_PATH')->notEmpty();
 // Active Directory configurations
 $dotenv->required('FEDAUTH_INSTITUTION')->notEmpty();
 $dotenv->required('FEDAUTH_API_ENDPOINT')->notEmpty();

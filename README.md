@@ -168,3 +168,47 @@ git checkout staging
 * [PHP](http://php.net)
 * [Perl](http://perldoc.perl.org)
 * [JavaScript](https://www.javascript.com)
+
+## Test Push Notification
+
+### Step 1 
+Log into the app so that a row in PatientDeviceIdentifier gets updated with your device's push notification registration ID (in the column RegistrationId). This is required because the RegistrationId may change at any time, and it also changes every time you reinstall the app.
+
+### Step 2
+Log into server(testing in RI-Dev) and use HeidiSQL to check PatientDeviceIdentifier table to copy the RegistrationId and keep it somewhere to be used after. 
+
+### Step 3
+Run PUTTY to open RI-Dev and use your own crendential to login (if you don't have one, please reacho out to Greg for help)
+
+to grant your account privileged access to opalsupt resources so that you can run commands that they cannot run under your regular accounts and call (there will be 2nd time password required to input)
+
+```
+sudo su - opalsupt
+```
+
+To enter docker container and call
+
+```
+dcd exec opaladmin bash
+```
+
+To change directory to the right folder where the test script is kept and call
+
+```
+cd publisher/php/tests
+```
+
+### Step 3
+Run the script in the docker container by calling the command below
+
+```
+php testPushNotification.php "device Id" "device type" "language"
+```
+
+ * device Id (in the column RegistrationId mentioned in Step 1)
+ * device type is 0 (IOS) or 1 (Android)
+ * language is en (English) or fr (French)
+.
+
+### Step 4
+Output will be printed to the terminal to indicate whether the notification was successfully sent, or if there was an error. If successful, you’ll receive a test push notification on your device.
