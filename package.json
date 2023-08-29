@@ -16,11 +16,11 @@
   },
   "homepage": "https://gitlab.com/opalmedapps/opalAdmin#README",
   "dependencies": {
-    "angular": "npm:@xlts.dev/angular@1.9.1",
-    "angular-animate": "npm:@xlts.dev/angular-animate@1.9.1",
-    "angular-cookies": "npm:@xlts.dev/angular-cookies@1.9.1",
-    "angular-route": "npm:@xlts.dev/angular-route@1.9.1",
-    "angular-sanitize": "npm:@xlts.dev/angular-sanitize@1.9.1",
+    "angular": "npm:@xlts.dev/angular@1.9.3",
+    "angular-animate": "npm:@xlts.dev/angular-animate@1.9.3",
+    "angular-cookies": "npm:@xlts.dev/angular-cookies@1.9.3",
+    "angular-route": "npm:@xlts.dev/angular-route@1.9.3",
+    "angular-sanitize": "npm:@xlts.dev/angular-sanitize@1.9.3",
     "angular-translate": "^2.18.2",
     "angular-translate-loader-static-files": "^2.15.1",
     "angular-translate-loader-url": "^2.15.1",
@@ -39,6 +39,6 @@
     "textangularjs": "^2.1.2"
   },
   "resolutions": {
-    "angular": "npm:@xlts.dev/angular@1.9.1"
+    "angular": "npm:@xlts.dev/angular@1.9.3"
   }
 }
