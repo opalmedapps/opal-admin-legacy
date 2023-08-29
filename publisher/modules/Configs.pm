@@ -82,31 +82,31 @@ sub fetchSourceCredentials
     if (!$sourceDBser) {return $sourceCredentials;} # return null object
 
     # ARIA
-    if ($sourceDBser eq 1) {
+    #if ($sourceDBser eq 1) {
 
-        $sourceCredentials->{_dsn}          = $ARIA_DB_DSN;
-        $sourceCredentials->{_user}         = $ARIA_DB_USERNAME;
-        $sourceCredentials->{_password}     = $ARIA_DB_PASSWORD;
+    #    $sourceCredentials->{_dsn}          = $ARIA_DB_DSN;
+    #    $sourceCredentials->{_user}         = $ARIA_DB_USERNAME;
+    #    $sourceCredentials->{_password}     = $ARIA_DB_PASSWORD;
 
-    }
+    #}
 
     # WaitRoomManagement
-    elsif ($sourceDBser eq 2) {
+    #elsif ($sourceDBser eq 2) {
 
-        $sourceCredentials->{_dsn}          = $WRM_DB_DSN;
-        $sourceCredentials->{_user}         = $WRM_DB_USERNAME;
-        $sourceCredentials->{_password}     = $WRM_DB_PASSWORD;
+    #    $sourceCredentials->{_dsn}          = $WRM_DB_DSN;
+    #    $sourceCredentials->{_user}         = $WRM_DB_USERNAME;
+    #    $sourceCredentials->{_password}     = $WRM_DB_PASSWORD;
 
-    }
+    #}
 
     # Mosaiq
-    elsif ($sourceDBser eq 3) {
+    #elsif ($sourceDBser eq 3) {
 
-        $sourceCredentials->{_dsn}          = $MOSAIQ_DB_DSN;
-        $sourceCredentials->{_user}         = $MOSAIQ_DB_USERNAME;
-        $sourceCredentials->{_password}     = $MOSAIQ_DB_PASSWORD;
+    #    $sourceCredentials->{_dsn}          = $MOSAIQ_DB_DSN;
+    #    $sourceCredentials->{_user}         = $MOSAIQ_DB_USERNAME;
+    #    $sourceCredentials->{_password}     = $MOSAIQ_DB_PASSWORD;
 
-    }
+    #}
     # Others
     # ...
 
