@@ -30,7 +30,7 @@ sub apiPatientCaregivers
     my $ua = LWP::UserAgent->new;
     my $res = $ua->get(
         $url,
-        "Authorization" => $newBackendToken,
+        "Authorization" => "Token ".$newBackendToken,
     );
 
     # return JSON string of the response
