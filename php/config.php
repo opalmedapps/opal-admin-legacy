@@ -83,7 +83,6 @@ define("MSSS_ACTIVE_DIRECTORY_CONFIG", [
 ]);
 
 define("AD_LOGIN_ACTIVE", $_ENV["AD_ENABLED"]);
-define("REGISTRATION_PATH", $_ENV["NEW_OPALADMIN_HOST_EXTERNAL"] . '/patients/access-request/');
 
 // Turn on all errors except for notices
 error_reporting(E_ALL & ~E_NOTICE ^ E_WARNING);

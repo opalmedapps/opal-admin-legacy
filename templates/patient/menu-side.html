@@ -36,7 +36,7 @@
 
 <div class="row side-panel-menu">
     <div ng-if="writeAccess" class="col-md-12">
-        <a href="{{configs.pathConfig.registration_url}}">
+        <a href="{{configs.newOpalAdminHost}}/{{siteLanguage.toLowerCase()}}/patients/access-request/">
             <div class="panel-container animated" ng-class="{pulse: hoverSideMenuReg, active: currentPage == '{{menu.url}}'}" ng-mouseenter="hoverSideMenuReg=true" ng-mouseleave="hoverSideMenuReg=false" style="cursor:pointer;">
                 <div class="side-panel-info-sm">
                     <div class="panel-content">
