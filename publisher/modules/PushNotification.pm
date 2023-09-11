@@ -238,6 +238,8 @@ sub sendPushNotification
     $apiResponse = decode_json($apiResponse);
 
     if ($apiResponse->{'data_access'} != 'ALL') {
+        $sendlog        = "Patient has no data access.";
+        insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusWarning, $sendlog);
         return;
     }
 
@@ -264,7 +266,7 @@ sub sendPushNotification
     my @PTDIDs  = getPatientDeviceIdentifiers($usernamesStr);
 
     if (!@PTDIDs) { # not identifiers listed
-        $sendlog        = "Patient has no device identifier! No push notification sent.";
+        $sendlog        = "Patient has no device identifier for the usernames: $usernamesStr! No push notification sent.";
         insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusWarning, $sendlog);
         return;
     }
