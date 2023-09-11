@@ -5,7 +5,7 @@
     $result = apptReminderPushNotification::getNextDayAppointments();
     if(array_key_exists("failure", $result) && $result["failure"] == 1)
     {
-        print json_encode($result) . PHP_EOL;
+        echo json_encode($result) . PHP_EOL;
         exit();
     }
     // Step 2: Prepare the Push Notification message
@@ -41,7 +41,7 @@
 
         // Call API to send push notification
         $response = apptReminderPushNotification::sendPatientNotification($patientSerNum, $language, $messages);
-        print json_encode($response) . PHP_EOL;
+        echo json_encode($response) . PHP_EOL;
     }
 
 ?>
