@@ -65,7 +65,7 @@ my ($patientser, $controlser, $reftablerowser) = @_; # args
 
      print "\n***** Push notification to patient caregivers *****\n";
 
-     $title = 'test notfications';
+     $title = 'test notifications';
 
      foreach my $PTDID (@PTDIDs) {
 
