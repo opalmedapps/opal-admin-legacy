@@ -1,24 +1,3 @@
-#!/usr/bin/perl
-
-#---------------------------------------------------------------------------------
-# K.Agnew 2021 Cron Modularity Refactor ++
-#---------------------------------------------------------------------------------
-# Control script for the sending of announcements to patients. This script has its
-# own dedicated cron job.
-# We use our custom Perl Modules to help us with getting information and
-# setting them into the appropriate place.
-
-#---------------------------------------------------------------------------------
-=Log
-This is the first phase for now in separating the dataContorl.pl
-
-Second phase will be modifying the OpalAdmin to use the new tables for
-the publishing control. This will allow a slow transition so that 
-it is easy to troubleshoot and validate the changes.
-
-YM 2021-06-28
-=cut
-#---------------------------------------------------------------------------------
 use Time::Piece;
 use POSIX;
 use Storable qw(dclone);
