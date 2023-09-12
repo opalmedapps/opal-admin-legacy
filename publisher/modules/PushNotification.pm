@@ -233,32 +233,7 @@ sub sendPushNotification
         $message =~ s/$key/$dynamicKeys{$key}/g;
     }
 
-    # get a list of the patient caregivers' device information
-    my $apiResponse = Api::apiPatientCaregivers($patientser);
-    $apiResponse = decode_json($apiResponse);
-
-    if ($apiResponse->{'data_access'} != 'ALL') {
-        $sendlog        = "Patient has no data access.";
-        insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusWarning, $sendlog);
-        return;
-    }
-
-    # get caregiver's username array
-    my @usernames = ();
-    if (exists($apiResponse->{'caregivers'})) {
-        my $caregivers = $apiResponse->{'caregivers'};
-        foreach $caregiver (@{ $caregivers }) {  # anonymous array traverse
-            push @usernames, $caregiver->{'username'};
-        }
-    }
-    if (!@usernames) {
-        $sendlog        = "Patient has no related caregivers.";
-        insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusWarning, $sendlog);
-        return;
-    }
-    # convert username array to string for the query
-    my $usernamesStr = join("','", @usernames);
-    $usernamesStr = "'".$usernamesStr."'";
+    $usernamesStr = getPatientCaregivers($patientser, $controlser, $reftablerowser);
 
     print "\n***** Get Patient Device Identifiers *****\n";
 
@@ -284,6 +259,47 @@ sub sendPushNotification
 
         insertPushNotificationInDB($ptdidser, $patientser, $controlser, $reftablerowser, $sendstatus, $sendlog);
     }
+}
+
+#====================================================================================
+# Get patient caregivers
+#====================================================================================
+sub getPatientCaregivers
+{
+    my ($patientser, $controlser, $reftablerowser) = @_; # args
+# get a list of the patient caregivers' device information
+    my $apiResponseStr = Api::apiPatientCaregivers($patientser);
+    $apiResponse = decode_json($apiResponseStr);
+
+    print "api response: $apiResponseStr\n";
+
+    if ($apiResponse->{'data_access'} != 'ALL') {
+        $sendlog        = "Patient has no data access.";
+        insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusWarning, $sendlog);
+        return;
+    }
+
+    # get caregiver's username array
+    my @usernames = ();
+    if (exists($apiResponse->{'caregivers'})) {
+        my $caregivers = $apiResponse->{'caregivers'};
+        foreach $caregiver (@{ $caregivers }) {  # anonymous array traverse
+            push @usernames, $caregiver->{'username'};
+        }
+    }
+
+    print "username list: @usernames\n";
+
+    if (!@usernames) {
+        $sendlog        = "Patient has no related caregivers.";
+        insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusWarning, $sendlog);
+        return;
+    }
+    # convert username array to string for the query
+    my $usernamesStr = join("','", @usernames);
+    $usernamesStr = "'".$usernamesStr."'";
+
+    return $usernamesStr;
 }
 
 #====================================================================================

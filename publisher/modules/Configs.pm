@@ -28,6 +28,7 @@ $path_name =~ s/publisher\/controls\/txTeamMessagesControl.pl//g;
 $path_name =~ s/publisher\/controls\/patientsForPatientsControl.pl//g;
 $path_name =~ s/publisher\/controls\/legacyQuestionnaireControl.pl//g;
 $path_name =~ s/publisher\/controls\/educationalMaterialControl.pl//g;
+$path_name =~ s/publisher\/controls\/testNotification.pl//g;
 
 # DEFINE OPAL DATABASE SETTINGS FROM ENV FILE
 # NOTE: This works for a MySQL setup.
