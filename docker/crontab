@@ -38,4 +38,4 @@
 30 00 * * * curl --silent --show-error http://opaladmin:8080/php/cron-job/add.audit.system.backup.php > /dev/null 2>> /var/www/html/publisher/logs/system-backup.log
 
 # Opal appointment reminder push notification
-0 14 * * * php /var/www/html/publisher/php/apptReminder.php > /dev/null 2>> /var/www/html/publisher/logs/apptReminder.log
+0 14 * * * php /var/www/html/publisher/php/apptReminder.php >> /var/www/html/publisher/logs/apptReminder.log
