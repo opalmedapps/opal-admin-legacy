@@ -13,7 +13,7 @@ class Sms extends Module {
      * @param false $guestStatus
      */
     public function __construct($guestStatus = false) {
-        if(!WRM_DB_ENABLED)
+        if(!ORMS_ENABLED)
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_FOUND);
         parent::__construct(MODULE_SMS, $guestStatus);
     }
