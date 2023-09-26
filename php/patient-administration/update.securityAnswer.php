@@ -6,16 +6,20 @@ include_once("../classes/NewOpalApiCall.php");
 //$patientObj = new PatientAdministration(); //Object
 //$response = $patientObj->updatePatientSecurityAnswer($_POST);
 
+print json_encode($_POST);
+
 // Update patient data_access in new opal DB
 $username = $_POST['username'];
 $language = strtolower($_POST['lan']);
-$answer_id = $_POST['question_id'];
+$question = $_POST['question'];
+$answer = $_POST['answer'];
+$answer_id = $_POST['answer_id'];
 
 $backendApi = new NewOpalApiCall(
     '/api/caregivers/'.$username.'/security-questions/'.$answer_id.'/',
     'PUT',
     $language,
-    ['data_access' => $data_access],
+    ['question' => $question, 'answer' => $answer],
     );
 
 $backendApi->execute();

@@ -140,77 +140,31 @@ angular.module('opalAdmin.controllers.update.securityAnswer',
 	$scope.updateSecurityQuestions = function () {
 		//Validate first question and choose the correct spot
 		if ($scope.validateInput($scope.patientSecurityQuestions.firstAnswer)) {
-			if($scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.secondQuestion
-                && $scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
-                && $scope.patientSecurityQuestions.firstQuestion_old !== null) {
-				updateQuestion($scope.patientSecurityQuestions.firstQuestion, $scope.patientSecurityQuestions.firstAnswer, $scope.patientSecurityQuestions.firstQuestion_old);
-				$scope.patientSecurityQuestions.firstQuestion_old = null;
-			}
-			else if($scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.secondQuestion
-                && $scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
-                && $scope.patientSecurityQuestions.secondQuestion_old !== null) {
-				updateQuestion($scope.patientSecurityQuestions.firstQuestion, $scope.patientSecurityQuestions.firstAnswer, $scope.patientSecurityQuestions.secondQuestion_old);
-				$scope.patientSecurityQuestions.secondQuestion_old = null;
-			}
-			else if($scope.patientSecurityQuestions.thirdQuestion_old !== null) {
-				updateQuestion($scope.patientSecurityQuestions.firstQuestion, $scope.patientSecurityQuestions.firstAnswer, $scope.patientSecurityQuestions.thirdQuestion_old);
-				$scope.patientSecurityQuestions.thirdQuestion_old = null;
-			}
+			updateQuestion($scope.patientSecurityQuestions.firstQuestion, $scope.patientSecurityQuestions.firstAnswer, $scope.patientSecurityQuestions.firstAnswerId);
 		}
 
 		//Validate secoond question and choose the correct spot
 		if ($scope.validateInput($scope.patientSecurityQuestions.secondAnswer)) {
-			if($scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.firstQuestion
-                && $scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
-                && $scope.patientSecurityQuestions.firstQuestion_old !== null) {
-				updateQuestion($scope.patientSecurityQuestions.secondQuestion, $scope.patientSecurityQuestions.secondAnswer, $scope.patientSecurityQuestions.firstQuestion_old);
-				$scope.patientSecurityQuestions.firstQuestion_old = null;
-			}
-			else if($scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.firstQuestion
-                && $scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
-                && $scope.patientSecurityQuestions.secondQuestion_old !== null) {
-				updateQuestion($scope.patientSecurityQuestions.secondQuestion, $scope.patientSecurityQuestions.secondAnswer, $scope.patientSecurityQuestions.secondQuestion_old);
-				$scope.patientSecurityQuestions.secondQuestion_old = null;
-			}
-			else if($scope.patientSecurityQuestions.thirdQuestion_old !== null) {
-				updateQuestion($scope.patientSecurityQuestions.secondQuestion, $scope.patientSecurityQuestions.secondAnswer, $scope.patientSecurityQuestions.thirdQuestion_old);
-				$scope.patientSecurityQuestions.thirdQuestion_old = null;
-			}
+			updateQuestion($scope.patientSecurityQuestions.secondQuestion, $scope.patientSecurityQuestions.secondAnswer, $scope.patientSecurityQuestions.secondAnswerId);
 		}
 
 		//Validate third question and choose the correct spot
 		if ($scope.validateInput($scope.patientSecurityQuestions.thirdAnswer)) {
-			if($scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.secondQuestion
-                && $scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
-                && $scope.patientSecurityQuestions.secondQuestion_old !== null) {
-				updateQuestion($scope.patientSecurityQuestions.thirdQuestion, $scope.patientSecurityQuestions.thirdAnswer, $scope.patientSecurityQuestions.firstQuestion_old);
-				$scope.patientSecurityQuestions.firstQuestion_old = null;
-			}
-			else if($scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.secondQuestion
-                && $scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
-                && $scope.patientSecurityQuestions.secondQuestion_old !== null) {
-				updateQuestion($scope.patientSecurityQuestions.thirdQuestion, $scope.patientSecurityQuestions.thirdAnswer, $scope.patientSecurityQuestions.secondQuestion_old);
-				$scope.patientSecurityQuestions.secondQuestion_old = null;
-			}
-			else if($scope.patientSecurityQuestions.thirdQuestion_old !== null) {
-				updateQuestion($scope.patientSecurityQuestions.thirdQuestion, $scope.patientSecurityQuestions.thirdAnswer, $scope.patientSecurityQuestions.thirdQuestion_old);
-				$scope.patientSecurityQuestions.thirdQuestion_old = null;
-			}
+			updateQuestion($scope.patientSecurityQuestions.thirdQuestion, $scope.patientSecurityQuestions.thirdAnswer, $scope.patientSecurityQuestions.thirdAnswerId);
 		}
 	};
 
 	//Function to update a security question and answer
-	function updateQuestion(question, answer, question_old) {
+	function updateQuestion(question, answer, answer_id) {
 		$.ajax({
 			type: "POST",
 			url: "patient-administration/update/security-answer",
 			data: {
 				username: $scope.puid,
 				lan: $scope.plang,
-				QuestionSerNum: question,
-				Answer: CryptoJS.SHA512(answer.toUpperCase()).toString(),
-				PatientSerNum: $scope.psnum,
-				OldQuestionSerNum: question_old,
+				question: question,
+				answer: CryptoJS.SHA512(answer.toUpperCase()).toString(),
+				answer_id: answer_id,
 			},
 			success: function () {
 				$scope.setBannerClass('success');
@@ -236,14 +190,17 @@ angular.module('opalAdmin.controllers.update.securityAnswer',
 			$scope.patientSecurityQuestions = {
 				firstQuestion_old: results[0].question,
 				firstQuestion: results[0].question,
+				firstAnswerId: results[0].id,
 				firstAnswer: null,
 				firstErrorMessage: null,
 				secondQuestion_old: results[1].question,
 				secondQuestion: results[1].question,
+				secondAnswerId: results[1].id,
 				secondAnswer: null,
 				secondErrorMessage: null,
 				thirdQuestion_old: results[2].question,
 				thirdQuestion: results[2].question,
+				thirdAnswerId: results[2].id,
 				thirdAnswer: null,
 				thirdErrorMessage: null,
 				changeDetected: false,
