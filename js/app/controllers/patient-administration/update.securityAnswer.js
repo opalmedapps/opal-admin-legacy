@@ -1,5 +1,9 @@
-angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).controller('update.securityAnswer', function ($scope, $filter, $uibModal, $uibModalInstance, patientAdministrationCollectionService, $state, Session, ErrorHandler) {
+angular.module('opalAdmin.controllers.update.securityAnswer',
+	['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).controller(
+		'update.securityAnswer', function ($scope, $filter, $uibModal, $uibModalInstance, patientAdministrationCollectionService, $state, Session, ErrorHandler
+	) {
 
+	$scope.patientSecurityQuestions = {}
 	$scope.cancel = function () {
 		$uibModalInstance.dismiss('cancel');
 	};
@@ -92,19 +96,19 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 	//Function to filter the chosen questions out to avoid choosing same question
 	$scope.firstFilter = function() {
 		return function (question) {
-			return question.questionSerNum !== $scope.patientSecurityQuestions.secondQuestion && question.questionSerNum !== $scope.patientSecurityQuestions.thirdQuestion;
+			return question.question_title !== $scope.patientSecurityQuestions.secondQuestion && question.question_title !== $scope.patientSecurityQuestions.thirdQuestion;
 		};
 	};
 
 	$scope.secondFilter = function() {
 		return function (question) {
-			return question.questionSerNum !== $scope.patientSecurityQuestions.firstQuestion && question.questionSerNum !== $scope.patientSecurityQuestions.thirdQuestion;
+			return question.question_title !== $scope.patientSecurityQuestions.firstQuestion && question.question_title !== $scope.patientSecurityQuestions.thirdQuestion;
 		};
 	};
 
 	$scope.thirdFilter = function() {
 		return function (question) {
-			return question.questionSerNum !== $scope.patientSecurityQuestions.firstQuestion && question.questionSerNum !== $scope.patientSecurityQuestions.secondQuestion;
+			return question.question_title !== $scope.patientSecurityQuestions.firstQuestion && question.question_title !== $scope.patientSecurityQuestions.secondQuestion;
 		};
 	};
 
@@ -225,38 +229,38 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 	}
 
 	function getPatientSecurityQuestions () {
+		getAllSecurityQuestions();
 		patientAdministrationCollectionService.getPatientSecurityQuestions($scope.puid, $scope.plang).then(function (response){
-			console.log(response);
-			const results = response.data?.results;
+			const results = response.data.results;
 
-			// $scope.patientSecurityQuestions = {
-			// 	firstQuestion_old: response.data[0].question,
-			// 	firstQuestion: response.data[0].SecurityQuestionSerNum,
-			// 	firstAnswer: null,
-			// 	firstErrorMessage: null,
-			// 	secondQuestion_old: response.data[1].SecurityQuestionSerNum,
-			// 	secondQuestion: response.data[1].SecurityQuestionSerNum,
-			// 	secondAnswer: null,
-			// 	secondErrorMessage: null,
-			// 	thirdQuestion_old: response.data[2].SecurityQuestionSerNum,
-			// 	thirdQuestion: response.data[2].SecurityQuestionSerNum,
-			// 	thirdAnswer: null,
-			// 	thirdErrorMessage: null,
-			// 	changeDetected: false,
-			// };
+			$scope.patientSecurityQuestions = {
+				firstQuestion_old: results[0].question,
+				firstQuestion: results[0].question,
+				firstAnswer: null,
+				firstErrorMessage: null,
+				secondQuestion_old: results[1].question,
+				secondQuestion: results[1].question,
+				secondAnswer: null,
+				secondErrorMessage: null,
+				thirdQuestion_old: results[2].question,
+				thirdQuestion: results[2].question,
+				thirdAnswer: null,
+				thirdErrorMessage: null,
+				changeDetected: false,
+			};
+
 			getAllSecurityQuestions();
 		});
 	}
 
 	function getAllSecurityQuestions () {
 		patientAdministrationCollectionService.getAllSecurityQuestions($scope.plang).then(function (response) {
-			console.log(response);
-			const results = response.data?.results;
+			const results = response.data.results;
 			$scope.questionList = [];
 			results.forEach(function (row) {
-				var question = {
-					questionSerNum: row.id,
-					questionText: (Session.retrieveObject('user').language === "FR" ? row.title_fr : row.title_en),
+				const question = {
+					question_id: row.id,
+					question_title: (Session.retrieveObject('user').language === "FR" ? row.title_fr : row.title_en),
 				};
 				$scope.questionList.push(question);
 			});

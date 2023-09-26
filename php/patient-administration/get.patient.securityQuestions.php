@@ -4,6 +4,7 @@ include_once("../classes/NewOpalApiCall.php");
 
 //$patientObj = new PatientAdministration(); //Object
 //$response = $patientObj->getPatientSecurityQuestions($_POST);
+//print json_encode($_POST); // Return response
 
 // Get patient security questions
 $username = $_POST['username'];
