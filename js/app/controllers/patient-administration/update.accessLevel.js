@@ -36,10 +36,12 @@ angular.module('opalAdmin.controllers.update.accessLevel', ['ngAnimate', 'ui.boo
 				data: {
 					accessLevel: $scope.accessLevel.value,
 					PatientSerNum: $scope.psnum,
+					lan: $scope.plang,
 				},
-				success: function () {
-					$scope.setBannerClass('success');
-					$scope.$parent.bannerMessage = $filter('translate')('PATIENT_ADMINISTRATION.ACCESS_LEVEL.SUCCESS');
+				success: function (response) {
+					console.log(response);
+					// $scope.setBannerClass('success');
+					// $scope.$parent.bannerMessage = $filter('translate')('PATIENT_ADMINISTRATION.ACCESS_LEVEL.SUCCESS');
 				},
 				error: function (err) {
 					ErrorHandler.onError(err, $filter('translate')('PATIENT_ADMINISTRATION.ACCESS_LEVEL.ERROR'), arrValidationUpdate);

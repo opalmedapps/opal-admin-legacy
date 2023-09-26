@@ -2116,7 +2116,7 @@ const OPAL_GET_PATIENT_NAME_ADMINISTRATION = "
 SELECT PatientSerNum AS psnum, CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))) AS pname,
 CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))) AS plname,
 SSN AS pramq, Sex AS psex, Email AS pemail, Language AS plang, 
-(SELECT u.Username FROM ".OPAL_USERS_TABLE." u WHERE u.UserType = 'Patient' AND u.UserTypeSerNum = PatientSerNum LIMIT 1) AS puid,
+(SELECT u.Username FROM ".OPAL_USERS_TABLE." u WHERE u.UserTypeSerNum = PatientSerNum LIMIT 1) AS puid,
 CASE 
     WHEN :lang = 'EN' THEN (SELECT al.AccessLevelName_EN FROM ".OPAL_ACCESS_LEVEL_TABLE." al WHERE al.ID = AccessLevel LIMIT 1) 
     WHEN :lang = 'FR' THEN (SELECT al.AccessLevelName_FR FROM ".OPAL_ACCESS_LEVEL_TABLE." al WHERE al.ID = AccessLevel LIMIT 1) 

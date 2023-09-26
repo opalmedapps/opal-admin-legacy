@@ -201,6 +201,8 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 			type: "POST",
 			url: "patient-administration/update/security-answer",
 			data: {
+				username: $scope.puid,
+				lan: $scope.plang,
 				QuestionSerNum: question,
 				Answer: CryptoJS.SHA512(answer.toUpperCase()).toString(),
 				PatientSerNum: $scope.psnum,
@@ -223,34 +225,38 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 	}
 
 	function getPatientSecurityQuestions () {
-		patientAdministrationCollectionService.getPatientSecurityQuestions($scope.psnum).then(function (response){
+		patientAdministrationCollectionService.getPatientSecurityQuestions($scope.puid, $scope.plang).then(function (response){
+			console.log(response);
+			const results = response.data?.results;
 
-			$scope.patientSecurityQuestions = {
-				firstQuestion_old: response.data[0].SecurityQuestionSerNum,
-				firstQuestion: response.data[0].SecurityQuestionSerNum,
-				firstAnswer: null,
-				firstErrorMessage: null,
-				secondQuestion_old: response.data[1].SecurityQuestionSerNum,
-				secondQuestion: response.data[1].SecurityQuestionSerNum,
-				secondAnswer: null,
-				secondErrorMessage: null,
-				thirdQuestion_old: response.data[2].SecurityQuestionSerNum,
-				thirdQuestion: response.data[2].SecurityQuestionSerNum,
-				thirdAnswer: null,
-				thirdErrorMessage: null,
-				changeDetected: false,
-			};
+			// $scope.patientSecurityQuestions = {
+			// 	firstQuestion_old: response.data[0].question,
+			// 	firstQuestion: response.data[0].SecurityQuestionSerNum,
+			// 	firstAnswer: null,
+			// 	firstErrorMessage: null,
+			// 	secondQuestion_old: response.data[1].SecurityQuestionSerNum,
+			// 	secondQuestion: response.data[1].SecurityQuestionSerNum,
+			// 	secondAnswer: null,
+			// 	secondErrorMessage: null,
+			// 	thirdQuestion_old: response.data[2].SecurityQuestionSerNum,
+			// 	thirdQuestion: response.data[2].SecurityQuestionSerNum,
+			// 	thirdAnswer: null,
+			// 	thirdErrorMessage: null,
+			// 	changeDetected: false,
+			// };
 			getAllSecurityQuestions();
 		});
 	}
 
 	function getAllSecurityQuestions () {
-		patientAdministrationCollectionService.getAllSecurityQuestions().then(function (response) {
+		patientAdministrationCollectionService.getAllSecurityQuestions($scope.plang).then(function (response) {
+			console.log(response);
+			const results = response.data?.results;
 			$scope.questionList = [];
-			response.data.forEach(function (row) {
+			results.forEach(function (row) {
 				var question = {
-					questionSerNum: row.SecurityQuestionSerNum,
-					questionText: (Session.retrieveObject('user').language === "FR" ? row.QuestionText_FR : row.QuestionText_EN),
+					questionSerNum: row.id,
+					questionText: (Session.retrieveObject('user').language === "FR" ? row.title_fr : row.title_en),
 				};
 				$scope.questionList.push(question);
 			});
