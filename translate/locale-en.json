@@ -2912,18 +2912,18 @@
     }
   },
   "PATIENT_ADMINISTRATION": {
-    "TITLE": "Patient Administration",
+    "TITLE": "Opal User Administration",
     "DESCRIPTION": "Modify patient account information",
     "MENU": {
-      "TITLE": "Patient Administration",
-      "PSEARCH": "Search Patient",
-      "PNAME": "Patient last name",
+      "TITLE": "Opal User Administration",
+      "PSEARCH": "Search User",
+      "PNAME": "User last name",
       "PMRN": "Patient MRN",
       "PRAMQ": "Patient RAMQ",
       "SUBMIT": "Submit",
       "RESET": "Reset",
       "DB_ERROR": "An error occured while contacting the database: ",
-      "MULTIPLE": "Multiple patients found matching search criteria, please select:",
+      "MULTIPLE": "Multiple users found matching search criteria, please select:",
       "NONE": "No Patients found matching criteria, please try again",
       "LAST": "Last Name",
       "FIRST": "First Name",
@@ -2936,10 +2936,10 @@
       "NO_MRN": "No MRN",
       "LANG": "Language",
       "OPTIONS": "Options",
-      "UPDATE_EMAIL": "Change Patient Email",
-      "UPDATE_PASSWORD": "Change Patient Password",
+      "UPDATE_EMAIL": "Change User Email",
+      "UPDATE_PASSWORD": "Change User Password",
       "UPDATE_ACCESS_LEVEL": "Change Patient Access Level",
-      "UPDATE_SECURITY_QUESTION": "Reset Patient Security Questions"
+      "UPDATE_SECURITY_QUESTION": "Reset User Security Questions"
     },
     "EMAIL": {
       "TITLE": "Change Patient Email",
