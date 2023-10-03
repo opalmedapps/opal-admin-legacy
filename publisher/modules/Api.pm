@@ -21,11 +21,11 @@ my $newBackendToken = Configs::fetchNewBackendToken();
 #====================================================================================
 # function calls the new backend api patients/legacy/<int:legacy_id>/
 #====================================================================================
-sub apiPatientCaregivers
+sub apiPatientCaregiverDevices
 {
     my ($patientSerNum) = @_; # patient ser number
 
-	$url = $newBackendHost . "/api/patients/legacy/$patientSerNum/";
+	$url = $newBackendHost . "/api/patients/legacy/$patientSerNum/caregiver-devices/";
 
     my $ua = LWP::UserAgent->new;
     my $res = $ua->get(
@@ -37,7 +37,7 @@ sub apiPatientCaregivers
     if ($res->is_success) {
         return $res->content;
     } else {
-        return '{"error": "apiPatientCaregivers request failed"}';
+        return '{"error": "apiPatientCaregiverDevices request failed"}';
     }
 }
 
