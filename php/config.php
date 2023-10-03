@@ -89,7 +89,6 @@ define("MSSS_ACTIVE_DIRECTORY_CONFIG", [
 ]);
 
 define("AD_LOGIN_ACTIVE", $_ENV["AD_ENABLED"]);
-define("REGISTRATION_PATH", $_ENV["NEW_OPALADMIN_HOST_EXTERNAL"] . '/patients/access-request/');
 
 // ORMS SMS api call
 define("ORMS_ENABLED", $_ENV["ORMS_ENABLED"]);
