@@ -2680,6 +2680,8 @@
       "SUB_TITLE": "Hospital Settings Tools",
       "INSTITUTION": "Institutions",
       "INSTITUTION_SUB": "Create or update an institution.",
+      "RELATIONSHIP_TYPE": "Relationship Types",
+      "RELATIONSHIP_TYPE_SUB": "Manage relationship types.",
       "SITE": "Sites",
       "SITE_SUB": "Create and update the sites belonging to an institution.",
       "BACK": "Back"
@@ -2700,8 +2702,6 @@
       "SUB_TITLE": "Patients Tools",
       "REGISTRATION": "Opal Registration",
       "REGISTRATION_SUB": "Register a patient or caregiver so they can use Opal.",
-      "RELATIONSHIP_TYPE": "Relationship Types",
-      "RELATIONSHIP_TYPE_SUB": "Manage relationship types.",
       "CAREGIVER_ACCESS": "Manage Caregiver Access",
       "CAREGIVER_ACCESS_SUB": "Manage access to patients by their caregivers.",
       "BACK": "Back"
