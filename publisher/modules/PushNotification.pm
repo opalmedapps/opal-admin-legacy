@@ -268,7 +268,7 @@ sub getPatientCaregivers
 {
     my ($patientser, $controlser, $reftablerowser) = @_; # args
 # get a list of the patient caregivers' device information
-    my $apiResponseStr = Api::apiPatientCaregivers($patientser);
+    my $apiResponseStr = Api::apiPatientCaregiverDevices($patientser);
     $apiResponse = decode_json($apiResponseStr);
 
     print "api response: $apiResponseStr\n";
