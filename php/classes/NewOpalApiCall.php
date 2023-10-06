@@ -11,7 +11,7 @@ class NewOpalApiCall extends ApiCall {
         $header = [
             'Authorization: Token '.NEW_OPALADMIN_TOKEN,
             'Accept-Language: '.$language,
-            'Cookie: sessionid='.$_COOKIE["sessionId"],
+            'Cookie: sessionid='.$_COOKIE["sessionid"],
         ];
 
         $this->setOption(CURLOPT_URL, NEW_OPALADMIN_HOST_INTERNAL.$api_route);
