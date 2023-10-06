@@ -24,7 +24,7 @@
             <div class="row">
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <span>{{'PATIENT_ADMINISTRATION.SECURITY_ANSWER.FIRST_QUESTION'|translate}}</span>
-                    <select class="form-control" ng-model="patientSecurityQuestions.firstQuestion" ng-change="changeFirstQuestion()" ng-options="question.questionSerNum as question.questionText for question in questionList | filter: firstFilter()" required="required"></select>
+                    <select class="form-control" ng-model="patientSecurityQuestions.firstQuestion" ng-change="changeFirstQuestion()" ng-options="question.question_title as question.question_title for question in questionList | filter: firstFilter()" required="required"></select>
                 </div>
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <span>{{'PATIENT_ADMINISTRATION.SECURITY_ANSWER.FIRST_ANSWER'|translate}}</span>
@@ -39,7 +39,7 @@
             <div class="row">
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <span>{{'PATIENT_ADMINISTRATION.SECURITY_ANSWER.SECOND_QUESTION'|translate}}</span>
-                    <select class="form-control" ng-model="patientSecurityQuestions.secondQuestion" ng-change="changeSecondQuestion()" ng-options="question.questionSerNum as question.questionText for question in questionList | filter: secondFilter()" required="required"></select>
+                    <select class="form-control" ng-model="patientSecurityQuestions.secondQuestion" ng-change="changeSecondQuestion()" ng-options="question.question_title as question.question_title for question in questionList | filter: secondFilter()" required="required"></select>
                 </div>
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <span>{{'PATIENT_ADMINISTRATION.SECURITY_ANSWER.SECOND_ANSWER'|translate}}</span>
@@ -54,7 +54,7 @@
             <div class="row">
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <span>{{'PATIENT_ADMINISTRATION.SECURITY_ANSWER.THIRD_QUESTION'|translate}}</span>
-                    <select class="form-control" ng-model="patientSecurityQuestions.thirdQuestion" ng-change="changeThirdQuestion()" ng-options="question.questionSerNum as question.questionText for question in questionList | filter: thirdFilter()"" required="required"></select>
+                    <select class="form-control" ng-model="patientSecurityQuestions.thirdQuestion" ng-change="changeThirdQuestion()" ng-options="question.question_title as question.question_title for question in questionList | filter: thirdFilter()"" required="required"></select>
                 </div>
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <span>{{'PATIENT_ADMINISTRATION.SECURITY_ANSWER.THIRD_ANSWER'|translate}}</span>

@@ -1,5 +1,9 @@
-angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).controller('update.securityAnswer', function ($scope, $filter, $uibModal, $uibModalInstance, patientAdministrationCollectionService, $state, Session, ErrorHandler) {
+angular.module('opalAdmin.controllers.update.securityAnswer',
+	['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).controller(
+		'update.securityAnswer', function ($scope, $filter, $uibModal, $uibModalInstance, patientAdministrationCollectionService, $state, Session, ErrorHandler
+	) {
 
+	$scope.patientSecurityQuestions = {}
 	$scope.cancel = function () {
 		$uibModalInstance.dismiss('cancel');
 	};
@@ -92,19 +96,19 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 	//Function to filter the chosen questions out to avoid choosing same question
 	$scope.firstFilter = function() {
 		return function (question) {
-			return question.questionSerNum !== $scope.patientSecurityQuestions.secondQuestion && question.questionSerNum !== $scope.patientSecurityQuestions.thirdQuestion;
+			return question.question_title !== $scope.patientSecurityQuestions.secondQuestion && question.question_title !== $scope.patientSecurityQuestions.thirdQuestion;
 		};
 	};
 
 	$scope.secondFilter = function() {
 		return function (question) {
-			return question.questionSerNum !== $scope.patientSecurityQuestions.firstQuestion && question.questionSerNum !== $scope.patientSecurityQuestions.thirdQuestion;
+			return question.question_title !== $scope.patientSecurityQuestions.firstQuestion && question.question_title !== $scope.patientSecurityQuestions.thirdQuestion;
 		};
 	};
 
 	$scope.thirdFilter = function() {
 		return function (question) {
-			return question.questionSerNum !== $scope.patientSecurityQuestions.firstQuestion && question.questionSerNum !== $scope.patientSecurityQuestions.secondQuestion;
+			return question.question_title !== $scope.patientSecurityQuestions.firstQuestion && question.question_title !== $scope.patientSecurityQuestions.secondQuestion;
 		};
 	};
 
@@ -136,75 +140,31 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 	$scope.updateSecurityQuestions = function () {
 		//Validate first question and choose the correct spot
 		if ($scope.validateInput($scope.patientSecurityQuestions.firstAnswer)) {
-			if($scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.secondQuestion
-                && $scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
-                && $scope.patientSecurityQuestions.firstQuestion_old !== null) {
-				updateQuestion($scope.patientSecurityQuestions.firstQuestion, $scope.patientSecurityQuestions.firstAnswer, $scope.patientSecurityQuestions.firstQuestion_old);
-				$scope.patientSecurityQuestions.firstQuestion_old = null;
-			}
-			else if($scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.secondQuestion
-                && $scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
-                && $scope.patientSecurityQuestions.secondQuestion_old !== null) {
-				updateQuestion($scope.patientSecurityQuestions.firstQuestion, $scope.patientSecurityQuestions.firstAnswer, $scope.patientSecurityQuestions.secondQuestion_old);
-				$scope.patientSecurityQuestions.secondQuestion_old = null;
-			}
-			else if($scope.patientSecurityQuestions.thirdQuestion_old !== null) {
-				updateQuestion($scope.patientSecurityQuestions.firstQuestion, $scope.patientSecurityQuestions.firstAnswer, $scope.patientSecurityQuestions.thirdQuestion_old);
-				$scope.patientSecurityQuestions.thirdQuestion_old = null;
-			}
+			updateQuestion($scope.patientSecurityQuestions.firstQuestion, $scope.patientSecurityQuestions.firstAnswer, $scope.patientSecurityQuestions.firstAnswerId);
 		}
 
 		//Validate secoond question and choose the correct spot
 		if ($scope.validateInput($scope.patientSecurityQuestions.secondAnswer)) {
-			if($scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.firstQuestion
-                && $scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
-                && $scope.patientSecurityQuestions.firstQuestion_old !== null) {
-				updateQuestion($scope.patientSecurityQuestions.secondQuestion, $scope.patientSecurityQuestions.secondAnswer, $scope.patientSecurityQuestions.firstQuestion_old);
-				$scope.patientSecurityQuestions.firstQuestion_old = null;
-			}
-			else if($scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.firstQuestion
-                && $scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
-                && $scope.patientSecurityQuestions.secondQuestion_old !== null) {
-				updateQuestion($scope.patientSecurityQuestions.secondQuestion, $scope.patientSecurityQuestions.secondAnswer, $scope.patientSecurityQuestions.secondQuestion_old);
-				$scope.patientSecurityQuestions.secondQuestion_old = null;
-			}
-			else if($scope.patientSecurityQuestions.thirdQuestion_old !== null) {
-				updateQuestion($scope.patientSecurityQuestions.secondQuestion, $scope.patientSecurityQuestions.secondAnswer, $scope.patientSecurityQuestions.thirdQuestion_old);
-				$scope.patientSecurityQuestions.thirdQuestion_old = null;
-			}
+			updateQuestion($scope.patientSecurityQuestions.secondQuestion, $scope.patientSecurityQuestions.secondAnswer, $scope.patientSecurityQuestions.secondAnswerId);
 		}
 
 		//Validate third question and choose the correct spot
 		if ($scope.validateInput($scope.patientSecurityQuestions.thirdAnswer)) {
-			if($scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.secondQuestion
-                && $scope.patientSecurityQuestions.firstQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
-                && $scope.patientSecurityQuestions.secondQuestion_old !== null) {
-				updateQuestion($scope.patientSecurityQuestions.thirdQuestion, $scope.patientSecurityQuestions.thirdAnswer, $scope.patientSecurityQuestions.firstQuestion_old);
-				$scope.patientSecurityQuestions.firstQuestion_old = null;
-			}
-			else if($scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.secondQuestion
-                && $scope.patientSecurityQuestions.secondQuestion_old !== $scope.patientSecurityQuestions.thirdQuestion
-                && $scope.patientSecurityQuestions.secondQuestion_old !== null) {
-				updateQuestion($scope.patientSecurityQuestions.thirdQuestion, $scope.patientSecurityQuestions.thirdAnswer, $scope.patientSecurityQuestions.secondQuestion_old);
-				$scope.patientSecurityQuestions.secondQuestion_old = null;
-			}
-			else if($scope.patientSecurityQuestions.thirdQuestion_old !== null) {
-				updateQuestion($scope.patientSecurityQuestions.thirdQuestion, $scope.patientSecurityQuestions.thirdAnswer, $scope.patientSecurityQuestions.thirdQuestion_old);
-				$scope.patientSecurityQuestions.thirdQuestion_old = null;
-			}
+			updateQuestion($scope.patientSecurityQuestions.thirdQuestion, $scope.patientSecurityQuestions.thirdAnswer, $scope.patientSecurityQuestions.thirdAnswerId);
 		}
 	};
 
 	//Function to update a security question and answer
-	function updateQuestion(question, answer, question_old) {
+	function updateQuestion(question, answer, answer_id) {
 		$.ajax({
 			type: "POST",
 			url: "patient-administration/update/security-answer",
 			data: {
-				QuestionSerNum: question,
-				Answer: CryptoJS.SHA512(answer.toUpperCase()).toString(),
-				PatientSerNum: $scope.psnum,
-				OldQuestionSerNum: question_old,
+				username: $scope.puid,
+				language: $scope.plang,
+				question: question,
+				answer: CryptoJS.SHA512(answer.toUpperCase()).toString(),
+				answer_id: answer_id,
 			},
 			success: function () {
 				$scope.setBannerClass('success');
@@ -223,34 +183,40 @@ angular.module('opalAdmin.controllers.update.securityAnswer', ['ngAnimate', 'ui.
 	}
 
 	function getPatientSecurityQuestions () {
-		patientAdministrationCollectionService.getPatientSecurityQuestions($scope.psnum).then(function (response){
+		patientAdministrationCollectionService.getPatientSecurityQuestions($scope.puid, $scope.plang).then(function (response){
+			const results = response.data;
 
 			$scope.patientSecurityQuestions = {
-				firstQuestion_old: response.data[0].SecurityQuestionSerNum,
-				firstQuestion: response.data[0].SecurityQuestionSerNum,
+				firstQuestion_old: results[0].question,
+				firstQuestion: results[0].question,
+				firstAnswerId: results[0].id,
 				firstAnswer: null,
 				firstErrorMessage: null,
-				secondQuestion_old: response.data[1].SecurityQuestionSerNum,
-				secondQuestion: response.data[1].SecurityQuestionSerNum,
+				secondQuestion_old: results[1].question,
+				secondQuestion: results[1].question,
+				secondAnswerId: results[1].id,
 				secondAnswer: null,
 				secondErrorMessage: null,
-				thirdQuestion_old: response.data[2].SecurityQuestionSerNum,
-				thirdQuestion: response.data[2].SecurityQuestionSerNum,
+				thirdQuestion_old: results[2].question,
+				thirdQuestion: results[2].question,
+				thirdAnswerId: results[2].id,
 				thirdAnswer: null,
 				thirdErrorMessage: null,
 				changeDetected: false,
 			};
+
 			getAllSecurityQuestions();
 		});
 	}
 
 	function getAllSecurityQuestions () {
-		patientAdministrationCollectionService.getAllSecurityQuestions().then(function (response) {
+		patientAdministrationCollectionService.getAllSecurityQuestions($scope.plang).then(function (response) {
+			const results = response.data;
 			$scope.questionList = [];
-			response.data.forEach(function (row) {
-				var question = {
-					questionSerNum: row.SecurityQuestionSerNum,
-					questionText: (Session.retrieveObject('user').language === "FR" ? row.QuestionText_FR : row.QuestionText_EN),
+			results.forEach(function (row) {
+				const question = {
+					question_id: row.id,
+					question_title: ($scope.plang === "FR" ? row.title_fr : row.title_en),
 				};
 				$scope.questionList.push(question);
 			});

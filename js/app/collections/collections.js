@@ -427,9 +427,12 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// API to get published security question list
-		patientAdministrationAPI.getAllSecurityQuestions = function () {
+		patientAdministrationAPI.getAllSecurityQuestions = function (language) {
 			return $http.post(
 				"patient-administration/get/all-security-questions",
+				$.param({
+					language: language,
+				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
@@ -437,11 +440,12 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// API to get patient answered security question list
-		patientAdministrationAPI.getPatientSecurityQuestions = function (serial) {
+		patientAdministrationAPI.getPatientSecurityQuestions = function (username, language) {
 			return $http.post(
 				"patient-administration/get/patient-security-questions",
 				$.param({
-					PatientSerNum: serial,
+					username: username,
+                    language: language,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
