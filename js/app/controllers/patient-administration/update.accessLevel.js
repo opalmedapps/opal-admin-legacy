@@ -36,8 +36,9 @@ angular.module('opalAdmin.controllers.update.accessLevel', ['ngAnimate', 'ui.boo
 				data: {
 					accessLevel: $scope.accessLevel.value,
 					PatientSerNum: $scope.psnum,
+					language: $scope.plang,
 				},
-				success: function () {
+				success: function (response) {
 					$scope.setBannerClass('success');
 					$scope.$parent.bannerMessage = $filter('translate')('PATIENT_ADMINISTRATION.ACCESS_LEVEL.SUCCESS');
 				},
