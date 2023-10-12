@@ -45,6 +45,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			username: { completed: false },
 			password: { completed: false },
 			role: { completed: false },
+			additional_roles: {completed: false},
 			language: { completed: false }
 		};
 
@@ -52,7 +53,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 		$scope.numOfCompletedSteps = 0;
 
 		// Default total number of steps
-		$scope.stepTotal = 4;
+		$scope.stepTotal = 5;
 
 		// Progress bar based on default completed steps and total
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -83,6 +84,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			confirmPassword: null,
 			role: null,
 			role_display: null,
+			additional_roles: null,
 			language: null,
 			language_display: null
 		};
@@ -99,6 +101,15 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			$scope.roles = response.data;
 		}).catch(function(err) {
 			ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR_ROLES'));
+		});
+
+		// Call our API service to get the list of possible additional roles
+		$scope.additional_roles = []
+		userCollectionService.getAdditionalRoles().then(
+			function(response){
+				$scope.additional_roles = response.data;
+			}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR_ADDITIONAL_ROLES'));
 		});
 
 		// Function to validate username
@@ -218,11 +229,29 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			$scope.roleSection.open = true;
 			if ($scope.newUser.role) {
 				steps.role.completed = true;
-				$scope.languageSection.show = true;
 				$scope.newUser.role_display = $scope.newUser.role.name_display;
 			}
 			else
 				steps.role.completed = false;
+
+			$scope.numOfCompletedSteps = stepsCompleted(steps);
+			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+
+		};
+
+		// Function to toggle steps when updating the additional role field
+		$scope.additionalRolesUpdate = function () {
+			$scope.roleSection.open = true;
+			if (JSON.stringify($scope.newUser.additional_roles) != '[]') {
+				steps.additional_roles.completed = true;
+				steps.role.completed = true;
+				$scope.languageSection.show = true;
+			}
+			else{
+				steps.additional_roles.completed = false;
+				steps.role.completed = false;
+				$scope.newUser.additional_roles = "";
+			}
 
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
