@@ -640,6 +640,32 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
+		// Function to get the list of existing groups from new backend
+		userAPI.getAdditionalRoles = function () {
+			return $http.get(
+				'http://127.0.0.1:8000/api/groups/',
+				{
+					headers: {
+						'Content-Type': 'multipart/form-data;',
+					},
+					withCredentials: true,
+				}
+			)
+		};
+
+		// Function to get the list of existing groups from new backend
+		userAPI.getUserSelectedAdditionalRoles = function (OAUsername) {
+			return $http.get(
+				'http://127.0.0.1:8000/api/users/'+OAUsername+'/',
+				{
+					headers: {
+						'Content-Type': 'multipart/form-data;',
+					},
+					withCredentials: true,
+				}
+			)
+		};
+
 		// Function to get user logs given a serial
 		userAPI.getUserActivityLogs = function (userser, OAUserId) {
 			return $http.post(
