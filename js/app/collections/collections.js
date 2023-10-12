@@ -585,7 +585,7 @@ angular.module('opalAdmin.collections', [])
 	})
 
 	// user API service
-	.factory('userCollectionService', function ($http) {
+	.factory('userCollectionService', function ($rootScope, $http) {
 
 		var userAPI = {};
 
@@ -643,7 +643,7 @@ angular.module('opalAdmin.collections', [])
 		// Function to get the list of existing groups from new backend
 		userAPI.getAdditionalRoles = function () {
 			return $http.get(
-				'http://127.0.0.1:8000/api/groups/',
+				$rootScope.newOpalAdminHost + '/api/groups/',
 				{
 					headers: {
 						'Content-Type': 'multipart/form-data;',
@@ -656,7 +656,7 @@ angular.module('opalAdmin.collections', [])
 		// Function to get the list of existing groups from new backend
 		userAPI.getUserSelectedAdditionalRoles = function (OAUsername) {
 			return $http.get(
-				'http://127.0.0.1:8000/api/users/'+OAUsername+'/',
+				$rootScope.newOpalAdminHost + '/api/users/' + OAUsername + '/',
 				{
 					headers: {
 						'Content-Type': 'multipart/form-data;',
