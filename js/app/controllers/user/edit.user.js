@@ -3,7 +3,6 @@ angular.module('opalAdmin.controllers.user.edit', ['ui.bootstrap', 'ui.grid']).
 controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter, $sce, $state, userCollectionService, Session, ErrorHandler) {
 	var OAUserId = Session.retrieveObject('user').id;
 	$scope.roleDisabled = false;
-
 	// Default booleans
 	$scope.changesMade = false;
 	$scope.passwordChange = false;
@@ -37,6 +36,19 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 	userCollectionService.getUserDetails($scope.currentUser.serial).then(function (response) {
 		$scope.user = response.data;
 		$scope.roleDisabled = (OAUserId == $scope.user.serial);
+		// introduce synchronous functions to run in order
+		userCollectionService.getAdditionalRoles().then(
+			function(response){
+				$scope.additionalroles = response.data;
+				userCollectionService.getUserSelectedAdditionalRoles($scope.user.username).then(
+					function(response){
+						get_selected_additional_roles(response.data);
+					}).catch(function(err) {
+					ErrorHandler.onError(err, $filter('translate')('USERS.EDIT.ERROR_USER_ADDITIONAL_ROLES'));
+				});
+			}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('USERS.EDIT.ERROR_ADDITIONAL_ROLES'));
+		});
 		processingModal.close(); // hide modal
 		processingModal = null; // remove reference
 	}).catch(function(err) {
@@ -56,6 +68,23 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 	}).catch(function(err) {
 		ErrorHandler.onError(err, $filter('translate')('USERS.EDIT.ERROR_ROLES'));
 	});
+
+	// Call our API service to get the list of possible groups from new backend
+
+
+	// Call our API service to get the list of user selected groups from new backend
+	$scope.user.selected_additionalroles = [];
+	function get_selected_additional_roles(selected_additionalroles_list) {
+		$scope.user.selected_additionalroles = [];
+		for (const [key, value] of Object.entries($scope.additionalroles)) {
+			  if (selected_additionalroles_list.groups.includes(value.pk)) {
+					group_dict={}
+				  	group_dict.pk = value.pk;
+					group_dict.name = value.name;
+					$scope.user.selected_additionalroles.push(group_dict);
+			  }
+		}
+	}
 
 	// Function that triggers when the password fields are updated
 	$scope.passwordUpdate = function () {
@@ -147,7 +176,7 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 				password: $scope.user.password,
 				confirmPassword: $scope.user.confirmPassword,
 				language: $scope.user.language,
-				roleId: $scope.user.role.serial
+				roleId: $scope.user.role.serial,
 			};
 
 			// submit
