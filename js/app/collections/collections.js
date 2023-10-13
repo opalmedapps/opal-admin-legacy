@@ -585,7 +585,7 @@ angular.module('opalAdmin.collections', [])
 	})
 
 	// user API service
-	.factory('userCollectionService', function ($http) {
+	.factory('userCollectionService', function ($rootScope, $http) {
 
 		var userAPI = {};
 
@@ -636,6 +636,32 @@ angular.module('opalAdmin.collections', [])
 				"user/get/roles",
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		// Function to get the list of existing additional privileges `groups` from new backend
+		userAPI.getAdditionalPrivileges = function () {
+			return $http.get(
+				$rootScope.newOpalAdminHost + '/api/groups/',
+				{
+					headers: {
+						'Content-Type': 'multipart/form-data;',
+					},
+					withCredentials: true,
+				}
+			)
+		};
+
+		// Function to get the list of user-selected additional privileges `groups` from new backend
+		userAPI.getUserSelectedAdditionalPrivileges = function (OAUsername) {
+			return $http.get(
+				$rootScope.newOpalAdminHost + '/api/users/' + OAUsername + '/',
+				{
+					headers: {
+						'Content-Type': 'multipart/form-data;',
+					},
+					withCredentials: true,
 				}
 			);
 		};
