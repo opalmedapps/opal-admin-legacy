@@ -62,9 +62,12 @@
                     <strong>{{'USERS.EDIT.CHANGE_ROLE'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': roleSection.open, 'glyphicon-chevron-right': !roleSection.open}"></i>
                 </div>
             </uib-accordion-heading>
-            <div class="row">
+            <div class="form-group row">
                 <div class="col-xs-12 col-sm-10">
                     <div class="row">
+                        <label class="control-label col-xs-12 col-md-2">
+                        {{'USERS.EDIT.CHANGE_ROLE'|translate}}
+                    </label>
                         <div class="col-sm-6">
                             <select ng-disabled="roleDisabled"  ng-model="user.role.serial" ng-change="roleUpdate()" ng-options="role.ID as role.name_display for role in roles" class="form-control">
                                 <option ng-hide="user.role" value="">{{'USERS.EDIT.SELECT_ROLE'|translate}}</option>
@@ -73,6 +76,22 @@
                     </div>
                 </div>
             </div>
+                <div class="form-group row">
+                <div class="col-xs-12 col-sm-10">
+                    <div class="row">
+                        <label class="control-label col-xs-12 col-md-2">
+                        {{'USERS.EDIT.ADDITIONAL_PRIVILEGES'|translate}}
+                        </label>
+                        <div class="col-sm-6">
+                            <select multiple="true" ng-disabled="roleDisabled" ng-model="user.selected_additionalprivileges" ng-change="roleUpdate()" ng-options="additionalprivilege as additionalprivilege.name for additionalprivilege in additionalprivileges track by additionalprivilege.pk" class="form-control">
+                                <option ng-hide="user.role" value="">{{'USERS.EDIT.SELECT_PRIVILEGES'|translate}}</option>
+                            </select>
+                            <p style="margin-bottom: 0;"><em><small>{{'USERS.EDIT.MUTIPLE_SELECT_TIPS'|translate}}</small></em></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- SECTION: Language -->

@@ -325,6 +325,25 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Sub-section: Additional Privileges -->
+                        <div class="row animated" ng-class="{fadeInUp: roleSection.show}" ng-if="roleSection.show">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    {{'USERS.ADD.ADDITIONAL_PRIVILEGES_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: roleSection.show}" ng-if="roleSection.show" style="margin-bottom: 15px;">
+                            <div class="col-xs-12 col-sm-8">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-6">
+                                        <select multiple="true" ng-model="newUser.additionalprivileges" ng-change="additionalPrivilegesUpdate()" ng-options="additionalprivilege as additionalprivilege.name for additionalprivilege in additionalprivileges" class="form-control">
+                                            <option ng-hide="newUser.additionalprivileges" value="">{{'USERS.ADD.SELECT_PRIVILEGES'|translate}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- SECTION: Language -->
                         <div class="row animated" ng-class="{fadeInUp: languageSection.show}" ng-if="languageSection.show">
                             <div class="col-xs-12 side-menu-title">
