@@ -45,7 +45,8 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			username: { completed: false },
 			password: { completed: false },
 			role: { completed: false },
-			language: { completed: false }
+			language: { completed: false },
+			additionalprivileges: {completed: false}
 		};
 
 		// Default count of completed steps
@@ -83,6 +84,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			confirmPassword: null,
 			role: null,
 			role_display: null,
+			additionalprivileges: null,
 			language: null,
 			language_display: null
 		};
@@ -100,6 +102,15 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 		}).catch(function(err) {
 			ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR_ROLES'));
 		});
+
+		// Call our API service to get the list of possible additional privileges
+		$scope.additionalprivileges = [];
+		userCollectionService.getAdditionalPrivileges().then(
+			function(response){
+				$scope.additionalprivileges = response.data;
+			}).catch(function(err) {
+				ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR_ADDITIONAL_PRIVILEGES'));
+			});
 
 		// Function to validate username
 		$scope.validUsername = { status: null, message: null };
@@ -218,8 +229,8 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			$scope.roleSection.open = true;
 			if ($scope.newUser.role) {
 				steps.role.completed = true;
-				$scope.languageSection.show = true;
 				$scope.newUser.role_display = $scope.newUser.role.name_display;
+				$scope.languageSection.show = true;
 			}
 			else
 				steps.role.completed = false;
@@ -227,6 +238,20 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
+		};
+
+		// Function to toggle steps when updating the additional privileges field
+		$scope.additionalPrivilegesUpdate = function () {
+			$scope.roleSection.open = true;
+			if ($scope.newUser.additionalprivileges.length > 0) {
+				steps.additionalprivileges.completed = true;
+			}
+			else{
+				steps.additionalprivileges.completed = false;
+				$scope.newUser.additionalprivileges =null;
+			}
+
+			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 		};
 
 		// Function to toggle steps when updating the language field
