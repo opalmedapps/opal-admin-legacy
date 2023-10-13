@@ -46,7 +46,6 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			password: { completed: false },
 			role: { completed: false },
 			language: { completed: false },
-			additionalprivileges: {completed: false}
 		};
 
 		// Default count of completed steps
@@ -243,14 +242,11 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 		// Function to toggle steps when updating the additional privileges field
 		$scope.additionalPrivilegesUpdate = function () {
 			$scope.roleSection.open = true;
-			if ($scope.newUser.additionalprivileges.length > 0) {
-				steps.additionalprivileges.completed = true;
-			}
-			else{
-				steps.additionalprivileges.completed = false;
+			if ($scope.newUser.additionalprivileges.length == 0) {
 				$scope.newUser.additionalprivileges =null;
 			}
 
+			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 		};
 
