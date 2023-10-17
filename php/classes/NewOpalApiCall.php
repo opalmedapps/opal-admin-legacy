@@ -2,7 +2,7 @@
 
 class NewOpalApiCall extends ApiCall {
 
-    public function __construct($api_route, $method, $language, $data) {
+    public function __construct($api_route, $method, $language, $data, $content_type) {
         if ($method == 'POST') {
             $this->setOption(CURLOPT_POST, 1);
         } else {
@@ -11,13 +11,17 @@ class NewOpalApiCall extends ApiCall {
         $header = [
             'Authorization: Token '.NEW_OPALADMIN_TOKEN,
             'Accept-Language: '.$language,
-            'Cookie: sessionid='.$_COOKIE["sessionid"],
+            'Cookie: sessionid='.$_COOKIE["sessionid"].';csrftoken='.$_COOKIE["csrftoken"],
+            'X-CSRFToken: '.$_COOKIE["csrftoken"],
+            $content_type,
         ];
-
         $this->setOption(CURLOPT_URL, NEW_OPALADMIN_HOST_INTERNAL.$api_route);
         $this->setOption(CURLOPT_HTTP_VERSION, 3);
         $this->setOption(CURLOPT_HTTPHEADER, $header);
-        $this->setOption(CURLOPT_POSTFIELDS, http_build_query($data));
+        if($content_type == '')
+            $this->setOption(CURLOPT_POSTFIELDS, http_build_query($data));
+        else
+            $this->setOption(CURLOPT_POSTFIELDS, $data);
         $this->setOption(CURLOPT_RETURNTRANSFER, true);
         $this->setOption(CURLOPT_TIMEOUT, 5);
         $this->setOption(CURLOPT_CONNECTTIMEOUT, 5);
