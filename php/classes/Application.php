@@ -52,21 +52,21 @@ class Application {
 
 			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
 
-			$buildName = $data[0];
+            $buildName = $data[0];
 
-			 $versionFile = fopen("../../VERSION", "r")
-			 	or die("Unable to open VERSION file!");
+            $versionFile = fopen("../../VERSION", "r")
+            or die("Unable to open VERSION file!");
 
-			 $version = fgets($versionFile);
-			 fclose($versionFile);
-
-//			$version = shell_exec('git describe');
-//			$branch = shell_exec('git rev-parse --abbrev-ref HEAD');
+            fgets($versionFile);
+            $version = fgets($versionFile);
+            fgets($versionFile);
+            $branch = fgets($versionFile);
+            fclose($versionFile);
 
 			$build = array(
-				'version'		=> json_encode($version),
+				'version'		=> $version,
 				'environment'	=> $buildName,
-				'branch'		=> 1
+				'branch'		=> $branch
 			);
 
 			return $build;

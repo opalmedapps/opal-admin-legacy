@@ -92,6 +92,4 @@ COPY --from=php-dependencies --chown=www-data:www-data /app/vendor ./vendor
 COPY --chown=www-data:www-data . .
 COPY docker/crontab /var/spool/cron/crontabs/www-data
 
-RUN git config --global --add safe.directory /var/www/html
-
 EXPOSE 8080

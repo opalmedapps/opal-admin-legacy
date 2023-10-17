@@ -92,7 +92,6 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 		$scope.build = null;
 		// Call our collection service to get the appliciaton build type
 		applicationCollectionService.getApplicationBuild().then(function (response) {
-			console.log(response);
 			// Assign value
 			$scope.build = response.data;
 
