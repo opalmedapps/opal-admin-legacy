@@ -42,7 +42,12 @@ RUN apt-get update \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/* \
-  && mkdir -p /var/spool/cron/crontabs 
+  && mkdir -p /var/spool/cron/crontabs
+
+# install git
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y git
 
 RUN cpanm --notest install \
       Array::Utils \
@@ -86,5 +91,7 @@ COPY --from=php-dependencies --chown=www-data:www-data /app/vendor ./vendor
 
 COPY --chown=www-data:www-data . .
 COPY docker/crontab /var/spool/cron/crontabs/www-data
+
+RUN git config --global --add safe.directory /var/www/html
 
 EXPOSE 8080

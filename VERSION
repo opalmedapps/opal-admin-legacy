@@ -1,1 +1,4 @@
-2.1.9.3
+version:
+v2.1.9.3-170-g7065fe6e
+branch:
+QSCCD-1528.LL.fix-version-display

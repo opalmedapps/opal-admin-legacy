@@ -5,6 +5,7 @@ services:
     image: opalmedapps/opaladmin
     env_file:
       - .env
+    command: /bin/sh -c docker/version.sh
     ports:
       - 8082:8080
     volumes:
