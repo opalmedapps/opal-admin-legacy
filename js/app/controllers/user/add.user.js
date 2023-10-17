@@ -276,7 +276,14 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 
 		// Function to register user
 		$scope.registerUser = function () {
-
+			// set the additional privileges to the form `{'groups': [group_1.pk,...]}`
+			var additionalprivileges_map = {'groups':[]};
+			if ($scope.newUser.additionalprivileges && $scope.newUser.additionalprivileges.length > 0) {
+				for (const item in $scope.newUser.additionalprivileges) {
+					additionalprivileges_map.groups.push($scope.newUser.additionalprivileges[item].pk);
+				}
+			}
+			$scope.newUser.additionalprivileges_map = additionalprivileges_map;
 			if ($scope.checkRegistrationForm()) {
 				var data = {
 					OAUserId: Session.retrieveObject('user').id,
@@ -286,8 +293,8 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 					confirmPassword: $scope.newUser.confirmPassword,
 					language: $scope.newUser.language,
 					roleId: $scope.newUser.role.ID,
+					additionalprivileges: $scope.newUser.additionalprivileges_map,
 				};
-
 				$.ajax({
 					type: "POST",
 					url: 'user/insert/user',
