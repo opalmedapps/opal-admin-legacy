@@ -2,6 +2,10 @@
 /**
  * User class to validate its identity and access levels
  */
+
+include_once("ApiCall.php");
+include_once("NewOpalApiCall.php");
+
 class User extends Module {
 
     public function __construct($guestStatus = false) {
@@ -431,6 +435,50 @@ class User extends Module {
         $this->opalDB->updateUserInfo($userDetails["serial"], $data["language"], $data["roleId"]);
 
         return true;
+    }
+
+    /**
+     * Update a user into the new backend by calling the endpoint `/api/users/username`. Use a predefined `NewOpalApiCall.php`
+     * library to perform the api call `PUT`. If the user in the backend is not added, it will display an error message to the
+     * user.
+     * @param $post array - contains all the user info
+     */
+    public function updateUserNewBackend($post) {
+        $language = strtolower($_POST['language']);
+        // check if no groups are selected by the user
+        if(!empty($_POST['selected_additionalprivileges']['groups']))
+            $payload = [
+                "username"=>$_POST['edited_username'],
+                "groups"=>$_POST['selected_additionalprivileges']['groups'],
+            ];
+        else
+            $payload = [
+                "username"=>$_POST['edited_username'],
+                "groups"=>[],
+            ];
+        // set the payload in json format
+        $json_payload= json_encode($payload);
+         error_log(print_r("THE PAYLOAD IS",TRUE));
+        error_log(print_r($json_payload,TRUE));
+        error_log(print_r('/api/users/' . $payload['username'] . '/',TRUE));
+        $backendApi = new NewOpalApiCall(
+            '/api/users/' . $payload['username'] . '/',
+            'PUT',
+            $language,
+            $json_payload,
+            'Content-Type: application/json',
+        );
+        error_log(print_r("BEFORE_EXECUTRE",TRUE));
+        $response = $backendApi->execute(); // response is string json
+        error_log(print_r("AFTER_EXECUTE",TRUE));
+        if($backendApi->getError())
+             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to New Backend " . $backendApi->getError());
+        else if($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS) {
+            echo $backendApi->getHttpCode();
+            print_r($backendApi->getAnswer());
+            HelpSetup::returnErrorMessage($backendApi->getHttpCode(), "Error from New Backend: " . $response["error"]);
+    }
+
     }
 
     /**
