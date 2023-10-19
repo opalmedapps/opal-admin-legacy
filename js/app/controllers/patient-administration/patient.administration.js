@@ -208,6 +208,7 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 				$scope.noPatientFound = false;
 				$scope.foundPatient = true; //display patient table
 				// set selected patient identifiers
+				$scope.selectedName = $scope.searchResult[0];
 				if ($scope.searchResult[0].pname) {
 					$scope.pname = $scope.searchResult[0].pname.replace(/["']/g, "");
 				}
@@ -238,7 +239,6 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 				if ($scope.searchResult[0].puid) {
 					$scope.puid = $scope.searchResult[0].puid.replace(/["']/g, "");
 				}
-
 			}
 
 		});
@@ -295,6 +295,7 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 			$scope.searchName = "";
 			$scope.searchMRN = "";
 			$scope.searchRAMQ = "";
+			$scope.selectedName = "";
 
 			$scope.noPatientFound = false;
 			$scope.generateFinished = false;
