@@ -1388,6 +1388,17 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
+     * Returns the usernames for a specific role requested.
+     * @params  $roleId : int - ID of the role
+     * @return  array - list of usernames related to given role
+     * */
+    function getUsersForRole($roleId) {
+    return $this->_fetchAll(OPAL_GET_OAUSERS_RELATED_TO_ROLE, array(
+            array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_INT)
+        ));
+    }
+
+    /*
      * Get the operations available from a specific role
      * @params  $roleId : int - ID of the role
      * @return  array - list of operations from the role-module table
@@ -4477,4 +4488,3 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_HOSPITAL_MAP_MH, $toUpdate);
     }
 }
-
