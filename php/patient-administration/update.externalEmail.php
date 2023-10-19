@@ -10,7 +10,7 @@ header('Content-Type: application/javascript');
 http_response_code(HTTP_STATUS_SUCCESS);
 
 // Update user email in new opal DB
-$username = $_POST['puid'];
+$username = $_POST['uid'];
 $email = $_POST['email'];
 $language = strtolower($_POST['language']);
 
