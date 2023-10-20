@@ -614,6 +614,11 @@ define("OPAL_GET_OA_ROLE_DETAILS","
     WHERE r.ID = :ID AND r.deleted = ".NON_DELETED_RECORD.";
 ");
 
+define("OPAL_GET_OAUSERS_RELATED_TO_ROLE","
+    SELECT user.username FROM ".OPAL_OA_ROLE_TABLE." role LEFT JOIN ".OPAL_OAUSER_TABLE." user on user.oaRoleId = role.ID
+    WHERE  role.ID = :oaRoleId AND role.deleted = ".NON_DELETED_RECORD." AND user.deleted = ". NON_DELETED_RECORD.";
+");
+
 define("OPAL_GET_OA_ROLE_MODULE","
     SELECT * FROM `".OPAL_OA_ROLE_MODULE_TABLE."` WHERE `oaRoleId` = :oaRoleId;
 ");
