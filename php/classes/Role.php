@@ -239,6 +239,50 @@ class Role extends Module {
     }
 
     /**
+     * Update a user groups in the new backend by calling the endpoint `/api/users/username/(un)set-manager-user/`.
+     * Use a predefined `NewOpalApiCall.php` library to perform the api call `PUT`. If the user in the backend
+     * is not modified, it will display an error message to the user.
+     * @param $post array - contains all the user info
+     */
+    public function updateUserGroupNewBackend($post) {
+        $language = strtolower($_POST['language']);
+        $roleToUpdate = HelpSetup::arraySanitization($post);
+
+        // get involved users from DB
+        $users_related_to_role = $this->opalDB->getUsersForRole($roleToUpdate["roleId"]);
+
+        // check if users module is in the updated operations
+        $newbackend_action_name = 'unset-manager-user';
+        foreach($roleToUpdate["operations"] as $sub) {
+            // if users module added and access is READ/WRITE/DELETE
+            if(isset($sub['moduleId']) && $sub['moduleId'] ===  json_encode(MODULE_USER)  && $sub['access'] >= (int) ACCESS_READ ){
+                $newbackend_action_name = 'set-manager-user';
+                // break if users module read/write/delete access right granted otherwise continue
+                break;
+            }
+        }
+        // TODO: consider making api call as an `async` function to avoid having to wait when there are many users.
+        // iterate over updated users, make api request for each user to add/remove from managers group in new backend.
+        foreach($users_related_to_role as $user) {
+            $backendApi = new NewOpalApiCall(
+                '/api/users/' . $user['username'] . '/' . $newbackend_action_name . '/',
+                'PUT',
+                $language,
+                '',
+                'Content-Type: application/json',
+            );
+
+            $response = $backendApi->execute(); // response is string json
+
+            if($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS && $backendApi->getError())
+                 HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to New Backend " . $backendApi->getError());
+            else if($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS) {
+                HelpSetup::returnErrorMessage($backendApi->getHttpCode(), "Error from New Backend: " . $response["error"]);
+            }
+        }
+    }
+
+    /**
      * Mark a role as being deleted.
      *
      * WARNING!!! No record should be EVER be removed from the role table! It should only being marked as
