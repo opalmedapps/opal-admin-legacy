@@ -1,0 +1,38 @@
+# dummy stages to follow the template guidelines
+stages:
+  - build
+  - test
+  - deploy
+  - review
+  - dast
+  - staging
+  - canary
+  - production
+  - incremental rollout 10%
+  - incremental rollout 25%
+  - incremental rollout 50%
+  - incremental rollout 100%
+  - performance
+  - cleanup
+  - extra
+
+
+variables:
+  TEST_DISABLED: "true"
+  DAST_DISABLED: "true"
+  POSTGRES_ENABLED: "false"
+
+
+build:
+  stage: build
+  script:
+    - export
+    - whoami
+
+# newjob:
+#   stage: deploy
+#   script:
+#     - whoami
+
+include: 
+  - template: Auto-DevOps.gitlab-ci.yml
