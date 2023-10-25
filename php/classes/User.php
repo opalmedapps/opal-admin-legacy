@@ -648,6 +648,37 @@ class User extends Module {
         $this->opalDB->markUserAsDeleted($userId);
     }
 
+    /**
+     * Mark a user as deleted. An user cannot delete its own record
+     *
+     * WARNING!!! No record should be EVER be removed from the opalDB database!
+     *
+     * REMEMBER !!! NO DELETE STATEMENT EVER !!! YOU HAVE BEING WARNED !!!
+     *
+     * @params $userId (int) ID of the user
+     * @return void
+     */
+    public function deleteUserNewBackend($post) {
+        $language = strtolower($_POST['language']);
+        $username=strip_tags($_POST["username"]);
+
+         $backendApi = new NewOpalApiCall(
+                '/api/users/' . $username . '/' . 'deactivate-user/',
+                'PUT',
+                $language,
+                '',
+                'Content-Type: application/json',
+            );
+
+            $response = $backendApi->execute(); // response is string json
+
+            if($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS && $backendApi->getError())
+                 HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to New Backend " . $backendApi->getError());
+            else if($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS) {
+                HelpSetup::returnErrorMessage($backendApi->getHttpCode(), "Error from New Backend: " . $response["error"]);
+            }
+    }
+
     /*
      * Get the list of roles an user can have.
      * @params  void
