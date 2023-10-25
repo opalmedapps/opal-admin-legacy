@@ -306,10 +306,6 @@ print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime
 print "Finished treatment team messages\n" if $verbose;
 
 
-# Once everything is complete, we update the "last transferred" field for patients
-# Patient control
-Patient::setPatientLastTransferredModularCron($start_datetime, 'Treatment Team Message');
-
 # # Post control
 PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'Treatment Team Message');
 

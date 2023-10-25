@@ -304,11 +304,6 @@ LegacyQuestionnaire::publishLegacyQuestionnaires($cronLogSer, @patientList);
 print "--- End publishLegacyQuestionnaires: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished Legacy Questionnaires\n" if $verbose;
 
-
-# Once everything is complete, we update the "last transferred" field for all controls
-# Patient control
-Patient::setPatientLastTransferredModularCron($start_datetime, 'LegacyQuestionnaire');
-
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 # Log that the script is finished in the cronlog
 Cron::setCronLog("Completed legQstControl", $current_datetime);

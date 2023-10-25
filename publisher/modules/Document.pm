@@ -234,16 +234,6 @@ sub setDocLog
 }
 
 #====================================================================================
-# Subroutine to set the document cron log serial
-#====================================================================================
-sub setDocCronLogSer
-{
-	my ($document, $cronlogser) = @_; # doc object with provided serial in arguments
-	$document->{_cronlogser} = $cronlogser; # set the ser
-	return $document->{_cronlogser};
-}
-
-#====================================================================================
 # Subroutine to get the document ser
 #====================================================================================
 sub getDocSer
@@ -397,23 +387,13 @@ sub getDocLog
 	return $document->{_log};
 }
 
-#====================================================================================
-# Subroutine to get the document cron log ser
-#====================================================================================
-sub getDocCronLogSer
-{
-	my ($document) = @_; # our document object
-	return $document->{_cronlogser};
-}
-
 #======================================================================================
 # Subroutine to get documents from the source database
 #======================================================================================
 sub getDocsFromSourceDB
 {
-	my $cronLogSer = @_[0];
-	my @patientList = @_[1];
-    my $global_patientInfo_sql = @_[2];
+	my @patientList = @_[0];
+    my $global_patientInfo_sql = @_[1];
 
 	my @docList = (); # initialize a list for document objects
 
@@ -428,9 +408,6 @@ sub getDocsFromSourceDB
 	my ($sourceuid, $errtxt, $validentry, $fileloc, $revised);
 	my ($apprvby, $apprvts, $authoredby, $dos, $createdby, $createdts);
     my $lasttransfer;
-
-	# Check for any new updates from the main cron control
-	CheckAliasesMarkedForUpdateModularCron('Document');
 
     # retrieve all aliases that are marked for update
     my @aliasList = Alias::getAliasesMarkedForUpdateModularCron('Document');
@@ -617,7 +594,6 @@ sub getDocsFromSourceDB
 				$document->setDocDateOfService($dos);
 				$document->setDocCreatedBy($createdby);
 				$document->setDocCreatedTimeStamp($createdts);
-				$document->setDocCronLogSer($cronLogSer);
 
 				push(@docList, $document);
 			}
@@ -740,7 +716,7 @@ sub inOurDatabase
 
 	# Other document variables, if it exists
 	my ($ser, $revised, $validentry, $errtxt, $fileloc, $transferstatus, $aliasexpressionser, $log, $patientser);
-	my ($apprvby, $apprvts, $authoredby, $dos, $createdby, $createdts, $cronlogser);
+	my ($apprvby, $apprvts, $authoredby, $dos, $createdby, $createdts);
 
 	my $inDB_sql = "
 		SELECT
@@ -759,8 +735,7 @@ sub inOurDatabase
 			Document.AuthoredBySerNum,
 			Document.DateOfService,
        		Document.CreatedBySerNum,
-			Document.CreatedTimeStamp,
-			Document.CronLogSerNum
+			Document.CreatedTimeStamp
 		FROM
 			Document
 		WHERE
@@ -794,7 +769,6 @@ sub inOurDatabase
         $dos            	= $data[13];
         $createdby      	= $data[14];
         $createdts      	= $data[15];
-        $cronlogser 		= $data[16];
 	}
 
 	if ($DocSourceUIDInDB) {
@@ -818,7 +792,6 @@ sub inOurDatabase
 		$ExistingDoc->setDocDateOfService($dos);
 		$ExistingDoc->setDocCreatedBy($createdby);
 		$ExistingDoc->setDocCreatedTimeStamp($createdts);
-		$ExistingDoc->setDocCronLogSer($cronlogser);
 
 		return $ExistingDoc; # this is true (ie. document exists, return object)
 	}
@@ -1263,13 +1236,11 @@ sub insertDocIntoOurDB
 	my $dateofservice		= $document->getDocDateOfService();
 	my $createdby			= $document->getDocCreatedBy();
 	my $createdtimestamp	= $document->getDocCreatedTimeStamp();
-	my $cronlogser			= $document->getDocCronLogSer();
 
 	my $insert_sql = "
 		INSERT INTO
 			Document (
 				DocumentSerNum,
-				CronLogSerNum,
 				PatientSerNum,
                 SourceDatabaseSerNum,
 				DocumentId,
@@ -1292,7 +1263,6 @@ sub insertDocIntoOurDB
 			)
 		VALUES (
 			NULL,
-			'$cronlogser',
 			'$patientser',
             '$sourcedbser',
 			'$sourceuid',
@@ -1355,14 +1325,12 @@ sub updateDatabase
 	my $dateofservice		= $document->getDocDateOfService();
 	my $createdby			= $document->getDocCreatedBy();
 	my $createdtimestamp	= $document->getDocCreatedTimeStamp();
-	my $cronlogser			= $document->getDocCronLogSer();
 
 	my $update_sql = "
 		UPDATE
 			Document
 		SET
 			PatientSerNum		    = '$patientser',
-			CronLogSerNum 			= '$cronlogser',
 			Revised		 	        = '$revised',
 			ValidEntry		        = '$validentry',
 			ErrorReasonText		    = '$errtxt',
@@ -1416,7 +1384,6 @@ sub compareWith
 	my $Sdateofservice		= $SuspectDoc->getDocDateOfService();
 	my $Screatedby			= $SuspectDoc->getDocCreatedBy();
 	my $Screatedtimestamp	= $SuspectDoc->getDocCreatedTimeStamp();
-	my $Scronlogser			= $SuspectDoc->getDocCronLogSer();
 
 	# Original document...
 	my $Orevised			= $OriginalDoc->getDocRevised();
@@ -1432,7 +1399,6 @@ sub compareWith
 	my $Odateofservice		= $OriginalDoc->getDocDateOfService();
 	my $Ocreatedby			= $OriginalDoc->getDocCreatedBy();
 	my $Ocreatedtimestamp	= $OriginalDoc->getDocCreatedTimeStamp();
-	my $Ocronlogser			= $OriginalDoc->getDocCronLogSer();
 
 	# go through each parameter
 	if ($Srevised ne $Orevised) {
@@ -1513,80 +1479,8 @@ sub compareWith
 		my $updatedLog = $UpdatedDoc->setDocLog($Slog); # update
 		print "Will update database entry to '$updatedLog'.\n";
 	}
-	if ($Scronlogser ne $Ocronlogser) {
-
-		print "Document Cron Log Serial has changed from '$Ocronlogser' to '$Scronlogser'\n";
-		my $updatedCronLogSer = $UpdatedDoc->setDocCronLogSer($Scronlogser); # update
-		print "Will update database entry to '$updatedCronLogSer'.\n";
-	}
 
 	return $UpdatedDoc;
-}
-
-#======================================================================================
-# Subroutine to sync the master table to the slave table and then set the publish flag 
-# from 1 to 2. This will identify what is currently being process by the cron job vs what
-# have just been activated during the cron running
-#======================================================================================
-sub CheckAliasesMarkedForUpdateModularCron
-{
-	my ($module) = @_; # current datetime, cron module type, 
-
-	# --------------------------------------------------
-	# First step is to make sure that the two tables have the same amount of records
-	my $insert_sql = "
-	INSERT INTO cronControlAlias (cronControlAliasSerNum, cronType, aliasUpdate, lastTransferred, lastUpdated, sessionId)
-	SELECT A.AliasSerNum, '$module' cronType, A.AliasUpdate, A.LastTransferred, A.LastUpdated, A.SessionId
-	FROM Alias A
-	WHERE A.AliasType = '$module'
-		AND A.AliasSerNum NOT IN (SELECT cronControlAliasSerNum FROM cronControlAlias CCP
-		WHERE CCP.cronType = '$module');
-    	";
-
-    # prepare query
-	my $query = $SQLDatabase->prepare($insert_sql)
-		or die "Could not prepare query: " . $SQLDatabase->errstr;
-
-	# execute query
-	$query->execute()
-		or die "Could not execute query: " . $query->errstr;
-
-	# --------------------------------------------------
-    # Second step is to sync the publish flag between the two tables
-    # Alias is the master and cronControlAlias is the slave
-	my $update_sql = "
-		UPDATE Alias A, cronControlAlias CCA
-		SET CCA.aliasUpdate = A.AliasUpdate
-		WHERE A.AliasSerNum = CCA.cronControlAliasSerNum
-			AND CCA.aliasUpdate <> A.AliasUpdate
-			AND CCA.cronType = '$module';
-    	";
-
-    # prepare query
-	my $query = $SQLDatabase->prepare($update_sql)
-		or die "Could not prepare query: " . $SQLDatabase->errstr;
-
-	# execute query
-	$query->execute()
-		or die "Could not execute query: " . $query->errstr;
-
-	# --------------------------------------------------
-	# Third step update the publish flag from 1 to 2
-	my $update2_sql = "
-		UPDATE cronControlAlias
-		SET aliasUpdate = 2
-		WHERE aliasUpdate = 1
-			AND cronType = '$module';
-    	";
-
-    # prepare query
-	my $query = $SQLDatabase->prepare($update2_sql)
-		or die "Could not prepare query: " . $SQLDatabase->errstr;
-
-	# execute query
-	$query->execute()
-		or die "Could not execute query: " . $query->errstr;
-
 }
 
 # To exit/return always true (for the module itself)
