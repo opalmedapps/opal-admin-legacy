@@ -129,6 +129,14 @@ angular.module('opalAdmin.services', [])
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
+
+			// Logout of ORMS by clear out the cookies
+			$cookies.remove("ormsAuth", {path: "/"});
+			$cookies.remove("specialityGroupId", {path: "/"});
+			$cookies.remove("specialityGroupName", {path: "/"});
+			$cookies.remove("clinicHubId", {path: "/"});
+			$cookies.remove("clinicHubName", {path: "/"});
+			$cookies.remove("hospitalCode", {path: "/"});
 		};
 		
 		this.logout = function () {	
