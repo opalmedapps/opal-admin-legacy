@@ -42,7 +42,7 @@ RUN apt-get update \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/* \
-  && mkdir -p /var/spool/cron/crontabs 
+  && mkdir -p /var/spool/cron/crontabs
 
 RUN cpanm --notest install \
       Array::Utils \
@@ -86,5 +86,9 @@ COPY --from=php-dependencies --chown=www-data:www-data /app/vendor ./vendor
 
 COPY --chown=www-data:www-data . .
 COPY docker/crontab /var/spool/cron/crontabs/www-data
+
+ARG GIT_VERSION='undefined'
+ARG GIT_BRANCH='unknown'
+RUN echo "$GIT_VERSION" > ./VERSION && echo "$GIT_BRANCH" >> ./VERSION
 
 EXPOSE 8080
