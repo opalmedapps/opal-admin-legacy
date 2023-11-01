@@ -55,7 +55,6 @@ sub new
 		_email 				=> undef,
 		_firebaseuid		=> undef,
 		_registrationdate	=> undef,
-		_cronlogser			=> undef, 		
 	};
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
@@ -235,16 +234,6 @@ sub setPatientRegistrationDate
 }
 
 #======================================================================================
-# Subroutine to set the patient cron log serial
-#======================================================================================
-sub setPatientCronLogSer
-{
-	my ($patient, $cronlogser) = @_; # patient object with provided serial in arguments
-	$patient->{_cronlogser} = $cronlogser; # set the serial
-	return $patient->{_cronlogser};
-}
-
-#======================================================================================
 # Subroutine to get the patient serial
 #======================================================================================
 sub getPatientSer
@@ -398,15 +387,6 @@ sub getPatientRegistrationDate
 }
 
 #======================================================================================
-# Subroutine to get the patient cron log serial
-#======================================================================================
-sub getPatientCronLogSer
-{
-	my ($patient) = @_; # our patient object
-	return $patient->{_cronlogser};
-}
-
-#======================================================================================
 # Subroutine to get all patient info from source dbs
 #======================================================================================
 sub getPatientInfoFromSourceDBs 
@@ -553,8 +533,6 @@ sub getPatientsMarkedForUpdate
 	# Update PatientControl Transfer flag form 0 to 1
 	MarkPatientForUpdate();
 	
-    my ($cronLogSer) = @_; # cron log serial in args
-	
 	my @patientList = (); # initialize list of patient objects
 	my ($wsPatientSerNum, $wsPatientAriaSer, $wsPatientId, $wsPatientId2, $wsFirstName, $wsLastName, $wsDateOfBirth, $wsAge, 
 		$wsSex, $wsProfileImage, $wsRAMQ, $wslastTransferred, $wsAccessLevel, $wsDeathDate, $wsEmail, $wsUsername, 
@@ -652,7 +630,6 @@ sub getPatientsMarkedForUpdate
 		$Patient->setPatientEmail($wsEmail);
 		$Patient->setPatientFirebaseUID($wsUsername);
 		$Patient->setPatientRegistrationDate($wsRegistrationDate);
-		$Patient->setPatientCronLogSer($cronLogSer);
 
 		push(@patientList, $Patient);
 	}
@@ -665,8 +642,6 @@ sub getPatientsMarkedForUpdateLegacy
 
 	# Update PatientControl Transfer flag form 0 to 1
 	MarkPatientForUpdate();
-	
-    my ($cronLogSer) = @_; # cron log serial in args
 	
 	my @patientList = (); # initialize list of patient objects
 	my ($lasttransfer, $id, $registrationdate);
@@ -716,7 +691,6 @@ sub getPatientsMarkedForUpdateLegacy
         $Patient->setPatientId($id);
 		$Patient->setPatientSSN($RAMQ);
         $Patient->setPatientRegistrationDate($registrationdate);
-		$Patient->setPatientCronLogSer($cronLogSer);
 		$Patient->setPatientSourceUID($sourceuid);
 
 		push(@patientList, $Patient);
@@ -727,7 +701,7 @@ sub getPatientsMarkedForUpdateLegacy
 
 sub getPatientsMarkedForUpdateModularCron {
 	
-	my ($cronLogSer, $cronType) = @_; # cron log serial in args
+	my ($cronType) = @_; # cron log serial in args
 
     $control_table = "";
 	if($cronType eq 'Document'){
@@ -738,8 +712,6 @@ sub getPatientsMarkedForUpdateModularCron {
         $control_table = "cronControlPatient_Announcement";
     }elsif($cronType eq 'LegacyQuestionnaire'){
         $control_table = "cronControlPatient_LegacyQuestionnaire";
-    }elsif($cronType eq 'Patients for Patients'){
-        $control_table = "cronControlPatient_PatientsForPatients";
     }elsif($cronType eq 'Treatment Team Message'){
         $control_table = "cronControlPatient_TreatmentTeamMessage";
     }
@@ -844,7 +816,6 @@ sub getPatientsMarkedForUpdateModularCron {
 		$Patient->setPatientEmail($wsEmail);
 		$Patient->setPatientFirebaseUID($wsUsername);
 		$Patient->setPatientRegistrationDate($wsRegistrationDate);
-		$Patient->setPatientCronLogSer($cronLogSer);
 
 		push(@patientList, $Patient);
 	}
@@ -854,7 +825,7 @@ sub getPatientsMarkedForUpdateModularCron {
 
 sub getPatientsMarkedForUpdateModularCronLegacy {
 	
-	my ($cronLogSer, $cronType) = @_; # cron log serial in args
+	my ($cronType) = @_; # cron log serial in args
 
     $control_table = "";
 	if($cronType eq 'Document'){
@@ -925,7 +896,6 @@ sub getPatientsMarkedForUpdateModularCronLegacy {
         $Patient->setPatientId($id);
 		$Patient->setPatientSSN($RAMQ);
         $Patient->setPatientRegistrationDate($registrationdate);
-		$Patient->setPatientCronLogSer($cronLogSer);
 		$Patient->setPatientSourceUID($sourceuid);
 		push(@patientList, $Patient);
 	}
@@ -1019,49 +989,6 @@ sub setPatientLastTransferredIntoOurDB
 			TransferFlag 		= 0
 		WHERE
 			TransferFlag		= 1
-	";
-
-	# prepare query
-	my $query = $SQLDatabase->prepare($update_sql)
-		or die "Could not prepare query: " . $SQLDatabase->errstr;
-
-	# execute query
-	$query->execute()
-		or die "Could not execute query: " . $query->errstr;
-}
-
-
-#======================================================================================
-# Subroutine to set/update the "last transferred" field to current time  and reset the transfer flag back from 1 to 0 (all other control modules)
-#======================================================================================
-sub setPatientLastTransferredModularCron
-{
-	my ($current_datetime, $cronType) = @_; # current datetime, cron module type,
-
-    $control_table = "";
-	if($cronType eq 'Document'){
-        $control_table = "cronControlPatient_Document";
-    }elsif($cronType eq 'EducationalMaterial'){
-        $control_table = "cronControlPatient_EducationalMaterial";
-    }elsif($cronType eq 'Announcement'){
-        $control_table = "cronControlPatient_Announcement";
-    }elsif($cronType eq 'LegacyQuestionnaire'){
-        $control_table = "cronControlPatient_LegacyQuestionnaire";
-    }elsif($cronType eq 'Patients for Patients'){
-        $control_table = "cronControlPatient_PatientsForPatients";
-    }elsif($cronType eq 'Treatment Team Message'){
-        $control_table = "cronControlPatient_TreatmentTeamMessage";
-    }
-
-	my $update_sql = "
-		UPDATE 
-			$control_table
-		SET
-			lastTransferred	= '$current_datetime',
-            lastUpdated 		= lastUpdated,
-			transferFlag 		= 0
-		WHERE
-			transferFlag		= 1
 	";
 
 	# prepare query

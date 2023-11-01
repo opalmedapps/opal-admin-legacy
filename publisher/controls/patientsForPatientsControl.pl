@@ -42,7 +42,6 @@ use PostControl;
 use Alias;
 use EducationalMaterialControl;
 use PatientsForPatients;
-use Cron;
 
 #-----------------------------------------------------------------------
 # Monitor this script's execution
@@ -233,16 +232,11 @@ sub writeToLogFile
 my $start_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 print "--- Start patientsForPatientsControl --- ", $start_datetime, "\n";
 
-# Log that the script is initialized in the cronlog
-my $cronLogSer = Cron::setCronLog("Started patsPatsControl", $start_datetime);
-
-
 #=========================================================================================
 # Retrieve all patients that are marked for update
 #=========================================================================================
 print "\n--- Start getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-# @registeredPatients = Patient::getPatientsMarkedForUpdateModularCron($cronLogSer, 'Patients for Patients');
-@patientList = Patient::getPatientsMarkedForUpdateModularCron($cronLogSer, 'Patients for Patients');
+@patientList = Patient::getPatientsMarkedForUpdateModularCron('Patients for Patients');
 print "--- End getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got patient list\n" if $verbose;
 
@@ -300,20 +294,14 @@ print "Got patient list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start publishPatientsForPatients: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-PatientsForPatients::publishPatientsForPatients($cronLogSer, @patientList);
+PatientsForPatients::publishPatientsForPatients(@patientList);
 print "--- End publishPatientsForPatients: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished patients for patients\n";
-
-# Once everything is complete, we update the "last transferred" field for all controls
-# Patient control
-Patient::setPatientLastTransferredModularCron($start_datetime, 'Patients for Patients');
 
 # Post control
 PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'Patients for Patients');
 
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
-# Log that the script is finished in the cronlog
-Cron::setCronLog("Completed patsPatsControl", $current_datetime);
 print "--- Completed ---- ", $current_datetime, "\n\n";
 
 print "Start Time [patientsForPatientsControl]: -->> $start_datetime\n";

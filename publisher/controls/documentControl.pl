@@ -42,7 +42,6 @@ use PostControl;
 use Alias;
 use EducationalMaterialControl;
 use Document;
-use Cron;
 
 #-----------------------------------------------------------------------
 # Monitor this script's execution
@@ -233,15 +232,11 @@ sub writeToLogFile
 my $start_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 print "--- Start documentControl --- ", $start_datetime, "\n";
 
-# Log that the script is initialized in the cronlog
-my $cronLogSer = Cron::setCronLog("Started documentControl", $start_datetime);
-
-
 #=========================================================================================
 # Retrieve all patients that are marked for update
 #=========================================================================================
 print "\n--- Start getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@registeredPatients = Patient::getPatientsMarkedForUpdateModularCronLegacy($cronLogSer, 'Document');
+@registeredPatients = Patient::getPatientsMarkedForUpdateModularCronLegacy('Document');
 print "--- End getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got patient list\n" if $verbose;
 
@@ -334,7 +329,7 @@ print "Got global patientInfo list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start getDocsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@DocList = Document::getDocsFromSourceDB($cronLogSer, \@patientList, $global_patientInfo_sql);
+@DocList = Document::getDocsFromSourceDB(\@patientList, $global_patientInfo_sql);
 print "--- End getDocsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got document list\n" if $verbose;
 
@@ -347,16 +342,10 @@ print "Finished document list\n" if $verbose;
 
 ################
 
-# Once everything is complete, we update the "last transferred" field for all controls
-# Patient control
-Patient::setPatientLastTransferredModularCron($start_datetime, 'Document');
-
 # Alias control
 Alias::setAliasLastTransferredModularControllers($start_datetime, 'Document');
 
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
-# Log that the script is finished in the cronlog
-Cron::setCronLog("Completed documentControl", $current_datetime);
 print "--- Completed ---- ", $current_datetime, "\n\n";
 
 print "Start Time [documentControl]: -->> $start_datetime\n";
