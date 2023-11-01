@@ -241,7 +241,6 @@ use Diagnosis;
 # use PatientDoctor;
 use TestResult;
 use TestResultControl;
-use Cron;
 use PostControl;
 use Announcement;
 use TxTeamMessage;
@@ -256,9 +255,6 @@ use LegacyQuestionnaire;
 # Get the current time (for last-updates/logs)
 my $start_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 print "--- Start --- ", $start_datetime, "\n";
-
-# Log that the script is initialized in the cronlog
-my $cronLogSer = Cron::setCronLog("Started", $start_datetime);
 
 #-----------------------------------------------------------------------
 # Parameter initialization
@@ -283,7 +279,7 @@ my $verbose = 1;
 # Retrieve all patients that are marked for update
 #=========================================================================================
 print "\n--- Start getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@registeredPatients = Patient::getPatientsMarkedForUpdateLegacy($cronLogSer);
+@registeredPatients = Patient::getPatientsMarkedForUpdateLegacy();
 print "--- End getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got patient list\n" if $verbose;
 
@@ -822,7 +818,6 @@ Patient::setPatientLastTransferredIntoOurDB($start_datetime);
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 
 # Log that the script is finished in the cronlog
-Cron::setCronLog("Completed", $current_datetime);
 print "--- Completed ---- ", $current_datetime, "\n\n";
 
 print "Start Time: -->> $start_datetime\n";

@@ -42,7 +42,6 @@ use PostControl;
 use EducationalMaterial;
 use Alias;
 use EducationalMaterialControl;
-use Cron;
 
 #-----------------------------------------------------------------------
 # Monitor this script's execution
@@ -233,16 +232,11 @@ sub writeToLogFile
 my $start_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 print "--- Start educationalMaterialControl--- ", $start_datetime, "\n";
 
-# Log that the script is initialized in the cronlog
-my $cronLogSer = Cron::setCronLog("Started educMatControl", $start_datetime);
-
-
 #=========================================================================================
 # Retrieve all patients that are marked for update
 #=========================================================================================
 print "\n--- Start getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-# @registeredPatients = Patient::getPatientsMarkedForUpdateModularCron($cronLogSer, 'EducationalMaterial');
-@patientList = Patient::getPatientsMarkedForUpdateModularCron($cronLogSer, 'EducationalMaterial');
+@patientList = Patient::getPatientsMarkedForUpdateModularCron('EducationalMaterial');
 print "--- End getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got patient list\n" if $verbose;
 
@@ -300,20 +294,14 @@ print "Got patient list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start publishEducationalMaterials: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-EducationalMaterial::publishEducationalMaterials($cronLogSer, @patientList);
+EducationalMaterial::publishEducationalMaterials(@patientList);
 print "--- End publishEducationalMaterials: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished Educational materials\n" if $verbose;
-
-# Once everything is complete, we update the "last transferred" field for all controls
-# Patient control
-Patient::setPatientLastTransferredModularCron($start_datetime, 'EducationalMaterial');
 
 # Educational material control
 EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime);
 
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
-# Log that the script is finished in the cronlog
-Cron::setCronLog("Completed educMatControl", $current_datetime);
 print "--- Completed ---- ", $current_datetime, "\n\n";
 
 print "Start Time [educationalMaterialControl]: -->> $start_datetime\n";

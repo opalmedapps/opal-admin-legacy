@@ -44,7 +44,6 @@ sub new
         _patientser     => undef,
         _postcontrolser => undef,
         _readstatus     => undef,
-        _cronlogser 	=> undef,
     };
 
     # bless associates an object with a class so Perl knows which package to search for
@@ -94,16 +93,6 @@ sub setAnnouncementReadStatus
 }
 
 #====================================================================================
-# Subroutine to set the Announcement Cron Log Serial
-#====================================================================================
-sub setAnnouncementCronLogSer
-{
-    my ($announcement, $cronlogser) = @_; # announcement object with provided serial in args
-    $announcement->{_cronlogser} = $cronlogser; # set the announcement ser
-    return $announcement->{_cronlogser};
-}
-
-#====================================================================================
 # Subroutine to get the Announcement Serial
 #====================================================================================
 sub getAnnouncementSer
@@ -139,21 +128,12 @@ sub getAnnouncementReadStatus
 	return $announcement->{_readstatus};
 }
 
-#====================================================================================
-# Subroutine to get the Announcement Cron Log Serial
-#====================================================================================
-sub getAnnouncementCronLogSer
-{
-	my ($announcement) = @_; # our announcement object
-	return $announcement->{_cronlogser};
-}
-
 #======================================================================================
 # Subroutine to publish announcement
 #======================================================================================
 sub publishAnnouncements
 {
-    my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
+    my (@patientList) = @_; # patient list and cron log serial from args
 
     #my $today_date = strftime("%Y-%m-%d", localtime(time));
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
@@ -389,7 +369,6 @@ sub publishAnnouncements
 	                # set the necessary values
 	                $announcement->setAnnouncementPatientSer($patientSer);
 	                $announcement->setAnnouncementPostControlSer($postControlSer);
-	                $announcement->setAnnouncementCronLogSer($cronLogSer);
 
 	                if (!$announcement->inOurDatabase()) {
 	    
@@ -426,13 +405,12 @@ sub inOurDatabase
     my $ExistingAnnouncement = (); # data to be entered if announcement exists
 
     # Other variables, if announcement exists
-    my ($readstatus, $cronlogser);
+    my ($readstatus);
 
     my $inDB_sql = "
         SELECT
             an.AnnouncementSerNum,
-            an.ReadStatus,
-            an.CronLogSerNum
+            an.ReadStatus
         FROM
             Announcement an
         WHERE
@@ -452,7 +430,6 @@ sub inOurDatabase
 
         $serInDB    = $data[0];
         $readstatus = $data[1];
-        $cronlogser = $data[2];
     }
 
     if ($serInDB) {
@@ -464,7 +441,6 @@ sub inOurDatabase
         $ExistingAnnouncement->setAnnouncementPatientSer($patientser);
         $ExistingAnnouncement->setAnnouncementPostControlSer($postcontrolser); 
         $ExistingAnnouncement->setAnnouncementReadStatus($readstatus);
-        $ExistingAnnouncement->setAnnouncementCronLogSer($cronlogser);
 
         return $ExistingAnnouncement; # this is true (ie. announcement exists, return object)
     }
@@ -481,19 +457,16 @@ sub insertAnnouncementIntoOurDB
 
     my $patientser      = $announcement->getAnnouncementPatientSer();
     my $postcontrolser  = $announcement->getAnnouncementPostControlSer();
-    my $cronlogser  	= $announcement->getAnnouncementCronLogSer();
 
     my $insert_sql = "
         INSERT INTO
             Announcement (
                 PatientSerNum,
-                CronLogSerNum,
                 PostControlSerNum,
                 DateAdded
             )
         VALUES (
             '$patientser',
-            '$cronlogser',
             '$postcontrolser',
             NOW()
         )
