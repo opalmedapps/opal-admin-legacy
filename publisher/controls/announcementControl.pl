@@ -44,7 +44,6 @@ use PostControl;
 use Announcement;
 use Alias;
 use EducationalMaterialControl;
-use Cron;
 
 #-----------------------------------------------------------------------
 # Monitor this script's execution
@@ -235,15 +234,11 @@ sub writeToLogFile
 my $start_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 print "--- Start announcementControl--- ", $start_datetime, "\n";
 
-# Log that the script is initialized in the cronlog
-my $cronLogSer = Cron::setCronLog("Started announceControl", $start_datetime);
-
 #=========================================================================================
 # Retrieve all patients that are marked for update
 #=========================================================================================
 print "\n--- Start getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-# @registeredPatients = Patient::getPatientsMarkedForUpdateModularCron($cronLogSer, 'Announcement');
-@patientList = Patient::getPatientsMarkedForUpdateModularCron($cronLogSer, 'Announcement');
+@patientList = Patient::getPatientsMarkedForUpdateModularCron('Announcement');
 print "--- End getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got patient list\n" if $verbose;
 
@@ -301,20 +296,14 @@ print "Got patient list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start publishAnnouncements: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-Announcement::publishAnnouncements($cronLogSer, @patientList);
+Announcement::publishAnnouncements(@patientList);
 print "--- End publishAnnouncements: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished announcements\n" if $verbose;
-
-# Once everything is complete, we update the "last transferred" field for all controls
-# Patient control
-Patient::setPatientLastTransferredModularCron($start_datetime, 'Announcement');
 
 # Post control
 PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'Announcement');
 
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
-# Log that the script is finished in the cronlog
-Cron::setCronLog("Completed announceControl", $current_datetime);
 print "--- Completed ---- ", $current_datetime, "\n\n";
 
 print "Start Time [announcementControl]: -->> $start_datetime\n";

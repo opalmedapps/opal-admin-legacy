@@ -42,7 +42,6 @@ sub new
         _patientser     => undef,
         _postcontrolser => undef,
         _readstatus     => undef,
-        _cronlogser     => undef,
     };
 
     # bless associates an object with a class so Perl knows which package to search for
@@ -92,16 +91,6 @@ sub setPatsForPatsReadStatus
 }
 
 #====================================================================================
-# Subroutine to set the PatsForPats Cron Log Serial
-#====================================================================================
-sub setPatsForPatsCronLogSer
-{
-    my ($patsforpats, $cronlogser) = @_; # patsforpats object with provided serial in args
-    $patsforpats->{_cronlogser} = $cronlogser; # set the patsforpats ser
-    return $patsforpats->{_cronlogser};
-}
-
-#====================================================================================
 # Subroutine to get the PatsForPats Serial
 #====================================================================================
 sub getPatsForPatsSer
@@ -137,21 +126,12 @@ sub getPatsForPatsReadStatus
 	return $patsforpats->{_readstatus};
 }
 
-#====================================================================================
-# Subroutine to get the PatsForPats Cron Log Serial
-#====================================================================================
-sub getPatsForPatsCronLogSer
-{
-    my ($patsforpats) = @_; # our patsforpats object
-    return $patsforpats->{_cronlogser};
-}
-
 #======================================================================================
 # Subroutine to publish patsforpats
 #======================================================================================
 sub publishPatientsForPatients
 {
-    my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
+    my (@patientList) = @_; # patient list and cron log serial from args
 
     #my $today_date = strftime("%Y-%m-%d", localtime(time));
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
@@ -341,7 +321,6 @@ sub publishPatientsForPatients
                 # set the necessary values
                 $patsforpats->setPatsForPatsPatientSer($patientSer);
                 $patsforpats->setPatsForPatsPostControlSer($postControlSer);
-                $patsforpats->setPatsForPatsCronLogSer($cronLogSer);
 
                 if (!$patsforpats->inOurDatabase()) {
 
@@ -375,13 +354,12 @@ sub inOurDatabase
     my $ExistingPatsForPats = (); # data to be entered if patsforpats exists
 
     # Other variables, if patsforpats exists
-    my ($readstatus, $cronlogser);
+    my ($readstatus);
 
     my $inDB_sql = "
         SELECT
             pfp.PatientsForPatientsSerNum,
-            pfp.ReadStatus,
-            pfp.CronLogSerNum
+            pfp.ReadStatus
         FROM
             PatientsForPatients pfp
         WHERE
@@ -401,7 +379,6 @@ sub inOurDatabase
 
         $serInDB    = $data[0];
         $readstatus = $data[1];
-        $cronlogser = $data[2];
     }
 
     if ($serInDB) {
@@ -413,7 +390,6 @@ sub inOurDatabase
         $ExistingPatsForPats->setPatsForPatsPatientSer($patientser);
         $ExistingPatsForPats->setPatsForPatsPostControlSer($postcontrolser); 
         $ExistingPatsForPats->setPatsForPatsReadStatus($readstatus);
-        $ExistingPatsForPats->setPatsForPatsCronLogSer($cronLogSer);
 
         return $ExistingPatsForPats; # this is true (ie. patsforpats exists, return object)
     }
@@ -430,19 +406,16 @@ sub insertPatsForPatsIntoOurDB
 
     my $patientser      = $patsforpats->getPatsForPatsPatientSer();
     my $postcontrolser  = $patsforpats->getPatsForPatsPostControlSer();
-    my $cronlogser      = $patsforpats->getPatsForPatsCronLogSer();
 
     my $insert_sql = "
         INSERT INTO
             PatientsForPatients (
                 PatientSerNum,
-                CronLogSerNum,
                 PostControlSerNum,
                 DateAdded
             )
         VALUES (
             '$patientser',
-            '$cronlogser',
             '$postcontrolser',
             NOW()
         )

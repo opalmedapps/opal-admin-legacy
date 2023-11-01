@@ -42,7 +42,6 @@ sub new
         _patientser         => undef,
         _edumatcontrolser   => undef,
         _readstatus         => undef,
-        _cronlogser         => undef,
     };
 
     # bless associates an object with a class so Perl knows which package to search for
@@ -92,16 +91,6 @@ sub setEduMatReadStatus
 }
 
 #====================================================================================
-# Subroutine to set the Educational Material Cron Log Serial
-#====================================================================================
-sub setEduMatCronLogSer
-{
-    my ($edumat, $cronlogser) = @_; # edumat object with provided serial in args
-    $edumat->{_cronlogser} = $cronlogser; # set the edumat ser
-    return $edumat->{_cronlogser};
-}
-
-#====================================================================================
 # Subroutine to get the Educational Material Serial
 #====================================================================================
 sub getEduMatSer
@@ -137,21 +126,12 @@ sub getEduMatReadStatus
 	return $edumat->{_readstatus};
 }
 
-#====================================================================================
-# Subroutine to get the Educational Material Cron Log Serial
-#====================================================================================
-sub getEduMatCronLogSer
-{
-    my ($edumat) = @_; # our edumat object
-    return $edumat->{_cronlogser};
-}
-
 #======================================================================================
 # Subroutine to publish educational materials
 #======================================================================================
 sub publishEducationalMaterials
 {
-    my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
+    my (@patientList) = @_; # patient list and cron log serial from args
 
     my $today_date = strftime("%Y-%m-%d", localtime(time));
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
@@ -163,9 +143,9 @@ sub publishEducationalMaterials
 
     # If we are not within the window to publish the messages then return
     #if ( (($now - $today_at_eightAM) < 0) or (($now - $today_at_eightPM) > 0) ) {return;}
-
-	# Check for any new updates from the main cron control
-	CheckEduMatControlsMarkedForPublishModularCron();
+    
+    # Check for any new updates from the main cron control
+    CheckEduMatControlsMarkedForPublishModularCron();
 
     # Retrieve all the controls
     my @eduMatControls = EducationalMaterialControl::getEduMatControlsMarkedForPublishModularCron();
@@ -385,7 +365,6 @@ sub publishEducationalMaterials
                 # set the necessary values
                 $eduMat->setEduMatPatientSer($patientSer);
                 $eduMat->setEduMatControlSer($eduMatControlSer);
-                $eduMat->setEduMatCronLogSer($cronLogSer);
 
                 if (!$eduMat->inOurDatabase()) {
         
@@ -419,13 +398,12 @@ sub inOurDatabase
     my $ExistingEduMat = (); # data to be entered if edumat exists
 
     # Other variables, if edumat exists
-    my ($readstatus, $cronlogser);
+    my ($readstatus);
 
     my $inDB_sql = "
         SELECT
             em.EducationalMaterialSerNum,
-            em.ReadStatus,
-            em.CronLogSerNum
+            em.ReadStatus
         FROM
             EducationalMaterial em
         WHERE
@@ -445,7 +423,6 @@ sub inOurDatabase
 
         $serInDB    = $data[0];
         $readstatus = $data[1];
-        $cronlogser = $data[2];
     }
 
     if ($serInDB) {
@@ -457,7 +434,6 @@ sub inOurDatabase
         $ExistingEduMat->setEduMatPatientSer($patientser);
         $ExistingEduMat->setEduMatControlSer($edumatcontrolser);
         $ExistingEduMat->setEduMatReadStatus($readstatus);
-        $ExistingEduMat->setEduMatCronLogSer($cronlogser);
 
         return $ExistingEduMat; # this is true (ie. edumat exists. return object)
     }
@@ -474,20 +450,17 @@ sub insertEducationalMaterialIntoOurDB
 
     my $patientser          = $edumat->getEduMatPatientSer();
     my $edumatcontrolser    = $edumat->getEduMatControlSer();
-    my $cronlogser          = $edumat->getEduMatCronLogSer();
 
     my $insert_sql = "
         INSERT INTO 
             EducationalMaterial (
                 PatientSerNum,
-                CronLogSerNum,
                 EducationalMaterialControlSerNum,
                 ReadStatus,
                 DateAdded
             )
         VALUES (
             '$patientser',
-            '$cronlogser',
             '$edumatcontrolser',
             0,
             NOW()

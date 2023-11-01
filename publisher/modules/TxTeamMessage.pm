@@ -42,7 +42,6 @@ sub new
         _patientser     => undef,
         _postcontrolser => undef,
         _readstatus     => undef,
-        _cronlogser     => undef,
     };
 
     # bless associates an object with a class so Perl knows which package to search for
@@ -92,16 +91,6 @@ sub setTTMReadStatus
 }
 
 #====================================================================================
-# Subroutine to set the Treatment Team Message Cron Log Serial
-#====================================================================================
-sub setTTMCronLogSer
-{
-    my ($ttm, $cronlogser) = @_; # ttm object with provided serial in args
-    $ttm->{_cronlogser} = $cronlogser; # set the ttm ser
-    return $ttm->{_cronlogser};
-}
-
-#====================================================================================
 # Subroutine to get the Treatment Team Message Serial
 #====================================================================================
 sub getTTMSer
@@ -137,21 +126,12 @@ sub getTTMReadStatus
 	return $ttm->{_readstatus};
 }
 
-#====================================================================================
-# Subroutine to get the Treatment Team Message Cron Log Serial
-#====================================================================================
-sub getTTMCronLogSer
-{
-    my ($ttm) = @_; # our ttm object
-    return $ttm->{_cronlogser};
-}
-
 #======================================================================================
 # Subroutine to publish tx team message
 #======================================================================================
 sub publishTxTeamMessages
 {
-    my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
+    my (@patientList) = @_; # patient list and cron log serial from args
 
     my $today_date = strftime("%Y-%m-%d", localtime(time));
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
@@ -332,7 +312,6 @@ sub publishTxTeamMessages
                 # set the necessary values
                 $txTeamMessage->setTTMPatientSer($patientSer);
                 $txTeamMessage->setTTMPostControlSer($postControlSer);
-                $txTeamMessage->setTTMCronLogSer($cronLogSer);
 
                 if (!$txTeamMessage->inOurDatabase()) {
 
@@ -367,13 +346,12 @@ sub inOurDatabase
     my $ExistingTTM = (); # data to be entered if ttm exists
 
     # Other variables, if ttm exists
-    my ($readstatus, $cronlogser);
+    my ($readstatus);
 
     my $inDB_sql = "
         SELECT
             ttm.TxTeamMessageSerNum,
-            ttm.ReadStatus,
-            ttm.CronLogSerNum
+            ttm.ReadStatus
         FROM
             TxTeamMessage ttm
         WHERE
@@ -393,7 +371,6 @@ sub inOurDatabase
 
         $serInDB    = $data[0];
         $readstatus = $data[1];
-        $cronlogser = $data[2];
     }
 
     if ($serInDB) {
@@ -405,7 +382,6 @@ sub inOurDatabase
         $ExistingTTM->setTTMPatientSer($patientser);
         $ExistingTTM->setTTMPostControlSer($postcontrolser);
         $ExistingTTM->setTTMReadStatus($readstatus);
-        $ExistingTTM->setTTMCronLogSer($cronlogser);
 
         return $ExistingTTM; # this is true (ie. ttm exists. return object)
 
@@ -424,20 +400,17 @@ sub insertTxTeamMessageIntoOurDB
 
     my $patientser      = $txTeamMessage->getTTMPatientSer();
     my $postcontrolser  = $txTeamMessage->getTTMPostControlSer();
-    my $cronlogser      = $txTeamMessage->getTTMCronLogSer();
 
     my $insert_sql = "
         INSERT INTO
             TxTeamMessage (
                 PatientSerNum,
-                CronLogSerNum,
                 PostControlSerNum,
                 DateAdded,
                 ReadStatus
             )
         VALUES (
             '$patientser',
-            '$cronlogser',
             '$postcontrolser',
             NOW(),
             0
