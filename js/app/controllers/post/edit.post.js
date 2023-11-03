@@ -27,11 +27,6 @@ controller('post.edit', function ($scope, $filter, $sce, $state, $uibModal, $uib
 			name_display: $filter('translate')('POSTS.ADD.TREATMENT_TEAM_MESSAGE'),
 			icon: 'user-md'
 		},
-		{
-			name: 'Patients for Patients',
-			name_display: $filter('translate')('POSTS.ADD.PATIENTS_FOR_PATIENTS'),
-			icon: 'users'
-		}
 	];
 
 	/* Function for the "Processing" dialog */
