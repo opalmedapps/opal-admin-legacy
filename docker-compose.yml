@@ -18,6 +18,8 @@ services:
     #container_name: opaladmin-cron
     build: .
     image: opalmedapps/opaladmin
+    env_file:
+      - .env
     volumes:
       - .:/var/www/html/
       - ./logs/opaladmin:/var/www/html/publisher/logs
