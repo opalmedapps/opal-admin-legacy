@@ -117,8 +117,6 @@ ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 ini_set("error_log", __DIR__."/../php-error.log");
 
-const LOCALHOST_ADDRESS = array('127.0.0.1','localhost','::1');
-
 const DEFAULT_CRON_OAUSERID = 23;
 const DEFAULT_CRON_USERNAME = "cronjob";
 const DEFAULT_CRON_ROLE = 1;
@@ -166,6 +164,7 @@ define("IOS_URL" , $_ENV["APPLE_URL"]);
 define('NEW_OPALADMIN_HOST_INTERNAL', $_ENV['NEW_OPALADMIN_HOST_INTERNAL']);
 define('NEW_OPALADMIN_HOST_EXTERNAL', $_ENV['NEW_OPALADMIN_HOST_EXTERNAL']);
 define('NEW_OPALADMIN_TOKEN', $_ENV['NEW_OPALADMIN_TOKEN']);
+define('CRON_CONTAINER_SERVICE_NAME', $_ENV['CRON_CONTAINER_SERVICE_NAME']);
 
 const RESOURCE_LEVEL_READY = 1;
 const RESOURCE_LEVEL_IN_PROCESS = 2;
