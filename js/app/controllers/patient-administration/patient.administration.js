@@ -221,7 +221,7 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 				if ($scope.searchResult[0].MRN) {
 					$scope.MRN = $scope.searchResult[0].MRN;
 				}
-				if ($scope.searchResult[0].pramq) {
+				if ($scope.searchResult[0].pramq || $scope.searchResult[0].pramq==="") {
 					$scope.pramq = $scope.searchResult[0].pramq.replace(/["']/g, "");
 				}
 				if ($scope.searchResult[0].psex) {
@@ -264,7 +264,7 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 				if ($scope.selectedName.MRN) {
 					$scope.MRN = $scope.selectedName.MRN;
 				}
-				if ($scope.selectedName.pramq) {
+				if ($scope.selectedName.pramq || $scope.selectedName.pramq==="") {
 					$scope.pramq = $scope.selectedName.pramq.replace(/["']/g, "");
 				}
 				if ($scope.selectedName.psex) {
