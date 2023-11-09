@@ -32,6 +32,20 @@ class CronJob extends OpalProject {
     }
 
     /**
+     * Retrieve the IP of a requesting container based on the service name definition.
+     * @param string containerName the name of the container
+     * @return string the external IP address of the container
+     */
+    protected function _getContainerIp($containerName) {
+        $output = shell_exec("getent hosts $containerName");
+        if ($output) {
+            $parts = preg_split('/\s+/', $output);
+            return $parts[0]; // The first part is the IP address
+        }
+        return false;
+    }
+
+    /**
      * Because the CronJob is not really a module, it has to be attached to another parent class named OpalProject. This
      * way, CronJob and Module can share some methods while having their own method. To validate if a cron call is valid
      * or not, it checks the user IP address which should be itself or locally. If it is not, rejects it.
@@ -40,8 +54,9 @@ class CronJob extends OpalProject {
      */
     protected function _checkCronAccess($arguments = array()) {
         $arguments = HelpSetup::arraySanitization($arguments);
+        $cronContainerIp = $this->_getContainerIp(CRON_CONTAINER_SERVICE_NAME);
         HelpSetup::getModuleMethodName($moduleName, $methodeName);
-        if(!in_array(HelpSetup::getUserIP(), LOCALHOST_ADDRESS)) {
+        if($cronContainerIp!==HelpSetup::getUserIP()){
             $this->_insertAudit($moduleName, $methodeName, $arguments, ACCESS_DENIED, $this->opalDB->getUsername());
             HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
         }
