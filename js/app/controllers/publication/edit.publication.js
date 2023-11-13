@@ -394,8 +394,8 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 						// Open trigger by appointment time if already selected
 						if(item.id == "Scheduled Time"){
 							$scope.toSubmit.scheduledtime = {
-								unit: getObjectFromDictionary(item.ScheduledTimeUnit, $scope.presetUnits),
-								direction: getObjectFromDictionary(item.ScheduledTimeDirection, $scope.presetDirections),
+								unit: $scope.presetUnits.find(unit => unit.id === item.ScheduledTimeUnit),
+								direction: $scope.presetDirections.find(direction => direction.id === item.ScheduledTimeDirection),
 								offset: parseInt(item.ScheduledTimeOffset)
 							}
 							$scope.selectedOffset = $scope.toSubmit.scheduledtime.offset;
