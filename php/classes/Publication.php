@@ -976,7 +976,7 @@ class Publication extends Module
             if(!empty($publication["triggers"])) {
                 $toInsert = array();
                 foreach($publication["triggers"] as $trigger) {
-                    if (!$this->_nestedSearch($trigger["id"], $trigger["type"], $existingTriggers))
+                    if (!$this->_nestedSearch($trigger["id"], $trigger["type"], $existingTriggers) or $trigger["type"] == "AppointmentStatus") {
                         array_push($toInsert, array(
                             "ControlTable"=>$controlTableName,
                             "ControlTableSerNum"=>$publication["materialId"]["value"],
@@ -985,9 +985,20 @@ class Publication extends Module
                             "DateAdded"=>date("Y-m-d H:i:s"),
                             "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
                             "SessionId"=>$this->opalDB->getSessionId(),
+                            "ScheduledTimeOffset"=>$publication["scheduledtime"]["offset"],
+                            "ScheduledTimeUnit"=>(isset($publication["scheduledtime"]["unit"]["id"])) ? $publication["scheduledtime"]["unit"]["id"]: null,
+                            "ScheduledTimeDirection"=>$publication["scheduledtime"]["direction"]["id"]
                         ));
+                        }
+                        // to delete previous appointment status after adding new one
+                        if ($trigger["type"] == "AppointmentStatus"){
+                            $this->opalDB->deleteFilters($trigger["id"], $trigger["type"], $publication["materialId"]["value"], $controlTableName);
+                        }
+
                 }
-                $this->opalDB->insertMultipleFilters($toInsert);
+                // insert only if there are items in `toInsert` array
+                if(!empty($toInsert))
+                    $this->opalDB->insertMultipleFilters($toInsert);
             }
 
             if(!$publication["occurrence"]["set"]) {
@@ -1131,7 +1142,7 @@ class Publication extends Module
         $results["patients"] = $this->opalDB->getPatientsTriggers();
         $results["dx"] = $this->opalDB->getDiagnosisTriggers();
         $results["appointments"] = $this->opalDB->getAppointmentsTriggers();
-        $results["appointmentStatuses"] = $this->opalDB->getAppointmentsStatusTriggers();
+        $results["appointmentTimes"] = $this->opalDB->getAppointmentsStatusTriggers();
         $results["doctors"] = $this->opalDB->getDoctorsTriggers();
         $results["machines"] = $this->opalDB->getTreatmentMachinesTriggers();
         $results["studies"] = $this->opalDB->getStudiesTriggers();
