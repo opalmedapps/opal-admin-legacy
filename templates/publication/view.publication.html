@@ -195,19 +195,36 @@
                 </p>
             </div>
         </div>
-        <!-- SECTION: Appointment status trigger -->
-        <div ng-if="triggerSection.appointmentStatus.available && appointmentStatus != ('PUBLICATION.EDIT.NO_FILTER'|translate)" uib-accordion-group is-open="appointmentStatusTriggerSection.open">
+        <!-- SECTION: Appointment time trigger -->
+        <div ng-if="triggerSection.appointmentTime.available && appointmentTime != ('PUBLICATION.EDIT.NO_FILTER'|translate)" uib-accordion-group is-open="appointmentTimeTriggerSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>{{'PUBLICATION.EDIT.TRIGGER_APPT_STATUS'|translate}}</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': appointmentStatusTriggerSection.open, 'glyphicon-chevron-right': !appointmentStatusTriggerSection.open}"></i>
+                    <strong>{{'PUBLICATION.EDIT.TRIGGER_APPT_TIME'|translate}}</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': appointmentTimeTriggerSection.open, 'glyphicon-chevron-right': !appointmentTimeTriggerSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div>
-                <strong>{{'PUBLICATION.EDIT.CURRENT_TRIGGER_APPT_STATUS'|translate}}</strong><br>
+                <strong>{{'PUBLICATION.EDIT.CURRENT_TRIGGER_APPT_TIME_SELECTION'|translate}}</strong><br>
                 <p>
                     <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                    {{appointmentStatus}}
+                    {{appointmentTime}}
                 </p>
+            <div>
+                <p ng-if="selectedOffset">
+                    <strong>{{'PUBLICATION.EDIT.SCHEDULEDTIME_OFFSET'|translate}}</strong>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                    {{selectedOffset}}
+                </p>
+                <p ng-if="selectedUnit">
+                    <strong>{{'PUBLICATION.EDIT.SCHEDULEDTIME_UNIT'|translate}}</strong>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                    {{selectedUnit.id}}
+                </p>
+                <p ng-if="selectedDirection">
+                    <strong>{{'PUBLICATION.EDIT.SCHEDULEDTIME_DIRECTION'|translate}}</strong>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                    {{selectedDirection.id}}
+                </p>
+            </div>
             </div>
         </div>
         <!-- SECTION: Appointment trigger -->
