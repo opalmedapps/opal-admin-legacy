@@ -808,8 +808,8 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 				return list[i];
 			}
 		}
-	};
-	// END OF SCHEDULED TIME SECTION FUNCTIONALITY
+	}
+
 	// Function to close edit modal dialog
 	$scope.cancel = function () {
 		$uibModalInstance.dismiss('cancel');
