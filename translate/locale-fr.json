@@ -652,7 +652,14 @@
       "MONTHS_SELECTED": " mois sélectionnés",
       "SELECT": " Sélectionner",
       "TODAY": "Aujourd'hui",
-      "RESET": "Vider"
+      "RESET": "Vider",
+      "BEFORE": "Avant",
+      "AFTER": "Après",
+      "MINUTES": "Minutes",
+      "HOURS": "Heures",
+      "DAYS": "Jours",
+      "WEEKS": "Semaines",
+      "MONTHS": "Mois"
     }
   },
   "PUBLICATION": {
