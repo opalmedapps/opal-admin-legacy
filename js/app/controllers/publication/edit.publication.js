@@ -801,15 +801,6 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 		};
 	};
 
-	// function to get the matching object of a key in a list of dictionaries
-	function getObjectFromDictionary(key, list){
-		for (var i = 0; i < list.length; i++){
-			if (list[i].id ==key){
-				return list[i];
-			}
-		}
-	}
-
 	// Function to close edit modal dialog
 	$scope.cancel = function () {
 		$uibModalInstance.dismiss('cancel');
