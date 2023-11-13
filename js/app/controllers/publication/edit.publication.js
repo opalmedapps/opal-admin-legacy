@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('publication.edit', function ($scope, $filter, $uibModal, $uibModalInstance, $locale, publicationCollectionService, FrequencyFilterService, Session, ErrorHandler) {
+angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('publication.edit', function ($scope, $filter, $uibModal, $uibModalInstance, $locale, publicationCollectionService, ScheduledTimeFilterService, FrequencyFilterService, Session, ErrorHandler) {
 
 	// initialize default variables & lists
 	$scope.toSubmit = {
@@ -19,10 +19,12 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 		publish_time: null,
 	};
 
-	$scope.appointmentStatus = $filter('translate')('PUBLICATION.EDIT.NO_FILTER');
+	$scope.appointmentTime = $filter('translate')('PUBLICATION.EDIT.NO_FILTER');
 
 	// Default boolean for showing frequency section details
 	$scope.showFrequency = false;
+	// Default boolean for showing scheduled time section
+	$scope.showScheduledTimeDetails = false;
 
 	$scope.oldData = {};
 	$scope.changesDetected = false;
@@ -111,7 +113,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 	$scope.triggerSection = {
 		patient: {available:false, open:false, show:false},
 		demo: {available:false, open:false, show:false},
-		appointmentStatus: {available:false,open:false, show:false, value: null},
+		appointmentTime: {available:false,open:false, show:false, value: null},
 		appointment: {available:false,open:false, show:false},
 		doctor: {available:false,open:false, show:false},
 		machine: {available:false,open:false, show:false},
@@ -129,7 +131,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 			value: null,
 			type: null,
 		},
-		triggers: []
+		triggers: [],
 	};
 
 	// Initialize to hold demographic triggers
@@ -222,7 +224,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 	$scope.doctorTriggerList = [];
 	$scope.studyTriggerList = [];
 	$scope.patientTriggerList = [];
-	$scope.appointmentStatusList = [];
+	$scope.appointmentTimeList = [];
 
 	/* Function for the "Processing" dialog */
 	var processingModal;
@@ -260,25 +262,25 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 		$scope.machineTriggerList = response.data.machines;
 		$scope.studyTriggerList = response.data.studies;
 		$scope.patientTriggerList = response.data.patients;
-		$scope.appointmentStatusList = response.data.appointmentStatuses;
-		$scope.appointmentStatusList.forEach(function(entry) {
+		$scope.appointmentTimeList = response.data.appointmentTimes;
+		$scope.appointmentTimeList.forEach(function(entry) {
 			if($scope.language.toUpperCase() === "FR") {
 
 				switch(entry.name) {
-				case "Open":
-					entry.name_display = "Ouvert";
-					break;
-				case "Completed":
-					entry.name_display = "Complété";
-					break;
-				case "Cancelled":
-					entry.name_display = "Annulé";
-					break;
-				case "Checked In":
-					entry.name_display = "Enregistré";
-					break;
-				default:
-					entry.name_display = "Non traduit";
+					case "Scheduled Time":
+						entry.name_display = "Temps prévu";
+						break;
+					case "Completed Time":
+						entry.name_display = "Temps Complété";
+						break;
+					case "Cancelled Time":
+						entry.name_display = "Temps Annulé";
+						break;
+					case "Checkin Time":
+						entry.name_display = "Temps Enregistré";
+						break;
+					default:
+						entry.name_display = "Non traduit";
 				}
 			}
 			else
@@ -363,11 +365,10 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 				else
 					$scope.preview.display = 2;
 			}
-
 			$scope.publishFrequencySection.available = response.data["publicationSettings"].indexOf("1") !== -1 ? true: false;
 			$scope.triggerSection.patient.available = response.data["publicationSettings"].indexOf("2") !== -1 ? true: false;
 			$scope.triggerSection.demo.available = response.data["publicationSettings"].indexOf("3") !== -1 ? true: false;
-			$scope.triggerSection.appointmentStatus.available = response.data["publicationSettings"].indexOf("4") !== -1 ? true: false;
+			$scope.triggerSection.appointmentTime.available = response.data["publicationSettings"].indexOf("4") !== -1 ? true: false;
 			$scope.triggerSection.appointment.available = response.data["publicationSettings"].indexOf("5") !== -1 ? true: false;
 			$scope.triggerSection.diagnosis.available = response.data["publicationSettings"].indexOf("6") !== -1 ? true: false;
 			$scope.triggerSection.doctor.available = response.data["publicationSettings"].indexOf("7") !== -1 ? true: false;
@@ -382,15 +383,27 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 			checkAdded($scope.machineTriggerList, $scope.selectAll.machine);
 			checkAdded($scope.studyTriggerList, $scope.selectAll.study);
 			checkAdded($scope.patientTriggerList, $scope.selectAll.patient);
-			checkAdded($scope.appointmentStatusList);
+			checkAdded($scope.appointmentTimeList);
 
-			$scope.appointmentStatus = $filter('translate')('PUBLICATION.EDIT.NO_FILTER');
-			angular.forEach($scope.appointmentStatusList, function (item){
+			$scope.appointmentTime = $filter('translate')('PUBLICATION.EDIT.NO_FILTER');
+			angular.forEach($scope.appointmentTimeList, function (item){
 				if(item.added) {
-					$scope.appointmentStatus = item.name_display;
-					if ($scope.apptSelected != item.id)
+					$scope.appointmentTime = item.name_display;
+					if ($scope.apptSelected != item.id) {
 						$scope.apptSelected = item.id;
-					else
+						// Open trigger by appointment time if already selected
+						if(item.id == "Scheduled Time"){
+							$scope.toSubmit.scheduledtime = {
+								unit: getObjectFromDictionary(item.ScheduledTimeUnit, $scope.presetUnits),
+								direction: getObjectFromDictionary(item.ScheduledTimeDirection, $scope.presetDirections),
+								offset: parseInt(item.ScheduledTimeOffset)
+							}
+							$scope.selectedOffset = $scope.toSubmit.scheduledtime.offset;
+							$scope.selectedDirection = $scope.toSubmit.scheduledtime.direction;
+							$scope.selectedUnit = $scope.toSubmit.scheduledtime.unit;
+							$scope.addScheduledTime();
+						}
+					}else
 						$scope.apptSelected = null;
 				}
 			});
@@ -679,24 +692,33 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 		}
 	};
 
-	// Function to toggle appointment status trigger
-	$scope.appointmentStatusUpdate = function (entrySelected) {
+	// Function to toggle appointment time trigger
+	$scope.appointmentTimeUpdate = function (entrySelected) {
 		$scope.toSubmit.triggers_updated = 1;
 		var entryFound = false;
-		angular.forEach($scope.appointmentStatusList, function(item){
+		angular.forEach($scope.appointmentTimeList, function(item){
 			if (($scope.toSubmit.triggers.findIndex(x => x.id === item.id)) != -1) {
+				// if trigger by appointment time is closed, reset its related variables
+				if(item.id == "Scheduled Time"){
+						$scope.removeScheduledTime();
+					}
 				$scope.toSubmit.triggers.splice($scope.toSubmit.triggers.findIndex(x => x.id === item.id), 1);
 			} else {
 				if (item.id == entrySelected.id) {
+					// if the selected time is scheduled time show relevant fields
+					if(item.id == "Scheduled Time"){
+						$scope.addScheduledTime();
+					}
+
 					$scope.toSubmit.triggers.push({type: item.type, id: item.id});
-					$scope.appointmentStatus = entrySelected.name_display;
+					$scope.appointmentTime = entrySelected.name_display;
 					entryFound = true;
 				}
 			}
 		});
 
 		if(!entryFound) {
-			$scope.appointmentStatus = $filter('translate')('PUBLICATION.EDIT.NO_FILTER');
+			$scope.appointmentTime = $filter('translate')('PUBLICATION.EDIT.NO_FILTER');
 		}
 
 
@@ -708,6 +730,86 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 			$scope.apptSelected = null;
 	};
 
+	// `Trigger by Appointment Time` functinolity
+
+	// function to be called when fields related to scheduled time are updated
+	// takes type (field name) and the value of the field passed by the template
+	$scope.appointmentScheduledTime = function (type, selectedValue) {
+		$scope.toSubmit.triggers_updated = 1;
+		if(type == "unit"){
+			$scope.toSubmit.scheduledtime.unit = selectedValue;
+			$scope.selectedUnit = selectedValue;
+		}else if(type == "direction"){
+			$scope.toSubmit.scheduledtime.direction = selectedValue;
+			$scope.selectedDirection = selectedValue;
+		} else{
+			$scope.toSubmit.scheduledtime.offset = selectedValue;
+			$scope.selectedOffset = selectedValue;
+		}
+		// only allow save when all fields are valid
+		$scope.validator.scheduledtime.completed =($scope.selectedUnit && $scope.selectedOffset && $scope.selectedDirection);
+	}
+
+	// Initialize list of preset publishing scheduled time variables
+	$scope.presetDirections = ScheduledTimeFilterService.presetDirections;
+	$scope.presetUnits = ScheduledTimeFilterService.presetUnits;
+
+	$scope.addScheduledTime = function () {
+		$scope.prepareScheduledTime();
+		$scope.showScheduledTimeDetails = true;
+	};
+
+	// Function for removing new scheduled time
+	$scope.removeScheduledTime = function () {
+		$scope.showScheduledTimeDetails = false; // Hide form
+		$scope.selectedDirection = $scope.presetDirections[1];
+		$scope.selectedUnit = '';
+		$scope.selectedOffset = 0;
+		// reset variable
+		$scope.toSubmit.scheduledtime = {
+			unit: '',
+			direction: $scope.presetDirections[1],
+			offset: 0
+		};
+		// delete validator when not selecting appointment scheduled time option
+		delete $scope.validator.scheduledtime;
+
+	};
+
+	// function for initializing variables related to scheduled time
+	$scope.prepareScheduledTime = function() {
+		if (!$scope.toSubmit.scheduledtime) {
+			// default it to `after` option.
+			$scope.selectedDirection = $scope.presetDirections[1];
+			$scope.selectedUnit = '';
+			$scope.selectedOffset = 0;
+			$scope.toSubmit.scheduledtime = {
+				unit: '',
+				direction: $scope.presetDirections[1],
+				offset: 0
+			};
+		} else {
+			$scope.toSubmit.scheduledtime = {
+				unit: $scope.selectedUnit,
+				direction: $scope.selectedDirection,
+				offset: $scope.selectedOffset
+			};
+		}
+		$scope.validator.scheduledtime = {
+			completed: false,
+			mandatory: false,
+		};
+	};
+
+	// function to get the matching object of a key in a list of dictionaries
+	function getObjectFromDictionary(key, list){
+		for (var i = 0; i < list.length; i++){
+			if (list[i].id ==key){
+				return list[i];
+			}
+		}
+	};
+	// END OF SCHEDULED TIME SECTION FUNCTIONALITY
 	// Function to close edit modal dialog
 	$scope.cancel = function () {
 		$uibModalInstance.dismiss('cancel');
@@ -845,6 +947,10 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 					}
 					else if (trigger.id == selectedTrigger.id)
 						trigger.added = true;
+						// append the new variables offset, unit, and direction to the trigger object
+						trigger.ScheduledTimeOffset = selectedTrigger.ScheduledTimeOffset;
+						trigger.ScheduledTimeUnit = selectedTrigger.ScheduledTimeUnit;
+						trigger.ScheduledTimeDirection = selectedTrigger.ScheduledTimeDirection;
 				}
 			});
 		});
@@ -1351,6 +1457,10 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 
 	// Function for updating the published questionnaire
 	$scope.updatePublication = function () {
+		// if not defined initialize it with default values
+		if (!$scope.toSubmit.scheduledtime) {
+			$scope.removeScheduledTime();
+		}
 		if($scope.formReady && $scope.changesDetected) {
 			var invalidDate = false;
 
