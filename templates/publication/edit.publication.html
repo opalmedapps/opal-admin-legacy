@@ -521,7 +521,7 @@
             <!-- NEW ADDED SECTION FOR SCHEDULED TIME -->
             <div class="row" style="margin-bottom:10px;" ng-if="showScheduledTimeDetails">
                 <div class="col-xs-12 col-sm-4">
-                <div class="form-horizontal">
+                    <div class="form-horizontal">
                         <div class="form-group">
                             <label class="control-label col-xs-12">
                                 {{'PUBLICATION.EDIT.SCHEDULEDTIME_OFFSET'|translate}}
@@ -535,10 +535,10 @@
                 <div class="col-xs-12 col-sm-4">
                     <div class="form-horizontal">
                         <div class="form-group">
-                         <label class="control-label col-xs-12">
+                            <label class="control-label col-xs-12">
                                 {{'PUBLICATION.EDIT.SCHEDULEDTIME_UNIT'|translate}}
                             </label>
-                        <div class="col-xs-12">
+                            <div class="col-xs-12">
                                 <select class="form-control"
                                         ng-options="unit.name for unit in presetUnits track by unit.id"
                                         ng-model="selectedUnit" ng-change="appointmentScheduledTime('unit',selectedUnit)">
@@ -547,8 +547,8 @@
                         </div>
                     </div>
                 </div>
-                 <div class="col-xs-12 col-sm-4">
-                   <div class="form-horizontal">
+                <div class="col-xs-12 col-sm-4">
+                    <div class="form-horizontal">
                         <div class="form-group">
                             <label class="control-label col-xs-12">
                                 {{'PUBLICATION.EDIT.SCHEDULEDTIME_DIRECTION'|translate}}
