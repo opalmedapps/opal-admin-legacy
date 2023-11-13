@@ -730,7 +730,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 			$scope.apptSelected = null;
 	};
 
-	// `Trigger by Appointment Time` functinolity
+	// `Trigger by Appointment Time` functionality
 
 	// function to be called when fields related to scheduled time are updated
 	// takes type (field name) and the value of the field passed by the template
