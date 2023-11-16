@@ -1,8 +1,6 @@
 services:
-  opaladmin:
-    #container_name: opaladmin
+  app:
     build: .
-    image: opalmedapps/opaladmin
     env_file:
       - .env
     ports:
@@ -14,10 +12,8 @@ services:
       - /var/www/html/node_modules
       - /var/www/html/bower_components
       - /var/www/html/vendor
-  opaladmin-cron:
-    #container_name: opaladmin-cron
+  cron:
     build: .
-    image: opalmedapps/opaladmin
     env_file:
       - .env
     volumes:
@@ -28,6 +24,8 @@ services:
       - /var/www/html/node_modules
       - /var/www/html/bower_components
       - /var/www/html/vendor
+    depends_on:
+      - app
     # cron needs to run as root
     user: root
     entrypoint: ['docker/cron.sh']

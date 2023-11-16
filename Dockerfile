@@ -1,5 +1,5 @@
 # Build/install JS dependencies
-FROM node:20.8.0-alpine3.18 as js-dependencies
+FROM node:20.9.0-alpine3.18 as js-dependencies
 
 # Install dependencies for bower
 RUN apk add --no-cache git
@@ -20,14 +20,14 @@ COPY bower.json ./
 RUN bower --allow-root --production install
 
 # Build/install PHP dependencies
-FROM composer:2.6.4 as php-dependencies
+FROM composer:2.6.5 as php-dependencies
 
 COPY composer.json composer.lock ./
 
 RUN composer install --no-dev --no-scripts --ignore-platform-reqs --optimize-autoloader
 
 # Build final image
-FROM php:8.0.30-apache-bullseye
+FROM php:8.1.25-apache-bookworm
 
 # Install dependencies
 RUN apt-get update \
