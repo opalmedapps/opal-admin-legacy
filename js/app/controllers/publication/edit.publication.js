@@ -748,10 +748,11 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 		}
 		// only allow save when all fields are valid
 		if($scope.selectedOffset > 0)
-			$scope.validator.scheduledtime.completed =($scope.selectedUnit && $scope.selectedOffset && $scope.selectedDirection);
+			$scope.validator.scheduledtime.completed = ($scope.selectedUnit && $scope.selectedOffset && $scope.selectedDirection);
+		else if ($scope.selectedOffset == 0)
+			$scope.validator.scheduledtime.completed = ($scope.selectedDirection);
 		else
-			$scope.validator.scheduledtime.completed =($scope.selectedDirection);
-
+			$scope.validator.scheduledtime.completed = false;
 	}
 
 	// Initialize list of preset publishing scheduled time variables
