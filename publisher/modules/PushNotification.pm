@@ -235,6 +235,11 @@ sub sendPushNotification
 
     $usernamesStr = getPatientCaregivers($patientser, $controlser, $reftablerowser);
 
+    if (!$usernamesStr) {
+        print "\nPatient username array is empty\n";
+        return;
+    }
+
     print "\n***** Get Patient Device Identifiers *****\n";
 
     # get a list of the patient's device information
@@ -293,7 +298,7 @@ sub getPatientCaregivers
     if (!@usernames) {
         $sendlog        = "Patient has no related caregivers.";
         insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusWarning, $sendlog);
-        return;
+        return '';
     }
     # convert username array to string for the query
     my $usernamesStr = join("','", @usernames);
@@ -398,6 +403,10 @@ sub getPatientDeviceIdentifiers
 
     # initialize list
     my @PTDIDs = ();
+
+    if (!$usernamesStr) {
+        $usernamesStr = "''";
+    }
 
     # DeviceType 0 is iOS
     # DeviceType 1 is Android
