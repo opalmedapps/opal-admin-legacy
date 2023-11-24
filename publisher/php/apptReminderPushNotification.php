@@ -3,7 +3,7 @@
     require_once('PushNotifications.php');
 
 
-   class apptReminderPushNotification{
+   class ApptReminderPushNotification{
 
        /**
        * ==============================================================================

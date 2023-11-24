@@ -2,7 +2,7 @@
     require_once('apptReminderPushNotification.php');
 
     // Step 1: Gets a list of all appointments of patient on the next day
-    $result = apptReminderPushNotification::getNextDayAppointments();
+    $result = ApptReminderPushNotification::getNextDayAppointments();
     if(array_key_exists("failure", $result) && $result["failure"] == 1)
     {
         echo json_encode($result) . PHP_EOL;
@@ -40,7 +40,7 @@
         );
 
         // Call API to send push notification
-        $response = apptReminderPushNotification::sendPatientNotification($patientSerNum, $language, $messages);
+        $response = ApptReminderPushNotification::sendPatientNotification($patientSerNum, $language, $messages);
         echo json_encode($response) . PHP_EOL;
     }
 
