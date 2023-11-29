@@ -237,7 +237,7 @@ class Appointment extends Module
                 $replacementMap["\$oldAppointmentTimeEN"] =  strftime('%l:%M %p', $prevStartDateTime);
                 
                 if ($prevStartDateTime >= $today){
-                    $this->_notifyChange($toUpdate,  $action, $replacementMap,$post["sourceId"]);
+                    $this->_notifyChange($toUpdate,  $action, $replacementMap, $post["sourceId"]);
                 }
             }
 
