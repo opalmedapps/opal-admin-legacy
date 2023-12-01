@@ -1,10 +1,9 @@
 # Build/install JS dependencies
-FROM node:20.9.0-alpine3.18 as js-dependencies
+FROM node:20.10.0-alpine3.18 as js-dependencies
 
 # Install dependencies for bower
-RUN apk add --no-cache git
-
-RUN npm install -g bower
+RUN apk add --no-cache git \
+  && npm install -g bower
 
 WORKDIR /app
 
@@ -21,6 +20,8 @@ RUN bower --allow-root --production install
 
 # Build/install PHP dependencies
 FROM composer:2.6.5 as php-dependencies
+
+WORKDIR /app
 
 COPY composer.json composer.lock ./
 
@@ -63,14 +64,22 @@ RUN cpanm --notest install \
       String::Util
 
 # Enable apache2 mods
-RUN a2enmod headers rewrite
+RUN a2enmod headers rewrite \
+  # Install and enable PHP extensions
+  && docker-php-ext-install pdo pdo_mysql
 
-# Install and enable PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql
+# which php.ini to use, can be either production or development
+ARG PHP_ENV=production
+ENV PHP_ENV=${PHP_ENV}
+
+COPY docker/update_php_config.sh /tmp
 
 # Change default port to 8080 to allow non-root user to bind port
 # Binding port 80 on CentOS seems to be forbidden for non-root users
-RUN sed -ri -e 's!Listen 80!Listen 8080!g' /etc/apache2/ports.conf
+RUN sed -ri -e 's!Listen 80!Listen 8080!g' /etc/apache2/ports.conf \
+  # Use production php.ini file by default
+  && mv "/usr/local/etc/php/php.ini-${PHP_ENV}" /usr/local/etc/php/php.ini \
+  && /tmp/update_php_config.sh
 
 WORKDIR /var/www/html
 
