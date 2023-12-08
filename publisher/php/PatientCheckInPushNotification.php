@@ -51,7 +51,7 @@ class PatientCheckInPushNotification{
         //================================================================
 
         // Obtain patient device identifiers
-        $patientDevices = self::getPatientDevices($patientSerNum);
+        $patientDevices = PushNotifications::getPatientDevicesInfo($patientSerNum);
 
         // If no device identifiers return there are no device identifiers
         if(count($patientDevices)==0) {
@@ -161,31 +161,6 @@ class PatientCheckInPushNotification{
         }catch(PDOException $e) {
             return array("success"=>0,"failure"=>1,"error"=>$e);
         }
-    }
-
-    /**
-     *    (getDevicesForPatient($patientId)
-     *    Consumes a PatientId, $patientId
-     *    Returns: Returns array with devices that match that particular PatiendId.
-     *    Notes: Removed the limites of records
-     **/
-    private static function getPatientDevices($patientSerNum){
-        global $pdo;
-        //Retrieving device registration id for notification and device
-        try{
-            $sql = "SELECT PD.PatientDeviceIdentifierSerNum, PD.RegistrationId, PD.DeviceType
-                  FROM PatientDeviceIdentifier as PD, Patient as P
-                  WHERE P.PatientSerNum = " . $patientSerNum . "
-                  AND P.PatientSerNum = PD.PatientSerNum
-                  AND length(trim(PD.RegistrationId)) > 0
-                  AND PD.DeviceType in (0,1)
-                  ORDER BY PD.LastUpdated desc;";
-
-            $result = $pdo->query($sql);
-        }catch(PDOException $e) {
-            return array("success"=>0,"failure"=>1,"error"=>$e);
-        }
-        return $result ->fetchAll();
     }
 
     /**

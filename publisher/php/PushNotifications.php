@@ -1,5 +1,8 @@
 <?php
 // Server file
+include_once "database.inc";
+include_once("../../php/config.php");
+include_once("../../php/classes/NewOpalApiCall.php");
 
 class PushNotifications {
 	// (Android)API access key from Google API's Console.
@@ -14,6 +17,65 @@ class PushNotifications {
 	private static $apns_topic = APNS_TOPIC;
 	// (iOS) APN Url target (development or sandbox)
 	private static $ios_url = IOS_URL;
+
+	// **************************************************
+	// Get patient caregiver devices information
+	// **************************************************
+	/**
+	* @param $patientSerNum
+	* @return patient caregiver devices info
+	**/
+	public static function getPatientDevicesInfo($patientSerNum)
+	{
+		$backendApi = new NewOpalApiCall(
+		'/api/patients/legacy/'.$patientSerNum.'/caregiver-devices/',
+		'GET',
+		'en',
+			[],
+		);
+		$response = $backendApi->execute();
+		$response = json_decode($response, true);
+		$caregivers = $response['caregivers'];
+		$userNameArray = [];
+		foreach ($caregivers as $caregiver) {
+			$userNameArray[] = $caregiver['username'];
+		}
+
+		$userNameArrayString = implode("','", $userNameArray);
+		$userNameArrayString = "'".$userNameArrayString."'";
+
+		return self::getPatientDevicesByUsernames($userNameArrayString);
+	}
+
+	// **************************************************
+	// Get patient devices information by user names
+	// **************************************************
+	/**
+	 * @param $patientSerNum
+	 * @return patient caregiver devices info
+	 **/
+	private static function getPatientDevicesByUsernames($userNameArrayString)
+	{
+		global $pdo;
+
+		$sql = "
+			SELECT DISTINCT
+				ptdid.PatientDeviceIdentifierSerNum,
+				ptdid.RegistrationId,
+				ptdid.DeviceType
+			FROM
+				PatientDeviceIdentifier ptdid
+			WHERE ptdid.DeviceType in ('0', '1')
+			AND Username in ($userNameArrayString)
+			AND IfNull(RegistrationId, '') <> ''
+		";
+
+		try {
+			return $pdo->query($sql);
+		} catch(PDOException $e) {
+			return array();
+		}
+	}
 
 	// **************************************************
 	// Sends Push notification for Android users

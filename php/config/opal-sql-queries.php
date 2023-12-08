@@ -1944,7 +1944,7 @@ SELECT DISTINCT ptdid.PatientDeviceIdentifierSerNum,
     ptdid.RegistrationId, ptdid.DeviceType
 FROM ".OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE." ptdid
 WHERE
-    ptdid.PatientSerNum = :Patientser
+    AND Username in (:userNamesStr)
     AND ptdid.DeviceType in ('0', '1')
     AND IfNull(RegistrationId, '') <> ''
 ";
