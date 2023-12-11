@@ -277,7 +277,9 @@ abstract class OpalProject
         ksort($replacements);
         $message =  str_replace($patterns, $replacements, $messageTemplate);
 
-        $ptdIds = $this->opalDB->getPatientDeviceIdentifiers($data["PatientSerNum"]);
+        $userNamesStr = $this->_getPatientCaregivers($data["PatientSerNum"]);
+
+        $ptdIds = $this->opalDB->getPatientDeviceIdentifiers($userNamesStr);
         if (count($ptdIds) == 0){
             $sendlog = "Patient has no device identifier! No push notification sent.";
             $pushNotificationDetail = $this->_buildNotification($this->statusWarning, $sendlog, $refTableId, $controlser, $data["PatientSerNum"], null);
@@ -313,6 +315,28 @@ abstract class OpalProject
                 $this->opalDB->insertPushNotification($pushNotificationDetail);
             }
         }
+    }
+
+    protected function _getPatientCaregivers($patientSerNum)
+    {
+        $backendApi = new NewOpalApiCall(
+            '/api/patients/legacy/'.$patientSerNum.'/caregiver-devices/',
+            'GET',
+            'en',
+            [],
+            );
+        $response = $backendApi->execute();
+        $response = json_decode($response, true);
+        $caregivers = $response['caregivers'];
+        $userNameArray = [];
+        foreach ($caregivers as $caregiver) {
+            $userNameArray[] = $caregiver['username'];
+        }
+
+        $userNameArrayString = implode("','", $userNameArray);
+        $userNameArrayString = "'".$userNameArrayString."'";
+
+        return self::getPatientDevicesByUsernames($userNameArrayString);
     }
 
     protected function _buildNotification($sendstatus, $sendlog, $refTableId, $controlser, $patientSerNum, $ptdidser) {
