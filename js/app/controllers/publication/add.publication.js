@@ -698,6 +698,8 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 						$scope.toSubmit.publishDateTime = tempDate;
 					}
 				}
+
+				console.log($scope.toSubmit);
 				
 				$.ajax({
 					type: "POST",

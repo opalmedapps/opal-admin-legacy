@@ -768,12 +768,18 @@ class Publication extends Module
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire.");
         $currentQuestionnaire = $currentQuestionnaire[0];
 
+
+        $name_EN = !empty($currentQuestionnaire["title_EN"]) ? htmlspecialchars_decode($currentQuestionnaire["title_EN"]) : '';
+        $name_FR = !empty($currentQuestionnaire["title_FR"]) ? htmlspecialchars_decode($currentQuestionnaire["title_FR"]) : '';
+        $description_EN = !empty($currentQuestionnaire["description_EN"]) ? htmlspecialchars_decode($currentQuestionnaire["description_EN"]) : '';
+        $description_FR = !empty($currentQuestionnaire["description_FR"]) ? htmlspecialchars_decode($currentQuestionnaire["description_FR"]) : '';
+
         $toInsert = array(
             "QuestionnaireDBSerNum"=>$currentQuestionnaire["ID"],
-            "QuestionnaireName_EN"=>$publication["name"]["name_EN"],
-            "QuestionnaireName_FR"=>$publication["name"]["name_FR"],
-            "Intro_EN"=>htmlspecialchars_decode($currentQuestionnaire["description_EN"]),
-            "Intro_FR"=>htmlspecialchars_decode($currentQuestionnaire["description_FR"]),
+            "QuestionnaireName_EN"=>$name_EN,
+            "QuestionnaireName_FR"=>$name_FR,
+            "Intro_EN"=>$description_EN,
+            "Intro_FR"=>$description_FR,
             "SessionId"=>$this->opalDB->getSessionId(),
             'PublishFlag'=> 0,
             "DateAdded"=>date("Y-m-d H:i:s"),
