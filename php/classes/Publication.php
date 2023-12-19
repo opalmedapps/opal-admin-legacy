@@ -769,8 +769,8 @@ class Publication extends Module
         $currentQuestionnaire = $currentQuestionnaire[0];
 
 
-        $name_EN = !empty($currentQuestionnaire["title_EN"]) ? htmlspecialchars_decode($currentQuestionnaire["title_EN"]) : '';
-        $name_FR = !empty($currentQuestionnaire["title_FR"]) ? htmlspecialchars_decode($currentQuestionnaire["title_FR"]) : '';
+        $name_EN = !empty($currentQuestionnaire["title_EN"]) ? $currentQuestionnaire["title_EN"] : '';
+        $name_FR = !empty($currentQuestionnaire["title_FR"]) ? $currentQuestionnaire["title_FR"] : '';
         $description_EN = !empty($currentQuestionnaire["description_EN"]) ? htmlspecialchars_decode($currentQuestionnaire["description_EN"]) : '';
         $description_FR = !empty($currentQuestionnaire["description_FR"]) ? htmlspecialchars_decode($currentQuestionnaire["description_FR"]) : '';
 
