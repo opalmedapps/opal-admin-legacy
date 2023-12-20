@@ -439,16 +439,21 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 						delete $scope.validator.name;
 					}
 
-					$scope.publishFrequencySection.available = response.data["triggers"].indexOf("1") !== -1 ? true: false;
-					$scope.triggerSection.patient.available = response.data["triggers"].indexOf("2") !== -1 ? true: false;
-					$scope.triggerSection.demo.available = response.data["triggers"].indexOf("3") !== -1 ? true: false;
-					$scope.triggerSection.appointmentStatus.available = response.data["triggers"].indexOf("4") !== -1 ? true: false;
-					$scope.triggerSection.appointment.available = response.data["triggers"].indexOf("5") !== -1 ? true: false;
-					$scope.triggerSection.diagnosis.available = response.data["triggers"].indexOf("6") !== -1 ? true: false;
-					$scope.triggerSection.doctor.available = response.data["triggers"].indexOf("7") !== -1 ? true: false;
-					$scope.triggerSection.machine.available = response.data["triggers"].indexOf("8") !== -1 ? true: false;
-					$scope.publishDate.available = response.data["triggers"].indexOf("9") !== -1 ? true: false;
-					$scope.triggerSection.study.available = response.data["triggers"].indexOf("10") !== -1 ? true: false;
+					let triggers = [];
+					response.data['triggers'].forEach((moduleId) => {
+						triggers.push(parseInt(moduleId));
+					});
+
+					$scope.publishFrequencySection.available = triggers.indexOf(1) > -1;
+					$scope.triggerSection.patient.available = triggers.indexOf(2) > -1;
+					$scope.triggerSection.demo.available = triggers.indexOf(3) > -1;
+					$scope.triggerSection.appointmentStatus.available = triggers.indexOf(4) > -1;
+					$scope.triggerSection.appointment.available = triggers.indexOf(5) > -1;
+					$scope.triggerSection.diagnosis.available = triggers.indexOf(6) > -1;
+					$scope.triggerSection.doctor.available = triggers.indexOf(7) > -1;
+					$scope.triggerSection.machine.available = triggers.indexOf(8) > -1;
+					$scope.publishDate.available = triggers.indexOf(9) > -1;
+					$scope.triggerSection.study.available = triggers.indexOf(10) > -1;
 					$scope.publicationList = response.data["publications"]; // Assign value
 				}).catch(function(err) {
 					ErrorHandler.onError(err, $filter('translate')('PUBLICATION.ADD.ERROR_MODULE'));
