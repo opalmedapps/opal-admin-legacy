@@ -52,7 +52,7 @@ RUN cpanm --notest install \
       Date::Calc \
       DateTime::Format::Strptime \
       DBI \
-      DVEEDEN/DBD-mysql-4.051.tar.gz \
+      DBD::MariaDB \
       File::Spec \
       Net::HTTP \
       JSON \
