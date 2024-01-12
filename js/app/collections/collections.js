@@ -653,6 +653,20 @@ angular.module('opalAdmin.collections', [])
 			)
 		};
 
+		// Function to get the call fedauth to check existence of a user
+		userAPI.isUserExist = function (username) {
+			return $http.post(
+					"user/checkuser",
+					$.param({
+						username: username,
+						password: "anypass", // this is a dummy password to be able to call the api
+					}),
+					{
+						headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+					}
+				);
+		};
+
 		// Function to get the list of user-selected additional privileges `groups` from new backend
 		userAPI.getUserSelectedAdditionalPrivileges = function (OAUsername) {
 			return $http.get(
