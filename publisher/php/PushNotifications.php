@@ -4,9 +4,9 @@ include_once "database.inc";
 include_once("../../php/config.php");
 include_once("../../php/classes/NewOpalApiCall.php");
 
+use Google\Auth\CredentialsLoader;
+
 class PushNotifications {
-	// (Android)API access key from Google API's Console.
-	private static $api_key = API_KEY ;
 	// (iOS) Private key's passphrase.
 	private static $passphrase = CERTIFICATE_PASSWORD;
 	//(iOS) Location of certificate file
@@ -90,7 +90,6 @@ class PushNotifications {
 	* 
 	**/
 	public static function android($data, $reg_id) {
-		// $url = 'https://fcm.googleapis.com/fcm/send';
 		$url = ANDROID_URL;
 
 		//validation and message prep
@@ -122,8 +121,9 @@ class PushNotifications {
 			)
 		);
 
+		// For Authorization format, see: https://firebase.google.com/docs/cloud-messaging/migrate-v1#update-authorization-of-send-requests
 		$headers = array(
-			'Authorization: key=' .self::$api_key,
+			'Authorization: Bearer ' . self::getAuthToken(),
 			'Content-Type: application/json'
 		);
 
@@ -280,5 +280,20 @@ class PushNotifications {
 	return array($outTitle, $outBody);
    }
 
+	/**
+	 * (getAuthToken())
+	 * Description: Uses Firebase credentials with the Google Auth Library to retrieve a short-lived OAuth 2.0 access token,
+	 *              which can be used to authorize push notifications sent with FCM (Firebase Cloud Messaging).
+	 *              See: https://firebase.google.com/docs/cloud-messaging/migrate-v1#use-credentials-to-mint-access-tokens
+	 *              See: https://github.com/googleapis/google-api-php-client/issues/1715#issuecomment-533217233
+	 * Requires: FIREBASE_SERVICEACCOUNT must contain a path to a valid service account file.
+	 **/
+	private static function getAuthToken() {
+		$scope = 'https://www.googleapis.com/auth/firebase.messaging';
+		$credentials = CredentialsLoader::makeCredentials($scope, json_decode(file_get_contents(
+			FIREBASE_SERVICEACCOUNT
+		), true));
+		return $credentials->fetchAuthToken();
+	}
 }
 ?>
