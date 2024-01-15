@@ -770,8 +770,8 @@ class Publication extends Module
 
         $toInsert = array(
             "QuestionnaireDBSerNum"=>$currentQuestionnaire["ID"],
-            "QuestionnaireName_EN"=>$publication["name"]["name_EN"],
-            "QuestionnaireName_FR"=>$publication["name"]["name_FR"],
+            "QuestionnaireName_EN"=>$currentQuestionnaire["title_EN"],
+            "QuestionnaireName_FR"=>$currentQuestionnaire["title_FR"],
             "Intro_EN"=>htmlspecialchars_decode($currentQuestionnaire["description_EN"]),
             "Intro_FR"=>htmlspecialchars_decode($currentQuestionnaire["description_FR"]),
             "SessionId"=>$this->opalDB->getSessionId(),
