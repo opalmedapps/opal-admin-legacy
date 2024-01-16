@@ -13,7 +13,6 @@
   "labels": ["dependencies"],
   "separateMinorPatch": true,
   "ignoreDeps": [
-    "crypto-js",
     "eslint",
     "express",
     "firebase-admin",
