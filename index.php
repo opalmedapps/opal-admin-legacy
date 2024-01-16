@@ -43,13 +43,8 @@
 	<script src="node_modules/textangularjs/dist/textAngular.js"></script>
 	<script src="node_modules/textangularjs/dist/textAngular-sanitize.js"></script>
 	<script src="node_modules/textangularjs/dist/textAngularSetup.js"></script>
+	<script src="node_modules/crypto-js/crypto-js.js"></script>
 
-	<script src="bower_components/cryptojslib/components/core.js"></script>
-	<script src="bower_components/cryptojslib/components/cipher-core.js"></script>
-	<script src="bower_components/cryptojslib/components/aes.js"></script>
-	<script src="bower_components/cryptojslib/components/mode-cfb-min.js"></script>
-	<script src="bower_components/cryptojslib/components/x64-core.js"></script>
-	<script src="bower_components/cryptojslib/components/sha512.js"></script>
 	<script src="node_modules/highcharts/highcharts.js"></script>
 	<script src="node_modules/highcharts-ng/dist/highcharts-ng.js"></script>
 
