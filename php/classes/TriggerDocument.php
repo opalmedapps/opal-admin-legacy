@@ -224,7 +224,7 @@ class TriggerDocument extends Trigger
         $patientAccessLevel = $this->opalDB->getPatientAccessLevel($patientSite["PatientSerNum"]);
         $modifyDatetime = strtotime($post["modifiedDatetime"]);
         if(array_key_exists("Accesslevel", $patientAccessLevel) && $patientAccessLevel["Accesslevel"] == 3 && $modifyDatetime >= $yesterday){
-            $this->_notifyChange($toInsert,$action,array(),$toInsert["DocumentSerNum"]);
+            $this->_notifyChange($toInsert, $action, array(), $toInsert["DocumentSerNum"]);
         }
         
         if (array_key_exists("documentString", $post) && $post["documentString"] != "")  {

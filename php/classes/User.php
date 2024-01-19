@@ -73,6 +73,41 @@ class User extends Module {
     }
 
     /*
+     * Call Active Directory systen to check if the user exists prior to insertion when AD_ENABLED is `1`.
+     * The API is supposed to respond an error, based on the error this function return .
+     * @params  $username (string)
+     *          $password (string)
+     * @return  (boolean) true if user exists in AD system. False otherwise.
+     * */
+    protected function _checkUserActiveDirectory($username, $password) {
+
+        $settingsAD = json_encode(ACTIVE_DIRECTORY_SETTINGS);
+        $settingsAD = str_replace("%%USERNAME%%", $username, $settingsAD);
+        $settingsAD = str_replace("%%PASSWORD%%", $password, $settingsAD);
+        $settingsAD = json_decode($settingsAD, true);
+
+        $fieldString = "";
+        foreach($settingsAD as $key=>$value) {
+            $fieldString .= $key.'='.urlencode($value).'&';
+        }
+        $fieldString = substr($fieldString, 0, -1);
+
+        $api = new ApiCall(MSSS_ACTIVE_DIRECTORY_CONFIG);
+        $api->setPostFields($fieldString);
+        $api->execute();
+
+        $requestResult = json_decode($api->getAnswer(), true);
+
+        $error_msg = $requestResult["error"];
+
+        if ($error_msg == "Username not found")
+            return false;
+        else
+            return true;
+        }
+
+
+    /*
      * Legacy authentication system when no AD is available. It validates the username and password directly into
      * opalDB after encrypting the password.
      * @params  $username (string) duh!
@@ -82,6 +117,37 @@ class User extends Module {
     protected function _userLoginLegacy($username, $password) {
         $result = $this->opalDB->authenticateUserLegacy($username, hash("sha256", $password . USER_SALT));
         $result = $this->_validateUserAuthentication($result, $username);
+        return $result;
+    }
+
+   /*
+    * Validate if user exists when `AD_ENABLED` is `1`.
+    * @param $post (array) contains username
+    * $result (boolean) if user exists it returns `true`, otherwise it returns `false`.
+    * */
+    public function isADUserExist($post) {
+        $userAccess = array();
+        $data = HelpSetup::arraySanitization($post);
+
+        if(!is_array($data)) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>"UNKNOWN USER"), ACCESS_DENIED, "UNKNOWN USER");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
+        }
+
+        $username = $data["username"];
+        $password = $data["password"];
+
+        // if username is empty log an error, no need to call external system.
+        if($username == "") {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
+        }
+
+        $result = $this->_checkUserActiveDirectory($username, $password);
+
+
         return $result;
     }
 
@@ -475,6 +541,56 @@ class User extends Module {
     }
 
     /**
+     * Update a user privilege in the new backend by calling the endpoint `/api/users/username/(un)set-manager-user/`.
+     * if the user being updated has a role that has users `Read/Write/Delete` privilege set the user as
+     * manager user in new backend. Otherwise, remove them from manager users group.
+     * @param $post array - contains all the user info
+     */
+    public function checkUpdateUserPrivilege($post) {
+        $language = strtolower($_POST['language']);
+        $user_to_update = HelpSetup::arraySanitization($post);
+        $username = "";
+
+        // when it comes from updating user the key is `edited_username` if it is from insert user key is `username`
+        if(isset($user_to_update['edited_username'])){
+            $username = $user_to_update['edited_username'];
+        }else{
+            $username = $user_to_update['username'];
+        }
+
+        // get operations related to the role
+        $role_operations = $this->opalDB->getRoleOperations($user_to_update["roleId"]);
+
+        // check if users module is in the updated operations
+        $newbackend_action_name = 'unset-manager-user';
+        foreach($role_operations as $sub) {
+            // if user module added and access is READ/WRITE/DELETE
+            if(isset($sub['moduleId']) && $sub['moduleId'] ==  json_encode(MODULE_USER)  && $sub['access'] >= (int) ACCESS_READ ){
+                $newbackend_action_name = 'set-manager-user';
+                // break if users module read/write/delete access right granted otherwise continue
+                break;
+            }
+        }
+
+        // make api request for the edited user to add/remove from managers group in new backend.
+        $backendApi = new NewOpalApiCall(
+            '/api/users/' . $username . '/' . $newbackend_action_name . '/',
+            'PUT',
+            $language,
+            '',
+            'Content-Type: application/json',
+        );
+
+        $response = $backendApi->execute(); // response is string json
+
+        if($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS && $backendApi->getError())
+             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to New Backend " . $backendApi->getError());
+        else if($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS) {
+            HelpSetup::returnErrorMessage($backendApi->getHttpCode(), "Error from New Backend: " . $response["error"]);
+        }
+    }
+
+    /**
      * Insert a new user into the OAUser table after sanitizing and validating the data. Depending if the AD system is
      * active or not, the insertion is done differently. Also, if the user already exists but was deleted, the record
      * will be undeleted and updated.
@@ -542,12 +658,11 @@ class User extends Module {
 
         $response = $backendApi->execute(); // response is string json
 
-        if($backendApi->getHttpCode() != HTTP_STATUS_CREATED && $backendApi->getError())
-             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to New Backend " . $backendApi->getError());
-        else if($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS) {
-            HelpSetup::returnErrorMessage($backendApi->getHttpCode(), "Error from New Backend: " . $response["error"]);
+        if ($backendApi->getHttpCode() != HTTP_STATUS_CREATED && $backendApi->getError()){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to New Backend " . $backendApi->getError());
         }
     }
+
     /**
      * Insert an user with a password because the AD system is inactive or N/A, or the user is a third party system.
      * @param $type int - type of user (human/system)

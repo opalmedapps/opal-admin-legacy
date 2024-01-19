@@ -365,17 +365,23 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 				else
 					$scope.preview.display = 2;
 			}
-			$scope.publishFrequencySection.available = response.data["publicationSettings"].indexOf("1") !== -1 ? true: false;
-			$scope.triggerSection.patient.available = response.data["publicationSettings"].indexOf("2") !== -1 ? true: false;
-			$scope.triggerSection.demo.available = response.data["publicationSettings"].indexOf("3") !== -1 ? true: false;
-			$scope.triggerSection.appointmentTime.available = response.data["publicationSettings"].indexOf("4") !== -1 ? true: false;
-			$scope.triggerSection.appointment.available = response.data["publicationSettings"].indexOf("5") !== -1 ? true: false;
-			$scope.triggerSection.diagnosis.available = response.data["publicationSettings"].indexOf("6") !== -1 ? true: false;
-			$scope.triggerSection.doctor.available = response.data["publicationSettings"].indexOf("7") !== -1 ? true: false;
-			$scope.triggerSection.machine.available = response.data["publicationSettings"].indexOf("8") !== -1 ? true: false;
-			$scope.triggerSection.study.available = response.data["publicationSettings"].indexOf("10") !== -1 ? true: false;
-			$scope.publishDate.available = (response.data["publicationSettings"].indexOf("9") !== -1) ? true: false;
-			$scope.title.available = response.data["publication"]["unique"] !== "1" ? true: false; // Assign value
+
+			let publicationSettings = [];
+			response.data['publicationSettings'].forEach((id) => {
+				publicationSettings.push(parseInt(id));
+			});
+
+			$scope.publishFrequencySection.available = publicationSettings.indexOf(1) > -1;
+			$scope.triggerSection.patient.available = publicationSettings.indexOf(2) > -1;
+			$scope.triggerSection.demo.available = publicationSettings.indexOf(3) > -1;
+			$scope.triggerSection.appointmentTime.available = publicationSettings.indexOf(4) > -1;
+			$scope.triggerSection.appointment.available = publicationSettings.indexOf(5) > -1;
+			$scope.triggerSection.diagnosis.available = publicationSettings.indexOf(6) > -1;
+			$scope.triggerSection.doctor.available = publicationSettings.indexOf(7) > -1;
+			$scope.triggerSection.machine.available = publicationSettings.indexOf(8) > -1;
+			$scope.triggerSection.study.available = publicationSettings.indexOf(10) > -1;
+			$scope.publishDate.available = publicationSettings.indexOf(9) > -1;
+			$scope.title.available = response.data["publication"]["unique"] !== 1; // Assign value
 
 			checkAdded($scope.appointmentTriggerList, $scope.selectAll.appointment); // Assign value
 			checkAdded($scope.dxTriggerList, $scope.selectAll.diagnosis);
@@ -460,7 +466,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 			$scope.changesDetected = false;
 			$scope.oldData = JSON.parse(JSON.stringify($scope.toSubmit));
 		}).catch(function (response) {
-			ErrorHandler.onError(err, $filter('translate')('PUBLICATION.EDIT.ERROR_DETAILS'));
+			ErrorHandler.onError(response, $filter('translate')('PUBLICATION.EDIT.ERROR_DETAILS'));
 			$uibModalInstance.close();
 		});
 	}

@@ -34,23 +34,29 @@ my ($patientser, $controlser, $reftablerowser) = @_; # args
 
     $usernamesStr = PushNotification::getPatientCaregivers($patientser, $controlser, $reftablerowser);
 
-     print "\n***** Get Patient Device Identifiers *****\n";
+    if (!$usernamesStr) {
+        print "Patient username array is empty\n";
+        $sendlog        = "Patient has no related caregivers. the username array is empty\n";
+        PushNotification::insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusWarning, $sendlog);
+        return;
+    }
 
-     # get a list of the patient's device information
-     my @PTDIDs  = PushNotification::getPatientDeviceIdentifiers($usernamesStr);
+    print "\n***** Get Patient Device Identifiers *****\n";
 
-     if (!@PTDIDs) { # not identifiers listed
-         $sendlog        = "Patient has no device identifier for the usernames: $usernamesStr! No push notification sent.";
-         PushNotification::insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusWarning, $sendlog);
-         return;
-     }
+    # get a list of the patient's device information
+    my @PTDIDs  = PushNotification::getPatientDeviceIdentifiers($usernamesStr);
 
-     print "\n***** Push notification to patient caregivers *****\n";
+    if (!@PTDIDs) { # not identifiers listed
+        $sendlog        = "Patient has no device identifier for the usernames: $usernamesStr! No push notification sent.";
+        PushNotification::insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusWarning, $sendlog);
+        return;
+    }
 
-     $title = 'test notifications';
+    print "\n***** Push notification to patient caregivers *****\n";
 
-     foreach my $PTDID (@PTDIDs) {
+    $title = 'test notifications';
 
+    foreach my $PTDID (@PTDIDs) {
          # retrieve params
          my $ptdidser        = $PTDID->{ser};
          my $registrationid  = $PTDID->{registrationid};
@@ -59,7 +65,7 @@ my ($patientser, $controlser, $reftablerowser) = @_; # args
          ($sendstatus, $sendlog) = PushNotification::postNotification($title, $message, $devicetype, $registrationid);
 
          PushNotification::insertPushNotificationInDB($ptdidser, $patientser, $controlser, $reftablerowser, $sendstatus, $sendlog);
-     }
+    }
 }
 
 print "$ARGV[0], $ARGV[1], $ARGV[2]\n";
