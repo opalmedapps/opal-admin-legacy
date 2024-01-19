@@ -457,30 +457,107 @@
                 </div>
             </div>
         </div>
-        <!-- SECTION: Appointment status trigger -->
-        <div ng-if="triggerSection.appointmentStatus.available" uib-accordion-group is-open="appointmentStatusTriggerSection.open">
+        <!-- SECTION: Appointment time trigger -->
+        <div ng-if="triggerSection.appointmentTime.available" uib-accordion-group is-open="appointmentTimeTriggerSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>{{'PUBLICATION.EDIT.TRIGGER_APPT_STATUS'|translate}}</strong><i
+                    <strong>{{'PUBLICATION.EDIT.TRIGGER_APPT_TIME'|translate}}</strong><i
                         class="pull-right glyphicon"
-                        ng-class="{'glyphicon-chevron-down': appointmentStatusTriggerSection.open, 'glyphicon-chevron-right': !appointmentStatusTriggerSection.open}"></i>
+                        ng-class="{'glyphicon-chevron-down': appointmentTimeTriggerSection.open, 'glyphicon-chevron-right': !appointmentTimeTriggerSection.open}"></i>
                 </div>
             </uib-accordion-heading>
-            <div class="alert alert-info" role="alert">
-                <strong>{{'PUBLICATION.EDIT.CURRENT_TRIGGER_APPT_STATUS'|translate}}</strong><br>
+            <div class="alert alert-info" role="alert" ng-if="!showScheduledTimeDetails">
+                <strong>{{'PUBLICATION.EDIT.CURRENT_TRIGGER_APPT_TIME_SELECTION'|translate}}</strong><br>
                 <p>
                     <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                    {{appointmentStatus}}
+                    {{appointmentTime}}
                 </p>
             </div>
+            <div class="alert alert-info" role="alert" ng-if="showScheduledTimeDetails">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3">
+                        <strong>{{'PUBLICATION.EDIT.CURRENT_TRIGGER_APPT_TIME_SELECTION'|translate}}</strong><br>
+                        <p>
+                            <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                            {{appointmentTime}}
+                        </p>
+                    </div>
+                    <div class="col-xs-12 col-sm-3">
+                        <strong>{{'PUBLICATION.EDIT.CURRENT_TRIGGER_APPT_TIME_OFFSET'|translate}}</strong><br>
+                        <p>
+                            <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                            {{selectedOffset}}
+                        </p>
+                    </div>
+                    <div class="col-xs-12 col-sm-3">
+                        <strong>{{'PUBLICATION.EDIT.CURRENT_TRIGGER_APPT_TIME_UNIT'|translate}}</strong><br>
+                        <p>
+                            <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                            {{selectedUnit.name}}
+                        </p>
+                    </div>
+                    <div class="col-xs-12 col-sm-3">
+                        <strong>{{'PUBLICATION.EDIT.CURRENT_TRIGGER_APPT_TIME_DIRECTION'|translate}}</strong><br>
+                        <p>
+                            <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                            {{selectedDirection.name}}
+                        </p>
+                    </div>
+                </div>
+            </div>
             <div class="row">
-                <div ng-repeat="appointmentStatus in appointmentStatusList" class="col-xs-12 col-sm-4 col-md-3 item-panel-select">
-                    <div class="panel-container" style="cursor:pointer;" ng-class="{pulse: hover, active: apptSelected == appointmentStatus.id}" ng-click="appointmentStatusUpdate(appointmentStatus)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                        <div class="panel-info" ng-class="{active: apptSelected == appointmentStatus.id}">
+                <div ng-repeat="appointmentTime in appointmentTimeList" class="col-xs-12 col-sm-4 col-md-3 item-panel-select">
+                    <div class="panel-container" style="cursor:pointer;" ng-class="{pulse: hover, active: apptSelected == appointmentTime.id}" ng-click="appointmentTimeUpdate(appointmentTime)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                        <div class="panel-info" ng-class="{active: apptSelected == appointmentTime.id}">
                             <div class="panel-content" style="text-align:center">
-                                <span ng-if="apptSelected != appointmentStatus.id" style="font-size:30px;" class="glyphicon glyphicon-minus"></span>
-                                <span ng-if="apptSelected == appointmentStatus.id" style="font-size:30px;" class="glyphicon glyphicon-ok"></span>
-                                <div class="option-panel-title">{{appointmentStatus.name_display}}</div>
+                                <span ng-if="apptSelected != appointmentTime.id" style="font-size:30px;" class="glyphicon glyphicon-minus"></span>
+                                <span ng-if="apptSelected == appointmentTime.id" style="font-size:30px;" class="glyphicon glyphicon-ok"></span>
+                                <div class="option-panel-title">{{appointmentTime.name_display}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- NEW ADDED SECTION FOR SCHEDULED TIME -->
+            <div class="row" style="margin-bottom:10px;" ng-if="showScheduledTimeDetails">
+                <div class="col-xs-12 col-sm-4">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-xs-12">
+                                {{'PUBLICATION.EDIT.SCHEDULEDTIME_OFFSET'|translate}}
+                            </label>
+                            <div class="col-xs-12">
+                                <input class="form-control" ng-model="selectedOffset" type="number" min="0" ng-change="appointmentScheduledTime('offset',selectedOffset)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-4">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-xs-12">
+                                {{'PUBLICATION.EDIT.SCHEDULEDTIME_UNIT'|translate}}
+                            </label>
+                            <div class="col-xs-12">
+                                <select class="form-control"
+                                        ng-options="unit.name for unit in presetUnits track by unit.id"
+                                        ng-model="selectedUnit" ng-change="appointmentScheduledTime('unit',selectedUnit)">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-4">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-xs-12">
+                                {{'PUBLICATION.EDIT.SCHEDULEDTIME_DIRECTION'|translate}}
+                            </label>
+                            <div class="col-xs-12">
+                                <select class="form-control"
+                                        ng-options="direction.name for direction in presetDirections track by direction.id"
+                                        ng-model="selectedDirection" ng-change="appointmentScheduledTime('direction',selectedDirection)">
+                                </select>
                             </div>
                         </div>
                     </div>
