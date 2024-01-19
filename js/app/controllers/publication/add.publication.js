@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 	/******************************************************************************
 	 * Add Publication Page controller
 	 *******************************************************************************/
-	controller('publication.add', function ($scope, $filter, $uibModal, $state, $locale, publicationCollectionService, Session, FrequencyFilterService, ErrorHandler ) {
+	controller('publication.add', function ($scope, $filter, $uibModal, $state, $locale, publicationCollectionService, Session, FrequencyFilterService, ScheduledTimeFilterService, ErrorHandler ) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -18,7 +18,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			show:false,
 			patient: {available:false,open:false, show:false},
 			demo: {available:false, open:false, show:false},
-			appointmentStatus: {available:false,open:false, show:false, value: null},
+			appointmentTime: {available:false,open:false, show:false, value: null},
 			appointment: {available:false,open:false, show:false},
 			doctor: {available:false,open:false, show:false},
 			machine: {available:false,open:false, show:false},
@@ -29,6 +29,8 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		$scope.language = Session.retrieveObject('user').language;
 		$scope.showAssigned = false;
 		$scope.hideAssigned = false;
+		// to hide/show details of scheduled time trigger
+		$scope.showScheduledTimeDetails = false;
 
 		$scope.popup = {
 			opened: false
@@ -75,7 +77,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		$scope.patientSearchField = "";
 
 		$scope.patientTriggerList = [];
-		$scope.appointmentStatusList = [];
+		$scope.appointmentTimeList = [];
 		$scope.appointmentTriggerList = [];
 		$scope.dxTriggerList = [];
 		$scope.doctorTriggerList = [];
@@ -192,22 +194,22 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			$scope.machineTriggerList = response.data.machines;
 			$scope.studyTriggerList = response.data.studies;
 			$scope.patientTriggerList = response.data.patients;
-			$scope.appointmentStatusList = response.data.appointmentStatuses;
-			$scope.appointmentStatusList.forEach(function(entry) {
+			$scope.appointmentTimeList = response.data.appointmentTimes;
+			$scope.appointmentTimeList.forEach(function(entry) {
 				if($scope.language.toUpperCase() === "FR") {
 
 					switch(entry.name) {
-					case "Open":
-						entry.name_display = "Ouvert";
+					case "Scheduled Time":
+						entry.name_display = "Temps prévu";
 						break;
-					case "Completed":
-						entry.name_display = "Complété";
+					case "Completed Time":
+						entry.name_display = "Temps Complété";
 						break;
-					case "Cancelled":
-						entry.name_display = "Annulé";
+					case "Cancelled Time":
+						entry.name_display = "Temps Annulé";
 						break;
-					case "Checked In":
-						entry.name_display = "Enregistré";
+					case "Checkin Time":
+						entry.name_display = "Temps Enregistré";
 						break;
 					default:
 						entry.name_display = "Non traduit";
@@ -319,7 +321,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 					open: false,
 					preview: false,
 				},
-				appointmentStatus: {
+				appointmentTime: {
 					display: false,
 					open: false,
 					preview: false,
@@ -447,7 +449,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 					$scope.publishFrequencySection.available = triggers.indexOf(1) > -1;
 					$scope.triggerSection.patient.available = triggers.indexOf(2) > -1;
 					$scope.triggerSection.demo.available = triggers.indexOf(3) > -1;
-					$scope.triggerSection.appointmentStatus.available = triggers.indexOf(4) > -1;
+					$scope.triggerSection.appointmentTime.available = triggers.indexOf(4) > -1;
 					$scope.triggerSection.appointment.available = triggers.indexOf(5) > -1;
 					$scope.triggerSection.diagnosis.available = triggers.indexOf(6) > -1;
 					$scope.triggerSection.doctor.available = triggers.indexOf(7) > -1;
@@ -633,27 +635,38 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			}
 		};
 
-		// Function to toggle appointment status filter
-		$scope.appointmentStatusUpdate = function (entrySelected) {
+		// Initialize list of preset publishing scheduled time variables
+		$scope.presetDirections = ScheduledTimeFilterService.presetDirections;
+		$scope.presetUnits = ScheduledTimeFilterService.presetUnits;
+		// Function to toggle appointment time filter
+		$scope.appointmentTimeUpdate = function (entrySelected) {
 			var entryFound = false;
-			angular.forEach($scope.appointmentStatusList, function(item){
+			angular.forEach($scope.appointmentTimeList, function(item){
 				if (($scope.toSubmit.triggers.findIndex(x => x.id === item.id)) != -1) {
 					$scope.toSubmit.triggers.splice($scope.toSubmit.triggers.findIndex(x => x.id === item.id), 1);
+					// if trigger by appointment time is closed, reset its related variables
+					if(item.id == "Scheduled Time"){
+						$scope.removeScheduledTime();
+					}
 				} else {
 					if (item.id == entrySelected.id) {
+						// if the selected time is scheduled time show relevant fields
+						if(item.id == "Scheduled Time"){
+							$scope.addScheduledTime();
+						}
 						$scope.toSubmit.triggers.push({id: item.id, type: item.type});
-						$scope.leftMenu.appointmentStatus.open = true;
-						$scope.leftMenu.appointmentStatus.show = true;
-						$scope.leftMenu.appointmentStatus.value = entrySelected.name_display;
+						$scope.leftMenu.appointmentTime.open = true;
+						$scope.leftMenu.appointmentTime.show = true;
+						$scope.leftMenu.appointmentTime.value = entrySelected.name_display;
 						entryFound = true;
 					}
 				}
 			});
 
 			if(!entryFound) {
-				$scope.leftMenu.appointmentStatus.open = false;
-				$scope.leftMenu.appointmentStatus.show = false;
-				$scope.leftMenu.appointmentStatus.value = null;
+				$scope.leftMenu.appointmentTime.open = false;
+				$scope.leftMenu.appointmentTime.show = false;
+				$scope.leftMenu.appointmentTime.value = null;
 			}
 
 
@@ -664,6 +677,76 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			else
 				$scope.apptSelected = null;
 		};
+
+		// function to be called when fields related to scheduled time are updated
+		// takes type (field name) and the value of the field passed by the template
+		$scope.appointmentScheduledTime = function (type, selectedValue) {
+			$scope.toSubmit.triggers_updated = 1;
+			if(type == "unit"){
+				$scope.toSubmit.scheduledtime.unit = selectedValue;
+				$scope.selectedUnit = selectedValue;
+			}else if(type == "direction"){
+				$scope.toSubmit.scheduledtime.direction = selectedValue;
+				$scope.selectedDirection = selectedValue;
+			} else{
+				$scope.toSubmit.scheduledtime.offset = selectedValue;
+				$scope.selectedOffset = selectedValue;
+			}
+			// only allow save when all fields are valid
+			if($scope.selectedOffset > 0)
+				$scope.validator.scheduledtime.completed =($scope.selectedUnit && $scope.selectedOffset && $scope.selectedDirection);
+			else if ($scope.selectedOffset == 0)
+				$scope.validator.scheduledtime.completed =($scope.selectedDirection);
+			else
+				$scope.validator.scheduledtime.completed = false;
+		}
+
+		$scope.addScheduledTime = function () {
+			$scope.prepareScheduledTime();
+			$scope.showScheduledTimeDetails = true;
+		};
+
+		// function for initializing variables related to scheduled time
+		$scope.prepareScheduledTime = function() {
+			if (!$scope.toSubmit.scheduledtime) {
+				// default it to `after` option.
+				$scope.selectedDirection = $scope.presetDirections[1];
+				$scope.selectedUnit = '';
+				$scope.selectedOffset = 0;
+				$scope.toSubmit.scheduledtime = {
+					unit: '',
+					direction: $scope.presetDirections[1],
+					offset: 0
+				};
+			} else {
+				$scope.toSubmit.scheduledtime = {
+					unit: $scope.selectedUnit,
+					direction: $scope.selectedDirection,
+					offset: $scope.selectedOffset
+				};
+			}
+
+			$scope.validator.scheduledtime = {
+				completed: true,
+				mandatory: true,
+			};
+	};
+
+		// Function for removing new scheduled time
+		$scope.removeScheduledTime = function () {
+			$scope.showScheduledTimeDetails = false; // Hide form
+			$scope.selectedDirection = $scope.presetDirections[1];
+			$scope.selectedUnit = '';
+			$scope.selectedOffset = 0;
+			// reset variable
+			$scope.toSubmit.scheduledtime = {
+				unit: '',
+				direction: $scope.presetDirections[1],
+				offset: 0
+			};
+			// delete validator when not selecting appointment scheduled time option
+			delete $scope.validator.scheduledtime;
+	};
 
 		// Submit new publication
 		$scope.submitPublication = function () {
