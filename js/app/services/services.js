@@ -146,6 +146,43 @@ angular.module('opalAdmin.services', [])
 		};
 	})
 
+	/*
+	 * service to get/translate all selection values in `Trigger by Appointment Time` section
+	 */
+	.service('ScheduledTimeFilterService', function ($filter) {
+		this.presetDirections = [
+			{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.BEFORE'),
+				id: 'before'
+			},
+			{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.AFTER'),
+				id: 'after'
+			}];
+
+		this.presetUnits = [
+			{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.MINUTES'),
+				id: 'minutes'
+			},
+			{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.HOURS'),
+				id: 'hours'
+			},
+			{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.DAYS'),
+				id: 'days'
+			},
+			{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.WEEKS'),
+				id: 'weeks'
+			},
+			{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.MONTHS'),
+				id: 'months'
+			}];
+	})
+
 	.service('FrequencyFilterService', function ($filter) {
 		this.presetFrequencies = [
 			{
