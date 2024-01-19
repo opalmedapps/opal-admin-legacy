@@ -274,25 +274,40 @@
                                     </p>
                                 </div>
                             </div>
-                            <!-- SECTION: Appointment Status trigger -->
-                            <div uib-accordion-group is-open="leftMenu.appointmentStatus.open" class="panel-container summary-box " ng-class="{fadeIn:leftMenu.appointmentStatus.show}" ng-if="leftMenu.appointmentStatus.show">
+                            <!-- SECTION: Appointment Time trigger -->
+                            <div uib-accordion-group is-open="leftMenu.appointmentTime.open" class="panel-container summary-box " ng-class="{fadeIn:leftMenu.appointmentTime.show}" ng-if="leftMenu.appointmentTime.show">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
                                             <span style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
-                                            <strong>{{'PUBLICATION.ADD.APPT_STATUS_TRIGGER'|translate}}</strong>
+                                            <strong>{{'PUBLICATION.ADD.APPT_TIME_TRIGGER'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.appointmentStatus.open, 'glyphicon-chevron-right': !leftMenu.appointmentStatus.open}"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.appointmentTime.open, 'glyphicon-chevron-right': !leftMenu.appointmentTime.open}"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
                                 <div class="description">
                                     <p>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{leftMenu.appointmentStatus.value}}
+                                        {{leftMenu.appointmentTime.value}}
+                                    </p>
+                                    <p ng-if="selectedOffset">
+                                        <strong>{{'PUBLICATION.ADD.SCHEDULEDTIME_OFFSET'|translate}}</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{selectedOffset}}
+                                    </p>
+                                    <p ng-if="selectedUnit">
+                                        <strong>{{'PUBLICATION.ADD.SCHEDULEDTIME_UNIT'|translate}}</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{selectedUnit.id}}
+                                    </p>
+                                    <p ng-if="selectedDirection">
+                                        <strong>{{'PUBLICATION.ADD.SCHEDULEDTIME_DIRECTION'|translate}}</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{selectedDirection.id}}
                                     </p>
                                 </div>
                             </div>
@@ -913,31 +928,77 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- SECTION: Appointment Status trigger -->
-                            <div ng-if="triggerSection.appointmentStatus.available">
+                            <!-- SECTION: Appointment Time trigger -->
+                            <div ng-if="triggerSection.appointmentTime.available">
                                 <div class="col-xs-12 side-menu-title" style="margin-top: 20px;">
                                     <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
                                         <span class="fas fa-dot-circle"></span>
-                                        <h2>{{'PUBLICATION.ADD.TRIGGER_APPT_STATUS'|translate}}</h2>
+                                        <h2>{{'PUBLICATION.ADD.TRIGGER_APPT_TIME'|translate}}</h2>
                                     </span>
                                     </div>
                                 </div>
                                 <div class="col-xs-12">
                                     <p style="margin-bottom: 10px;"><span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span> {{'PUBLICATION.ADD.TAS_EXPLANATION'|translate}}</p>
                                 </div>
-                                <div ng-repeat="appointmentStatus in appointmentStatusList" class="col-xs-12 col-sm-4 col-md-3 item-panel-select">
-                                    <div class="panel-container" style="cursor:pointer;" ng-class="{pulse: hover, active: apptSelected == appointmentStatus.id}" ng-click="appointmentStatusUpdate(appointmentStatus)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                                        <div class="panel-info" ng-class="{active: apptSelected == appointmentStatus.id}">
+                                <div ng-repeat="appointmentTime in appointmentTimeList" class="col-xs-12 col-sm-4 col-md-3 item-panel-select">
+                                    <div class="panel-container" style="cursor:pointer;" ng-class="{pulse: hover, active: apptSelected == appointmentTime.id}" ng-click="appointmentTimeUpdate(appointmentTime)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                        <div class="panel-info" ng-class="{active: apptSelected == appointmentTime.id}">
                                             <div class="panel-content" style="text-align:center">
-                                                <span ng-if="apptSelected != appointmentStatus.id" style="font-size:30px;" class="glyphicon glyphicon-minus"></span>
-                                                <span ng-if="apptSelected == appointmentStatus.id" style="font-size:30px;" class="glyphicon glyphicon-ok"></span>
-                                                <div class="option-panel-title">{{appointmentStatus.name_display}}</div>
+                                                <span ng-if="apptSelected != appointmentTime.id" style="font-size:30px;" class="glyphicon glyphicon-minus"></span>
+                                                <span ng-if="apptSelected == appointmentTime.id" style="font-size:30px;" class="glyphicon glyphicon-ok"></span>
+                                                <div class="option-panel-title">{{appointmentTime.name_display}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- NEW ADDED SECTION FOR SCHEDULED TIME -->
+                                <div class="row" style="margin-bottom:10px;" ng-if="showScheduledTimeDetails">
+                                    <div class="col-xs-12 col-sm-4">
+                                        <div class="form-horizontal">
+                                            <div class="form-group">
+                                                <label class="control-label col-xs-12">
+                                                    {{'PUBLICATION.ADD.SCHEDULEDTIME_OFFSET'|translate}}
+                                                </label>
+                                                <div class="col-xs-12">
+                                                    <input class="form-control" ng-model="selectedOffset" type="number" min="0" ng-change="appointmentScheduledTime('offset',selectedOffset)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-4">
+                                        <div class="form-horizontal">
+                                            <div class="form-group">
+                                                <label class="control-label col-xs-12">
+                                                    {{'PUBLICATION.ADD.SCHEDULEDTIME_UNIT'|translate}}
+                                                </label>
+                                                <div class="col-xs-12">
+                                                    <select class="form-control"
+                                                            ng-options="unit.name for unit in presetUnits track by unit.id"
+                                                            ng-model="selectedUnit" ng-change="appointmentScheduledTime('unit',selectedUnit)">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-4">
+                                        <div class="form-horizontal">
+                                            <div class="form-group">
+                                                <label class="control-label col-xs-12">
+                                                    {{'PUBLICATION.ADD.SCHEDULEDTIME_DIRECTION'|translate}}
+                                                </label>
+                                                <div class="col-xs-12">
+                                                    <select class="form-control"
+                                                            ng-options="direction.name for direction in presetDirections track by direction.id"
+                                                            ng-model="selectedDirection" ng-change="appointmentScheduledTime('direction',selectedDirection)">
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
                             <!-- SECTION: Appointment triggers -->
                             <div ng-if="triggerSection.appointment.available">
                                 <div class="col-xs-12 side-menu-title" style="margin-top: 20px;">
