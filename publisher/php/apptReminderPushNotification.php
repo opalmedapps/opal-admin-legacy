@@ -95,6 +95,7 @@ class ApptReminderPushNotification
                             Appointment ap, Patient P
                         WHERE 
                             DATE(ap.ScheduledStartTime) = DATE(DATE_ADD(NOW(), INTERVAL 1 DAY))
+                            AND TIME(ap.ScheduledStartTime) >= '02:00'
                             AND ap.State = 'Active' 
                             AND ap.Status <> 'Deleted' 
                             AND ap.PatientSerNum = P.PatientSerNum) AS AP,
@@ -104,6 +105,7 @@ class ApptReminderPushNotification
                         WHERE A.AliasSerNum = AE.AliasSerNum) AS ALIAS
                     
                     where AP.AliasExpressionSerNum = ALIAS.AliasExpressionSerNum
+                    Order by AP.PatientSerNum, AP.`Time`
                 ;    
             ";
 
