@@ -263,7 +263,24 @@ abstract class OpalProject
             // Add $patientName as a wildcard for replacement
             $dynamicKeys['$patientName'] = $firstName;
         }
+        $caregiver_institution = $this->_getPatientCaregiversAndInstitution($data["PatientSerNum"]);
 
+        $userNamesStr = $caregiver_institution["caregivers"];
+        $institution = $caregiver_institution["institution"];
+
+        // Special case for replacing the $institution wildcard
+        if (str_contains($messageTemplate, '$institution')) {
+           if(!empty($institution)){
+               // Add $institution as a wildcard for replacement
+               $dynamicKeys['$institution'] = $institution;
+           }else{
+               $sendlog = "An error occurred while getting the patient's institution";
+               $pushNotificationDetail = $this->_buildNotification($this->statusFailure, $sendlog, $refTableId, $controlser, $data['PatientSerNum'], null);
+               return;
+           }
+        }
+
+        // prepare array for replacements
         $patterns           = array();
         $replacements       = array();
         $indice             = 0;
@@ -276,8 +293,6 @@ abstract class OpalProject
         ksort($patterns);
         ksort($replacements);
         $message =  str_replace($patterns, $replacements, $messageTemplate);
-
-        $userNamesStr = $this->_getPatientCaregivers($data["PatientSerNum"]);
 
         $ptdIds = $this->opalDB->getPatientDeviceIdentifiers($userNamesStr);
         if (count($ptdIds) == 0){
@@ -317,7 +332,7 @@ abstract class OpalProject
         }
     }
 
-    protected function _getPatientCaregivers($patientSerNum)
+    protected function _getPatientCaregiversAndInstitution($patientSerNum)
     {
         $backendApi = new NewOpalApiCall(
             '/api/patients/legacy/'.$patientSerNum.'/caregiver-devices/',
@@ -328,6 +343,8 @@ abstract class OpalProject
         $response = $backendApi->execute();
         $response = json_decode($response, true);
         $caregivers = $response['caregivers'];
+        $institution = $response['institution'];
+
         $userNameArray = [];
         foreach ($caregivers as $caregiver) {
             $userNameArray[] = $caregiver['username'];
@@ -336,7 +353,13 @@ abstract class OpalProject
         $userNameArrayString = implode("','", $userNameArray);
         $userNameArrayString = "'".$userNameArrayString."'";
 
-        return self::getPatientDevicesByUsernames($userNameArrayString);
+        $caregiverDevicesUsernames = self::getPatientDevicesByUsernames($userNameArrayString);
+
+        // Return an array containing caregivers and institution
+        return [
+            'caregivers' => $caregiverDevicesUsernames,
+            'institution' => $institution,
+        ];
     }
 
     protected function _buildNotification($sendstatus, $sendlog, $refTableId, $controlser, $patientSerNum, $ptdidser) {
