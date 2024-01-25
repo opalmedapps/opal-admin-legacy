@@ -139,6 +139,9 @@ class PushNotifications {
 		// fwrite($myfile, print_r([$response, $message],true)."\n");
 		// fclose($myfile);
 
+		// TODO formatting of responses has changed
+		return $response;
+
 		$data = array();
 		$data["success"] = $response["success"];
 		$data["failure"] = $response["failure"];
@@ -286,10 +289,18 @@ class PushNotifications {
 	 **/
 	private static function getAuthToken() {
 		$scope = 'https://www.googleapis.com/auth/firebase.messaging';
+
+		// TODO (testing) find a permanent solution for relative path problem below
+		$serviceAccountPath = "../../.." . FIREBASE_SERVICEACCOUNT;
+		echo getcwd() . "\n";
+		echo $serviceAccountPath . "\n";
+		echo "File exists: " . (file_exists($serviceAccountPath) ? 'true' : 'false') ;
+
 		$credentials = CredentialsLoader::makeCredentials($scope, json_decode(file_get_contents(
-			FIREBASE_SERVICEACCOUNT
+			$serviceAccountPath
 		), true));
-		return $credentials->fetchAuthToken();
+		$token = $credentials->fetchAuthToken();
+		return $token["access_token"];
 	}
 }
 ?>
