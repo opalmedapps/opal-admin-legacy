@@ -286,19 +286,18 @@ class PushNotifications {
 	 *              See: https://firebase.google.com/docs/cloud-messaging/migrate-v1#use-credentials-to-mint-access-tokens
 	 *              See: https://github.com/googleapis/google-api-php-client/issues/1715#issuecomment-533217233
 	 * Requires: FIREBASE_SERVICEACCOUNT must contain a path to a valid service account file.
-	 **/
+	 *
+	 * @throws Exception If the function fails to read the service account file at FIREBASE_SERVICEACCOUNT.
+	 */
 	private static function getAuthToken() {
 		$scope = 'https://www.googleapis.com/auth/firebase.messaging';
 
-		// TODO (testing) find a permanent solution for relative path problem below
-		$serviceAccountPath = "../../.." . FIREBASE_SERVICEACCOUNT;
-		echo getcwd() . "\n";
-		echo $serviceAccountPath . "\n";
-		echo "File exists: " . (file_exists($serviceAccountPath) ? 'true' : 'false') ;
+		// Read the Firebase service account from its file
+		$serviceAccount = json_decode(file_get_contents(FIREBASE_SERVICEACCOUNT), true);
+		if (is_null($serviceAccount)) throw new Exception("Failed to read Firebase service account at: " . FIREBASE_SERVICEACCOUNT);
 
-		$credentials = CredentialsLoader::makeCredentials($scope, json_decode(file_get_contents(
-			$serviceAccountPath
-		), true));
+		// Use the service account to get an authentication token
+		$credentials = CredentialsLoader::makeCredentials($scope, $serviceAccount);
 		$token = $credentials->fetchAuthToken();
 		return $token["access_token"];
 	}
