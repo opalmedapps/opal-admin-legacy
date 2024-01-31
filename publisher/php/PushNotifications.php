@@ -139,17 +139,13 @@ class PushNotifications {
 		// fwrite($myfile, print_r([$response, $message],true)."\n");
 		// fclose($myfile);
 
-		// TODO formatting of responses has changed
-		return $response;
-
 		$data = array();
-		$data["success"] = $response["success"];
-		$data["failure"] = $response["failure"];
-		if($response["success"]==0) {
-			$data["error"]=$response["results"][0]["error"];
+		$data["success"] = $response["name"] ? 1 : 0;
+		$data["failure"] = $response["error"] ? 1 : 0;
+		if ($data["failure"] == 1) {
+			$data["error"] = $response["error"]["message"];
 		}
 		return $data;
-
 	}
 
 	// **************************************************
