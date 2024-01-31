@@ -24,7 +24,6 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.hospitalMap.edit',
 	'opalAdmin.controllers.hospitalMap.delete',
 	'opalAdmin.controllers.notification',
-	'opalAdmin.controllers.notification.add',
 	'opalAdmin.controllers.notification.edit',
 	'opalAdmin.controllers.notification.delete',
 	'opalAdmin.controllers.notification.log',
