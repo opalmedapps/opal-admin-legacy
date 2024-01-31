@@ -150,7 +150,6 @@ angular.module('opalAdmin', [
 			.state('hospital-map', { url: '/hospital-map', templateUrl: "templates/hospital-map/hospital-map.html", controller: "hospitalMap", data: { requireLogin: true } })
 			.state('hospital-map-add', { url: '/hospital-map/add', templateUrl: "templates/hospital-map/add.hospital-map.html", controller: "hospitalMap.add", data: { requireLogin: true } })
 			.state('notification', { url: '/notification', templateUrl: "templates/notification/notification.html", controller: "notification", data: { requireLogin: true } })
-			.state('notification-add', { url: '/notification/add', templateUrl: "templates/notification/add.notification.html", controller: "notification.add", data: { requireLogin: true } })
 			.state('patients/menu', { url: '/patients/menu', templateUrl: "templates/patient/menu-main.html", controller: "patient", data: { requireLogin: true, accessible: true } })
 			.state('patients', { url: '/patients', templateUrl: "templates/patient/patient.html", controller: "patient", data: { requireLogin: true } })
 			.state('patients/activity', { url: '/patients/activity', templateUrl: "templates/patient/patient-activity.html", controller: "patientActivity", data: { requireLogin: true } })
