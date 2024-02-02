@@ -32,7 +32,6 @@ $dotenv->required('DATABASE_USE_SSL')->notEmpty();
 $dotenv->required('SSL_CA')->notEmpty();
 // Push notification configurations
 $dotenv->required('PUSH_NOTIFICATION_URL')->notEmpty();
-$dotenv->required('PUSH_NOTIFICATION_ANDROID_API_KEY')->notEmpty();
 $dotenv->required('PUSH_NOTIFICATION_ANDROID_URL')->notEmpty();
 $dotenv->required('APPLE_CERT_PASSWORD');
 $dotenv->required('APPLE_CERT_FILENAME')->notEmpty();
@@ -153,8 +152,7 @@ define("ALIAS_TYPE_TASK", 1);
 define("ALIAS_TYPE_APPOINTMENT", 2);
 define("ALIAS_TYPE_DOCUMENT", 3);
 
-// Push Notification FCM and APN credientials.
-define("API_KEY" , $_ENV["PUSH_NOTIFICATION_ANDROID_API_KEY"]);
+// Push Notification FCM and APN variables and credentials
 define("ANDROID_URL" , $_ENV["PUSH_NOTIFICATION_ANDROID_URL"]);
 define("CERTIFICATE_PASSWORD" , $_ENV["APPLE_CERT_PASSWORD"]);
 define("CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $_ENV["APPLE_CERT_FILENAME"]);
@@ -208,17 +206,22 @@ define("APPLE_PUSH_NOTIFICATION_POSTFIELDS_CONFIG", json_encode(array(
     ))));
 
 define("ANDROID_PUSH_NOTIFICATION_POSTFIELDS_CONFIG", json_encode(array(
-    'registration_ids' => array("%%REGISTRATION_ID_HERE%%"),
-    'data' => array(
-        'notId' => date("His"),
-        'title' => "%%TITLE_HERE%%",
-        'body' => "%%BODY_HERE%%",
-        'channelId' => 'opal',
-        'payload' => array(
-            'aps' => array(
-                'category' => 'opal'
-            )
-        )
+    'message' => array(
+        // Target device's registration ID (to which the notification will be sent)
+        'token' => "%%REGISTRATION_ID_HERE%%",
+
+        // General notification content
+        'notification' => array(
+            'title' => "%%TITLE_HERE%%",
+            'body' => "%%BODY_HERE%%",
+        ),
+
+        // Android-specific settings
+        'android' => array(
+            'notification' => array(
+                'channel_id' => 'opal',
+            ),
+        ),
     )
 )));
 
@@ -226,7 +229,8 @@ const ANDROID_PUSH_NOTIFICATION_CONFIG = array(
     CURLOPT_URL=>ANDROID_URL,
     CURLOPT_POST=>true,
     CURLOPT_HTTPHEADER=>array(
-        'Authorization: key=' . API_KEY,
+        // For Authorization format, see: https://firebase.google.com/docs/cloud-messaging/migrate-v1#update-authorization-of-send-requests
+        'Authorization: Bearer %%TOKEN_HERE%%',
         'Content-Type: application/json'
     ),
     CURLOPT_RETURNTRANSFER=>true,

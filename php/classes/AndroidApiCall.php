@@ -1,9 +1,12 @@
 <?php
 
+include_once("FirebaseOpal.php");
+
 class AndroidApiCall extends ApiCall {
 
 
     public function __construct($registrationId, $title, $body, $options = ANDROID_PUSH_NOTIFICATION_CONFIG) {
+        $options[CURLOPT_HTTPHEADER][0] = str_replace("%%TOKEN_HERE%%", FirebaseOpal::getFCMAuthToken(), $options[CURLOPT_HTTPHEADER][0]);
         parent::__construct($options);
         $this->setOption(CURLOPT_POSTFIELDS,
             str_replace("%%BODY_HERE%%", $body,

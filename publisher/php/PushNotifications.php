@@ -3,8 +3,7 @@
 include_once "database.inc";
 include_once("../../php/config.php");
 include_once("../../php/classes/NewOpalApiCall.php");
-
-use Google\Auth\CredentialsLoader;
+include_once("../../php/classes/FirebaseOpal.php");
 
 class PushNotifications {
 	// (iOS) Private key's passphrase.
@@ -127,7 +126,7 @@ class PushNotifications {
 
 		// For Authorization format, see: https://firebase.google.com/docs/cloud-messaging/migrate-v1#update-authorization-of-send-requests
 		$headers = array(
-			'Authorization: Bearer ' . self::getAuthToken(),
+			'Authorization: Bearer ' . FirebaseOpal::getFCMAuthToken(),
 			'Content-Type: application/json'
 		);
 
@@ -274,28 +273,5 @@ class PushNotifications {
 	// return title and body in an array
 	return array($outTitle, $outBody);
    }
-
-	/**
-	 * (getAuthToken())
-	 * Description: Uses Firebase credentials with the Google Auth Library to retrieve a short-lived OAuth 2.0 access token,
-	 *              which can be used to authorize push notifications sent with FCM (Firebase Cloud Messaging).
-	 *              See: https://firebase.google.com/docs/cloud-messaging/migrate-v1#use-credentials-to-mint-access-tokens
-	 *              See: https://github.com/googleapis/google-api-php-client/issues/1715#issuecomment-533217233
-	 * Requires: FIREBASE_SERVICEACCOUNT must contain a path to a valid service account file.
-	 *
-	 * @throws Exception If the function fails to read the service account file at FIREBASE_SERVICEACCOUNT.
-	 */
-	private static function getAuthToken() {
-		$scope = 'https://www.googleapis.com/auth/firebase.messaging';
-
-		// Read the Firebase service account from its file
-		$serviceAccount = json_decode(file_get_contents(FIREBASE_SERVICEACCOUNT), true);
-		if (is_null($serviceAccount)) throw new Exception("Failed to read Firebase service account at: " . FIREBASE_SERVICEACCOUNT);
-
-		// Use the service account to get an authentication token
-		$credentials = CredentialsLoader::makeCredentials($scope, $serviceAccount);
-		$token = $credentials->fetchAuthToken();
-		return $token["access_token"];
-	}
 }
 ?>
