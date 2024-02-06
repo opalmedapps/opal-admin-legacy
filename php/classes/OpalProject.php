@@ -241,7 +241,7 @@ abstract class OpalProject
 
     protected function _notifyChange($data, $action, $dynamicKeys, $refTableId){
         // NOTE: The same functionality already exists in Perl (PushNotification.pm). Any change to the logic here needs to be applied there as well.
-        $notificationControl = $this->opalDB->getNotificationControlDetails($data["PatientSerNum"], $action);        
+        $notificationControl = $this->opalDB->getNotificationControlDetails($data["PatientSerNum"], $action);
         $controlser         = $notificationControl[0]["NotificationControlSerNum"];
         $messageTitle       = $notificationControl[0]["Name"];
         $messageTemplate    = $notificationControl[0]["Message"];
@@ -285,8 +285,8 @@ abstract class OpalProject
             $pushNotificationDetail = $this->_buildNotification($this->statusWarning, $sendlog, $refTableId, $controlser, $data["PatientSerNum"], null);
             $this->opalDB->insertPushNotification($pushNotificationDetail);        
         } else {
-            
-            foreach($ptdIds as $ptdId) {                
+
+            foreach($ptdIds as $ptdId) {
                 $ptdidser       = $ptdId["PatientDeviceIdentifierSerNum"];
                 $registrationId = $ptdId["RegistrationId"];
                 $deviceType     = $ptdId["DeviceType"];
@@ -324,10 +324,10 @@ abstract class OpalProject
             'GET',
             'en',
             [],
-            );
+        );
         $response = $backendApi->execute();
-        $response = json_decode($response, true);
-        $caregivers = $response['caregivers'];
+        $response = $response ? json_decode($response, true) : NULL;
+        $caregivers = $response && $response['caregivers'] ? $response['caregivers'] : [];
         $userNameArray = [];
         foreach ($caregivers as $caregiver) {
             $userNameArray[] = $caregiver['username'];
@@ -336,7 +336,7 @@ abstract class OpalProject
         $userNameArrayString = implode("','", $userNameArray);
         $userNameArrayString = "'".$userNameArrayString."'";
 
-        return self::getPatientDevicesByUsernames($userNameArrayString);
+        return $userNameArrayString;
     }
 
     protected function _buildNotification($sendstatus, $sendlog, $refTableId, $controlser, $patientSerNum, $ptdidser) {

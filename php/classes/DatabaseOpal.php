@@ -4065,10 +4065,9 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Get patient device 
-     * @param $typeCode string - appointment type
-     * @param $typeDesc string - appointment type description
-     * @return array - data found if any
+     * Get patient devices information by user names
+     * @param $userNamesStr string - usernames separated by comma
+     * @return array - caregiver devices info
      */
     function getPatientDeviceIdentifiers($userNamesStr) {
         return $this->_fetchAll(OPAL_GET_PATIENT_DEVICE_IDENTIFIERS, array(
