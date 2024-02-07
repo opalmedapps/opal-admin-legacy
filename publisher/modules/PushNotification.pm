@@ -37,7 +37,6 @@ my $SQLDatabase		= $Database::targetDatabase;
 #my $thisURL = 'https://' . $ipaddress . $Configs::BACKEND_REL_URL . 'php/sendPushNotification.php';
 # the docker environment is blocking the local net address currently. the direct url for push notifiction is add below
 my $thisURL = Configs::fetchPushNotificationUrl();
-# my $thisURL = 'http://localhost:8080/publisher/php/sendPushNotification.php'
 my $statusSuccess = 'T';
 my $statusWarning = 'W';
 my $statusFailure = 'F';
@@ -340,8 +339,8 @@ sub postNotification
     try {
         $returnStatus = decode_json($response->content);
     } catch {
-        $sendstatus = $statusFailure;
-        $sendlog    = "Failed to send push notification! Message: 'Push Notification Timed Out'->{'error'}";
+        $sendstatus = $statusWarning;
+        $sendlog    = "Unknown status of push notification! Message: 'Failed to decode response: $_";
     };
 
     print "\n***** End Push Notification *****\n";
@@ -350,9 +349,13 @@ sub postNotification
         $sendstatus = $statusSuccess;
         $sendlog    = "Push notification successfully sent! Message: $message";
     }
-    if ($returnStatus->{'success'} eq 0) {
+    elsif ($returnStatus->{'success'} eq 0) {
         $sendstatus = $statusFailure;
         $sendlog    = "Failed to send push notification! Message: $returnStatus->{'error'}";
+    }
+    else {
+        $sendstatus = $statusWarning;
+        $sendlog    = "Unknown status of push notification! Unexpected return status: $returnStatus";
     }
 
     return ($sendstatus, $sendlog);
