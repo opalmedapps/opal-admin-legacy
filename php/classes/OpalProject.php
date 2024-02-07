@@ -283,7 +283,7 @@ abstract class OpalProject
         if (count($ptdIds) == 0){
             $sendlog = "Patient has no device identifier! No push notification sent.";
             $pushNotificationDetail = $this->_buildNotification($this->statusWarning, $sendlog, $refTableId, $controlser, $data["PatientSerNum"], null);
-            $this->opalDB->insertPushNotification($pushNotificationDetail);        
+            $this->opalDB->insertPushNotification($pushNotificationDetail);
         } else {
 
             foreach($ptdIds as $ptdId) {
