@@ -3,10 +3,9 @@
 include_once "database.inc";
 include_once("../../php/config.php");
 include_once("../../php/classes/NewOpalApiCall.php");
+include_once("../../php/classes/FirebaseOpal.php");
 
 class PushNotifications {
-	// (Android)API access key from Google API's Console.
-	private static $api_key = API_KEY ;
 	// (iOS) Private key's passphrase.
 	private static $passphrase = CERTIFICATE_PASSWORD;
 	//(iOS) Location of certificate file
@@ -92,52 +91,47 @@ class PushNotifications {
 	* 
 	**/
 	public static function android($data, $reg_id) {
-		// $url = 'https://fcm.googleapis.com/fcm/send';
 		$url = ANDROID_URL;
 
-		//validation and message prep
-		if(is_array($data)){
-			// encode (UTF8) the title and body
+		// Validation and message prep
+		if (is_array($data)) {
+			// Encode (UTF8) the title and body
 			$result = self::encodePayload($data['mtitle'], $data['mdesc'] );
 			$wsTitle = $result[0];
 			$wsBody =  $result[1];
-        }else{ //data not array error
+		}
+		else {
 			$response =  array("success"=>0,"failure"=>1,"error"=>"Request data invalid, unable to send push notification.");
 			return $response;
 		}
 
-		// Create a unique Post ID so that the push notification
-		// will not override the previous push notification by using
-		// time format (hours, minutes, and seconds)
-		// Ex: 10:35:23 would be 103523
-		$wsDate = date("His");
+		$notification = array(
+			'message' => array(
+				// Target device's registration ID (to which the notification will be sent)
+				'token' => $reg_id,
 
-		$message = array(
-			'notId' 				=> $wsDate,
-			'title'					=> $wsTitle,
-			'body'					=> $wsBody,
-			'channelId'				=> 'opal',
-			'payload'				=> array(
-				'aps'				=> array(
-					'category'		=> 'opal'
-				)
-			)
+				// General notification content
+				'notification' => array(
+					'title' => $wsTitle,
+					'body' => $wsBody,
+				),
+
+				// Android-specific settings
+				'android' => array(
+					'notification' => array(
+						'channel_id' => 'opal',
+					),
+				),
+			),
 		);
 
+		// For Authorization format, see: https://firebase.google.com/docs/cloud-messaging/migrate-v1#update-authorization-of-send-requests
 		$headers = array(
-			'Authorization: key=' .self::$api_key,
+			'Authorization: Bearer ' . FirebaseOpal::getFCMAuthToken(),
 			'Content-Type: application/json'
 		);
 
-		// data -->> is the message of the body
-		// notification -->> is a short title of the text message (about 64 characters)
-		$fields = array(
-			'registration_ids' => array($reg_id),
-			'data' => $message
-			// 'notification' => $message
-		);
-
-		$response = self::useCurl($url, $headers, json_encode($fields));
+		$response = self::useCurl($url, $headers, json_encode($notification));
 		$response = json_decode($response,true);
 
 		// **** Uncomment the below lines for troubleshooting
@@ -146,13 +140,12 @@ class PushNotifications {
 		// fclose($myfile);
 
 		$data = array();
-		$data["success"] = $response["success"];
-		$data["failure"] = $response["failure"];
-		if($response["success"]==0) {
-			$data["error"]=$response["results"][0]["error"];
+		$data["success"] = $response["name"] ? 1 : 0;
+		$data["failure"] = $response["error"] ? 1 : 0;
+		if ($data["failure"] == 1) {
+			$data["error"] = $response["error"]["message"];
 		}
 		return $data;
-
 	}
 
 	// **************************************************
@@ -281,6 +274,5 @@ class PushNotifications {
 	// return title and body in an array
 	return array($outTitle, $outBody);
    }
-
 }
 ?>

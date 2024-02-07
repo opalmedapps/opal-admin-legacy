@@ -42,12 +42,6 @@ git clone git@gitlab.com:opalmedapps/opalAdmin.git
 Installing 3rd-party libraries require both [NodeJS](https://nodejs.org/en/download/) and [Bower](https://bower.io/#install-bower) to be installed on your server. To install the 3rd-party libraries, navigate to the project directory and issue the install commands:
 
 ```
-cd opalAdmin
-```
-
-then
-
-```
 bower install 
 ```
 
@@ -69,13 +63,9 @@ This will copy **./.env.sample** to **./.env** and set preliminary configuration
 
 ### Step 5
 
-Create an empty Opal database using your favourite tool. **Note:** Keep track of the database name.
-
-### Step 6
-
 Open the **.env** file using your favourite editor and replace the default Opal credentials with your local credentials.
 
-### Step 7
+### Step 6
 
 **your Firebase Configurations**
 
@@ -83,30 +73,16 @@ Get firebase web configuration:
 - Go to [Firebase Console](https://console.firebase.google.com/u/0/)
 - Click on Settings (gear icon) in the left panel, then click on Project Settings. 
 - In the General tab, scroll down to Your apps and select the html </> icon (Web). 
-- Type Opal Local as the app nickname (don’t enable Firebase Hosting). 
-- Click Register app (if this is the first time, otherwise, move to next step). 
-- Copy and paste the code on the screen into a new file and call it `firebase-admin-key.json`.
-  - Make sure to protect your private key; once you’ve downloaded it, you can’t download it again, you can only generate a new one. 
-  - If you’re setting up your listener using Docker, you’ll need to copy the private key to another folder. See the listener README for
-  details. 
-
-Copy the `firebase-admin-key.json` file to `config/firebase/`
+- If this has not been set up yet, type Opal Local as the app nickname (don’t enable Firebase Hosting),
+  and click on Register app (otherwise, skip to the next step). 
+- Click on the `Service Accounts` tab.
+- Click on `Generate new private key` (if you haven't already; otherwise, you can use your previously downloaded key).
+  - Make sure to protect your private key; once you’ve downloaded it, you can’t download it again, you can only generate a new one.
+- Name your key file `firebase-admin-key.json`, and copy it to `config/firebase/`.
 
 If your database is being run with secure transport required (SSL/TLS traffic encryption), also update the values for the SSL environment variables: `DATABASE_USE_SSL=1` and `SSL_CA=/var/www/html/certs/ca.pem` after copying the `ca.pem` file into the certs directory. Detailed instructions on how to generate SSL certificates can be found either in the [documentation repository](https://gitlab.com/opalmedapps/docs/-/blob/main/docs/guides/self_signed_certificates.md) or in the [db-docker README](https://gitlab.com/opalmedapps/db-docker).
 
-### Step 8
-
-Visit opalAdmin's database version control page in your web browser at:
-
-http://localhost:8091/dbv
-
-Username: dbv -- Password: dbv
-
-### Step 9
-
-On the DBV page, run all revisions by selecting all revisions and clicking *Run selected revisions*
-
-### Step 10
+### Step 7
 
 Visit the opalAdmin site:
 
@@ -169,49 +145,70 @@ git checkout staging
 * [Perl](http://perldoc.perl.org)
 * [JavaScript](https://www.javascript.com)
 
-## Test Push Notification
+## Testing Push Notifications
 
-### Step 1 
-Log into the app so that a row in PatientDeviceIdentifier gets updated with your device's push notification registration ID (in the column RegistrationId). This is required because the RegistrationId may change at any time, and it also changes every time you reinstall the app.
+### Prerequisites
 
-### Step 2
-Log into server(testing in RI-Dev) and use HeidiSQL to check PatientDeviceIdentifier table to copy the RegistrationId and keep it somewhere to be used after. 
+#### If testing on a server:
 
-### Step 3
-Run PUTTY to open RI-Dev and use your own crendential to login (if you don't have one, please reacho out to Greg for help)
-
-to grant your account privileged access to opalsupt resources so that you can run commands that they cannot run under your regular accounts and call (there will be 2nd time password required to input)
-
-```
+1. Connect to the server and use your own credentials to log in.
+2. To grant your account privileged access to opalsupt resources, so that you can run commands that you could not run
+   normally, call the following and enter your own user's password again:
+   
+```bash
 sudo su - opalsupt
 ```
 
-To enter docker container and call
+3. To access the backend container, call the following (replacing `dcd` if needed with the right shortcut for the target environment):
 
-```
+```bash
 dcd exec opaladmin bash
 ```
 
-To change directory to the right folder where the test script is kept and call
+#### If testing locally:
 
-```
+1. Make sure your Firebase service account file is in the directory `config/firebase/`.
+2. Make sure the following `.env` variables have been correctly set:
+   1. `FIREBASE_ADMIN_KEY_PATH`
+   2. `PUSH_NOTIFICATION_URL`
+   3. `PUSH_NOTIFICATION_ANDROID_URL` (if using Android)
+3. Build a copy of your local Opal app and install it on a mobile device. Make sure to allow push notifications.
+
+
+After the above setup, you can test push notifications as follows using the test script.
+
+### Step 1
+
+Log into the app so that a row in `PatientDeviceIdentifier` gets updated with your device's push notification registration ID (in the column `RegistrationId`).
+This is required because the registration ID may change at any time (including each time you reinstall the app).
+
+### Step 2
+
+Use a database client to check the PatientDeviceIdentifier table: copy the `RegistrationId` from your latest login and keep it somewhere to be used later.
+
+### Step 3
+
+Go to the directory containing the test script:
+
+```bash
 cd publisher/php/tests
 ```
 
-### Step 3
-Run the script in the docker container by calling the command below
-
-```
-php testPushNotification.php "device Id" "device type" "language"
-```
-
- * device Id (in the column RegistrationId mentioned in Step 1)
- * device type is 0 (IOS) or 1 (Android)
- * language is en (English) or fr (French)
-.
-
 ### Step 4
-Output will be printed to the terminal to indicate whether the notification was successfully sent, or if there was an error. If successful, you’ll receive a test push notification on your device.
+Run the script in the docker container by calling the command below:
+
+```bash
+php testPushNotification.php <device-id> <device-type> <language>
+```
+
+ * `<device-id>`: Value from the column `RegistrationId` mentioned above.
+ * `<device-type>`: `0` (iOS) or `1` (Android)
+ * `<language>`: `en` (English) or `fr` (French)
+
+
+### Step 5
+Output will be printed to the terminal to indicate whether the notification was successfully sent, or if there was an error.
+If successful, you’ll receive a test push notification on your device.
 
 ## Version file
 
