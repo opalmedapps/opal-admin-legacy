@@ -60,9 +60,10 @@
             $response = PushNotifications::android($message, $device);
         }
     
-        echo "<br />Complete<br />";
+        echo "<br />Complete<br />\n";
     
         // Return responses
         print json_encode($response);
+        echo "\n";
     }
 ?>
