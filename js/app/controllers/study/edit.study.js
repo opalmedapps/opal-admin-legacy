@@ -391,8 +391,8 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	});
 
 	$scope.consentFormUpdate = function(form){
-		$scope.toSubmit.consent_form.id = form.ID;
-		$scope.consentTitle = form.name_display;
+		if($scope.toSubmit.consent_form.id)
+			$scope.consentTitle = form.name_display;
 	}
 
 	$scope.popupStart = {};
