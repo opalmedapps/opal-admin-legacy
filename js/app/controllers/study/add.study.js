@@ -271,12 +271,13 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 
 	
 		$scope.consentFormUpdate = function(form){
-			$scope.toSubmit.consent_form.id = form.ID;
-			$scope.selectedName = form.name_display;
-			$scope.leftMenu.consent_form.open = $scope.toSubmit.consent_form;
-			$scope.leftMenu.consent_form.display = $scope.leftMenu.consent_form.open;
-			$scope.leftMenu.consent_form.preview = $scope.leftMenu.consent_form.open;
-			$scope.validator.consent_form.completed = $scope.leftMenu.consent_form.open;
+			if($scope.toSubmit.consent_form.id){
+				$scope.selectedName = form.name_display;
+				$scope.leftMenu.consent_form.open = $scope.toSubmit.consent_form;
+				$scope.leftMenu.consent_form.display = $scope.leftMenu.consent_form.open;
+				$scope.leftMenu.consent_form.preview = $scope.leftMenu.consent_form.open;
+				$scope.validator.consent_form.completed = $scope.leftMenu.consent_form.open;
+			}
 		}
 	
 
