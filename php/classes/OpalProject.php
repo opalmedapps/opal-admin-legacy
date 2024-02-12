@@ -334,7 +334,6 @@ abstract class OpalProject
         }
 
         $userNameArrayString = implode("','", $userNameArray);
-        $userNameArrayString = "'".$userNameArrayString."'";
 
         return $userNameArrayString;
     }
@@ -395,7 +394,7 @@ abstract class OpalProject
             $replacementMap = array();
             $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
             $replacementMap["\$getDateTime"] =  $formatter->format($StartDateTime);
-            $formatter = new \IntlDateFormatter('en_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
+            $formatter = new \IntlDateFormatter(locale: 'en_CA', dateType: \IntlDateFormatter::NONE, timeType: \IntlDateFormatter::SHORT, pattern: "h:mm a");
             $replacementMap["\$getDateTime"] =  $formatter->format($StartDateTime);
                     
             $scheduledStartTime = strtotime($currentAppointment["ScheduledStartTime"]);
