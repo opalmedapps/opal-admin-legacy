@@ -189,7 +189,7 @@ class CronJob extends OpalProject {
 
                 $formatter = new \IntlDateFormatter('en_CA', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
                 $replacementMap["\$newAppointmentDateEN"] =  $formatter->format($SStartDateTime);
-                $formatter = new \IntlDateFormatter('en_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
+                $formatter = new \IntlDateFormatter(locale: 'en_CA', dateType: \IntlDateFormatter::NONE, timeType: \IntlDateFormatter::SHORT, pattern: "h:mm a");
                 $replacementMap["\$newAppointmentTimeEN"] =  $formatter->format($SStartDateTime);
 
                 $this->opalDB->deleteAppointmentPending($appointmentPending["ID"]);
