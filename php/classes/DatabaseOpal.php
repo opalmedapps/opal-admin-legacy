@@ -14,7 +14,8 @@ class DatabaseOpal extends DatabaseAccess {
     public function __construct($newServer = "localhost", $newDB = "", $newPort = "3306", $newUserDB = "root", $newPass = "", $dsn = false, $newOAUserId = false, $guestAccess = false) {
         parent::__construct($newServer, $newDB, $newPort, $newUserDB, $newPass, $dsn);
         if (!$guestAccess) {
-            $newOAUserId = strip_tags($newOAUserId);
+            $newOAUserId = $newOAUserId ?? '0';
+            $newOAUserId = strip_tags(strval($newOAUserId));
 
             if($_SESSION["ID"] && $_SESSION["ID"] == $newOAUserId) {
                 $this->OAUserId = $_SESSION["ID"];
