@@ -333,7 +333,7 @@ abstract class OpalProject
             $userNameArray[] = $caregiver['username'];
         }
 
-        $userNameArrayString = implode("','", $userNameArray);
+        $userNameArrayString = implode(",", $userNameArray);
 
         return $userNameArrayString;
     }
