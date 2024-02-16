@@ -23,7 +23,21 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			},
 		];
 
+		// Function to check AD is enabled
+		function isADEnabled() {
+			if ($scope.configs.login.activeDirectory.enabled === '1'){
+				// update number of steps to exclude password
+				$scope.stepTotal = 3;
+				return true;
+			}else{
+				// update number of steps to include password step
+				$scope.stepTotal = 4;
+				return false;
+			}
+		}
+
 		// default booleans
+		$scope.ADEnabled = isADEnabled();
 		$scope.passwordSection = {open:false, show:false};
 		$scope.roleSection = {open:false, show:false};
 		$scope.languageSection = {open:false, show:false};
@@ -51,9 +65,6 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 		// Default count of completed steps
 		$scope.numOfCompletedSteps = 0;
 
-		// Default total number of steps
-		$scope.stepTotal = 4;
-
 		// Progress bar based on default completed steps and total
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
@@ -73,6 +84,23 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			}
 
 			return numberOfTrues;
+		}
+
+		// Function to check if user is already in use
+		function checkUserAlreadyInUse(username){
+			userCollectionService.usernameAlreadyInUse(username).then(function (response) {
+					if (response.data.count) {
+						// Handle the case where the username is already in use
+						$scope.validUsername.status = 'invalid';
+						$scope.validUsername.message = $filter('translate')('USERS.ADD.ERROR_USERNAME_USED');
+						$scope.usernameUpdate();
+					} else {
+						// Handle the case where the username is not in use
+						$scope.validUsername.status = 'valid';
+						$scope.validUsername.message = null;
+						$scope.usernameUpdate();
+					}
+				});
 		}
 
 		// Initialize new user object
@@ -120,25 +148,30 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 				$scope.usernameUpdate();
 				return;
 			}
+			// if AD is enabled
+			if($scope.ADEnabled) {
+				// check if user exists as an ADFS user
+				userCollectionService.isUserExist(username).then(function (response) {
+					// disable password section
+					$scope.disablePassword = true;
+					// if ADFS user exists
+					if (response.data.is_exist) {
+						// check if user is already added to opaladmin database
+						 checkUserAlreadyInUse(username);
 
-			// Make request to check if username already in use
-			userCollectionService.usernameAlreadyInUse(username).then(function (response) {
-				if(response.data.count) {
-					$scope.validUsername.status = 'invalid';
-					$scope.validUsername.message = $filter('translate')('USERS.ADD.ERROR_USERNAME_USED');
-					$scope.usernameUpdate();
-					return;
-				}
-				else {
-					$scope.validUsername.status = 'valid';
-					$scope.validUsername.message = null;
-					$scope.usernameUpdate();
-					return;
-				}
-			}).catch(function(err) {
-				ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR_USERNAME_UNKNOWN'));
-			});
-
+					} else { //if ADFS user does not exist
+						// Handle the case where the username doesn't exist in AD (response.data.is_exist is false)
+						$scope.validUsername.status = 'invalid';
+						$scope.validUsername.message = $filter('translate')('USERS.ADD.ERROR_AD_USERNAME_NOT_EXIST');
+						$scope.usernameUpdate();
+					}
+				}).catch(function (error) {
+					// Handle communication errors for request
+					alert("An error occurred in fedauth request", error);
+				});
+			}else{// if AD is disabled check only opaladmin database
+				checkUserAlreadyInUse(username);
+			}
 		};
 
 		// Function to validate password
@@ -169,7 +202,9 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 		// Function to validate confirm password
 		$scope.validConfirmPassword = { status: null, message: null };
 		$scope.validateConfirmPassword = function (confirmPassword) {
-
+			$scope.validConfirmPassword.status = 'valid';
+				$scope.validConfirmPassword.message = null;
+				$scope.passwordUpdate();
 			if (!confirmPassword) {
 				$scope.validConfirmPassword.status = null;
 				$scope.passwordUpdate();
@@ -201,10 +236,12 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 		$scope.usernameUpdate = function () {
 			if ($scope.validUsername.status == 'valid') {
 				steps.username.completed = true;
-				$scope.passwordSection.show = true;
+				$scope.roleSection.show = true;
 			}
-			else
+			else {
+				$scope.roleSection.show = false;
 				steps.username.completed = false;
+			}
 
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);

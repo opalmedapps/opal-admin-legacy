@@ -1,5 +1,5 @@
 # Build/install JS dependencies
-FROM node:20.10.0-alpine3.18 as js-dependencies
+FROM node:20.11.0-alpine3.19 as js-dependencies
 
 # Install dependencies for bower
 RUN apk add --no-cache git \
@@ -19,7 +19,7 @@ COPY bower.json ./
 RUN bower --allow-root --production install
 
 # Build/install PHP dependencies
-FROM composer:2.6.5 as php-dependencies
+FROM composer:2.6.6 as php-dependencies
 
 WORKDIR /app
 
@@ -28,7 +28,7 @@ COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-scripts --ignore-platform-reqs --optimize-autoloader
 
 # Build final image
-FROM php:8.1.25-apache-bookworm
+FROM php:8.2.15-apache-bookworm
 
 # Install dependencies
 RUN apt-get update \
@@ -40,6 +40,8 @@ RUN apt-get update \
       # Perl modules
       # Perl mysql dependency
       libmariadb-dev-compat \
+      # IntlDateFormatter dependency
+      libicu-dev \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/* \
@@ -52,7 +54,7 @@ RUN cpanm --notest install \
       Date::Calc \
       DateTime::Format::Strptime \
       DBI \
-      DVEEDEN/DBD-mysql-4.051.tar.gz \
+      DBD::MariaDB \
       File::Spec \
       Net::HTTP \
       JSON \
@@ -66,7 +68,7 @@ RUN cpanm --notest install \
 # Enable apache2 mods
 RUN a2enmod headers rewrite \
   # Install and enable PHP extensions
-  && docker-php-ext-install pdo pdo_mysql
+  && docker-php-ext-install pdo pdo_mysql intl
 
 # which php.ini to use, can be either production or development
 ARG PHP_ENV=production

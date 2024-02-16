@@ -388,6 +388,7 @@ RewriteRule ^user/update/language php/user/update.language.php [QSA,L]
 RewriteRule ^user/update/password php/user/update.password.php [QSA,L]
 RewriteRule ^user/update/user php/user/update.user.php [QSA,L]
 RewriteRule ^user/username-in-use php/user/username_in_use.php [QSA,L]
+RewriteRule ^user/checkuser php/user/check.user.adfs.php [QSA,L]
 RewriteRule ^user/validate-login php/user/user.login.php [QSA,L]
 
 # Document section

@@ -105,7 +105,7 @@ class Appointment extends Module
      */    
     protected function _validateInsertAppointment(&$post, &$patientSite, &$source) {
         $post = HelpSetup::arraySanitization($post);
-                
+
         if(is_array($post)){
             $errCode = $this->_validateAppointmentSourceExternalId($post, $patientSite, $source);
 
@@ -228,13 +228,15 @@ class Appointment extends Module
             if ($post["status"] == "Cancelled" || $post["status"] == "Deleted"){
                 $action = "AppointmentCancelled";
                 $replacementMap = array();
-                setlocale(LC_TIME, 'fr_CA');                                        
-                $replacementMap["\$oldAppointmentDateFR"] =  strftime('%A %d %B %Y', $prevStartDateTime);
-                $replacementMap["\$oldAppointmentTimeFR"] =  strftime('%R', $prevStartDateTime);
+                $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
+                $replacementMap["\$oldAppointmentDateFR"] =  $formatter->format($prevStartDateTime);
+                $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
+                $replacementMap["\$oldAppointmentTimeFR"] =  $formatter->format($prevStartDateTime);
 
-                setlocale(LC_TIME, 'en_CA');
-                $replacementMap["\$oldAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $prevStartDateTime);
-                $replacementMap["\$oldAppointmentTimeEN"] =  strftime('%l:%M %p', $prevStartDateTime);
+                $formatter = new \IntlDateFormatter('en_CA', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
+                $replacementMap["\$oldAppointmentDateEN"] =  $formatter->format($prevStartDateTime);
+                $formatter = new \IntlDateFormatter(locale: 'en_CA', dateType: \IntlDateFormatter::NONE, timeType: \IntlDateFormatter::SHORT, pattern: "h:mm a");
+                $replacementMap["\$oldAppointmentTimeEN"] =  $formatter->format($prevStartDateTime);
                 
                 if ($prevStartDateTime >= $today){
                     $this->_notifyChange($toUpdate,  $action, $replacementMap, $post["sourceId"]);
@@ -367,12 +369,14 @@ class Appointment extends Module
 
         if($countAppt == 0 ) {
             $action = 'AppointmentNew';                    
-            setlocale(LC_TIME, 'fr_CA');                                        
-            $replacementMap["\$newAppointmentDateFR"] =  strftime('%A %d %B %Y', $newStartDateTime);
-            $replacementMap["\$newAppointmentTimeFR"] =  strftime('%R', $newStartDateTime);
-            setlocale(LC_TIME, 'en_CA');
-            $replacementMap["\$newAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $newStartDateTime);
-            $replacementMap["\$newAppointmentTimeEN"] =  strftime('%l:%M %p', $newStartDateTime);
+            $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
+            $replacementMap["\$newAppointmentDateFR"] =  $formatter->format($newStartDateTime);
+            $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
+            $replacementMap["\$newAppointmentTimeFR"] =  $formatter->format($newStartDateTime);
+            $formatter = new \IntlDateFormatter('en_CA', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
+            $replacementMap["\$newAppointmentDateEN"] =  $formatter->format($newStartDateTime);
+            $formatter = new \IntlDateFormatter(locale: 'en_CA', dateType: \IntlDateFormatter::NONE, timeType: \IntlDateFormatter::SHORT, pattern: "h:mm a");
+            $replacementMap["\$newAppointmentTimeEN"] =  $formatter->format($newStartDateTime);
             
         } else {
 
@@ -411,21 +415,25 @@ class Appointment extends Module
                 //if difference is greater than an hour
 		        // 2019-06-12 : Change from 1 hour to 2 hours by John's request
                 $hourdiff = abs(round(($newStartDateTime - $prevStartDateTime)/3600, 1));
-                print_r("Difference between " . $appointment["ScheduledStartTime"] . " and " . $post["scheduledTimestamp"] . " is " . $hourdiff ."\n\n");
+
+                // Use the following line for debugging
+                // print_r("Difference between " . $appointment["ScheduledStartTime"] . " and " . $post["scheduledTimestamp"] . " is " . $hourdiff ."\n\n");
                                 
                 if ($hourdiff >= 2) {
-                    $action = 'AppointmentTimeChange';                    
-                    setlocale(LC_TIME, 'fr_CA');                                        
-                    $replacementMap["\$oldAppointmentDateFR"] =  strftime('%A %d %B %Y', $prevStartDateTime);
-                    $replacementMap["\$newAppointmentDateFR"] =  strftime('%A %d %B %Y', $newStartDateTime);
-                    $replacementMap["\$oldAppointmentTimeFR"] =  strftime('%R', $prevStartDateTime);
-                    $replacementMap["\$newAppointmentTimeFR"] =  strftime('%R', $newStartDateTime);
+                    $action = 'AppointmentTimeChange';
+                    $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
+                    $replacementMap["\$oldAppointmentDateFR"] =  $formatter->format($prevStartDateTime);
+                    $replacementMap["\$newAppointmentDateFR"] =  $formatter->format($newStartDateTime);
+                    $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
+                    $replacementMap["\$oldAppointmentTimeFR"] =  $formatter->format($prevStartDateTime);
+                    $replacementMap["\$newAppointmentTimeFR"] =  $formatter->format($newStartDateTime);
 
-                    setlocale(LC_TIME, 'en_CA');
-                    $replacementMap["\$oldAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $prevStartDateTime);
-                    $replacementMap["\$newAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $newStartDateTime);
-                    $replacementMap["\$oldAppointmentTimeEN"] =  strftime('%l:%M %p', $prevStartDateTime);
-                    $replacementMap["\$newAppointmentTimeEN"] =  strftime('%l:%M %p', $newStartDateTime);
+                    $formatter = new \IntlDateFormatter('en_CA', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
+                    $replacementMap["\$oldAppointmentDateEN"] =  $formatter->format($prevStartDateTime);
+                    $replacementMap["\$newAppointmentDateEN"] =  $formatter->format($newStartDateTime);
+                    $formatter = new \IntlDateFormatter(locale: 'en_CA', dateType: \IntlDateFormatter::NONE, timeType: \IntlDateFormatter::SHORT, pattern: "h:mm a");
+                    $replacementMap["\$oldAppointmentTimeEN"] =  $formatter->format($prevStartDateTime);
+                    $replacementMap["\$newAppointmentTimeEN"] =  $formatter->format($newStartDateTime);
                 }
             }
 
@@ -572,13 +580,15 @@ class Appointment extends Module
             if ($post["status"] == "Cancelled"){
                 $action = "AppointmentCancelled";
                 $replacementMap = array();
-                setlocale(LC_TIME, 'fr_CA');                                        
-                $replacementMap["\$oldAppointmentDateFR"] =  strftime('%A %d %B %Y', $prevStartDateTime);
-                $replacementMap["\$oldAppointmentTimeFR"] =  strftime('%R', $prevStartDateTime);
+                $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
+                $replacementMap["\$oldAppointmentDateFR"] =  $formatter->format($prevStartDateTime);
+                $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
+                $replacementMap["\$oldAppointmentTimeFR"] =  $formatter->format($prevStartDateTime);
 
-                setlocale(LC_TIME, 'en_CA');
-                $replacementMap["\$oldAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $prevStartDateTime);
-                $replacementMap["\$oldAppointmentTimeEN"] =  strftime('%l:%M %p', $prevStartDateTime);
+                $formatter = new \IntlDateFormatter('en_CA', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
+                $replacementMap["\$oldAppointmentDateEN"] =  $formatter->format($prevStartDateTime);
+                $formatter = new \IntlDateFormatter(locale: 'en_CA', dateType: \IntlDateFormatter::NONE, timeType: \IntlDateFormatter::SHORT, pattern: "h:mm a");
+                $replacementMap["\$oldAppointmentTimeEN"] =  $formatter->format($prevStartDateTime);
                 
                 if ($prevStartDateTime >= $today){
                     $this->_notifyChange($toUpdate, $action, $replacementMap,$post["sourceId"]);

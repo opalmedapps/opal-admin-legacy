@@ -73,6 +73,41 @@ class User extends Module {
     }
 
     /*
+     * Call Active Directory systen to check if the user exists prior to insertion when AD_ENABLED is `1`.
+     * The API is supposed to respond an error, based on the error this function return .
+     * @params  $username (string)
+     *          $password (string)
+     * @return  (boolean) true if user exists in AD system. False otherwise.
+     * */
+    protected function _checkUserActiveDirectory($username, $password) {
+
+        $settingsAD = json_encode(ACTIVE_DIRECTORY_SETTINGS);
+        $settingsAD = str_replace("%%USERNAME%%", $username, $settingsAD);
+        $settingsAD = str_replace("%%PASSWORD%%", $password, $settingsAD);
+        $settingsAD = json_decode($settingsAD, true);
+
+        $fieldString = "";
+        foreach($settingsAD as $key=>$value) {
+            $fieldString .= $key.'='.urlencode($value).'&';
+        }
+        $fieldString = substr($fieldString, 0, -1);
+
+        $api = new ApiCall(MSSS_ACTIVE_DIRECTORY_CONFIG);
+        $api->setPostFields($fieldString);
+        $api->execute();
+
+        $requestResult = json_decode($api->getAnswer(), true);
+
+        $error_msg = $requestResult["error"];
+
+        if ($error_msg == "Username not found")
+            return false;
+        else
+            return true;
+        }
+
+
+    /*
      * Legacy authentication system when no AD is available. It validates the username and password directly into
      * opalDB after encrypting the password.
      * @params  $username (string) duh!
@@ -82,6 +117,37 @@ class User extends Module {
     protected function _userLoginLegacy($username, $password) {
         $result = $this->opalDB->authenticateUserLegacy($username, hash("sha256", $password . USER_SALT));
         $result = $this->_validateUserAuthentication($result, $username);
+        return $result;
+    }
+
+   /*
+    * Validate if user exists when `AD_ENABLED` is `1`.
+    * @param $post (array) contains username
+    * $result (boolean) if user exists it returns `true`, otherwise it returns `false`.
+    * */
+    public function isADUserExist($post) {
+        $userAccess = array();
+        $data = HelpSetup::arraySanitization($post);
+
+        if(!is_array($data)) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>"UNKNOWN USER"), ACCESS_DENIED, "UNKNOWN USER");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
+        }
+
+        $username = $data["username"];
+        $password = $data["password"];
+
+        // if username is empty log an error, no need to call external system.
+        if($username == "") {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
+        }
+
+        $result = $this->_checkUserActiveDirectory($username, $password);
+
+
         return $result;
     }
 

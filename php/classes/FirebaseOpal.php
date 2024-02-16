@@ -1,5 +1,6 @@
 <?php
 
+use Google\Auth\CredentialsLoader;
 use Kreait\Firebase\Database;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Exception\FirebaseException;
@@ -62,5 +63,28 @@ class FirebaseOpal extends HelpSetup
         } catch (Throwable $err) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY, "An error occur during disabling a user: " . $err->getMessage());
         }
+    }
+
+    /**
+     * @description Uses Firebase credentials with the Google Auth Library to retrieve a short-lived OAuth 2.0 access token,
+     *              which can be used to authorize push notifications sent with FCM (Firebase Cloud Messaging).
+     *              See: https://firebase.google.com/docs/cloud-messaging/migrate-v1#use-credentials-to-mint-access-tokens
+     *              See: https://github.com/googleapis/google-api-php-client/issues/1715#issuecomment-533217233
+     *
+     *              Requirement: FIREBASE_SERVICEACCOUNT must contain a path to a valid service account file.
+     *
+     * @throws Exception If the function fails to read the service account file at FIREBASE_SERVICEACCOUNT.
+     */
+    static function getFCMAuthToken() {
+        $scope = 'https://www.googleapis.com/auth/firebase.messaging';
+
+        // Read the Firebase service account from its file
+        $serviceAccount = json_decode(file_get_contents(FIREBASE_SERVICEACCOUNT), true);
+        if (is_null($serviceAccount)) throw new Exception("Failed to read Firebase service account at: " . FIREBASE_SERVICEACCOUNT);
+
+        // Use the service account to get an authentication token
+        $credentials = CredentialsLoader::makeCredentials($scope, $serviceAccount);
+        $token = $credentials->fetchAuthToken();
+        return $token["access_token"];
     }
 }

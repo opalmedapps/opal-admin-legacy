@@ -241,7 +241,7 @@ abstract class OpalProject
 
     protected function _notifyChange($data, $action, $dynamicKeys, $refTableId){
         // NOTE: The same functionality already exists in Perl (PushNotification.pm). Any change to the logic here needs to be applied there as well.
-        $notificationControl = $this->opalDB->getNotificationControlDetails($data["PatientSerNum"], $action);        
+        $notificationControl = $this->opalDB->getNotificationControlDetails($data["PatientSerNum"], $action);
         $controlser         = $notificationControl[0]["NotificationControlSerNum"];
         $messageTitle       = $notificationControl[0]["Name"];
         $messageTemplate    = $notificationControl[0]["Message"];
@@ -283,10 +283,10 @@ abstract class OpalProject
         if (count($ptdIds) == 0){
             $sendlog = "Patient has no device identifier! No push notification sent.";
             $pushNotificationDetail = $this->_buildNotification($this->statusWarning, $sendlog, $refTableId, $controlser, $data["PatientSerNum"], null);
-            $this->opalDB->insertPushNotification($pushNotificationDetail);        
+            $this->opalDB->insertPushNotification($pushNotificationDetail);
         } else {
-            
-            foreach($ptdIds as $ptdId) {                
+
+            foreach($ptdIds as $ptdId) {
                 $ptdidser       = $ptdId["PatientDeviceIdentifierSerNum"];
                 $registrationId = $ptdId["RegistrationId"];
                 $deviceType     = $ptdId["DeviceType"];
@@ -324,19 +324,18 @@ abstract class OpalProject
             'GET',
             'en',
             [],
-            );
+        );
         $response = $backendApi->execute();
-        $response = json_decode($response, true);
-        $caregivers = $response['caregivers'];
+        $response = $response ? json_decode($response, true) : NULL;
+        $caregivers = $response && $response['caregivers'] ? $response['caregivers'] : [];
         $userNameArray = [];
         foreach ($caregivers as $caregiver) {
             $userNameArray[] = $caregiver['username'];
         }
 
-        $userNameArrayString = implode("','", $userNameArray);
-        $userNameArrayString = "'".$userNameArrayString."'";
+        $userNameArrayString = implode(",", $userNameArray);
 
-        return self::getPatientDevicesByUsernames($userNameArrayString);
+        return $userNameArrayString;
     }
 
     protected function _buildNotification($sendstatus, $sendlog, $refTableId, $controlser, $patientSerNum, $ptdidser) {
@@ -393,10 +392,10 @@ abstract class OpalProject
             $StartDateTime = strtotime(date("Y-m-d H:i:s"));
             $action = "CheckInNotification";
             $replacementMap = array();
-            setlocale(LC_TIME, 'fr_CA');        
-            $replacementMap["\$getDateTime"] =  strftime('%R', $StartDateTime);
-            setlocale(LC_TIME, 'en_CA');        
-            $replacementMap["\$getDateTime"] =  strftime('%l:%M %p', $StartDateTime);
+            $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
+            $replacementMap["\$getDateTime"] =  $formatter->format($StartDateTime);
+            $formatter = new \IntlDateFormatter(locale: 'en_CA', dateType: \IntlDateFormatter::NONE, timeType: \IntlDateFormatter::SHORT, pattern: "h:mm a");
+            $replacementMap["\$getDateTime"] =  $formatter->format($StartDateTime);
                     
             $scheduledStartTime = strtotime($currentAppointment["ScheduledStartTime"]);
             if ($scheduledStartTime >= $today){

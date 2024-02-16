@@ -101,7 +101,7 @@ define("SQL_OPAL_GET_MODULE_BY_ID", "
 ");
 
 define("SQL_OPAL_GET_FILTERS_DETAILS", "
-    SELECT DISTINCT FilterType AS type, FilterId AS id
+    SELECT DISTINCT FilterType AS type, FilterId AS id, ScheduledTimeOffset, ScheduledTimeUnit, ScheduledTimeDirection
     FROM ".OPAL_FILTERS_TABLE." WHERE ControlTableSerNum = :ControlTableSerNum AND ControlTable = :ControlTable;
 ");
 
@@ -375,7 +375,7 @@ define("OPAL_GET_APPOINTMENTS_TRIGGERS","
 define("OPAL_GET_APPOINTMENT_STATUS_TRIGGERS","
     SELECT DISTINCT Name AS name, Name AS id, 'AppointmentStatus' AS type, '' AS added FROM ".OPAL_STATUS_ALIAS_TABLE."
     UNION ALL
-    SELECT 'Checked In' AS name, 1 AS id, 'CheckedInFlag' AS type, '' AS added;
+    SELECT 'Checkin Time' AS name, 1 AS id, 'CheckedInFlag' AS type, '' AS added;
 ");
 
 define("OPAL_GET_DOCTORS_TRIGGERS","
@@ -1944,7 +1944,7 @@ SELECT DISTINCT ptdid.PatientDeviceIdentifierSerNum,
     ptdid.RegistrationId, ptdid.DeviceType
 FROM ".OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE." ptdid
 WHERE
-    AND Username in (:userNamesStr)
+    INSTR(:userNamesStr, Username) > 0
     AND ptdid.DeviceType in ('0', '1')
     AND IfNull(RegistrationId, '') <> ''
 ";
