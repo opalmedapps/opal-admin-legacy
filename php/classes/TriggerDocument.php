@@ -218,7 +218,8 @@ class TriggerDocument extends Trigger
             $doc["ErrorReasonText"] = $post["errorMessage"];
             $doc["LastUpdated"] = $post["modifiedDatetime"];
             $doc["SessionId"] = $this->opalDB->getSessionId();
-            $this->opalDB->updateDocument($toInsert);
+            $id = $this->opalDB->updateDocument($toInsert);
+            $toInsert["DocumentSerNum"] = $id;
         }
         
         $patientAccessLevel = $this->opalDB->getPatientAccessLevel($patientSite["PatientSerNum"]);
