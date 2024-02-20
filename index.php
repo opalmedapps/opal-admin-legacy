@@ -16,7 +16,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		
 	<!-- Libraries -->
-	<script src="bower_components/jquery/dist/jquery.js"></script>
+	<script src="node_modules/jquery/dist/jquery.min.js"></script>
 	<script src="node_modules/angular/angular.js"></script>
 	<script src="node_modules/angular-route/angular-route.js"></script>
 	<script src="node_modules/angular-animate/angular-animate.js"></script>
@@ -28,10 +28,10 @@
 	<script src="node_modules/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
 	<script src="node_modules/angularjs-dropdown-multiselect/dist/angularjs-dropdown-multiselect.min.js"></script>
 	<script src="node_modules/ng-idle/angular-idle.js"></script>
-	<script src="bower_components/moment/moment.js"></script>
-	<script src="bower_components/moment-timezone/builds/moment-timezone.min.js"></script>
-	<script src="bower_components/moment-timezone/builds/moment-timezone-with-data.min.js"></script>
-	<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+	<script src="node_modules/moment/moment.js"></script>
+	<script src="node_modules/moment-timezone/builds/moment-timezone.min.js" defer></script>
+	<script src="node_modules/moment-timezone/builds/moment-timezone-with-data.min.js" defer></script>
+	<script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 	<script src="node_modules/multiple-date-picker/dist/multipleDatePicker.js"></script>
 	<script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
 	<script src="node_modules/rangy/lib/rangy-core.js"></script>
@@ -53,7 +53,7 @@
 	<!-- <script src="node_modules/angular-ui-grid/ui-grid.auto-resize.min.js"></script> -->
 
 	
-	<script src="js/lib/bootstrap/bootstrap-datetimepicker.min.js"></script>
+	<script src="js/lib/bootstrap/bootstrap-datetimepicker.min.js" defer></script>
 	<script src="js/lib/bootstrap/ui.bootstrap.materialPicker.js"></script>
 	<script src="js/lib/livicon/raphael-min.js"></script>
 	<script src="js/lib/livicon/livicons-1.4-custom.min.js"></script>
@@ -211,7 +211,7 @@
 
 	<!-- Stylesheets -->
 	<link media="all" type="text/css" rel="stylesheet" href="css/lib/jquery-ui.css">
-	<link media="all" type="text/css" rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+	<link media="all" type="text/css" rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
 	<link media="all" type="text/css" rel="stylesheet" href="css/lib/bootstrap-datetimepicker.css">
 	<link media="all" type="text/css" rel="stylesheet" href="node_modules/angular-ui-grid/ui-grid.css">
 	<link media="all" type="text/css" rel="stylesheet" href="css/lib/animate.css">

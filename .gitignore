@@ -31,14 +31,8 @@ publisher/php/certificates/**
 # ignore QR Images
 images/hospital-maps/qrCodes/**
 
-# ignore bower/node components
-bower_components
-node_modules/**
-# except firebase-admin
-!node_modules/firebase-admin 
-
-# ignore vscode editor config
-.editorconfig
+# ignore node components
+node_modules
 
 # ignore idea for PhpStorm
 .idea
@@ -84,3 +78,5 @@ php-error.log
 
 # ignore certs folder used for storing SSL certificate
 certs/*
+
+.DS_Store
