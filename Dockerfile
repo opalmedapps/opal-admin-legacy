@@ -1,12 +1,8 @@
 # Build/install JS dependencies
-FROM node:20.11.0-alpine3.19 as js-dependencies
-
-# Install dependencies for bower
-RUN apk add --no-cache git \
-  && npm install -g bower
+FROM node:20.11.1-alpine3.19 as js-dependencies
 
 WORKDIR /app
-
+ 
 # install modules
 # allow to cache by not copying the whole application code in (yet)
 # see: https://stackoverflow.com/questions/35774714/how-to-cache-the-run-npm-install-instruction-when-docker-build-a-dockerfile
@@ -15,11 +11,8 @@ COPY package-lock.json ./
 COPY .npmrc ./
 RUN npm ci
 
-COPY bower.json ./
-RUN bower --allow-root --production install
-
 # Build/install PHP dependencies
-FROM composer:2.6.6 as php-dependencies
+FROM composer:2.7.1 as php-dependencies
 
 WORKDIR /app
 
@@ -28,7 +21,7 @@ COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-scripts --ignore-platform-reqs --optimize-autoloader
 
 # Build final image
-FROM php:8.2.15-apache-bookworm
+FROM php:8.2.16-apache-bookworm
 
 # Install dependencies
 RUN apt-get update \
@@ -92,7 +85,6 @@ USER www-data
 
 # copy only the dependencies in...
 COPY --from=js-dependencies --chown=www-data:www-data /app/node_modules ./node_modules
-COPY --from=js-dependencies --chown=www-data:www-data /app/bower_components ./bower_components
 COPY --from=php-dependencies --chown=www-data:www-data /app/vendor ./vendor
 
 COPY --chown=www-data:www-data . .
