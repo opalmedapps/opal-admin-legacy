@@ -30,7 +30,8 @@
 */2 * * * * /var/www/html/publisher/controls/legacyQuestionnaireControl.pl > /dev/null 2>> /var/www/html/publisher/logs/executions_legacyQuestionnaire.log
 */2 * * * * /var/www/html/publisher/controls/txTeamMessagesControl.pl > /dev/null 2>> /var/www/html/publisher/logs/executions_txTeamMessages.log
 
-# Pending appointments module
+# Pending appointments and resources module
+# These curls will only be authorized if there is a Cron system user in the OpalDB.OAUser table, see opal-sql-queries.php, SQL_OPAL_SELECT_USER_INFO query
 */1 * * * * curl --silent --show-error http://opaladmin:8080/cron-job/update/resource-pending > /dev/null 2>> /var/www/html/publisher/logs/resource-pending.log
 */1 * * * * curl --silent --show-error http://opaladmin:8080/cron-job/update/appointment-pending > /dev/null 2>> /var/www/html/publisher/logs/appointment-pending.log
 
