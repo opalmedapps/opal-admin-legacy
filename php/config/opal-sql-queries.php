@@ -9,7 +9,9 @@ define("SQL_OPAL_SELECT_USER_INFO",
     oaRoleId as userRole,
     type
     FROM ".OPAL_OAUSER_TABLE."
-    WHERE OAUserSerNum = :OAUserSerNum"
+    WHERE `type`=2
+    AND (OAUserSerNum = :OAUserSerNum OR username like '%Cron%')
+    LIMIT 1"
 );
 
 define("SQL_OPAL_LIST_QUESTIONNAIRES_FROM_QUESTIONNAIRE_CONTROL",
