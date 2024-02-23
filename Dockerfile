@@ -87,8 +87,21 @@ USER www-data
 COPY --from=js-dependencies --chown=www-data:www-data /app/node_modules ./node_modules
 COPY --from=php-dependencies --chown=www-data:www-data /app/vendor ./vendor
 
-COPY --chown=www-data:www-data . .
+# Specifically add only the required files
+COPY --chown=www-data:www-data ./favicon.png ./
+COPY --chown=www-data:www-data ./index.php ./
+COPY --chown=www-data:www-data ./.htaccess ./
+COPY --chown=www-data:www-data ./css ./css
+COPY --chown=www-data:www-data ./docker ./docker
+COPY --chown=www-data:www-data ./fonts ./fonts
+COPY --chown=www-data:www-data ./images ./images
+COPY --chown=www-data:www-data ./js ./js
+COPY --chown=www-data:www-data ./php ./php
+COPY --chown=www-data:www-data ./publisher ./publisher
+COPY --chown=www-data:www-data ./templates ./templates
+COPY --chown=www-data:www-data ./translate ./translate
 COPY docker/crontab /var/spool/cron/crontabs/www-data
+COPY docker/cron.sh /cron.sh
 
 ARG GIT_VERSION='undefined'
 ARG GIT_BRANCH='unknown'
