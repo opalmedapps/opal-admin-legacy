@@ -26,4 +26,4 @@ services:
       - app
     # cron needs to run as root
     user: root
-    entrypoint: ['docker/cron.sh']
+    entrypoint: ['/cron.sh']
