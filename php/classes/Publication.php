@@ -67,10 +67,11 @@ class Publication extends Module
         $results["publication"]["description"]["EN"] = $publicationDetails["type_EN"];
         $results["publication"]["description"]["FR"] = $publicationDetails["type_FR"];
 
-        $subModuleList =  json_decode($module["subModule"]);
+        
         $results["publication"]["unique"] =  $module["unique"];
 
         if($moduleId == MODULE_POST) {
+            $subModuleList =  json_decode($module["subModule"]);
             $postDetails = $this->opalDB->getPostDetails($publicationId);
             foreach($subModuleList as $subModule) {
                 if($postDetails["type"] == $subModule->name_EN) {
