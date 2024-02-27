@@ -147,7 +147,11 @@ class Publication extends Module
 
         // Because some doctors, appointments or patients can be removed from their tables but still being present in
         // the filter table, we must clean up the filters first before sending the data to the front end.
-        $triggersTemp = $this->opalDB->getTriggersDetails($publicationId, $module["controlTableName"]);
+        if($module["controlTableName"] ==="LegacyQuestionnaireControl")
+            $triggersTemp = $this->opalDB->getQuestionnaireTriggersDetails($publicationId, $module["controlTableName"]);
+        else
+            $triggersTemp = $this->opalDB->getTriggersDetails($publicationId, $module["controlTableName"]);
+        
         $publicationSettings = $this->opalDB->getPublicationSettings();
         $test = array();
 
@@ -639,7 +643,8 @@ class Publication extends Module
     protected function _validateFrequency(&$publication, &$subModule, $strictEnforcement = true) {
         $errMsgs = array();                                             //By default, no error message
         $pubSettings = $this->opalDB->getPublicationNonTriggerSettingsPerModule($publication["moduleId"]["value"]);
-        $subModule = json_decode($subModule, true);
+        if($subModule !== NULL)
+            $subModule = json_decode($subModule, true);
         foreach($pubSettings as $setting) {
             $mandatory = false;
             if(is_array($subModule) && count($subModule) > 0) {
