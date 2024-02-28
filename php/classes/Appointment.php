@@ -240,7 +240,7 @@ class Appointment extends Module
                 $replacementMap["\$oldAppointmentTimeEN"] =  $formatter->format($prevStartDateTime);
                 
                 if ($prevStartDateTime >= $today){
-                    $this->_notifyChange($toUpdate,  $action, $replacementMap, $post["sourceId"]);
+                    $this->_notifyChange($toUpdate,  $action, $replacementMap, $toUpdate["AppointmentSerNum"]);
                 }
             }
 
@@ -441,13 +441,14 @@ class Appointment extends Module
             if( $countAppt == 0 ) {
                 $toInsert["AppointmentSerNum"] = $this->opalDB->insertAppointment($toInsert);
             } else {
+                $toInsert["AppointmentSerNum"] = $this->opalDB->updateAppointments($toInsert);
                 $toInsert["ReadBy"] = "[]";
                 $this->opalDB->updateAppointments($toInsert);
             }
         }
         
         if (!is_null($action) && $countAlias == 1 && $toPublish == 1 && $newStartDateTime >= $today){
-            $this->_notifyChange($toInsert, $action, $replacementMap,$post["sourceId"]);
+            $this->_notifyChange($toInsert, $action, $replacementMap, $toInsert["AppointmentSerNum"]);
         }
         return false;
     }
@@ -594,7 +595,7 @@ class Appointment extends Module
                 $replacementMap["\$oldAppointmentTimeEN"] =  $formatter->format($prevStartDateTime);
                 
                 if ($prevStartDateTime >= $today){
-                    $this->_notifyChange($toUpdate, $action, $replacementMap,$post["sourceId"]);
+                    $this->_notifyChange($toUpdate, $action, $replacementMap, $toUpdate["AppointmentSerNum"]);
                 }
             }
 
