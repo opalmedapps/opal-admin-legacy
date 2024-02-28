@@ -190,7 +190,7 @@ class TriggerDocument extends Trigger
             "CreatedBySerNum" => $this->opalDB->getStaffDetail($source["SourceDatabaseSerNum"],$post["creationUserId"])["StaffSerNum"],
             "CreatedTimeStamp" => $post["creationDatetime"],
             "TransferStatus" => "T",
-            "TransferLog" => "Transfert Api",
+            "TransferLog" => "Transfer Api",
             "ReadStatus" => 0,
             "LastUpdated" => $post["modifiedDatetime"],
             "SessionId" => $this->opalDB->getSessionId()
@@ -218,6 +218,7 @@ class TriggerDocument extends Trigger
             $doc["ErrorReasonText"] = $post["errorMessage"];
             $doc["LastUpdated"] = $post["modifiedDatetime"];
             $doc["SessionId"] = $this->opalDB->getSessionId();
+            $doc["ReadBy"] = "[]";
             $id = $this->opalDB->updateDocument($toInsert);
             $toInsert["DocumentSerNum"] = $id;
         }
