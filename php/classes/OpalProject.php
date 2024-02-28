@@ -350,7 +350,7 @@ abstract class OpalProject
         );
     }
 
-    protected function _insertNotification($data, $controlser,$refTableId){
+    protected function _insertNotification($data, $controlser, $refTableId){
         $aliasExpressionDetail = $this->opalDB->getAliasExpressionDetail($data["AliasExpressionSerNum"]);
         $newNotification = array (
             "PatientSerNum"=>$data["PatientSerNum"],
