@@ -172,7 +172,7 @@
                                 <div ng-if="newTestResult.interpretability" class="description">
                                     <p>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{'TEST.ADD.INTERPRETABILITY_OPTION'|translate}}
+                                        {{'TEST.LIST.INTERPRETABLE'|translate}}
                                     </p>
                                 </div>
                             </div>
@@ -503,7 +503,7 @@
                     </div>
                     <div class="row animated" ng-class="{fadeInUp: interpretabilitySection.show}" ng-if="interpretabilitySection.show">
                         <div class="col-xs-12 col-lg-8">
-                            <input type="checkbox" ng-model="newTestResult.interpretability" ng-click="interpretabilityUpdate()" /> <strong>{{'TEST.ADD.INTERPRETABILITY_OPTION'|translate}}</strong>
+                            <input type="checkbox" ng-model="newTestResult.interpretability" ng-click="interpretabilityUpdate()" /> <strong>{{'TEST.LIST.INTERPRETABLE'|translate}}</strong>
                         </div>
                     </div>
                     <!-- SECTION: Additional Links -->
