@@ -10,7 +10,7 @@ class Notification extends Module {
     public function __construct($guestStatus = false) {
         // Setup class-wide database connection with or without SSL
         if(USE_SSL == 1){
-            $this->$host_db_link = new PDO(
+            $this->host_db_link = new PDO(
                 OPAL_DB_DSN,
                 OPAL_DB_USERNAME,
                 OPAL_DB_PASSWORD,
@@ -21,14 +21,14 @@ class Notification extends Module {
                 )
             );
         }else{
-            $this->$host_db_link = new PDO(
+            $this->host_db_link = new PDO(
                 OPAL_DB_DSN,
                 OPAL_DB_USERNAME,
                 OPAL_DB_PASSWORD,
                 array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
             );
         }
-        $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+        $this->host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
         parent::__construct(MODULE_NOTIFICATION, $guestStatus);
     }
@@ -57,7 +57,7 @@ class Notification extends Module {
                 WHERE
                     nt.NotificationTypeSerNum   = ntt.NotificationTypeSerNum
             ";
-		    $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+		    $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -113,7 +113,7 @@ class Notification extends Module {
                 AND ntt.NotificationTypeSerNum      = nt.NotificationTypeSerNum
             ";
 
-	        $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+	        $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
@@ -161,7 +161,7 @@ class Notification extends Module {
                 WHERE
                     nt.NotificationTypeSerNum IS NULL
             ";
-		    $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+		    $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -222,7 +222,7 @@ class Notification extends Module {
                     '$sessionId'
                 )
             ";
-            $query = $this->$host_db_link->prepare( $sql );
+            $query = $this->host_db_link->prepare( $sql );
 			$query->execute();
         } catch( PDOException $e) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for notification. " . $e->getMessage());
@@ -267,7 +267,7 @@ class Notification extends Module {
                     NotificationControl.NotificationControlSerNum = $serial
             ";
 
-	        $query = $this->$host_db_link->prepare( $sql );
+	        $query = $this->host_db_link->prepare( $sql );
             $query->execute();
 
             $response['value'] = 1;
@@ -303,7 +303,7 @@ class Notification extends Module {
                 WHERE
                     NotificationControl.NotificationControlSerNum = $serial
             ";
-            $query = $this->$host_db_link->prepare( $sql );
+            $query = $this->host_db_link->prepare( $sql );
             $query->execute();
 
             $sql = "
@@ -316,7 +316,7 @@ class Notification extends Module {
                 ORDER BY NotificationControlMH.RevSerNum DESC 
                 LIMIT 1
             ";
-            $query = $this->$host_db_link->prepare( $sql );
+            $query = $this->host_db_link->prepare( $sql );
             $query->execute();
 
             $response['value'] = 1;
@@ -391,7 +391,7 @@ class Notification extends Module {
                 ";
             }
 
-            $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             $notificationSeries = array();
