@@ -88,7 +88,11 @@ angular.module('opalAdmin', [
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			);
+			).catch(function(response){
+				console.error("Unable to connect to old Opal Admin: ", response.status);
+				
+				return $q.reject(response);
+			});
 
 			/*
 				Log in to the new back end API.
@@ -113,7 +117,10 @@ angular.module('opalAdmin', [
 					console.error('Unable to connect to the api-backend:', response.status);
 					return oaPromise;
 				}
-			);
+			).catch(function(error) {
+				console.error('Unknown error occurred:', error.status);
+				return oaPromise;
+			});
 		};
 
 		authService.isAuthenticated = function () {

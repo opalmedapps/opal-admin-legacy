@@ -81,7 +81,7 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, A
 				Idle.watch();
 			}).catch(function(err) {
 				$rootScope.$broadcast(AUTH_EVENTS.loginFailed);
-
+				console.error(err.status);
 				switch(err.status) {
 				case HTTP_CODE.notAuthenticatedError:
 					$errMsg = $filter('translate')('LOGIN.ERROR_401');

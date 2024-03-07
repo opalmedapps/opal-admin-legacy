@@ -80,8 +80,8 @@ angular.module('opalAdmin.services', [])
 			}
 			else if(response.status === HTTP_CODE.forbiddenAccessError)
 				$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
-			// else if(response.status === HTTP_CODE.notAuthenticatedError)
-			// 	$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+			else if(response.status === HTTP_CODE.notAuthenticatedError)
+			 	$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
 		}
 	})
 
