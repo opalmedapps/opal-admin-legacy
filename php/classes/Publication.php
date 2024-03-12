@@ -804,9 +804,9 @@ class Publication extends Module
                                 "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
                                 "SessionId"=>$this->opalDB->getSessionId(),
                                 // this change is related to appointment time triggers QSCCD-1526
-                                "ScheduledTimeOffset"=>$publication["scheduledtime"]["offset"],
+                                "ScheduledTimeOffset"=>(isset($publication["scheduledtime"]["offset"])) ? $publication["scheduledtime"]["offset"]: 0,
                                 "ScheduledTimeUnit"=>(isset($publication["scheduledtime"]["unit"]["id"])) ? $publication["scheduledtime"]["unit"]["id"]: null,
-                                "ScheduledTimeDirection"=>$publication["scheduledtime"]["direction"]["id"]
+                                "ScheduledTimeDirection"=>(isset($publication["scheduledtime"]["direction"]["id"])) ? $publication["scheduledtime"]["direction"]["id"]: 'after'
                              ));
                         }
                     }
@@ -819,9 +819,9 @@ class Publication extends Module
                     "DateAdded"=>date("Y-m-d H:i:s"),
                     "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
                     "SessionId"=>$this->opalDB->getSessionId(),
-                    "ScheduledTimeOffset"=>$publication["scheduledtime"]["offset"],
+                    "ScheduledTimeOffset"=>(isset($publication["scheduledtime"]["offset"])) ? $publication["scheduledtime"]["offset"]: 0,
                     "ScheduledTimeUnit"=>(isset($publication["scheduledtime"]["unit"]["id"])) ? $publication["scheduledtime"]["unit"]["id"]: null,
-                    "ScheduledTimeDirection"=>$publication["scheduledtime"]["direction"]["id"]
+                    "ScheduledTimeDirection"=>(isset($publication["scheduledtime"]["direction"]["id"])) ? $publication["scheduledtime"]["direction"]["id"]: 'after'
                 ));
 
             }
@@ -997,9 +997,9 @@ class Publication extends Module
                             "DateAdded"=>date("Y-m-d H:i:s"),
                             "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
                             "SessionId"=>$this->opalDB->getSessionId(),
-                            "ScheduledTimeOffset"=>$publication["scheduledtime"]["offset"],
+                            "ScheduledTimeOffset"=>(isset($publication["scheduledtime"]["offset"])) ? $publication["scheduledtime"]["offset"]: 0,
                             "ScheduledTimeUnit"=>(isset($publication["scheduledtime"]["unit"]["id"])) ? $publication["scheduledtime"]["unit"]["id"]: null,
-                            "ScheduledTimeDirection"=>$publication["scheduledtime"]["direction"]["id"]
+                            "ScheduledTimeDirection"=>(isset($publication["scheduledtime"]["direction"]["id"])) ? $publication["scheduledtime"]["direction"]["id"]: 'after'
                         ));
                     }
                         // to delete previous appointment status after adding new one
