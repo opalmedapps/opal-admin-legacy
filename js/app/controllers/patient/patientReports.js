@@ -44,7 +44,6 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 	$scope.pmrn = "";
 	$scope.plang = "";
 
-	console.log($scope.diagReport);
 
 	$scope.diagReport = ""; //empty report segments
 	$scope.qstReport = "";
@@ -695,7 +694,6 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 			$scope.foundPatient = false;
 
 			// Reset the report values
-			/*
 			$scope.diagReport = "";
 			$scope.qstReport = "";
 			$scope.apptReport = "";
@@ -705,8 +703,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 			$scope.noteReport = "";
 			$scope.clinnoteReport = "";
 			$scope.txteamReport = "";
-			$scope.generalReport = ""; */
-
+			$scope.generalReport = ""; 
 		});
 	};
 
@@ -735,6 +732,8 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 			dataType: "json",
 			success: function (response) {
 				populateTables(response);
+				// Since the data is fetched before tables prints, a simple resize fixes this
+				window.dispatchEvent(new Event('resize')); 
 			},
 			error: function (err) {
 				ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
@@ -753,7 +752,6 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 			if (result && (result !== null)) {
 				if (result.diagnosis) {
 					$scope.diagReport = result.diagnosis;
-					//console.log($scope.diagReport.length);
 					strip($scope.diagReport);
 					$scope.calculateGridHeight($scope.diagReport);
 				}
@@ -815,20 +813,14 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		});
 	}
 
-
 	//Remove whitespace from input
 	function strip(text) {
 		return text ? String(text).replace(/<[^>]+>/gm, '') : '';
 	};
-
+	// Calculate the height of the grid for the populate tables function
 	$scope.calculateGridHeight = function(data) {
 		return {
 			'height': (data.length * 30 + 90) + 'px',
-		};
-	};
-	$scope.calculateGridContainerStyle = function(dataArray) {
-		return {
-			'height': (dataArray.length * 30 + 90) + 'px' // Set the same height as the gridStyle
 		};
 	};
 
