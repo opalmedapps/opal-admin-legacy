@@ -57,6 +57,7 @@ $dotenv->required('AD_ENABLED')->notEmpty();
 $dotenv->required('LOGIN_LEGACY_SALT')->notEmpty();
 # ORMS & OIE
 $dotenv->required('ORMS_ENABLED')->isBoolean();
+$dotenv->required('ORMS_HOST')->notEmpty();
 
 if ($_ENV['ORMS_ENABLED']) {
     $dotenv->required('OIE_HOST');
@@ -89,6 +90,8 @@ define("MSSS_ACTIVE_DIRECTORY_CONFIG", [
 
 define("AD_LOGIN_ACTIVE", $_ENV["AD_ENABLED"]);
 
+// ORMS
+define("ORMS_HOST", $_ENV["ORMS_HOST"]);
 // ORMS SMS api call
 define("ORMS_ENABLED", $_ENV["ORMS_ENABLED"]);
 
