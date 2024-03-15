@@ -79,7 +79,7 @@ angular.module('opalAdmin', [
 
 		authService.login = function (username, password) {
 			// Log in to the old Opal Admin API
-			let oaPromise = $http.post(
+			var oaPromise = $http.post(
 				"user/validate-login",
 				$.param({
 					username: username,
@@ -88,11 +88,10 @@ angular.module('opalAdmin', [
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			).catch(function(response){
+			);/*.catch(function(response){
 				console.error("Unable to connect to old Opal Admin: ", response.status);
-				
-				return $q.reject(response);
-			});
+				return response;
+			});*/
 
 			/*
 				Log in to the new back end API.
@@ -115,11 +114,12 @@ angular.module('opalAdmin', [
 				function (response) { return oaPromise; }, // Success
 				function (response) { // Error
 					console.error('Unable to connect to the api-backend:', response.status);
+					console.log(oaPromise);
 					return oaPromise;
 				}
 			).catch(function(error) {
-				console.error('Unknown error occurred:', error.status);
-				return oaPromise;
+				console.error('An error occurred:', error.status);
+				return $q.resolve(oaPromise);
 			});
 		};
 
@@ -226,6 +226,7 @@ angular.module('opalAdmin', [
 	.factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
 		return {
 			responseError: function (response) {
+				console.log(response);
 				$rootScope.$broadcast({
 					401: AUTH_EVENTS.notAuthenticated,
 					// 403: AUTH_EVENTS.notAuthorized,
@@ -251,6 +252,7 @@ angular.module('opalAdmin', [
 					$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
 				} else {
 					// user is not logged in
+					
 					$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
 				}
 			}

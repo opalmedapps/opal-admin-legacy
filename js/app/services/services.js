@@ -5,6 +5,8 @@ angular.module('opalAdmin.services', [])
 
 	.service('Session', function ($cookies) {
 		this.create = function (data) {
+			console.log(data.user);
+			console.log("manger");
 			$cookies.put('django_language', data.user.language.toLowerCase(), {samesite: 'lax', path: '/'});
 
 			angular.forEach(data.menu, function(category) {

@@ -65,6 +65,7 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, A
 	};
 
 	$scope.submitLogin = function (credentials) {
+		//console.log(credentials);
 		if ($scope.loginFormComplete()) {
 			AuthService.login(credentials.username, credentials.password).then(function (response) {
 				var accessLevel = [];
@@ -73,7 +74,6 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, A
 				});
 				response.data.access = accessLevel;
 				Session.create(response.data);
-
 				$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
 				$rootScope.currentUser = response.data.user;
 				$rootScope.setSiteLanguage(response.data.user);
@@ -81,7 +81,7 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, A
 				Idle.watch();
 			}).catch(function(err) {
 				$rootScope.$broadcast(AUTH_EVENTS.loginFailed);
-				console.error(err.status);
+				console.log(err);
 				switch(err.status) {
 				case HTTP_CODE.notAuthenticatedError:
 					$errMsg = $filter('translate')('LOGIN.ERROR_401');
