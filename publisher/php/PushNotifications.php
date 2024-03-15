@@ -22,14 +22,15 @@ class PushNotifications {
 	// **************************************************
 	/**
 	* @param $patientSerNum
+	* @param array $ignoredUsernames - an optional list of usernames that should be ignored when device IDs are fetched
 	* @return patient caregiver devices info
 	**/
-	public static function getPatientDevicesInfo($patientSerNum)
+	public static function getPatientDevicesInfo($patientSerNum, $ignoredUsernames = [])
 	{
 		$backendApi = new NewOpalApiCall(
-		'/api/patients/legacy/'.$patientSerNum.'/caregiver-devices/',
-		'GET',
-		'en',
+			'/api/patients/legacy/'.$patientSerNum.'/caregiver-devices/',
+			'GET',
+			'en',
 			[],
 		);
 		$response = $backendApi->execute();
@@ -37,7 +38,10 @@ class PushNotifications {
 		$caregivers = $response['caregivers'];
 		$userNameArray = [];
 		foreach ($caregivers as $caregiver) {
-			$userNameArray[] = $caregiver['username'];
+			// Check if fetched username exists in an $ignoredUsernames
+			// If the username is in the list, skip it
+			if (!in_array($caregiver['username'], $ignoredUsernames))
+				$userNameArray[] = $caregiver['username'];
 		}
 
 		$userNameArrayString = implode("','", $userNameArray);
