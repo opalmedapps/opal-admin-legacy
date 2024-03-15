@@ -14,6 +14,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 		$rootScope.siteLanguage = null;
 
 		$rootScope.newOpalAdminHost = null;
+		$rootScope.ormsHost = null;
 
 		$scope.configs = null;
 		$scope.sourceDatabases = null;
@@ -25,6 +26,24 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 		applicationCollectionService.getConfigs().then(function (response) {
 			$scope.configs = response.data;
 			$rootScope.newOpalAdminHost = $scope.configs.newOpalAdminHost;
+			$rootScope.ormsHost = $scope.configs.ormsHost;
+
+			// Check whether the user is logged in and coming from ORMS
+			if ($rootScope.currentUser && document.referrer) {
+				if ($rootScope.ormsHost.startsWith(document.referrer)) {
+					// Check if the user only has access to ORMS (Clinician Dashboard)
+					const userAccess = Session.retrieveObject('access');
+					const countAccess = userAccess.filter(x => x >= 1).length;
+					// the Clinician Dashboard module ID is 25
+					const ormsAccess = userAccess[25];
+
+
+					if (countAccess == 1 && ormsAccess >= 1) {
+						return LogoutService.logout();
+					}
+
+				}
+			}
 
 			// Call our collection service to get enabled flags in the source database table
 			var updateNeeded = false;
