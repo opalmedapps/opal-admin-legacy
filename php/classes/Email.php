@@ -10,7 +10,7 @@ class Email extends Module {
     public function __construct($guestStatus = false) {
         // Setup class-wide database connection with or without SSL
         if(USE_SSL == 1){
-            $this->$host_db_link = new PDO(
+            $this->host_db_link = new PDO(
                 OPAL_DB_DSN,
                 OPAL_DB_USERNAME,
                 OPAL_DB_PASSWORD,
@@ -21,14 +21,14 @@ class Email extends Module {
                 )
             );
         }else{
-            $this->$host_db_link = new PDO(
+            $this->host_db_link = new PDO(
                 OPAL_DB_DSN,
                 OPAL_DB_USERNAME,
                 OPAL_DB_PASSWORD,
                 array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
             );
         }
-        $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+        $this->host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
         parent::__construct(MODULE_EMAIL, $guestStatus);
     }
@@ -57,7 +57,7 @@ class Email extends Module {
 				WHERE
 					ec.EmailTypeSerNum = et.EmailTypeSerNum
 			";
-            $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -110,7 +110,7 @@ class Email extends Module {
 				WHERE
 					ec.EmailControlSerNum = $serial
 			";
-            $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
@@ -158,7 +158,7 @@ class Email extends Module {
 			WHERE
 				ec.EmailTypeSerNum IS NOT NULL
 		";
-            $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -218,7 +218,7 @@ class Email extends Module {
 					'$sessionId'
 				)
 			";
-            $query = $this->$host_db_link->prepare( $sql );
+            $query = $this->host_db_link->prepare( $sql );
             $query->execute();
         } catch( PDOException $e) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for email. " . $e->getMessage());
@@ -264,7 +264,7 @@ class Email extends Module {
 				WHERE
 					EmailControl.EmailControlSerNum = $serial
 			";
-            $query = $this->$host_db_link->prepare( $sql );
+            $query = $this->host_db_link->prepare( $sql );
             $query->execute();
 
             $response['value'] = 1;
@@ -304,7 +304,7 @@ class Email extends Module {
 				WHERE
 					EmailControl.EmailControlSerNum = $serial 
 			";
-            $query = $this->$host_db_link->prepare( $sql );
+            $query = $this->host_db_link->prepare( $sql );
             $query->execute();
 
             $sql = "
@@ -317,7 +317,7 @@ class Email extends Module {
                 ORDER BY EmailControlMH.RevSerNum DESC 
                 LIMIT 1
             ";
-            $query = $this->$host_db_link->prepare( $sql );
+            $query = $this->host_db_link->prepare( $sql );
             $query->execute();
 
             $response['value'] = 1;
@@ -396,7 +396,7 @@ class Email extends Module {
                 ";
             }
 
-            $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             $emailSeries = array();
@@ -461,7 +461,7 @@ class Email extends Module {
                 AND emmh.CronLogSerNum              IN ($serials)
             ";
 
-            $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {

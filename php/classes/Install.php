@@ -10,7 +10,7 @@ class Install {
 	public function __construct() {
 		// Setup class-wide database connection with or without SSL
         if(USE_SSL == 1){
-            $this->$host_db_link = new PDO(
+            $this->host_db_link = new PDO(
                 OPAL_DB_DSN,
                 OPAL_DB_USERNAME,
                 OPAL_DB_PASSWORD,
@@ -21,14 +21,14 @@ class Install {
                 )
             );
         }else{
-            $this->$host_db_link = new PDO(
+            $this->host_db_link = new PDO(
                 OPAL_DB_DSN,
                 OPAL_DB_USERNAME,
                 OPAL_DB_PASSWORD,
                 array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
             );
         }
-		$this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+		$this->host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
     }
 
 	public $salt = "Zo4rU5Z1YyKJAASY0PT6EUg7BBYdlEhPaNLuxAwU8lqu1ElzHv0Ri7EM6irpx5w";
@@ -89,7 +89,7 @@ class Install {
 			// If we're here, connection's good
 			$sql = "CREATE DATABASE IF NOT EXISTS $name";
 
-			$query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			$pathname 	= getcwd();
@@ -108,13 +108,13 @@ class Install {
 			    case 1:
 				    $response['error'] = "There was an error during import.";
 				    $sql = "DROP DATABASE IF EXISTS $name";
-				    $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				    $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 					$query->execute();
 				    break;
 			    case 2:
 			    	$response['error'] = "There was an error during import.";
 			    	$sql = "DROP DATABASE IF EXISTS $name";
-				    $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				    $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 					$query->execute();
 			    	break;
 			 }
@@ -319,7 +319,7 @@ class Install {
 				// Enable database
 				$sql = "UPDATE SourceDatabase SET Enabled = 1 WHERE SourceDatabaseSerNum = 1";
 
-				$query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 				$query->execute();
 
 
@@ -356,7 +356,7 @@ class Install {
 				// Enable database
 				$sql = "UPDATE SourceDatabase SET Enabled = 1 WHERE SourceDatabaseSerNum = 2";
 
-				$query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 				$query->execute();
 
 			}
@@ -394,7 +394,7 @@ class Install {
 				// Enable database
 				$sql = "UPDATE SourceDatabase SET Enabled = 1 WHERE SourceDatabaseSerNum = 3";
 
-				$query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 				$query->execute();
 
 			}
