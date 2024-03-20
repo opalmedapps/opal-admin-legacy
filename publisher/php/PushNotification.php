@@ -1,11 +1,10 @@
 <?php
 // Server file
-include_once "database.inc";
 include_once("../../php/config.php");
-include_once("../../php/classes/NewOpalApiCall.php");
 include_once("../../php/classes/FirebaseOpal.php");
 
-class PushNotifications {
+
+class PushNotification {
 	// (iOS) Private key's passphrase.
 	private static $passphrase = CERTIFICATE_PASSWORD;
 	//(iOS) Location of certificate file
@@ -17,70 +16,6 @@ class PushNotifications {
 	// (iOS) APN Url target (development or sandbox)
 	private static $ios_url = IOS_URL;
 
-	// **************************************************
-	// Get patient caregiver devices information
-	// **************************************************
-	/**
-	* @param $patientSerNum
-	* @param array $ignoredUsernames - an optional list of usernames that should be ignored when device IDs are fetched
-	* @return patient caregiver devices info
-	**/
-	public static function getPatientDevicesInfo($patientSerNum, $ignoredUsernames = [])
-	{
-		$backendApi = new NewOpalApiCall(
-			'/api/patients/legacy/'.$patientSerNum.'/caregiver-devices/',
-			'GET',
-			'en',
-			[],
-		);
-		$response = $backendApi->execute();
-		$response = json_decode($response, true);
-		$caregivers = $response['caregivers'];
-		$userNameArray = [];
-		foreach ($caregivers as $caregiver) {
-			// Check if fetched username exists in an $ignoredUsernames
-			// If the username is in the list, skip it
-			if (!in_array($caregiver['username'], $ignoredUsernames))
-				$userNameArray[] = $caregiver['username'];
-		}
-
-		$userNameArrayString = implode("','", $userNameArray);
-		$userNameArrayString = "'".$userNameArrayString."'";
-
-		return self::getPatientDevicesByUsernames($userNameArrayString);
-	}
-
-	// **************************************************
-	// Get patient devices information by user names
-	// **************************************************
-	/**
-	 * @param $patientSerNum
-	 * @return patient caregiver devices info
-	 **/
-	private static function getPatientDevicesByUsernames($userNameArrayString)
-	{
-		global $pdo;
-
-		$sql = "
-			SELECT DISTINCT
-				ptdid.PatientDeviceIdentifierSerNum,
-				ptdid.RegistrationId,
-				ptdid.DeviceType
-			FROM
-				PatientDeviceIdentifier ptdid
-			WHERE ptdid.DeviceType in ('0', '1')
-			AND Username in ($userNameArrayString)
-			AND IfNull(RegistrationId, '') <> ''
-		";
-
-		try {
-			$stmt = $pdo->prepare($sql);
-			$stmt->execute();
-			return $stmt->fetchAll();
-		} catch(PDOException $e) {
-			return array();
-		}
-	}
 
 	// **************************************************
 	// Sends Push notification for Android users

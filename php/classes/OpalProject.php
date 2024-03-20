@@ -1,5 +1,8 @@
 <?php
 
+include_once("../../publisher/php/PublisherPatient.php");
+
+
 /**
  * OpalProject class
  *
@@ -277,16 +280,15 @@ abstract class OpalProject
         ksort($replacements);
         $message =  str_replace($patterns, $replacements, $messageTemplate);
 
-        $userNamesStr = $this->_getPatientCaregivers($data["PatientSerNum"]);
+        $patientDevices = PublisherPatient::getCaregiverDeviceIdentifiers($data["PatientSerNum"]);
 
-        $ptdIds = $this->opalDB->getPatientDeviceIdentifiers($userNamesStr);
-        if (count($ptdIds) == 0){
+        if (count($patientDevices) == 0){
             $sendlog = "Patient has no device identifier! No push notification sent.";
             $pushNotificationDetail = $this->_buildNotification($this->statusWarning, $sendlog, $refTableId, $controlser, $data["PatientSerNum"], null);
             $this->opalDB->insertPushNotification($pushNotificationDetail);
         } else {
 
-            foreach($ptdIds as $ptdId) {
+            foreach($patientDevices as $ptdId) {
                 $ptdidser       = $ptdId["PatientDeviceIdentifierSerNum"];
                 $registrationId = $ptdId["RegistrationId"];
                 $deviceType     = $ptdId["DeviceType"];
@@ -315,27 +317,6 @@ abstract class OpalProject
                 $this->opalDB->insertPushNotification($pushNotificationDetail);
             }
         }
-    }
-
-    protected function _getPatientCaregivers($patientSerNum)
-    {
-        $backendApi = new NewOpalApiCall(
-            '/api/patients/legacy/'.$patientSerNum.'/caregiver-devices/',
-            'GET',
-            'en',
-            [],
-        );
-        $response = $backendApi->execute();
-        $response = $response ? json_decode($response, true) : NULL;
-        $caregivers = $response && $response['caregivers'] ? $response['caregivers'] : [];
-        $userNameArray = [];
-        foreach ($caregivers as $caregiver) {
-            $userNameArray[] = $caregiver['username'];
-        }
-
-        $userNameArrayString = implode(",", $userNameArray);
-
-        return $userNameArrayString;
     }
 
     protected function _buildNotification($sendstatus, $sendlog, $refTableId, $controlser, $patientSerNum, $ptdidser) {

@@ -3,7 +3,9 @@
 // INCLUDES
 //===================================
 include_once "database.inc";
-require_once('PushNotifications.php');
+require_once('PushNotification.php');
+require_once('PublisherPatient.php');
+
 
 class PatientCheckInPushNotification{
 
@@ -50,11 +52,13 @@ class PatientCheckInPushNotification{
         // SEND MESSAGE TO PATIENT DEVICES AND RECORD IN DATABASE
         //================================================================
 
-        // Obtain patient device identifiers
-        $patientDevices = PushNotifications::getPatientDevicesInfo($patientSerNum);
+        // Obtain patient device identifiers (patient's caregivers including self-caregiver)
+        $patientDevices = PublisherPatient::getCaregiverDeviceIdentifiers(
+            $patientSerNum,
+        );
 
         // If no device identifiers return there are no device identifiers
-        if(count($patientDevices)==0) {
+        if(count($patientDevices) == 0) {
             return array("success"=>1, "failure"=>0,"responseDevices"=>"No patient devices available for that patient");
         }
 
@@ -230,9 +234,9 @@ class PatientCheckInPushNotification{
 
             // Determine device type (0 = iOS & 1 = Android)
             if($device["DeviceType"]==0) {
-                $response = PushNotifications::iOS($message, $device["RegistrationId"]);
+                $response = PushNotification::iOS($message, $device["RegistrationId"]);
             } else if($device["DeviceType"]==1) {
-                $response = PushNotifications::android($message, $device["RegistrationId"]);
+                $response = PushNotification::android($message, $device["RegistrationId"]);
             }
             // Log result of push notification on database.
             // NOTE: Inserting -1 for appointmentSerNum

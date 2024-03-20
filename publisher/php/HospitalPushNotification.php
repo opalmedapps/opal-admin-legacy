@@ -1,6 +1,8 @@
 <?php
     include_once "database.inc";
-    require_once('PushNotifications.php');
+    require_once('PushNotification.php');
+    require_once('PublisherPatient.php');
+
 
    class HospitalPushNotification{
 
@@ -28,15 +30,17 @@
                     "mtitle"=>$title,
                     "mdesc"=>$description
                 );
-                if($deviceType==0)
+
+                if ($deviceType == 0)
                 {
-                    $response = PushNotifications::iOS($message,$registrationId);
-                }else if($deviceType==1)
+                    $response = PushNotification::iOS($message, $registrationId);
+                } else if ($deviceType == 1)
                 {
-                    $response = PushNotifications::android( $message,$registrationId);
+                    $response = PushNotification::android($message, $registrationId);
                 }
+
                 return $response;
-            }else{ // Not within window, return empty response
+            } else { // Not within window, return empty response
 				return array("success"=>0,"failure"=>1,"error"=>"Unable to send PushNotification: Quiet hours.");
             }
        }
@@ -141,11 +145,14 @@
             $messageLabels = $result->fetch();
 
             $message = self::buildMessageForRoomNotification($room["room_".$language], $messageLabels["Name_".$language ],$messageLabels["Description_".$language] );
-           //Obtain patient device identifiers
-           $patientDevices = PushNotifications::getPatientDevicesInfo($patientSerNum);
+
+            // Obtain patient device identifiers (patient's caregivers including self-caregiver)
+            $patientDevices = PublisherPatient::getCaregiverDeviceIdentifiers(
+                $patientSerNum,
+            );
 
             //If no identifiers return there are no identifiers
-            if(count($patientDevices)==0)
+            if(count($patientDevices) == 0)
             {
                 return array("success"=>1, "failure"=>0,"responseDevices"=>"No patient devices available for that patient");
                 exit();
@@ -158,10 +165,10 @@
                 //Determine device type
                 if($device["DeviceType"]==0)
                 {
-                    $response = PushNotifications::iOS($message, $device["RegistrationId"]);
+                    $response = PushNotification::iOS($message, $device["RegistrationId"]);
                 }else if($device["DeviceType"]==1)
                 {
-                    $response = PushNotifications::android($message, $device["RegistrationId"]);
+                    $response = PushNotification::android($message, $device["RegistrationId"]);
                 }
 
                 //Log result of push notification on database.
