@@ -1,7 +1,7 @@
 <?php
 include_once "database.inc";
 
-require_once('customPushNotification.php');
+require_once('CustomPushNotification.php');
 
 
 class DelayedLabNotification
@@ -188,7 +188,7 @@ class DelayedLabNotification
                 "message_text_FR" => "",
             );
             // Call API to send push notification
-            $response = customPushNotification::sendNotificationByPatientSerNum(
+            $response = CustomPushNotification::sendNotificationByPatientSerNum(
                 $lab["PatientSerNum"],
                 $lab["Language"],
                 $messages,

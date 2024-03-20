@@ -1,5 +1,8 @@
 <?php
 
+include_once("ApiCall.php");
+
+
 class NewOpalApiCall extends ApiCall {
 
     public function __construct($api_route, $method, $language, $data, $content_type = '') {
