@@ -9,7 +9,7 @@ class EduMaterial extends Module {
     public function __construct($guestStatus = false) {
         // Setup class-wide database connection with or without SSL
         if(USE_SSL == 1){
-            $this->$host_db_link = new PDO(
+            $this->host_db_link = new PDO(
                 OPAL_DB_DSN,
                 OPAL_DB_USERNAME,
                 OPAL_DB_PASSWORD,
@@ -20,14 +20,14 @@ class EduMaterial extends Module {
                 )
             );
         }else{
-            $this->$host_db_link = new PDO(
+            $this->host_db_link = new PDO(
                 OPAL_DB_DSN,
                 OPAL_DB_USERNAME,
                 OPAL_DB_PASSWORD,
                 array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
             );
         }
-        $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+        $this->host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
         
         parent::__construct(MODULE_EDU_MAT, $guestStatus);
     }
@@ -67,7 +67,7 @@ class EduMaterial extends Module {
 						EducationalMaterialControl.EducationalMaterialControlSerNum = $eduMatSer
 				";
 
-				$query = $this->$host_db_link->prepare( $sql );
+				$query = $this->host_db_link->prepare( $sql );
 				$query->execute();
 
             }
@@ -99,7 +99,7 @@ class EduMaterial extends Module {
                 FROM
                     EducationalMaterialControl em
             ";
-			$query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -159,8 +159,8 @@ class EduMaterial extends Module {
 		$userSer 		= $eduMatDetails['user']['id'];
 		$sessionId 		= $eduMatDetails['user']['sessionid'];
 
-        $urlExt_EN          = '';
-        $urlExt_FR          = '';
+        $urlExt_EN          = null;
+        $urlExt_FR          = null;
 
 
         $response = array(
@@ -183,6 +183,7 @@ class EduMaterial extends Module {
 
 		try {
             // Validate each table of content or URL
+           
             $extensions = array();
             $sql = "
                 SELECT DISTINCT 
@@ -190,7 +191,7 @@ class EduMaterial extends Module {
                 FROM
                     AllowableExtension ae
             ";
-            $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -268,10 +269,10 @@ class EduMaterial extends Module {
                 ON ae_fr.Name = '$urlExt_FR'
                 
             ";
-			$query = $this->$host_db_link->prepare( $sql );
+			$query = $this->host_db_link->prepare( $sql );
 			$query->execute();
 
-			$eduMatSer = $this->$host_db_link->lastInsertId();
+			$eduMatSer = $this->host_db_link->lastInsertId();
 
             if($tocs) {
                 foreach ($tocs as $toc) {
@@ -328,10 +329,10 @@ class EduMaterial extends Module {
                             ae_en.Name = '$tocExt_EN'
                         AND ae_fr.Name = '$tocExt_FR'
                     ";
-                    $query = $this->$host_db_link->prepare( $sql );
+                    $query = $this->host_db_link->prepare( $sql );
 	    			$query->execute();
     
-	    		    $tocSer = $this->$host_db_link->lastInsertId();
+	    		    $tocSer = $this->host_db_link->lastInsertId();
 
                     $sql = "
                         INSERT INTO
@@ -348,11 +349,11 @@ class EduMaterial extends Module {
                             NOW()
                         )
                     ";
-                    $query = $this->$host_db_link->prepare( $sql );
+                    $query = $this->host_db_link->prepare( $sql );
 			    	$query->execute();
                 }
             }
-
+            
             $response['value'] = 1; // Success
             return $response;
 
@@ -419,7 +420,7 @@ class EduMaterial extends Module {
                 FROM
                     AllowableExtension ae
             ";
-            $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -482,7 +483,7 @@ class EduMaterial extends Module {
                         AND ae_fr.Name = '$urlExt_FR'
                     ";
                 
-        			$query = $this->$host_db_link->prepare( $sql );
+        			$query = $this->host_db_link->prepare( $sql );
         			$query->execute();
                 }
                 else {
@@ -503,7 +504,7 @@ class EduMaterial extends Module {
                             EducationalMaterialControl.EducationalMaterialControlSerNum = $eduMatSer
                     ";
                 
-                    $query = $this->$host_db_link->prepare( $sql );
+                    $query = $this->host_db_link->prepare( $sql );
                     $query->execute();
                 }
             }
@@ -620,7 +621,7 @@ class EduMaterial extends Module {
                         em.EducationalMaterialControlSerNum = toc.EducationalMaterialControlSerNum
                     AND toc.ParentSerNum                    = $eduMatSer
                 ";
-                $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
     			$query->execute();
         
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -631,7 +632,7 @@ class EduMaterial extends Module {
                         WHERE
                             EducationalMaterialControl.EducationalMaterialControlSerNum = $data[0]
                     ";         
-                    $secondQuery = $this->$host_db_link->prepare( $sql );
+                    $secondQuery = $this->host_db_link->prepare( $sql );
                     $secondQuery->execute();
                 }
 
@@ -641,7 +642,7 @@ class EduMaterial extends Module {
                     WHERE
                         EducationalMaterialTOC.ParentSerNum = $eduMatSer
                 ";
-    	        $query = $this->$host_db_link->prepare( $sql );
+    	        $query = $this->host_db_link->prepare( $sql );
                 $query->execute();
 
                 if($tocs) {
@@ -697,10 +698,10 @@ class EduMaterial extends Module {
                                 ae_en.Name = '$tocExt_EN'
                             AND ae_fr.Name = '$tocExt_FR'
                         ";
-                        $query = $this->$host_db_link->prepare( $sql );
+                        $query = $this->host_db_link->prepare( $sql );
     	    			$query->execute();
         
-    	    		    $tocSer = $this->$host_db_link->lastInsertId();
+    	    		    $tocSer = $this->host_db_link->lastInsertId();
                         
                         $sql = "
                             INSERT INTO
@@ -717,7 +718,7 @@ class EduMaterial extends Module {
                                 NOW()
                             )
                         ";
-                        $query = $this->$host_db_link->prepare( $sql );
+                        $query = $this->host_db_link->prepare( $sql );
     			    	$query->execute();
                     }
                 }
@@ -755,7 +756,7 @@ class EduMaterial extends Module {
                     EducationalMaterialControl.EducationalMaterialControlSerNum = $eduMatSer
             ";
 
-	        $query = $this->$host_db_link->prepare( $sql );
+	        $query = $this->host_db_link->prepare( $sql );
             $query->execute();
 
             $sql = "
@@ -765,7 +766,7 @@ class EduMaterial extends Module {
                     Filters.ControlTableSerNum   = $eduMatSer
                 AND Filters.ControlTable         = 'EducationalMaterialControl'
             ";
-            $query = $this->$host_db_link->prepare( $sql );
+            $query = $this->host_db_link->prepare( $sql );
 			$query->execute();
 
             $sql = "
@@ -778,7 +779,7 @@ class EduMaterial extends Module {
                     em.EducationalMaterialControlSerNum = toc.EducationalMaterialControlSerNum
                 AND toc.ParentSerNum = $eduMatSer
             ";
-            $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
     
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -789,7 +790,7 @@ class EduMaterial extends Module {
                     WHERE
                         EducationalMaterialControl.EducationalMaterialControlSerNum = $data[0]
                 ";         
-                $secondQuery = $this->$host_db_link->prepare( $sql );
+                $secondQuery = $this->host_db_link->prepare( $sql );
                 $secondQuery->execute();
             }
 
@@ -799,7 +800,7 @@ class EduMaterial extends Module {
                 WHERE
                     EducationalMaterialTOC.ParentSerNum    = $eduMatSer
             ";
-            $query = $this->$host_db_link->prepare( $sql );
+            $query = $this->host_db_link->prepare( $sql );
 			$query->execute();
 
             $response['value'] = 1;
@@ -846,7 +847,7 @@ class EduMaterial extends Module {
                         cl.CronDateTime ASC 
                 ";
 
-                $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
                 $query->execute();
 
                 $eduMatSeries = array();
@@ -893,7 +894,7 @@ class EduMaterial extends Module {
                         cl.CronDateTime ASC 
                 ";
 
-                $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
                 $query->execute();
 
                 $eduMatSeries = array();
@@ -1003,7 +1004,7 @@ class EduMaterial extends Module {
             // eg: https://youtu.be/AAAA ... ID = AAAA
             $pos = strrpos($url, '/');
             $id = $pos === false ? false : substr($url, $pos + 1);
-            if (!id) {
+            if (!$id) {
                 return $urlCheck;
             }
             $urlCheck = 'https://www.youtube.com/embed/' . $id;

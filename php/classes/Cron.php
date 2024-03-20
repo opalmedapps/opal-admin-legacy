@@ -9,7 +9,7 @@ class Cron extends Module {
     public function __construct($guestStatus = false) {
         // Setup class-wide database connection with or without SSL
         if(USE_SSL == 1){
-            $this->$host_db_link = new PDO(
+            $this->host_db_link = new PDO(
                 OPAL_DB_DSN,
                 OPAL_DB_USERNAME,
                 OPAL_DB_PASSWORD,
@@ -20,14 +20,14 @@ class Cron extends Module {
                 )
             );
         }else{
-            $this->$host_db_link = new PDO(
+            $this->host_db_link = new PDO(
                 OPAL_DB_DSN,
                 OPAL_DB_USERNAME,
                 OPAL_DB_PASSWORD,
                 array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
             );
         }
-        $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+        $this->host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
         
         parent::__construct(MODULE_CRON_LOG, $guestStatus);
     }
@@ -53,7 +53,7 @@ class Cron extends Module {
 					Cron 
 			";
 
-            $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
@@ -108,7 +108,7 @@ class Cron extends Module {
 					Cron.CronSerNum 	= $cronSer
 			";
 
-            $query = $this->$host_db_link->prepare( $sql );
+            $query = $this->host_db_link->prepare( $sql );
             $query->execute();
 
             /* Build our custom cronjobs for crontab
