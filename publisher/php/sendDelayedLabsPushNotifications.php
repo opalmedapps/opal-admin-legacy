@@ -2,7 +2,7 @@
 // Find delayed lab results and trigger sending off push notifications.
 // Only send one notification irregardless of the total number of lab results
 
-require_once('delayedLabNotification.php');
+require_once('DelayedLabNotification.php');
 
 
 // Create in app notifications for the delayed lab results that are available between NOW() and NOW() - 2 hours

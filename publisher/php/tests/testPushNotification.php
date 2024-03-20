@@ -9,7 +9,7 @@
     Run this script by calling  php testPushNotification.php "device Id" "device type" "language"
 */
     include_once "../database.inc";
-    require_once('../PushNotifications.php');
+    require_once('../PushNotification.php');
 
     if(count($argv) < 4)
     {
@@ -53,11 +53,11 @@
     
         if($argv[2]=="0")
         {
-            $response = PushNotifications::iOS($message, $device);
+            $response = PushNotification::iOS($message, $device);
         }
         else if($argv[2]=="1")
         {
-            $response = PushNotifications::android($message, $device);
+            $response = PushNotification::android($message, $device);
         }
     
         echo "<br />Complete<br />\n";
