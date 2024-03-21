@@ -1720,10 +1720,9 @@ define("OPAL_GET_ALIAS_EXPRESSION","
 ");
 
 define("OPAL_GET_GENERIC_APPOINTMENT_ALIAS", "
-    SELECT A.AliasSerNum, A.AliasUpdate, A.SourceDatabaseSerNum, AE.AliasExpressionSerNum, AE.ExpressionName, AE.Description
-    FROM ".OPAL_ALIAS_TABLE." A, ".OPAL_ALIAS_EXPRESSION_TABLE." AE
-    WHERE A.AliasSerNum = AE.AliasSerNum
-    AND A.AliasType = 'Appointment'
+    SELECT A.AliasSerNum, A.AliasUpdate, A.SourceDatabaseSerNum
+    FROM ".OPAL_ALIAS_TABLE." A
+    WHERE A.AliasType = 'Appointment'
     AND A.AliasName_EN LIKE :AliasName;
 ");
 
