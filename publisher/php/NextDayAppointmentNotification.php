@@ -1,5 +1,6 @@
 <?php
 include_once "database.inc";
+require_once('CustomPushNotification.php');
 
 
 class NextDayAppointmentNotification
