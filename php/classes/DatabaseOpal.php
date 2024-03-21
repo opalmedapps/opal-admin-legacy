@@ -3447,6 +3447,27 @@ class DatabaseOpal extends DatabaseAccess {
         return  $this->_fetchAll(OPAL_GET_ALIAS_EXPRESSION, $params );
     }
 
+    function getGenericAlias($site) {
+        $params = array(
+            array("parameter" => ":AliasName", "variable" => $site . " Appointment", "data_type" => PDO::PARAM_STR),
+        );
+        return $this->_fetchAll(OPAL_GET_GENERIC_APPOINTMENT_ALIAS, $params);
+    }
+
+    function assignToGenericAlias($aliasId, $typeCode, $typeDesc) {
+        $toInsert = array(
+            "AliasSerNum" => $aliasId,
+            // TODO: should the masterSourceAlias be referenced here?
+            "masterSourceAliasId" => NULL,
+            "ExpressionName" => $typeCode,
+            "Description" => $typeDesc,
+            "LastUpdatedBy" => $this->getOAUserId(),
+            "SessionId" => $this->getSessionId(),
+        );
+
+        return $this->_replaceRecordIntoTable(OPAL_ALIAS_EXPRESSION_TABLE, $toInsert);
+    }
+
     /**
      * Update an alias.
      * @param $toUpdate
