@@ -3454,11 +3454,13 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(OPAL_GET_GENERIC_APPOINTMENT_ALIAS, $params);
     }
 
-    function assignToGenericAlias($aliasId, $typeCode, $typeDesc) {
+    function assignToGenericAlias($aliasId, $sourceId, $typeCode, $typeDesc) {
+        $sourceAlias = $this->getSourceAliasDetails($typeCode, $sourceId, $typeCode, ALIAS_TYPE_APPOINTMENT);
+        $masterSourceAliasId = $sourceAlias[0]["ID"];
+
         $toInsert = array(
             "AliasSerNum" => $aliasId,
-            // TODO: should the masterSourceAlias be referenced here?
-            "masterSourceAliasId" => NULL,
+            "masterSourceAliasId" => $masterSourceAliasId,
             "ExpressionName" => $typeCode,
             "Description" => $typeDesc,
             "LastUpdatedBy" => $this->getOAUserId(),
