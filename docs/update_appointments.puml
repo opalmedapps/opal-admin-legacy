@@ -1,0 +1,52 @@
+@startuml update_appointment
+
+title "Inserting and updating appointments"
+
+participant OIE
+participant opalAdmin as BE
+participant OpalDB as DB
+
+OIE -> BE: update appointment
+activate BE
+    BE -> BE: validate appointment
+    note right of BE: checks that the POST data contains the required fields\nand makes look ups in the DB for patient site and source system
+    activate BE
+        BE -> DB: look up patient site using MRN and site
+        BE -> DB: look up source database using sourceSystem data
+    deactivate BE
+    BE -> DB: find appointment using SourceDatabaseSerNum and sourceId
+    BE -> DB: find appointment alias using appointment type code and type description
+    opt no alias found
+        BE -> DB: find generic alias for the site the appointment is at
+
+        opt generic alias found
+            BE -> DB: assign appointment code to generic alias
+        end
+    end
+    BE -> BE: build data to be inserted
+    note right of BE: the appointment is only published if there is an alias
+    opt no existing appointment found
+        BE -> BE: set action to AppointmentNew
+    end
+    alt no alias found or alias is not published
+        BE -> DB: insert appointment into pending appointments
+    else
+        BE -> DB: delete pending appointment
+        opt appointment time changed and the difference is >= 2 hours
+            BE -> BE: set action to AppointmentTimeChange
+        end
+
+        alt new appointment
+            BE -> DB: insert appointment
+            note right of BE: still uses REPLACE INTO
+        else
+            BE -> DB: update existing appointment
+            note right of BE: also resets ReadBy to not read by anyone
+        end
+    end
+
+    opt there is an action and a published alias and the appointment is today or later
+        BE -> BE: notify user of change
+    end
+    
+@enduml
