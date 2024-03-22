@@ -79,7 +79,7 @@ angular.module('opalAdmin', [
 
 		authService.login = function (username, password) {
 			// Log in to the old Opal Admin API
-			var oaPromise = $http.post(
+			let oaPromise = $http.post(
 				"user/validate-login",
 				$.param({
 					username: username,
@@ -88,10 +88,27 @@ angular.module('opalAdmin', [
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			);/*.catch(function(response){
-				console.error("Unable to connect to old Opal Admin: ", response.status);
+			).then(function(response){
 				return response;
-			});*/
+			}).catch(function(response){
+				throw response;
+			})
+			
+			oaPromise.then((response)=>{
+				
+				return response;
+			}).catch((response)=> {
+				console.error("Unable to connect to old Opal Admin: ",response.status);
+			});
+			/******* 
+			 
+			 	.then(
+			Goes to first option if there is a catch
+				() => console.log("after a catch the chain is restored"), // "after a catch the chain is restored"
+			Goes to second option if there is no catch
+				() => console.log("Not fired due to the catch"),
+			); 
+			********/
 
 			/*
 				Log in to the new back end API.
@@ -114,13 +131,9 @@ angular.module('opalAdmin', [
 				function (response) { return oaPromise; }, // Success
 				function (response) { // Error
 					console.error('Unable to connect to the api-backend:', response.status);
-					console.log(oaPromise);
 					return oaPromise;
 				}
-			).catch(function(error) {
-				console.error('An error occurred:', error.status);
-				return $q.resolve(oaPromise);
-			});
+			);
 		};
 
 		authService.isAuthenticated = function () {
@@ -226,7 +239,7 @@ angular.module('opalAdmin', [
 	.factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
 		return {
 			responseError: function (response) {
-				console.log(response);
+				//console.log(response);
 				$rootScope.$broadcast({
 					401: AUTH_EVENTS.notAuthenticated,
 					// 403: AUTH_EVENTS.notAuthorized,

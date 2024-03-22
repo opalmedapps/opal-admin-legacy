@@ -5,8 +5,6 @@ angular.module('opalAdmin.services', [])
 
 	.service('Session', function ($cookies) {
 		this.create = function (data) {
-			console.log(data.user);
-			console.log("manger");
 			$cookies.put('django_language', data.user.language.toLowerCase(), {samesite: 'lax', path: '/'});
 
 			angular.forEach(data.menu, function(category) {
@@ -82,8 +80,8 @@ angular.module('opalAdmin.services', [])
 			}
 			else if(response.status === HTTP_CODE.forbiddenAccessError)
 				$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
-			else if(response.status === HTTP_CODE.notAuthenticatedError)
-			 	$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+			// else if(response.status === HTTP_CODE.notAuthenticatedError)
+			// 	$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
 		}
 	})
 
