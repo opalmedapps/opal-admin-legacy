@@ -347,6 +347,8 @@ class Appointment extends Module
                 $aliasExpressionId = $this->opalDB->assignToGenericAlias($aliasInfos[0]["AliasSerNum"], $source["SourceDatabaseSerNum"], $post['appointmentTypeCode'], $post['appointmentTypeDescription']);
                 // $aliasInfos is missing the AliasExpressionSerNum at this point
                 $aliasInfos[0]["AliasExpressionSerNum"] = $aliasExpressionId;
+            } else {
+                HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("details" => "No alias found for appointment code.")));
             }
         }
 
