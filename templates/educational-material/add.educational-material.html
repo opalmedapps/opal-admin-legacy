@@ -387,10 +387,10 @@
                         </div>
                         <div class="row" ng-if="urlSection.show">
                             <div class="col-xs-12 col-md-6">
-                                <div class="panel" ng-class="(newEduMat.url_EN) ? 'panel-success': 'panel-danger'">
+                                <div class="panel" ng-class="(urlValidation(newEduMat.url_EN)) ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>{{'EDUCATION.ADD.ENGLISH'|translate}}</strong>
-                                        <span ng-hide="newEduMat.url_EN" style="float:right"><em>{{'EDUCATION.ADD.INCOMPLETE'|translate}}</em></span>
-                                        <span ng-show="newEduMat.url_EN" style="float:right"><em>{{'EDUCATION.ADD.COMPLETE'|translate}}</em></span>
+                                        <span ng-hide="urlValidation(newEduMat.url_EN)" style="float:right"><em>{{'EDUCATION.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="urlValidation(newEduMat.url_EN)" style="float:right"><em>{{'EDUCATION.ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body form-horizontal">
                                         <div class="form-group">
@@ -405,10 +405,10 @@
                                 </div>
                             </div>
                             <div class="col-xs-12 col-md-6">
-                                <div class="panel" ng-class="(newEduMat.url_FR) ? 'panel-success': 'panel-danger'">
+                                <div class="panel" ng-class="(urlValidation(newEduMat.url_FR)) ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>{{'EDUCATION.ADD.FRENCH'|translate}}</strong>
-                                        <span ng-hide="newEduMat.url_FR" style="float:right"><em>{{'EDUCATION.ADD.INCOMPLETE'|translate}}</em></span>
-                                        <span ng-show="newEduMat.url_FR" style="float:right"><em>{{'EDUCATION.ADD.COMPLETE'|translate}}</em></span>
+                                        <span ng-hide="urlValidation(newEduMat.url_FR)" style="float:right"><em>{{'EDUCATION.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="urlValidation(newEduMat.url_FR)" style="float:right"><em>{{'EDUCATION.ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body form-horizontal">
                                         <div class="form-group">

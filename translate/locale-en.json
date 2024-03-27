@@ -1328,7 +1328,7 @@
       "PHASE_EXPLANATION": "Please assign the phase in treatment this educational material should be publish at.",
       "URL_EXPLANATION": "Please specify the location of the educational material for both English and French versions. If there is more than one education material, please go to the <strong>Table Of Contents</strong> section.",
       "NOTE": "Note: ",
-      "ALLOWED_URLS": "URL should start with http:// or https://",
+      "ALLOWED_URLS": "URL needs to start with http:// or https:// and needs to end with a domain extension.",
       "TABLE_EXPLANATION": "For more than one educational material in a table of contents, please assign the respective title, URL, and type for both English and French versions.",
       "ENGLISH_ORDER": "English -- Order",
       "FRENCH_ORDER": "French -- Order",
