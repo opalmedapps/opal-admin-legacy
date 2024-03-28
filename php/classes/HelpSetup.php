@@ -57,6 +57,7 @@ class HelpSetup {
      * */
     public static function verifyDate($date, $strict = false, $format = 'Y-m-d H:i') {
         $dateTime = DateTime::createFromFormat($format, $date);
+       // var_dump($dateTime);
         $errors = DateTime::getLastErrors();
 
         if (!empty($errors['warning_count']))
