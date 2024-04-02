@@ -77,44 +77,56 @@ angular.module('opalAdmin', [
 
 		var authService = {};
 
-		authService.login = function (username, password) {
+		authService.login = async function (username, password) {
 			// Log in to the old Opal Admin API
-			let oaPromise = $http.post(
-				"user/validate-login",
-				$.param({
-					username: username,
-					password: password,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
+			let response;
+			
+			try {
+				response = await $http.post(
+					"user/validate-login",
+					$.param({
+						username: username,
+						password: password,
+					}),
+					{
+						headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+					}
+				);
+			} catch (error) {
+				// error is the error response
+				response = error;
+			}
+			
+			let backendResponse;
 
-			/*
-				Log in to the new back end API.
+			// Only log in to the backend if the user successfully logged in
+			if (response.status == 200) {
 
-				$http.post config should include 'withCredentials' option so the request includes authentication info.
+				try {
+					backendResponse = await $http.post(
+						$rootScope.newOpalAdminHost + '/api/auth/login/',
+						{
+							"username": username,
+							"password": password,
+						},
+						{
+							"headers": {'Content-Type': 'application/json'},
+							'withCredentials': true
+						}
+					);
+				} catch (error) {
+					backendResponse = error;
+				}
+			}
 
-				https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#requests_with_credentials
-			*/
-			return $http.post(
-				$rootScope.newOpalAdminHost + '/api/auth/login/',
-				{
-					"username": username,
-					"password": password,
-				},
-				{
-					"headers": {'Content-Type': 'application/json'},
-					'withCredentials': true
+			return new Promise((resolve, reject) => {
+				if (response.status == 200 && backendResponse.status == 200) {
+					resolve(response);
+				} else {
+					reject(response);
 				}
-			).then(
-				function (response) { return oaPromise; }, // Success
-				function (response) { // Error
-					console.error('Unable to connect to the api-backend:', response.status);
-					return oaPromise;
-				}
-			);
-		};
+			});
+		}
 
 		authService.isAuthenticated = function () {
 			return !!Session.retrieveObject('user');
