@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.login', ['ngAnimate', 'ui.bootstrap']).
 /******************************************************************************
  * Login controller
  *******************************************************************************/
-controller('login', function ($scope, $rootScope, $state, $filter, $translate, $window, AUTH_EVENTS, HTTP_CODE, AuthService, Idle, Session) {
+controller('login', function ($scope, $rootScope, $state, $filter, $translate, $window, AUTH_EVENTS, HTTP_CODE, AuthService, Idle, Session, $timeout) {
 
 	// Initialize login object
 	$scope.credentials = {
@@ -73,7 +73,6 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, $
 				});
 				response.data.access = accessLevel;
 				Session.create(response.data);
-
 				$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
 				$rootScope.currentUser = response.data.user;
 				$rootScope.setSiteLanguage(response.data.user);
@@ -93,7 +92,6 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, $
 				}								
 			}).catch(function(err) {
 				$rootScope.$broadcast(AUTH_EVENTS.loginFailed);
-
 				switch(err.status) {
 				case HTTP_CODE.notAuthenticatedError:
 					$errMsg = $filter('translate')('LOGIN.ERROR_401');
@@ -122,8 +120,10 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, $
 
 				$scope.bannerMessage = $errMsg;
 				$scope.setBannerClass('danger');
+				$timeout(function(){
+					$scope.showBanner();
+				});
 				$scope.shakeForm();
-				$scope.showBanner();
 			});
 		}
 	};
