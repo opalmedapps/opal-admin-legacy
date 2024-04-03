@@ -316,18 +316,8 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 		$scope.hospitalMapUpdate = function (event, hospitalMap) {
 
-			if ($scope.alias.hospitalMap) {
-				if ($scope.alias.hospitalMap.serial == event.target.value) {
-					$scope.alias.hospitalMap = null;
-					$scope.alias.hospitalMapSer = null;
-				}
-				else {
-					$scope.alias.hospitalMap = hospitalMap;
-				}
-			}
-			else {
-				$scope.alias.hospitalMap = hospitalMap;
-			}
+			// make hospital map required: disallow unselecting a hospital map, only allow the user to change the selection
+			$scope.alias.hospitalMap = hospitalMap;
 
 			// Toggle boolean
 			$scope.changesMade = true;
@@ -452,6 +442,6 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			return !!(($scope.alias.name_EN && $scope.alias.name_FR && $scope.alias.description_EN
 				&& $scope.alias.description_FR && $scope.alias.type && (total + $scope.alias.deleted.length + $scope.alias.published.length > 0)
 				&& $scope.changesMade) && ($scope.alias.type != 'Appointment' || ($scope.alias.type == 'Appointment' &&
-				$scope.alias.checkin_details.instruction_EN && $scope.alias.checkin_details.instruction_FR)));
+				$scope.alias.checkin_details.instruction_EN && $scope.alias.checkin_details.instruction_FR && $scope.alias.hospitalMap)));
 		};
 	});
