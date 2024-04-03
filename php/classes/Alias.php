@@ -207,9 +207,10 @@ class Alias extends Module {
                     $errCode = "0" . $errCode;
 
                 // 3rd bit
-                if (array_key_exists("hospitalMap", $post) && $post["hospitalMap"] != "") {
-                    if($post["type"] != ALIAS_TYPE_APPOINTMENT_TEXT)
+                if (array_key_exists("hospitalMap", $post)) {
+                    if($post["type"] != ALIAS_TYPE_APPOINTMENT_TEXT || $post["hospitalMap"] == "") {
                         $errCode = "1" . $errCode;
+                    }
                     else {
                         $total = $this->opalDB->countHospitalMap($post["hospitalMap"]);
                         $total = intval($total["total"]);

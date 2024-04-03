@@ -41,7 +41,8 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 		type: { completed: false },
 		color: { completed: false },
 		terms: { completed: false },
-		checkin: { completed: false }
+		checkin: { completed: false },
+		hospital_map: { completed: false }
 	};
 
 	$scope.filter = $filter('filter');
@@ -50,7 +51,7 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 	$scope.numOfCompletedSteps = 0;
 
 	// Default total number of steps
-	$scope.stepTotal = 6;
+	$scope.stepTotal = 7;
 
 	// Progress bar based on default completed steps and total
 	$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -285,19 +286,27 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 		// Toggle booleans
 		$scope.hospitalMapSection.open = true;
 
-		if ($scope.newAlias.hospitalMap) {
-			if ($scope.newAlias.hospitalMap.serial == event.target.value) {
-				$scope.newAlias.hospitalMap = null;
-				$scope.newAlias.hospitalMapSer = null;
-				$scope.hospitalMapSection.open = false;
-			}
-			else {
-				$scope.newAlias.hospitalMap = hospitalMap;
-			}
+		// unselect clicked hospital map if it is already selected
+		if ($scope.newAlias.hospitalMap && $scope.newAlias.hospitalMap.serial == event.target.value) {
+			$scope.newAlias.hospitalMap = null;
+			$scope.newAlias.hospitalMapSer = null;
+			$scope.hospitalMapSection.open = false;
+
+			steps.hospital_map.completed = false;
 		}
-		else {
+
+		if ($scope.newAlias.hospitalMap || $scope.hospitalMapSection.open) {
 			$scope.newAlias.hospitalMap = hospitalMap;
+			
+			steps.hospital_map.completed = true;
 		}
+
+
+		// Count the number of completed steps
+		$scope.numOfCompletedSteps = stepsCompleted(steps);
+
+		// Change progress bar
+		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 	}
 
 	// Function to toggle necessary changes when updating alias type
