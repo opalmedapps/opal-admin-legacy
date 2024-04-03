@@ -187,7 +187,7 @@
                     <strong>{{'ALIAS.EDIT.ATTACHED_MAP'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': hospitalMapSection.open, 'glyphicon-chevron-right': !hospitalMapSection.open}"></i>
                 </div>
             </uib-accordion-heading>
-            <div class="alert alert-info" role="alert">
+            <div class="alert" ng-class="{'alert-info': alias.hospitalMap, 'alert-danger': !alias.hospitalMap}" role="alert">
                 <strong>{{'ALIAS.EDIT.CURRENT_MAP'|translate}}</strong><br>
                 <p>
                 <div>
