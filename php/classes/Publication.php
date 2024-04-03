@@ -436,6 +436,7 @@ class Publication extends Module
         $currentDate = false;
         if($strictEnforcement)
             $currentDate = (int) $occurrence["start_date"] < strtotime(date("Y-m-d"));
+       // var_dump($currentDate);
 
         if (!HelpSetup::isValidTimeStamp($occurrence["start_date"]) || $currentDate)
             array_push($errMsgs, "Invalid start date.");
@@ -663,13 +664,13 @@ class Publication extends Module
                 $custom = json_decode($setting["custom"], true);
                 if (array_key_exists("dateTime", $custom)) {
                     if(isset($publication["materialId"]["type"]) && $publication["materialId"]["type"] == "Announcement") {
-                        //var_dump($publication[$setting["internalName"]]);
-                        if(!HelpSetup::verifyDate($publication[$setting["internalName"]], true, $custom["dateTime"])){
-                            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publishing date.");}
+                      //  var_dump($publication[$setting["internalName"]]);
+                        if(!HelpSetup::verifyDate($publication[$setting["internalName"]], true, $custom["dateTime"]))
+                            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publishing date.");
                     }
                     else if(isset($publication[$setting["internalName"]])) {
-                        if(!HelpSetup::verifyDate($publication[$setting["internalName"]], true, $custom["dateTime"])){
-                            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publishing date.");}
+                        if(!HelpSetup::verifyDate($publication[$setting["internalName"]], true, $custom["dateTime"]))
+                            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publishing date.");
 
                     }
                 }
