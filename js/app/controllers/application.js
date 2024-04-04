@@ -15,6 +15,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 		$rootScope.newOpalAdminHost = null;
 		$rootScope.ormsHost = null;
+		$rootScope.isADEnabled = false;
 
 		$scope.configs = null;
 		$scope.sourceDatabases = null;
@@ -27,6 +28,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 			$scope.configs = response.data;
 			$rootScope.newOpalAdminHost = $scope.configs.newOpalAdminHost;
 			$rootScope.ormsHost = $scope.configs.ormsHost;
+			$rootScope.isADEnabled = $scope.configs.login.activeDirectory.enabled === '1';
 
 			// Check whether the user is logged in and coming from ORMS
 			if ($rootScope.currentUser && document.referrer) {
