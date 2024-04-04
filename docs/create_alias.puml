@@ -1,0 +1,24 @@
+@startuml update_appointment
+
+title "Creating and updating an alias"
+
+participant user
+participant opalAdmin as BE
+participant OpalDB as DB
+
+note right of BE: represents the frontend and backend of opalAdmin for brevity
+user -> BE: create alias
+BE -> BE: get educational materials
+BE -> BE: get source databases
+BE -> BE: get hospital maps
+user -> BE: select source database
+user -> BE: select alias type
+BE -> BE: get (alias) expressions
+note right of BE: php/classes/Alias.php getExpressions(sourceDB, type)\nphp/classes/DatabaseOpal.php getSourceAliasesByTypeAndSource(typeID, sourceDatabaseID)
+user -> user: make selection and fill out fields
+user -> BE: submit data
+note right of BE: calls alias/insert/alias\nphp/classes/Alias.php insertAlias(post_data)
+BE -> BE: validate and sanitize alias
+BE --> user: success
+    
+@enduml
