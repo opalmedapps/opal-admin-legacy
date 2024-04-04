@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 	/******************************************************************************
 	 * Controller for user registration
 	 *******************************************************************************/
-	controller('user.add', function ($scope, userCollectionService, $state, $filter, Session, ErrorHandler) {
+	controller('user.add', function ($scope, $rootScope, userCollectionService, $state, $filter, $timeout, Session, ErrorHandler) {
 		var OAUserId = Session.retrieveObject('user').id;
 
 		// Function to go to previous page
@@ -23,21 +23,28 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			},
 		];
 
-		// Function to check AD is enabled
-		function isADEnabled() {
-			if ($scope.configs.login.activeDirectory.enabled === '1'){
-				// update number of steps to exclude password
-				$scope.stepTotal = 3;
-				return true;
-			}else{
-				// update number of steps to include password step
-				$scope.stepTotal = 4;
-				return false;
-			}
+		// Initialize new user object
+		$scope.newUser = {
+			type: $scope.userType[0].ID,
+			username: null,
+			password: null,
+			confirmPassword: null,
+			role: null,
+			role_display: null,
+			additionalprivileges: null,
+			language: null,
+			language_display: null
+		};
+
+		// Function to check whether a password is required for the user
+		function isPasswordRequired() {
+			// if AD is enabled the password is only not required if it is a human user
+			return !($rootScope.isADEnabled && $scope.newUser.type === '1');
 		}
 
 		// default booleans
-		$scope.ADEnabled = isADEnabled();
+		// isPasswordRequired is updated in the watch function for newUser.type
+		$scope.isPasswordRequired = true;
 		$scope.passwordSection = {open:false, show:false};
 		$scope.roleSection = {open:false, show:false};
 		$scope.languageSection = {open:false, show:false};
@@ -64,6 +71,10 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 
 		// Default count of completed steps
 		$scope.numOfCompletedSteps = 0;
+
+		// Default total number of steps
+		// adjusted in the watch function for newUser.type
+		$scope.stepTotal = 4;
 
 		// Progress bar based on default completed steps and total
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -103,19 +114,6 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 				});
 		}
 
-		// Initialize new user object
-		$scope.newUser = {
-			type: $scope.userType[0].ID,
-			username: null,
-			password: null,
-			confirmPassword: null,
-			role: null,
-			role_display: null,
-			additionalprivileges: null,
-			language: null,
-			language_display: null
-		};
-
 		// Call our API service to get the list of possible roles
 		$scope.roles = [];
 		userCollectionService.getRoles(OAUserId).then(function (response) {
@@ -148,8 +146,9 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 				$scope.usernameUpdate();
 				return;
 			}
+
 			// if AD is enabled
-			if($scope.ADEnabled) {
+			if(!$scope.isPasswordRequired) {
 				// check if user exists as an ADFS user
 				userCollectionService.isUserExist(username).then(function (response) {
 					// disable password section
@@ -230,6 +229,11 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			} else {
 				$scope.type_name = $scope.userType[0].name_display;
 			}
+
+			$timeout(() => {
+				$scope.isPasswordRequired = isPasswordRequired();
+				$scope.stepTotal = $scope.isPasswordRequired ? 4 : 3;
+			});
 		});
 
 		// Function to toggle steps when updating the username field
