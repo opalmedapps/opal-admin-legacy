@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.user.edit', ['ui.bootstrap', 'ui.grid']).
 
-controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter, $sce, $state, userCollectionService, Session, ErrorHandler) {
+controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter, $rootScope, userCollectionService, Session, ErrorHandler) {
 	var OAUserId = Session.retrieveObject('user').id;
 	$scope.roleDisabled = false;
 	// Default booleans
@@ -36,6 +36,7 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 	userCollectionService.getUserDetails($scope.currentUser.serial).then(function (response) {
 		$scope.user = response.data;
 		$scope.roleDisabled = (OAUserId == $scope.user.serial);
+		$scope.isPasswordRequired = isPasswordRequired();
 		// introduce synchronous functions to run in order
 		userCollectionService.getAdditionalPrivileges().then(
 			function(response){
@@ -81,6 +82,12 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 				  $scope.user.selected_additionalprivileges.push(group_dict);
 			  }
 		}
+	}
+
+	// Function to check whether a password is required for the user
+	function isPasswordRequired() {
+		// if AD is enabled the password is only not required if it is a human user
+		return !($rootScope.isADEnabled && $scope.user.type === 1);
 	}
 
 	// Function that triggers when the password fields are updated
