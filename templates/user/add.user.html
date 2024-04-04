@@ -233,19 +233,19 @@
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
                                         <span class="fas fa-dot-circle"></span>
-                                        <h2 ng-if="!ADEnabled">{{'USERS.ADD.USER_PASS_EXPLANATION'|translate}}</h2>
-                                        <h2 ng-if="ADEnabled">{{'USERS.ADD.USER_PASS_AD_EXPLANATION'|translate}}</h2>
+                                        <h2 ng-if="isPasswordRequired">{{'USERS.ADD.USER_PASS_EXPLANATION'|translate}}</h2>
+                                        <h2 ng-if="!isPasswordRequired">{{'USERS.ADD.USER_PASS_AD_EXPLANATION'|translate}}</h2>
                                     </span>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-xs-12">
-                                <p ng-if="!ADEnabled" style="margin-bottom: 10px;">
+                                <p ng-if="isPasswordRequired" style="margin-bottom: 10px;">
                                     <span style="color:#d9534f"><strong>{{'USERS.ADD.REQUIRED_2'|translate}}</strong></span>
                                         {{'USERS.ADD.USER_PASS'|translate}}
                                 </p>
-                                <p ng-if="ADEnabled" style="margin-bottom: 10px;">
+                                <p ng-if="!isPasswordRequired" style="margin-bottom: 10px;">
                                     <span style="color:#d9534f"><strong>{{'USERS.ADD.REQUIRED_2'|translate}}</strong></span>
                                         {{'USERS.ADD.USER_AD_PASS'|translate}}
                                 </p>
@@ -253,14 +253,14 @@
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-md-9">
-                                <div class="panel" ng-class="((validUsername.status == 'valid' && validPassword.status == 'valid' && validConfirmPassword.status == 'valid' ) || (validUsername.status == 'valid' && ADEnabled)) ? 'panel-success': 'panel-danger'">
-                                    <div ng-if="!ADEnabled" class="panel-heading"><strong>{{'USERS.ADD.USER_PASS'|translate}}</strong>
+                                <div class="panel" ng-class="((validUsername.status == 'valid' && validPassword.status == 'valid' && validConfirmPassword.status == 'valid' ) || (validUsername.status == 'valid' && !isPasswordRequired)) ? 'panel-success': 'panel-danger'">
+                                    <div ng-if="isPasswordRequired" class="panel-heading"><strong>{{'USERS.ADD.USER_PASS'|translate}}</strong>
                                         <span ng-hide="validUsername.status == 'valid' && validPassword.status == 'valid' && validConfirmPassword.status == 'valid'" style="float:right"><em>{{'USERS.ADD.INCOMPLETE'|translate}}</em></span>
                                         <span ng-show="validUsername.status == 'valid' && validPassword.status == 'valid' && validConfirmPassword.status == 'valid'" style="float:right"><em>{{'USERS.ADD.COMPLETE'|translate}}</em></span>
                                     </div>
-                                    <div ng-if="ADEnabled" class="panel-heading"><strong>{{'USERS.ADD.USER_AD_PASS'|translate}}</strong>
-                                        <span ng-hide="validUsername.status == 'valid' && ADEnabled" style="float:right"><em>{{'USERS.ADD.INCOMPLETE'|translate}}</em></span>
-                                        <span ng-show="validUsername.status == 'valid' && ADEnabled" style="float:right"><em>{{'USERS.ADD.COMPLETE'|translate}}</em></span>
+                                    <div ng-if="!isPasswordRequired" class="panel-heading"><strong>{{'USERS.ADD.USER_AD_PASS'|translate}}</strong>
+                                        <span ng-hide="validUsername.status == 'valid' && !isPasswordRequired" style="float:right"><em>{{'USERS.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="validUsername.status == 'valid' && !isPasswordRequired" style="float:right"><em>{{'USERS.ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body form-horizontal">
                                         <div class="form-group has-feedback" ng-class="{'has-success': validUsername.status == 'valid', 'has-error': validUsername.status == 'invalid', 'has-warning': validUsername.status == 'warning'}">
@@ -275,7 +275,7 @@
                                                 {{validUsername.message}}
                                             </em>
                                         </div>
-                                        <div ng-if="!ADEnabled">
+                                        <div ng-if="isPasswordRequired">
                                             <div class="form-group has-feedback" ng-class="{'has-success': validPassword.status == 'valid', 'has-error': validPassword.status == 'invalid', 'has-warning': validPassword.status == 'warning'}">
                                                 <label class="control-label col-xs-12 col-md-2">
                                                     {{'USERS.ADD.PASSWORD'|translate}}
