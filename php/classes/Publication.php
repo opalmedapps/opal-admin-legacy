@@ -299,7 +299,7 @@ class Publication extends Module
      * */
     protected function _validateTriggers(&$triggersToValidate, &$moduleId) {
         $validatedTriggers = array();
-        $errMsgs = array();                                             //By default, no error message
+        $errMsgs = array();    //By default, no error message
         $listTriggers = $this->opalDB->getPublicationSettingsPerModule($moduleId); //Get lists of triggers and their settings
         if (is_array($listTriggers) && count($listTriggers) <= 0) {
             array_push($errMsgs, "Invalid Module.");
