@@ -107,18 +107,18 @@ angular.module('opalAdmin.services', [])
 				The post request should include X-CSRFTOKEN header for successful logout (required by Django's backend).
 			*/
 			$http.post(
-                                $rootScope.newOpalAdminHost + '/api/auth/logout/',
-                                null,
-                                {
-                                        'headers': {
-                                                'Content-Type': 'application/json',
-						'x-csrftoken': $cookies.get('csrftoken')
-                                        },
-                                        'withCredentials': true
-                                }
-                        ).then(
-				function (response) {},
-				function (response) { console.error('Unable to logout using api-backend:', response.status); }
+                $rootScope.newOpalAdminHost + '/api/auth/logout/',
+                null,
+                {
+                    'headers': {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': $cookies.get('csrftoken')
+                    },
+                    'withCredentials': true
+                }
+            ).then(
+                function (response) {},
+                function (response) { console.error('Unable to logout using api-backend:', response.status); }
 			);
 
 			
