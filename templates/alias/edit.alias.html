@@ -76,6 +76,9 @@
                     </li>
                 </ul>
             </div>
+            <div ng-if="alias.published.length == 0 && (termList | filter: {added: 1}).length == 0" class="alert alert-info" role="alert" style="margin-top: 20px;">
+                <p ng-bind-html="'ALIAS.EDIT.NOTE_NONE_ASSIGNED' | translate"></p>
+            </div>
         </div>
         <!-- SECTION: Title -->
         <div uib-accordion-group is-open="titleSection.open">
