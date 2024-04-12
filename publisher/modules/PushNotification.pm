@@ -205,12 +205,14 @@ sub getPushNotificationSendLog
 sub sendPushNotification
 {
     my ($patientser, $reftablerowser, $notificationtype, %dynamicKeys) = @_; # args
-
     # retrieve notification parameters
     my $notification        = NotificationControl::getNotificationControlDetails($patientser, $notificationtype);
     my $controlser          = $notification->getNotificationControlSer();
     my $title               = $notification->getNotificationControlName();
     my $message             = $notification->getNotificationControlDescription();
+    my $language            = $notification->getNotificationLanguage();
+    my $institution_acronym_en = getInstitutionAcronym('en');
+    my $institution_acronym_fr = getInstitutionAcronym('fr');
 
     my ($sendstatus, $sendlog); # initialize
 
@@ -228,6 +230,16 @@ sub sendPushNotification
 
         # add $patientName as a wildcard for replacement
         $dynamicKeys{'\$patientName'} = $firstName;
+    }
+
+    # special case for replacing the $institution wildcard
+    if (index($message, '$institution') != -1) {
+        # TODO: update the code below once push notifications are built using caregiver's language setting.
+        # See QSCCD-2118.
+
+        # add $institution as a wildcard for replacement
+        if ($language eq "EN") { $dynamicKeys{'\$institution'} = $institution_acronym_en; }
+        if ($language eq "FR") { $dynamicKeys{'\$institution'} = $institution_acronym_fr; }
     }
 
     # loop through potential wildcard keys to execute a string replace
@@ -253,6 +265,11 @@ sub sendPushNotification
         return;
     }
 
+    # NOTE! Currently push notifications are sent based on the target patient's language.
+    # E.g., If Homer is a target patient for whom a new record and a push notification are being created,
+    # and Homer's language is set to English, then push notification for Marge will be also in English
+    # regardless of Marge's language setting.
+    # TODO: Take into account caregiver's language when send push notifications. See QSCCD-2118.
     print "\n***** Push notification to patient caregivers *****\n";
 
     foreach my $PTDID (@PTDIDs) {
@@ -269,12 +286,12 @@ sub sendPushNotification
 }
 
 #====================================================================================
-# Get patient caregivers
+# Subroutine to get patient caregivers
 #====================================================================================
 sub getPatientCaregivers
 {
     my ($patientser, $controlser, $reftablerowser) = @_; # args
-# get a list of the patient caregivers' device information
+    # get a list of the patient caregivers' device information
     my $apiResponseStr = Api::apiPatientCaregiverDevices($patientser);
     $apiResponse = decode_json($apiResponseStr);
 
@@ -452,6 +469,30 @@ sub getPatientDeviceIdentifiers
     }
 
     return @PTDIDs;
+}
+
+#====================================================================================
+# Subroutine to get institution's acronym
+#====================================================================================
+sub getInstitutionAcronym
+{
+    my ($language) = @_; # args
+    # call Django-backend endpoint to get institution's info
+    my $apiResponseStr = Api::apiInstitutions($language);
+    $apiResponse = decode_json($apiResponseStr);
+
+    print "api response: $apiResponseStr\n";
+
+    # If response is empty return an empty string
+    if (!$apiResponse) {
+        return '';
+    }
+
+    if (exists($apiResponse[0]->{'acronym'})) {
+        return $apiResponse[0]->{'acronym'};
+    } else {
+        return '';
+    }
 }
 
 # Exit smoothly
