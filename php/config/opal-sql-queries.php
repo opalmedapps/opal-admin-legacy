@@ -1912,7 +1912,8 @@ SELECT DISTINCT nc.NotificationControlSerNum,
     CASE 
         WHEN p.Language = 'EN' THEN nc.Name_EN
         WHEN p.Language = 'FR' THEN nc.Name_FR
-    END As Name
+    END AS Name,
+    p.Language AS Language
 FROM   ".OPAL_PATIENT_TABLE." p, ".OPAL_NOTIFICATION_CONTROL_TABLE." nc,
         ".OPAL_NOTIFICATION_TYPES_TABLE." nt
 WHERE p.PatientSerNum              = :Patientser

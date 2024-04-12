@@ -1,6 +1,7 @@
 <?php
 
 include_once("../../publisher/php/PublisherPatient.php");
+include_once("NewOpalApiCall.php");
 
 
 /**
@@ -245,9 +246,12 @@ abstract class OpalProject
     protected function _notifyChange($data, $action, $dynamicKeys, $refTableId){
         // NOTE: The same functionality already exists in Perl (PushNotification.pm). Any change to the logic here needs to be applied there as well.
         $notificationControl = $this->opalDB->getNotificationControlDetails($data["PatientSerNum"], $action);
-        $controlser         = $notificationControl[0]["NotificationControlSerNum"];
-        $messageTitle       = $notificationControl[0]["Name"];
-        $messageTemplate    = $notificationControl[0]["Message"];
+        $controlser          = $notificationControl[0]["NotificationControlSerNum"];
+        $messageTitle        = $notificationControl[0]["Name"];
+        $messageTemplate     = $notificationControl[0]["Message"];
+        $language            = $notificationControl[0]["Language"];
+        $institution_acronym_en = $this->_getInstitutionAcronym('en');
+        $institution_acronym_fr = $this->_getInstitutionAcronym('fr');
         
         $this->_insertNotification($data, $controlser, $refTableId);
 
@@ -267,6 +271,23 @@ abstract class OpalProject
             $dynamicKeys['$patientName'] = $firstName;
         }
 
+        // Special case for replacing the $institution wildcard
+        if (str_contains($messageTemplate, '$institution')) {
+            // TODO: update the code below once push notifications are built using caregiver's language setting.
+            // See QSCCD-2118
+           if($language == 'EN'){
+                // Add $institution as a wildcard for replacement
+                $dynamicKeys['$institution'] = $institution_acronym_en;
+           } elseif ($language == 'FR') {
+                $dynamicKeys['$institution'] = $institution_acronym_fr;
+           } else {
+               $sendlog = "An error occurred while getting the patient's institution";
+               $pushNotificationDetail = $this->_buildNotification($this->statusFailure, $sendlog, $refTableId, $controlser, $data['PatientSerNum'], null);
+               return;
+           }
+        }
+
+        // prepare array for replacements
         $patterns           = array();
         $replacements       = array();
         $indice             = 0;
@@ -288,11 +309,15 @@ abstract class OpalProject
             $this->opalDB->insertPushNotification($pushNotificationDetail);
         } else {
 
+            // NOTE! Currently push notifications are sent based on the target patient's language.
+            // E.g., If Homer is a target patient for whom a new record and a push notification are being created,
+            // and Homer's language is set to English, then push notification for Marge will be also in English
+            // regardless of Marge's language setting.
+            // TODO: Take into account caregiver's language when send push notifications. See QSCCD-2118.
             foreach($patientDevices as $ptdId) {
                 $ptdidser       = $ptdId["PatientDeviceIdentifierSerNum"];
                 $registrationId = $ptdId["RegistrationId"];
                 $deviceType     = $ptdId["DeviceType"];
-
 
                 if (!in_array($deviceType, SUPPORTED_PHONE_DEVICES)) {
                     $sendstatus = $this->statusFailure;
@@ -383,5 +408,26 @@ abstract class OpalProject
                 $this->_notifyChange($currentAppointment, $action, $replacementMap,$post["appointment"]);        
             }            
         }        
+    }
+
+    /**
+     * Retrieve institution's acronym (e.g., OMI, OHIGPH).
+     * @param string $language - the target language (e.g., 'en' or 'fr')
+     * @return string - institution acronym
+     */
+    protected function _getInstitutionAcronym($language) {
+        $backendApi = new NewOpalApiCall(
+            '/api/institutions/',
+            'GET',
+            $language,
+            [],
+        );
+        $response = $backendApi->execute();
+        $response = $response ? json_decode($response, true) : NULL;
+
+        $institution = $response && $response[0] ? $response[0] : NULL;
+        $acronym = $institution && $institution['acronym'] ? $institution['acronym'] : '';
+
+        return $acronym;
     }
 }

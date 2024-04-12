@@ -30,6 +30,7 @@ sub new
         _name           => undef,
         _description    => undef,
         _type           => undef,
+        _language       => undef,
     };
 
     # bless associates an object with a class so Perl knows which package to search for
@@ -79,6 +80,16 @@ sub setNotificationControlType
 }
 
 #====================================================================================
+# Subroutine to set the Notification Control Language
+#====================================================================================
+sub setNotificationControlLanguage
+{
+    my ($notification, $language) = @_; # notification object with provided language in args
+    $notification->{_language} = $language; # set the notification name
+    return $notification->{_language};
+}
+
+#====================================================================================
 # Subroutine to get the Notification Control Serial
 #====================================================================================
 sub getNotificationControlSer
@@ -115,6 +126,15 @@ sub getNotificationControlType
 }
 
 #====================================================================================
+# Subroutine to get the Notification Control Language
+#====================================================================================
+sub getNotificationLanguage
+{
+    my ($notification) = @_; # our notification object
+	return $notification->{_language};
+}
+
+#====================================================================================
 # Subroutine to get notification details according to patient and type
 #====================================================================================
 sub getNotificationControlDetails
@@ -133,7 +153,8 @@ sub getNotificationControlDetails
             CASE 
                 WHEN Patient.Language = 'EN' THEN NotificationControl.Name_EN
                 WHEN Patient.Language = 'FR' THEN NotificationControl.Name_FR
-            END As Name
+            END AS Name,
+            Patient.Language AS Language
         FROM
             Patient,
             NotificationControl,
@@ -156,10 +177,12 @@ sub getNotificationControlDetails
         $ser        = $data[0];
         $message    = $data[1];
         $title      = $data[2];
+        $language   = $data[3];
 
         $notification->setNotificationControlSer($ser);
         $notification->setNotificationControlDescription($message);
         $notification->setNotificationControlName($title);
+        $notification->setNotificationControlLanguage($language);
     }
 
     return $notification;
