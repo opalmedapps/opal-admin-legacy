@@ -59,7 +59,7 @@ sub apiInstitutions
     
     # return JSON string of the response
     if ($res->is_success) {
-        return $res;
+        return $res->content;
     } else {
         return ();
     }
