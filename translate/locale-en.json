@@ -1838,7 +1838,8 @@
       "ERROR_DETAILS": "An error occurred while getting the alias details.",
       "ERROR_ALIAS": "An error occurred while getting the alias expressions.",
       "ERROR_UPDATE": "An error occurred while updating the alias.",
-      "SUCCESS_EDIT": "The alias has being updated successfully."
+      "SUCCESS_EDIT": "The alias has being updated successfully.",
+      "ERROR_MISSING_MAP": "A hospital map must be defined to submit."
     },
     "LOG": {
       "TITLE": "Logs",
