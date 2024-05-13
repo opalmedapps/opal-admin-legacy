@@ -21,7 +21,7 @@ COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-scripts --ignore-platform-reqs --optimize-autoloader
 
 # Build final image
-FROM php:8.2.17-apache-bookworm
+FROM php:8.2.19-apache-bookworm
 
 # Install dependencies
 RUN apt-get update \
