@@ -23,7 +23,8 @@
   'content_types'     => $_POST['content_types'],
   'details_updated'   => $_POST['details_updated'],
   'triggers_updated'  => $_POST['triggers_updated'],
-  'tocs_updated'      => $_POST['tocs_updated']
+  'tocs_updated'      => $_POST['tocs_updated'],
+  'purpose_ID'        => $_POST['purpose_ID']
   );
 
   // Call function

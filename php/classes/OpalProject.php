@@ -55,13 +55,18 @@ abstract class OpalProject
     * */
     protected function _getListEduMaterial() {
         $results = $this->opalDB->getPublishedEducationalMaterial();
-        foreach($results as &$row)
+        foreach($results as &$row){
             $row["tocs"] = $this->opalDB->getTocsContent($row["serial"]);
+            // Create purpose/category mapping
+            $purposeId = $row["purpose_ID"];
+            $purposeMapping = PURPOSE_CATEGORY_MAPPING[$purposeId];
+            $row["purpose"] = $purposeMapping;
+        }
         return $results;
     }
 
     /*
-     * Get the details of aneducational material. Protected function so any module can call it the same way when needed
+     * Get the details of an educational material. Protected function so any module can call it the same way when needed
      * without having to call the module educational materials itself, but cannot be called from outside.
      * @params  void
      * @return  $result - array - list of educational materials
@@ -69,6 +74,10 @@ abstract class OpalProject
     protected function _getEducationalMaterialDetails($eduId) {
         $results = $this->opalDB->getEduMaterialDetails($eduId);
         $results["tocs"] = $this->opalDB->getTocsContent($results["serial"]);
+        // Create purpose/category mapping
+        $purposeId = $results["purpose_ID"];
+        $purposeMapping = PURPOSE_CATEGORY_MAPPING[$purposeId];
+        $results["purpose"] = $purposeMapping;
         return $results;
     }
 

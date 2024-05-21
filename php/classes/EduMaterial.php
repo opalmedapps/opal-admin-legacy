@@ -158,6 +158,7 @@ class EduMaterial extends Module {
 		$triggers       = $eduMatDetails['triggers'];
 		$userSer 		= $eduMatDetails['user']['id'];
 		$sessionId 		= $eduMatDetails['user']['sessionid'];
+        $purpose_ID     = $eduMatDetails['purpose_ID'];
 
         $urlExt_EN          = null;
         $urlExt_FR          = null;
@@ -167,19 +168,6 @@ class EduMaterial extends Module {
             'value'     => 0,
             'message'   => ''
         );
-
-        // Validate share url extension
-        // Comment out for now because unsure if share url can be anything 
-        /*if ($shareURL_EN || $shareURL_FR) {
-
-            $shareEXT_EN = $this->extensionSearch($shareURL_EN);
-            $shareEXT_FR = $this->extensionSearch($shareURL_FR);
-
-            if ($shareEXT_EN != 'pdf' || $shareEXT_FR != 'pdf') {
-                $response['message'] = 'Supporting PDF fields must be pdfs!';
-                return $response; // return error
-            }
-        }*/
 
 		try {
             // Validate each table of content or URL
@@ -244,7 +232,8 @@ class EduMaterial extends Module {
                         DateAdded,
 						LastPublished,
 						LastUpdatedBy,
-						SessionId
+						SessionId,
+                        EducationalMaterialCategoryId
                     )
                 SELECT DISTINCT
                     \"$name_EN\",
@@ -260,7 +249,8 @@ class EduMaterial extends Module {
                     NOW(),
 					NOW(),
 					'$userSer',
-					'$sessionId'
+					'$sessionId',
+                    '$purpose_ID'
                 FROM 
                     AllowableExtension dummy 
                 LEFT JOIN AllowableExtension ae_en
@@ -383,6 +373,7 @@ class EduMaterial extends Module {
         $tocs               = $eduMatDetails['tocs'];
 		$userSer 			= $eduMatDetails['user']['id'];
 		$sessionId 			= $eduMatDetails['user']['sessionid'];
+        $purpose_ID         = $eduMatDetails['purpose_ID'];
 
         $urlExt_EN          = null;
         $urlExt_FR          = null;
@@ -391,25 +382,11 @@ class EduMaterial extends Module {
 
         $detailsUpdated     = $eduMatDetails['details_updated'];
         $tocsUpdated        = $eduMatDetails['tocs_updated'];
-//        $triggersUpdated    = $eduMatDetails['triggers_updated'];
 
         $response = array(
             'value'     => 0,
             'message'   => ''
         );
-
-        // Validate share url extension
-        // Comment out for now because unsure if share url can be anything 
-        /*if ($shareURL_EN || $shareURL_FR) {
-
-            $shareEXT_EN = $this->extensionSearch($shareURL_EN);
-            $shareEXT_FR = $this->extensionSearch($shareURL_FR);
-
-            if ($shareEXT_EN != 'pdf' || $shareEXT_FR != 'pdf') {
-                $response['message'] = 'Supporting PDF fields must be pdfs!';
-                return $response; // return error
-            }
-        }*/
 
 		try {
             // Validate each table of content or URL
@@ -476,7 +453,8 @@ class EduMaterial extends Module {
                             EducationalMaterialControl.ShareURL_EN 		= \"$shareURL_EN\",
         					EducationalMaterialControl.ShareURL_FR 		= \"$shareURL_FR\",
         					EducationalMaterialControl.LastUpdatedBy	= '$userSer',
-        					EducationalMaterialControl.SessionId		= '$sessionId'
+        					EducationalMaterialControl.SessionId		= '$sessionId',
+                            EducationalMaterialControl.EducationalMaterialCategoryId = '$purpose_ID'
                         WHERE
                             EducationalMaterialControl.EducationalMaterialControlSerNum = $eduMatSer
                         AND ae_en.Name = '$urlExt_EN'
@@ -499,7 +477,8 @@ class EduMaterial extends Module {
                             EducationalMaterialControl.ShareURL_EN      = \"$shareURL_EN\",
                             EducationalMaterialControl.ShareURL_FR      = \"$shareURL_FR\",
                             EducationalMaterialControl.LastUpdatedBy    = '$userSer',
-                            EducationalMaterialControl.SessionId        = '$sessionId'
+                            EducationalMaterialControl.SessionId        = '$sessionId',
+                            EducationalMaterialControl.EducationalMaterialCategoryId = '$purpose_ID'
                         WHERE
                             EducationalMaterialControl.EducationalMaterialControlSerNum = $eduMatSer
                     ";
@@ -508,107 +487,6 @@ class EduMaterial extends Module {
                     $query->execute();
                 }
             }
-
-/*            if ($triggersUpdated) {
-        
-                $sql = "
-    		        SELECT DISTINCT 
-                        Filters.FilterType,
-                        Filters.FilterId
-        			FROM     
-        				Filters
-    		    	WHERE 
-                        Filters.ControlTableSerNum       = $eduMatSer
-                    AND Filters.ControlTable             = 'EducationalMaterialControl'
-                    AND Filters.FilterType              != ''
-                    AND Filters.FilterId                != ''
-    		    ";
-
-    		    $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-        		$query->execute();
-
-    			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-        
-                    $triggerArray = array(
-                        'type'  => $data[0],
-                        'id'    => $data[1]
-                    );
-                    array_push($existingTriggers, $triggerArray);
-                }
-
-                if($existingTriggers) { 
-
-                    // If old triggers not in new trigger list, then remove
-        	    	foreach ($existingTriggers as $existingTrigger) {
-                        $id     = $existingTrigger['id'];
-                        $type   = $existingTrigger['type'];
-                        if (!$this->nestedSearch($id, $type, $triggers)) {
-    				    	$sql = "
-                                DELETE FROM 
-        					    	Filters
-        	    				WHERE
-                                    Filters.FilterId            = \"$id\"
-                                AND Filters.FilterType          = '$type'
-                                AND Filters.ControlTableSerNum   = $eduMatSer
-                                AND Filters.ControlTable         = 'EducationalMaterialControl'
-    		    		    ";  
-                
-    	    	    		$query = $host_db_link->prepare( $sql );
-    		    	    	$query->execute();
-
-                             $sql = "
-                                UPDATE FiltersMH
-                                SET 
-                                    FiltersMH.LastUpdatedBy = '$userSer',
-                                    FiltersMH.SessionId = '$sessionId'
-                                WHERE
-                                    FiltersMH.FilterId              = \"$id\"
-                                AND FiltersMH.FilterType            = '$type'
-                                AND FiltersMH.ControlTableSerNum    = $eduMatSer
-                                AND FiltersMH.ControlTable          = 'EducationalMaterialControl'
-                                ORDER BY FiltersMH.DateAdded DESC 
-                                LIMIT 1
-                            ";
-                            $query = $host_db_link->prepare( $sql );
-                            $query->execute();
-                        }
-                    }
-    	    	}
-
-                if($triggers) {
-
-                    // If new triggers (i.e. not in old list), then insert
-        			foreach ($triggers as $trigger) {
-                        $id     = $trigger['id'];
-                        $type   = $trigger['type'];
-                        if (!$this->nestedSearch($id, $type, $existingTriggers)) {
-                            $sql = "
-                                INSERT INTO 
-                                    Filters (
-                                        ControlTable,
-                                        ControlTableSerNum,
-                                        FilterId,
-                                        FilterType,
-                                        DateAdded,
-                                        LastUpdatedBy,
-                                        SessionId
-                                    )
-                                VALUES (
-                                    'EducationalMaterialControl',
-                                    '$eduMatSer',
-                                    \"$id\",
-                                    '$type',
-                                    NOW(),
-                                    '$userSer',
-                                    '$sessionId'
-                                )
-    	    	    		";
-    		    	    	$query = $host_db_link->prepare( $sql );
-    		    		    $query->execute();
-        			    }
-    	    		}
-                }
-            }*/
 
             if ($tocsUpdated) {
                 $sql = "
