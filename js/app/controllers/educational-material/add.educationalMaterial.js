@@ -33,6 +33,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 
 		// Default boolean variables
 		$scope.titleSection = {open:false, show:true};
+		$scope.purposeSection = {open: false, show: false};
 		$scope.typeSection = {open:false, show:false};
 		$scope.urlSection = {open:false, show:false};
 		$scope.tocsSection = {open:false, show:false};
@@ -50,6 +51,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 		// completed steps boolean object; used for progress bar
 		var steps = {
 			title: { completed: false },
+			purpose: { completed: false },
 			url: { completed: false },
 			type: { completed: false },
 			tocs: { completed: false }
@@ -64,7 +66,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 		$scope.numOfCompletedSteps = 0;
 
 		// Default total number of steps
-		$scope.stepTotal = 4;
+		$scope.stepTotal = 5;
 
 		// Progress for progress bar on default steps and total
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -91,6 +93,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 		$scope.newEduMat = {
 			name_EN: null,
 			name_FR: null,
+			purpose_ID: null,
 			url_EN: null,
 			url_FR: null,
 			share_url_EN: null,
@@ -98,6 +101,30 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 			type_EN: "",
 			type_FR: "",
 			tocs: [],
+		};
+
+		// Options for purpose
+		$scope.purposeOptions = [
+			{ ID: 1, title_EN: 'Clinical', title_FR: 'Clinique' },
+			{ ID: 2, title_EN: 'Research', title_FR: 'Recherche' }
+		];
+
+		// Translate the 'title_display' property based on the user's language
+		$scope.translatePurposeTitleDisplay = function (title_EN, title_FR) {
+			if ($scope.language === 'EN') {
+				return title_EN;
+			} else if ($scope.language === 'FR') {
+				return title_FR;
+			}
+			// Default to French if language is not specified
+			return title_FR;
+		};
+
+		$scope.getSelectedPurposeText = function() {
+			var selectedPurpose = $scope.purposeOptions.find(function(purpose) {
+				return purpose.ID === $scope.newEduMat.purpose_ID;
+			});
+			return selectedPurpose ? $scope.translatePurposeTitleDisplay(selectedPurpose.title_EN, selectedPurpose.title_FR) : '';
 		};
 
 		// Initialize lists to hold the distinct edu material types
@@ -135,7 +162,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 
 			if ($scope.newEduMat.name_EN && $scope.newEduMat.name_FR) {
 
-				$scope.typeSection.show = true;
+				$scope.purposeSection.show = true;
 
 				// Toggle step completion
 				steps.title.completed = true;
@@ -151,6 +178,33 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
+		};
+
+		// Function to toggle necessary changes when updating purpose
+		$scope.purposeUpdate = function () {
+
+			$scope.purposeSection.open = true;
+
+			if ($scope.newEduMat.purpose_ID) {
+
+				$scope.typeSection.show = true;
+
+				// Toggle step completion
+				steps.purpose.completed = true;
+				// Count the number of completed steps
+				$scope.numOfCompletedSteps = stepsCompleted(steps);
+				// Change progress bar
+				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+			} else {
+				// Toggle step completion
+				steps.purpose.completed = false;
+				// Count the number of completed steps
+				$scope.numOfCompletedSteps = stepsCompleted(steps);
+				// Change progress bar
+				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+			}
+			// Update the visibility of the purpose section based on title completion
+			$scope.purposeSection.show = steps.title.completed;
 		};
 
 		// Function to toggle necessary changes when updating the urls
@@ -352,7 +406,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 				// Log who created educational material
 				var currentUser = Session.retrieveObject('user');
 				$scope.newEduMat.user = currentUser;
-
+				
 				// Check for duplicate form values
 				angular.forEach($scope.EduMatTypes, function(value) { 
 					//if translations do not match, return invalidEduMatType

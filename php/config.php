@@ -254,6 +254,24 @@ const MAX_PUSH_NOTIFICATION_PER_STATUS_TO_SEND = 100;
 const PUSH_NOTIFICATION_NO_STATUS = 0;
 const TIMEOUT_EXECUTION_TIME_IN_SECONDS = 25;
 
+/**
+ * Purpose/category mapping for Reference Materials
+ */
+const PURPOSE_CATEGORY_MAPPING = array(
+    1 => array(
+        'title_EN' => 'Clinical',
+        'title_FR' => 'Clinique',
+        'description_EN' => 'Clinical category',
+        'description_FR' => 'Catégorie clinique'
+    ),
+    2 => array(
+        'title_EN' => 'Research',
+        'title_FR' => 'Recherche',
+        'description_EN' => 'Research category',
+        'description_FR' => 'Catégorie recherche'
+    )
+);
+
 /*
  * Module ID of each module in the opalAdmin
  * */

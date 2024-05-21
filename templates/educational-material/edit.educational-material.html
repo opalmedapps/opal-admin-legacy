@@ -40,6 +40,22 @@
                 </div>
             </div>
         </div>
+        <!-- SECTION: Purpose-->
+        <div uib-accordion-group is-open="purposeSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'EDUCATION.EDIT.PURPOSE'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': purposeSection.open, 'glyphicon-chevron-right': !purposeSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-md-16" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.PURPOSE'|translate}}</span>
+                        <select ng-model="eduMat.purpose_ID" ng-change="detailsUpdated()" ng-options="purpose.ID as translatePurposeTitleDisplay(purpose.title_EN, purpose.title_FR) for purpose in purposeOptions" class="form-control"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- SECTION: Single URL -->
         <div uib-accordion-group is-open="urlSection.open" ng-show="!eduMat.tocs.length">
             <uib-accordion-heading>
