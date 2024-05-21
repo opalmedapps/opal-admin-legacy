@@ -16,6 +16,23 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 	// Initialize lists to hold the distinct edu material types
 	$scope.EduMatTypes = [];
 
+	// Options for purpose
+	$scope.purposeOptions = [
+		{ ID: 1, title_EN: 'Clinical', title_FR: 'Clinique' },
+		{ ID: 2, title_EN: 'Research', title_FR: 'Recherche' }
+	];
+
+	// Translate the 'title_display' property based on the user's language
+    $scope.translatePurposeTitleDisplay = function (title_EN, title_FR) {
+        if ($scope.language === 'EN') {
+            return title_EN;
+        } else if ($scope.language === 'FR') {
+            return title_FR;
+        }
+        // Default to French if language is not specified
+        return title_FR;
+    };
+
 	// Call our API to get the list of edu material types
 	// Call our API to get the list of edu material types
 	educationalMaterialCollectionService.getEducationalMaterialTypes().then(function (response) {
@@ -55,8 +72,6 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 			keyboard: false,
 		});
 	};
-	// Show processing dialog
-	// $scope.showProcessingModal();
 
 	// Call our API service to get the current educational material details
 	educationalMaterialCollectionService.getEducationalMaterialDetails($scope.currentEduMat.serial).then(function (response) {
@@ -74,7 +89,7 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 	// Function to check necessary form fields are complete
 	$scope.checkForm = function () {
 		if ($scope.eduMat.name_EN && $scope.eduMat.name_FR && (($scope.eduMat.url_EN && $scope.eduMat.url_FR)
-			|| $scope.tocsComplete) && $scope.changesMade) {
+			|| $scope.tocsComplete) && $scope.changesMade  && $scope.eduMat.purpose_ID) {
 			return true;
 		}
 		else
@@ -170,12 +185,12 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 		}
 	};
 
+
 	// Submit changes
 	$scope.updateEduMat = function () {
 
 		if ($scope.checkForm()) {
 			$scope.eduMat.user = Session.retrieveObject('user');
-
 			// Submit form
 			$.ajax({
 				type: "POST",
