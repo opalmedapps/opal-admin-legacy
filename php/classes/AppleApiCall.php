@@ -17,8 +17,8 @@ class AppleApiCall extends ApiCall {
      */
     public function execute() {
         $ch = curl_init();
-        foreach ($this->options as $option=>$value)
-            curl_setopt($ch, $option, $value);
+
+        curl_setopt_array($ch, $this->options);
 
         $result = curl_exec($ch);
         $this->answerInfo = curl_getinfo($ch);
