@@ -37,12 +37,12 @@ class CronJob extends OpalProject {
      * @return string the external IP address of the container
      */
     protected function _getContainerIp($containerName) {
-        $output = shell_exec("getent hosts $containerName");
-        if ($output) {
-            $parts = preg_split('/\s+/', $output);
-            return $parts[0]; // The first part is the IP address
+        $ip = gethostbyname($containerName);
+        if ($ip === $containerName) {
+            // gethostbyname returns the input if it can't resolve it to an IP
+            return false;
         }
-        return false;
+        return $ip;
     }
 
     /**

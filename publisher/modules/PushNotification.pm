@@ -482,7 +482,7 @@ sub getInstitutionAcronym
 
     print "\napi response: $apiResponseStr\n";
 
-    my @$apiResponse = @{decode_json($apiResponseStr)};
+    my $apiResponse = decode_json($apiResponseStr);
 
     if (exists($apiResponse[0]) and $apiResponse[0]->{'acronym'}) {
         return $apiResponse[0]->{'acronym'};
