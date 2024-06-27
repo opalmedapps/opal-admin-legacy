@@ -1253,22 +1253,6 @@ angular.module('opalAdmin.collections', [])
 		return diagnosisAPI;
 	})
 
-	// install API service
-	.factory('installCollectionService', function ($http) {
-
-		var installAPI = {};
-
-		// Function to verify installation requirements
-		installAPI.verifyRequirements = function (urlpath) {
-			return $http({
-				method: 'JSONP',
-				url: "install/verify-requirements"
-			});
-		};
-
-		return installAPI;
-	})
-
 	//sms API service
 	.factory('smsCollectionService',function($http){
 
