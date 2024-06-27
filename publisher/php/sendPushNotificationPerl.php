@@ -4,9 +4,9 @@
     $pathname 	= __DIR__;
     $abspath 	= str_replace('php', 'modules', $pathname);
 
-    $patientSerNum  = HospitalPushNotification::sanitizeInput($_POST['patientSerNum']);
-    $ser            = HospitalPushNotification::sanitizeInput($_POST['ser']);
-    $typeRequest    = HospitalPushNotification::sanitizeInput($_POST['typeRequest']);
+    $patientSerNum  = escapeshellarg($_POST['patientSerNum']);
+    $ser            = escapeshellarg($_POST['ser']);
+    $typeRequest    = escapeshellarg($_POST['typeRequest']);
 
     $execStr = "perl " . $abspath . "/PushNotificationFromPHP.pm $patientSerNum $ser $typeRequest";
 
