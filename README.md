@@ -68,7 +68,7 @@ Run the test script in the container:
 docker compose exec app php publisher/php/tests/testPushNotification.php <deviceID> <deviceType> <language>
 ```
 
-* `<deviceID>`: Value from the column `RegistrationId` mentioned above
+* `<registrationID>`: Value from the column `RegistrationId` mentioned above
 * `<deviceType>`: `0` (iOS) or `1` (Android)
 * `<language>`: `en` (English) or `fr` (French)
 

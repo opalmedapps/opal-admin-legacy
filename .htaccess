@@ -188,14 +188,6 @@ RewriteRule ^hospital-map/get/hospital-maps php/hospital-map/get.hospital_maps.p
 RewriteRule ^hospital-map/insert/hospital-map php/hospital-map/insert.hospital_map.php [QSA,L]
 RewriteRule ^hospital-map/update/hospital-map php/hospital-map/update.hospital_map.php [QSA,L]
 
-# Installation
-RewriteRule ^install/check-aria-connection php/install/check_aria_connection.php [QSA,L]
-RewriteRule ^install/check-mosaiq-connection php/install/check_mosaiq_connection.php [QSA,L]
-RewriteRule ^install/check-opal-connection php/install/check_opal_connection.php [QSA,L]
-RewriteRule ^install/register-admin php/install/register_admin.php [QSA,L]
-RewriteRule ^install/verify-requirements php/install/verify_requirements.php [QSA,L]
-RewriteRule ^install/write-configurations php/install/write_configurations.php [QSA,L]
-
 # Library Section
 RewriteRule ^library/get/libraries php/questionnaire/get.libraries.php [QSA,L]
 RewriteRule ^library/insert/library php/questionnaire/insert.library.php [QSA,L]

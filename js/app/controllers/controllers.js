@@ -50,7 +50,6 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.user.edit.ad',
 	'opalAdmin.controllers.user.delete',
 	'opalAdmin.controllers.user.log',
-	'opalAdmin.controllers.installation',
 	'opalAdmin.controllers.email',
 	'opalAdmin.controllers.email.add',
 	'opalAdmin.controllers.email.edit',

@@ -128,8 +128,6 @@
  	<script type="text/javascript" src="js/app/controllers/user/delete.user.js"></script>
  	<script type="text/javascript" src="js/app/controllers/user/log.user.js"></script>
 
- 	<script type="text/javascript" src="js/app/controllers/install/installation.js"></script>
-
  	<script type="text/javascript" src="js/app/controllers/email/email.js"></script>
  	<script type="text/javascript" src="js/app/controllers/email/add.email.js"></script>
  	<script type="text/javascript" src="js/app/controllers/email/edit.email.js"></script>
