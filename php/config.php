@@ -113,12 +113,6 @@ if (ORMS_ENABLED) {
     ]);
 }
 
-// Turn on all errors except for notices
-error_reporting(E_ALL & ~E_NOTICE ^ E_WARNING);
-ini_set('display_startup_errors', 1);
-ini_set('display_errors', 1);
-ini_set("error_log", __DIR__."/../php-error.log");
-
 const DEFAULT_CRON_OAUSERID = 23;
 const DEFAULT_CRON_USERNAME = "cronjob";
 const DEFAULT_CRON_ROLE = 1;
