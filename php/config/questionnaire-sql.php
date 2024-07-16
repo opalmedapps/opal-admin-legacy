@@ -1,8 +1,5 @@
 <?php
 
-// use config file to get the env variables
-use config;
-
 // DEFINE QUESTIONNAIRE 2019 SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MySQL setup.
 define( "QUESTIONNAIRE_DB_2019_HOST",  $_ENV["QUESTIONNAIRE_DB_HOST"]);
