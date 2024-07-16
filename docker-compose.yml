@@ -1,6 +1,9 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      args:
+        - PHP_ENV=development
     env_file:
       - .env
     ports:

@@ -1,8 +1,5 @@
 <?php
 
-// use config file to get the env variables
-use config;
-
 // DEFINE OPAL SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MySQL setup.
 define( "OPAL_DB_HOST", $_ENV["OPAL_DB_HOST"]);
