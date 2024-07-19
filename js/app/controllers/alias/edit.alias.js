@@ -15,6 +15,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		$scope.language = Session.retrieveObject('user').language;
 		$scope.noteDeactivated = $filter('translate')('ALIAS.EDIT.NOTE_DEACTIVATED');
 		$scope.showHospitalMapError = false; // make a more obvious error message when hospital map is missing, since this is a new requirement
+        $scope.isNewAlias = !$scope.currentAlias || !$scope.currentAlias.serial; // check if it's a new alias or an existing one
 
 		// Default toolbar for wysiwyg
 		$scope.toolbar = [
@@ -439,7 +440,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 		$scope.$watch('alias', function() {
 			$scope.formIsValid = $scope.checkForm();
-			$scope.showHospitalMapError = !$scope.alias.hospitalMap;
+			$scope.showHospitalMapError = $scope.isNewAlias && $scope.alias.type == 'Appointment' && !$scope.alias.hospitalMap;
 		}, true);
 
 		// Function to return boolean for form completion
