@@ -78,10 +78,9 @@ RUN sed -ri -e 's!Listen 80!Listen 8080!g' /etc/apache2/ports.conf \
 WORKDIR /var/www/html
 
 # Parent needs to be owned by www-data to satisfy npm
-RUN chown -R www-data:www-data /var/www/
-
-RUN chmod u+s /usr/sbin/cron \
-  && usermod -aG www-data root
+RUN chown -R www-data:www-data /var/www/ \
+  # Give the necessary rights to the www-data user to run the cron
+  && chmod u+s /usr/sbin/cron
 
 USER www-data
 
@@ -102,13 +101,13 @@ COPY --chown=www-data:www-data ./php ./php
 COPY --chown=www-data:www-data ./publisher ./publisher
 COPY --chown=www-data:www-data ./templates ./templates
 COPY --chown=www-data:www-data ./translate ./translate
-COPY docker/crontab /etc/cron.d/crontab
 COPY docker/cron.sh /cron.sh
 
 ARG GIT_VERSION='undefined'
 ARG GIT_BRANCH='unknown'
 RUN echo "$GIT_VERSION" > ./VERSION && echo "$GIT_BRANCH" >> ./VERSION
 
-RUN crontab /etc/cron.d/crontab
+# Add cronjobs to crontab
+RUN crontab -u www-data docker/crontab
 
 EXPOSE 8080
