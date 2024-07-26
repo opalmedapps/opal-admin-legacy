@@ -22,25 +22,25 @@
 # 
 # m h  dom mon dow   command
 # Primary cron job
-*/2 * * * * /var/www/html/publisher/dataControl.pl > /dev/null 2>> /var/www/html/publisher/logs/executions.log
+*/2 * * * * /var/www/html/publisher/dataControl.pl > /dev/null 2>> /proc/1/fd/2
 
 # New cron controls
-*/1 * * * * /var/www/html/publisher/controls/announcementControl.pl > /dev/null 2>> /var/www/html/publisher/logs/executions_announcement.log
-*/2 * * * * /var/www/html/publisher/controls/educationalMaterialControl.pl > /dev/null 2>> /var/www/html/publisher/logs/executions_educationalMaterial.log
-*/2 * * * * /var/www/html/publisher/controls/legacyQuestionnaireControl.pl > /dev/null 2>> /var/www/html/publisher/logs/executions_legacyQuestionnaire.log
-*/2 * * * * /var/www/html/publisher/controls/txTeamMessagesControl.pl > /dev/null 2>> /var/www/html/publisher/logs/executions_txTeamMessages.log
+*/1 * * * * /var/www/html/publisher/controls/announcementControl.pl >> /dev/null 2>> /proc/1/fd/2
+*/2 * * * * /var/www/html/publisher/controls/educationalMaterialControl.pl > /dev/null 2>> /proc/1/fd/2
+*/2 * * * * /var/www/html/publisher/controls/legacyQuestionnaireControl.pl > /dev/null 2>> /proc/1/fd/2
+*/2 * * * * /var/www/html/publisher/controls/txTeamMessagesControl.pl > /dev/null 2>> /proc/1/fd/2
 
 # Pending appointments and resources module
 # These curls will only be authorized if there is a Cron system user in the OpalDB.OAUser table, see opal-sql-queries.php, SQL_OPAL_SELECT_USER_INFO query
-*/1 * * * * curl --silent --show-error http://opaladmin:8080/cron-job/update/resource-pending > /dev/null 2>> /var/www/html/publisher/logs/resource-pending.log
-*/1 * * * * curl --silent --show-error http://opaladmin:8080/cron-job/update/appointment-pending > /dev/null 2>> /var/www/html/publisher/logs/appointment-pending.log
+*/1 * * * * curl --silent --show-error http://opaladmin:8080/cron-job/update/resource-pending > /dev/null 2>> /proc/1/fd/2
+*/1 * * * * curl --silent --show-error http://opaladmin:8080/cron-job/update/appointment-pending > /dev/null 2>> /proc/1/fd/2
 
 # audit backup cron
-30 00 * * * curl --silent --show-error http://opaladmin:8080/php/cron-job/add.audit.system.backup.php > /dev/null 2>> /var/www/html/publisher/logs/system-backup.log
+30 00 * * * curl --silent --show-error http://opaladmin:8080/php/cron-job/add.audit.system.backup.php > /dev/null 2>> /proc/1/fd/2
 
 # Opal appointment reminder push notification
-0 14 * * * php /var/www/html/publisher/php/sendAppointmentReminders.php >> /var/www/html/publisher/logs/sendAppointmentReminders.log
+0 14 * * * php /var/www/html/publisher/php/sendAppointmentReminders.php >> /proc/1/fd/2
 
 # Delayed notifications for lab results. Runs every two hours.
 # If the frequency is changed the query in the delayedLabPushNotification.php should be updated as well.
-0 */2 * * * php /var/www/html/publisher/php/sendDelayedLabsPushNotifications.php
+0 */2 * * * php /var/www/html/publisher/php/sendDelayedLabsPushNotifications.php > /dev/null 2>> /proc/1/fd/2

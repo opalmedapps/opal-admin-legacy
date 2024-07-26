@@ -27,7 +27,7 @@ FROM php:8.3.9-apache-bookworm
 RUN apt-get update \
   && apt-get install -y \
       # for cronjobs
-      busybox-static \
+      cron \
       # to install Perl modules
       cpanminus \
       # Perl modules
@@ -37,8 +37,7 @@ RUN apt-get update \
       libicu-dev \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-  && rm -rf /var/lib/apt/lists/* \
-  && mkdir -p /var/spool/cron/crontabs
+  && rm -rf /var/lib/apt/lists/*
 
 RUN cpanm --notest install \
       Array::Utils \
@@ -81,6 +80,9 @@ WORKDIR /var/www/html
 # Parent needs to be owned by www-data to satisfy npm
 RUN chown -R www-data:www-data /var/www/
 
+RUN chmod u+s /usr/sbin/cron \
+  && usermod -aG www-data root
+
 USER www-data
 
 # copy only the dependencies in...
@@ -100,11 +102,13 @@ COPY --chown=www-data:www-data ./php ./php
 COPY --chown=www-data:www-data ./publisher ./publisher
 COPY --chown=www-data:www-data ./templates ./templates
 COPY --chown=www-data:www-data ./translate ./translate
-COPY docker/crontab /var/spool/cron/crontabs/www-data
+COPY docker/crontab /etc/cron.d/crontab
 COPY docker/cron.sh /cron.sh
 
 ARG GIT_VERSION='undefined'
 ARG GIT_BRANCH='unknown'
 RUN echo "$GIT_VERSION" > ./VERSION && echo "$GIT_BRANCH" >> ./VERSION
+
+RUN crontab /etc/cron.d/crontab
 
 EXPOSE 8080

@@ -27,6 +27,4 @@ services:
       - /var/www/html/vendor
     depends_on:
       - app
-    # cron needs to run as root
-    user: root
     entrypoint: ['/cron.sh']
