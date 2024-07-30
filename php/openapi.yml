@@ -287,7 +287,7 @@ paths:
         - administration
         - institution integration
       summary: Update doctor information
-      description: "Update a doctor's information in the Opal database."
+      description: "Update a doctor's identifying information in the Opal database."
       requestBody:
         required: true
         content:
@@ -606,7 +606,7 @@ paths:
       tags:
         - diagnosis
         - institution integration
-      summary: Insert a patient diagnosis
+      summary: Insert a new patient diagnosis
       description: "Insert a new patient diagnosis into the Opal database."
       requestBody:
         required: true
@@ -900,7 +900,7 @@ paths:
         tags:
           - demographics
           - institution integration
-        summary: Update patient demographic data
+        summary: Update an opal patient's demographic data
         description: "Update patient data in the Opal database."
         requestBody:
           required: true
@@ -969,7 +969,7 @@ paths:
       tags:
         - document
         - institution integration
-      summary: Insert a patient's document
+      summary: Insert a new document for an opal patient
       description: "Insert a new patient document into the Opal database."
       requestBody:
         required: true
