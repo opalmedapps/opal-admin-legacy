@@ -1,0 +1,1066 @@
+openapi: 3.0.0
+info:
+  title: Legacy OpalAdmin API
+  description: "API to integrate source data with the Opal data ecosystem. These API endpoints allow
+    hospitals or institutions to send JSON-formatted data for Opal patients into the Opal databases 
+    to then be provided to Opal patients via the Opal app. This is not an exhaustive listing of all API
+    provided by this application, but rather the minimum set of API required for integrating a source data system
+    with Opal.
+    <br/><br/>
+    For a more detailed description please refer to: https://gitlab.com/opalmedapps/opalAdmin<br />"
+  version: 1.0.0
+
+tags:
+  - name: appointment
+    description: Endpoints related to patient appointments
+  - name: administration
+    description: Endpoints related to hospital administration and staff
+  - name: auth
+    description: Endpoints related to api authorization
+  - name: diagnosis
+    description: Endpoints related to patient diagnoses
+  - name: demographics
+    description: Endpoints related to patient demographics
+  - name: document
+    description: Endpoints related to patient documents
+  - name: institution integration
+    description: Endpoints for integrating the Open Opal solution with an institution
+
+
+paths:
+  /opalAdmin/master-source/insert/appointments:
+    post:
+      tags:
+        - appointment
+        - institution integration
+      summary: Create a new appointment alias
+      description: "Create an alias for an appointment that exists within the hospital data system"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source:
+                  description: "Source system"
+                  type: string
+                externalId:
+                  description: "External identifier for the appointment"
+                  type: string
+                code:
+                  description: "Appointment code"
+                  type: string
+                description:
+                  description: "Description of the appointment"
+                  type: string
+                creationDate:
+                  description: "Date the appointment alias was created"
+                  type: string
+                  format: date
+              required:
+                - source
+                - externalId
+                - code
+                - description
+      responses:
+        '200':
+          description: Alias inserted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  reason:
+                    type: string
+                    example: "Invalid request parameters. Please check your input."
+
+  /opalAdmin/master-source/update/appointments:
+    post:
+      tags:
+        - appointment
+        - institution integration
+      summary: Update an existing alias
+      description: "Update an existing alias record in the Opal database."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source:
+                  description: "Source system"
+                  type: string
+                externalId:
+                  description: "External identifier for the appointment"
+                  type: string
+                code:
+                  description: "Appointment code"
+                  type: string
+                description:
+                  description: "Description of the appointment"
+                  type: string
+                creationDate:
+                  description: "Date the appointment alias was created"
+                  type: string
+                  format: date
+              required:
+                - source
+                - externalId
+                - code
+                - description
+      responses:
+        '200':
+          description: Appointment updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  reason:
+                    type: string
+                    example: "Invalid request parameters. Please check your input."
+
+  /opalAdmin/appointment/update/appointment:
+    post:
+      tags:
+        - appointment
+        - institution integration
+      summary: Update a patient's appointment
+      description: "Update a patient appointment record in the Opal database."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sourceId:
+                  description: "Appointment identifier within the source data system"
+                  type: integer
+                clinicDescription:
+                  description: "Description of the clinic"
+                  type: string
+                scheduledTimestamp:
+                  description: "Scheduled date and time of the appointment"
+                  type: string
+                  pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$'
+                site:
+                  description: "Site where the appointment is scheduled"
+                  type: string
+                sourceSystem:
+                  description: "Source system name"
+                  type: string
+                mrn:
+                  description: "Patient Medical Record Number"
+                  type: string
+                appointmentTypeCode:
+                  description: "Code for the type of appointment"
+                  type: string
+                clinicCode:
+                  description: "Code for the clinic"
+                  type: string
+                appointmentTypeDescription:
+                  description: "Description for the type of appointment"
+                  type: string
+                status:
+                  description: "Status of the appointment"
+                  type: string
+              required:
+                - sourceId
+                - clinicDescription
+                - scheduledTimestamp
+                - site
+                - sourceSystem
+                - mrn
+                - appointmentTypeCode
+                - clinicCode
+                - appointmentTypeDescription
+                - status
+      responses:
+        '200':
+          description: Appointment updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  reason:
+                    type: string
+                    example: "Invalid request parameters. Please check your input."
+
+  /opalAdmin/appointment/delete/appointment:
+      post:
+        tags:
+          - appointment
+          - institution integration
+        summary: Delete a patient's appointment
+        description: "Delete a patient appointment record in the Opal database."
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sourceId:
+                    description: "Unique identifier for the source system"
+                    type: integer
+                  sourceSystem:
+                    description: "Source system name"
+                    type: string
+                  status:
+                    description: "Status of the appointment"
+                    type: string
+                required:
+                  - sourceId
+                  - sourceSystem
+                  - status
+        responses:
+          '200':
+            description: Appointment deleted successfully
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: string
+                      example: "success"
+          '400':
+            description: Invalid request parameters
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: string
+                      example: "error"
+                    reason:
+                      type: string
+                      example: "Invalid request parameters. Please check your input."
+
+  /opalAdmin/doctor/update/doctor:
+    post:
+      tags:
+        - administration
+        - institution integration
+      summary: Update doctor information
+      description: "Update a doctor's identifying information in the Opal database."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                resourceId:
+                  description: "Unique identifier for the doctor resource"
+                  type: string
+                firstName:
+                  description: "Doctor's first name"
+                  type: string
+                lastName:
+                  description: "Doctor's last name"
+                  type: string
+                alias:
+                  description: "Doctor's alias"
+                  type: string
+              required:
+                - resourceId
+                - firstName
+                - lastName
+                - alias
+      responses:
+        '200':
+          description: Doctor information updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  reason:
+                    type: string
+                    example: "Invalid request parameters. Please check your input."
+
+  /opalAdmin/doctor/update/patient-doctor:
+    post:
+      tags:
+        - administration
+        - institution integration
+      summary: Update patient-doctor relationship
+      description: "Update the relationship between a patient and a doctor in the Opal database."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                resourceId:
+                  description: "Unique identifier for the doctor resource"
+                  type: string
+                oncologistFlag:
+                  description: "Flag indicating if the doctor is an oncologist"
+                  type: string
+                primaryOncologistFlag:
+                  description: "Flag indicating if the doctor is the primary oncologist"
+                  type: string
+                active:
+                  description: "Flag indicating if the relationship is active"
+                  type: boolean
+                mrn:
+                  description: "Patient Medical Record Number"
+                  type: string
+                site:
+                  description: "Site where the relationship is recorded"
+                  type: string
+                messageTimestamp:
+                  description: "Timestamp of the message"
+                  type: string
+                  format: date-time
+              required:
+                - resourceId
+                - oncologistFlag
+                - primaryOncologistFlag
+                - active
+                - mrn
+                - site
+                - messageTimestamp
+      responses:
+        '200':
+          description: Patient-doctor relationship updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  reason:
+                    type: string
+                    example: "Invalid request parameters. Please check your input."
+
+  /opalAdmin/resource/update/staff:
+    post:
+      tags:
+        - administration
+        - institution integration
+      summary: Update hospital staff personal identifier information
+      description: "Update hospital staff information in the Opal database."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  description: "Staff member's first name"
+                  type: string
+                displayName:
+                  description: "Staff member's display name"
+                  type: string
+                lastName:
+                  description: "Staff member's last name"
+                  type: string
+                lastUpdated:
+                  description: "Timestamp of the last update"
+                  type: string
+                  format: date-time
+                source:
+                  description: "Source system name"
+                  type: string
+                userId:
+                  description: "Unique identifier for the user"
+                  type: string
+                messageTimestamp:
+                  description: "Timestamp of the message"
+                  type: string
+                  format: date-time
+              required:
+                - firstName
+                - displayName
+                - lastName
+                - lastUpdated
+                - source
+                - userId
+                - messageTimestamp
+      responses:
+        '200':
+          description: Staff information updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  reason:
+                    type: string
+                    example: "Invalid request parameters. Please check your input."
+
+  /opalAdmin/resource/insert/resource:
+    post:
+      tags:
+        - administration
+        - institution integration
+      summary: Insert a new resource
+      description: "Insert a new resource into the Opal database."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source:
+                  description: "Source system name"
+                  type: string
+                appointment:
+                  description: "Appointment identifier"
+                  type: string
+                resources:
+                  description: "List of resources"
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      code:
+                        description: "Resource code"
+                        type: string
+                      name:
+                        description: "Resource name"
+                        type: string
+                      type:
+                        description: "Resource type"
+                        type: string
+              required:
+                - source
+                - appointment
+                - resources
+      responses:
+        '200':
+          description: Resource inserted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  reason:
+                    type: string
+                    example: "Invalid request parameters. Please check your input."
+
+  /opalAdmin/user/system-login:
+      post:
+        tags:
+          - auth
+          - institution integration
+        summary: System login
+        description: "Authenticate a system user and start a session."
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    description: "Username for login"
+                    type: string
+                  password:
+                    description: "Password for login"
+                    type: string
+                required:
+                  - username
+                  - password
+        responses:
+          '200':
+            description: Login successful
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    ID:
+                      type: string
+                      example: "12345"
+                    username:
+                      type: string
+                      example: "jdoe"
+                    language:
+                      type: string
+                      example: "en"
+                    role:
+                      type: string
+                      example: "admin"
+                    sessionID:
+                      type: string
+                      example: "abcd-1234-efgh-5678"
+          '400':
+            description: Invalid login parameters
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: string
+                      example: "error"
+                    reason:
+                      type: string
+                      example: "Invalid username or password. Please try again."
+
+
+  /opalAdmin/diagnosis/insert/patient-diagnosis:
+    post:
+      tags:
+        - diagnosis
+        - institution integration
+      summary: Insert a new patient diagnosis
+      description: "Insert a new patient diagnosis into the Opal database."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                site:
+                  description: "Site where the diagnosis was recorded"
+                  type: string
+                source:
+                  description: "Source system name"
+                  type: string
+                externalId:
+                  description: "Unique identifier for the diagnosis in the source system"
+                  type: string
+                mrn:
+                  description: "Patient Medical Record Number"
+                  type: string
+                code:
+                  description: "Diagnosis code (e.g., ICD10)"
+                  type: string
+                creationDate:
+                  description: "Date of diagnosis creation"
+                  type: string
+                  format: date
+                descriptionEn:
+                  description: "Diagnosis description in English"
+                  type: string
+                descriptionFr:
+                  description: "Diagnosis description in French"
+                  type: string
+                  nullable: true
+                stage:
+                  description: "Stage of the diagnosis"
+                  type: string
+                  nullable: true
+                stageCriteria:
+                  description: "Criteria for the stage of the diagnosis"
+                  type: string
+                  nullable: true
+              required:
+                - site
+                - source
+                - externalId
+                - mrn
+                - code
+                - creationDate
+                - descriptionEn
+      responses:
+        '200':
+          description: Patient diagnosis inserted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  reason:
+                    type: string
+                    example: "Invalid request parameters. Please check your input."
+
+  /opalAdmin/master-source/insert/diagnoses:
+      post:
+        tags:
+          - diagnosis
+          - institution integration
+        summary: Insert a new diagnosis alias from the ICD coded system
+        description: "Insert a new diagnosis alias into the Opal database."
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  source:
+                    description: "Source system name"
+                    type: string
+                  externalId:
+                    description: "Unique identifier for the diagnosis in the source system"
+                    type: string
+                  code:
+                    description: "Diagnosis code (e.g., ICD10)"
+                    type: string
+                  description:
+                    description: "Diagnosis description"
+                    type: string
+                  creationDate:
+                    description: "Date of diagnosis creation"
+                    type: string
+                    format: date
+                required:
+                  - source
+                  - externalId
+                  - code
+                  - description
+                  - creationDate
+        responses:
+          '200':
+            description: Master source diagnosis inserted successfully
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: string
+                      example: "success"
+          '400':
+            description: Invalid request parameters
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: string
+                      example: "error"
+                    reason:
+                      type: string
+                      example: "Invalid request parameters. Please check your input."
+
+  /opalAdmin/master-source/get/diagnosis-exists:
+    get:
+      tags:
+        - diagnosis
+        - institution integration
+      summary: Check if a diagnosis alias exists
+      description: "Check if a diagnosis alias exists in the Opal database."
+      parameters:
+        - name: source
+          in: query
+          description: "Source system name"
+          required: true
+          schema:
+            type: string
+        - name: externalId
+          in: query
+          description: "Unique identifier for the diagnosis in the source system"
+          required: true
+          schema:
+            type: string
+        - name: code
+          in: query
+          description: "Diagnosis code (e.g., ICD10)"
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Diagnosis existence check successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exists:
+                    type: boolean
+                    example: true
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  reason:
+                    type: string
+                    example: "Invalid request parameters. Please check your input."
+
+  /opalAdmin/diagnosis/delete/patient-diagnosis:
+    post:
+      tags:
+        - diagnosis
+        - institution integration
+      summary: Delete a patient diagnosis
+      description: "Delete a patient diagnosis from the Opal database."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source:
+                  description: "Source system name"
+                  type: string
+                mrn:
+                  description: "Patient Medical Record Number"
+                  type: string
+                site:
+                  description: "Site where the diagnosis was recorded"
+                  type: string
+                rowId:
+                  description: "Unique identifier for the diagnosis in the Opal system"
+                  type: string
+              required:
+                - source
+                - mrn
+                - site
+                - rowId
+      responses:
+        '200':
+          description: Patient diagnosis deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  reason:
+                    type: string
+                    example: "Invalid request parameters. Please check your input."
+
+  /opalAdmin/patient/get/patient-exist:
+    get:
+      tags:
+        - demographics
+        - institution integration
+      summary: Check if a patient is registered with Opal
+      description: "Check if a patient exists in the Opal database."
+      parameters:
+        - name: site
+          in: query
+          description: "Site where the patient was registered"
+          required: true
+          schema:
+            type: string
+        - name: mrn
+          in: query
+          description: "Patient Medical Record Number"
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Patient existence check successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exists:
+                    type: boolean
+                    example: true
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  reason:
+                    type: string
+                    example: "Invalid request parameters. Please check your input."
+
+  /opalAdmin/patient/update/patient-data:
+      post:
+        tags:
+          - demographics
+          - institution integration
+        summary: Update an opal patient's demographic data
+        description: "Update patient data in the Opal database."
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mrns:
+                    description: "Array of MRNs associated with the patient"
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        site:
+                          description: "Site where the MRN is registered"
+                          type: string
+                        mrn:
+                          description: "Patient Medical Record Number"
+                          type: string
+                      required:
+                        - site
+                        - mrn
+                  ramq:
+                    description: "Patient's RAMQ number"
+                    type: string
+                  birthDate:
+                    description: "Patient's birth date"
+                    type: string
+                    format: date
+                  name:
+                    description: "Patient's name"
+                    type: string
+                required:
+                  - mrns
+                  - ramq
+                  - birthDate
+                  - name
+        responses:
+          '200':
+            description: Patient data updated successfully
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: string
+                      example: "success"
+          '400':
+            description: Invalid request parameters
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: string
+                      example: "error"
+                    reason:
+                      type: string
+                      example: "Invalid request parameters. Please check your input."
+
+  /opalAdmin/document/insert/document:
+    post:
+      tags:
+        - document
+        - institution integration
+      summary: Insert a new document for an opal patient
+      description: "Insert a new patient document into the Opal database."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mrn:
+                  description: "Patient Medical Record Number"
+                  type: string
+                site:
+                  description: "Site where the document is registered"
+                  type: string
+                documentId:
+                  description: "Unique identifier for the document"
+                  type: string
+                approvalUserId:
+                  description: "User ID of the approver"
+                  type: string
+                approvalDateTime:
+                  description: "Date and time of approval"
+                  type: string
+                  format: date-time
+                authorUserId:
+                  description: "User ID of the author"
+                  type: string
+                noteDescription:
+                  description: "Description of the note"
+                  type: string
+                noteDateTime:
+                  description: "Date and time of the note"
+                  type: string
+                  format: date-time
+                revised:
+                  description: "Indicates if the document has been revised"
+                  type: boolean
+                validEntry:
+                  description: "Indicates if the entry is valid"
+                  type: boolean
+                fileName:
+                  description: "Name of the file"
+                  type: string
+                creationUserId:
+                  description: "User ID of the creator"
+                  type: string
+                creationDateTime:
+                  description: "Date and time of creation"
+                  type: string
+                  format: date-time
+                sourceSystem:
+                  description: "Source system name"
+                  type: string
+              required:
+                - mrn
+                - site
+                - documentId
+                - approvalUserId
+                - approvalDateTime
+                - authorUserId
+                - noteDescription
+                - noteDateTime
+                - revised
+                - validEntry
+                - fileName
+                - creationUserId
+                - creationDateTime
+                - sourceSystem
+      responses:
+        '200':
+          description: Document inserted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  reason:
+                    type: string
+                    example: "Invalid request parameters. Please check your input."
+
+
