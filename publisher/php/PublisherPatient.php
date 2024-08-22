@@ -10,7 +10,7 @@ class PublisherPatient {
      * 
 	 * @param $patientSerNum - patient serial number for whom the device identifiers are fetched
 	 * @param array $ignoredUsernames - an optional list of usernames that should be ignored when device IDs are fetched
-	 * @return array caregiver devices info
+	 * @return array an array with caregiver devices info at index 0, the institution acronym in English at index 1, and institution acronym in French at index 2
 	 */
     public static function getCaregiverDeviceIdentifiers(
         $patientSerNum,
@@ -36,7 +36,11 @@ class PublisherPatient {
 
 		$userNameArrayString = implode(",", $userNameArray);
 
-		return self::getPatientDeviceIdentifiers($userNameArrayString);
+		return array(
+			self::getPatientDeviceIdentifiers($userNameArrayString),
+			$response['institution']['acronym_en'],
+			$response['institution']['acronym_fr'],
+		);
     }
 
     /**

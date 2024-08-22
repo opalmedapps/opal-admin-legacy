@@ -458,7 +458,7 @@ class Appointment extends Module
 
         // Don't send PushNotifications for Appointments between 00:00:00-02:00:00 since these are generally placeholder appointments
         $scheduledHour = (int) (new DateTime($toInsert["ScheduledStartTime"]))->format('H');
-        if (!is_null($action) && $countAlias == 1 && $toPublish == 1 && $newStartDateTime >= $today && $scheduledHour >= 2){
+        if (!is_null($action) && $countAlias >= 1 && $toPublish == 1 && $newStartDateTime >= $today && $scheduledHour >= 2){
             $this->_notifyChange($toInsert, $action, $replacementMap, $toInsert["AppointmentSerNum"]);
         }
         return false;

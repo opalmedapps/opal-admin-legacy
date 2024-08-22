@@ -29,7 +29,7 @@ class CustomPushNotification{
         $ignoredUsernames = [],
     ) {
         // Obtain patient device identifiers (patient's caregivers including self-caregiver)
-        $patientDevices = PublisherPatient::getCaregiverDeviceIdentifiers(
+        list($patientDevices, $institution_acronym_en, $institution_acronym_fr) = PublisherPatient::getCaregiverDeviceIdentifiers(
             $patientSerNum,
             $ignoredUsernames,
         );
