@@ -211,8 +211,6 @@ sub sendPushNotification
     my $title               = $notification->getNotificationControlName();
     my $message             = $notification->getNotificationControlDescription();
     my $language            = $notification->getNotificationLanguage();
-    my $institution_acronym_en = getInstitutionAcronym('en');
-    my $institution_acronym_fr = getInstitutionAcronym('fr');
 
     my ($sendstatus, $sendlog); # initialize
 
@@ -232,6 +230,8 @@ sub sendPushNotification
         $dynamicKeys{'\$patientName'} = $firstName;
     }
 
+    ($usernamesStr, $institution_acronym_en, $institution_acronym_fr) = getPatientCaregivers($patientser, $controlser, $reftablerowser);
+
     # special case for replacing the $institution wildcard
     if (index($message, '$institution') != -1) {
         # TODO: update the code below once push notifications are built using caregiver's language setting.
@@ -246,8 +246,6 @@ sub sendPushNotification
     for my $key (keys %dynamicKeys) {
         $message =~ s/$key/$dynamicKeys{$key}/g;
     }
-
-    $usernamesStr = getPatientCaregivers($patientser, $controlser, $reftablerowser);
 
     if (!$usernamesStr) {
         print "\nPatient username array is empty\n";
@@ -323,7 +321,10 @@ sub getPatientCaregivers
     my $usernamesStr = join("','", @usernames);
     $usernamesStr = "'".$usernamesStr."'";
 
-    return $usernamesStr;
+    my $acronym_en = $apiResponse->{'institution'}->{'acronym_en'};
+    my $acronym_fr = $apiResponse->{'institution'}->{'acronym_fr'};
+
+    return ($usernamesStr, $acronym_en, $acronym_fr);
 }
 
 #====================================================================================
@@ -469,27 +470,6 @@ sub getPatientDeviceIdentifiers
     }
 
     return @PTDIDs;
-}
-
-#====================================================================================
-# Subroutine to get institution's acronym
-#====================================================================================
-sub getInstitutionAcronym
-{
-    my ($language) = @_; # args
-    # call Django-backend endpoint to get institution's info
-    my $apiResponseStr = Api::apiInstitutions($language);
-
-    print "\napi response: $apiResponseStr\n";
-
-    my $apiResponse = decode_json($apiResponseStr);
-
-    if (exists($apiResponse[0]) and $apiResponse[0]->{'acronym'}) {
-        return $apiResponse[0]->{'acronym'};
-    } else {
-        # If response is empty return an empty string
-        return '';
-    }
 }
 
 # Exit smoothly

@@ -41,29 +41,5 @@ sub apiPatientCaregiverDevices
     }
 }
 
-#====================================================================================
-# Call the new backend api /api/institutions/ endpoint
-#====================================================================================
-sub apiInstitutions
-{
-    my ($language) = @_;
-
-    $url = $newBackendHost . "/api/institutions/";
-
-    my $ua = LWP::UserAgent->new;
-    my $res = $ua->get(
-        $url,
-        "Authorization" => "Token ".$newBackendToken,
-        "Accept-Language" => lc $language . "-CA," . lc $language,
-    );
-    
-    # return JSON string of the response
-    if ($res->is_success) {
-        return $res->content;
-    } else {
-        return ();
-    }
-}
-
 # To exit/return always true (for the module itself)
 1;
