@@ -259,8 +259,6 @@ abstract class OpalProject
         $messageTitle        = $notificationControl[0]["Name"];
         $messageTemplate     = $notificationControl[0]["Message"];
         $language            = $notificationControl[0]["Language"];
-        $institution_acronym_en = $this->_getInstitutionAcronym('en');
-        $institution_acronym_fr = $this->_getInstitutionAcronym('fr');
         
         $this->_insertNotification($data, $controlser, $refTableId);
 
@@ -279,6 +277,8 @@ abstract class OpalProject
             // Add $patientName as a wildcard for replacement
             $dynamicKeys['$patientName'] = $firstName;
         }
+
+        list($patientDevices, $institution_acronym_en, $institution_acronym_fr) = PublisherPatient::getCaregiverDeviceIdentifiers($data["PatientSerNum"]);
 
         // Special case for replacing the $institution wildcard
         if (str_contains($messageTemplate, '$institution')) {
@@ -309,8 +309,6 @@ abstract class OpalProject
         ksort($patterns);
         ksort($replacements);
         $message =  str_replace($patterns, $replacements, $messageTemplate);
-
-        $patientDevices = PublisherPatient::getCaregiverDeviceIdentifiers($data["PatientSerNum"]);
 
         if (count($patientDevices) == 0){
             $sendlog = "Patient has no device identifier! No push notification sent.";
@@ -417,26 +415,5 @@ abstract class OpalProject
                 $this->_notifyChange($currentAppointment, $action, $replacementMap,$post["appointment"]);        
             }            
         }        
-    }
-
-    /**
-     * Retrieve institution's acronym (e.g., OMI, OHIGPH).
-     * @param string $language - the target language (e.g., 'en' or 'fr')
-     * @return string - institution acronym
-     */
-    protected function _getInstitutionAcronym($language) {
-        $backendApi = new NewOpalApiCall(
-            '/api/institutions/',
-            'GET',
-            $language,
-            [],
-        );
-        $response = $backendApi->execute();
-        $response = $response ? json_decode($response, true) : NULL;
-
-        $institution = $response && $response[0] ? $response[0] : NULL;
-        $acronym = $institution && $institution['acronym'] ? $institution['acronym'] : '';
-
-        return $acronym;
     }
 }
