@@ -30,8 +30,6 @@
     "angularjs-dropdown-multiselect": "2.0.0-beta.10",
     "bootstrap": "3.4.1",
     "crypto-js": "4.2.0",
-    "eslint": "^3.18.0",
-    "express": "^4.15.3",
     "firebase-admin": "^4.2.0",
     "fontawesome": "4.7.2",
     "highcharts": "^9.1.0",

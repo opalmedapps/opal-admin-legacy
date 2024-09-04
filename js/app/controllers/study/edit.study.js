@@ -1,5 +1,3 @@
-//const e = require("express");
-
 angular.module('opalAdmin.controllers.study.edit', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
 controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance, $locale, studyCollectionService, Session, ErrorHandler) {
