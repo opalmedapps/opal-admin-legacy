@@ -62,13 +62,13 @@
                             <div class="panel-container" ng-if="!notificationChartLogs.length">
                                 <div class="panel-info">
                                     <div class="jumbotron content" style="background-color: transparent; margin-bottom:0">
-                                        <p style="font-size:45px;">{{'NOTIFICATIONS.LIST.NO_DATA'|translate}}</p>
+                                        <p style="font-size:30px;">{{'CHART_UNAVAILABLE'|translate}}</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="panel-container" ng-if="notificationChartLogs.length">
                                 <div class="panel-info">
-                                    <highchart id="chart1" config="chartConfig"></highchart>
+                                    <p style="font-size:30px;">{{'CHART_UNAVAILABLE'|translate}}</p>
                                 </div>
                             </div>
                             <div class="panel-container" ng-if="notificationListLogs.length > 0">
