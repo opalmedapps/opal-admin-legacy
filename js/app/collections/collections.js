@@ -557,15 +557,6 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		// Function to get the cron logs for highcharts
-		cronAPI.getCronChartLogs = function () {
-			return $http.post(
-				"cron/get/cron-chart-logs",
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
 
 		// Function to get selected cron logs
 		cronAPI.getSelectedCronListLogs = function (contents, OAUserId) {
