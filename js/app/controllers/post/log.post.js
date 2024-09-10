@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.post.log', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'highcharts-ng', 'ui.grid.autoResize']).
+angular.module('opalAdmin.controllers.post.log', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']).
 
 
 /******************************************************************************

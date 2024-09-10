@@ -34,8 +34,6 @@
     "express": "^4.15.3",
     "firebase-admin": "^4.2.0",
     "fontawesome": "4.7.2",
-    "highcharts": "^9.1.0",
-    "highcharts-ng": "^1.2.0",
     "jquery": "3.7.1",
     "moment": "2.29.4",
     "moment-timezone": "0.5.45",

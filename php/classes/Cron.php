@@ -251,55 +251,7 @@ class Cron extends Module {
         }
     }
 
-    /**
-     *
-     * Gets chart cron logs
-     *
-     * @return array $cronLogs : the cron logs for highcharts
-     */
-    public function getCronChartLogs() {
-        $this->checkReadAccess();
-
-        $moduleList = $this->opalDB->getAvailableRolesModules();
-        $moduleArr = array();
-        $cronLogs = array();
-
-        foreach($moduleList as $module) {
-            array_push($moduleArr, $module["ID"]);
-        }
-
-        if(in_array(MODULE_ALIAS, $moduleArr) && HelpSetup::validateReadModule(MODULE_ALIAS))
-            array_push($cronLogs,
-                array ('name' => 'Appointment', 'data' => $this->opalDB->getCronLogAppointments()),
-                array ('name' => 'Document', 'data' => $this->opalDB->getCronLogDocuments()),
-                array ('name' => 'Task', 'data' => $this->opalDB->getCronLogTasks())
-            );
-
-        if(in_array(MODULE_POST, $moduleArr) && HelpSetup::validateReadModule(MODULE_POST))
-            array_push($cronLogs,
-                array('name' => 'Announcement', 'data' => $this->opalDB->getCronLogAnnouncements()),
-                array('name' => 'Treatment Team Message', 'data' => $this->opalDB->getCronLogTTMs()),
-                array('name' => 'Patients for Patients', 'data' => $this->opalDB->getCronLogPFP())
-            );
-
-        if(in_array(MODULE_EDU_MAT, $moduleArr) && HelpSetup::validateReadModule(MODULE_EDU_MAT))
-            array_push($cronLogs, array('name' => 'Educational Material', 'data' => $this->opalDB->getCronLogEduMaterials()));
-
-        if(in_array(MODULE_NOTIFICATION, $moduleArr) && HelpSetup::validateReadModule(MODULE_NOTIFICATION))
-            array_push($cronLogs, array('name' => 'Notification', 'data' => $this->opalDB->getCronLogNotifications()));
-
-        if(in_array(MODULE_TEST_RESULTS, $moduleArr) && HelpSetup::validateReadModule(MODULE_TEST_RESULTS))
-            array_push($cronLogs, array('name' => 'Test Result', 'data' => $this->opalDB->getCronLogTestResults()));
-
-        if(in_array(MODULE_EMAIL, $moduleArr) && HelpSetup::validateReadModule(MODULE_EMAIL))
-            array_push($cronLogs, array('name' => 'Email', 'data' => $this->opalDB->getCronLogEmails()));
-
-        if(in_array(MODULE_QUESTIONNAIRE, $moduleArr) && HelpSetup::validateReadModule(MODULE_QUESTIONNAIRE))
-            array_push($cronLogs, array('name' => 'Legacy Questionnaire', 'data' => $this->opalDB->getCronLogQuestionnaires()));
-
-        return $cronLogs;
-    }
-
+   
     /**
      *
      * Gets list logs of content during one or many cron sessions
