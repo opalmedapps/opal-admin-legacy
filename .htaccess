@@ -364,7 +364,7 @@ RewriteRule ^test-result/update/test-result-publish-flags php/test-result/update
 RewriteRule ^test-result/update/test-result php/test-result/update.test_result.php [QSA,L]
 
 # Trigger Section
-RewriteRule ^trigger/execute/questionnaire-triggers php/trigger/executeQuestionnaireTriggers.php
+# RewriteRule ^trigger/execute/questionnaire-triggers php/trigger/executeQuestionnaireTriggers.php
 
 # User Section
 RewriteRule ^user/delete/user php/user/delete.user.php [QSA,L]
