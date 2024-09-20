@@ -16,6 +16,7 @@
   },
   "homepage": "https://gitlab.com/opalmedapps/opalAdmin#README",
   "dependencies": {
+    "@fontsource/nunito": "5.1.0",
     "angular": "npm:@xlts.dev/angular@1.9.6",
     "angular-animate": "npm:@xlts.dev/angular-animate@1.9.6",
     "angular-cookies": "npm:@xlts.dev/angular-cookies@1.9.6",
@@ -32,6 +33,7 @@
     "bootstrap": "3.4.1",
     "crypto-js": "4.2.0",
     "eonasdan-bootstrap-datetimepicker": "4.17.49",
+    "font-awesome": "4.7.0",
     "jquery": "3.7.1",
     "moment": "2.29.4",
     "moment-timezone": "0.5.45",

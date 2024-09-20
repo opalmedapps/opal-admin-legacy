@@ -200,10 +200,11 @@
 	<link media="all" type="text/css" rel="stylesheet" href="node_modules/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css">
 	<link media="all" type="text/css" rel="stylesheet" href="node_modules/angular-ui-grid/ui-grid.css">
 	<link media="all" type="text/css" rel="stylesheet" href="node_modules/animate.css/animate.min.css">
-	<link media="all" type="text/css" rel="stylesheet" href="css/lib/font-awesome.min.css">
+	<link media="all" type="text/css" rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
 	<link media="all" type="text/css" rel="stylesheet" href="node_modules/textangularjs/dist/textAngular.css">
 	<link media="all" type="text/css" rel="stylesheet" href="css/lib/ui.bootstrap.materialPicker.css">
 
+	<link media="all" type="text/css" rel="stylesheet" href="node_modules/@fontsource/nunito/index.css">
 	<link media="all" type="text/css" rel="stylesheet" href="css/style.css">
 
 	<!-- Favicon -->
