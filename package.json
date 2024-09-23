@@ -30,18 +30,11 @@
     "angularjs-dropdown-multiselect": "2.0.0-beta.10",
     "bootstrap": "3.4.1",
     "crypto-js": "4.2.0",
-    "eslint": "^3.18.0",
-    "express": "^4.15.3",
-    "firebase-admin": "^4.2.0",
-    "fontawesome": "4.7.2",
     "jquery": "3.7.1",
     "moment": "2.29.4",
     "moment-timezone": "0.5.45",
-    "multiple-date-picker": "^2.1.0",
-    "ng-idle": "^1.3.2",
-    "textangularjs": "^2.1.2"
-  },
-  "resolutions": {
-    "angular": "npm:@xlts.dev/angular@1.9.6"
+    "multiple-date-picker": "2.1.0",
+    "ng-idle": "1.3.2",
+    "textangularjs": "2.1.2"
   }
 }
