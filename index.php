@@ -44,21 +44,13 @@
 	<script src="node_modules/textangularjs/dist/textAngular-sanitize.js"></script>
 	<script src="node_modules/textangularjs/dist/textAngularSetup.js"></script>
 	<script src="node_modules/crypto-js/crypto-js.js"></script>
-
-
-
-	<script src="node_modules/angular-ui-grid/ui-grid.js"></script>
-	<!-- <script src="node_modules/angular-ui-grid/ui-grid.auto-resize.min.js"></script> -->
-
-	
+	<script src="node_modules/angular-ui-grid/ui-grid.js"></script>	
 	<script src="js/lib/bootstrap/bootstrap-datetimepicker.min.js" defer></script>
 	<script src="js/lib/bootstrap/ui.bootstrap.materialPicker.js"></script>
 	<script src="js/lib/livicon/raphael-min.js"></script>
 	<script src="js/lib/livicon/livicons-1.4-custom.min.js"></script>
 	<script src="js/lib/itemSlide/itemslide.min.js"></script>
 	<script src="js/lib/require/require.js"></script>
-	<!-- <script src="js/lib/fontawesome/fontawesome-all.min.js"></script>
-	<script src="js/lib/fontawesome/fa-v4-shims.min.js"></script>-->
 
 	<!-- Start Up -->
  	<script type="text/javascript" src="js/app/app.js"></script>
