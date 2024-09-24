@@ -1,5 +1,5 @@
 # Build/install JS dependencies
-FROM node:20.15.1-alpine3.20 AS js-dependencies
+FROM node:20.17.0-alpine3.20 AS js-dependencies
 
 WORKDIR /app
  
@@ -12,7 +12,7 @@ COPY .npmrc ./
 RUN npm ci
 
 # Build/install PHP dependencies
-FROM composer:2.7.7 AS php-dependencies
+FROM composer:2.7.9 AS php-dependencies
 
 WORKDIR /app
 
@@ -21,7 +21,7 @@ COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-scripts --ignore-platform-reqs --optimize-autoloader
 
 # Build final image
-FROM php:8.3.9-apache-bookworm
+FROM php:8.3.11-apache-bookworm
 
 # Install dependencies
 RUN apt-get update \

@@ -44,21 +44,10 @@
 	<script src="node_modules/textangularjs/dist/textAngular-sanitize.js"></script>
 	<script src="node_modules/textangularjs/dist/textAngularSetup.js"></script>
 	<script src="node_modules/crypto-js/crypto-js.js"></script>
-
-
-
-	<script src="node_modules/angular-ui-grid/ui-grid.js"></script>
-	<!-- <script src="node_modules/angular-ui-grid/ui-grid.auto-resize.min.js"></script> -->
-
-	
-	<script src="js/lib/bootstrap/bootstrap-datetimepicker.min.js" defer></script>
+	<script src="node_modules/angular-ui-grid/ui-grid.js"></script>	
+	<script src="node_modules/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js" defer></script>
 	<script src="js/lib/bootstrap/ui.bootstrap.materialPicker.js"></script>
-	<script src="js/lib/livicon/raphael-min.js"></script>
-	<script src="js/lib/livicon/livicons-1.4-custom.min.js"></script>
-	<script src="js/lib/itemSlide/itemslide.min.js"></script>
-	<script src="js/lib/require/require.js"></script>
-	<!-- <script src="js/lib/fontawesome/fontawesome-all.min.js"></script>
-	<script src="js/lib/fontawesome/fa-v4-shims.min.js"></script>-->
+	<script src="node_modules/requirejs/require.js"></script>
 
 	<!-- Start Up -->
  	<script type="text/javascript" src="js/app/app.js"></script>
@@ -208,21 +197,18 @@
 	<!-- Stylesheets -->
 	<link media="all" type="text/css" rel="stylesheet" href="css/lib/jquery-ui.css">
 	<link media="all" type="text/css" rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
-	<link media="all" type="text/css" rel="stylesheet" href="css/lib/bootstrap-datetimepicker.css">
+	<link media="all" type="text/css" rel="stylesheet" href="node_modules/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css">
 	<link media="all" type="text/css" rel="stylesheet" href="node_modules/angular-ui-grid/ui-grid.css">
-	<link media="all" type="text/css" rel="stylesheet" href="css/lib/animate.css">
-	<link media="all" type="text/css" rel="stylesheet" href="css/lib/livicon.css">
-	<link media="all" type="text/css" rel="stylesheet" href="css/lib/font-awesome.min.css">
-	<link media="all" type="text/css" rel="stylesheet" href="css/lib/prettify.css">
-	<link media="all" type="text/css" rel="stylesheet" href="css/lib/docs.min.css">
+	<link media="all" type="text/css" rel="stylesheet" href="node_modules/animate.css/animate.min.css">
+	<link media="all" type="text/css" rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
 	<link media="all" type="text/css" rel="stylesheet" href="node_modules/textangularjs/dist/textAngular.css">
 	<link media="all" type="text/css" rel="stylesheet" href="css/lib/ui.bootstrap.materialPicker.css">
 
+	<link media="all" type="text/css" rel="stylesheet" href="node_modules/@fontsource/nunito/index.css">
 	<link media="all" type="text/css" rel="stylesheet" href="css/style.css">
 
 	<!-- Favicon -->
 	<link rel="shortcut icon" type="image/png" href="favicon.png"/>
-
 </head>
 <body ng-app="opalAdmin" ng-controller="application">
 	<div ng-include="'templates/navbar-menu.html'" ></div>
