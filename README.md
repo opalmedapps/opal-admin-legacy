@@ -76,8 +76,3 @@ docker compose exec app php publisher/php/tests/testPushNotification.php <device
 
 Output will be printed to the terminal to indicate whether the notification was successfully sent, or if there was an error.
 If successful, you’ll receive a test push notification on your device.
-
-## Version file
-
-The `VERSION` file in the project root is used to display environment information.
-It is updated in a CI job when building the container image.
