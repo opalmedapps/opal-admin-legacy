@@ -12,6 +12,7 @@ $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->safeload();
 
 // Ensure that the following environment variables are set
+$dotenv->required('ENVIRONMENT_NAME')->notEmpty();
 // Opal Database Settings
 $dotenv->required('OPAL_DB_HOST')->notEmpty();
 $dotenv->required('OPAL_DB_PORT')->notEmpty();
