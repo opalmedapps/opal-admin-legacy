@@ -16,23 +16,25 @@ stages:
   - cleanup
   - extra
 
-# workaround to be able to set variables using commands
-# see: https://gitlab.com/gitlab-org/gitlab-runner/-/issues/2814#note_414028555
-set variables:
-  stage: .pre
-  script:
-    - apk add --no-cache git
-    - echo GIT_VERSION=$(git describe) > variables.env
-    - echo GIT_BRANCH=$CI_COMMIT_REF_NAME >> variables.env
-  artifacts:
-    reports:
-      dotenv: variables.env
 
-
-include: 
-  - template: Auto-DevOps.gitlab-ci.yml
+include:
+  - project: 'opalmedapps/engineering/ci-templates'
+    file: '/templates/InterruptibleMergeRequest-Pipelines.gitlab-ci.yml'
+  - project: 'opalmedapps/engineering/ci-templates'
+    file: '/templates/Auto-DevOps.gitlab-ci.yml'
   - component: $CI_SERVER_FQDN/opalmedapps/engineering/ci-templates/check-thirdparty-notice@main
     inputs:
       package-file: package.json
       composer-file: composer.json
       additional-dependencies: jQueryUI ui.bootstrap.materialPicker
+
+# for some reason, a branch pipeline is added as well
+check_thirdparty_notice:
+  rules:
+    # Add the job to merge request pipelines if there's an open merge request.
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    # Don't add it to a *branch* pipeline if it's already in a merge request pipeline.
+    - if: $CI_OPEN_MERGE_REQUESTS
+      when: never
+    # If there's no open merge request, add it to a *branch* pipeline instead.
+    - if: '$CI_COMMIT_TAG || $CI_COMMIT_BRANCH'

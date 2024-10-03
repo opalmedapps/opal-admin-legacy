@@ -54,18 +54,10 @@ class Application {
             $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
 
             $buildName = $data[0];
-
-            $versionFile = fopen("../../VERSION", "r")
-            or die("Unable to open VERSION file!");
-
-            $version = fgets($versionFile);
-            $branch = fgets($versionFile);
-            fclose($versionFile);
-
+            $environment_name = $_ENV["ENVIRONMENT_NAME"];
             $build = array(
-                'version'		=> $version,
+                'environment_name' => $environment_name,
                 'environment'	=> $buildName,
-                'branch'		=> $branch
             );
 
             return $build;
