@@ -13,6 +13,12 @@
   // Extra rules for node images. See: https://github.com/renovatebot/renovate/discussions/29501
   // Ensure that node docker versioning doesn't interfer with the custom managers.
   "ignorePresets": ["workarounds:nodeDockerVersioning"],
+  // Only rebase existing MRs when the branch is conflicted
+  // This avoids getting spammed by updates to existing MRs
+  // We need to rebase branches to fast-forward merge anyway
+  //
+  // https://docs.renovatebot.com/configuration-options/#rebasewhen
+  "rebaseWhen": "conflicted",
   "assignees": ["Douzeyu"],
   "labels": ["dependencies"],
   "ignoreDeps": [
