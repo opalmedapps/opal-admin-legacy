@@ -4113,7 +4113,6 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":TransferLog","variable"=>$toUpdate['TransferLog'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":ReadStatus","variable"=>$toUpdate['ReadStatus'],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":SessionId","variable"=>$toUpdate['SessionId'],"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":DateAdded","variable"=>$toUpdate['DateAdded'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":LastUpdated","variable"=>$toUpdate['LastUpdated'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":DocumentSerNum","variable"=>$toUpdate['DocumentSerNum'],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":PatientSerNum","variable"=>$toUpdate['PatientSerNum'],"data_type"=>PDO::PARAM_INT),

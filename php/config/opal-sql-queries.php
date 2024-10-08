@@ -1995,8 +1995,7 @@ CreatedTimeStamp = :CreatedTimeStamp,
 TransferStatus = :TransferStatus,       
 TransferLog = :TransferLog,          
 ReadStatus = :ReadStatus,           
-SessionId = :SessionId,            
-DateAdded = :DateAdded,
+SessionId = :SessionId,
 LastUpdated = :LastUpdated
 WHERE DocumentSerNum = :DocumentSerNum AND PatientSerNum = :PatientSerNum;
 ";

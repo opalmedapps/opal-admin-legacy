@@ -194,11 +194,12 @@ class MasterSourceAlias extends MasterSourceModule {
                             array_push($errMsgs, $item);
                         }
                     }*/
-                    else {
-/*                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");*/
+                    // ignore the duplicate alias error temporarily
+                    /*else {
+                        //HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicated keys detected in the records. Please contact your administrator.");
                         $item["validation"] = bindec("1000000");
                         array_push($errMsgs, $item);
-                    }
+                    }*/
                 }
                 else {
                     $item["validation"] = $errCode;
