@@ -99,20 +99,33 @@ define("ORMS_HOST", $_ENV["ORMS_HOST"]);
 define("ORMS_ENABLED", $_ENV["ORMS_ENABLED"]);
 
 if (ORMS_ENABLED) {
-    define("WRM_API_URL", $_ENV["OIE_HOST"]);
+    define("WRM_API_URL", $_ENV["ORMS_HOST_INTERNAL"]);
     define("WRM_API_METHOD", [
-        "getSmsAppointments" => "/SmsAppointment/get",
-        "getMessages" => "/SmsMessage/get",
-        "updateSmsAppointment" => "/SmsAppointment/update",
-        "updateMessage" => "/SmsMessage/update",
-        "getSpecialityGroups" => "/Hospital/SpecialityGroups",
-        "getTypes" => "/SmsMessage/Types"
+        # Get all existing SmsAppointment records from OrmsDatabase.SmsAppointment (this table joins a patient appointment with the sms resources associated to it)
+        "getSmsAppointments" => "php/api/public/v1/sms/smsAppointment/getSmsAppointments",
+        
+        # Get all text messages associated with a particular specialty and type (e.g Get all General SMS texts at CCC)
+        # Note: API call made as soon as user selects Specialty and clicks a type in the OA frontend SMS Message page
+        "getMessages" => "php/api/public/v1/sms/smsMessage/getMessages",
+        
+        # Update the type and/or active status for a particular patient's SMS appointment record (OrmsDatabase.SmsAppointment)
+        "updateSmsAppointment" => "php/api/public/v1/sms/smsAppointment/updateSmsAppointment",
+        
+        # Update the SMS text content for a specific specialty+type+event combination in ORMs (e.g Update checkin message for General appointments at CCC)
+        # Note: A separate API call is sent for english and french texts, so 2 calls per OA-frontend SMS Message page submission by the user
+        "updateMessage" => "php/api/public/v1/sms/smsMessage/updateMessage",
+
+        # Get all existing SpecialGroup records from OrmsDatabase.SpecialtyGroup (These are the various possible appointment specialties, e.g CCC, RVH Surgical, Nephrology, etc)
+        "getSpecialityGroups" => "php/api/public/v1/hospital/getSpecialityGroups",
+        
+        # Get the unique SMS message types from Orms (General, Radonc, Telemed, Zoom - usually)
+        "getTypes" => "php/api/public/v1/sms/smsMessage/getTypes"
     ]);
     define("WRM_API_CONFIG", [
         "64" => 0,
         "19913" =>  1,
         "47" =>  1,
-        "10023" => ["Content-Type: application/json"]
+        "10023" => ["Content-Type: application/json; charset=utf-8"]
     ]);
 }
 
@@ -174,7 +187,7 @@ const DEFAULT_API_CONFIG = array(
     CURLOPT_RETURNTRANSFER=>true,
     CURLOPT_FOLLOWLOCATION=>true,
     CURLOPT_POST=>true,
-    CURLOPT_SSL_VERIFYPEER=>false,
+    CURLOPT_SSL_VERIFYPEER=>true,
     CURLOPT_HEADER=>true,
 );
 
