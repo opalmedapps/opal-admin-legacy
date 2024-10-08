@@ -209,18 +209,8 @@ class TriggerDocument extends Trigger
             $toInsert["DocumentSerNum"] = $id;
         } else {
             $action = "UpdDocument";
-            $doc["ApprovedBySerNum"] = $this->opalDB->getStaffDetail($source["SourceDatabaseSerNum"],$post["appovalUserId"])["StaffSerNum"];
-            $doc["ApprovedTimeStamp"] = $post["approvalDatetime"];
-            $doc["AuthoredBySerNum"] = $this->opalDB->getStaffDetail($source["SourceDatabaseSerNum"],$post["authorUserId"])["StaffSerNum"];
-            $doc["Revised"] = $post["revised"];
-            $doc["ValidEntry"] = $post["validEntry"];
-            $doc["AliasExpressionSerNum"] = $aliasInfos[0]["AliasExpressionSerNum"];
-            $doc["ErrorReasonText"] = $post["errorMessage"];
-            $doc["LastUpdated"] = $post["modifiedDatetime"];
-            $doc["SessionId"] = $this->opalDB->getSessionId();
-            $doc["ReadBy"] = "[]";
-            $id = $this->opalDB->updateDocument($toInsert);
-            $toInsert["DocumentSerNum"] = $id;
+            $toInsert["DocumentSerNum"] = $doc["DocumentSerNum"];
+            $this->opalDB->updateDocument($toInsert);
         }
         
         $patientAccessLevel = $this->opalDB->getPatientAccessLevel($patientSite["PatientSerNum"]);
