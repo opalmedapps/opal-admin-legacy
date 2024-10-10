@@ -209,7 +209,7 @@ class TriggerDocument extends Trigger
             $toInsert["DocumentSerNum"] = $id;
         } else {
             $action = "UpdDocument";
-            $toInsert["DocumentSerNum"] = $doc["DocumentSerNum"];
+            $toInsert["DocumentSerNum"] = $doc[0]["DocumentSerNum"];
             $this->opalDB->updateDocument($toInsert);
         }
         
