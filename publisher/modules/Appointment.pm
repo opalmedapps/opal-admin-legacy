@@ -389,7 +389,7 @@ sub getPatientsAppointmentsFromDateInOurDB
         SELECT DISTINCT
             ap.AppointmentSerNum,
             ap.AliasExpressionSerNum,
-            ap.AppointmentAriaSer,
+            ap.SourceSystemID,
             ap.ScheduledStartTime,
             ap.ScheduledEndTime,
             ap.DiagnosisSerNum,
@@ -453,7 +453,7 @@ sub getTodaysPatientsAppointmentsFromOurDB
         SELECT DISTINCT
             ap.AppointmentSerNum,
             ap.AliasExpressionSerNum,
-            ap.AppointmentAriaSer,
+            ap.SourceSystemID,
             ap.ScheduledStartTime,
             ap.ScheduledEndTime,
             ap.DiagnosisSerNum,
@@ -525,7 +525,7 @@ sub getAllPatientsAppointmentsFromOurDB
         SELECT DISTINCT
             ap.AppointmentSerNum,
             ap.AliasExpressionSerNum,
-            ap.AppointmentAriaSer,
+            ap.SourceSystemID,
             ap.ScheduledStartTime,
             ap.ScheduledEndTime,
             ap.DiagnosisSerNum,
@@ -777,7 +777,7 @@ sub inOurDatabase
 		# Default the scheduled start and end time to 1970-01-01 00:00:00
 		my $inDB_sql = "
 			SELECT DISTINCT
-				AppointmentAriaSer,
+				SourceSystemID,
 				AliasExpressionSerNum,
 				if(ifnull(ScheduledStartTime, '1970-01-01 00:00:00') = '0000-00-00 00:00:00', '1970-01-01 00:00:00', ScheduledStartTime) as ScheduledStartTime,
 				if(ifnull(ScheduledEndTime, '1970-01-01 00:00:00') = '0000-00-00 00:00:00', '1970-01-01 00:00:00', ScheduledEndTime) as ScheduledEndTime,
@@ -794,7 +794,7 @@ sub inOurDatabase
 			FROM
 				Appointment
 			WHERE
-				AppointmentAriaSer      = '$sourceUID'
+				SourceSystemID      = '$sourceUID'
 	      AND SourceDatabaseSerNum    = '$sourceDBSer'
 		";
 
@@ -877,7 +877,7 @@ sub insertApptIntoOurDB
 				PatientSerNum,
 				CronLogSerNum,
                 SourceDatabaseSerNum,
-				AppointmentAriaSer,
+				SourceSystemID,
 				AliasExpressionSerNum,
                 Status,
                 State,
@@ -964,7 +964,7 @@ sub updateDatabase
             ReadStatus              = 0,
             CronLogSerNum 			= '$cronlogser'
 		WHERE
-			AppointmentAriaSer	    = '$sourceuid'
+			SourceSystemID	    = '$sourceuid'
         AND SourceDatabaseSerNum    = '$sourcedbser'
 		";
 
