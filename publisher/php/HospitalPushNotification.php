@@ -47,7 +47,7 @@
 
       /**
         *    sendRoomNotification($patientId, $room, $appointmentSerNum, $mrn, $site):
-        *    Consumes a PatientId or (MRN and Site), a room location, and an AppointmentAriaSer, it
+        *    Consumes a PatientId or (MRN and Site), a room location, and an SourceSystemID, it
         *    stores notification in database, updates appointment with room location, sends
         *    the notification to the pertinent devices that map to that particular patientId,
         *    and finally records the send status for the push notification.
@@ -60,7 +60,7 @@
         *             registrationId, deviceId) for each device, and Message array containing
         *             (title,description),  NotificationSerNum, and error if any.
         **/
-       public static function sendCallPatientNotification($patientId, $room, $appointmentAriaSer, $mrn = null, $site = null)
+       public static function sendCallPatientNotification($patientId, $room, $SourceSystemID, $mrn = null, $site = null)
        {
            global $pdo;
 
@@ -78,13 +78,13 @@
                         AND PHI.MRN = :patientId
                         and PHI.Hospital_Identifier_Type_Code = :sitecode
                         AND P.PatientSerNum = A.PatientSerNum 
-                        AND A.AppointmentAriaSer = :ariaSer
+                        AND A.SourceSystemID = :sourceSer
                     ";
            try{
                 $s = $pdo->prepare($sql);
                 $s->bindValue(':patientId', $patientId);
                 $s->bindValue(':sitecode', $wsSite);
-                $s->bindValue(':ariaSer', $appointmentAriaSer);
+                $s->bindValue(':sourceSer', $SourceSystemID);
                 $s->execute();
                 $result = $s->fetchAll();
            }catch(PDOException $e)
@@ -106,7 +106,7 @@
 
            //Update appointment room location in database
            try{
-               $sql = "UPDATE Appointment SET RoomLocation_EN = '".$room['room_EN']."', RoomLocation_FR = '".$room['room_FR']."' WHERE Appointment.AppointmentAriaSer = ".$appointmentAriaSer." AND Appointment.PatientSerNum = ".$patientSerNum;
+               $sql = "UPDATE Appointment SET RoomLocation_EN = '".$room['room_EN']."', RoomLocation_FR = '".$room['room_FR']."' WHERE Appointment.SourceSystemID = ".$SourceSystemID." AND Appointment.PatientSerNum = ".$patientSerNum;
                 $resultAppointment = $pdo->query($sql);
            }catch(PDOException $e)
            {

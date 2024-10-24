@@ -162,7 +162,7 @@ class OpalCheckin{
 
         // Get current patients appointments from OpalDB that exist in aria
         $sqlAria = "
-            Select A.AppointmentSerNum, A.AppointmentAriaSer
+            Select A.AppointmentSerNum, A.SourceSystemID
             From Patient_Hospital_Identifier PHI, Appointment A
             Where PHI.MRN = '$patientId'
                 And PHI.Hospital_Identifier_Type_Code = '$Site'
@@ -173,7 +173,7 @@ class OpalCheckin{
 
         // Get current patients appointments from OpalDB that exist in medivisit
         $sqlMediVisit = "
-            Select A.AppointmentSerNum, A.AppointmentAriaSer
+            Select A.AppointmentSerNum, A.SourceSystemID
             From Patient_Hospital_Identifier PHI, Appointment A
             Where PHI.MRN = '$patientId'
                 And PHI.Hospital_Identifier_Type_Code = '$Site'
@@ -229,7 +229,7 @@ class OpalCheckin{
 
         // Cross verify opalDB appointments with external DB appointments
         foreach ($appts as $apt){
-            if(in_array($apt['AppointmentAriaSer'], $ext_appts)){
+            if(in_array($apt['SourceSystemID'], $ext_appts)){
                 $success[] = $apt['AppointmentSerNum'];
             }
         }

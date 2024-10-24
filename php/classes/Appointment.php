@@ -357,7 +357,7 @@ class Appointment extends Module
         $toInsert = array(
             "PatientSerNum" => $patientSite["PatientSerNum"],
             "sourceName" => $source["SourceDatabaseName"],
-            "AppointmentAriaSer" => $post["sourceId"],
+            "SourceSystemID" => $post["sourceId"],
             "PrioritySerNum" => 0,
             "DiagnosisSerNum" => 0,
             "Status" => $post["status"],
@@ -470,7 +470,7 @@ class Appointment extends Module
      * @return void
      */
     protected function _updateAppointmentPending($toInsert) {
-        $pendingAppointment = $this->opalDB->findPendingAppointment($toInsert["SourceDatabaseSerNum"],$toInsert["AppointmentAriaSer"]);
+        $pendingAppointment = $this->opalDB->findPendingAppointment($toInsert["SourceDatabaseSerNum"],$toInsert["SourceSystemID"]);
         $this->opalDB->deleteAppointmentPending($pendingAppointment[0]["AppointmentSerNum"]);
     }
 
@@ -481,7 +481,7 @@ class Appointment extends Module
      * @return int Appointment ID (new or updated) set as pending
      */
     protected function _insertAppointmentPending($toInsert, &$source) {        
-        $pendingAppointment = $this->opalDB->findPendingAppointment($source["SourceDatabaseName"],$toInsert["AppointmentAriaSer"]);
+        $pendingAppointment = $this->opalDB->findPendingAppointment($source["SourceDatabaseName"],$toInsert["SourceSystemID"]);
         $toInsert["DateModified"] = date("Y-m-d H:i:s");
 
         if(count($pendingAppointment) > 0) {
@@ -495,7 +495,7 @@ class Appointment extends Module
     }
 
     protected function _insertAppointmentPendingMH($toInsert, &$source) {
-        $pendingAppointment = $this->opalDB->findPendingMHAppointment($source["SourceDatabaseName"],$toInsert["AppointmentAriaSer"]);        
+        $pendingAppointment = $this->opalDB->findPendingMHAppointment($source["SourceDatabaseName"],$toInsert["SourceSystemID"]);        
         unset($toInsert["DateAdded"]);        
 
         if(count($pendingAppointment) > 0) {
