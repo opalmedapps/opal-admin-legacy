@@ -3770,7 +3770,7 @@ class DatabaseOpal extends DatabaseAccess {
      */
     function getAppointmentForResource($appointmentAriaId, $sourceId) {
         return $this->_fetchAll(OPAL_GET_APPOINTMENT_FOR_RESOURCE, array(
-            array("parameter"=>":AppointmentAriaSer","variable"=>$appointmentAriaId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SourceSystemID","variable"=>$appointmentAriaId,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
         ));
     }
@@ -3916,7 +3916,7 @@ class DatabaseOpal extends DatabaseAccess {
     function updateCheckInForAppointment($source, $appointment) {
         return $this->_updateRecordIntoTable(UPDATE_APPOINTMENT_CHECKIN, array(
             "SourceDatabaseSerNum"=>$source,
-            "AppointmentAriaSer"=>$appointment,
+            "SourceSystemID"=>$appointment,
         ));
     }
 
@@ -3929,7 +3929,7 @@ class DatabaseOpal extends DatabaseAccess {
     function getFirstMrnSiteBySourceAppointment($source, $appointment) {
         return $this->_fetchAll(OPAL_GET_FIRST_MRN_SITE_BY_SOURCE_APPOINTMENT, array(
             array("parameter"=>":SourceDatabaseName","variable"=>$source,"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":AppointmentAriaSer","variable"=>$appointment,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SourceSystemID","variable"=>$appointment,"data_type"=>PDO::PARAM_STR),
         ));
     }
 
@@ -4008,7 +4008,7 @@ class DatabaseOpal extends DatabaseAccess {
 		$params = array(
             array("parameter"=>":AliasExpressionSerNum","variable"=>$toUpdate['AliasExpressionSerNum'],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$toUpdate['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":AppointmentAriaSer","variable"=>$toUpdate['AppointmentAriaSer'],"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SourceSystemID","variable"=>$toUpdate['SourceSystemID'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":PrioritySerNum","variable"=>$toUpdate['PrioritySerNum'],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":DiagnosisSerNum","variable"=>$toUpdate['DiagnosisSerNum'],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":Status","variable"=>$toUpdate['Status'],"data_type"=>PDO::PARAM_STR),
