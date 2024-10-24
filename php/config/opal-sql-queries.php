@@ -693,11 +693,11 @@ define("OPAL_GET_DOCUMENT_MH","
 ");
 
 define("OPAL_GET_APPOINTMENT_MH","
-    SELECT DISTINCT ae.ExpressionName AS expression_name, ae.Description AS expression_description, apmh.AppointmentRevSerNum AS revision, apmh.CronLogSerNum AS cron_serial, apmh.PatientSerNum AS patient_serial, sd.SourceDatabaseName AS source_db, apmh.AppointmentAriaSer AS source_uid, apmh.Status AS status, apmh.State AS state, apmh.ScheduledStartTime AS scheduled_start, apmh.ScheduledEndTime AS scheduled_end, apmh.ActualStartDate AS actual_start, apmh.ActualEndDate AS actual_end, apmh.RoomLocation_EN AS room_EN, apmh.RoomLocation_FR AS room_FR, apmh.Checkin AS checkin, apmh.DateAdded AS date_added, apmh.ReadStatus AS read_status, apmh.ModificationAction AS mod_action FROM ".OPAL_APPOINTMENT_MH_TABLE." apmh, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_SOURCE_DATABASE_TABLE." sd WHERE apmh.AliasExpressionSerNum = ae.AliasExpressionSerNum AND apmh.SourceDatabaseSerNum = sd.SourceDatabaseSerNum AND apmh.CronLogSerNum IN (%%LIST_IDS%%);
+    SELECT DISTINCT ae.ExpressionName AS expression_name, ae.Description AS expression_description, apmh.AppointmentRevSerNum AS revision, apmh.CronLogSerNum AS cron_serial, apmh.PatientSerNum AS patient_serial, sd.SourceDatabaseName AS source_db, apmh.SourceSystemID AS source_uid, apmh.Status AS status, apmh.State AS state, apmh.ScheduledStartTime AS scheduled_start, apmh.ScheduledEndTime AS scheduled_end, apmh.ActualStartDate AS actual_start, apmh.ActualEndDate AS actual_end, apmh.RoomLocation_EN AS room_EN, apmh.RoomLocation_FR AS room_FR, apmh.Checkin AS checkin, apmh.DateAdded AS date_added, apmh.ReadStatus AS read_status, apmh.ModificationAction AS mod_action FROM ".OPAL_APPOINTMENT_MH_TABLE." apmh, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_SOURCE_DATABASE_TABLE." sd WHERE apmh.AliasExpressionSerNum = ae.AliasExpressionSerNum AND apmh.SourceDatabaseSerNum = sd.SourceDatabaseSerNum AND apmh.CronLogSerNum IN (%%LIST_IDS%%);
 ");
 
 define("OPAL_GET_ALIAS_MH","
-    SELECT DISTINCT al.AliasType AS type, ae.ExpressionName AS expression_name, ae.Description AS expression_description, apmh.AppointmentRevSerNum AS revision, apmh.CronLogSerNum AS cron_serial, apmh.PatientSerNum AS patient_serial, sd.SourceDatabaseName AS source_db, apmh.AppointmentAriaSer AS source_uid, apmh.DateAdded AS date_added, apmh.ReadStatus AS read_status, apmh.ModificationAction AS mod_action FROM ".OPAL_APPOINTMENT_MH_TABLE." apmh, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_SOURCE_DATABASE_TABLE." sd, ".OPAL_ALIAS_TABLE." al WHERE apmh.AliasExpressionSerNum  = ae.AliasExpressionSerNum AND ae.AliasSerNum = al.AliasSerNum AND apmh.SourceDatabaseSerNum = sd.SourceDatabaseSerNum AND apmh.CronLogSerNum IN (%%LIST_IDS%%) UNION ALL SELECT DISTINCT al.AliasType AS type, ae.ExpressionName AS expression_name, ae.Description AS expression_description, docmh.DocumentRevSerNum AS revision, docmh.CronLogSerNum AS cron_serial, docmh.PatientSerNum AS patient_serial, sd.SourceDatabaseName AS source_db, docmh.DocumentId AS source_uid, docmh.DateAdded AS date_added, docmh.ReadStatus AS read_status, docmh.ModificationAction AS mod_action FROM ".OPAL_DOCUMENT_MH_TABLE." docmh, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_SOURCE_DATABASE_TABLE." sd, ".OPAL_ALIAS_TABLE." al WHERE docmh.AliasExpressionSerNum = ae.AliasExpressionSerNum AND ae.AliasSerNum = al.AliasSerNum AND docmh.SourceDatabaseSerNum = sd.SourceDatabaseSerNum AND docmh.CronLogSerNum IN (%%LIST_IDS%%) UNION ALL SELECT DISTINCT al.AliasType AS type, ae.ExpressionName AS expression_name, ae.Description AS expression_description, tmh.TaskRevSerNum AS revision, tmh.CronLogSerNum AS cron_serial, tmh.PatientSerNum AS patient_serial, sd.SourceDatabaseName AS source_db, tmh.TaskAriaSer AS source_uid, tmh.DateAdded AS date_added, 'N/A' AS read_status, tmh.ModificationAction AS mod_action FROM ".OPAL_TASK_MH_TABLE." tmh, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_SOURCE_DATABASE_TABLE." sd, ".OPAL_ALIAS_TABLE." al WHERE tmh.AliasExpressionSerNum = ae.AliasExpressionSerNum AND ae.AliasSerNum = al.AliasSerNum AND tmh.SourceDatabaseSerNum = sd.SourceDatabaseSerNum AND tmh.CronLogSerNum IN (%%LIST_IDS%%);
+    SELECT DISTINCT al.AliasType AS type, ae.ExpressionName AS expression_name, ae.Description AS expression_description, apmh.AppointmentRevSerNum AS revision, apmh.CronLogSerNum AS cron_serial, apmh.PatientSerNum AS patient_serial, sd.SourceDatabaseName AS source_db, apmh.SourceSystemID AS source_uid, apmh.DateAdded AS date_added, apmh.ReadStatus AS read_status, apmh.ModificationAction AS mod_action FROM ".OPAL_APPOINTMENT_MH_TABLE." apmh, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_SOURCE_DATABASE_TABLE." sd, ".OPAL_ALIAS_TABLE." al WHERE apmh.AliasExpressionSerNum  = ae.AliasExpressionSerNum AND ae.AliasSerNum = al.AliasSerNum AND apmh.SourceDatabaseSerNum = sd.SourceDatabaseSerNum AND apmh.CronLogSerNum IN (%%LIST_IDS%%) UNION ALL SELECT DISTINCT al.AliasType AS type, ae.ExpressionName AS expression_name, ae.Description AS expression_description, docmh.DocumentRevSerNum AS revision, docmh.CronLogSerNum AS cron_serial, docmh.PatientSerNum AS patient_serial, sd.SourceDatabaseName AS source_db, docmh.DocumentId AS source_uid, docmh.DateAdded AS date_added, docmh.ReadStatus AS read_status, docmh.ModificationAction AS mod_action FROM ".OPAL_DOCUMENT_MH_TABLE." docmh, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_SOURCE_DATABASE_TABLE." sd, ".OPAL_ALIAS_TABLE." al WHERE docmh.AliasExpressionSerNum = ae.AliasExpressionSerNum AND ae.AliasSerNum = al.AliasSerNum AND docmh.SourceDatabaseSerNum = sd.SourceDatabaseSerNum AND docmh.CronLogSerNum IN (%%LIST_IDS%%) UNION ALL SELECT DISTINCT al.AliasType AS type, ae.ExpressionName AS expression_name, ae.Description AS expression_description, tmh.TaskRevSerNum AS revision, tmh.CronLogSerNum AS cron_serial, tmh.PatientSerNum AS patient_serial, sd.SourceDatabaseName AS source_db, tmh.TaskAriaSer AS source_uid, tmh.DateAdded AS date_added, 'N/A' AS read_status, tmh.ModificationAction AS mod_action FROM ".OPAL_TASK_MH_TABLE." tmh, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_SOURCE_DATABASE_TABLE." sd, ".OPAL_ALIAS_TABLE." al WHERE tmh.AliasExpressionSerNum = ae.AliasExpressionSerNum AND ae.AliasSerNum = al.AliasSerNum AND tmh.SourceDatabaseSerNum = sd.SourceDatabaseSerNum AND tmh.CronLogSerNum IN (%%LIST_IDS%%);
 ");
 
 define("OPAL_GET_EMAILS_MH","
@@ -958,21 +958,21 @@ define("OPAL_GET_APPOINTMENT_ID", "
 SELECT *
 FROM ".OPAL_APPOINTMENTS_TABLE."
 WHERE SourceDatabaseSerNum=:SourceSystem
-AND AppointmentAriaSer=:SourceId
+AND SourceSystemID=:SourceId
 ");
 
 define("OPAL_GET_APPOINTMENT_PENDING_ID", "
 SELECT ID
 FROM ".OPAL_APPOINTMENTS_PENDING_TABLE."
 WHERE sourceName=:SourceSystem
-AND AppointmentAriaSer=:SourceId
+AND SourceSystemID=:SourceId
 ");
 
 
 define("OPAL_GET_APPOINTMENT_PENDING", "
 SELECT ID, PatientSerNum, sourceName, 
 appointmentTypeCode, appointmentTypeDescription, 
-AppointmentAriaSer, PrioritySerNum, DiagnosisSerNum, 
+SourceSystemID, PrioritySerNum, DiagnosisSerNum, 
 Status, State, ScheduledStartTime, ScheduledEndTime, 
 ActualStartDate, ActualEndDate, Location, 
 RoomLocation_EN, RoomLocation_FR, Checkin, 
@@ -980,19 +980,19 @@ ChangeRequest, DateAdded, DateModified, ReadStatus,
 Level, SessionId, updatedBy, LastUpdated
 FROM ".OPAL_APPOINTMENTS_PENDING_TABLE."
 WHERE sourceName=:SourceSystem
-AND AppointmentAriaSer=:SourceId
+AND SourceSystemID=:SourceId
 ");
 
 define("OPAL_GET_APPOINTMENT_PENDING_MH_ID", "
 SELECT AppointmentPendingId
 FROM ".OPAL_APPOINTMENTS_PENDING_MH_TABLE."
 WHERE sourceName=:SourceSystem
-AND AppointmentAriaSer=:SourceId
+AND SourceSystemID=:SourceId
 ");
 
 define("OPAL_GET_APPOINTMENT_PENDING_MH", "
 SELECT AppointmentPendingId, revisionId, ACTION, PatientSerNum, 
-sourceName, AppointmentAriaSer, PrioritySerNum, 
+sourceName, SourceSystemID, PrioritySerNum, 
 DiagnosisSerNum, Status, State, ScheduledStartTime, 
 ScheduledEndTime, ActualStartDate, ActualEndDate, 
 Location, RoomLocation_EN, RoomLocation_FR, Checkin, Level, 
@@ -1000,7 +1000,7 @@ ChangeRequest, PendingDate, ProcessedDate, ReadStatus,
 SessionId, LastUpdated
 FROM ".OPAL_APPOINTMENTS_PENDING_MH_TABLE."
 WHERE sourceName=:SourceSystem
-AND AppointmentAriaSer=:SourceId
+AND SourceSystemID=:SourceId
 ");
 
 define("OPAL_DELETE_APPOINTMENT_PENDING","
@@ -1011,7 +1011,7 @@ define("OPAL_GET_APPOINTMENT", "
     SELECT DISTINCT phi.PatientSerNum,
     hm.MapUrl,hm.MapURL_EN,hm.MapURL_FR,hm.MapName_EN,hm.MapName_FR,hm.MapDescription_EN,hm.MapDescription_FR,
     a.ScheduledStartTime AS starttime, a.ScheduledEndTime AS endtime,
-    a.checkin,a.SourceDatabaseSerNum,a.AppointmentAriaSer,em.ReadStatus,
+    a.checkin,a.SourceDatabaseSerNum,a.SourceSystemID,em.ReadStatus,
     a.Status ,
     a.RoomLocation_EN,a.RoomLocation_FR,
     ac.CheckinPossible,ac.CheckinInstruction_EN,ac.CheckinInstruction_FR,
@@ -1777,7 +1777,7 @@ AND phi.MRN = :MRN AND phi.Hospital_Identifier_Type_Code = :Hospital_Identifier_
 ";
 
 const OPAL_GET_APPOINTMENT_FOR_RESOURCE = "
-    SELECT * FROM " . OPAL_APPOINTMENTS_TABLE . " WHERE AppointmentAriaSer = :AppointmentAriaSer AND SourceDatabaseSerNum = :SourceDatabaseSerNum;
+    SELECT * FROM " . OPAL_APPOINTMENTS_TABLE . " WHERE SourceSystemID = :SourceSystemID AND SourceDatabaseSerNum = :SourceDatabaseSerNum;
 ";
 
 const OPAL_GET_RESOURCE_PENDING = "
@@ -1808,13 +1808,13 @@ const UPDATE_RESOURCE_PENDING_LEVEL_IN_PROCESS = "
     UPDATE ".OPAL_RESOURCE_PENDING_TABLE." rp SET rp.`level` = ".RESOURCE_LEVEL_IN_PROCESS.", updatedBy = :updatedBy
     WHERE ( SELECT COUNT(*) AS total FROM ".OPAL_APPOINTMENTS_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s
     ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum WHERE s.SourceDatabaseName = rp.sourceName AND
-    s.Enabled = ".ACTIVE_RECORD." AND a.AppointmentAriaSer = rp.appointmentId AND rp.`level` = ".RESOURCE_LEVEL_READY.") = 1
+    s.Enabled = ".ACTIVE_RECORD." AND a.SourceSystemID = rp.appointmentId AND rp.`level` = ".RESOURCE_LEVEL_READY.") = 1
 ";
 
 const GET_OLDEST_RESOURCE_PENDING_IN_PROCESS = "
     SELECT rp.*, (SELECT a.AppointmentSerNum FROM ".OPAL_APPOINTMENTS_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s
     ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum WHERE s.SourceDatabaseName = rp.sourceName AND s.Enabled = 1 AND
-    a.AppointmentAriaSer = rp.appointmentId) AS AppointmentSerNum, (SELECT s1.SourceDatabaseSerNum FROM
+    a.SourceSystemID = rp.appointmentId) AS AppointmentSerNum, (SELECT s1.SourceDatabaseSerNum FROM
     ".OPAL_SOURCE_DATABASE_TABLE." s1 WHERE s1.SourceDatabaseName = rp.sourceName AND s1.Enabled = 1) AS SourceDatabaseSerNum
     FROM ".OPAL_RESOURCE_PENDING_TABLE." rp WHERE rp.`level` = 2 ORDER BY creationDate ASC LIMIT 1;
 ";
@@ -1823,14 +1823,14 @@ const OPAL_DELETE_RESOURCE_PENDING = "DELETE FROM " . OPAL_RESOURCE_PENDING_TABL
 
 const UPDATE_APPOINTMENT_CHECKIN = "
     UPDATE ".OPAL_APPOINTMENTS_TABLE." SET Checkin = ".CHECKED_IN." WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum
-    AND AppointmentAriaSer = :AppointmentAriaSer AND Checkin = ".NOT_CHECKED_IN.";
+    AND SourceSystemID = :SourceSystemID AND Checkin = ".NOT_CHECKED_IN.";
 ";
 
 const OPAL_GET_FIRST_MRN_SITE_BY_SOURCE_APPOINTMENT = "
     SELECT phi.Hospital_Identifier_Type_Code AS site, phi.MRN AS mrn FROM ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi
     LEFT JOIN ".OPAL_APPOINTMENTS_TABLE." a ON a.PatientSerNum = phi.PatientSerNum
     LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum
-    WHERE s.SourceDatabaseName = :SourceDatabaseName AND a.AppointmentAriaSer = :AppointmentAriaSer AND
+    WHERE s.SourceDatabaseName = :SourceDatabaseName AND a.SourceSystemID = :SourceSystemID AND
     Is_Active = ".ACTIVE_RECORD." LIMIT 1;
 ";
 
@@ -1851,13 +1851,13 @@ const UPDATE_APPOINTMENT_PENDING_LEVEL_IN_PROCESS = "
     UPDATE ".OPAL_APPOINTMENTS_PENDING_TABLE." ap SET ap.`level` = ".APPOINTMENT_LEVEL_IN_PROCESS.", updatedBy = :updatedBy
     WHERE ( SELECT COUNT(*) AS total FROM ".OPAL_APPOINTMENTS_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s
     ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum WHERE s.SourceDatabaseName = ap.sourceName AND
-    s.Enabled = ".ACTIVE_RECORD." AND a.AppointmentAriaSer = ap.AppointmentAriaSer AND ap.`level` = ".APPOINTMENT_LEVEL_READY.") = 1
+    s.Enabled = ".ACTIVE_RECORD." AND a.SourceSystemID = ap.SourceSystemID AND ap.`level` = ".APPOINTMENT_LEVEL_READY.") = 1
 ";
 
 const GET_OLDEST_APPOINTMENT_PENDING_IN_PROCESS = "
     SELECT ap.*, (SELECT a.AppointmentSerNum FROM ".OPAL_APPOINTMENTS_TABLE." a LEFT JOIN ".OPAL_SOURCE_DATABASE_TABLE." s
     ON s.SourceDatabaseSerNum = a.SourceDatabaseSerNum WHERE s.SourceDatabaseName = ap.sourceName AND s.Enabled = 1 AND
-    a.AppointmentAriaSer = ap.AppointmentAriaSer) AS AppointmentSerNum, (SELECT s1.SourceDatabaseSerNum FROM
+    a.SourceSystemID = ap.SourceSystemID) AS AppointmentSerNum, (SELECT s1.SourceDatabaseSerNum FROM
     ".OPAL_SOURCE_DATABASE_TABLE." s1 WHERE s1.SourceDatabaseName = ap.sourceName AND s1.Enabled = 1) AS SourceDatabaseSerNum
     FROM ".OPAL_APPOINTMENTS_PENDING_TABLE." ap WHERE ap.`level` = 1 ORDER BY DateAdded ASC;
 ";
@@ -1955,7 +1955,7 @@ const OPAL_UPDATE_APPOINTMENT = "
 UPDATE " .OPAL_APPOINTMENTS_TABLE. " SET 
 AliasExpressionSerNum = :AliasExpressionSerNum,    
 SourceDatabaseSerNum = :SourceDatabaseSerNum,
-AppointmentAriaSer = :AppointmentAriaSer ,
+SourceSystemID = :SourceSystemID ,
 PrioritySerNum = :PrioritySerNum,
 DiagnosisSerNum = :DiagnosisSerNum,
 Status = :Status,
