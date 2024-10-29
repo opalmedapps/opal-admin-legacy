@@ -2000,10 +2000,16 @@ LastUpdated = :LastUpdated
 WHERE DocumentSerNum = :DocumentSerNum AND PatientSerNum = :PatientSerNum;
 ";
 
-const OPAL_GET_DOCTOR_RESOURCE = "
+const OPAL_GET_ARIA_DOCTOR_RESOURCE = "
     SELECT ResourceSerNum,SourceDatabaseSerNum,ResourceAriaSer,ResourceCode,ResourceName,ResourceType
      FROM ".OPAL_RESOURCE_TABLE." WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum 
-     AND (ResourceAriaSer =:ResourceId OR ResourceCode = :ResourceId);
+     AND ResourceAriaSer = :ResourceId;
+";
+
+const OPAL_GET_NON_ARIA_DOCTOR_RESOURCE = "
+    SELECT ResourceSerNum,SourceDatabaseSerNum,ResourceAriaSer,ResourceCode,ResourceName,ResourceType
+     FROM ".OPAL_RESOURCE_TABLE." WHERE SourceDatabaseSerNum = :SourceDatabaseSerNum 
+     AND ResourceCode = :ResourceId;
 ";
 
 const OPAL_GET_DOCTOR = " 

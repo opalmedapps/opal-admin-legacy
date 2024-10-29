@@ -111,7 +111,11 @@ class TriggerDoctor extends Trigger
             $errCode = "1" . $errCode;
         } else {
             $errCode = "0" . $errCode;
-            $resource = $this->opalDB->getDoctorResource($source["SourceDatabaseSerNum"], $post["resourceId"]);
+            if ($post["sourceSystem"] == 'Aria') {
+                $resource = $this->opalDB->getAriaDoctorResource($source["SourceDatabaseSerNum"], $post["resourceId"]);
+            } else {
+                $resource = $this->opalDB->getNonAriaDoctorResource($source["SourceDatabaseSerNum"], $post["resourceId"]);
+            }
             
             if ($resource === false) {
                 $errCode = $errCode . '1';
@@ -176,7 +180,11 @@ class TriggerDoctor extends Trigger
      */
     protected function _updateResource(&$post, &$source, &$resourceData)
     {
-        $resource = $this->opalDB->getDoctorResource($source["SourceDatabaseSerNum"], $post["resourceId"]);
+        if ($post["sourceSystem"] == 'Aria') {
+            $resource = $this->opalDB->getAriaDoctorResource($source["SourceDatabaseSerNum"], $post["resourceId"]);
+        } else {
+            $resource = $this->opalDB->getNonAriaDoctorResource($source["SourceDatabaseSerNum"], $post["resourceId"]);
+        }
 
         if ($resource === false) {
             $resourceData = array(
@@ -217,7 +225,6 @@ class TriggerDoctor extends Trigger
 
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
-
         $this->_updateResource($post, $source, $resourceData);
 
         $doctor = $this->opalDB->getDoctor($resourceData["ResourceSerNum"]);
