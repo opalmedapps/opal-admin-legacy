@@ -42,34 +42,49 @@ class User extends Module {
      * @return  $result (array) details of the user info.
      * */
     protected function _userLoginActiveDirectory($username, $password) {
-
-        $result = $this->opalDB->authenticateUserAD($username);
-        $result = $this->_validateUserAuthentication($result, $username);
-
-        $settingsAD = json_encode(ACTIVE_DIRECTORY_SETTINGS);
-        $settingsAD = str_replace("%%USERNAME%%", $username, $settingsAD);
-        $settingsAD = str_replace("%%PASSWORD%%", $password, $settingsAD);
-        $settingsAD = json_decode($settingsAD, true);
-
-        $fieldString = "";
-        foreach($settingsAD as $key=>$value) {
-            $fieldString .= $key.'='.urlencode($value).'&';
-        }
-        $fieldString = substr($fieldString, 0, -1);
-
-        $api = new ApiCall(MSSS_ACTIVE_DIRECTORY_CONFIG);
-        $api->setPostFields($fieldString);
-        $api->execute();
-        $requestResult = json_decode($api->getAnswer(), true);
-
-        if(!$requestResult["authenticate"]) {
+        // Ensure that the username exists
+        $users = $this->opalDB->authenticateUserAD($username);
+        if (count($users) != 1) {
             HelpSetup::getModuleMethodName($moduleName, $methodeName);
             $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Wrong username and/or password.");
-        } else if (count($this->opalDB->authenticateUserAccess($username)) != 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Wrong username and/or password.");
+        }
 
-        return $result;
+        
+        $backendApi = new NewOpalApiCall(
+            '/api/auth/login/',
+            'POST',
+            'en',
+            json_encode([
+                "username" => $username,
+                "password" => $password,
+            ]),
+            'Content-Type: application/json',
+        );
+
+        $response = $backendApi->execute();
+
+        // login failed
+        if ($backendApi->getHttpCode() == HTTP_STATUS_BAD_REQUEST_ERROR && $backendApi->getError()) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $backendApi->getError());
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Wrong username and/or password.");
+        }
+        // other errors 
+        else if ($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS && $backendApi->getError())
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to New Backend " . $backendApi->getError());
+        else if ($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS) {
+            HelpSetup::returnErrorMessage($backendApi->getHttpCode(), "Error from New Backend: " . $response["error"]);
+        }
+
+        // pass the Set-Cookie headers to the user
+        $headers = $backendApi->getHeaders()['set-cookie'];
+        
+        foreach ($headers as $cookie) {
+            header("Set-Cookie: " . $cookie);
+        }
+
+        return $users[0];
     }
 
     /*
@@ -175,10 +190,7 @@ class User extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
         }
 
-        if(AD_LOGIN_ACTIVE)
-            $result = $this->_userLoginActiveDirectory($username, $password);
-        else
-            $result = $this->_userLoginLegacy($username, $password);
+        $result = $this->_userLoginActiveDirectory($username, $password);
 
         $_SESSION["ID"] = $result["id"];
         $_SESSION["username"] = $result["username"];
