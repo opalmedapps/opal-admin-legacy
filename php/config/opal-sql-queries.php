@@ -418,7 +418,7 @@ define("SQL_OPAL_VALIDATE_SYSTEM_OAUSER_LOGIN","
 ");
 
 define("SQL_OPAL_VALIDATE_OAUSER_LOGIN_AD","
-    SELECT * FROM ".OPAL_LOGIN_VIEW." WHERE username = :username AND type = " . HUMAN_USER . ";
+    SELECT id, username, language, role, type FROM ".OPAL_LOGIN_VIEW." WHERE username = :username AND type = " . HUMAN_USER . ";
 ");
 
 define("SQL_OPAL_VALIDATE_OAUSER_ACCESS","
