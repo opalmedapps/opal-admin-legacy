@@ -77,27 +77,17 @@ angular.module('opalAdmin', [
 
 		var authService = {};
 
-		authService.login = async function (username, password) {
-			// Log in to the old Opal Admin API
-			let response;
-			
-			try {
-				response = await $http.post(
-					"user/validate-login",
-					$.param({
-						username: username,
-						password: password,
-					}),
-					{
-						headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-					}
-				);
-			} catch (error) {
-				// error is the error response
-				response = error;
-			}
-
-			return response;
+		authService.login = function (username, password) {
+			return $http.post(
+				"user/validate-login",
+				$.param({
+					username: username,
+					password: password,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		}
 
 		authService.isAuthenticated = function () {
