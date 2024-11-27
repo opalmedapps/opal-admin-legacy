@@ -371,7 +371,6 @@ RewriteRule ^user/get/user-activity-logs php/user/get.user_activity_logs.php [QS
 RewriteRule ^user/get/user-details php/user/get.user_details.php [QSA,L]
 RewriteRule ^user/get/users php/user/get.users.php [QSA,L]
 RewriteRule ^user/insert/user php/user/insert.user.php [QSA,L]
-RewriteRule ^user/login-registration php/user/user.login.registration.php [QSA,L]
 RewriteRule ^user/logout php/user/logout.php [QSA,L]
 RewriteRule ^user/system-login php/user/system.user.login.php [QSA,L]
 RewriteRule ^user/update/language php/user/update.language.php [QSA,L]
