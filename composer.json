@@ -2,7 +2,7 @@
     "name": "integrator/opal-admin",
     "description": "Libraries required for OpalAdmin",
     "require": {
-        "google/auth": "1.42.0",
+        "google/auth": "1.43.0",
         "kreait/firebase-php": "7.15.0",
         "vlucas/phpdotenv": "5.6.1"
     }
