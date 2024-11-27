@@ -33,24 +33,13 @@ class User extends Module {
         return $result;
     }
 
-    /*
-     * Authentication with the Active Directory system. Check first if the user exists in opalDB. If not, no need to
-     * make and external call and throw the exception. Then, prepare the settings for the AD by inserting username and
-     * password. Wait for the answer, and if any problem, throw an exception. Otherwise, return the user info.
-     * @params  $username (string) duh!
-     *          $password (string) DUH!
-     * @return  $result (array) details of the user info.
-     * */
-    protected function _userLoginActiveDirectory($username, $password) {
-        // Ensure that the username exists
-        $users = $this->opalDB->authenticateUserAD($username);
-        if (count($users) != 1) {
-            HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
-            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Wrong username and/or password.");
-        }
-
-        
+    /**
+     * Log user in on backend.
+     * 
+     * @param $username the username
+     * @param $password the password
+     */
+    protected function _loginBackend($username, $password) {
         $backendApi = new NewOpalApiCall(
             '/api/auth/login/',
             'POST',
@@ -76,6 +65,28 @@ class User extends Module {
         else if ($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS) {
             HelpSetup::returnErrorMessage($backendApi->getHttpCode(), "Error from New Backend: " . $response["error"]);
         }
+
+        return $backendApi;
+    }
+
+    /*
+     * Authentication with the Active Directory system. Check first if the user exists in opalDB. If not, no need to
+     * make and external call and throw the exception. Then, prepare the settings for the AD by inserting username and
+     * password. Wait for the answer, and if any problem, throw an exception. Otherwise, return the user info.
+     * @params  $username (string) duh!
+     *          $password (string) DUH!
+     * @return  $result (array) details of the user info.
+     * */
+    protected function _userLogin($username, $password) {
+        // Ensure that the username exists
+        $users = $this->opalDB->authenticateUserAD($username);
+        if (count($users) != 1) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Wrong username and/or password.");
+        }
+
+        $backendApi = $this->_loginBackend($username, $password);
 
         // pass the Set-Cookie headers to the user
         $headers = $backendApi->getHeaders()['set-cookie'];
@@ -190,7 +201,7 @@ class User extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
         }
 
-        $result = $this->_userLoginActiveDirectory($username, $password);
+        $result = $this->_userLogin($username, $password);
 
         $_SESSION["ID"] = $result["id"];
         $_SESSION["username"] = $result["username"];
@@ -324,58 +335,6 @@ class User extends Module {
     }
 
     /*
-     * Login for registration of patient. Before each inscription, the login of the user must be validated. Validation
-     * is made base on the Patient module write access. If the user got a valid user/pass and correct access level
-     * (read and write), then it is authorized to proceed. Otherwise, return error 401. No matter what, logs the result
-     * in the audit table.
-     * @param   $post (array) contains username, password
-     * @return  200 (success), 401 (denied) or 500 (server error, oops!)
-     * */
-    public function userLoginRegistration($post) {
-        $data = HelpSetup::arraySanitization($post);
-
-        if(!is_array($data)) {
-            HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>"UNKNOWN USER"), ACCESS_DENIED, "UNKNOWN USER");
-            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
-        }
-
-        $username = $data["username"];
-        $password = $data["password"];
-
-        if($username == "" || $password == "") {
-            HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>($data["username"] ? $data["username"] : "UNKNOWN USER")), ACCESS_DENIED, ($data["username"] ? $data["username"] : "UNKNOWN USER"));
-            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
-        }
-
-        if(AD_LOGIN_ACTIVE)
-            $resultUser = $this->_userLoginActiveDirectory($username, $password);
-        else
-            $resultUser = $this->_userLoginLegacy($username, $password);
-
-        $this->_connectAsMain($resultUser["id"]);
-
-        HelpSetup::getModuleMethodName($moduleName, $methodeName);
-        $result = $this->opalDB->getUserAccessRegistration($resultUser["role"]);
-
-        if(count($result) != 1) {
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
-            HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "No access found. Please contact your administrator.");
-        }
-        $result = $result[0];
-
-        if(!(($result["access"] >> 1) & 1) || !(($result["operation"] >> 1) & 1)) {
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
-            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Access denied.");
-        }
-
-        $this->_logActivity($resultUser["id"], HelpSetup::makeSessionId(), 'LoginRegistration');
-        $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_GRANTED, $username);
-        return HTTP_STATUS_SUCCESS;
-    }
-
-    /*
      * Logs the user out by logging it in the logActivity.
      * @params  void
      * @return  answer from the log activity
@@ -412,7 +371,7 @@ class User extends Module {
         if($confimPassword != $password)
             array_push($errMsgs, "Password and password confirmation do not match.");
 
-        $length = (strlen($password) >= 8);
+        $length = (strlen($password) >= 12);
         $special = preg_match('#[\W]+#', $password);
         $number = preg_match("#[0-9]+#",$password);
         $upper = preg_match("#[A-Z]+#",$password);
@@ -431,7 +390,6 @@ class User extends Module {
      * @return  number of updated record
      * */
     public function updatePassword($post) {
-        $this->checkWriteAccess(ENCRYPTED_DATA);
         $post = HelpSetup::arraySanitization($post);
 
         $username = $this->opalDB->getUserDetails($post["OAUserId"]);
@@ -447,16 +405,33 @@ class User extends Module {
         if(count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
 
-        $result = $this->opalDB->authenticateUserLegacy($username, hash("sha256", $oldPassword . USER_SALT));
-        if(count($result) < 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid username/password.");
-        else if(count($result) > 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Somethings's wrong. There is too many entries!");
+        $this->_loginBackend($username, $oldPassword);
 
-        $result = $result[0];
+        $backendApi = new NewOpalApiCall(
+            '/api/auth/password/change/',
+            'POST',
+            'en',
+            json_encode([
+                "new_password1" => $password,
+                "new_password2" => $confirmPassword,
+            ]),
+            'Content-Type: application/json',
+        );
 
-        $updated = $this->opalDB->updateUserPassword($result["id"], hash("sha256", $password . USER_SALT));
-        return $updated;
+        $response = $backendApi->execute();
+
+        // login failed
+        if ($backendApi->getHttpCode() == HTTP_STATUS_BAD_REQUEST_ERROR && $backendApi->getError()) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Update failed.");
+        }
+        // other errors 
+        else if ($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS && $backendApi->getError())
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to New Backend " . $backendApi->getError());
+        else if ($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS) {
+            HelpSetup::returnErrorMessage($backendApi->getHttpCode(), "Error from New Backend: " . $response["error"]);
+        }
+
+        return 1;
     }
 
     /*
@@ -493,7 +468,7 @@ class User extends Module {
         if(!is_array($userDetails))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid user.");
 
-        if(!AD_LOGIN_ACTIVE || intval($userDetails["type"]) == 2) {
+        if(intval($userDetails["type"]) == 2) {
             if($data["password"] && $data["confirmPassword"]) {
                 $result = $this->_passwordValidation($data["password"], $data["confirmPassword"]);
                 if (count($result) > 0)
@@ -511,6 +486,12 @@ class User extends Module {
 
         $this->opalDB->updateUserInfo($userDetails["serial"], $data["language"], $data["roleId"]);
 
+        // call new backend api function to update the users and their groups
+        $this->_updateUserNewBackend($post);
+
+        // call new backend api function to update user manager group according to the role assigned to them
+        $this->_checkUpdateUserPrivilege($post);
+
         return true;
     }
 
@@ -520,19 +501,25 @@ class User extends Module {
      * user.
      * @param $post array - contains all the user info
      */
-    public function updateUserNewBackend($post) {
-        $language = strtolower($_POST['language']);
+    protected function _updateUserNewBackend($post) {
+        $language = strtolower($post['language']);
+
+        $payload = [
+            "username" => $post['edited_username'],
+        ];
+        
+        if (!empty($post["password"]) && !empty($post["confirmPassword"])) {
+            $payload["password"] = $post['password'];
+            $payload["password2"] = $post['confirmPassword'];
+        }
+
         // check if no groups are selected by the user
-        if(!empty($_POST['selected_additionalprivileges']['groups']))
-            $payload = [
-                "username"=>$_POST['edited_username'],
-                "groups"=>$_POST['selected_additionalprivileges']['groups'],
-            ];
-        else
-            $payload = [
-                "username"=>$_POST['edited_username'],
-                "groups"=>[],
-            ];
+        if(!empty($post['selected_additionalprivileges']['groups'])) {
+            $payload["groups"] = $post['selected_additionalprivileges']['groups'];
+        } else {
+            $payload["groups"] = [];
+        }
+
         // set the payload in json format
         $json_payload= json_encode($payload);
         $backendApi = new NewOpalApiCall(
@@ -558,8 +545,8 @@ class User extends Module {
      * manager user in new backend. Otherwise, remove them from manager users group.
      * @param $post array - contains all the user info
      */
-    public function checkUpdateUserPrivilege($post) {
-        $language = strtolower($_POST['language']);
+    protected function _checkUpdateUserPrivilege($post) {
+        $language = strtolower($post['language']);
         $user_to_update = HelpSetup::arraySanitization($post);
         $username = "";
 
@@ -633,10 +620,11 @@ class User extends Module {
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicate usernames found.");
 
-        if (!AD_LOGIN_ACTIVE || $type == 2)
-            $this->_prepareUserWithPassword($type, $username, $password, $confirmPassword, $language, $roleId, $isInsert);
-        else
-            $this->_insertUpdateUser($type, $username, $language, HelpSetup::generateRandomString(), $roleId, $isInsert);
+        $this->_prepareUserWithPassword($type, $username, $password, $confirmPassword, $language, $roleId, $isInsert);
+        // call new backend api function to insert the new users and their groups
+        $this->_insertUserNewBackend($post);
+        // call new backend api function to update user manager group according to the role assigned to them
+        $this->_checkUpdateUserPrivilege($post);
     }
     /**
      * Insert a new user into the new backend by calling the endpoint `/api/users/`. Use a predefined `NewOpalApiCall.php`
@@ -644,19 +632,20 @@ class User extends Module {
      * user.
      * @param $post array - contains all the user info
      */
-    public function insertUserNewBackend($post) {
-        $language = strtolower($_POST['language']);
+    protected function _insertUserNewBackend($post) {
+        $language = strtolower($post['language']);
+        $payload = [
+            "username"=>$post['username'],
+            "password"=>$post['password'],
+            "password2"=>$post['confirmPassword'],
+        ];
+
         // check if no groups are selected by the user
-        if(!empty($_POST['additionalprivileges']['groups']))
-            $payload = [
-                "username"=>$_POST['username'],
-                "groups"=>$_POST['additionalprivileges']['groups'],
-            ];
-        else
-            $payload = [
-                "username"=>$_POST['username'],
-                "groups"=>[],
-            ];
+        if(!empty($post['additionalprivileges']['groups'])) {
+            $payload["groups"] = $post['additionalprivileges']['groups'];
+        } else {
+            $payload["groups"] = [];
+        }
         // set the payload in json format
         $json_payload= json_encode($payload);
 
@@ -773,6 +762,9 @@ class User extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "An user cannot delete itself.");
 
         $this->opalDB->markUserAsDeleted($userId);
+
+        // when user is marked as deleted successfully in the legacy opaladmin, call new backend api to deactivate user
+        $this->_deleteUserNewBackend($_POST);
     }
 
     /**
@@ -783,14 +775,15 @@ class User extends Module {
      * @params  $post (array) data receive from the front in $_POST method
      * @return void or api response if fails to accomplish the deactivation.
      */
-    public function deleteUserNewBackend($post) {
-        $language = strtolower($_POST['language']);
-        $username=strip_tags($_POST["username"]);
+    protected function _deleteUserNewBackend($post) {
+        $post = HelpSetup::arraySanitization($post);
+
+        $username = strip_tags($post["username"]);
 
          $backendApi = new NewOpalApiCall(
                 '/api/users/' . $username . '/' . 'deactivate-user/',
                 'PUT',
-                $language,
+                'en',
                 '',
                 'Content-Type: application/json',
             );
