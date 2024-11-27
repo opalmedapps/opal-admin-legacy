@@ -113,7 +113,6 @@ RewriteRule ^application/update/source-databases php/application/update.source_d
 
 # Appointment Section
 RewriteRule ^appointment/get/appointments php/appointment/get.appointments.php [QSA,L]
-RewriteRule ^appointment/update/appointment-check-in php/appointment/update.appointment.check.in.php [QSA,L]
 RewriteRule ^appointment/update/appointment-status php/appointment/update.appointment.status.php [QSA,L]
 RewriteRule ^appointment/update/appointment php/appointment/update.appointment.php [QSA,L]
 RewriteRule ^appointment/delete/appointment php/appointment/delete.appointment.php [QSA,L]
@@ -126,7 +125,6 @@ RewriteRule ^audit/get/audits php/audit/get.audits.php [QSA,L]
 
 # Cron Job section
 RewriteRule ^cron-job/update/resource-pending php/cron-job/update.resource.pending.php [QSA,L]
-RewriteRule ^cron-job/update/appointment-check-in php/cron-job/update.appointment.check.in.php [QSA,L]
 RewriteRule ^cron-job/update/appointment-pending php/cron-job/update.appointment.pending.php [QSA,L]
 RewriteRule ^cron-job/add/audit-system-backup php/cron-job/add.audit.system.backup.php [QSA,L]
 
