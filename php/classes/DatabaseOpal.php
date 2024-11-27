@@ -3908,19 +3908,6 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Update the check-in of an appointment to checked if it was not checked and returned the number of affected rows
-     * @param $source int - source database ID
-     * @param $appointment - external appointment ID
-     * @return int - number of row affected
-     */
-    function updateCheckInForAppointment($source, $appointment) {
-        return $this->_updateRecordIntoTable(UPDATE_APPOINTMENT_CHECKIN, array(
-            "SourceDatabaseSerNum"=>$source,
-            "SourceSystemID"=>$appointment,
-        ));
-    }
-
-    /**
      * Get the first site and mrn found based on its source and appointment ID. Used to send push notification.
      * @param $source int - source database ID
      * @param $appointment - external appointment ID

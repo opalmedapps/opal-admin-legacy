@@ -178,80 +178,6 @@ abstract class OpalProject
         $this->opalDB->insertResourcesForAppointment($resourceAppointmentList);
     }
 
-    /**
-     * Validate and sanitize appointment check-in info.
-     * @param $post - data for the resource to validate
-     * @param $source - contains source details
-     * @param $appointment - contains appointment details (if exists)
-     * @param $patientInfo - contains patient info (if exists)
-     * Validation code :    Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit information
-     *                      are coded from right to left:
-     *                      1: source name missing or invalid
-     *                      2: appointment missing
-     *                      3: Duplicate appointments have being found. Contact the administrator ASAP.
-     *                      4: MRN and site not found.
-     * @return string - error code
-     */
-    protected function _validateAppointmentCheckIn(&$post, &$source, &$appointment, &$patientInfo) {
-        $errCode = "";
-
-        if (is_array($post)) {
-            // 1st bit
-            if (!array_key_exists("source", $post) || $post["source"] == "") {
-                if(!array_key_exists("source", $post)) $post["source"] = "";
-                $errCode = "1" . $errCode;
-            }
-            else {
-                $source = $this->opalDB->getSourceDatabaseDetails($post["source"]);
-                if(count($source) < 1) {
-                    $errCode = "1" . $errCode;
-                    $source = array();
-                }
-                else if(count($source) == 1) {
-                    $source = $source[0];
-                    $errCode = "0" . $errCode;
-                }
-                else
-                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates sources found. Contact your administrator.");
-            }
-
-            // 2nd bit
-            if (!array_key_exists("appointment", $post) || $post["appointment"] == "") {
-                if(!array_key_exists("appointment", $post)) $post["appointment"] = "";
-                $errCode = "1" . $errCode;
-            }
-            else
-                $errCode = "0" . $errCode;
-
-            // 3rd bit
-            if(bindec($errCode) == 0) {
-                $appointment = $this->opalDB->getAppointmentForResource($post["appointment"], $source["SourceDatabaseSerNum"]);
-                if(count($appointment) > 1)
-                    $errCode = "1" . $errCode;
-                else {
-                    if(count($appointment) == 1)
-                        $appointment = $appointment[0];
-                    $errCode = "0" . $errCode;
-                }
-
-                // 4th bit
-                $patientInfo = $this->opalDB->getFirstMrnSiteBySourceAppointment($post["source"], $post["appointment"]);
-                if(count($patientInfo) < 1)
-                    $errCode = "1" . $errCode;
-                else {
-                    $patientInfo = $patientInfo[0];
-                    $errCode = "0" . $errCode;
-                }
-
-            } else
-                $errCode = "1" . $errCode;
-			
-        } else
-            $errCode .= "1111";
-
-        return $errCode;
-    }
-
     protected function _notifyChange($data, $action, $dynamicKeys, $refTableId){
         // NOTE: The same functionality already exists in Perl (PushNotification.pm). Any change to the logic here needs to be applied there as well.
         $notificationControl = $this->opalDB->getNotificationControlDetails($data["PatientSerNum"], $action);
@@ -382,38 +308,5 @@ abstract class OpalProject
         }
         
         $this->opalDB->insertNotification($newNotification);
-    }
-
-    /**
-     * Updates the check-in for a particular appointment to checked and send the info to the push notification API. If
-     * the call returns an error, a code 502 (bad gateway) is returned to the caller to inform there's a problem with
-     * the push notification. Otherwise, a code 200 (all clear) is returned.
-     * @param $post array - contains the source name and the external appointment ID
-     */
-    protected function _updateAppointmentCheckIn(&$post) {
-        $today = strtotime(date("Y-m-d H:i:s"));
-        $errCode = $this->_validateAppointmentCheckIn($post, $source, $appointment, $patientInfo);
-        $errCode = bindec($errCode);
-        if ($errCode != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
-        
-        $rowCount = $this->opalDB->updateCheckInForAppointment($source["SourceDatabaseSerNum"], $post["appointment"]);
-        
-        if($rowCount >= 1) {
-            $currentAppointment = $this->opalDB->findAppointment($source["SourceDatabaseSerNum"],$post["appointment"]);
-            $currentAppointment = $currentAppointment[0];
-            $StartDateTime = strtotime(date("Y-m-d H:i:s"));
-            $action = "CheckInNotification";
-            $replacementMap = array();
-            $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
-            $replacementMap["\$getDateTime"] =  $formatter->format($StartDateTime);
-            $formatter = new \IntlDateFormatter(locale: 'en_CA', dateType: \IntlDateFormatter::NONE, timeType: \IntlDateFormatter::SHORT, pattern: "h:mm a");
-            $replacementMap["\$getDateTime"] =  $formatter->format($StartDateTime);
-                    
-            $scheduledStartTime = strtotime($currentAppointment["ScheduledStartTime"]);
-            if ($scheduledStartTime >= $today){
-                $this->_notifyChange($currentAppointment, $action, $replacementMap,$post["appointment"]);        
-            }            
-        }        
     }
 }
