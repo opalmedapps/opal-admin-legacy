@@ -909,15 +909,13 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Authenticate a username and a password of an user in opalDB (legacy system)
+     * Check that the username of the system user exists in opalDB (legacy system)
      * @params  $username (string)
-     *          $password (string) already encrypted
      * @return  array with the results found
      * */
-    function authenticateSystemUser($username, $password) {
+    function authenticateSystemUser($username) {
         return $this->_fetchAll(SQL_OPAL_VALIDATE_SYSTEM_OAUSER_LOGIN, array(
             array("parameter"=>":username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":password","variable"=>$password,"data_type"=>PDO::PARAM_STR),
         ));
     }
 
@@ -1039,18 +1037,16 @@ class DatabaseOpal extends DatabaseAccess {
      * Update a specific user informations and reactivate the account.
      * @param $type int - type of account (user or system)
      * @param $username string - username of the account to update
-     * @param $password string - encrypted password
      * @param $language string - preferred language of the account (en/fr)
      * @param $roleId int - ID of the role of the user
      * @return int - number of records affected
      */
-    function updateUser($type, $username, $password, $language, $roleId) {
+    function updateUser($type, $username, $language, $roleId) {
         return $this->_execute(OPAL_UPDATE_USER, array(
             array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":type","variable"=>$type,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":Language","variable"=>$language,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":Username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":Password","variable"=>$password,"data_type"=>PDO::PARAM_STR),
         ));
     }
 

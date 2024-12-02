@@ -132,20 +132,6 @@ class User extends Module {
             return true;
         }
 
-
-    /*
-     * Legacy authentication system when no AD is available. It validates the username and password directly into
-     * opalDB after encrypting the password.
-     * @params  $username (string) duh!
-     *          $password (string) DUH!
-     * @return  $result (array) details of the user info.
-     * */
-    protected function _userLoginLegacy($username, $password) {
-        $result = $this->opalDB->authenticateUserLegacy($username, hash("sha256", $password . USER_SALT));
-        $result = $this->_validateUserAuthentication($result, $username);
-        return $result;
-    }
-
    /*
     * Validate if user exists when `AD_ENABLED` is `1`.
     * @param $post (array) contains username
@@ -295,8 +281,16 @@ class User extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
         }
 
-        $result = $this->opalDB->authenticateSystemUser($username, hash("sha256", $password . USER_SALT));
+        $result = $this->opalDB->authenticateSystemUser($username);
         $result = $this->_validateUserAuthentication($result, $username);
+        $backendApi = $this->_loginBackend($username, $password);
+
+        // pass the Set-Cookie headers to the user
+        $headers = $backendApi->getHeaders()['set-cookie'];
+        
+        foreach ($headers as $cookie) {
+            header("Set-Cookie: " . $cookie);
+        }
 
         $_SESSION["ID"] = $result["id"];
         $_SESSION["username"] = $result["username"];
@@ -384,16 +378,17 @@ class User extends Module {
     }
 
     /*
-     * Updates the password of a specific user after validating it.
+     * Updates the password of the current user after validating it.
      * @param   $post (array) array of data coming from the frontend that contains username, password and confirm
      *          password.
      * @return  number of updated record
      * */
     public function updatePassword($post) {
         $post = HelpSetup::arraySanitization($post);
+        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        $this->_insertAudit($moduleName, $methodeName, $post, ACCESS_GRANTED);
 
-        $username = $this->opalDB->getUserDetails($post["OAUserId"]);
-        $username = $username["username"];
+        $username = $_SESSION["username"];
         $oldPassword = $post["oldPassword"];
         $password = $post["password"];
         $confirmPassword = $post["confirmPassword"];
@@ -440,10 +435,10 @@ class User extends Module {
      * @returns number of records modified
      * */
     public function updateLanguage($post) {
-        HelpSetup::getModuleMethodName($moduleName, $methodeName);
-        $this->_insertAudit($moduleName, $methodeName, HelpSetup::arraySanitization($post), ACCESS_GRANTED);
-
         $post = HelpSetup::arraySanitization($post);
+        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        $this->_insertAudit($moduleName, $methodeName, $post, ACCESS_GRANTED);
+
         $post["language"] = strtoupper($post["language"]);
 
         if($post["language"] != "EN" && $post["language"] != "FR")
@@ -468,13 +463,10 @@ class User extends Module {
         if(!is_array($userDetails))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid user.");
 
-        if(intval($userDetails["type"]) == 2) {
-            if($data["password"] && $data["confirmPassword"]) {
-                $result = $this->_passwordValidation($data["password"], $data["confirmPassword"]);
-                if (count($result) > 0)
-                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
-                $this->opalDB->updateUserPassword($userDetails["serial"], hash("sha256", $data["password"] . USER_SALT));
-            }
+        if($data["password"] && $data["confirmPassword"]) {
+            $result = $this->_passwordValidation($data["password"], $data["confirmPassword"]);
+            if (count($result) > 0)
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
         }
 
         $newRole = $this->opalDB->getRoleDetails($data["roleId"]);
@@ -635,9 +627,9 @@ class User extends Module {
     protected function _insertUserNewBackend($post) {
         $language = strtolower($post['language']);
         $payload = [
-            "username"=>$post['username'],
-            "password"=>$post['password'],
-            "password2"=>$post['confirmPassword'],
+            "username" => $post['username'],
+            "password" => $post['password'],
+            "password2" => $post['confirmPassword'],
         ];
 
         // check if no groups are selected by the user
@@ -682,7 +674,7 @@ class User extends Module {
         if(count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
 
-        $this->_insertUpdateUser($type, $username, $language, $password, $roleId, $isInsert);
+        $this->_insertUpdateUser($type, $username, $language, $roleId, $isInsert);
     }
 
     /**
@@ -694,11 +686,12 @@ class User extends Module {
      * @param $roleId int - role of the user
      * @param $isInsert boolean - if the process is an insert new user or update a deactivated user
      */
-    protected function _insertUpdateUser($type, $username, $language, $password, $roleId, $isInsert = false) {
+    protected function _insertUpdateUser($type, $username, $language, $roleId, $isInsert = false) {
         if($isInsert)
-            $this->opalDB->insertUser($type, $username, hash("sha256", $password . USER_SALT), $language, $roleId);
+            // use a random password instead of a blank password
+            $this->opalDB->insertUser($type, $username, hash("sha256", base64_encode(random_bytes(20)) . base64_encode(random_bytes(20))), $language, $roleId);
         else
-            $this->opalDB->updateUser($type, $username, hash("sha256", $password . USER_SALT), $language, $roleId);
+            $this->opalDB->updateUser($type, $username, $language, $roleId);
     }
 
     /*

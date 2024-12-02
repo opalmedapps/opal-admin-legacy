@@ -57,7 +57,6 @@ $dotenv->required('SHARED_DRIVE_PATH')->notEmpty();
 $dotenv->required('FEDAUTH_INSTITUTION')->notEmpty();
 $dotenv->required('FEDAUTH_API_ENDPOINT')->notEmpty();
 $dotenv->required('AD_ENABLED')->notEmpty();
-$dotenv->required('LOGIN_LEGACY_SALT')->notEmpty();
 # ORMS & OIE
 $dotenv->required('ORMS_ENABLED')->isBoolean();
 $dotenv->required('ORMS_HOST')->notEmpty();
@@ -76,7 +75,6 @@ session_start();
 date_default_timezone_set("America/Toronto");
 
 // set the active directory settings
-define("USER_SALT", $_ENV["LOGIN_LEGACY_SALT"]);
 define("ACTIVE_DIRECTORY", $_ENV["FEDAUTH_API_ENDPOINT"]);
 define("ACTIVE_DIRECTORY_SETTINGS", [
 // just a placeholder
