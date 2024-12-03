@@ -90,9 +90,11 @@ class User extends Module {
 
         // pass the Set-Cookie headers to the user
         $headers = $backendApi->getHeaders()['set-cookie'];
-        
+
+        // append cookies from the backend response
         foreach ($headers as $cookie) {
-            header("Set-Cookie: " . $cookie);
+            // Do not replace existing headers
+            header("Set-Cookie: " . $cookie, false);
         }
 
         return $users[0];
@@ -284,13 +286,7 @@ class User extends Module {
         $result = $this->opalDB->authenticateSystemUser($username);
         $result = $this->_validateUserAuthentication($result, $username);
         $backendApi = $this->_loginBackend($username, $password);
-
-        // pass the Set-Cookie headers to the user
-        $headers = $backendApi->getHeaders()['set-cookie'];
-        
-        foreach ($headers as $cookie) {
-            header("Set-Cookie: " . $cookie);
-        }
+        // don't pass the set-cookie headers to the response since the system user only needs a session on opaladmin
 
         $_SESSION["ID"] = $result["id"];
         $_SESSION["username"] = $result["username"];
