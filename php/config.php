@@ -35,7 +35,6 @@ if (getenv('DATABASE_USE_SSL')) {
 // Push notification configurations
 $dotenv->required('PUSH_NOTIFICATION_URL')->notEmpty();
 $dotenv->required('PUSH_NOTIFICATION_ANDROID_URL')->notEmpty();
-$dotenv->required('APPLE_CERT_PASSWORD');
 $dotenv->required('APPLE_CERT_FILENAME')->notEmpty();
 $dotenv->required('APPLE_CERT_KEY')->notEmpty();
 $dotenv->required('APPLE_URL')->notEmpty();
@@ -134,11 +133,11 @@ if (USE_SSL) {
 }
 
 const ABS_PATH = "/var/www/html/";
-const RELATIVE_URL = "/";
+$relative_url = $_ENV["RELATIVE_URL"] ?? "/";
 
 // Environment-specific variables
 define("FRONTEND_ABS_PATH", str_replace("/", DIRECTORY_SEPARATOR, ABS_PATH));
-define("FRONTEND_REL_URL", str_replace("/", DIRECTORY_SEPARATOR, RELATIVE_URL));
+define("FRONTEND_REL_URL", str_replace("/", DIRECTORY_SEPARATOR, $relative_url));
 define("BACKEND_ABS_PATH", FRONTEND_ABS_PATH . "publisher/" );
 define("BACKEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", BACKEND_ABS_PATH) );
 define("FRONTEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", FRONTEND_ABS_PATH) );
