@@ -4,7 +4,7 @@
 // NOTE: This works for a MySQL setup.
 define( "OPAL_DB_HOST", $_ENV["OPAL_DB_HOST"]);
 define( "OPAL_DB_PORT", $_ENV["OPAL_DB_PORT"]);
-define( "OPAL_DB_NAME", $_ENV["OPAL_DB_NAME"]);
+define( "OPAL_DB_NAME", "OpalDB");
 define( "OPAL_DB_DSN", "mysql:host=" . OPAL_DB_HOST . ";port=" . OPAL_DB_PORT . ";dbname=" . OPAL_DB_NAME . ";charset=utf8" );
 define( "OPAL_DB_USERNAME", $_ENV["OPAL_DB_USER"]);
 define( "OPAL_DB_PASSWORD", $_ENV["OPAL_DB_PASSWORD"]);
