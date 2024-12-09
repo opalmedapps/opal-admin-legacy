@@ -5,8 +5,6 @@ include_once("../../php/classes/FirebaseOpal.php");
 
 
 class PushNotification {
-	// (iOS) Private key's passphrase.
-	private static $passphrase = CERTIFICATE_PASSWORD;
 	//(iOS) Location of certificate file
 	private static $certificate_file = CERTIFICATE_FILE;
 	// iOS Location of cert key
@@ -130,7 +128,6 @@ class PushNotification {
 		curl_setopt($ch, CURLOPT_HTTP_VERSION,3);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, ["apns-topic: $apns_topic"]); //opal app bundle ID
 		curl_setopt($ch, CURLOPT_SSLCERT, self::$certificate_file); //pem file
-		//curl_setopt($ch, CURLOPT_SSLCERTPASSWD, self::$passphrase); //pem secret
 		curl_setopt($ch, CURLOPT_SSLKEY, self::$certificate_key); // cert key
 		//curl_setopt($ch, CURLOPT_SSLKEYPASSWD, ); if we add a password to the key file we'll specify that here
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);

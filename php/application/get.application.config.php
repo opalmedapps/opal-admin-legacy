@@ -10,13 +10,9 @@ $restrictedConfig['login']['activeDirectory']['enabled'] =  AD_LOGIN_ACTIVE;
 $restrictedConfig['newOpalAdminHost'] =  NEW_OPALADMIN_HOST_EXTERNAL;
 $restrictedConfig['ormsHost'] = ORMS_HOST;
 
-// opaldb always enabled
+// opaldb and questionnairedb are always enabled
 $restrictedConfig['databaseConfig']['opal']['enabled'] = 1;
-
-// Check if the database is enabled in the environment file to include it in the api service
-if ($_ENV["QUESTIONNAIRE_DB_ENABLED"] == 1) {
-    $restrictedConfig['databaseConfig']['questionnaire2019']['enabled'] = $_ENV["QUESTIONNAIRE_DB_ENABLED"];
-}
+$restrictedConfig['databaseConfig']['questionnaire2019']['enabled'] = 1;
 
 header('Content-Type: application/json');
 echo json_encode($restrictedConfig);
