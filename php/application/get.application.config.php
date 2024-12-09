@@ -8,7 +8,10 @@ include_once('../config.php');
 $restrictedConfig = array();
 $restrictedConfig['login']['activeDirectory']['enabled'] =  AD_LOGIN_ACTIVE;
 $restrictedConfig['newOpalAdminHost'] =  NEW_OPALADMIN_HOST_EXTERNAL;
-$restrictedConfig['ormsHost'] = ORMS_HOST;
+
+if (ORMS_ENABLED) {
+    $restrictedConfig['ormsHost'] = ORMS_HOST;
+}
 
 // opaldb and questionnairedb are always enabled
 $restrictedConfig['databaseConfig']['opal']['enabled'] = 1;
