@@ -198,14 +198,14 @@ class PushNotification {
 		if ($validUTF8inTitle) {
 			$outTitle = stripslashes($inTitle);
 		} else {
-			$titleStr =  mb_convert_encoding($inTitle, 'UTF-8', mb_list_encodings());
+			$titleStr =  mb_convert_encoding($inTitle, 'UTF-8', 'ISO-8859-1');
 			$outTitle = stripslashes($titleStr);
 		}
 	
 		if ($validUTF8inBody) {
 			$outBody = stripslashes($inBody);
 		} else {
-			$bodyStr =  mb_convert_encoding($inBody, 'UTF-8', mb_list_encodings());
+			$bodyStr =  mb_convert_encoding($inBody, 'UTF-8', 'ISO-8859-1');
 			$outBody = stripslashes($bodyStr);
 		}
 
