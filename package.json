@@ -16,7 +16,7 @@
   },
   "homepage": "https://gitlab.com/opalmedapps/opalAdmin#README",
   "dependencies": {
-    "@fontsource/nunito": "5.1.0",
+    "@fontsource/nunito": "5.1.1",
     "angular": "npm:@xlts.dev/angular@1.9.7",
     "angular-animate": "npm:@xlts.dev/angular-animate@1.9.7",
     "angular-cookies": "npm:@xlts.dev/angular-cookies@1.9.7",
