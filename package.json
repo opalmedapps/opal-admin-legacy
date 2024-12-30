@@ -36,7 +36,7 @@
     "font-awesome": "4.7.0",
     "jquery": "3.7.1",
     "moment": "2.30.1",
-    "moment-timezone": "0.5.45",
+    "moment-timezone": "0.5.46",
     "multiple-date-picker": "2.1.6",
     "ng-idle": "1.3.2",
     "requirejs": "2.3.7",
