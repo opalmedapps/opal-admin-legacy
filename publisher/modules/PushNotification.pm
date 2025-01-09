@@ -213,9 +213,10 @@ sub sendPushNotification
     # retrieve notification parameters
     my $notification        = NotificationControl::getNotificationControlDetails($patientser, $notificationtype);
     my $controlser          = $notification->getNotificationControlSer();
-    my $title               = $notification->getNotificationControlName();
-    my $message             = $notification->getNotificationControlDescription();
+    my $name                = $notification->getNotificationControlName();
+    my $description         = $notification->getNotificationControlDescription();
     my $language            = $notification->getNotificationLanguage();
+    my $message             = $description->{$language};
 
     my ($sendstatus, $sendlog); # initialize
 
@@ -235,7 +236,7 @@ sub sendPushNotification
         $dynamicKeys{'\$patientName'} = $firstName;
     }
 
-    ($usernamesStr, $institution_acronym_en, $institution_acronym_fr) = getPatientCaregivers($patientser, $controlser, $reftablerowser);
+    ($usernamesStr, $institution_acronym_en, $institution_acronym_fr, $userLanguageList) = getPatientCaregivers($patientser, $controlser, $reftablerowser);
 
     # special case for replacing the $institution wildcard
     if (index($message, '$institution') != -1) {
@@ -249,8 +250,10 @@ sub sendPushNotification
 
     # loop through potential wildcard keys to execute a string replace
     for my $key (keys %dynamicKeys) {
-        $message =~ s/$key/$dynamicKeys{$key}/g;
+        $description->{EN} =~ s/$key/$dynamicKeys{$key}/g;
+        $description->{FR} =~ s/$key/$dynamicKeys{$key}/g;
     }
+    $message = $description->{$language};
 
     if (!$usernamesStr) {
         print "\nPatient username array is empty\n";
@@ -258,6 +261,7 @@ sub sendPushNotification
     }
 
     print "\n***** Get Patient Device Identifiers *****\n";
+    print $message;
 
     # get a list of the patient's device information
     my @PTDIDs  = getPatientDeviceIdentifiers($usernamesStr);
@@ -281,6 +285,8 @@ sub sendPushNotification
         my $ptdidser        = $PTDID->{ser};
         my $registrationid  = $PTDID->{registrationid};
         my $devicetype      = $PTDID->{devicetype};
+        my $title           = $name->{uc($userLanguageList->{$PTDID->{username}})};
+        my $message         = $description->{uc($userLanguageList->{$PTDID->{username}})};
 
         ($sendstatus, $sendlog) = postNotification($title, $message, $devicetype, $registrationid);
 
@@ -308,10 +314,12 @@ sub getPatientCaregivers
 
     # get caregiver's username array
     my @usernames = ();
+    my @userLanguageList = {};
     if (exists($apiResponse->{'caregivers'})) {
         my $caregivers = $apiResponse->{'caregivers'};
         foreach $caregiver (@{ $caregivers }) {  # anonymous array traverse
             push @usernames, $caregiver->{'username'};
+            $userLanguageList->{$caregiver->{'username'}} = $caregiver->{'language'};
         }
     }
 
@@ -329,7 +337,7 @@ sub getPatientCaregivers
     my $acronym_en = $apiResponse->{'institution'}->{'acronym_en'};
     my $acronym_fr = $apiResponse->{'institution'}->{'acronym_fr'};
 
-    return ($usernamesStr, $acronym_en, $acronym_fr);
+    return ($usernamesStr, $acronym_en, $acronym_fr, $userLanguageList);
 }
 
 #====================================================================================
@@ -443,7 +451,8 @@ sub getPatientDeviceIdentifiers
         SELECT DISTINCT
             ptdid.PatientDeviceIdentifierSerNum,
             ptdid.RegistrationId,
-            ptdid.DeviceType
+            ptdid.DeviceType,
+            ptdid.Username
         FROM
             PatientDeviceIdentifier ptdid
         WHERE ptdid.DeviceType in ('0', '1')
@@ -464,11 +473,13 @@ sub getPatientDeviceIdentifiers
         my $ser             = $data[0];
         my $registrationid  = $data[1];
         my $devicetype      = $data[2];
+        my $username        = $data[3];
 
         my $ptdid = {
             'ser'               => $ser,
             'registrationid'    => $registrationid,
-            'devicetype'        => $devicetype
+            'devicetype'        => $devicetype,
+            'username'          => $username,
         };
 
         push(@PTDIDs, $ptdid);
