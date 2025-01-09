@@ -261,7 +261,6 @@ sub sendPushNotification
     }
 
     print "\n***** Get Patient Device Identifiers *****\n";
-    print $message;
 
     # get a list of the patient's device information
     my @PTDIDs  = getPatientDeviceIdentifiers($usernamesStr);
