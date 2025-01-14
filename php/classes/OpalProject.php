@@ -238,10 +238,10 @@ abstract class OpalProject
                     // TODO: update the code below once push notifications are built using caregiver's language setting.
                     // See QSCCD-2118
                     if($language == 'en'){
-                            // Add $institution as a wildcard for replacement
-                            $dynamicKeys['$institution'] = $institution_acronym_en;
+                        // Add $institution as a wildcard for replacement
+                        $dynamicKeys['$institution'] = $institution_acronym_en;
                     } elseif ($language == 'fr') {
-                            $dynamicKeys['$institution'] = $institution_acronym_fr;
+                        $dynamicKeys['$institution'] = $institution_acronym_fr;
                     } else {
                         $sendlog = "An error occurred while getting the patient's institution";
                         $pushNotificationDetail = $this->_buildNotification($this->statusFailure, $sendlog, $refTableId, $controlser, $data['PatientSerNum'], null);
