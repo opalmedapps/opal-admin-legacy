@@ -186,59 +186,18 @@ abstract class OpalProject
         // NOTE: The same functionality already exists in Perl (PushNotification.pm). Any change to the logic here needs to be applied there as well.
         $notificationControl = $this->opalDB->getNotificationControlDetails($data["PatientSerNum"], $action);
         $controlser          = $notificationControl[0]["NotificationControlSerNum"];
-        $messageTitle        = $notificationControl[0]["Name"];
-        $messageTemplate     = $notificationControl[0]["Message"];
+        $messageTitles        = array(
+            "en"=>$notificationControl[0]["Name_EN"],
+            "fr"=>$notificationControl[0]["Name_FR"],
+        );
+        $messageTemplates     = array(
+            "en"=>$notificationControl[0]["Message_EN"],
+            "fr"=>$notificationControl[0]["Message_FR"],
+        );
         $language            = $notificationControl[0]["Language"];
-        
         $this->_insertNotification($data, $controlser, $refTableId);
 
-        // Special case for replacing the $patientName wildcard
-        if (str_contains($messageTemplate, '$patientName')) {
-            try {
-                $patient = $this->opalDB->getPatientSerNum($data['PatientSerNum'])[0];
-                $firstName = $patient['FirstName'];
-            } catch (Exception $e) {
-                $sendlog = "An error occurred while querying the patient's first name: $e";
-                $pushNotificationDetail = $this->_buildNotification($this->statusFailure, $sendlog, $refTableId, $controlser, $data['PatientSerNum'], null);
-                $this->opalDB->insertPushNotification($pushNotificationDetail);
-                return;
-            }
-
-            // Add $patientName as a wildcard for replacement
-            $dynamicKeys['$patientName'] = $firstName;
-        }
-
-        list($patientDevices, $institution_acronym_en, $institution_acronym_fr) = PublisherPatient::getCaregiverDeviceIdentifiers($data["PatientSerNum"]);
-
-        // Special case for replacing the $institution wildcard
-        if (str_contains($messageTemplate, '$institution')) {
-            // TODO: update the code below once push notifications are built using caregiver's language setting.
-            // See QSCCD-2118
-           if($language == 'EN'){
-                // Add $institution as a wildcard for replacement
-                $dynamicKeys['$institution'] = $institution_acronym_en;
-           } elseif ($language == 'FR') {
-                $dynamicKeys['$institution'] = $institution_acronym_fr;
-           } else {
-               $sendlog = "An error occurred while getting the patient's institution";
-               $pushNotificationDetail = $this->_buildNotification($this->statusFailure, $sendlog, $refTableId, $controlser, $data['PatientSerNum'], null);
-               return;
-           }
-        }
-
-        // prepare array for replacements
-        $patterns           = array();
-        $replacements       = array();
-        $indice             = 0;
-        foreach($dynamicKeys as $key=>$val) {
-            $patterns[$indice] = $key;
-            $replacements[$indice] = $val;
-            $indice +=1;
-        }
-
-        ksort($patterns);
-        ksort($replacements);
-        $message =  str_replace($patterns, $replacements, $messageTemplate);
+        list($patientDevices, $institution_acronym_en, $institution_acronym_fr, $language_list) = PublisherPatient::getCaregiverDeviceIdentifiers($data["PatientSerNum"]);
 
         if (count($patientDevices) == 0){
             $sendlog = "Patient has no device identifier! No push notification sent.";
@@ -252,9 +211,57 @@ abstract class OpalProject
             // regardless of Marge's language setting.
             // TODO: Take into account caregiver's language when send push notifications. See QSCCD-2118.
             foreach($patientDevices as $ptdId) {
-                $ptdidser       = $ptdId["PatientDeviceIdentifierSerNum"];
-                $registrationId = $ptdId["RegistrationId"];
-                $deviceType     = $ptdId["DeviceType"];
+                $ptdidser        = $ptdId["PatientDeviceIdentifierSerNum"];
+                $registrationId  = $ptdId["RegistrationId"];
+                $deviceType      = $ptdId["DeviceType"];
+                $language        = $language_list[$ptdId['Username']];
+                $messageTemplate = $messageTemplates[$language];
+                $messageTitle    = $messageTitles[$language];
+
+                // Special case for replacing the $patientName wildcard
+                if (str_contains($messageTemplate, '$patientName')) {
+                    try {
+                        $patient = $this->opalDB->getPatientSerNum($data['PatientSerNum'])[0];
+                        $firstName = $patient['FirstName'];
+                    } catch (Exception $e) {
+                        $sendlog = "An error occurred while querying the patient's first name: $e";
+                        $pushNotificationDetail = $this->_buildNotification($this->statusFailure, $sendlog, $refTableId, $controlser, $data['PatientSerNum'], null);
+                        $this->opalDB->insertPushNotification($pushNotificationDetail);
+                        return;
+                    }
+
+                    // Add $patientName as a wildcard for replacement
+                    $dynamicKeys['$patientName'] = $firstName;
+                }
+
+                // Special case for replacing the $institution wildcard
+                if (str_contains($messageTemplate, '$institution')) {
+                    // TODO: update the code below once push notifications are built using caregiver's language setting.
+                    // See QSCCD-2118
+                    if($language == 'en'){
+                            // Add $institution as a wildcard for replacement
+                            $dynamicKeys['$institution'] = $institution_acronym_en;
+                    } elseif ($language == 'fr') {
+                            $dynamicKeys['$institution'] = $institution_acronym_fr;
+                    } else {
+                        $sendlog = "An error occurred while getting the patient's institution";
+                        $pushNotificationDetail = $this->_buildNotification($this->statusFailure, $sendlog, $refTableId, $controlser, $data['PatientSerNum'], null);
+                        return;
+                    }
+                }
+                // prepare array for replacements
+                $patterns           = array();
+                $replacements       = array();
+                $indice             = 0;
+                foreach($dynamicKeys as $key=>$val) {
+                    $patterns[$indice] = $key;
+                    $replacements[$indice] = $val;
+                    $indice +=1;
+                }
+
+                ksort($patterns);
+                ksort($replacements);
+                $message =  str_replace($patterns, $replacements, $messageTemplate);
 
                 if (!in_array($deviceType, SUPPORTED_PHONE_DEVICES)) {
                     $sendstatus = $this->statusFailure;

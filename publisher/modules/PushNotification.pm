@@ -215,45 +215,12 @@ sub sendPushNotification
     my $controlser          = $notification->getNotificationControlSer();
     my $name                = $notification->getNotificationControlName();
     my $description         = $notification->getNotificationControlDescription();
-    my $language            = $notification->getNotificationLanguage();
-    my $message             = $description->{$language};
 
     my ($sendstatus, $sendlog); # initialize
 
-    # special case for replacing the $patientName wildcard
-    if (index($message, '$patientName') != -1) {
-        # query the patient's first name
-        my $firstName;
-        try {
-            $firstName = Patient::getPatientFirstNameFromSer($patientser);
-        } catch {
-            $sendlog = "An error occurred while querying the patient's first name: $_";
-            insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusFailure, $sendlog);
-        };
-        if (!defined $firstName) { return; }  # Return if catch block was used
-
-        # add $patientName as a wildcard for replacement
-        $dynamicKeys{'\$patientName'} = $firstName;
-    }
+    
 
     ($usernamesStr, $institution_acronym_en, $institution_acronym_fr, $userLanguageList) = getPatientCaregivers($patientser, $controlser, $reftablerowser);
-
-    # special case for replacing the $institution wildcard
-    if (index($message, '$institution') != -1) {
-        # TODO: update the code below once push notifications are built using caregiver's language setting.
-        # See QSCCD-2118.
-
-        # add $institution as a wildcard for replacement
-        if ($language eq "EN") { $dynamicKeys{'\$institution'} = $institution_acronym_en; }
-        if ($language eq "FR") { $dynamicKeys{'\$institution'} = $institution_acronym_fr; }
-    }
-
-    # loop through potential wildcard keys to execute a string replace
-    for my $key (keys %dynamicKeys) {
-        $description->{EN} =~ s/$key/$dynamicKeys{$key}/g;
-        $description->{FR} =~ s/$key/$dynamicKeys{$key}/g;
-    }
-    $message = $description->{$language};
 
     if (!$usernamesStr) {
         print "\nPatient username array is empty\n";
@@ -284,8 +251,40 @@ sub sendPushNotification
         my $ptdidser        = $PTDID->{ser};
         my $registrationid  = $PTDID->{registrationid};
         my $devicetype      = $PTDID->{devicetype};
-        my $title           = $name->{uc($userLanguageList->{$PTDID->{username}})};
-        my $message         = $description->{uc($userLanguageList->{$PTDID->{username}})};
+        my $language        = $userLanguageList->{$PTDID->{username}}
+        my $title           = $name->{$language};
+        my $message         = $description->{$language};
+
+        # special case for replacing the $patientName wildcard
+        if (index($message, '$patientName') != -1) {
+            # query the patient's first name
+            my $firstName;
+            try {
+                $firstName = Patient::getPatientFirstNameFromSer($patientser);
+            } catch {
+                $sendlog = "An error occurred while querying the patient's first name: $_";
+                insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusFailure, $sendlog);
+            };
+            if (!defined $firstName) { return; }  # Return if catch block was used
+
+            # add $patientName as a wildcard for replacement
+            $dynamicKeys{'\$patientName'} = $firstName;
+        }
+
+        # special case for replacing the $institution wildcard
+        if (index($message, '$institution') != -1) {
+            # TODO: update the code below once push notifications are built using caregiver's language setting.
+            # See QSCCD-2118.
+
+            # add $institution as a wildcard for replacement
+            if ($language eq "en") { $dynamicKeys{'\$institution'} = $institution_acronym_en; }
+            if ($language eq "fr") { $dynamicKeys{'\$institution'} = $institution_acronym_fr; }
+        }
+
+        # loop through potential wildcard keys to execute a string replace
+        for my $key (keys %dynamicKeys) {
+            $message =~ s/$key/$dynamicKeys{$key}/g;
+        }
 
         ($sendstatus, $sendlog) = postNotification($title, $message, $devicetype, $registrationid);
 

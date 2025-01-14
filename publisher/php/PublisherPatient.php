@@ -31,12 +31,14 @@ class PublisherPatient {
 		$response = $response ? json_decode($response, true) : NULL;
 		$caregivers = $response && $response['caregivers'] ? $response['caregivers'] : [];
 		$userNameArray = [];
+		$userLanguageArray = [];
 
 		foreach ($caregivers as $caregiver) {
 			// Check if fetched username exists in an $ignoredUsernames
 			// If the username is in the list, skip it
 			if (!in_array($caregiver['username'], $ignoredUsernames))
 				$userNameArray[] = $caregiver['username'];
+				$userLanguageArray[$caregiver['username']] = $caregiver['language'];
 		}
 
 		$userNameArrayString = implode(",", $userNameArray);
@@ -45,6 +47,7 @@ class PublisherPatient {
 			self::getPatientDeviceIdentifiers($userNameArrayString),
 			$response['institution']['acronym_en'],
 			$response['institution']['acronym_fr'],
+			$userLanguageArray,
 		);
     }
 

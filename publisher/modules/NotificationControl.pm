@@ -177,12 +177,12 @@ sub getNotificationControlDetails
 	while (my @data = $query->fetchrow_array()) {
         $ser        = $data[0];
         $message    = {
-            EN => $data[1],
-            FR => $data[2],
+            en => $data[1],
+            fr => $data[2],
         };
         $title      = {
-            EN => $data[3],
-            FR => $data[4],
+            en => $data[3],
+            fr => $data[4],
         };
         $language   = $data[5];
 
