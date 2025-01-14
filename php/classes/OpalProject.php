@@ -194,7 +194,15 @@ abstract class OpalProject
             "en"=>$notificationControl[0]["Message_EN"],
             "fr"=>$notificationControl[0]["Message_FR"],
         );
-        $language            = $notificationControl[0]["Language"];
+        
+        try {
+            $patient = $this->opalDB->getPatientSerNum($data['PatientSerNum'])[0];
+        } catch (Exception $e) {
+            $sendlog = "An error occurred while querying the patient's first name: $e";
+            $pushNotificationDetail = $this->_buildNotification($this->statusFailure, $sendlog, $refTableId, $controlser, $data['PatientSerNum'], null);
+            $this->opalDB->insertPushNotification($pushNotificationDetail);
+            return;
+        }
         $this->_insertNotification($data, $controlser, $refTableId);
 
         list($patientDevices, $institution_acronym_en, $institution_acronym_fr, $language_list) = PublisherPatient::getCaregiverDeviceIdentifiers($data["PatientSerNum"]);
@@ -220,16 +228,7 @@ abstract class OpalProject
 
                 // Special case for replacing the $patientName wildcard
                 if (str_contains($messageTemplate, '$patientName')) {
-                    try {
-                        $patient = $this->opalDB->getPatientSerNum($data['PatientSerNum'])[0];
-                        $firstName = $patient['FirstName'];
-                    } catch (Exception $e) {
-                        $sendlog = "An error occurred while querying the patient's first name: $e";
-                        $pushNotificationDetail = $this->_buildNotification($this->statusFailure, $sendlog, $refTableId, $controlser, $data['PatientSerNum'], null);
-                        $this->opalDB->insertPushNotification($pushNotificationDetail);
-                        return;
-                    }
-
+                    $firstName = $patient['FirstName'];
                     // Add $patientName as a wildcard for replacement
                     $dynamicKeys['$patientName'] = $firstName;
                 }

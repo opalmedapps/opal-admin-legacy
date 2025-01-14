@@ -217,8 +217,16 @@ sub sendPushNotification
     my $description         = $notification->getNotificationControlDescription();
 
     my ($sendstatus, $sendlog); # initialize
-
     
+    # query the patient's first name
+    my $firstName;
+    try {
+        $firstName = Patient::getPatientFirstNameFromSer($patientser);
+    } catch {
+        $sendlog = "An error occurred while querying the patient's first name: $_";
+        insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusFailure, $sendlog);
+    };
+    if (!defined $firstName) { return; }  # Return if catch block was used
 
     ($usernamesStr, $institution_acronym_en, $institution_acronym_fr, $userLanguageList) = getPatientCaregivers($patientser, $controlser, $reftablerowser);
 
@@ -257,16 +265,6 @@ sub sendPushNotification
 
         # special case for replacing the $patientName wildcard
         if (index($message, '$patientName') != -1) {
-            # query the patient's first name
-            my $firstName;
-            try {
-                $firstName = Patient::getPatientFirstNameFromSer($patientser);
-            } catch {
-                $sendlog = "An error occurred while querying the patient's first name: $_";
-                insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusFailure, $sendlog);
-            };
-            if (!defined $firstName) { return; }  # Return if catch block was used
-
             # add $patientName as a wildcard for replacement
             $dynamicKeys{'\$patientName'} = $firstName;
         }
