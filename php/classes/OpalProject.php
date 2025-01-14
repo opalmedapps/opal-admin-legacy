@@ -237,7 +237,7 @@ abstract class OpalProject
                 if (str_contains($messageTemplate, '$institution')) {
                     // TODO: update the code below once push notifications are built using caregiver's language setting.
                     // See QSCCD-2118
-                    if($language == 'en'){
+                    if ($language == 'en'){
                         // Add $institution as a wildcard for replacement
                         $dynamicKeys['$institution'] = $institution_acronym_en;
                     } elseif ($language == 'fr') {
