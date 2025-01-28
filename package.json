@@ -1,6 +1,5 @@
 {
   "name": "opaladmin",
-  "version": "0.13.0",
   "description": "Administrative tool for Opal",
   "repository": {
     "type": "git",
@@ -9,7 +8,7 @@
   "keywords": [
     "opalAdmin"
   ],
-  "author": "Ackeem B.",
+  "author": "Opal Health Informatics Group",
   "license": "AGPL-3.0-or-later",
   "bugs": {
     "url": "https://gitlab.com/opalmedapps/opalAdmin/issues"
