@@ -13,7 +13,7 @@
   "bugs": {
     "url": "https://gitlab.com/opalmedapps/opalAdmin/issues"
   },
-  "homepage": "https://gitlab.com/opalmedapps/opalAdmin#README",
+  "homepage": "https://www.opalmedapps.com",
   "dependencies": {
     "@fontsource/nunito": "5.1.1",
     "angular": "npm:@xlts.dev/angular@1.9.7",
