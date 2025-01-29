@@ -5,14 +5,8 @@
     "type": "git",
     "url": "git+https://gitlab.com/opalmedapps/opalAdmin.git"
   },
-  "keywords": [
-    "opalAdmin"
-  ],
   "author": "Opal Health Informatics Group",
   "license": "AGPL-3.0-or-later",
-  "bugs": {
-    "url": "https://gitlab.com/opalmedapps/opalAdmin/issues"
-  },
   "homepage": "https://www.opalmedapps.com",
   "dependencies": {
     "@fontsource/nunito": "5.1.1",
