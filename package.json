@@ -1,10 +1,6 @@
 {
   "name": "opaladmin",
   "description": "Administrative tool for Opal",
-  "repository": {
-    "type": "git",
-    "url": "git+https://gitlab.com/opalmedapps/opalAdmin.git"
-  },
   "author": "Opal Health Informatics Group",
   "license": "AGPL-3.0-or-later",
   "homepage": "https://www.opalmedapps.com",
