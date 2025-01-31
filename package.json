@@ -1,20 +1,9 @@
 {
   "name": "opaladmin",
-  "version": "0.13.0",
   "description": "Administrative tool for Opal",
-  "repository": {
-    "type": "git",
-    "url": "git+https://gitlab.com/opalmedapps/opalAdmin.git"
-  },
-  "keywords": [
-    "opalAdmin"
-  ],
-  "author": "Ackeem B.",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://gitlab.com/opalmedapps/opalAdmin/issues"
-  },
-  "homepage": "https://gitlab.com/opalmedapps/opalAdmin#README",
+  "author": "Opal Health Informatics Group",
+  "license": "AGPL-3.0-or-later",
+  "homepage": "https://www.opalmedapps.com",
   "dependencies": {
     "@fontsource/nunito": "5.1.1",
     "angular": "npm:@xlts.dev/angular@1.9.7",
