@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: Copyright (C) 2018 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('publication.edit', function ($scope, $filter, $uibModal, $uibModalInstance, $locale, publicationCollectionService, ScheduledTimeFilterService, FrequencyFilterService, Session, ErrorHandler) {
 
 	// initialize default variables & lists

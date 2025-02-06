@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: Copyright (C) 2020 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 angular.module('opalAdmin.controllers.alert', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular'])
 
 	.controller('alert', function ($scope, $state, $filter, $uibModal, alertCollectionService, Session, uiGridConstants, ErrorHandler, MODULE) {

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: Copyright (C) 2018 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 angular.module('opalAdmin.controllers.alert.delete', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
 controller('alert.delete', function ($scope, $filter, $uibModalInstance, Session, ErrorHandler) {

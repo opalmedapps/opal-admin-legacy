@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: Copyright (C) 2016 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 // Angular Module
 // To collect various data using JSONP (JavaScript Object Notation with Padding), a safer (than JSON) cross-domain ajax call
 // Most pages on the site require information from either our database or clinical databases so we create an "API service" (Application

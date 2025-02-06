@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: Copyright (C) 2020 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 angular.module('opalAdmin.controllers.audit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 controller('audit', function ($rootScope, $scope, $filter, $sce, $state, $uibModal, uiGridConstants, auditCollectionService, Session, ErrorHandler, MODULE) {
 	$scope.navMenu = Session.retrieveObject('menu');
