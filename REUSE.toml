@@ -92,47 +92,6 @@ SPDX-License-Identifier = "NOASSERTION"
 
 [[annotations]]
 path = [
-    "publisher/modules/Alias.pm",
-    "publisher/modules/Announcement.pm",
-    "publisher/modules/Api.pm",
-    "publisher/modules/Appointment.pm",
-    "publisher/modules/Configs.pm",
-    "publisher/modules/Database.pm",
-    "publisher/modules/Diagnosis.pm",
-    "publisher/modules/Doctor.pm",
-    "publisher/modules/Document.pm",
-    "publisher/modules/EducationalMaterial.pm",
-    "publisher/modules/EducationalMaterialControl.pm",
-    "publisher/modules/Email.pm",
-    "publisher/modules/FTP.pm",
-    "publisher/modules/Filter.pm",
-    "publisher/modules/LegacyQuestionnaire.pm",
-    "publisher/modules/NotificationControl.pm",
-    "publisher/modules/Patient.pm",
-    "publisher/modules/PatientDoctor.pm",
-    "publisher/modules/PatientLocation.pm",
-    "publisher/modules/PatientsForPatients.pm",
-    "publisher/modules/PostControl.pm",
-    "publisher/modules/Priority.pm",
-    "publisher/modules/PushNotification.pm",
-    "publisher/modules/PushNotificationFromPHP.pm",
-    "publisher/modules/Questionnaire.pm",
-    "publisher/modules/Resource.pm",
-    "publisher/modules/ResourceAppointment.pm",
-    "publisher/modules/Staff.pm",
-    "publisher/modules/Task.pm",
-    "publisher/modules/TestResult.pm",
-    "publisher/modules/TestResultControl.pm",
-    "publisher/modules/TxTeamMessage.pm",
-    "publisher/modules/Venue.pm",
-]
-precedence = "override"
-SPDX-FileCopyrightText = "NOASSERTION"
-SPDX-License-Identifier = "NOASSERTION"
-
-
-[[annotations]]
-path = [
     "images/template/clinician/waiting_room.png",
 ]
 precedence = "override"
