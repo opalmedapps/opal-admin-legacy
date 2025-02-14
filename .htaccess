@@ -79,8 +79,6 @@ AddHandler .php .py .jsp .asp .htm .shtml .sh
 <FilesMatch "package\.json|package-lock\.json|bower\.json|composer\.json|composer\.lock|\.md">
   Require all denied
 </FilesMatch>
-RewriteRule ^bower_components/angularjs-dropdown-multiselect/docs/?$ - [F,L]
-RewriteRule ^bower_components/angular-multiple-date-picker/docs/?$ - [F,L]
 
 
 # Accesses to the OpalAdmin API

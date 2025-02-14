@@ -80,3 +80,6 @@ php-error.log
 certs/*
 
 .DS_Store
+
+# ignore unit test cache folders
+.phpunit.result.cache

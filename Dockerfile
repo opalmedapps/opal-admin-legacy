@@ -12,7 +12,7 @@ COPY .npmrc ./
 RUN npm ci
 
 # Build/install PHP dependencies
-FROM composer:2.8.4 AS php-dependencies
+FROM composer:2.8.5 AS php-dependencies
 
 WORKDIR /app
 
@@ -25,7 +25,7 @@ FROM php:8.4.2-apache-bookworm
 
 # Install dependencies
 RUN apt-get update \
-  && apt-get install -y \
+  && apt-get install --no-install-recommends -y \
       # for cronjobs
       busybox-static \
       # to install Perl modules
@@ -35,10 +35,19 @@ RUN apt-get update \
       libmariadb-dev-compat \
       # IntlDateFormatter dependency
       libicu-dev \
+      # libxml for php-soap
+      libxml2-dev \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/* \
   && mkdir -p /var/spool/cron/crontabs
+
+# satisfy DL4006 (see: https://github.com/hadolint/hadolint/wiki/DL4006)
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+# Install redis
+# see: https://stackoverflow.com/a/71607810
+# installation asks answers, answer them all with no
+RUN echo -n no | pecl install redis
 
 RUN cpanm --notest install \
       Array::Utils \
@@ -61,7 +70,9 @@ RUN cpanm --notest install \
 # Enable apache2 mods
 RUN a2enmod headers rewrite \
   # Install and enable PHP extensions
-  && docker-php-ext-install pdo pdo_mysql intl
+  && docker-php-ext-install pdo pdo_mysql intl soap \
+  # Enable redis extension
+  && docker-php-ext-enable redis
 
 # which php.ini to use, can be either production or development
 ARG PHP_ENV=production
@@ -96,6 +107,7 @@ COPY --chown=www-data:www-data ./docker ./docker
 COPY --chown=www-data:www-data ./fonts ./fonts
 COPY --chown=www-data:www-data ./images ./images
 COPY --chown=www-data:www-data ./js ./js
+COPY --chown=www-data:www-data ./labs ./labs
 COPY --chown=www-data:www-data ./php ./php
 COPY --chown=www-data:www-data ./publisher ./publisher
 COPY --chown=www-data:www-data ./templates ./templates

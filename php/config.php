@@ -1,5 +1,9 @@
 <?php
 
+// SPDX-FileCopyrightText: Copyright (C) 2017 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 require_once __DIR__."/../vendor/autoload.php";
 use Dotenv\Dotenv;
 
@@ -50,6 +54,10 @@ $dotenv->required('FEDAUTH_API_ENDPOINT')->notEmpty();
 $dotenv->required('AD_ENABLED')->notEmpty();
 # ORMS
 $dotenv->required('ORMS_ENABLED')->isBoolean();
+// Labs configurations
+$dotenv->required('LABS_PUSH_NOTIFICATION_URL')->notEmpty();
+$dotenv->required('LABS_OASIS_WSDL_URL')->notEmpty();
+$dotenv->required('LABS_EMAIL_RECIPIENTS')->notEmpty();
 
 if ($_ENV['ORMS_ENABLED']) {
     $dotenv->required('ORMS_HOST')->notEmpty();
