@@ -180,6 +180,8 @@
 	<script type="text/javascript" src="js/app/controllers/patient-administration/update.accessLevel.js"></script>
 	<script type="text/javascript" src="js/app/controllers/patient-administration/update.securityAnswer.js"></script>
 
+	<script type="text/javascript" src="js/app/controllers/about/about.js"></script>
+
 	<!-- Collection -->
  	<script type="text/javascript" src="js/app/collections/collections.js"></script>
 
@@ -215,6 +217,8 @@
 	<div id="page">
 		<div ui-view style="position: relative; height: inherit;"></div>
 		<div ng-if="build" class="app-version">
+			<a ui-sref="about">About</a> · 
+			<a href="https://github.com/opalmedapps">View Source Code</a> · 
 			(Environment: {{build.environment_name}})
 		</div>
 	</div>

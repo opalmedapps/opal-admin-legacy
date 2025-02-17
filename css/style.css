@@ -571,6 +571,10 @@ ul.no-list {
     margin: 5em auto;
 }
 
+.about-opal {
+    margin: 0 auto;
+}
+
 #main {
     position: relative;
     padding: 0px 14px 15px;
@@ -1580,10 +1584,28 @@ footer {
 }
 
 .app-version {
+    color: #000;
     position: fixed;
     right: 5px;
     bottom: 5px;
-    font-size: 12px;
+    font-size: 14px;
+}
+
+.app-version a {
+    text-decoration: underline;
+}
+
+.app-version a:hover {
+    color: #6f5499;
+}
+
+.acknowledgements-licensing-certification {
+    font-size:0.9em;
+    color:#007BFF;
+}
+
+.acknowledgements-licensing-certification:hover {
+    text-decoration: underline;
 }
 
 .no-calendar-header .picker-top-row,
