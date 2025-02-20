@@ -57,7 +57,6 @@ $dotenv->required('ORMS_ENABLED')->isBoolean();
 // Labs configurations
 $dotenv->required('LABS_PUSH_NOTIFICATION_URL')->notEmpty();
 $dotenv->required('LABS_OASIS_WSDL_URL')->notEmpty();
-$dotenv->required('LABS_EMAIL_RECIPIENTS')->notEmpty();
 
 if ($_ENV['ORMS_ENABLED']) {
     $dotenv->required('ORMS_HOST')->notEmpty();

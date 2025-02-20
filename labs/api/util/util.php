@@ -83,7 +83,7 @@ function send_email(string $message){
     $headers .= "Content-type: text/plain; charset=iso-8859-1\r\n";
     $headers .= "X-Priority: 3\r\n";
     $headers .= "X-Mailer: PHP". phpversion() ."\r\n".
-    $to = get_env_var("LABS_EMAIL_RECIPIENTS");
+    // $to = get_env_var("LABS_EMAIL_RECIPIENTS");
     $subject = "Error in Opal Labs Interface";
     @mail($to, $subject, $message,  $headers);
 }
