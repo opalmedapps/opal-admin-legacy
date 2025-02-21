@@ -3478,11 +3478,11 @@ class DatabaseOpal extends DatabaseAccess {
      */
     function assignToGenericAlias($aliasId, $source, $typeCode, $typeDesc) {
         $sourceAlias = $this->getSourceAliasDetails($source["SourceDatabaseName"], $source["SourceDatabaseSerNum"], $typeCode, ALIAS_TYPE_APPOINTMENT);
-        $masterSourceAliasId = $sourceAlias[0]["ID"];
-
-        if (!is_int($masterSourceAliasId)) {
+        if (count($sourceAlias) == 0) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("details" => "No master source alias found for source database and appointment code.")));
         }
+        $masterSourceAliasId = $sourceAlias[0]["ID"];
+
 
         $toInsert = array(
             "AliasSerNum" => $aliasId,
