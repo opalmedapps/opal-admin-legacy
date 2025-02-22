@@ -216,12 +216,15 @@
 	<div ng-include="'templates/navbar-menu.html'" ></div>
 	<div id="page">
 		<div ui-view style="position: relative; height: inherit;"></div>
-		<div ng-if="build" class="app-version">
-			<a ui-sref="about">About</a> · 
-			<a href="https://github.com/opalmedapps">View Source Code</a> · 
+	</div>
+
+	<footer ng-if="build" class="app-version" ng-class="{'login-footer': isIndexPage()}">
+		<div class="text-right">
+			<a ui-sref="about">About</a> ·
+			<a href="https://github.com/opalmedapps">View Source Code</a> ·
 			(Environment: {{build.environment_name}})
 		</div>
-	</div>
+	</footer>
  
 </body>
 </html>

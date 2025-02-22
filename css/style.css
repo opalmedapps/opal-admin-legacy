@@ -1340,9 +1340,7 @@ footer {
     clear: both; }
 
 footer {
-    border-top: 1px solid #111;
     padding: 33px 20px;
-    text-transform: uppercase;
     -webkit-transition: padding .2s ease-in-out;
     -moz-transition: padding .2s ease-in-out;
     -ms-transition: padding .2s ease-in-out;
@@ -1584,11 +1582,22 @@ footer {
 }
 
 .app-version {
-    color: #000;
     position: fixed;
     right: 5px;
-    bottom: 5px;
+    bottom: 0px;
+    width: 100%;
+    color: #000;
     font-size: 14px;
+    border-top: 1px solid #e7e7e7;
+    padding: 15px 0;
+    background: #e6edfa;
+    opacity: 0.8;
+}
+
+.login-footer {
+    border-top: 0px;
+    padding: 15px 10px;
+    background: none;
 }
 
 .app-version a {
