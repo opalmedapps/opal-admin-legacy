@@ -218,11 +218,11 @@
 		<div ui-view style="position: relative; height: inherit;"></div>
 	</div>
 
-	<footer ng-if="build" class="app-version" ng-class="{'login-footer': isIndexPage()}">
+	<footer class="app-version" ng-class="{'login-footer': isIndexPage()}">
 		<div class="text-right">
 			<a ui-sref="about">About</a> ·
 			<a href="https://github.com/opalmedapps">View Source Code</a> ·
-			(Environment: {{build.environment_name}})
+			<span ng-if="build">(Environment: {{build.environment_name}})</span>
 		</div>
 	</footer>
  
