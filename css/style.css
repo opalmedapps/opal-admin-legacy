@@ -1608,12 +1608,12 @@ footer {
     color: #6f5499;
 }
 
-.acknowledgements-licensing-certification {
-    font-size:0.9em;
-    color:#007BFF;
+.url-link {
+    font-size: 0.9em;
+    color: #007BFF;
 }
 
-.acknowledgements-licensing-certification:hover {
+.url-link:hover {
     text-decoration: underline;
 }
 
