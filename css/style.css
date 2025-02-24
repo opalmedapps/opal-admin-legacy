@@ -1583,15 +1583,18 @@ footer {
 
 .app-version {
     position: fixed;
-    right: 5px;
-    bottom: 0px;
+    right: 0;
+    bottom: 0;
     width: 100%;
     color: #000;
     font-size: 14px;
-    border-top: 1px solid #e7e7e7;
-    padding: 15px 0;
-    background: #e6edfa;
-    opacity: 0.8;
+    border-top: 1px solid #ddd;
+    padding-top: 1px;
+    padding-left: 20px;
+    padding-bottom: 5px;
+    padding-right: 10px;
+    background: #f5f5f7;
+    opacity: 90%;
 }
 
 .login-footer {
