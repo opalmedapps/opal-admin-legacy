@@ -72,7 +72,7 @@ class PushNotification {
 		$response = json_decode($response,true);
 
 		// **** Uncomment the below lines for troubleshooting
-		// $myfile = fopen("/var/www/html/opalAdmin/publisher/logs/PushNotification.log", "a");
+		// $myfile = fopen("/var/www/html/publisher/logs/PushNotification.log", "a");
 		// fwrite($myfile, print_r([$response, $message],true)."\n");
 		// fclose($myfile);
 
@@ -135,14 +135,15 @@ class PushNotification {
 		$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
 		// **** Uncomment the below lines for troubleshooting
-		// $myfile = fopen("/var/www/html/opalAdmin/publisher/logs/PushNotification.log", "a");
+		// $myfile = fopen("/var/www/html/publisher/logs/PushNotification.log", "a");
 		// fwrite($myfile, "http code: $httpcode");
 		// fwrite($myfile, print_r([$response,$body],true)."\n");
 		// fclose($myfile);
 
         if ($httpcode != 200) {
 			$err = curl_error($ch);
-			$response =  array("success"=>0,"failure"=>1,"error"=>"$err");
+			$error_message = ($err) ? "$err" : json_decode($response);
+			$response =  array("success" => 0, "failure" => 1, "error" => $error_message);
 		} else {
 			$response =  array("success"=>1,"failure"=>0);
         }
