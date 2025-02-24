@@ -17,7 +17,8 @@
     "COUNTDOWN": "Vous serez déconnecté(e) dans ",
     "SECONDS": " secondes",
     "SECOND": " seconde",
-    "ALT_LANGUAGE": "English"
+    "ALT_LANGUAGE": "English",
+    "DISCLAIMER": "Mentions, licence et avis de non-responsabilité"
   },
   "PROCESSING": {
     "TITLE": "En traitement..."

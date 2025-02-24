@@ -17,7 +17,8 @@
     "COUNTDOWN": "You'll be logged out in ",
     "SECONDS": " seconds",
     "SECOND": " second",
-    "ALT_LANGUAGE": "Français"
+    "ALT_LANGUAGE": "Français",
+    "DISCLAIMER": "Acknowledgements, Licensing and Healthcare Disclaimer"
   },
   "PROCESSING": {
     "TITLE": "Processing..."
