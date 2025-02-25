@@ -3435,5 +3435,8 @@
   "ACCESS_LEVEL_1": "1 : Need-to-know information",
   "ACCESS_LEVEL_2": "2 : ",
   "ACCESS_LEVEL_3": "2 : All data",
-  "CHART_UNAVAILABLE": "The charts are currently unavailable."
+  "CHART_UNAVAILABLE": "The charts are currently unavailable.",
+  "ENVIRONMENT": "Environement",
+  "ABOUT": "About",
+  "SOURCE_CODE": "View Source Code"
 }

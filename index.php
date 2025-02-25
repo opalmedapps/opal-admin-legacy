@@ -220,9 +220,9 @@
 
 	<footer class="app-version" ng-class="{'login-footer': isIndexPage()}">
 		<div class="text-right">
-			<a ui-sref="about">About</a> ·
-			<a href="https://github.com/opalmedapps">View Source Code</a> ·
-			<span ng-if="build">(Environment: {{build.environment_name}})</span>
+			<a ui-sref="about">{{'ABOUT'|translate}}</a> ·
+			<a href="https://github.com/opalmedapps">{{'SOURCE_CODE'|translate}}</a> ·
+			<span ng-if="build">({{'ENVIRONMENT'|translate}}: {{build.environment_name}})</span>
 		</div>
 	</footer>
  

@@ -3455,5 +3455,8 @@
   "ACCESS_LEVEL_1": "1 : Informations transmises sur la base du besoin",
   "ACCESS_LEVEL_2": "2 : ",
   "ACCESS_LEVEL_3": "2 : Toutes les données",
-  "CHART_UNAVAILABLE": "Les graphiques sont actuellement indisponibles."
+  "CHART_UNAVAILABLE": "Les graphiques sont actuellement indisponibles.",
+  "ENVIRONMENT": "Environnement",
+  "ABOUT": "À propos",
+  "SOURCE_CODE": "Voir le code source"
 }
