@@ -1589,10 +1589,7 @@ footer {
     color: #000;
     font-size: 14px;
     border-top: 1px solid #e7e7e7;
-    padding-top: 1px;
-    padding-left: 20px;
-    padding-bottom: 5px;
-    padding-right: 10px;
+    padding: 1px 10px 5px 20px;
     background: #e6edfa;
     opacity: 90%;
 }
