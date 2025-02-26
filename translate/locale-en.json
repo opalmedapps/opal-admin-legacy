@@ -3438,5 +3438,7 @@
   "CHART_UNAVAILABLE": "The charts are currently unavailable.",
   "ENVIRONMENT": "Environement",
   "ABOUT": "About",
-  "SOURCE_CODE": "View Source Code"
+  "SOURCE_CODE": "View Source Code",
+  "SHOW_LICENSE_TEXT": "Show license text",
+  "UNTRANSLATED_PAGE_DISCLAIMER": "This section has not yet been translated, but its original content is provided below for reference purposes. Thank you for your understanding."
 }

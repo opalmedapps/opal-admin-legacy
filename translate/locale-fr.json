@@ -3458,5 +3458,7 @@
   "CHART_UNAVAILABLE": "Les graphiques sont actuellement indisponibles.",
   "ENVIRONMENT": "Environnement",
   "ABOUT": "À propos",
-  "SOURCE_CODE": "Voir le code source"
+  "SOURCE_CODE": "Voir le code source",
+  "SHOW_LICENSE_TEXT": "Afficher la licence",
+  "UNTRANSLATED_PAGE_DISCLAIMER": "La traduction de cette section n'est pas encore disponible, mais son contenu original est tout de même affiché ci-dessous à titre de référence. Merci de votre compréhension."
 }

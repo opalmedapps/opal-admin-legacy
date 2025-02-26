@@ -47,6 +47,7 @@
 	<script src="node_modules/angular-ui-grid/ui-grid.js"></script>	
 	<script src="node_modules/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js" defer></script>
 	<script src="js/lib/bootstrap/ui.bootstrap.materialPicker.js"></script>
+	<script src="node_modules/marked/marked.min.js"></script>
 	<script src="node_modules/requirejs/require.js"></script>
 
 	<!-- Start Up -->
