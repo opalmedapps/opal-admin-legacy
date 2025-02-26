@@ -99,5 +99,5 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.update.password',
 	'opalAdmin.controllers.update.securityAnswer',
 	'opalAdmin.controllers.update.accessLevel',
-	'opalAdmin.controllers.about',
+	'opalAdmin.controllers.about'
 ]);
