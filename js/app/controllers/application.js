@@ -124,7 +124,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 		$scope.isIndexPage = () => $state.current.name === 'login';
 
-		var pagesToIgnore = ['login', 'install'];
+		var pagesToIgnore = ['login', 'about'];
 
 		// Trigger on idle start
 		$scope.$on('IdleStart', function () {
