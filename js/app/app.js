@@ -167,7 +167,8 @@ angular.module('opalAdmin', [
 			.state('sms/message',{ url: '/sms/message', templateUrl: "templates/sms/add.sms.html", controller: "add.sms", data:{ requireLogin: false } })
 			.state('patient-administration',{ url: '/patient-administration', templateUrl: "templates/patient-administration/patient.administration.html", controller: "patient.administration", data:{ requireLogin: true } })
 			.state('hospital-settings', { url: '/hospital-settings', templateUrl: "templates/hospital-settings/menu-main.html", data: { requireLogin: true }})
-			.state('clinician', { url: '/clinician', templateUrl: "templates/clinician/menu-main.html", data: { requireLogin: true }});
+			.state('clinician', { url: '/clinician', templateUrl: "templates/clinician/menu-main.html", data: { requireLogin: true }})
+			.state('about', { url: '/about', templateUrl: 'templates/about/about.html', controller: 'about', data: { requireLogin: false } });
 	}])
 
 	.config(function ($httpProvider) {
