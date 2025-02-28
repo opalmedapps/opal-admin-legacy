@@ -3392,6 +3392,20 @@
       "UNKNOWN": "Erreur inconnue. Veuillez réessayer plus tard."
     }
   },
+  "ABOUT_OPAL": {
+    "LICENSE_INFORMATION_TITLE": "Informations sur la licence",
+    "LICENSE_INFORMATION": "Sauf indication contraire, ce code est soumis aux termes de la <a href='LICENSE' class='url-link'>GNU Affero General Public License version 3 ou ultérieure (AGPL)</a>, dont une copie est liée ici pour votre commodité. Ce code est également distribué aux termes de la <a href='' ng-click='gotoDisclaimer()' class='url-link'>clause de non-responsabilité en matière de soins de santé</a>, que vous trouverez en bas de cette page.",
+    "WEBSITES": "Sites Web",
+    "OPAL_WEBSITE": "Le site d'Opale: <a href='https://www.opalmedapps.com' class='url-link'>https://www.opalmedapps.com</a>",
+    "OPAL_GITHUB": "L'organisation GitHub Opal: <a href='https://github.com/opalmedapps' class='url-link'>https://github.com/opalmedapps</a>",
+    "COPYRIGHT_TITLE": "Copyright",
+    "COPYRIGHT": "Les informations sur les droits d'auteur pour la plupart des fichiers de la distribution se trouvent dans chaque fichier.",
+    "HEALTHCARE_DISCLAIMER_TITLE": "Clause de non-responsabilité en matière de soins de santé",
+    "HEALTHCARE_DISCLAIMER": "Au Canada, ou dans toute autre juridiction où ils pourraient s'appliquer, les clauses supplémentaires en matière de soins de santé relatives à l'exclusion de garantie et à la limitation de responsabilité suivantes sont par la présente incorporées dans les termes et conditions de la Licence publique générale GNU Affero :",
+    "HEALTHCARE_DISCLAIMER_FIRST_CLAUSE": "Aucune garantie, de quelque nature que ce soit, n'est donnée quant aux résultats que vous obtiendrez en vous fiant au code concerné (ou à toute information ou contenu obtenu par le biais du code concerné), y compris, mais sans s'y limiter, en ce qui concerne le respect des lois ou réglementations en matière de confidentialité ou des normes et protocoles de l'industrie des soins cliniques. L'utilisation du code concerné ne remplace pas la pratique standard ou le jugement professionnel d'un prestataire de soins de santé. Toute décision relative à la pertinence du traitement ou à la validité ou à la fiabilité des informations ou contenus mis à disposition par le code concerné relève de la seule responsabilité du prestataire de soins de santé. Par conséquent, il incombe à chaque prestataire de soins de santé de vérifier l'ensemble des antécédents médicaux et les plans de traitement avec chaque patient.",
+    "HEALTHCARE_DISCLAIMER_SECOND_CLAUSE": "En aucun cas et en vertu d'aucune théorie juridique, que ce soit en matière de responsabilité délictuelle (y compris la négligence), contractuelle ou autre, aucun contributeur ni personne distribuant le logiciel couvert tel que permis par la licence ne pourra être tenu responsable envers vous de tout dommage indirect, spécial, accessoire ou consécutif, y compris, sans limitation, les dommages résultant de la perte de la bonne volonté, de l'interruption du travail, d'une panne ou d'un dysfonctionnement informatique, ou de tout autre dommage ou perte, quelle qu'en soit la nature (directe ou autre), résultant de ou associé à l'utilisation ou à l'incapacité d'utiliser le contenu couvert (y compris, sans limitation, l'utilisation d'informations ou de contenu mis à disposition par le code couvert, toute documentation associée, ainsi que le non-respect par le code couvert des lois et réglementations relatives à la confidentialité ou des normes et protocoles de l'industrie des soins cliniques), même si la partie concernée a été informée de la possibilité de tels dommages.",
+    "THIRD_PARTY_TITLE": "Dépendances tierces"
+  },
   "PATIENT_REGISTRATION_TITLE": "Inscription à Opal",
   "PATIENT_REGISTRATION_SEARCH_HEADER": "Recherche",
   "PATIENT_REGISTRATION_SEARCH_DESCRIPTION": "Veuillez entrer un numéro de carte soleil de 12 caractères avec l'identifiant dur patient pour lancer le processus d'incription.",
