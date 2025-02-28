@@ -32,7 +32,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 			// Check whether the user is logged in and coming from ORMS
 			if ($rootScope.currentUser && document.referrer) {
-				if ($rootScope.ormsHost.startsWith(document.referrer)) {
+				if ($rootScope.ormsHost && $rootScope.ormsHost.startsWith(document.referrer)) {
 					// Check if the user only has access to ORMS (Clinician Dashboard)
 					const userAccess = Session.retrieveObject('access');
 					const countAccess = userAccess.filter(x => x >= 1).length;
