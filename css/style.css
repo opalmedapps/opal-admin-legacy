@@ -1641,7 +1641,7 @@ footer {
     margin-top: 10px;
 }
 
-/* Header font-size adjustments that scale with the user's chosen font size (using fontSizeDesc on the .third-party container) */
+/* Header font-size adjustments */
 .third-party h1 {
     font-size: 1.6em;
 }
@@ -1679,7 +1679,6 @@ footer {
 .third-party details summary:before {
     color: #444;
     content: "▶";
-    /* The math font family allows the triangle to display on mobile (this character is not available in Roboto) */
     font-family: math;
     font-size: 0.7em;
     font-weight: bold;

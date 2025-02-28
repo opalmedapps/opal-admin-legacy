@@ -19,7 +19,7 @@
                         </details>
                     `;
                 },
-                // Convert all links to open in a new tab (or in an external browser on mobile) using a _blank target
+                // Convert all links to open in a new tab using a _blank target
                 link(href, title, text) {
                     const titleAttr = title ? ` title="${title}"` : '';
                     return `<a href="${href}"${titleAttr} target="_blank" rel="noopener">${text}</a>`;
@@ -43,7 +43,7 @@
                 // Process the Markdown content into HTML
                 let parsedHtml = marked.parse(mdContent);
 
-                // If applicable, add a paragraph at the beginning stating that the page has not been translated
+                // If applicable, add a paragraph at the beginning stating that the section has not been translated
                 if ($rootScope.siteLanguage !== 'EN')
                     parsedHtml = `<p class="third-party-pre">
                             ${$filter('translate')('UNTRANSLATED_PAGE_DISCLAIMER')}
