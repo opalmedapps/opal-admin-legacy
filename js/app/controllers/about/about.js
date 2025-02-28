@@ -5,9 +5,9 @@
         .module('opalAdmin.controllers.about', [])
         .controller('about', thirdPartyController);
 
-    thirdPartyController.$inject = ['$scope', '$rootScope', '$filter', '$http', '$sce'];
+    thirdPartyController.$inject = ['$scope', '$rootScope', '$filter', '$http', '$sce', '$location', '$anchorScroll'];
 
-    function thirdPartyController($scope, $rootScope, $filter, $http, $sce,) {        
+    function thirdPartyController($scope, $rootScope, $filter, $http, $sce, $location, $anchorScroll) {
         const customRenderExtension = {
             renderer: {
                 // Turn all license text blocks into collapsible sections using <details><summary>
@@ -57,5 +57,11 @@
             .catch(function(error) {
                 console.error('Error fetching Markdown file:', error);
         });
+
+        $scope.gotoDisclaimer = function() {
+            // Set the location hash to the id of the element
+            $location.hash('healthcare-disclaimer');
+            $anchorScroll();
+        };
     }
 })();
