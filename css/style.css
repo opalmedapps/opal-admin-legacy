@@ -1691,6 +1691,15 @@ footer {
     content: "▼";
 }
 
+.third-party a {
+    font-size: 0.9em;
+    color: #007BFF;
+}
+
+.third-party a:hover {
+    text-decoration: underline;
+}
+
 /* 
  * Custom Styles for ngGrid
  */
