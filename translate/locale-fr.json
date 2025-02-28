@@ -3404,7 +3404,8 @@
     "HEALTHCARE_DISCLAIMER": "Au Canada, ou dans toute autre juridiction où ils pourraient s'appliquer, les clauses supplémentaires en matière de soins de santé relatives à l'exclusion de garantie et à la limitation de responsabilité suivantes sont par la présente incorporées dans les termes et conditions de la Licence publique générale GNU Affero :",
     "HEALTHCARE_DISCLAIMER_FIRST_CLAUSE": "Aucune garantie, de quelque nature que ce soit, n'est donnée quant aux résultats que vous obtiendrez en vous fiant au code concerné (ou à toute information ou contenu obtenu par le biais du code concerné), y compris, mais sans s'y limiter, en ce qui concerne le respect des lois ou réglementations en matière de confidentialité ou des normes et protocoles de l'industrie des soins cliniques. L'utilisation du code concerné ne remplace pas la pratique standard ou le jugement professionnel d'un prestataire de soins de santé. Toute décision relative à la pertinence du traitement ou à la validité ou à la fiabilité des informations ou contenus mis à disposition par le code concerné relève de la seule responsabilité du prestataire de soins de santé. Par conséquent, il incombe à chaque prestataire de soins de santé de vérifier l'ensemble des antécédents médicaux et les plans de traitement avec chaque patient.",
     "HEALTHCARE_DISCLAIMER_SECOND_CLAUSE": "En aucun cas et en vertu d'aucune théorie juridique, que ce soit en matière de responsabilité délictuelle (y compris la négligence), contractuelle ou autre, aucun contributeur ni personne distribuant le logiciel couvert tel que permis par la licence ne pourra être tenu responsable envers vous de tout dommage indirect, spécial, accessoire ou consécutif, y compris, sans limitation, les dommages résultant de la perte de la bonne volonté, de l'interruption du travail, d'une panne ou d'un dysfonctionnement informatique, ou de tout autre dommage ou perte, quelle qu'en soit la nature (directe ou autre), résultant de ou associé à l'utilisation ou à l'incapacité d'utiliser le contenu couvert (y compris, sans limitation, l'utilisation d'informations ou de contenu mis à disposition par le code couvert, toute documentation associée, ainsi que le non-respect par le code couvert des lois et réglementations relatives à la confidentialité ou des normes et protocoles de l'industrie des soins cliniques), même si la partie concernée a été informée de la possibilité de tels dommages.",
-    "THIRD_PARTY_TITLE": "Dépendances tierces"
+    "THIRD_PARTY_TITLE": "Dépendances tierces",
+    "UNTRANSLATED_PAGE_DISCLAIMER": "La traduction de cette section n'est pas encore disponible, mais son contenu original est tout de même affiché ci-dessous à titre de référence. Merci de votre compréhension."
   },
   "PATIENT_REGISTRATION_TITLE": "Inscription à Opal",
   "PATIENT_REGISTRATION_SEARCH_HEADER": "Recherche",
@@ -3473,6 +3474,5 @@
   "ENVIRONMENT": "Environnement",
   "ABOUT": "À propos",
   "SOURCE_CODE": "Voir le code source",
-  "SHOW_LICENSE_TEXT": "Afficher la licence",
-  "UNTRANSLATED_PAGE_DISCLAIMER": "La traduction de cette section n'est pas encore disponible, mais son contenu original est tout de même affiché ci-dessous à titre de référence. Merci de votre compréhension."
+  "SHOW_LICENSE_TEXT": "Afficher la licence"
 }

@@ -46,7 +46,7 @@
                 // If applicable, add a paragraph at the beginning stating that the page has not been translated
                 if ($rootScope.siteLanguage !== 'EN')
                     parsedHtml = `<p class="third-party-pre">
-                            ${$filter('translate')('UNTRANSLATED_PAGE_DISCLAIMER')}
+                            ${$filter('translate')('ABOUT_OPAL.UNTRANSLATED_PAGE_DISCLAIMER')}
                         </p>
                         <hr>`
                     + parsedHtml;
