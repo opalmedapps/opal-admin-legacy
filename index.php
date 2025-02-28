@@ -186,6 +186,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 	<script type="text/javascript" src="js/app/controllers/patient-administration/update.accessLevel.js"></script>
 	<script type="text/javascript" src="js/app/controllers/patient-administration/update.securityAnswer.js"></script>
 
+	<script type="text/javascript" src="js/app/controllers/about/about.js"></script>
+
 	<!-- Collection -->
  	<script type="text/javascript" src="js/app/collections/collections.js"></script>
 
@@ -220,10 +222,15 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 	<div ng-include="'templates/navbar-menu.html'" ></div>
 	<div id="page">
 		<div ui-view style="position: relative; height: inherit;"></div>
-		<div ng-if="build" class="app-version">
-			(Environment: {{build.environment_name}})
-		</div>
 	</div>
+
+	<footer class="app-version" ng-class="{'login-footer': isIndexPage()}">
+		<div class="text-right">
+			<a ui-sref="about">{{'ABOUT'|translate}}</a> ·
+			<a href="https://github.com/opalmedapps">{{'SOURCE_CODE'|translate}}</a> ·
+			<span ng-if="build">({{'ENVIRONMENT'|translate}}: {{build.environment_name}})</span>
+		</div>
+	</footer>
  
 </body>
 </html>

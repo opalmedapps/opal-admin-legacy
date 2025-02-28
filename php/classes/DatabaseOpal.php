@@ -3475,15 +3475,19 @@ class DatabaseOpal extends DatabaseAccess {
      * Assigns the appointment code to the given alias for the given master source.
      * 
      * @param int $aliasId the ID of the generic alias
-     * @param int $sourceId the ID of the master source alias
+     * @param array $source the source database
      * @param string $typeCode the appointment code
      * @param string $typeDesc the appointment description
      * 
      * @return int|boolean the ID of the inserted element or false if it failed
      */
-    function assignToGenericAlias($aliasId, $sourceId, $typeCode, $typeDesc) {
-        $sourceAlias = $this->getSourceAliasDetails($typeCode, $sourceId, $typeCode, ALIAS_TYPE_APPOINTMENT);
+    function assignToGenericAlias($aliasId, $source, $typeCode, $typeDesc) {
+        $sourceAlias = $this->getSourceAliasDetails($source["SourceDatabaseName"], $source["SourceDatabaseSerNum"], $typeCode, ALIAS_TYPE_APPOINTMENT);
+        if (count($sourceAlias) == 0) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("details" => "No master source alias found for source database and appointment code.")));
+        }
         $masterSourceAliasId = $sourceAlias[0]["ID"];
+
 
         $toInsert = array(
             "AliasSerNum" => $aliasId,

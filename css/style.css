@@ -577,6 +577,10 @@ ul.no-list {
     margin: 5em auto;
 }
 
+.about-opal {
+    margin: 0 auto;
+}
+
 #main {
     position: relative;
     padding: 0px 14px 15px;
@@ -1342,9 +1346,7 @@ footer {
     clear: both; }
 
 footer {
-    border-top: 1px solid #111;
     padding: 33px 20px;
-    text-transform: uppercase;
     -webkit-transition: padding .2s ease-in-out;
     -moz-transition: padding .2s ease-in-out;
     -ms-transition: padding .2s ease-in-out;
@@ -1587,9 +1589,38 @@ footer {
 
 .app-version {
     position: fixed;
-    right: 5px;
-    bottom: 5px;
-    font-size: 12px;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    color: #000;
+    font-size: 14px;
+    border-top: 1px solid #e7e7e7;
+    padding: 1px 10px 5px 20px;
+    background: #e6edfa;
+    opacity: 0.9;
+}
+
+.login-footer {
+    border-top: 0px;
+    padding: 15px 10px;
+    background: none;
+}
+
+.app-version a {
+    text-decoration: underline;
+}
+
+.app-version a:hover {
+    color: #6f5499;
+}
+
+.url-link {
+    font-size: 0.9em;
+    color: #007BFF;
+}
+
+.url-link:hover {
+    text-decoration: underline;
 }
 
 .no-calendar-header .picker-top-row,
