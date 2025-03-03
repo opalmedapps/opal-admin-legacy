@@ -3396,7 +3396,7 @@
     "LICENSE_INFORMATION_TITLE": "Informations sur la licence",
     "LICENSE_INFORMATION": "Sauf indication contraire, ce code est soumis aux termes de la <a href='LICENSE' class='url-link'>GNU Affero General Public License version 3 ou ultérieure (AGPL)</a>, dont une copie est liée ici pour votre commodité. Ce code est également distribué aux termes de la <a href='' ng-click='gotoDisclaimer()' class='url-link'>clause de non-responsabilité en matière de soins de santé</a>, que vous trouverez en bas de cette page.",
     "WEBSITES": "Sites Web",
-    "OPAL_WEBSITE": "Le site d'Opale: <a href='https://www.opalmedapps.com' class='url-link'>https://www.opalmedapps.com</a>",
+    "OPAL_WEBSITE": "Le site d'Opal: <a href='https://www.opalmedapps.com' class='url-link'>https://www.opalmedapps.com</a>",
     "OPAL_GITHUB": "L'organisation GitHub Opal: <a href='https://github.com/opalmedapps' class='url-link'>https://github.com/opalmedapps</a>",
     "COPYRIGHT_TITLE": "Copyright",
     "COPYRIGHT": "Les informations sur les droits d'auteur pour la plupart des fichiers de la distribution se trouvent dans chaque fichier.",
