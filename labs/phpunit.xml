@@ -6,7 +6,7 @@ SPDX-FileCopyrightText: Copyright (C) 2020 Opal Health Informatics Group at the 
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd" bootstrap="vendor/autoload.php" colors="true" cacheDirectory=".phpunit.cache">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd" bootstrap="../vendor/autoload.php" colors="true" cacheDirectory=".phpunit.cache">
   <coverage>
     <include>
       <directory suffix=".php">./app</directory>
@@ -14,10 +14,10 @@ SPDX-License-Identifier: AGPL-3.0-or-later
   </coverage>
   <testsuites>
     <testsuite name="Classes">
-      <directory suffix="Test.php">./tests/classes</directory>
+      <directory suffix="Test.php">tests/classes</directory>
     </testsuite>
     <testsuite name="Requests">
-      <directory suffix="Test.php">./tests/requests</directory>
+      <directory suffix="Test.php">tests/requests</directory>
     </testsuite>
   </testsuites>
   <php>
