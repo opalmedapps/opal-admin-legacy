@@ -1,5 +1,9 @@
 #!/usr/bin/perl
 
+# SPDX-FileCopyrightText: Copyright (C) 2014 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 #---------------------------------------------------------------------------------
 # A.Joseph 13-Aug-2014 ++ File: Priority.pm
 #---------------------------------------------------------------------------------
