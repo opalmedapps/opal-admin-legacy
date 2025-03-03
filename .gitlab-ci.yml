@@ -56,4 +56,4 @@ phpunit:
     # Install project dependencies (including dev dependencies)
     - composer install
   script:
-    - ./vendor/bin/phpunit
+    - ./vendor/bin/phpunit -c labs/phpunit.xml
