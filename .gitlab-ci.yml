@@ -50,7 +50,9 @@ phpunit:
   stage: test
   image: php:8.4.2-alpine
   before_script:
-    - apk add --no-cache curl unzip
+    - apk add --no-cache curl unzip libxml2-dev
+    # Install SOAP extension
+    - docker-php-ext-install soap
     # Install Composer globally
     - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
     # Install project dependencies (including dev dependencies)
