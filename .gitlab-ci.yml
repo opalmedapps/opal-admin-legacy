@@ -50,7 +50,7 @@ phpunit:
   stage: test
   needs: [build]
   before_script:
-    - apt-get update && apt-get install -y unzip
+    - apk add --no-cache curl unzip
     # Install Composer globally
     - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
     # Install project dependencies (including dev dependencies)
