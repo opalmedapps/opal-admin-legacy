@@ -1,5 +1,9 @@
 <?php
 
+// SPDX-FileCopyrightText: Copyright (C) 2022 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 class AppleApiCall extends ApiCall {
 
     public function __construct($registrationId, $title, $body, $options = APPLE_PUSH_NOTIFICATION_CONFIG) {

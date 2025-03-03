@@ -1,5 +1,9 @@
 <?php
 
+// SPDX-FileCopyrightText: Copyright (C) 2021 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 /**
  * SMS class objet and methods. WARNING! Because of the nature of the ORMS API with its limited calls, some of them are
  * used multiple times, and they do not allow a full validation of the data to be sent back to the ORMS API. For more
