@@ -48,7 +48,7 @@ check_thirdparty_notice:
 
 phpunit:
   stage: test
-  needs: [build]
+  image: php:8.4.2-apache-bookworm
   before_script:
     - apk add --no-cache curl unzip
     # Install Composer globally
