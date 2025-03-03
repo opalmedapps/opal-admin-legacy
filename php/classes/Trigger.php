@@ -1,5 +1,9 @@
 <?php
 
+// SPDX-FileCopyrightText: Copyright (C) 2021 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 // TODO: if needed: use the actual package via composer: https://packagist.org/packages/jwadhams/json-logic-php
 // include('../lib/JWadhams/JsonLogic.php');
 /*

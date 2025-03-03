@@ -1,4 +1,9 @@
 <?php
+
+// SPDX-FileCopyrightText: Copyright (C) 2019 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 /**
  * This class is where we should store all useful functions for the opalAdmin. Create static functions here.
  * User: Dominic Bourdua
