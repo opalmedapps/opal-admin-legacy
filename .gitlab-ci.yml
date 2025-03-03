@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Copyright (C) 2023 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # dummy stages to follow the template guidelines
 stages:
   - build
@@ -22,6 +26,9 @@ include:
     file: '/templates/InterruptibleMergeRequest-Pipelines.gitlab-ci.yml'
   - project: 'opalmedapps/engineering/ci-templates'
     file: '/templates/Auto-DevOps.gitlab-ci.yml'
+  # Add Reuse job: https://reuse.software/
+  - project: 'opalmedapps/engineering/ci-templates'
+    file: '/templates/jobs/Reuse.gitlab-ci.yml'
   - component: $CI_SERVER_FQDN/opalmedapps/engineering/ci-templates/check-thirdparty-notice@main
     inputs:
       package-file: package.json

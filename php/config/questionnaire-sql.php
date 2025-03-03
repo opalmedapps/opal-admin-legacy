@@ -1,5 +1,9 @@
 <?php
 
+// SPDX-FileCopyrightText: Copyright (C) 2019 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 // DEFINE QUESTIONNAIRE 2019 SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MySQL setup.
 define( "QUESTIONNAIRE_DB_2019_HOST",  $_ENV["QUESTIONNAIRE_DB_HOST"]);
