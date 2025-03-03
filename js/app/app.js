@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: Copyright (C) 2016 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 /* Angular module */
 /*
  * Constant:  To define all of the available event codes in a central place. If you ever
@@ -167,7 +171,8 @@ angular.module('opalAdmin', [
 			.state('sms/message',{ url: '/sms/message', templateUrl: "templates/sms/add.sms.html", controller: "add.sms", data:{ requireLogin: false } })
 			.state('patient-administration',{ url: '/patient-administration', templateUrl: "templates/patient-administration/patient.administration.html", controller: "patient.administration", data:{ requireLogin: true } })
 			.state('hospital-settings', { url: '/hospital-settings', templateUrl: "templates/hospital-settings/menu-main.html", data: { requireLogin: true }})
-			.state('clinician', { url: '/clinician', templateUrl: "templates/clinician/menu-main.html", data: { requireLogin: true }});
+			.state('clinician', { url: '/clinician', templateUrl: "templates/clinician/menu-main.html", data: { requireLogin: true }})
+			.state('about', { url: '/about', templateUrl: 'templates/about/about.html', controller: 'about', data: { requireLogin: false } });
 	}])
 
 	.config(function ($httpProvider) {

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: Copyright (C) 2016 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.application',
 	'opalAdmin.controllers.navigation',
@@ -98,5 +102,6 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.update.email',
 	'opalAdmin.controllers.update.password',
 	'opalAdmin.controllers.update.securityAnswer',
-	'opalAdmin.controllers.update.accessLevel'
+	'opalAdmin.controllers.update.accessLevel',
+	'opalAdmin.controllers.about'
 ]);

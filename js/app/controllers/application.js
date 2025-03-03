@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: Copyright (C) 2017 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', 'pascalprecht.translate']).
 
 
@@ -32,7 +36,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 			// Check whether the user is logged in and coming from ORMS
 			if ($rootScope.currentUser && document.referrer) {
-				if ($rootScope.ormsHost.startsWith(document.referrer)) {
+				if ($rootScope.ormsHost && $rootScope.ormsHost.startsWith(document.referrer)) {
 					// Check if the user only has access to ORMS (Clinician Dashboard)
 					const userAccess = Session.retrieveObject('access');
 					const countAccess = userAccess.filter(x => x >= 1).length;
@@ -122,7 +126,9 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 		$scope.inAuthLoginModal = false;
 
-		var pagesToIgnore = ['login', 'install'];
+		$scope.isIndexPage = () => $state.current.name === 'login';
+
+		var pagesToIgnore = ['login', 'about'];
 
 		// Trigger on idle start
 		$scope.$on('IdleStart', function () {
