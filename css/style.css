@@ -1645,6 +1645,7 @@ footer {
     font-family: monospace;
     font-size: 0.8em;
     margin-top: 10px;
+    font-style: italic;
 }
 
 /* Header font-size adjustments */
