@@ -82,3 +82,15 @@ docker compose exec app php publisher/php/tests/testPushNotification.php <device
 
 Output will be printed to the terminal to indicate whether the notification was successfully sent, or if there was an error.
 If successful, you’ll receive a test push notification on your device.
+
+## Labs Design
+
+_Please see the [sequence diagram](diagram.png) for the workflow details. The source code of the diagram can be found [here](https://gitlab.com/opalmedapps/docs/-/blob/main/docs/development/architecture/diagrams/labs.puml?ref_type=heads)._
+
+The notification for test results arrives from the interface engine (IE) via post request to a PHP script.
+
+Using these notifications, one may then obtain the test results using the Oasis webservice via the Oasis [Soap client](https://en.wikipedia.org/wiki/SOAP):
+
+```php
+response = oasis_soap_client->getLabList(oasisPatientId, fromDate, toDate); // dates in "Y-m-d"
+```
