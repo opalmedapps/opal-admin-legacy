@@ -41,8 +41,8 @@
         $http.get(thirdPartyURL)
             .then(function(response) {
                 let mdContent = response.data;
-                // Remove the first line of the Markdown file
-                mdContent = mdContent.split('\n').slice(1).join('\n');
+                // Remove both the comment block and the section header
+                mdContent = mdContent.replace(/<!--[\s\S]*?-->\s*# Third-Party Dependencies\s*\n/, '');
 
                 // Process the Markdown content into HTML
                 let parsedHtml = marked.parse(mdContent);
