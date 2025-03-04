@@ -102,8 +102,6 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 		};
 		$rootScope.setSiteLanguage($rootScope.currentUser);
 
-		$scope.userRoles = USER_ROLES;
-		$scope.isAuthorized = AuthService.isAuthorized;
 		$scope.isAuthenticated = AuthService.isAuthenticated;
 
 		// Function to close idle modal
@@ -128,11 +126,11 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 		$scope.isIndexPage = () => $state.current.name === 'login';
 
-		var pagesToIgnore = ['login', 'about'];
+		var pagesToIgnore = ['login'];
 
 		// Trigger on idle start
 		$scope.$on('IdleStart', function () {
-			if ((pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {
+			if ($scope.isAuthenticated() && (pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {
 				$scope.warning = $uibModal.open({
 					templateUrl: 'templates/idle-warning-modal.html',
 					windowClass: 'modal-danger'
@@ -152,7 +150,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 			LogoutService.logLogout(); // send logout report to backend
 			Session.destroy(); // destroy session
 
-			if ((pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {
+			if ($scope.isAuthenticated() && (pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {
 				$scope.inAuthLoginModal = true;
 				loginModal() // open login modal
 					.then(function () {
@@ -179,7 +177,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 		// Trigger on non-authentication
 		$scope.$on(AUTH_EVENTS.notAuthenticated, function () {
-			if ((pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {
+			if ($scope.isAuthenticated() && (pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {
 				$scope.inAuthLoginModal = true;
 				loginModal() // open login modal
 					.then(function () {
