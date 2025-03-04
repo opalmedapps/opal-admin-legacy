@@ -179,8 +179,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 		// Trigger on non-authentication
 		$scope.$on(AUTH_EVENTS.notAuthenticated, function () {
-			var currentState = $state.current.name;
-			if (currentState != 'login' && !$scope.inAuthLoginModal) {
+			if ((pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {
 				$scope.inAuthLoginModal = true;
 				loginModal() // open login modal
 					.then(function () {
