@@ -125,6 +125,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 		$scope.inAuthLoginModal = false;
 
 		$scope.isIndexPage = () => $state.current.name === 'login';
+		$scope.isAboutPage = () => $state.current.name === 'about';
 
 		var pagesToIgnore = ['login'];
 
