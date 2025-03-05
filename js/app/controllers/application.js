@@ -147,10 +147,10 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 		$scope.$on('IdleTimeout', function () {
 			closeIdleModal(); // close idle modal
 
+			let isAuthenticated = $scope.isAuthenticated();
 			LogoutService.logLogout(); // send logout report to backend
 			Session.destroy(); // destroy session
-
-			if ($scope.isAuthenticated() && (pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {
+			if (isAuthenticated && (pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {
 				$scope.inAuthLoginModal = true;
 				loginModal() // open login modal
 					.then(function () {
@@ -177,7 +177,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 		// Trigger on non-authentication
 		$scope.$on(AUTH_EVENTS.notAuthenticated, function () {
-			if ($scope.isAuthenticated() && (pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {
+			if ((pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {
 				$scope.inAuthLoginModal = true;
 				loginModal() // open login modal
 					.then(function () {
