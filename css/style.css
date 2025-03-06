@@ -1615,7 +1615,6 @@ footer {
 }
 
 .url-link {
-    font-size: 0.9em;
     color: #007BFF;
 }
 
@@ -1633,6 +1632,75 @@ footer {
 }
 .btn-frequency-select {
     width: 100%;
+}
+
+/* Third party licenses styling that is used in the about page */
+.third-party {
+    margin-bottom: 16px;
+    overflow-wrap: break-word;
+}
+
+.third-party-pre {
+    font-size: 1.1em;
+    margin-top: 10px;
+    font-style: italic;
+}
+
+/* Header font-size adjustments */
+.third-party h1 {
+    font-size: 1.6em;
+}
+.third-party h2 {
+    font-size: 1.3em;
+}
+.third-party h3 {
+    font-size: 1.2em;
+}
+.third-party h4 {
+    font-size: 1.1em;
+}
+
+/* See: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary */
+/* Show a grey border box when the details are closed */
+.third-party details {
+    background-color: #F5F5F5;
+    border: 1px solid #CCC;
+    border-radius: 4px;
+    margin-top: 14px;
+    padding: 2px 6px;
+}
+
+/* Hide the border box when the details are open */
+.third-party details[open] {
+    background-color: transparent;
+    border: none;
+}
+
+.third-party details[open] summary {
+    margin-bottom: 4px;
+}
+
+/* Arrow in front of details summary (closed) */
+.third-party details summary:before {
+    color: #444;
+    content: "▶";
+    font-family: math;
+    font-size: 0.7em;
+    font-weight: bold;
+    margin-right: 4px;
+}
+
+/* Arrow in front of details summary (open) */
+.third-party details[open] summary:before {
+    content: "▼";
+}
+
+.third-party a {
+    color: #007BFF;
+}
+
+.third-party a:hover {
+    text-decoration: underline;
 }
 
 /* 
