@@ -1,4 +1,9 @@
 #!/usr/bin/perl
+
+# SPDX-FileCopyrightText: Copyright (C) 2020 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 #---------------------------------------------------------------------------------
 # Y.Mo 03-Apr-2020
 # This module is no longer required because the test results will be fetch from Oacis.

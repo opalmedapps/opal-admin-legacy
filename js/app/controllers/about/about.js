@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: Copyright (C) 2025 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 (function () {
     'use strict';
 
@@ -19,7 +23,7 @@
                         </details>
                     `;
                 },
-                // Convert all links to open in a new tab (or in an external browser on mobile) using a _blank target
+                // Convert all links to open in a new tab using a _blank target
                 link(href, title, text) {
                     const titleAttr = title ? ` title="${title}"` : '';
                     return `<a href="${href}"${titleAttr} target="_blank" rel="noopener">${text}</a>`;
@@ -37,13 +41,13 @@
         $http.get(thirdPartyURL)
             .then(function(response) {
                 let mdContent = response.data;
-                // Remove the first line of the Markdown file
-                mdContent = mdContent.split('\n').slice(1).join('\n');
+                // Remove both the comment block and the section header
+                mdContent = mdContent.replace(/<!--[\s\S]*?-->\s*# Third-Party Dependencies\s*\n/, '');
 
                 // Process the Markdown content into HTML
                 let parsedHtml = marked.parse(mdContent);
 
-                // If applicable, add a paragraph at the beginning stating that the page has not been translated
+                // If applicable, add a paragraph at the beginning stating that the section has not been translated
                 if ($rootScope.siteLanguage !== 'EN')
                     parsedHtml = `<p class="third-party-pre">
                             ${$filter('translate')('ABOUT_OPAL.UNTRANSLATED_PAGE_DISCLAIMER')}

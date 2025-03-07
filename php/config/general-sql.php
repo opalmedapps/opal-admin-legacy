@@ -1,4 +1,9 @@
 <?php
+
+// SPDX-FileCopyrightText: Copyright (C) 2019 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 /**
  * General SQL config file that is common to all database accesses
  * User: Dominic Bourdua

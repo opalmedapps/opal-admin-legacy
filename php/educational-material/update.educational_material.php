@@ -1,5 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
+
+// SPDX-FileCopyrightText: Copyright (C) 2016 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+header('Content-Type: application/javascript');
   /* To update an edu material for any changes */
   include_once('educational-material.inc');
 

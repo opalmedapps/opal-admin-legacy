@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: Copyright (C) 2016 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 @charset "UTF-8";
 
 /* ===============================================
@@ -1609,7 +1615,6 @@ footer {
 }
 
 .url-link {
-    font-size: 0.9em;
     color: #007BFF;
 }
 
@@ -1636,12 +1641,12 @@ footer {
 }
 
 .third-party-pre {
-    font-family: monospace;
-    font-size: 0.8em;
+    font-size: 1.1em;
     margin-top: 10px;
+    font-style: italic;
 }
 
-/* Header font-size adjustments that scale with the user's chosen font size (using fontSizeDesc on the .third-party container) */
+/* Header font-size adjustments */
 .third-party h1 {
     font-size: 1.6em;
 }
@@ -1679,7 +1684,6 @@ footer {
 .third-party details summary:before {
     color: #444;
     content: "▶";
-    /* The math font family allows the triangle to display on mobile (this character is not available in Roboto) */
     font-family: math;
     font-size: 0.7em;
     font-weight: bold;
@@ -1689,6 +1693,14 @@ footer {
 /* Arrow in front of details summary (open) */
 .third-party details[open] summary:before {
     content: "▼";
+}
+
+.third-party a {
+    color: #007BFF;
+}
+
+.third-party a:hover {
+    text-decoration: underline;
 }
 
 /* 
@@ -1930,43 +1942,4 @@ footer {
     right: 0;
     width: 100%;
     height: 100%;
-}
-
-/* The customize icon for clinical area button */
-.clinician-icon {
-    width: 50px;
-    height: 50px;
-    overflow: hidden;
-}
-
-.clinician-icon > span {
-    background-image: url("../images/template/clinician/waiting_room.png");
-    background-size: 50px;
-    display: inline-block;
-    height: 50px;
-    width: 50px;
-    -webkit-filter: drop-shadow(50px 0px #6F5499);
-    filter: drop-shadow(50px 0px #6F5499);
-    background-position: -100% 0;
-    margin-left: -50px;
-}
-
-@media only screen and (max-width:600px) {
-    .clinician-icon {
-        width: 30px;
-        height: 30px;
-        overflow: hidden;
-    }
-    
-    .clinician-icon > span {
-        background-image: url("../images/template/clinician/waiting_room.png");
-        background-size: 30px;
-        display: inline-block;
-        height: 30px;
-        width: 30px;
-        -webkit-filter: drop-shadow(30px 0px #6F5499);
-        filter: drop-shadow(30px 0px #6F5499);
-        background-position: -100% 0;
-        margin-left: -30px;
-    }
 }

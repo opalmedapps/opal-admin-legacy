@@ -1,5 +1,10 @@
 <?php
-    include_once "database.inc";
+
+// SPDX-FileCopyrightText: Copyright (C) 2017 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+include_once "database.inc";
     require_once('PushNotification.php');
     require_once('PublisherPatient.php');
 

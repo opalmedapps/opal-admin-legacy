@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: Copyright (C) 2017 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', 'pascalprecht.translate']).
 
 
@@ -32,7 +36,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 			// Check whether the user is logged in and coming from ORMS
 			if ($rootScope.currentUser && document.referrer) {
-				if ($rootScope.ormsHost.startsWith(document.referrer)) {
+				if ($rootScope.ormsHost && $rootScope.ormsHost.startsWith(document.referrer)) {
 					// Check if the user only has access to ORMS (Clinician Dashboard)
 					const userAccess = Session.retrieveObject('access');
 					const countAccess = userAccess.filter(x => x >= 1).length;
@@ -98,8 +102,6 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 		};
 		$rootScope.setSiteLanguage($rootScope.currentUser);
 
-		$scope.userRoles = USER_ROLES;
-		$scope.isAuthorized = AuthService.isAuthorized;
 		$scope.isAuthenticated = AuthService.isAuthenticated;
 
 		// Function to close idle modal
@@ -124,11 +126,11 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 		$scope.isIndexPage = () => $state.current.name === 'login';
 
-		var pagesToIgnore = ['login', 'about'];
+		var pagesToIgnore = ['login'];
 
 		// Trigger on idle start
 		$scope.$on('IdleStart', function () {
-			if ((pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {
+			if ($scope.isAuthenticated() && (pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {
 				$scope.warning = $uibModal.open({
 					templateUrl: 'templates/idle-warning-modal.html',
 					windowClass: 'modal-danger'
@@ -145,10 +147,10 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 		$scope.$on('IdleTimeout', function () {
 			closeIdleModal(); // close idle modal
 
+			let isAuthenticated = $scope.isAuthenticated();
 			LogoutService.logLogout(); // send logout report to backend
 			Session.destroy(); // destroy session
-
-			if ((pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {
+			if (isAuthenticated && (pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {
 				$scope.inAuthLoginModal = true;
 				loginModal() // open login modal
 					.then(function () {
@@ -175,8 +177,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 		// Trigger on non-authentication
 		$scope.$on(AUTH_EVENTS.notAuthenticated, function () {
-			var currentState = $state.current.name;
-			if (currentState != 'login' && !$scope.inAuthLoginModal) {
+			if ((pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {
 				$scope.inAuthLoginModal = true;
 				loginModal() // open login modal
 					.then(function () {

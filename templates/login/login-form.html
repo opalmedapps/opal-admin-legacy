@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: Copyright (C) 2018 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 <div class="form-box form-box-shake animated" ng-class="{'pulse': !formLoaded}">
     <div class="row" style="margin-top:10px;">
         <div class="horz-line" style="height: 10px; text-align: center; margin-left:25px; margin-right:34px">
@@ -33,12 +39,10 @@
                 </div>
             </form>
 
-            <div class="row">
-                <div class="col-xs-12 text-left" style="margin-top:20px;">
+            <div class="row col-xs-offset-1" style="margin-top:20px;">
                   <a ui-sref="about" class="url-link">
                     {{'LOGIN.DISCLAIMER'|translate}}
                   </a>
-                </div>
             </div>
         </div>
     </div>
