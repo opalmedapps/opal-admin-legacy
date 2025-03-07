@@ -16,7 +16,7 @@ COPY .npmrc ./
 RUN npm ci
 
 # Build/install PHP dependencies
-FROM composer:2.8.5 AS php-dependencies
+FROM composer:2.8.6 AS php-dependencies
 
 WORKDIR /app
 

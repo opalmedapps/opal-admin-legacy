@@ -87,9 +87,9 @@ If successful, you’ll receive a test push notification on your device.
 
 _Please see the [sequence diagram](diagram.png) for the workflow details. The source code of the diagram can be found [here](https://gitlab.com/opalmedapps/docs/-/blob/main/docs/development/architecture/diagrams/labs.puml?ref_type=heads)._
 
-The notification for test results arrives from the interface engine (IE) via post request to a PHP script.
+The notification for test results arrives from the interface engine (IE) via POST request to a PHP script.
 
-Using these notifications, one may then obtain the test results using the Oasis webservice via the Oasis [Soap client](https://en.wikipedia.org/wiki/SOAP):
+Using these notifications, one may then obtain the test results using the Oasis webservice via the Oasis [SOAP](https://en.wikipedia.org/wiki/SOAP) service:
 
 ```php
 response = oasis_soap_client->getLabList(oasisPatientId, fromDate, toDate); // dates in "Y-m-d"
