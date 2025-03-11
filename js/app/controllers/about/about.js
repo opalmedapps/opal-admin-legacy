@@ -9,9 +9,15 @@
         .module('opalAdmin.controllers.about', [])
         .controller('about', thirdPartyController);
 
-    thirdPartyController.$inject = ['$scope', '$rootScope', '$filter', '$http', '$sce', '$location', '$anchorScroll'];
+    thirdPartyController.$inject = [
+        '$scope', '$rootScope', '$filter', '$http', '$sce', '$location', '$anchorScroll', '$translate'
+    ];
 
-    function thirdPartyController($scope, $rootScope, $filter, $http, $sce, $location, $anchorScroll) {
+    function thirdPartyController(
+        $scope, $rootScope, $filter, $http, $sce, $location, $anchorScroll, $translate
+    ) {
+        $scope.currentLang = $translate.use();
+
         const customRenderExtension = {
             renderer: {
                 // Turn all license text blocks into collapsible sections using <details><summary>
@@ -48,12 +54,13 @@
                 let parsedHtml = marked.parse(mdContent);
 
                 // If applicable, add a paragraph at the beginning stating that the section has not been translated
-                if ($rootScope.siteLanguage !== 'EN')
+                if ($translate.use() !== 'en') {
                     parsedHtml = `<p class="third-party-pre">
                             ${$filter('translate')('ABOUT_OPAL.UNTRANSLATED_PAGE_DISCLAIMER')}
                         </p>
                         <hr>`
                     + parsedHtml;
+                }
 
                 // Trust the HTML to bypass Angular's sanitizer
                 $scope.thirdPartyContent = $sce.trustAsHtml(parsedHtml);
