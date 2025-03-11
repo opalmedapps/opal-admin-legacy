@@ -443,7 +443,7 @@ function sendPushNotification(mixed $backendPatient, string $labResultId): void
             }
         }
 
-        (new Client())->request('POST', 'http://localhost:8080/publisher/php/sendPushNotificationPerl.php', [
+        (new Client())->request('POST', '/publisher/php/sendPushNotificationPerl.php', [
             'form_params' => [
                 "patientSerNum" => $backendPatient->legacy_id,
                 "ser"           => $labResultId,

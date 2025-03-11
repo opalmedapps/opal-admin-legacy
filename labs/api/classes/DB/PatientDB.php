@@ -6,7 +6,7 @@
 
 namespace Opal\Labs\Classes\DB;
 
-require_once __DIR__ . "/../../../vendor/autoload.php";
+require_once __DIR__ . "/../../../../vendor/autoload.php";
 require_once __DIR__ . "/../../util/util.php";
 use Exception;
 use Opal\Labs\Classes\Patient;
