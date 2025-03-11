@@ -80,7 +80,7 @@ Options +FollowSymLinks
 AddHandler .php .py .jsp .asp .htm .shtml .sh
 
 # Additional security to lock down files and folders
-<FilesMatch "package\.json|package-lock\.json|bower\.json|composer\.json|composer\.lock|\.md">
+<FilesMatch "^(?!THIRDPARTY\.md$)(package\.json|package-lock\.json|bower\.json|composer\.json|composer\.lock|.*\.md)$">
   Require all denied
 </FilesMatch>
 
