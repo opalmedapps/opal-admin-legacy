@@ -54,6 +54,8 @@ $dotenv->required('FEDAUTH_API_ENDPOINT')->notEmpty();
 $dotenv->required('AD_ENABLED')->notEmpty();
 # ORMS
 $dotenv->required('ORMS_ENABLED')->isBoolean();
+// Labs configurations
+// $dotenv->required('LABS_OASIS_WSDL_URL')->notEmpty();
 
 if ($_ENV['ORMS_ENABLED']) {
     $dotenv->required('ORMS_HOST')->notEmpty();

@@ -11,4 +11,32 @@
 node_modules
 npm-debug.log
 
+# PHP
 vendor
+
+# vscode generated
+**/.DS_Store
+**/.dockerignore
+**/.env.sample
+**/.git
+**/.gitattributes
+**/.gitignore
+**/.project
+**/.vs
+**/.vscode
+**/*.*proj.user
+**/docker-compose*
+**/Dockerfile*
+**/npm-debug.log
+**/README.md
+
+# other ignores
+.gitlab
+.gitlab-ci.yml
+docs
+labs/tests
+labs/diagram.png
+labs/phpunit.xml
+logs
+php-error.log
+renovate.json5
