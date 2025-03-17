@@ -40,7 +40,7 @@ include:
 build:
   before_script:
     # add npmrc file with XLTS.dev registry token
-    - '[ -z "$NPMRC_FILE"] && echo \"Error: environment variable NPMRC_FILE must be defined for this job" && exit 1'
+    - '[ -z "$NPMRC_FILE"] && echo "Error: environment variable NPMRC_FILE must be defined for this job" && exit 1'
     - echo "$NPMRC_FILE" > .npmrc
 
 # for some reason, a branch pipeline is added as well
