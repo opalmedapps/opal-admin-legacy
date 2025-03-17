@@ -213,9 +213,7 @@ abstract class OpalProject
             $this->opalDB->insertPushNotification($pushNotificationDetail);
         } else {
 
-            // NOTE! Currently push notifications are sent based on the target patient's language.
-            // E.g., If Homer is a target patient for whom a new record and a push notification are being created,
-            // and Homer's language is set to English, then push notification for Marge will be also in English
+            // NOTE! Push notifications are sent based on the target caregivers's language.
             // regardless of Marge's language setting.
             foreach($patientDevices as $ptdId) {
                 $ptdidser        = $ptdId["PatientDeviceIdentifierSerNum"];
