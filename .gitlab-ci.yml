@@ -29,8 +29,6 @@ include:
   # Add Reuse job: https://reuse.software/
   - project: 'opalmedapps/engineering/ci-templates'
     file: '/templates/jobs/Reuse.gitlab-ci.yml'
-  - project: 'opalmedapps/engineering/ci-templates'
-    file: '/templates/jobs/Build.gitlab-ci.yml'
   - component: $CI_SERVER_FQDN/opalmedapps/engineering/ci-templates/check-thirdparty-notice@main
     inputs:
       package-file: package.json
