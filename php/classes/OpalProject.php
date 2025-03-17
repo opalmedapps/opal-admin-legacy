@@ -217,7 +217,6 @@ abstract class OpalProject
             // E.g., If Homer is a target patient for whom a new record and a push notification are being created,
             // and Homer's language is set to English, then push notification for Marge will be also in English
             // regardless of Marge's language setting.
-            // TODO: Take into account caregiver's language when send push notifications. See QSCCD-2118.
             foreach($patientDevices as $ptdId) {
                 $ptdidser        = $ptdId["PatientDeviceIdentifierSerNum"];
                 $registrationId  = $ptdId["RegistrationId"];
@@ -235,8 +234,6 @@ abstract class OpalProject
 
                 // Special case for replacing the $institution wildcard
                 if (str_contains($messageTemplate, '$institution')) {
-                    // TODO: update the code below once push notifications are built using caregiver's language setting.
-                    // See QSCCD-2118
                     if ($language == 'en'){
                         // Add $institution as a wildcard for replacement
                         $dynamicKeys['$institution'] = $institution_acronym_en;

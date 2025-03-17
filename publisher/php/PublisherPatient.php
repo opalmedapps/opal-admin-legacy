@@ -15,7 +15,8 @@ class PublisherPatient {
      * 
 	 * @param $patientSerNum - patient serial number for whom the device identifiers are fetched
 	 * @param array $ignoredUsernames - an optional list of usernames that should be ignored when device IDs are fetched
-	 * @return array an array with caregiver devices info at index 0, the institution acronym in English at index 1, and institution acronym in French at index 2
+	 * @return array an array with caregiver devices info at index 0, the institution acronym in English at index 1, 
+	 * institution acronym in French at index 2, and user language infor at index 3.
 	 */
     public static function getCaregiverDeviceIdentifiers(
         $patientSerNum,
