@@ -24,7 +24,7 @@
                 code(code) {
                     return `
                         <details>
-                          <summary>${$filter('translate')('SHOW_LICENSE_TEXT')}</summary>
+                          <summary>${$filter('translate')('ABOUT_OPAL.SHOW_LICENSE_TEXT')}</summary>
                           <pre><code>${code}</code></pre>
                         </details>
                     `;

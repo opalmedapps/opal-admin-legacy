@@ -3393,19 +3393,21 @@
     }
   },
   "ABOUT_OPAL": {
+    "TITLE": "À propos d'Opal",
     "LICENSE_INFORMATION_TITLE": "Informations sur la licence",
-    "LICENSE_INFORMATION": "Sauf indication contraire, ce code est soumis aux termes de la <a href='LICENSE' class='url-link'>GNU Affero General Public License version 3 ou ultérieure (AGPL)</a>, dont une copie est liée ici pour votre commodité. Ce code est également distribué aux termes de la <a href='' ng-click='gotoDisclaimer()' class='url-link'>clause de non-responsabilité en matière de soins de santé</a>, que vous trouverez en bas de cette page.",
+    "LICENSE_INFORMATION": "À moins d'indication contraire, le code source de ce logiciel est soumis aux termes de la licence <a href='LICENSE' class='url-link'>GNU Affero General Public License version 3 or later (AGPL)</a>, dont le lien est fourni ci-dessous à titre de référence. Ce code est également distribué selon les termes de la <a href='' ng-click='gotoDisclaimer()' class='url-link'>clause de non-responsabilité en matière de soins de santé</a>, que vous trouverez plus bas.",
     "WEBSITES": "Sites Web",
     "OPAL_WEBSITE": "Le site d'Opal: <a href='https://www.opalmedapps.com' class='url-link'>https://www.opalmedapps.com</a>",
-    "OPAL_GITHUB": "L'organisation GitHub Opal: <a href='https://github.com/opalmedapps' class='url-link'>https://github.com/opalmedapps</a>",
-    "COPYRIGHT_TITLE": "Copyright",
+    "OPAL_GITHUB": "L'organisation GitHub d'Opal: <a href='https://github.com/opalmedapps' class='url-link'>https://github.com/opalmedapps</a>",
+    "COPYRIGHT_TITLE": "Droits d'auteur",
     "COPYRIGHT": "Les informations sur les droits d'auteur pour la plupart des fichiers de la distribution se trouvent dans chaque fichier.",
     "HEALTHCARE_DISCLAIMER_TITLE": "Clause de non-responsabilité en matière de soins de santé",
     "HEALTHCARE_DISCLAIMER": "In Canada, or any other jurisdictions where they may apply, the following additional healthcare disclaimer of warranty and limitation of liability are hereby incorporated into the terms and conditions of the GNU Affero General Public License:",
     "HEALTHCARE_DISCLAIMER_FIRST_CLAUSE": "No warranties of any kind whatsoever are made as to the results that you will obtain from relying upon the covered code (or any information or content obtained by way of the covered code), including but not limited to compliance with privacy laws or regulations or clinical care industry standards and protocols. Use of the covered code is not a substitute for a health care provider's standard practice or professional judgment. Any decision with regard to the appropriateness of treatment, or the validity or reliability of information or content made available by the covered code, is the sole responsibility of the health care provider. Consequently, it is incumbent upon each health care provider to verify all medical history and treatment plans with each patient.",
     "HEALTHCARE_DISCLAIMER_SECOND_CLAUSE": "Under no circumstances and under no legal theory, whether tort (including negligence), contract, or otherwise, shall any contributor, or anyone who distributes covered software as permitted by the license, be liable to you for any indirect, special, incidental, consequential damages of any character including, without limitation, damages for loss of goodwill, work stoppage, computer failure or malfunction, or any and all other damages or losses, of any nature whatsoever (direct or otherwise) on account of or associated with the use or inability to use the covered content (including, without limitation, the use of information or content made available by the covered code, all documentation associated therewith, and the failure of the covered code to comply with privacy laws and regulations or clinical care industry standards and protocols), even if such party shall have been informed of the possibility of such damages.",
     "THIRD_PARTY_TITLE": "Dépendances tierces",
-    "UNTRANSLATED_PAGE_DISCLAIMER": "La traduction de cette section n'est pas encore disponible, mais son contenu original est tout de même affiché ci-dessous à titre de référence. Merci de votre compréhension."
+    "UNTRANSLATED_PAGE_DISCLAIMER": "La traduction de cette section n'est pas encore disponible, mais son contenu original est tout de même affiché ci-dessous à titre de référence. Merci de votre compréhension.",
+    "SHOW_LICENSE_TEXT": "Afficher la licence"
   },
   "PATIENT_REGISTRATION_TITLE": "Inscription à Opal",
   "PATIENT_REGISTRATION_SEARCH_HEADER": "Recherche",
@@ -3473,6 +3475,5 @@
   "CHART_UNAVAILABLE": "Les graphiques sont actuellement indisponibles.",
   "ENVIRONMENT": "Environnement",
   "ABOUT": "À propos",
-  "SOURCE_CODE": "Voir le code source",
-  "SHOW_LICENSE_TEXT": "Afficher la licence"
+  "SOURCE_CODE": "Voir le code source"
 }
