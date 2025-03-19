@@ -16,6 +16,23 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 	// Initialize lists to hold the distinct edu material types
 	$scope.EduMatTypes = [];
 
+	// Options for purpose
+	$scope.purposeOptions = [
+		{ ID: 1, title_EN: 'Clinical', title_FR: 'Clinique' },
+		{ ID: 2, title_EN: 'Research', title_FR: 'Recherche' }
+	];
+
+	// Translate the 'title_display' property based on the user's language
+    $scope.translateTitleDisplay = function (title_EN, title_FR) {
+        if ($scope.language === 'EN') {
+            return title_EN;
+        } else if ($scope.language === 'FR') {
+            return title_FR;
+        }
+        // Default to French if language is not specified
+        return title_FR;
+    };
+
 	// Call our API to get the list of edu material types
 	// Call our API to get the list of edu material types
 	educationalMaterialCollectionService.getEducationalMaterialTypes().then(function (response) {
@@ -60,6 +77,7 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 
 	// Call our API service to get the current educational material details
 	educationalMaterialCollectionService.getEducationalMaterialDetails($scope.currentEduMat.serial).then(function (response) {
+		console.log(response.data);
 		$scope.eduMat = response.data;
 	}).catch(function(err) {
 		ErrorHandler.onError(err, $filter('translate')('EDUCATION.EDIT.ERROR_DETAILS'));
@@ -168,6 +186,12 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 			$scope.validShareURLFR.message = null;
 			$scope.setChangesMade();
 		}
+	};
+
+	$scope.selectedPurpose = $scope.eduMat.purpose_ID;
+	$scope.updatePurpose = function() {
+		$scope.eduMat.purpose.ID = $scope.selectedPurpose;
+		$scope.setChangesMade();
 	};
 
 	// Submit changes
