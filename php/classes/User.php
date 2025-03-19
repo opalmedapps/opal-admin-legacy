@@ -649,14 +649,12 @@ class User extends Module {
     }
 
     /**
-     * Mark a user as deleted. An user cannot delete its own record
+     * Call new backend endpoint to deactivate the user when deleted, if exists.
      *
-     * WARNING!!! No record should be EVER be removed from the opalDB database!
+     * The endpoint that will be called is `api/users/username/deactivate-user/`
      *
-     * REMEMBER !!! NO DELETE STATEMENT EVER !!! YOU HAVE BEING WARNED !!!
-     *
-     * @params $userId (int) ID of the user
-     * @return void
+     * @params  $post (array) data receive from the front in $_POST method
+     * @return void or api response if fails to accomplish the deactivation.
      */
     public function deleteUserNewBackend($post) {
         $language = strtolower($_POST['language']);
