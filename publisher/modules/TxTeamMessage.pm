@@ -153,7 +153,7 @@ sub publishTxTeamMessages
 {
     my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
 
-    #my $today_date = strftime("%Y-%m-%d", localtime(time));
+    my $today_date = strftime("%Y-%m-%d", localtime(time));
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
     
     # Check for any new updates from the main cron control
