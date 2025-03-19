@@ -169,6 +169,19 @@
                 </ul>
             </div>
         </div>
+        <!-- SECTION: Interpretability -->
+        <div uib-accordion-group is-open="interpretabilitySection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'TEST.EDIT.INTERPRETABILITY'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': interpretabilitySection.open, 'glyphicon-chevron-right': !interpretabilitySection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12">
+                    <input type="checkbox" ng-click="interpretabilityUpdate()" ng-checked="testResult.interpretability" /> <strong>{{'TEST.EDIT.INTERPRETABILITY_OPTION'|translate}}</strong>
+                </div>
+            </div>
+        </div>
         <!-- SECTION: Additional links -->
 <!--        <div uib-accordion-group is-open="additionalLinksSection.open">-->
 <!--            <uib-accordion-heading>-->

@@ -1152,7 +1152,7 @@ define("OPAL_GET_DEMOGRAPHICS_REPORT_GROUP", "
 
 define("OPAL_GET_TEST_RESULTS","
     SELECT DISTINCT TestControlSerNum AS serial, Name_EN AS name_EN, Name_FR AS name_FR, PublishFlag AS publish,
-    Group_EN AS group_EN, Group_FR AS group_FR, 0 AS changed FROM ".OPAL_TEST_CONTROL_TABLE.";
+    Group_EN AS group_EN, Group_FR AS group_FR, 0 AS changed, InterpretationRecommended AS interpretability FROM ".OPAL_TEST_CONTROL_TABLE.";
 ");
 
 define("OPAL_GET_ASSIGNED_TESTS","
@@ -1167,7 +1167,7 @@ define("OPAL_UPDATE_TEST_RESULTS_PUBLISH_FLAG","
 
 define("OPAL_GET_TEST_RESULT_DETAILS","
     SELECT DISTINCT Name_EN AS name_EN, Name_FR AS name_FR, Description_EN AS description_EN, Description_FR AS description_FR,
-    Group_EN AS group_EN, Group_FR AS group_FR, EducationalMaterialControlSerNum AS eduMatSer FROM ".OPAL_TEST_CONTROL_TABLE."
+    Group_EN AS group_EN, Group_FR AS group_FR, EducationalMaterialControlSerNum AS eduMatSer, InterpretationRecommended AS interpretability FROM ".OPAL_TEST_CONTROL_TABLE."
     WHERE TestControlSerNum = :TestControlSerNum;
 ");
 
@@ -1200,7 +1200,7 @@ define("OPAL_UPDATE_TEST_CONTROL", "
     UPDATE ".OPAL_TEST_CONTROL_TABLE." SET name_EN = :name_EN, name_FR = :name_FR, description_EN = :description_EN,
     description_FR = :description_FR, group_EN = :group_EN, group_FR = :group_FR,
     EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum, LastUpdatedBy = :LastUpdatedBy,
-    SessionId = :SessionId WHERE TestControlSerNum = :TestControlSerNum;"
+    SessionId = :SessionId, InterpretationRecommended = :InterpretationRecommended WHERE TestControlSerNum = :TestControlSerNum;"
 );
 
 define("OPAL_REMOVE_UNUSED_TEST_EXPRESSIONS","
