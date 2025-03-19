@@ -233,6 +233,26 @@ sub sendPushNotification
         $message =~ s/$key/$dynamicKeys{$key}/g;
     }
 
+    print "\n***** Push notification to patient caregivers *****\n";
+    # get a list of the patient caregivers' device information
+    my apiResponse = Api::apiPatientCaregivers($patientser);
+    apiResponse = decode_json(apiResponse);
+
+    if (exists(apiResponse->{'caregivers'})) {
+        my $caregivers = apiResponse->{'caregivers'};
+        foreach $caregiver (@{ $caregivers }) {  # anonymous array traverse
+            my $devices = $caregiver->{'devices'};
+            foreach $device (@{ $devices }) {  # anonymous array traverse
+                my $deviceType = $device->{'type'};
+                my $push_token = $device->{'push_token'};
+                if ($deviceType != 'WEB') {
+                    $deviceType = $deviceType == 'IOS' ? 0 : 1;
+                    postNotification($title, $message, $deviceType, $push_token);
+                }
+            }
+        }
+    }
+
     # get a list of the patient's device information
     my @PTDIDs  = getPatientDeviceIdentifiers($patientser);
 
@@ -253,26 +273,6 @@ sub sendPushNotification
         ($sendstatus, $sendlog) = postNotification($title, $message, $devicetype, $registrationid);
 
         insertPushNotificationInDB($ptdidser, $patientser, $controlser, $reftablerowser, $sendstatus, $sendlog);
-    }
-
-    print "\n***** Push notification to patient caregivers *****\n";
-    # get a list of the patient caregivers' device information
-    my apiResponse = Api::apiPatientCaregivers($patientser);
-    apiResponse = decode_json(apiResponse);
-
-    if (exists(apiResponse->{'caregivers'})) {
-        my $caregivers = apiResponse->{'caregivers'};
-        foreach $caregiver (@{ $caregivers }) {  # anonymous array traverse
-            my $devices = $caregiver->{'devices'};
-            foreach $device (@{ $devices }) {  # anonymous array traverse
-                my $deviceType = $device->{'type'};
-                my $push_token = $device->{'push_token'};
-                if ($deviceType != 'WEB') {
-                    $deviceType = $deviceType == 'IOS' ? 0 : 1;
-                    postNotification($title, $message, $deviceType, $push_token);
-                }
-            }
-        }
     }
 }
 
