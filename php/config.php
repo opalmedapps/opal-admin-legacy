@@ -85,6 +85,24 @@ define("MSSS_ACTIVE_DIRECTORY_CONFIG", [
 define("AD_LOGIN_ACTIVE", $_ENV["AD_ENABLED"]);
 define("REGISTRATION_PATH", $_ENV["NEW_OPALADMIN_HOST_EXTERNAL"] . '/patients/access-request/');
 
+// ORMS SMS api call
+define("WRM_DB_ENABLED", true);
+define("WRM_API_URL", "https://lxvmri02.muhcad.muhcfrd.ca/");
+define("WRM_API_METHOD", [
+    "getSmsAppointments" => "/SmsAppointment/get",
+    "getMessages" => "/SmsMessage/get",
+    "updateSmsAppointment" => "/SmsAppointment/update",
+    "updateMessage" => "/SmsMessage/update",
+    "getSpecialityGroups" => "/Hospital/SpecialityGroups",
+    "getTypes" => "/SmsMessage/Types"
+]);
+define("WRM_API_CONFIG", [
+    "64" => 0,
+    "19913" =>  1,
+    "47" =>  1,
+    "10023" => ["Content-Type: application/json"]
+]);
+
 // Turn on all errors except for notices
 error_reporting(E_ALL & ~E_NOTICE ^ E_WARNING);
 ini_set('display_startup_errors', 1);
@@ -367,6 +385,7 @@ require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "ApiCall.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "AndroidApiCall.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "AppleApiCall.php" );
+require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Sms.php" );
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TriggerDocument.php");
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TriggerDoctor.php");
 require_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TriggerStaff.php");
