@@ -411,8 +411,8 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 				// Check for duplicate form values
 				angular.forEach($scope.EduMatTypes, function(value) { 
 					//if translations do not match, return invalidEduMatType
-					if ((angular.equals($scope.newEduMat.type_EN, value["EN"]) && !angular.equals($scope.newEduMat.type_FR, value["FR"]))
-						|| (angular.equals($scope.newEduMat.type_FR, value["FR"]) && !angular.equals($scope.newEduMat.type_EN, value["EN"]))) { 
+					if ((angular.equals($scope.newEduMat.type_EN.toLowerCase(), value["EN"].toLowerCase()) && !angular.equals($scope.newEduMat.type_FR.toLowerCase(), value["FR"].toLowerCase()))
+						|| (angular.equals($scope.newEduMat.type_FR.toLowerCase(), value["FR"].toLowerCase()) && !angular.equals($scope.newEduMat.type_EN.toLowerCase(), value["EN"].toLowerCase()))) { 
 							$scope.invalidEduMatType = true;	
 							event.preventDefault();
 					}
