@@ -180,20 +180,6 @@ class Appointment extends Module
     }
 
     /**
-     * Updates the check-in for a particular appointment to checked and send the info to the push notification API. If
-     * the call returns an error, a code 502 (bad gateway) is returned to the caller to inform there's a problem with
-     * the push notification. Otherwise, a code 200 (all clear) is returned.
-     * @param array<mixed> $post - array contains the source name and the external appointment ID
-     * @return void
-     */
-    public function updateAppointmentCheckIn($post)
-    {
-        $this->checkWriteAccess($post);
-        $post = HelpSetup::arraySanitization($post);
-        $this->_updateAppointmentCheckIn($post);
-    }
-
-    /**
      * Delete a specific appointment.
      * @param array<mixed> $post : contains the following info:
      *                          sourceSystem : Source database of appointment (i.e. Aria, Medivisit, Mosaic, etc.)

@@ -137,19 +137,7 @@ class CronJob extends OpalProject {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, $e->getMessage());
         }
     }
-
-    /**
-     * Updates the check-in for a particular appointment to checked and send the info to the push notification API. If
-     * the call returns an error, a code 502 (bad gateway) is returned to the caller to inform there's a problem with
-     * the push notification. Otherwise, a code 200 (all clear) is returned.
-     * @param $post array - contains the source name and the external appointment ID
-     */
-    public function updateAppointmentCheckIn($post) {
-        $this->_checkCronAccess();
-        $post = HelpSetup::arraySanitization($post);
-        $this->_updateAppointmentCheckIn($post);
-    }
-
+    
     /**
      * Update appointment in appointmentPending table.
      */
