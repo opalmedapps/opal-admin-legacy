@@ -49,6 +49,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 						type: "POST",
 						url: "application/update/source-databases",
 						data: $scope.sourceDatabases,
+						dataType: 'json',
 						success: function (response) {
 							console.log("Updated source databases");
 						}

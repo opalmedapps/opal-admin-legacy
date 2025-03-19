@@ -350,6 +350,22 @@ class Alias extends Module {
      * Insert/replace list of alias expressions for an alias. First if checks if the alias expression exists or not
      * already. If it exists, put it in the update list. If not, put it in the insert list.
      * @param $aliasExpressions array - list of alias expressions
+     * [
+     *      {
+     *          checkin_details: object,
+     *          ...
+     *          terms: [
+     *              {
+     *                  added: int,
+     *                  assigned: string (AliasName_EN),
+     *                  descriptipon: string,
+     *                  externalId: string,
+     *                  id: int (masterSourceAlias.code)
+     *                  masterSourceAliasId: int (masterSourceAlias.ID)
+     *              }
+     *          ],
+     *      }
+     * ]
      * @param $aliasId int - Alias ID (or sernum)
      * @param $lastTransferred string - date of last transferred to use
      */
@@ -359,20 +375,20 @@ class Alias extends Module {
         foreach($aliasExpressions as $item) {
             $tempArray = array(
                 "AliasSerNum"=>$aliasId,
-                "masterSourceAliasId"=>$item['ID'],
-                "ExpressionName"=>$item['code'],
+                "masterSourceAliasId"=>$item['masterSourceAliasId'],  // masterSourceAlias.ID
+                "ExpressionName"=>$item['id'],  // masterSourceAlias.code
                 "Description"=>$item['description']
             );
 
             if($lastTransferred != "")
                 $tempArray["LastTransferred"] = $lastTransferred;
 
-            if(array_key_exists("AliasExpressionSerNum", $item) && $item["AliasExpressionSerNum"] != "") {
+            if(!empty($item["AliasExpressionSerNum"])) {
                 $tempArray["AliasExpressionSerNum"] = $item["AliasExpressionSerNum"];
                 array_push($toUpdate, $tempArray);
-            }
-            else
+            } else {
                 array_push($toInsert, $tempArray);
+            }
         }
 
         if(count($toInsert) > 0)
