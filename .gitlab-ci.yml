@@ -32,7 +32,7 @@ build:
   stage: build
   script:
     - uname -a
-    - apt update && apt install git
+    - apk add --no-cache git
     - export TEST=$(git describe)
     - export
     - whoami
