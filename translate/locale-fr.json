@@ -1902,6 +1902,7 @@
       "NAME": "Nom",
       "TEST_GROUP": "Groupe de tests",
       "PUBLISH": "Publier",
+      "INTERPRETABLE": "Interprétable",
       "OPERATIONS": "Opérations",
       "SUCCESS_FLAGS": "Les publications ont été mises à jour!",
       "ERROR_FLAGS": "Une erreur s'est produite lors de la mise à jour des options de publication.",

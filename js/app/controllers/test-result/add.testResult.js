@@ -91,7 +91,7 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 		group_EN: "",
 		group_FR: "",
 		eduMat: null,
-		interpretability: null,
+		interpretability: 0,
 		tests: [],
 		// additional_links: []
 	};

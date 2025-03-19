@@ -1152,7 +1152,7 @@ define("OPAL_GET_DEMOGRAPHICS_REPORT_GROUP", "
 
 define("OPAL_GET_TEST_RESULTS","
     SELECT DISTINCT TestControlSerNum AS serial, Name_EN AS name_EN, Name_FR AS name_FR, PublishFlag AS publish,
-    Group_EN AS group_EN, Group_FR AS group_FR, 0 AS changed FROM ".OPAL_TEST_CONTROL_TABLE.";
+    Group_EN AS group_EN, Group_FR AS group_FR, 0 AS changed, InterpretabilityFlag AS interpretability FROM ".OPAL_TEST_CONTROL_TABLE.";
 ");
 
 define("OPAL_GET_ASSIGNED_TESTS","

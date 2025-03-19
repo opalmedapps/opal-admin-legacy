@@ -1880,6 +1880,7 @@
       "NAME": "Name",
       "TEST_GROUP": "Test Group",
       "PUBLISH": "Publish Flag",
+      "INTERPRETABLE": "Interpretable",
       "OPERATIONS": "Operations",
       "SUCCESS_FLAGS": "Flag(s) Successfully Saved!",
       "ERROR_FLAGS": "An error occurred while updating the flags.",
