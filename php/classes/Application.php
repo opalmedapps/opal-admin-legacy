@@ -40,17 +40,17 @@ class Application {
 		$build = array();
 		try {
             $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			$sql = "
-				SELECT DISTINCT
-					bt.Name
-				FROM
-					BuildType bt
-				LIMIT 1
-			";
-			$query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
+            $sql = "
+                SELECT DISTINCT
+                    bt.Name
+                FROM
+                    BuildType bt
+                LIMIT 1
+            ";
+            $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
 
-			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
+            $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
 
             $buildName = $data[0];
 
@@ -61,13 +61,13 @@ class Application {
             $branch = fgets($versionFile);
             fclose($versionFile);
 
-			$build = array(
-				'version'		=> $version,
-				'environment'	=> $buildName,
-				'branch'		=> $branch
-			);
+            $build = array(
+                'version'		=> $version,
+                'environment'	=> $buildName,
+                'branch'		=> $branch
+            );
 
-			return $build;
+            return $build;
 		} catch (PDOException $e) {
 			echo $e->getMessage();
 			return $build;
