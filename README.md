@@ -59,13 +59,13 @@ npm install
 
 ### Step 4
 
-Setup the configuration file by running the executable bash script located in the project's root:
+Setup the environment file by running the executable bash script located in the project's root:
 
 ```
-bash ./makeconfigs.sh
+bash ./make_env_file.sh
 ```
 
-This will copy **./default-config.json** to **./config.json** and set preliminary configurations.
+This will copy **./.env.sample** to **./.env** and set preliminary configurations.
 
 ### Step 5
 
@@ -73,7 +73,11 @@ Create an empty Opal database using your favourite tool. **Note:** Keep track of
 
 ### Step 6
 
-Open the **config.json** file using your favourite editor and replace the default Opal credentials with your local credentials.
+Open the **.env** file using your favourite editor and replace the default Opal credentials with your local credentials.
+
+Copy the `firebase-admin-key.json` file to `config/firebase/`
+
+If your database is being run with secure transport required (SSL/TLS traffic encryption), also update the values for the SSL environment variables: `DATABASE_USE_SSL=1` and `SSL_CA=/var/www/html/certs/ca.pem` after copying the `ca.pem` file into the certs directory. Detailed instructions on how to generate SSL certificates can be found either in the [documentation repository](https://gitlab.com/opalmedapps/docs/-/blob/main/docs/guides/self_signed_certificates.md) or in the [db-docker README](https://gitlab.com/opalmedapps/db-docker).
 
 ### Step 7
 
