@@ -146,7 +146,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 				$scope.usernameUpdate();
 				return;
 			}
-			console.log($scope.userType);
+
 			// if AD is enabled
 			if(!$scope.isPasswordRequired) {
 				// check if user exists as an ADFS user
