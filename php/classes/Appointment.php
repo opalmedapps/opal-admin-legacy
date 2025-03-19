@@ -338,7 +338,18 @@ class Appointment extends Module
         $prevStartDateTime = strtotime($post["scheduledTimestamp"]);
 
         $aliasInfos = $this->opalDB->getAlias('Appointment',$post['appointmentTypeCode'], $post['appointmentTypeDescription']);
-        $countAlias = count($aliasInfos);
+        
+        // If there is no alias for this appointment code, retrieve the generic alias for the site
+        // and assign the code to the generic alias
+        if (count($aliasInfos) == 0) {
+            $aliasInfos = $this->opalDB->getGenericAlias($post["site"]);
+            
+            if (count($aliasInfos) > 0) {
+                $this->opalDB->assignToGenericAlias($aliasInfos[1]["AliasSerNum"], $post['appointmentTypeCode'], $post['appointmentTypeDescription']);
+            }
+        }
+
+        $countAlias = count($aliasInfos);       
 
         $toInsert = array(
             "PatientSerNum" => $patientSite["PatientSerNum"],
