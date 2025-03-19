@@ -235,11 +235,11 @@ sub sendPushNotification
 
     print "\n***** Push notification to patient caregivers *****\n";
     # get a list of the patient caregivers' device information
-    my apiResponse = Api::apiPatientCaregivers($patientser);
-    apiResponse = decode_json(apiResponse);
+    my $apiResponse = Api::apiPatientCaregivers($patientser);
+    $apiResponse = decode_json($apiResponse);
 
-    if (exists(apiResponse->{'caregivers'})) {
-        my $caregivers = apiResponse->{'caregivers'};
+    if (exists($apiResponse->{'caregivers'})) {
+        my $caregivers = $apiResponse->{'caregivers'};
         foreach $caregiver (@{ $caregivers }) {  # anonymous array traverse
             my $devices = $caregiver->{'devices'};
             foreach $device (@{ $devices }) {  # anonymous array traverse
