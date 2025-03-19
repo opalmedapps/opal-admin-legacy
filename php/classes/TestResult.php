@@ -309,7 +309,7 @@ class TestResult extends Module
             "Group_FR" => $post['group_FR'],
             "PublishFlag" => 0,
             "EducationalMaterialControlSerNum" => (is_array($post['eduMat']) && isset($post['eduMat']['serial'])) ? $post['eduMat']['serial'] : null,
-            "InterpretabilityFlag" => $post['interpretability'] ? 1 : 0,
+            "InterpretationRecommended" => $post['interpretability'] ? 1 : 0,
         );
 
         $newId = $this->opalDB->insertTestResult($toInsert);
@@ -469,7 +469,7 @@ class TestResult extends Module
             "group_FR" => $post['group_FR'],
             "EducationalMaterialControlSerNum" => (is_array($post['eduMat']) && isset($post['eduMat']['serial'])) ? $post['eduMat']['serial'] : null,
             "TestControlSerNum" => $post['serial'],
-            "InterpretabilityFlag" => $post['interpretability'] ? 1 : 0,
+            "InterpretationRecommended" => $post['interpretability'] ? 1 : 0,
         );
 
         $result = $this->opalDB->updateTestControl($toUpdate);
