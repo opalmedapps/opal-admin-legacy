@@ -259,12 +259,12 @@ sub sendPushNotification
     apiResponse = decode_json(apiResponse);
 
     if (exists(apiResponse->{'caregivers'})) {
-        @caregivers = dclone(apiResponse->{'caregivers'});
+        my @caregivers = dclone(apiResponse->{'caregivers'});
         foreach $caregiver (@caregivers) {
-            @devices = dclone($caregiver->{'devices'});
+            my @devices = dclone($caregiver->{'devices'});
             foreach $device (@devices) {
-                $deviceType = $device->{'type'};
-                $push_token = $device->{'push_token'};
+                my $deviceType = $device->{'type'};
+                my $push_token = $device->{'push_token'};
                 if ($deviceType != 'WEB') {
                     $deviceType = $deviceType == 'IOS' ? 0 : 1;
                     postNotification($title, $message, $deviceType, $push_token);
