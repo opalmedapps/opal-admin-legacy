@@ -2,7 +2,7 @@
 /*
     Updated this test script so that it can be called without changing its code by using command-line arguments.
 
-	The first argument (arg[1]) is device Id.
+    The first argument (arg[1]) is device Id.
     The second argument (arg[2]) is device type, 0 is IOS and 1 is Android.
     The third argument (arg[3]) is language, en is English and fr is French.
 

@@ -182,20 +182,28 @@ Run PUTTY to open RI-Dev and use your own crendential to login (if you don't hav
 
 to grant your account privileged access to opalsupt resources so that you can run commands that they cannot run under your regular accounts and call (there will be 2nd time password required to input)
 
+```
 sudo su - opalsupt
+```
 
 To enter docker container and call
 
+```
 dcd exec opaladmin bash
+```
 
 To change directory to the right folder where the test script is kept and call
 
+```
 cd publisher/php/tests
+```
 
 ### Step 3
 Run the script in the docker container by calling the command below
 
+```
 php testPushNotification.php "device Id" "device type" "language"
+```
 
  * device Id (in the column RegistrationId mentioned in Step 1)
  * device type is 0 (IOS) or 1 (Android)
