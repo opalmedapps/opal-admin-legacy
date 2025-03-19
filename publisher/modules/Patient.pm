@@ -1040,7 +1040,22 @@ sub setPatientLastTransferredIntoOurDB
 #======================================================================================
 sub setPatientLastTransferredModularCron
 {
-	my ($current_datetime, $control_table) = @_; # current datetime, cron module type,
+	my ($current_datetime, $cronType) = @_; # current datetime, cron module type,
+
+    $control_table = "";
+	if($cronType == 'Document'){
+        $control_table = "cronControlPatient_Document";
+    }elsif($cronType == 'EducationalMaterial'){
+        $control_table = "cronControlPatient_EducationalMaterial";
+    }elsif($cronType == 'Announcement'){
+        $control_table = "cronControlPatient_Announcement";
+    }elsif($cronType == 'LegacyQuestionnaire'){
+        $control_table = "cronControlPatient_LegacyQuestionnaire";
+    }elsif($cronType == 'Patients for Patients'){
+        $control_table = "cronControlPatient_PatientsForPatients";
+    }elsif($cronType == 'TreatmentTeamMessage'){
+        $control_table = "cronControlPatient_TreatmentTeamMessage";
+    }
 
 	my $update_sql = "
 		UPDATE 
