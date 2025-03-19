@@ -11,7 +11,7 @@ $patient->updatePatient($data);
 // get patient's Firebase username
 // and update the "QuestionnaireDB.answerQuestionnaire.respondentDisplayName" field
 
-$username = $patient->getPatientFirebaseUsername($data["ramq"]);
+$username = $patient->getPatientFirebaseUsername($data["mrns"]);
 
 if (isset($username)) {
     $questionnaire->updateAnswerQuestionnaireRespondent(

@@ -2282,12 +2282,14 @@ class DatabaseOpal extends DatabaseAccess {
 
     /**
      * Get patient's Firebase username
-     * @param $ssn : string - target patient RAMQ number
+     * @param  $siteCode : string - target patient's site code
+     * @param  $mrn      : string - target patient's MRN
      * @return array - patient Firebase username(s)
      */
-    function getPatientFirebaseUsername($ssn){
+    function getPatientFirebaseUsername($siteCode, $mrn){
         return $this->_fetchAll(OPAL_GET_PATIENT_FIREBASE_USERNAME, array(
-            array("parameter"=>":SSN","variable"=>$ssn,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":siteCode","variable"=>$siteCode,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":MRN","variable"=>$mrn,"data_type"=>PDO::PARAM_STR),
         ));
     }
 

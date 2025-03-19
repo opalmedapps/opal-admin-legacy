@@ -79,12 +79,16 @@ class Patient extends Module {
     }
 
     /**
-     * Return patient's Firebase username searched by the RAMQ
+     * Get patient's Firebase username searched by a site code and MRN
+     *
+     * @param $mrns : list of dictionaries containing patient's site codes and MRNs
      * @return array - list of the Firebase username(s) matching search
      */
-    public function getPatientFirebaseUsername($ramq) {
+    public function getPatientFirebaseUsername($mrns) {
         $this->checkReadAccess();
-        $usernames = $this->opalDB->getPatientFirebaseUsername($ramq);
+        $siteCode = $mrns[0]['site'];
+        $mrn = $mrns[0]['mrn'];
+        $usernames = $this->opalDB->getPatientFirebaseUsername($siteCode, $mrn);
         return isset($usernames[0]['username']) ? $usernames[0]['username'] : null;
     }
 

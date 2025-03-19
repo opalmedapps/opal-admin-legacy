@@ -915,8 +915,9 @@ define("OPAL_GET_PATIENT_RAMQ", "
 define("OPAL_GET_PATIENT_FIREBASE_USERNAME", "
     SELECT u.Username AS username
     FROM ".OPAL_USERS_TABLE." u
-    LEFT JOIN ".OPAL_PATIENT_TABLE." p ON u.UserTypeSerNum = p.PatientSerNum
-    WHERE p.SSN LIKE :SSN;
+    LEFT JOIN ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." phi ON u.UserTypeSerNum = phi.PatientSerNum
+    WHERE phi.Hospital_Identifier_Type_Code = :siteCode
+    AND phi.MRN = :MRN;
 ");
 
 define("OPAL_GET_DIAGNOSIS_REPORT", "
