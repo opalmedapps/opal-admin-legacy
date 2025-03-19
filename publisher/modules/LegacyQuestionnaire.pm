@@ -141,6 +141,9 @@ sub publishLegacyQuestionnaires
 	my $datetime_format = DateTime::Format::Strptime->new(
                     pattern   => '%Y-%m-%d %H:%M:%S',  # pattern of the datetimeformat
                 );
+    # Get the current time
+    my $current_time = DateTime->now;
+
 
 	foreach my $Patient (@patientList) {
 
@@ -252,10 +255,9 @@ sub publishLegacyQuestionnaires
                 push(@appointmentStatuses, $status) unless grep{$_ eq $status} @appointmentStatuses;
                 push(@checkins, $checkinFlag) unless grep{$_ eq $checkinFlag} @checkins;
 
-                # Determine if the appointment start datetime has past
-                if ($originalAppDateTimeObj < $targetAppDateTimeObj) {
+                # Determine if the target time has past
+                if ($targetAppDateTimeObj < $current_time) {
                     if (@patientFilters) {
-                        # if the patient appointment failed to match the target date time filter
                         $isPatientSpecificFilterDefined = 1;
                     }
                     # move on to the next questionnaire
