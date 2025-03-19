@@ -140,8 +140,10 @@ class DelayedLabNotification
                     '[',
                     IFNULL(GROUP_CONCAT(IF(PTR.ReadBy='[]', NULL, SUBSTRING(PTR.ReadBy, 2, LENGTH(PTR.ReadBy) - 2))), ''),
                     ']'
-                ) AS ReadBy
+                ) AS ReadBy,
+                P.Language AS Language
             FROM PatientTestResult PTR
+            LEFT JOIN Patient P ON P.PatientSerNum = PTR.PatientSerNum
             -- fetch the delayed labs that are available between NOW() and NOW() - 2 HOURS
             -- the time range should be set in accordance with the cronjob (please see docker/crontab)
             WHERE PTR.AvailableAt >= NOW() - INTERVAL 2 HOUR AND PTR.AvailableAt <= NOW()
@@ -190,8 +192,8 @@ class DelayedLabNotification
             );
             // Call API to send push notification
             $response = customPushNotification::sendNotificationByPatientSerNum(
-                $patientSerNum,
-                $language,
+                $lab["PatientSerNum"],
+                $lab["Language"],
                 $messages,
                 $ignoredUsernames,
             );
