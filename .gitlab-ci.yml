@@ -26,6 +26,7 @@ variables:
 build:
   stage: build
   script:
+    - uname -a
     - export TEST=$(git describe)
     - export
     - whoami
