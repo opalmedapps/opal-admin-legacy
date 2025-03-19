@@ -53,7 +53,7 @@ class Application {
             $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
 
             $buildName = $data[0];
-
+            
             $versionFile = fopen("../../VERSION", "r")
             or die("Unable to open VERSION file!");
 
