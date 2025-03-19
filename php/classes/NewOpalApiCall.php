@@ -2,7 +2,7 @@
 
 class NewOpalApiCall extends ApiCall {
 
-    public function __construct($api_route, $method, $language, $data, $content_type) {
+    public function __construct($api_route, $method, $language, $data, $content_type = '') {
         if ($method == 'POST') {
             $this->setOption(CURLOPT_POST, 1);
         } else {
@@ -15,6 +15,7 @@ class NewOpalApiCall extends ApiCall {
             'X-CSRFToken: '.$_COOKIE["csrftoken"],
             $content_type,
         ];
+
         $this->setOption(CURLOPT_URL, NEW_OPALADMIN_HOST_INTERNAL.$api_route);
         $this->setOption(CURLOPT_HTTP_VERSION, 3);
         $this->setOption(CURLOPT_HTTPHEADER, $header);
@@ -22,6 +23,7 @@ class NewOpalApiCall extends ApiCall {
             $this->setOption(CURLOPT_POSTFIELDS, http_build_query($data));
         else
             $this->setOption(CURLOPT_POSTFIELDS, $data);
+
         $this->setOption(CURLOPT_RETURNTRANSFER, true);
         $this->setOption(CURLOPT_TIMEOUT, 5);
         $this->setOption(CURLOPT_CONNECTTIMEOUT, 5);
@@ -40,7 +42,7 @@ class NewOpalApiCall extends ApiCall {
         $this->answerInfo = curl_getinfo($ch);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-        if(curl_error($ch) || $httpcode != HTTP_STATUS_SUCCESS) {
+        if(curl_error($ch) || $httpcode != HTTP_STATUS_SUCCESS || $httpcode != HTTP_STATUS_CREATED) {
             if(curl_error($ch)) {
                 $this->answer = false;
                 $this->header = false;
