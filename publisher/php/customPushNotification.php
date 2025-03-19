@@ -66,15 +66,23 @@
         /**
          *    sendNotificationByPatientSerNum($patientSerNum, $language, $message):
          *    Requires: - PatientSerNum, language, and message. The message is in an array.
+         *    Optional: - ignoredUsernames - list of usernames to whom the push notifications should not be sent.
          *    Returns:  Object containing keys of success, failure,
          *             responseDevices, which is an array containing, (success, failure,
          *             registrationId, deviceId) for each device, and Message array containing
          *             (title, description),  NotificationSerNum, and error if any.
          **/
-        public static function sendNotificationByPatientSerNum($patientSerNum, $language, $message)
-        {
+        public static function sendNotificationByPatientSerNum(
+            $patientSerNum,
+            $language,
+            $message,
+            $ignoredUsernames = [],
+        ) {
             // Obtain patient device identifiers
-            $patientDevices = PushNotifications::getPatientDevicesInfo($patientSerNum);
+            $patientDevices = PushNotifications::getPatientDevicesInfo(
+                $patientSerNum,
+                $ignoredUsernames,
+            );
 
             // If no identifiers return there are no identifiers
             if (count($patientDevices) == 0) {

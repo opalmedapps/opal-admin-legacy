@@ -189,7 +189,12 @@ class DelayedLabNotification
                 "message_text_FR" => "",
             );
             // Call API to send push notification
-            $response = customPushNotification::sendNotificationByPatientSerNum($patientSerNum, $language, $messages);
+            $response = customPushNotification::sendNotificationByPatientSerNum(
+                $patientSerNum,
+                $language,
+                $messages,
+                $ignoredUsernames,
+            );
             echo json_encode($response) . PHP_EOL;
         }
     }
