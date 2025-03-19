@@ -22,6 +22,11 @@ variables:
   DAST_DISABLED: "true"
   POSTGRES_ENABLED: "false"
 
+setup:
+  stage: .pre
+  script:
+    - apt update && apt install git
+
 
 build:
   stage: build
