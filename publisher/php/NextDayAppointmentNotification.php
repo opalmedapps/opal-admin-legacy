@@ -19,12 +19,14 @@ class NextDayAppointmentNotification
             echo json_encode($result) . PHP_EOL;
             exit();
         }
+        
+        // set the hopital acronym
+        $hospitalEN = self::getInstitutionAcronym('en');
+        $hospitalFR = self::getInstitutionAcronym('fr');
         // Step 2: Prepare the Push Notification message
         foreach ($result as $row) {
             $patientSerNum = $row["PatientSerNum"];
             $language = $row["Language"];
-            $hospitalEN = "MUHC";
-            $hospitalFR = "CUSM";
             $titleEN = "Opal Appointment Reminder";
             $titleFR = "Rappel de rendez-vous d'Opal";
             $appointmentDate = $row["Date"];
@@ -113,5 +115,26 @@ class NextDayAppointmentNotification
             exit();
         }
         return $result;
+    }
+
+    /**
+     * Retrieve institution's acronym (e.g., OMI, OHIGPH).
+     * @param string $language - the target language (e.g., 'en' or 'fr')
+     * @return string - institution acronym
+     */
+    protected static function getInstitutionAcronym($language) {
+        $backendApi = new NewOpalApiCall(
+            '/api/institutions/',
+            'GET',
+            $language,
+            [],
+        );
+        $response = $backendApi->execute();
+        $response = $response ? json_decode($response, true) : NULL;
+
+        $institution = $response && $response[0] ? $response[0] : NULL;
+        $acronym = $institution && $institution['acronym'] ? $institution['acronym'] : '';
+
+        return $acronym;
     }
 }
