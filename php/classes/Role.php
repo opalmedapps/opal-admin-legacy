@@ -251,7 +251,7 @@ class Role extends Module {
         // get involved users from DB
         $users_related_to_role = $this->opalDB->getUsersForRole($roleToUpdate["roleId"]);
 
-        // check if patient module is in the updated operations
+        // check if users module is in the updated operations
         $newbackend_action_name = 'unset-manager-user';
         foreach($roleToUpdate["operations"] as $sub) {
             // if users module added and access is READ/WRITE/DELETE
