@@ -25,13 +25,14 @@ variables:
 setup:
   stage: .pre
   script:
-    - apt update && apt install git
+    - apk add --no-cache git
 
 
 build:
   stage: build
   script:
     - uname -a
+    - apt update && apt install git
     - export TEST=$(git describe)
     - export
     - whoami
