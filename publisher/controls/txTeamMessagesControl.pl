@@ -42,7 +42,6 @@ use Alias;
 use EducationalMaterialControl;
 use PostControl;
 use TxTeamMessage;
-use Cron;
 
 #-----------------------------------------------------------------------
 # Monitor this script's execution
@@ -232,9 +231,6 @@ sub writeToLogFile
 my $start_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 print "--- Start txTeamMessagesControl --- ", $start_datetime, "\n";
 
-# Log that the script is initialized in the cronlog
-my $cronLogSer = Cron::setCronLog("Started txTmMessControl", $start_datetime);
-
 #=========================================================================================
 # Retrieve all patients that are marked for update
 #=========================================================================================
@@ -242,8 +238,7 @@ print "\n--- Start getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", 
 
 # We will generate our patient list specifically from the cronControlPatient table, for all patients marked for an update whose cronType = 'txTeamMessages'
 # 	this is needed to ensure this control (and every other control) is completely separate from dataControl.pl, to avoid syncing issues / missed patients
-# @registeredPatients = Patient::getPatientsMarkedForUpdateModularCron($cronLogSer, 'Treatment Team Message');
-@patientList = Patient::getPatientsMarkedForUpdateModularCron($cronLogSer, 'Treatment Team Message');
+@patientList = Patient::getPatientsMarkedForUpdateModularCron('Treatment Team Message');
 print "--- End getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got patient list\n" if $verbose;
 
@@ -301,7 +296,7 @@ print "Got patient list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-TxTeamMessage::publishTxTeamMessages($cronLogSer, @patientList);
+TxTeamMessage::publishTxTeamMessages(@patientList);
 print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished treatment team messages\n" if $verbose;
 
@@ -310,8 +305,6 @@ print "Finished treatment team messages\n" if $verbose;
 PostControl::setPostControlLastPublishedModularControllers($start_datetime, 'Treatment Team Message');
 
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
-# Log that the script is finished in the cronlog
-Cron::setCronLog("Completed txTmMessControl", $current_datetime);
 print "--- Completed ---- ", $current_datetime, "\n\n";
 
 print "Start Time [txTeamMessagesControl]: -->> $start_datetime\n";
