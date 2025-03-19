@@ -1,6 +1,6 @@
 # opalAdmin
 
-OpalAdmin is the administrative tool for managing and tagging personal health information that is published to Opal.
+OpalAdmin is an administrative tool for managing and tagging personal health information that is published to Opal.
 
 ## Getting Started
 
@@ -30,7 +30,7 @@ Once the image is built and the container running, you can access opalAdmin via 
 You can then log in with the test user credentials:
 
 * Username: `admin`
-* Password: `Opal123456!!`
+* Password: `123456Opal!!`
 
 ## Built With
 
