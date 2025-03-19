@@ -15,6 +15,8 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 		$rootScope.firebaseConfig = null;
 
+		$rootScope.newOpalAdminHost = null;
+
 		$scope.configs = null;
 		$scope.sourceDatabases = null;
 
@@ -26,6 +28,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 			// Assign value
 			$scope.configs = response.data;
 			$rootScope.firebaseConfig = $scope.configs.firebaseConfig.database;
+			$rootScope.newOpalAdminHost = $scope.configs.newOpalAdminHost;
 			// initialize firebase variable
 			if (!firebase.apps.length) {
 				firebase.initializeApp($rootScope.firebaseConfig);
