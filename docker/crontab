@@ -39,3 +39,6 @@
 
 # Opal appointment reminder push notification
 0 14 * * * php /var/www/html/publisher/php/apptReminder.php >> /var/www/html/publisher/logs/apptReminder.log
+
+# Delayed notifications for lab results
+* * * * * php /var/www/html/publisher/php/sendDelayedLabsPushNotification.php 
