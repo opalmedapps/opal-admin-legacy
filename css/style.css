@@ -1871,6 +1871,7 @@ footer {
 }
 
 .clinician-icon > span {
+    background-image: url("../images/template/clinician/waiting_room.png");
     background-size: 50px;
     display: inline-block;
     height: 50px;
@@ -1889,6 +1890,7 @@ footer {
     }
     
     .clinician-icon > span {
+        background-image: url("../images/template/clinician/waiting_room.png");
         background-size: 30px;
         display: inline-block;
         height: 30px;
