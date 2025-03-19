@@ -254,10 +254,10 @@ class Role extends Module {
         // check if patient module is in the updated operations
         $newbackend_action_name = 'unset-manager-user';
         foreach($roleToUpdate["operations"] as $sub) {
+            // if users module added and access is READ/WRITE/DELETE
             if(isset($sub['moduleId']) && $sub['moduleId'] ===  json_encode(MODULE_USER)  && $sub['access'] >= (int) ACCESS_READ ){
-                // if patient module added and access is READ/WRITE/DELETE
                 $newbackend_action_name = 'set-manager-user';
-                // break if patient module read/write/delete access right granted otherwise continue
+                // break if users module read/write/delete access right granted otherwise continue
                 break;
             }
         }
