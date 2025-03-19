@@ -1,3 +1,4 @@
+
 {
   "name": "opaladmin",
   "authors": [
@@ -16,13 +17,8 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "1.8.2",
     "jquery": "^3.2.0",
-    "angular-route": "^1.5.11",
-    "angular-animate": "^1.5.11",
-    "angular-sanitize": "^1.5.11",
     "angular-ui-router": "^1.0.30",
-    "angular-cookies": "^1.5.11",
     "ng-idle": "angular-idle#^1.3.2",
     "moment": "^2.18.0",
     "bootstrap": "^3.4.1",
@@ -39,8 +35,5 @@
     "highcharts-ng": "^1.2.0",
     "highcharts": "^9.1.0",
     "moment-timezone": "^0.5.16"
-  },
-  "resolutions": {
-    "angular": "1.8.2"
   }
 }
