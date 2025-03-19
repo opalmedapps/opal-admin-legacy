@@ -182,12 +182,15 @@ class CronJob extends OpalProject {
                 $appointmentPending["AliasExpressionSerNum"] = $aliasInfos[0]['AliasExpressionSerNum'];
                 
                 $action = 'AppointmentNew';                    
-                setlocale(LC_TIME, 'fr_CA');                                        
-                $replacementMap["\$newAppointmentDateFR"] =  strftime('%A %d %B %Y', $SStartDateTime);
-                $replacementMap["\$newAppointmentTimeFR"] =  strftime('%R', $SStartDateTime);
-                setlocale(LC_TIME, 'en_CA');
-                $replacementMap["\$newAppointmentDateEN"] =  strftime('%A, %B %e, %Y', $SStartDateTime);
-                $replacementMap["\$newAppointmentTimeEN"] =  strftime('%l:%M %p', $SStartDateTime);
+                $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
+                $replacementMap["\$newAppointmentDateFR"] =  $formatter->format($SStartDateTime);
+                $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
+                $replacementMap["\$newAppointmentTimeFR"] =  $formatter->format($SStartDateTime);
+
+                $formatter = new \IntlDateFormatter('en_CA', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
+                $replacementMap["\$newAppointmentDateEN"] =  $formatter->format($SStartDateTime);
+                $formatter = new \IntlDateFormatter('en_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
+                $replacementMap["\$newAppointmentTimeEN"] =  $formatter->format($SStartDateTime);
 
                 $this->opalDB->deleteAppointmentPending($appointmentPending["ID"]);
                 unset($appointmentPending["ID"]);

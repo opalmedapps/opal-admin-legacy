@@ -283,7 +283,7 @@ abstract class OpalProject
         if (count($ptdIds) == 0){
             $sendlog = "Patient has no device identifier! No push notification sent.";
             $pushNotificationDetail = $this->_buildNotification($this->statusWarning, $sendlog, $refTableId, $controlser, $data["PatientSerNum"], null);
-            $this->opalDB->insertPushNotification($pushNotificationDetail);        
+            $this->opalDB->insertPushNotification($pushNotificationDetail);
         } else {
 
             foreach($ptdIds as $ptdId) {
@@ -393,10 +393,10 @@ abstract class OpalProject
             $StartDateTime = strtotime(date("Y-m-d H:i:s"));
             $action = "CheckInNotification";
             $replacementMap = array();
-            setlocale(LC_TIME, 'fr_CA');        
-            $replacementMap["\$getDateTime"] =  strftime('%R', $StartDateTime);
-            setlocale(LC_TIME, 'en_CA');        
-            $replacementMap["\$getDateTime"] =  strftime('%l:%M %p', $StartDateTime);
+            $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
+            $replacementMap["\$getDateTime"] =  $formatter->format($StartDateTime);
+            $formatter = new \IntlDateFormatter('en_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
+            $replacementMap["\$getDateTime"] =  $formatter->format($StartDateTime);
                     
             $scheduledStartTime = strtotime($currentAppointment["ScheduledStartTime"]);
             if ($scheduledStartTime >= $today){
