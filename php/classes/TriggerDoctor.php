@@ -189,10 +189,11 @@ class TriggerDoctor extends Trigger
                 $resourceData["ResourceAriaSer"] = $post["resourceId"];
                 $resourceData["ResourceCode"] = "";
             } else {
-                $resourceData["ResourceAriaSer"] = "";
+                $resourceData["ResourceAriaSer"] = 0;
                 $resourceData["ResourceCode"] = $post["resourceId"];
             }
             $this->opalDB->insertResource($resourceData);
+            $resourceData = $this->opalDB->getDoctorResource($source["SourceDatabaseSerNum"], $post["resourceId"]);
         } else {
             $resourceData = $resource;
             $resourceData["ResourceName"] = $post["alias"];
@@ -240,7 +241,7 @@ class TriggerDoctor extends Trigger
         if ($post["sourceSystem"] == 'Aria') {
             $doctorData["DoctorAriaSer"] = $post["resourceId"];
         } else {
-            $doctorData["DoctorAriaSer"] = "";
+            $doctorData["DoctorAriaSer"] = 0;
         }
 
         if ($doctor !== false) {
