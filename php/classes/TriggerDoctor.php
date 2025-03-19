@@ -192,8 +192,7 @@ class TriggerDoctor extends Trigger
                 $resourceData["ResourceAriaSer"] = 0;
                 $resourceData["ResourceCode"] = $post["resourceId"];
             }
-            $this->opalDB->insertResource($resourceData);
-            $resourceData = $this->opalDB->getDoctorResource($source["SourceDatabaseSerNum"], $post["resourceId"]);
+            $resourceData['ResourceSerNum'] = $this->opalDB->insertResource($resourceData);
         } else {
             $resourceData = $resource;
             $resourceData["ResourceName"] = $post["alias"];
