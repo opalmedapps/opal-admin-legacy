@@ -235,7 +235,7 @@ class Appointment extends Module
 
                 $formatter = new \IntlDateFormatter('en_CA', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
                 $replacementMap["\$oldAppointmentDateEN"] =  $formatter->format($prevStartDateTime);
-                $formatter = new \IntlDateFormatter('en_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
+                $formatter = new \IntlDateFormatter(locale: 'en_CA', dateType: \IntlDateFormatter::NONE, timeType: \IntlDateFormatter::SHORT, pattern: "h:mm a");
                 $replacementMap["\$oldAppointmentTimeEN"] =  $formatter->format($prevStartDateTime);
                 
                 if ($prevStartDateTime >= $today){
@@ -375,7 +375,7 @@ class Appointment extends Module
             $replacementMap["\$newAppointmentTimeFR"] =  $formatter->format($newStartDateTime);
             $formatter = new \IntlDateFormatter('en_CA', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
             $replacementMap["\$newAppointmentDateEN"] =  $formatter->format($newStartDateTime);
-            $formatter = new \IntlDateFormatter('en_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
+            $formatter = new \IntlDateFormatter(locale: 'en_CA', dateType: \IntlDateFormatter::NONE, timeType: \IntlDateFormatter::SHORT, pattern: "h:mm a");
             $replacementMap["\$newAppointmentTimeEN"] =  $formatter->format($newStartDateTime);
             
         } else {
@@ -431,7 +431,7 @@ class Appointment extends Module
                     $formatter = new \IntlDateFormatter('en_CA', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
                     $replacementMap["\$oldAppointmentDateEN"] =  $formatter->format($prevStartDateTime);
                     $replacementMap["\$newAppointmentDateEN"] =  $formatter->format($newStartDateTime);
-                    $formatter = new \IntlDateFormatter('en_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
+                    $formatter = new \IntlDateFormatter(locale: 'en_CA', dateType: \IntlDateFormatter::NONE, timeType: \IntlDateFormatter::SHORT, pattern: "h:mm a");
                     $replacementMap["\$oldAppointmentTimeEN"] =  $formatter->format($prevStartDateTime);
                     $replacementMap["\$newAppointmentTimeEN"] =  $formatter->format($newStartDateTime);
                 }
@@ -587,7 +587,7 @@ class Appointment extends Module
 
                 $formatter = new \IntlDateFormatter('en_CA', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
                 $replacementMap["\$oldAppointmentDateEN"] =  $formatter->format($prevStartDateTime);
-                $formatter = new \IntlDateFormatter('en_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
+                $formatter = new \IntlDateFormatter(locale: 'en_CA', dateType: \IntlDateFormatter::NONE, timeType: \IntlDateFormatter::SHORT, pattern: "h:mm a");
                 $replacementMap["\$oldAppointmentTimeEN"] =  $formatter->format($prevStartDateTime);
                 
                 if ($prevStartDateTime >= $today){
