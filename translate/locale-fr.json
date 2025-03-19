@@ -2679,7 +2679,7 @@
   },
   "PATIENTS": {
     "MENU": {
-      "TITLE": "Tableau de bord Patient",
+      "TITLE": "Patient",
       "SUB_TITLE": "Outils pour patients",
       "REGISTRATION": "Inscription à Opal",
       "REGISTRATION_SUB": "Enregistrer un patient ou un proche aidant afin qu'il puisse utiliser Opal.",
