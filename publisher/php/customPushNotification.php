@@ -74,7 +74,8 @@
 			);
 
 			//Obtain patient device identifiers
-			$patientDevices = self::getDevicesForPatient($patientSerNum);
+//			$patientDevices = self::getDevicesForPatient($patientSerNum);
+           $patientDevices = PushNotifications::getPatientDevicesInfo($patientSerNum);
 
 			//If no identifiers return there are no identifiers
 			if(count($patientDevices)==0)

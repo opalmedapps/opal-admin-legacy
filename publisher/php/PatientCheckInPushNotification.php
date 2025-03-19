@@ -51,7 +51,7 @@ class PatientCheckInPushNotification{
         //================================================================
 
         // Obtain patient device identifiers
-        $patientDevices = self::getPatientDevices($patientSerNum);
+        $patientDevices = PushNotifications::getPatientDevicesInfo($patientSerNum);
 
         // If no device identifiers return there are no device identifiers
         if(count($patientDevices)==0) {

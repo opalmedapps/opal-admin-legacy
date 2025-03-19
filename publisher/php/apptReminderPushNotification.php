@@ -23,7 +23,7 @@ class ApptReminderPushNotification
     public static function sendPatientNotification($patientSerNum, $language, $messages)
     {
         //Obtain patient device identifiers
-        $patientDevices = self::getDevicesForPatient($patientSerNum);
+        $patientDevices = PushNotifications::getPatientDevicesInfo($patientSerNum);
 
         //If no identifiers return there are no identifiers
         if (count($patientDevices) == 0) {

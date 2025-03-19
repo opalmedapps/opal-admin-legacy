@@ -142,7 +142,7 @@
 
             $message = self::buildMessageForRoomNotification($room["room_".$language], $messageLabels["Name_".$language ],$messageLabels["Description_".$language] );
            //Obtain patient device identifiers
-            $patientDevices = self::getDevicesForPatient($patientId, $wsSite);
+           $patientDevices = PushNotifications::getPatientDevicesInfo($patientSerNum);
 
             //If no identifiers return there are no identifiers
             if(count($patientDevices)==0)
