@@ -1773,7 +1773,7 @@
       "TYPE_EXPLANATION": "Veuillez sélectionner le type d'alias.",
       "CLINICAL_CODES": "Codes cliniques",
       "CLINICAL_EXPLANATION": "Veuillez attribuer un ou plusieurs codes cliniques. Les informations de chaque code clinique sont réparties comme suit: ID externe - code | description du code.",
-      "NOTE_PUBLISHED": "<span style=\"font-weight: bold\">Note: </span>Les codes déjà attribués peuvent déjà être publiés (déjà utilisés par Opal). Si vous modifiez l'attribution d'un code publié, veuillez mentionner dans la description à quel alias il était attribué jusqu'à quelle date.",
+      "NOTE_PUBLISHED": "<span style=\"font-weight: bold\">Note: </span>Les codes déjà attribués peuvent déjà être publiés (déjà utilisés par Opal). Si vous modifiez l'attribution d'un code publié, veuillez mentionner dans la description à quel alias le code publié a été attribué et jusqu'à quelle date.",
       "SEARCH": "Rechercher",
       "SELECT_ALL": "Tout sélectionner",
       "SHOW_ALL": "Tout afficher",
