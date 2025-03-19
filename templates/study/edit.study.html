@@ -98,23 +98,20 @@
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div class="input-group">
                         <span class="input-group-addon">{{'STUDY.ADD.EMAIL'|translate}}</span>
-                        <input class="form-control" type="text" ng-model="toSubmit.investigator.email" ng-change="validateInvestigatorInfo()" required="required" ng-style="{'border-color' : emVal == true ? 'green':'red'}"/>
+                        <input class="form-control" type="text" ng-model="toSubmit.investigator.email" ng-change="validateInvestigatorInfo()" required="required"/>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 10px;">
                     <div class="input-group">
                         <span class="input-group-addon">{{'STUDY.ADD.PHONE'|translate}}</span>
-                        <input class="form-control" type="text" ng-model="toSubmit.investigator.phone" ng-change="validateInvestigatorInfo()" required="required" ng-style="{'border-color' : phoneVal == true ? 'green':'red'}"/>
+                        <input class="form-control" type="text" ng-model="toSubmit.investigator.phone" ng-change="validateInvestigatorInfo()" required="required"/>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                <div class="col-xs-12 col-sm-2" style="margin-bottom: 10px;">
                     <div class="input-group">
-                        <span class="input-group-addon">{{'STUDY.LIST.PHONE_EXT'|translate}}</span>
-                        <input class="form-control" type="text" ng-model="toSubmit.investigator.phoneExt" ng-change="validateInvestigatorInfo()" ng-style="{'border-color' : extVal == true ? 'green':'red'}"/>
+                        <input class="form-control" type="text" ng-model="toSubmit.investigator.phoneExt" ng-change="validateInvestigatorInfo()" placeholder="ext."/>
                     </div>
                 </div>
             </div>
