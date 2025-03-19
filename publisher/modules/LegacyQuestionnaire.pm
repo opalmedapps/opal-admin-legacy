@@ -235,7 +235,7 @@ sub publishLegacyQuestionnaires
             foreach my $appointment (@patientAppointments) {
                 # get the start datetime from the appointment object
                 my $appointmentTimeStr = $appointment->getApptStartDateTime();
-                my $originalAppDateTimeObj= $datetime_format->parse_datetime($appointmentTimeStr);
+                # in case the unit is not set to any value, the target time is same as the appointment start time
                 my $targetAppDateTimeObj= $datetime_format->parse_datetime($appointmentTimeStr);
                 # if the unit is defined
                 if ($scheduledTimeUnit){
@@ -251,18 +251,18 @@ sub publishLegacyQuestionnaires
                 my $aliasSer = Alias::getAliasFromOurDB($expressionSer);
                 my $status = $appointment->getApptStatus();
                 my $checkinFlag = $appointment->getApptCheckin();
-                push(@aliasSerials, $aliasSer) unless grep{$_ eq $aliasSer} @aliasSerials;
-                push(@appointmentStatuses, $status) unless grep{$_ eq $status} @appointmentStatuses;
-                push(@checkins, $checkinFlag) unless grep{$_ eq $checkinFlag} @checkins;
 
-                # Determine if the target time has past
-                if ($targetAppDateTimeObj < $current_time) {
-                    if (@patientFilters) {
-                        $isPatientSpecificFilterDefined = 1;
-                    }
-                    # move on to the next questionnaire
-                    else{next;}
+                push(@aliasSerials, $aliasSer) unless grep{$_ eq $aliasSer} @aliasSerials;
+                # check if appointment status is `Scheduled Time` and the target time has past
+                if ($status eq "Scheduled Time" and $targetAppDateTimeObj < $current_time ){
+                    # if true, append it to appointmentStatuses if not added already
+                    push(@appointmentStatuses, $status) unless grep{$_ eq $status} @appointmentStatuses;
+                # in case the status is of other name, resume regular functionality
+                }elsif ($status ne "Scheduled Time"){
+                    # if true so it is `Completed/Cancelled/Checkin Time` no timing condition is applicable, just append
+                    push(@appointmentStatuses, $status) unless grep{$_ eq $status} @appointmentStatuses;
                 }
+                push(@checkins, $checkinFlag) unless grep{$_ eq $checkinFlag} @checkins;
 
             }
 
@@ -309,7 +309,7 @@ sub publishLegacyQuestionnaires
                     # else no patient filters were defined and failed to match the status filter
                     # move on to the next questionnaire
                     else{next;}
-                } 
+                }
             }
 
 			# Fetch appointment filters (if any)
