@@ -251,8 +251,6 @@ sub publishLegacyQuestionnaires
                 push(@aliasSerials, $aliasSer) unless grep{$_ eq $aliasSer} @aliasSerials;
                 push(@appointmentStatuses, $status) unless grep{$_ eq $status} @appointmentStatuses;
                 push(@checkins, $checkinFlag) unless grep{$_ eq $checkinFlag} @checkins;
-                # toggle flag
-				$isNonPatientSpecificFilterDefined = 1;
 
                 # Determine if the appointment start datetime has past
                 if ($originalAppDateTimeObj < $targetAppDateTimeObj) {
