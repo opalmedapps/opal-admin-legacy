@@ -395,33 +395,16 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
             if(inp && (inp !== null)){
                 $scope.qstReport = inp;
                 for(var i=0; i< $scope.qstReport.length; i++){
-                    if($scope.qstReport[i].pname){
-                        $scope.qstReport[i].pname = $scope.qstReport[i].pname;
-                    }else{
+                    if(!$scope.qstReport[i].pname){
                         $scope.qstReport[i].pname = "N/A";
                     }
-                    if($scope.qstReport[i].plname){
-                        $scope.qstReport[i].plname = $scope.qstReport[i].plname;
-                    }else{
+                    if(!$scope.qstReport[i].plname){
                         $scope.qstReport[i].plname = "N/A";
                     }
-                    if($scope.qstReport[i].pdob){
-                        $scope.qstReport[i].pdob = $scope.qstReport[i].pdob;
-                    }else{
+                    if(!$scope.qstReport[i].pdob){
                         $scope.qstReport[i].pdob = "N/A";
                     }
-                    if($scope.qstReport[i].psex){
-                        $scope.qstReport[i].psex = $scope.qstReport[i].psex;
-                    }
-                    if($scope.qstReport[i].pser){
-                        $scope.qstReport[i].pser = $scope.qstReport[i].pser;
-                    }
-                    if($scope.qstReport[i].qdate){
-                        $scope.qstReport[i].qdate = $scope.qstReport[i].qdate;
-                    }
-                    if($scope.qstReport[i].qcomplete){
-                        $scope.qstReport[i].qcomplete = $scope.qstReport[i].qcomplete;
-                    }else{
+                    if(!$scope.qstReport[i].qcomplete){
                         $scope.qstReport[i].qcomplete = "N/A";
                     }
                 }
@@ -549,53 +532,34 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                 $scope.patientReport = inp;
                 $scope.diagnosisdata = [];
                 for(let i = 0; i < $scope.patientReport.length; i++){
-                    if($scope.patientReport[i].pname){
-                        $scope.patientReport[i].pname = $scope.patientReport[i].pname;
-                    }else{
+                    if(!$scope.patientReport[i].pname){
                         $scope.patientReport[i].pname = "N/A";
                     }
-                    if($scope.patientReport[i].plname){
-                        $scope.patientReport[i].plname = $scope.patientReport[i].plname;
-                    }else{
+                    if(!$scope.patientReport[i].plname){
                         $scope.patientReport[i].plname = "N/A";
                     }
-                    if($scope.patientReport[i].psex){
-                        $scope.patientReport[i].psex = $scope.patientReport[i].psex;
-                    }else{
+                    if(!$scope.patientReport[i].psex){
                         $scope.patientReport[i].psex = "N/A";
                     }
-                    if($scope.patientReport[i].pser){
-                        $scope.patientReport[i].pser = $scope.patientReport[i].pser;
-                    }else{
+                    if(!$scope.patientReport[i].pser){
                         $scope.patientReport[i].pser = "N/A";
                     }
-                    if($scope.patientReport[i].pdob){
-                        $scope.patientReport[i].pdob = $scope.patientReport[i].pdob;
-                    }else{
+                    if(!$scope.patientReport[i].pdob){
                         $scope.patientReport[i].pdob = "N/A";
                     }
-                    if($scope.patientReport[i].page){
-                        $scope.patientReport[i].page = $scope.patientReport[i].page;
-                    }else{
+                    if(!$scope.patientReport[i].page){
                         $scope.patientReport[i].page = "N/A";
                     }
-                    if($scope.patientReport[i].pemail){
-                        $scope.patientReport[i].pemail = $scope.patientReport[i].pemail;
-                    }else{
+                    if(!$scope.patientReport[i].pemail){
                         $scope.patientReport[i].pemail = "N/A";
                     }
-                    if($scope.patientReport[i].plang){
-                        $scope.patientReport[i].plang = $scope.patientReport[i].plang;
-                    }else{
+                    if(!$scope.patientReport[i].plang){
                         $scope.patientReport[i].plang = "N/A";
                     }
-                    if($scope.patientReport[i].preg){
-                        $scope.patientReport[i].preg = $scope.patientReport[i].preg;
-                    }else{
+                    if(!$scope.patientReport[i].preg){
                         $scope.patientReport[i].preg = "N/A";
                     }
                     if($scope.patientReport[i].diagdesc){
-                        $scope.patientReport[i].diagdesc = $scope.patientReport[i].diagdesc;
                         if($scope.diagnosisdata.some(x => (x.name && x.name == $scope.patientReport[i].diagdesc)))
                             $scope.diagnosisdata.find(x => (x.name && x.name == $scope.patientReport[i].diagdesc)).y += 1;
                         else
@@ -603,9 +567,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                     }else{
                         $scope.patientReport[i].diagdesc = "N/A";
                     }
-                    if($scope.patientReport[i].diagdate){
-                        $scope.patientReport[i].diagdate = $scope.patientReport[i].diagdate;
-                    }else{
+                    if(!$scope.patientReport[i].diagdate){
                         $scope.patientReport[i].diagdate = "N/A";
                     }
                  }
