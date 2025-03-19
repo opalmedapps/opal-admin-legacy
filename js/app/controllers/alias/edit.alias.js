@@ -437,14 +437,15 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 		// Function to return boolean for form completion
 		$scope.checkForm = function () {
-			var total = 0;
-			angular.forEach($scope.termList, function (term) {
-				if (term.added) total++;
-			});
+			// check whether required data is defined (by converting to boolean)
+			let nameDefined = !!($scope.alias.name_EN && $scope.alias.name_FR);
+			let descriptionDefined = !!($scope.alias.description_EN && $scope.alias.description_FR);
+			let checkinDetailsDefined = !!($scope.alias.checkin_details.instruction_EN && $scope.alias.checkin_details.instruction_FR);
+			let typeDefined = !!$scope.alias.type;
+			let hospitalMapDefined = !!$scope.alias.hospitalMap;
 
-			return !!(($scope.alias.name_EN && $scope.alias.name_FR && $scope.alias.description_EN
-				&& $scope.alias.description_FR && $scope.alias.type && (total + $scope.alias.deleted.length + $scope.alias.published.length > 0)
-				&& $scope.changesMade) && ($scope.alias.type != 'Appointment' || ($scope.alias.type == 'Appointment' &&
-				$scope.alias.checkin_details.instruction_EN && $scope.alias.checkin_details.instruction_FR && $scope.alias.hospitalMap)));
+			return $scope.changesMade && nameDefined && descriptionDefined && typeDefined
+				&& ($scope.alias.type != 'Appointment' || ($scope.alias.type == 'Appointment' &&
+				checkinDetailsDefined && hospitalMapDefined));
 		};
 	});
