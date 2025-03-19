@@ -18,7 +18,7 @@ services:
     image: opalmedapps/opaladmin
     volumes:
       - .:/var/www/html/
-      - ./docker/crontab:/var/spool/cron/crontabs/www-data
+      - ./logs/opaladmin:/var/www/html/publisher/logs
       # don't overwrite existing content in these directories
       # needed if you want to manage these through the Docker image build process only
       - /var/www/html/node_modules
