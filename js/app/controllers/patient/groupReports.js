@@ -253,42 +253,18 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
             if(inp && (inp !== null)){
                 $scope.educReport = inp;
                 for(var i = 0; i< $scope.educReport.length; i++){
-                    if($scope.educReport[i].pname){
-                        $scope.educReport[i].pname = $scope.educReport[i].pname;
-                    }else{
+                    if(!$scope.educReport[i].pname){
                         $scope.educReport[i].pname = "N/A";
                     }
-                    if($scope.educReport[i].plname){
-                        $scope.educReport[i].plname = $scope.educReport[i].plname;
-                    }else{
+                    if(!$scope.educReport[i].plname){
                         $scope.educReport[i].plname = "N/A";
                     }
-                    if($scope.educReport[i].pser){
-                        $scope.educReport[i].pser = $scope.educReport[i].pser;
-                    }else{
+                    if(!$scope.educReport[i].pser){
                         $scope.educReport[i].pser = "N/A";
                     }
-                    if($scope.educReport[i].page){
-                        $scope.educReport[i].page = $scope.educReport[i].page;
-                    }
-                    if($scope.educReport[i].pdob){
-                        $scope.educReport[i].pdob = $scope.educReport[i].pdob;
-                    }
-                    if($scope.educReport[i].psex){
-                        $scope.educReport[i].psex = $scope.educReport[i].psex;
-                    }else{
+                    if(!$scope.educReport[i].psex){
                         $scope.educReport[i].psex = "N/A";
-                    }
-                    if($scope.educReport[i].edate){
-                        $scope.educReport[i].edate = $scope.educReport[i].edate;
-                    }
-                    if($scope.educReport[i].eread){
-                        $scope.educReport[i].eread = $scope.educReport[i].eread;
-                    }
-                    if($scope.educReport[i].eupdate){
-                        $scope.educReport[i].eupdate = $scope.educReport[i].eupdate;
-                    }
-                    
+                    }         
                 }
                 $scope.educReportLength = $scope.educReport.length;
                 $scope.showEducReport = true;
