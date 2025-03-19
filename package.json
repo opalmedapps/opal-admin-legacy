@@ -8,7 +8,7 @@
     "@fontsource/nunito": "5.1.1",
     "angular": "npm:@xlts.dev/angular@1.9.7",
     "angular-animate": "npm:@xlts.dev/angular-animate@1.9.7",
-    "angular-cookies": "npm:@xlts.dev/angular-cookies@1.9.7",
+    "angular-cookies": "npm:@xlts.dev/angular-cookies@1.9.8",
     "angular-route": "npm:@xlts.dev/angular-route@1.9.7",
     "angular-sanitize": "npm:@xlts.dev/angular-sanitize@1.9.7",
     "angular-translate": "2.19.1",
