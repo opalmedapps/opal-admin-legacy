@@ -45,11 +45,13 @@ class Questionnaire extends QuestionnaireModule {
         $validatedQuestionnaire = array(
             "title_EN"=>htmlspecialchars($post['title_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
             "title_FR"=>htmlspecialchars($post['title_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "short_name_EN"=>htmlspecialchars($post['short_name_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "short_name_FR"=>htmlspecialchars($post['short_name_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
             "description_EN"=>htmlspecialchars($post['description_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
             "description_FR"=>htmlspecialchars($post['description_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
         );
 
-        if ($validatedQuestionnaire["title_EN"] == "" || $validatedQuestionnaire["title_FR"] == "" || $validatedQuestionnaire["description_EN"] == "" || $validatedQuestionnaire["description_FR"] == "")
+        if ($validatedQuestionnaire["title_EN"] == "" || $validatedQuestionnaire["title_FR"] == "" || $validatedQuestionnaire["short_name_EN"] == "" || $validatedQuestionnaire["short_name_FR"] == "" || $validatedQuestionnaire["description_EN"] == "" || $validatedQuestionnaire["description_FR"] == "")
             return false;
 
         //Sanitize the questionnaire ID (if any). IF there was supposed to be an ID and it's empty, reject the
@@ -180,6 +182,8 @@ class Questionnaire extends QuestionnaireModule {
 
         $questionnaireDetails["title_EN"] = htmlspecialchars_decode($questionnaireDetails["title_EN"]);
         $questionnaireDetails["title_FR"] = htmlspecialchars_decode($questionnaireDetails["title_FR"]);
+        $questionnaireDetails["short_name_EN"] = htmlspecialchars_decode($questionnaireDetails["short_name_EN"]);
+        $questionnaireDetails["short_name_FR"] = htmlspecialchars_decode($questionnaireDetails["short_name_FR"]);
         $questionnaireDetails["description_EN"] = htmlspecialchars_decode($questionnaireDetails["description_EN"]);
         $questionnaireDetails["description_FR"] = htmlspecialchars_decode($questionnaireDetails["description_FR"]);
         $questionnaireDetails["locked"] = intval($this->_isQuestionnaireLocked($questionnaireId));
@@ -241,7 +245,7 @@ class Questionnaire extends QuestionnaireModule {
         $toInsert = array(FRENCH_LANGUAGE=>$newQuestionnaire['description_FR'], ENGLISH_LANGUAGE=>$newQuestionnaire['description_EN']);
         $description = $this->questionnaireDB->addToDictionary($toInsert, QUESTIONNAIRE_TABLE);
 
-        $toInsert = array(FRENCH_LANGUAGE=>"", ENGLISH_LANGUAGE=>"");
+        $toInsert = array(FRENCH_LANGUAGE=>$newQuestionnaire['short_name_FR'], ENGLISH_LANGUAGE=>$newQuestionnaire['short_name_EN']);
         $nickname = $this->questionnaireDB->addToDictionary($toInsert, QUESTIONNAIRE_TABLE);
         $instruction = $this->questionnaireDB->addToDictionary($toInsert, QUESTIONNAIRE_TABLE);
 
@@ -431,6 +435,22 @@ class Questionnaire extends QuestionnaireModule {
         );
         $total += $this->questionnaireDB->updateDictionary($toUpdateDict, QUESTIONNAIRE_TABLE);
 
+        //Update the dictionary entry for the title if necessary
+        $toUpdateDict = array(
+            array(
+                "content"=>$updatedQuestionnaire["short_name_FR"],
+                "languageId"=>FRENCH_LANGUAGE,
+                "contentId"=>$oldQuestionnaire["nickname"],
+            ),
+            array(
+                "content"=>$updatedQuestionnaire["short_name_EN"],
+                "languageId"=>ENGLISH_LANGUAGE,
+                "contentId"=>$oldQuestionnaire["nickname"],
+            ),
+        );
+        $total += $this->questionnaireDB->updateDictionary($toUpdateDict, QUESTIONNAIRE_TABLE);
+
+        //Update the dictionary entry for the description if necessary
         $toUpdateDict = array(
             array(
                 "content"=>$updatedQuestionnaire["description_FR"],
