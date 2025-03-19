@@ -34,7 +34,6 @@ my $pramq = param("pramq");
 my $sdb = param("db");
 #begin feedback
 
-print 'Hello';
 print "Content-type: application/json\n\n";
 
 my $db;
