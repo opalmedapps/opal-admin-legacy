@@ -237,7 +237,6 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 		// Function to add / remove a term to alias
 		$scope.toggleTermSelection = function (term) {
-
 			// Toggle booleans
 			$scope.changesMade = true;
 			$scope.termsMod = true;
@@ -246,7 +245,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			if (term.added)
 				term.added = 0;
 			else
-				term.added = 1; // added parameter
+				term.added = 1;
 
 
 		};
@@ -448,6 +447,18 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			angular.forEach($scope.termList, function (term) {
 				if (term.added) total++;
 			});
+
+			// console.log(total);
+			// console.log($scope.changesMade);
+			// console.log($scope.alias.name_EN && $scope.alias.name_FR && $scope.alias.description_EN
+				// && $scope.alias.description_FR && $scope.alias.type);
+			// console.log(total + $scope.alias.deleted.length + $scope.alias.published.length > 0);
+			// console.log($scope.alias.type);
+			// console.log($scope.alias.checkin_details);
+			// console.log($scope.alias.checkin_details.instruction_EN);
+			// console.log($scope.alias.checkin_details.instruction_FR);
+
+			// console.log($scope.alias.type != 'Appointment' || ($scope.alias.type == 'Appointment' && $scope.alias.checkin_details.instruction_EN && $scope.alias.checkin_details.instruction_FR));
 
 			return !!(($scope.alias.name_EN && $scope.alias.name_FR && $scope.alias.description_EN
 				&& $scope.alias.description_FR && $scope.alias.type && (total + $scope.alias.deleted.length + $scope.alias.published.length > 0)
