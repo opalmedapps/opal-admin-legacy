@@ -254,15 +254,14 @@ class Role extends Module {
         // check if patient module is in the updated operations
         $newbackend_action_name = 'unset-manager-user';
         foreach($roleToUpdate["operations"] as $sub) {
-            if(isset($sub['moduleId'])){
+            if(isset($sub['moduleId']) && $sub['moduleId'] ===  json_encode(MODULE_USER)  && $sub['access'] >= (int) ACCESS_READ ){
                 // if patient module added and access is READ/WRITE/DELETE
-                if ($sub['moduleId'] ===  json_encode(MODULE_USER)  && $sub['access'] >= (int) ACCESS_READ ) {
-                    $newbackend_action_name = 'set-manager-user';
-                    // break if patient module read/write/delete access right granted otherwise continue
-                    break;
-                }
+                $newbackend_action_name = 'set-manager-user';
+                // break if patient module read/write/delete access right granted otherwise continue
+                break;
             }
         }
+        // TODO: consider making api call as an `async` function to avoid having to wait when there are many users.
         // iterate over updated users, make api request for each user to add/remove from managers group in new backend.
         foreach($users_related_to_role as $user) {
             $backendApi = new NewOpalApiCall(
