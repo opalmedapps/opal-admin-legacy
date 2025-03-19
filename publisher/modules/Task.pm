@@ -22,7 +22,6 @@ use Storable qw(dclone); # for deep copies
 
 use Patient; # Our patient module
 use Alias; # Our Alias module
-use Priority; # Our priority module
 use Diagnosis; # Our diagnosis module
 
 #---------------------------------------------------------------------------------
@@ -44,7 +43,6 @@ sub new
 		_aliasexpressionser	=> undef,
 		_duedatetime		=> undef,
         _diagnosisser       => undef,
-        _priorityser        => undef,
 		_creationdate		=> undef,
 		_status			    => undef,
         _state              => undef,
@@ -159,16 +157,6 @@ sub setTaskCompletionDate
 }
 
 #====================================================================================
-# Subroutine to set the task priority serial
-#====================================================================================
-sub setTaskPrioritySer
-{
-	my ($task, $priorityser) = @_; # task object with provided serial in arguments
-	$task->{_priorityser} = $priorityser; # set the ser
-	return $task->{_priorityser};
-}
-
-#====================================================================================
 # Subroutine to set the task diagnosis serial
 #====================================================================================
 sub setTaskDiagnosisSer
@@ -279,15 +267,6 @@ sub getTaskCompletionDate
 }
 
 #====================================================================================
-# Subroutine to get the Task priority serial
-#====================================================================================
-sub getTaskPrioritySer
-{
-	my ($task) = @_; # our task object
-	return $task->{_priorityser};
-}
-
-#====================================================================================
 # Subroutine to get the Task diagnosis ser
 #====================================================================================
 sub getTaskDiagnosisSer
@@ -317,7 +296,7 @@ sub getTasksFromSourceDB
 	my @taskList = (); # initialize a list for task objects
 
 	# when we retrieve query results
-	my ($sourceuid, $duedatetime, $priorityser, $diagnosisser);
+	my ($sourceuid, $duedatetime, $diagnosisser);
     my ($creationdate, $status, $state, $completiondate);
     my $lasttransfer;
 
@@ -468,7 +447,6 @@ sub getTasksFromSourceDB
 				$expressionname = $row->[6];
 				$patientSer 	= $row->[7];
 
-				$priorityser	= Priority::getClosestPriority($patientSer, $duedatetime);
 				$diagnosisser	= Diagnosis::getClosestDiagnosis($patientSer, $duedatetime);
 
 				$task->setTaskPatientSer($patientSer);
@@ -476,7 +454,6 @@ sub getTasksFromSourceDB
 				$task->setTaskSourceDatabaseSer($sourceDBSer);
 				$task->setTaskAliasExpressionSer($expressionDict{$expressionname}); # assign expression serial
 				$task->setTaskDueDateTime($duedatetime); # assign duedatetime
-				$task->setTaskPrioritySer($priorityser);
 				$task->setTaskDiagnosisSer($diagnosisser);
 				$task->setTaskCreationDate($creationdate); # assign creation date
 				$task->setTaskStatus($status); # assign status
@@ -611,7 +588,7 @@ sub inOurDatabase
 	my $ExistingTask = (); # data to be entered if task exists
 
 	# Other task variable, if task exists
-	my ($ser, $patientser, $aliasexpressionser, $duedatetime, $priorityser, $diagnosisser);
+	my ($ser, $patientser, $aliasexpressionser, $duedatetime, $diagnosisser);
     my ($creationdate, $status, $state, $completiondate, $cronlogser);
 
 	my $inDB_sql = "
@@ -621,7 +598,6 @@ sub inOurDatabase
 			Task.DueDateTime,
 			Task.TaskSerNum,
 			Task.PatientSerNum,
-            Task.PrioritySerNum,
             Task.DiagnosisSerNum,
             Task.CreationDate,
             Task.Status,
@@ -649,7 +625,6 @@ sub inOurDatabase
 		$duedatetime		= $data[2];
 		$ser			    = $data[3];
 		$patientser		    = $data[4];
-        $priorityser        = $data[5];
         $diagnosisser       = $data[6];
         $creationdate       = $data[7];
         $status             = $data[8];
@@ -668,7 +643,6 @@ sub inOurDatabase
 		$ExistingTask->setTaskDueDateTime($duedatetime); # set the due datetime
 		$ExistingTask->setTaskSer($ser);
 		$ExistingTask->setTaskPatientSer($patientser);
-        $ExistingTask->setTaskPrioritySer($priorityser);
         $ExistingTask->setTaskDiagnosisSer($diagnosisser);
 		$ExistingTask->setTaskStatus($status); # set the status
 		$ExistingTask->setTaskCreationDate($creationdate); # set the creation date
@@ -695,7 +669,6 @@ sub insertTaskIntoOurDB
 	my $aliasexpressionser	= $task->getTaskAliasExpressionSer();
 	my $duedatetime		    = $task->getTaskDueDateTime();
 	my $diagnosisser		= $task->getTaskDiagnosisSer();
-	my $priorityser		    = $task->getTaskPrioritySer();
 	my $creationdate	    = $task->getTaskCreationDate();
 	my $status		        = $task->getTaskStatus();
 	my $completiondate	    = $task->getTaskCompletionDate();
@@ -715,7 +688,6 @@ sub insertTaskIntoOurDB
                 Status,
                 State,
                 CompletionDate,
-                PrioritySerNum,
                 DiagnosisSerNum,
                 DateAdded
 			)
@@ -730,7 +702,6 @@ sub insertTaskIntoOurDB
             '$status',
             '$state',
             '$completiondate',
-            '$priorityser',
             '$diagnosisser',
             NOW()
 		)
@@ -765,7 +736,6 @@ sub updateDatabase
 	my $aliasexpressionser	= $task->getTaskAliasExpressionSer();
 	my $duedatetime		    = $task->getTaskDueDateTime();
 	my $diagnosisser		= $task->getTaskDiagnosisSer();
-	my $priorityser		    = $task->getTaskPrioritySer();
 	my $creationdate	    = $task->getTaskCreationDate();
 	my $status		        = $task->getTaskStatus();
 	my $completiondate	    = $task->getTaskCompletionDate();
@@ -783,7 +753,6 @@ sub updateDatabase
             State                   = '$state',
 			CreationDate		    = '$creationdate',
 			CompletionDate		    = '$completiondate',
-            PrioritySerNum          = '$priorityser',
             DiagnosisSerNum         = '$diagnosisser',
             CronLogSerNum 			= '$cronlogser'
 		WHERE
@@ -814,7 +783,6 @@ sub compareWith
 	# Suspect Task...
 	my $Sduedatetime	    = $SuspectTask->getTaskDueDateTime();
 	my $Saliasexpressionser	= $SuspectTask->getTaskAliasExpressionSer();
-    my $Spriorityser        = $SuspectTask->getTaskPrioritySer();
     my $Sdiagnosisser       = $SuspectTask->getTaskDiagnosisSer();
 	my $Screationdate	    = $SuspectTask->getTaskCreationDate();
 	my $Sstatus		        = $SuspectTask->getTaskStatus();
@@ -825,7 +793,6 @@ sub compareWith
 	# Original Task...
 	my $Oduedatetime	    = $OriginalTask->getTaskDueDateTime();
 	my $Oaliasexpressionser	= $OriginalTask->getTaskAliasExpressionSer();
-    my $Opriorityser        = $OriginalTask->getTaskPrioritySer();
     my $Odiagnosisser       = $OriginalTask->getTaskDiagnosisSer();
 	my $Ocreationdate	    = $OriginalTask->getTaskCreationDate();
 	my $Ostatus		        = $OriginalTask->getTaskStatus();
@@ -845,12 +812,6 @@ sub compareWith
 		print "Task Alias Expression Serial has changed from '$Oaliasexpressionser' to '$Saliasexpressionser'\n";
 		my $updatedAESer = $UpdatedTask->setTaskAliasExpressionSer($Saliasexpressionser); # update
 		print "Will update database entry to '$updatedAESer'.\n";
-	}
-	if ($Spriorityser ne $Opriorityser) {
-
-		print "Task Priority serial has changed from '$Opriorityser' to '$Spriorityser'\n";
-		my $updatedPrioritySer = $UpdatedTask->setTaskPrioritySer($Spriorityser); # update
-		print "Will update database entry to '$updatedPrioritySer'.\n";
 	}
 	if ($Sdiagnosisser ne $Odiagnosisser) {
 

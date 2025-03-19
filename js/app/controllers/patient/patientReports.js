@@ -21,6 +21,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		testresults: false,
 		pattestresults: false,
 		notifications: false,
+		treatplan: false,
 		clinicalnotes: false,
 		treatingteam: false,
 		general: false,
@@ -55,6 +56,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 	$scope.clinnoteReport = "";
 	$scope.txteamReport = "";
 	$scope.generalReport = "";
+	$scope.txplanReport = "";
 
 	// Initialize gridOptions objects for each report segment, set to track corresponding report segment data
 	$scope.diagGridOptions = {
@@ -452,6 +454,69 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		enableColumnResizing: true,
 	};
 
+	$scope.txplanGridOptions = {
+		data: 'txplanReport',
+		columnDefs: [
+			{
+				field: 'diagnosisdescription',
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.DESC'),
+				width: '15%',
+				enableColumnMenu: false
+			},
+			{
+				field: 'aliastype',
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.TYPE'),
+				width: '10%',
+				enableColumnMenu: false
+			},
+			{
+				field: 'aliasexpressiondescription',
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.DESC_EXP'),
+				width: '15%',
+				enableColumnMenu: false
+			},
+			{
+				field: 'aliasname',
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.NAME'),
+				width: '10%',
+				enableColumnMenu: false
+			},
+			{
+				field: 'aliasdescription',
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.DESC_ALI'),
+				width: '20%',
+				enableColumnMenu: false
+			},
+			{
+				field: 'taskstatus',
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.TASK_STATUS'),
+				width: '5%',
+				enableColumnMenu: false
+			},
+			{
+				field: 'taskstate',
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.TASK_STATE'),
+				width: '5%',
+				enableColumnMenu: false
+			},
+			{
+				field: 'taskdue',
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.TASK_DUE'),
+				width: '10%',
+				enableColumnMenu: false
+			},
+			{
+				field: 'taskcompletiondate',
+				displayName: $filter('translate')('PATIENTS.REPORT.COLUMNS.TREATMENT_PLAN.TASK_COMPLETE'),
+				width: '10%',
+				enableColumnMenu: false
+			},
+
+		],
+		enableFiltering: true,
+		enableColumnResizing: true,
+	};
+
 	$scope.selectedName = "";
 
 	// Safe apply function prevents potential '$apply already in progress' errors during execution
@@ -480,9 +545,8 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				type: "POST",
 				url: "patient/get/patient-name",
 				data: {pname: $scope.searchName},
-				dataType: "json",
 				success: function (response) {
-					displayName(response);
+					displayName(JSON.parse(response));
 				},
 				error: function (err) {
 					ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
@@ -493,9 +557,8 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				type: "POST",
 				url: "patient/get/patient-mrn",
 				data: {pmrn: $scope.searchMRN},
-				dataType: "json",
 				success: function (response) {
-					displayName(response);
+					displayName(JSON.parse(response));
 				},
 				error: function (err) {
 					ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
@@ -506,9 +569,8 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				type: "POST",
 				url: "patient/get/patient-ramq",
 				data: {pramq: $scope.searchRAMQ},
-				dataType: "json",
 				success: function (response) {
-					displayName(response);
+					displayName(JSON.parse(response));
 				},
 				error: function (err) {
 					ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
@@ -590,6 +652,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				$scope.featureList.testresults = true;
 				$scope.featureList.pattestresults = true;
 				$scope.featureList.notifications = true;
+				$scope.featureList.treatplan = true;
 				$scope.featureList.clinicalnotes = true;
 				$scope.featureList.treatingteam = true;
 				$scope.featureList.general = true;
@@ -639,6 +702,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				$scope.featureList.testresults = true;
 				$scope.featureList.pattestresults = true;
 				$scope.featureList.notifications = true;
+				$scope.featureList.treatplan = true;
 				$scope.featureList.clinicalnotes = true;
 				$scope.featureList.treatingteam = true;
 				$scope.featureList.general = true;
@@ -677,6 +741,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 			$scope.featureList.testresults = false;
 			$scope.featureList.pattestresults = false;
 			$scope.featureList.notifications = false;
+			$scope.featureList.treatplan = false;
 			$scope.featureList.clinicalnotes = false;
 			$scope.featureList.treatingteam = false;
 			$scope.featureList.general = false;
@@ -694,6 +759,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 			$scope.clinnoteReport = "";
 			$scope.txteamReport = "";
 			$scope.generalReport = "";
+			$scope.txplanReport = "";
 
 		});
 	};
@@ -716,6 +782,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				testresults: $scope.featureList.testresults,
 				pattestresults: $scope.featureList.pattestresults,
 				notes: $scope.featureList.notifications,
+				treatplan: $scope.featureList.treatplan,
 				clinicalnotes: $scope.featureList.clinicalnotes,
 				treatingteam: $scope.featureList.treatingteam,
 				general: $scope.featureList.general,
@@ -782,6 +849,10 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 					for (var i = 0; i < $scope.generalReport.length; i++) {
 						$scope.generalReport[i].body = strip($scope.generalReport[i].body);
 					}
+				}
+				if (result.treatplan) {
+					$scope.txplanReport = result.treatplan;
+					strip($scope.txplanReport);
 				}
 				$scope.generateFinished = true; //finally we can show report segments
 
