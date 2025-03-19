@@ -2672,10 +2672,10 @@
     "MENU": {
       "TITLE": "Hospital Settings",
       "SUB_TITLE": "Hospital Settings Tools",
-      "INSTITUTION": "Create or update an institution",
-      "INSTITUTION_SUB": "The <strong>Institutions</strong> button links to the Institutions page in Opal Admin v2.0",
-      "SITE": "Create and update the sites belonging to an institution",
-      "SITE_SUB": "The <strong>Sites</strong> button links to the Sites page in Opal Admin v2.0",
+      "INSTITUTION": "Institutions",
+      "INSTITUTION_SUB": "Create or update an institution.",
+      "SITE": "Sites",
+      "SITE_SUB": "Create and update the sites belonging to an institution.",
       "BACK": "Back"
     }
   },
@@ -2685,8 +2685,8 @@
       "SUB_TITLE": "Patients Tools",
       "REGISTRATION": "Opal Registration",
       "REGISTRATION_SUB": "Register a patient or caregiver so they can use Opal.",
-      "RELATIONSHIP_TYPE": "Manage relationship types",
-      "RELATIONSHIP_TYPE_SUB": "The <strong>Relationship Types</strong> button links to the Relationship Types page in Opal Admin v2.0",
+      "RELATIONSHIP_TYPE": "Relationship Types",
+      "RELATIONSHIP_TYPE_SUB": "Manage relationship types.",
       "BACK": "Back"
     },
     "LIST": {

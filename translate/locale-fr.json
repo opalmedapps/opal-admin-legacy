@@ -2689,10 +2689,10 @@
     "MENU": {
       "TITLE": "Paramètres Hospitalier",
       "SUB_TITLE": "Outils pour Paramètres Hospitalier",
-      "INSTITUTION": "Créer ou mettre à jour un établissement",
-      "INSTITUTION_SUB": "Le bouton <strong>Établissement</strong> renvoie à la page Établissement dans Opal Admin v2.0",
-      "SITE": "Créer et mettre à jour les sites appartenant à un établissement",
-      "SITE_SUB": "Le bouton <strong>Sites</strong> renvoie à la page Sites dans Opal Admin v2.0",
+      "INSTITUTION": "Établissement",
+      "INSTITUTION_SUB": "Créer ou mettre à jour un établissement.",
+      "SITE": "Sites",
+      "SITE_SUB": "Créer et mettre à jour les sites appartenant à un établissement.",
       "BACK": "Retour"
     }
   },
@@ -2702,8 +2702,8 @@
       "SUB_TITLE": "Outils pour patients",
       "REGISTRATION": "Inscription à Opal",
       "REGISTRATION_SUB": "Enregistrer un patient ou un proche aidant afin qu'il puisse utiliser Opal.",
-      "RELATIONSHIP_TYPE": "Gérer types de relations avec le proche aidant",
-      "RELATIONSHIP_TYPE_SUB": "Le bouton <strong>Types de relations</strong> renvoie à la page Types de relations dans Opal Admin v2.0",
+      "RELATIONSHIP_TYPE": "Types de relations",
+      "RELATIONSHIP_TYPE_SUB": "Gérer types de relations avec le proche aidant.",
       "BACK": "Retour"
     },
     "LIST": {
