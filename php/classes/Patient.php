@@ -804,6 +804,7 @@ class Patient extends Module {
             $patientData["Sex"] = $post["gender"];
         }
 
+        $patientData["DeathDate"] = NULL;
         // Avoid the case when deceasedDateTime value is valid value
         if(array_key_exists("deceasedDateTime", $post) && (strtotime($post["deceasedDateTime"]) > 0)) {
             $patientData["StatusReasonTxt"] = "Deceased patient";
@@ -819,6 +820,7 @@ class Patient extends Module {
         if(array_key_exists("deceasedDateTime", $post) && (strtotime($post["deceasedDateTime"]) <= 0)) {
             $patientData["StatusReasonTxt"] = "";
             $patientData["BlockedStatus"] = 0;
+            $patientData["DeathDate"] = $post["deceasedDateTime"];
             $this->opalDB->updatePatientPublishFlag($patientSerNum, 1);
         }
 
