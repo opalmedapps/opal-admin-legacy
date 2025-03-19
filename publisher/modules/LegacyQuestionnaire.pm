@@ -24,6 +24,7 @@ use Alias; # Our custom alias module
 use Diagnosis; # Our custom diagnosis module
 use PatientDoctor; # Our custom patient doctor module 
 use PushNotification; # Our custom push notification module
+use DateTime;
 
 #---------------------------------------------------------------------------------
 # Connect to the databases
@@ -135,7 +136,14 @@ sub publishLegacyQuestionnaires
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
 
 	# Retrieve all the legacy questionnaire controls
-	my @legacyQuestionnaireControls = getLegacyQuestionnaireControlsMarkedForPublish(); 
+	my @legacyQuestionnaireControls = getLegacyQuestionnaireControlsMarkedForPublish();
+
+	my $datetime_format = DateTime::Format::Strptime->new(
+                    pattern   => '%Y-%m-%d %H:%M:%S',  # pattern of the datetimeformat
+                );
+    # Get the current time
+    my $current_time = DateTime->now;
+
 
 	foreach my $Patient (@patientList) {
 
@@ -221,14 +229,39 @@ sub publishLegacyQuestionnaires
             my $frequencyFilter = $questionnaireFilters->getFrequencyFilter();
 
             # we build all possible appointment and diagnoses for each appointment found
+            my $scheduledTimeOffset =  $questionnaireFilters->getScheduledTimeOffsetFilters();
+            my $scheduledTimeUnit =  $questionnaireFilters->getScheduledTimeUnitFilters();
+            my $scheduledTimeDirection = $questionnaireFilters->getScheduledTimeDirectionFilters();
             foreach my $appointment (@patientAppointments) {
-
+                # get the start datetime from the appointment object
+                my $appointmentTimeStr = $appointment->getApptStartDateTime();
+                # in case the unit is not set to any value, the target time is same as the appointment start time
+                my $targetAppDateTimeObj= $datetime_format->parse_datetime($appointmentTimeStr);
+                # if the unit is defined
+                if ($scheduledTimeUnit){
+                    # substract if direction is `before`
+                    if ($scheduledTimeDirection eq 'before'){
+                        $targetAppDateTimeObj->subtract($scheduledTimeUnit => $scheduledTimeOffset);
+                    # add if direction is `after`
+                    }else {
+                        $targetAppDateTimeObj->add($scheduledTimeUnit => $scheduledTimeOffset);
+                    }
+                }
                 my $expressionSer = $appointment->getApptAliasExpressionSer();
                 my $aliasSer = Alias::getAliasFromOurDB($expressionSer);
                 my $status = $appointment->getApptStatus();
                 my $checkinFlag = $appointment->getApptCheckin();
+
                 push(@aliasSerials, $aliasSer) unless grep{$_ eq $aliasSer} @aliasSerials;
-                push(@appointmentStatuses, $status) unless grep{$_ eq $status} @appointmentStatuses;
+                # check if appointment status is `Scheduled Time` and the target time has past
+                if ($status eq "Scheduled Time" and $targetAppDateTimeObj < $current_time ){
+                    # if true, append it to appointmentStatuses if not added already
+                    push(@appointmentStatuses, $status) unless grep{$_ eq $status} @appointmentStatuses;
+                # in case the status is of other name, resume regular functionality
+                }elsif ($status ne "Scheduled Time"){
+                    # if true so it is `Completed/Cancelled/Checkin Time` no timing condition is applicable, just append
+                    push(@appointmentStatuses, $status) unless grep{$_ eq $status} @appointmentStatuses;
+                }
                 push(@checkins, $checkinFlag) unless grep{$_ eq $checkinFlag} @checkins;
 
             }
@@ -276,7 +309,7 @@ sub publishLegacyQuestionnaires
                     # else no patient filters were defined and failed to match the status filter
                     # move on to the next questionnaire
                     else{next;}
-                } 
+                }
             }
 
 			# Fetch appointment filters (if any)
@@ -822,10 +855,8 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
         my $filters = Filter::getAllFiltersFromOurDB($ser, 'LegacyQuestionnaireControl');
 
         $questionnaireControl->setLegacyQuestionnaireFilters($filters);
-
         push(@questionnaireControlList, $questionnaireControl);
     }
-
     return @questionnaireControlList;
 }
 
