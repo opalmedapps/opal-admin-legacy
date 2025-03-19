@@ -698,7 +698,7 @@ sub insertTaskIntoOurDB
 	my $priorityser		    = ($task->getTaskPrioritySer() eq '' ? 0 : $task->getTaskPrioritySer());
 	my $creationdate	    = $task->getTaskCreationDate();
 	my $status		        = $task->getTaskStatus();
-	my $completiondate	    = ($task->getTaskCompletionDate() eq '' ? '0000-00-00 00:00:00' : $task->getTaskPrioritySer());
+	my $completiondate	    = ($task->getTaskCompletionDate() eq '' ? '0000-00-00 00:00:00' : $task->getTaskCompletionDate());
 	my $state		        = $task->getTaskState();
 	my $cronlogser		    = $task->getTaskCronLogSer();
 
