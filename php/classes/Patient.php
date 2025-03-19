@@ -804,17 +804,19 @@ class Patient extends Module {
             $patientData["Sex"] = $post["gender"];
         }
 
-        if(array_key_exists("deceasedDateTime", $post) && $post["deceasedDateTime"] != "") {
+        // Avoid the case when deceasedDateTime value is "0000-00-00"
+        if(array_key_exists("deceasedDateTime", $post) && (strtotime($post["deceasedDateTime"]) > 0)) {
             $patientData["StatusReasonTxt"] = "Deceased patient";
             $patientData["BlockedStatus"] = 1;
             $this->opalDB->updatePatientPublishFlag($patientSerNum, 0);
             $patientData["DeathDate"] = $post["deceasedDateTime"];
         }
 
-        if(array_key_exists("deceasedDateTime", $post) && $post["deceasedDateTime"] == null) {
+        // Deal with the cases when deceasedDateTime values contain empty string, NULL, "0000-00-00" and some invalid date strings
+        if(array_key_exists("deceasedDateTime", $post) && (strtotime($post["deceasedDateTime"]) <= 0)) {
             $patientData["StatusReasonTxt"] = " ";
             $patientData["BlockedStatus"] = 0;
-            $this->opalDB->updatePatientPublishFlag($patientSerNum, 0);
+            $this->opalDB->updatePatientPublishFlag($patientSerNum, 1);
         }
 
         unset($patientData["LastUpdated"]);
