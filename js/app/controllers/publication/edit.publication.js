@@ -250,35 +250,37 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 		});
 
 		$scope.appointmentTriggerList = response.data.appointments; // Assign value
+		// Casting for all IDs from int to string since the database has every ID as string
+		// This prevents the comparision in changeTriggers function from failing and creating a duplicate
 		for(var i = 0; i < $scope.appointmentTriggerList.length; i++){
-			($scope.appointmentTriggerList[i].id) = ($scope.appointmentTriggerList[i].id).toString();
+			$scope.appointmentTriggerList[i].id = $scope.appointmentTriggerList[i].id.toString();
 		}
 		$scope.dxTriggerList = response.data.dx;
-		var numId=0;
 		$scope.dxTriggerList.forEach(function(entry) {
 			if($scope.language.toUpperCase() === "FR")
 				entry.name_display = entry.name_FR;
 			else
 				entry.name_display = entry.name;
-			($scope.dxTriggerList[numId].id) = ($scope.dxTriggerList[numId].id).toString();
-			numId++;
 		});
+		for(var i=0; i< $scope.dxTriggerList.length; i++){
+			$scope.dxTriggerList[i].id = $scope.dxTriggerList[i].id.toString();
+		}
 		
 		$scope.doctorTriggerList = response.data.doctors;
 		for(var i = 0; i < $scope.doctorTriggerList.length; i++){
-			($scope.doctorTriggerList[i].id)= ($scope.doctorTriggerList[i].id).toString();
+			$scope.doctorTriggerList[i].id= $scope.doctorTriggerList[i].id.toString();
 		}
 		$scope.machineTriggerList = response.data.machines;
 		for(var i = 0; i < $scope.machineTriggerList.length; i++){
-			($scope.machineTriggerList[i].id)= ($scope.machineTriggerList[i].id).toString();
+			$scope.machineTriggerList[i].id= $scope.machineTriggerList[i].id.toString();
 		}
 		$scope.studyTriggerList = response.data.studies;
 		for(var i = 0; i < $scope.studyTriggerList.length; i++){
-			$scope.studyTriggerList[i].id= ($scope.studyTriggerList[i].id).toString();
+			$scope.studyTriggerList[i].id= $scope.studyTriggerList[i].id.toString();
 		}
 		$scope.patientTriggerList = response.data.patients;
 		for(var i = 0; i < $scope.patientTriggerList.length; i++){
-			$scope.patientTriggerList[i].id= ($scope.patientTriggerList[i].id).toString();
+			$scope.patientTriggerList[i].id= $scope.patientTriggerList[i].id.toString();
 		}
 		$scope.appointmentTimeList = response.data.appointmentTimes;
 		$scope.appointmentTimeList.forEach(function(entry) {

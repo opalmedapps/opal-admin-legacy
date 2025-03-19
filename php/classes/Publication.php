@@ -147,7 +147,7 @@ class Publication extends Module
 
         // Because some doctors, appointments or patients can be removed from their tables but still being present in
         // the filter table, we must clean up the filters first before sending the data to the front end.
-        if($module["controlTableName"] ==="LegacyQuestionnaireControl")
+        if($module["controlTableName"] === "LegacyQuestionnaireControl")
             $triggersTemp = $this->opalDB->getQuestionnaireTriggersDetails($publicationId, $module["controlTableName"]);
         else
             $triggersTemp = $this->opalDB->getTriggersDetails($publicationId, $module["controlTableName"]);
