@@ -167,6 +167,14 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 	// Submit changes
 	$scope.updateUser = function () {
 		if ($scope.checkForm()) {
+			// set the additional privileges to the form `{'groups': [group_1.pk,...]}`
+			var additionalprivileges_map = {'groups':[]};
+			if ($scope.user.selected_additionalprivileges && $scope.user.selected_additionalprivileges.length > 0) {
+				for (const item in $scope.user.selected_additionalprivileges) {
+					additionalprivileges_map.groups.push($scope.user.selected_additionalprivileges[item].pk);
+				}
+			}
+			$scope.user.additionalprivileges_map = additionalprivileges_map;
 			var data = {
 				OAUserId: Session.retrieveObject('user').id,
 				id: $scope.user.serial,
@@ -174,8 +182,9 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 				confirmPassword: $scope.user.confirmPassword,
 				language: $scope.user.language,
 				roleId: $scope.user.role.serial,
+				selected_additionalprivileges: $scope.user.additionalprivileges_map,
+				edited_username: $scope.user.username,
 			};
-
 			// submit
 			$.ajax({
 				type: "POST",

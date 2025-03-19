@@ -2,6 +2,9 @@
 /**
  * User class to validate its identity and access levels
  */
+include_once("ApiCall.php");
+include_once("NewOpalApiCall.php");
+
 class User extends Module {
 
     public function __construct($guestStatus = false) {
@@ -434,6 +437,44 @@ class User extends Module {
     }
 
     /**
+     * Update a user into the new backend by calling the endpoint `/api/users/username`. Use a predefined `NewOpalApiCall.php`
+     * library to perform the api call `PUT`. If the user in the backend is not added, it will display an error message to the
+     * user.
+     * @param $post array - contains all the user info
+     */
+    public function updateUserNewBackend($post) {
+        $language = strtolower($_POST['language']);
+        // check if no groups are selected by the user
+        if(!empty($_POST['selected_additionalprivileges']['groups']))
+            $payload = [
+                "username"=>$_POST['edited_username'],
+                "groups"=>$_POST['selected_additionalprivileges']['groups'],
+            ];
+        else
+            $payload = [
+                "username"=>$_POST['edited_username'],
+                "groups"=>[],
+            ];
+        // set the payload in json format
+        $json_payload= json_encode($payload);
+        $backendApi = new NewOpalApiCall(
+            '/api/users/' . $payload['username'] . '/',
+            'PUT',
+            $language,
+            $json_payload,
+            'Content-Type: application/json',
+        );
+
+        $response = $backendApi->execute(); // response is string json
+
+        if($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS && $backendApi->getError())
+             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to New Backend " . $backendApi->getError());
+        else if($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS) {
+            HelpSetup::returnErrorMessage($backendApi->getHttpCode(), "Error from New Backend: " . $response["error"]);
+        }
+    }
+
+    /**
      * Insert a new user into the OAUser table after sanitizing and validating the data. Depending if the AD system is
      * active or not, the insertion is done differently. Also, if the user already exists but was deleted, the record
      * will be undeleted and updated.
@@ -469,7 +510,44 @@ class User extends Module {
         else
             $this->_insertUpdateUser($type, $username, $language, HelpSetup::generateRandomString(), $roleId, $isInsert);
     }
+    /**
+     * Insert a new user into the new backend by calling the endpoint `/api/users/`. Use a predefined `NewOpalApiCall.php`
+     * library to perform the api call. If the user in the backend is not added, it will display an error message to the
+     * user.
+     * @param $post array - contains all the user info
+     */
+    public function insertUserNewBackend($post) {
+        $language = strtolower($_POST['language']);
+        // check if no groups are selected by the user
+        if(!empty($_POST['additionalprivileges']['groups']))
+            $payload = [
+                "username"=>$_POST['username'],
+                "groups"=>$_POST['additionalprivileges']['groups'],
+            ];
+        else
+            $payload = [
+                "username"=>$_POST['username'],
+                "groups"=>[],
+            ];
+        // set the payload in json format
+        $json_payload= json_encode($payload);
 
+        $backendApi = new NewOpalApiCall(
+            '/api/users/',
+            'POST',
+            $language,
+            $json_payload,
+            'Content-Type: application/json',
+        );
+
+        $response = $backendApi->execute(); // response is string json
+
+        if($backendApi->getHttpCode() != HTTP_STATUS_CREATED && $backendApi->getError())
+             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to New Backend " . $backendApi->getError());
+        else if($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS) {
+            HelpSetup::returnErrorMessage($backendApi->getHttpCode(), "Error from New Backend: " . $response["error"]);
+        }
+    }
     /**
      * Insert an user with a password because the AD system is inactive or N/A, or the user is a third party system.
      * @param $type int - type of user (human/system)
