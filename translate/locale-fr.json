@@ -2456,10 +2456,10 @@
       "CONSENT_FORM": "Formulaire de consentement",
       "CONSENT_ID": "Forme identifiant:",
       "CURRENT_CONSENTS": "Consentements actuels",
-      "INVITED": "invité",
-      "OPAL_CONSENTED": "opaleConsenté",
-      "OTHER_CONSENTED": "autreConsenté",
-      "DECLINED": "diminué",
+      "INVITED": "Invité(e)",
+      "OPAL_CONSENTED": "Consenti (appli Opal)",
+      "OTHER_CONSENTED": "Consenti (autres méthodes)",
+      "DECLINED": "Décliné",
       "CONSENT_FORM_PUBLISHED": "Le formulaire de consentement a déjà été publié!"
     }
   },
