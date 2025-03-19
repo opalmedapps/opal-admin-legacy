@@ -1299,7 +1299,7 @@
       "INCOMPLETE": "Incomplete",
       "COMPLETE": "Complete",
       "TITLE_EXPLANATION": "Please assign an English and French title.",
-      "TYPE_EXPLANATION": "Please specify the type of educational material. Choose from the list of existing types (on text field focus) or specify a new type.",
+      "TYPE_EXPLANATION": "Please specify the type of educational material. Click on the text field, specify a new type or choose from the list of existing types.",
       "PHASE_EXPLANATION": "Please assign the phase in treatment this educational material should be publish at.",
       "URL_EXPLANATION": "Please specify the location of the educational material for both English and French versions. If there is more than one education material, please go tofr the <strong>Table Of Contents</strong> section.",
       "TABLE_EXPLANATION": "For more than one educational material in a table of contents, please assign the respective title, URL, and type for both English and French versions.",

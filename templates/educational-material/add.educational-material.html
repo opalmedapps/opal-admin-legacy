@@ -335,7 +335,7 @@
                                                 {{'EDUCATION.ADD.TYPE'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
-                                                <select class="form-control" ng-model="newEduMat.type_EN" ng-change="typeUpdate(newEduMat.type_EN, 'EN')" ng-options="type.EN as type.EN for type in EduMatTypes" required="required" default-option="{{'EDUCATION.ADD.ENGLISH_TYPE'|translate}}"></select>                                             </select>
+                                                <input class="form-control" type="text" ng-model="newEduMat.type_EN" ng-change="typeUpdate(newEduMat.type_EN, 'EN')" typeahead-on-select="typeUpdate(newEduMat.type_EN, 'EN')" uib-typeahead="type.EN as type.EN for type in EduMatTypes | filter:{EN:$viewValue}" typeahead-min-length="0" placeholder="{{'EDUCATION.ADD.ENGLISH_TYPE'|translate}}" required="required">
                                             </div>
                                         </div>
                                     </div>
@@ -353,7 +353,7 @@
                                                 {{'EDUCATION.ADD.TYPE'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
-                                                <select class="form-control" type="text" ng-model="newEduMat.type_FR" ng-change="typeUpdate(newEduMat.type_FR, 'FR')" ng-options="type.FR as type.FR for type in EduMatTypes" typeahead-min-length="0" placeholder="{{'EDUCATION.ADD.FRENCH_TYPE'|translate}}" required="required"></select>
+                                                <input class="form-control" type="text" ng-model="newEduMat.type_FR" ng-change="typeUpdate(newEduMat.type_FR, 'FR')" typeahead-on-select="typeUpdate(newEduMat.type_FR, 'FR')" uib-typeahead="type.FR as type.FR for type in EduMatTypes | filter:{FR:$viewValue}" typeahead-min-length="0" placeholder="{{'EDUCATION.ADD.FRENCH_TYPE'|translate}}" required="required">
                                             </div>
                                         </div>
                                     </div>
