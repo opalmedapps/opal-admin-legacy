@@ -268,7 +268,7 @@
         {
             // sanitize the input string
             if ($inString != '') {
-                $outString = filter_var($inString, FILTER_SANITIZE_ADD_SLASHES, FILTER_SANITIZE_STRING);
+                $outString = filter_var($inString, FILTER_SANITIZE_ADD_SLASHES);
              } else {
                 $outString = "";
              }
