@@ -36,7 +36,7 @@
 
 <div class="row side-panel-menu">
     <div ng-if="writeAccess" class="col-md-12">
-        <a href="{{configs.pathConfig.registration_url}}">
+        <a href="{{newOpalAdminHost}}/patients/access-request/">
             <div class="panel-container animated" ng-class="{pulse: hoverSideMenuReg, active: currentPage == '{{menu.url}}'}" ng-mouseenter="hoverSideMenuReg=true" ng-mouseleave="hoverSideMenuReg=false" style="cursor:pointer;">
                 <div class="side-panel-info-sm">
                     <div class="panel-content">
@@ -56,17 +56,5 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-12">
-        <a href="{{configs.newOpalAdminHost}}/patients/relationship-types/">
-            <div class="panel-container animated" ng-class="{pulse: hoverSideMenu}" ng-mouseenter="hoverSideMenu=true" ng-mouseleave="hoverSideMenu=false" style="cursor:pointer;">
-                <div class="side-panel-info-sm">
-                    <div class="panel-content">
-                        <span style="font-size: 23px;vertical-align:middle" class="fa fa-users" aria-hidden="true"></span>
-                        <h6 class="side-panel-title" style="display:inline-block;margin:0"><strong>{{'PATIENTS.MENU.RELATIONSHIP_TYPE'|translate}}</strong></h6>
-                    </div>
-                </div>
-            </div>
-        </a>
     </div>
 </div>
