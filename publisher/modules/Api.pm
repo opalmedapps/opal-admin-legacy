@@ -21,7 +21,7 @@ my $newBackendToken = Configs::fetchNewBackendToken();
 #====================================================================================
 # function calls the new backend api patients/legacy/<int:legacy_id>/
 #====================================================================================
-sub apiPatientCaregivers($)
+sub apiPatientCaregivers
 {
     my ($patientSerNum) = @_; # patient ser number
 
