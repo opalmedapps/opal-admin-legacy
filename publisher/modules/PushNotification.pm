@@ -237,8 +237,6 @@ sub sendPushNotification
 
     if (!$usernamesStr) {
         print "\nPatient username array is empty\n";
-        $sendlog        = "Patient has no related caregiver. the username array is empty";
-        insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusWarning, $sendlog);
         return;
     }
 
