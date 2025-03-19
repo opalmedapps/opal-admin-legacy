@@ -2719,6 +2719,8 @@
       "REGISTRATION_SUB": "Enregistrer un patient ou un proche aidant afin qu'il puisse utiliser Opal.",
       "RELATIONSHIP_TYPE": "Types de relations",
       "RELATIONSHIP_TYPE_SUB": "Gérer types de relations avec le proche aidant.",
+      "CAREGIVER_ACCESS": "Gestion d'accès des proches aidants",
+      "CAREGIVER_ACCESS_SUB": "Gérer l'accès aux patients par leurs soignants.",
       "BACK": "Retour"
     },
     "LIST": {
