@@ -827,7 +827,7 @@ sub inOurDatabase
 }
 
 #======================================================================================
-# Subroutine to copy/transfer our patient documents into a target director
+# Subroutine to copy/transfer our patient documents into a target directory
 #======================================================================================
 sub transferPatientDocuments
 {
