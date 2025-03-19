@@ -1395,6 +1395,7 @@ sub compareWith
 {
 	my ($SuspectAppt, $OriginalAppt) = @_; # our two appt objects from arguments
 	my $UpdatedAppt = dclone($OriginalAppt);
+	my $change = 0; # boolean to recognize an actual difference between objects
 	
 	# retrieve parameters
 	# Suspect Appointment...
@@ -1424,11 +1425,13 @@ sub compareWith
 	# go through each parameter
 
 	if ($SAliasExpressionSer ne $OAliasExpressionSer) {
+		$change = 1; # change occurred
 		print "Appointment Alias Expression Serial has changed from '$OAliasExpressionSer' to '$SAliasExpressionSer'\n";
 		my $updatedAESer = $UpdatedAppt->setApptAliasExpressionSer($SAliasExpressionSer); # update serial
 		print "Will update database entry to '$updatedAESer'.\n";
 	}
 	if ($SStartDateTime ne $OStartDateTime) {
+		$change = 1; # change occurred
 		print "Appointment Scheduled Start DateTime has change from '$OStartDateTime' to '$SStartDateTime'\n";
 		my $updatedSDT = $UpdatedAppt->setApptStartDateTime($SStartDateTime); # update start datetime
 		print "Will update database entry to '$updatedSDT'.\n";
@@ -1486,21 +1489,25 @@ sub compareWith
 
 	}
 	if ($SEndDateTime ne $OEndDateTime) {
+		$change = 1; # change occurred
 		print "Appointment Scheduled End DateTime has changed from '$OEndDateTime' to '$SEndDateTime'\n";
 		my $updatedEDT = $UpdatedAppt->setApptEndDateTime($SEndDateTime); # update end datetime
 		print "Will update database entry to '$updatedEDT'.\n";
 	}
     if ($SPrioritySer ne $OPrioritySer) {
+		$change = 1; # change occurred
 		print "Appointment Priority has changed from '$OPrioritySer' to '$SPrioritySer'\n";
 		my $updatedPrioritySer = $UpdatedAppt->setApptPrioritySer($SPrioritySer); # update
 		print "Will update database entry to '$updatedPrioritySer'.\n";
 	}
 	if ($SDiagnosisSer ne $ODiagnosisSer) {
+		$change = 1; # change occurred
 		print "Appointment Diagnosis has changed from '$ODiagnosisSer' to '$SDiagnosisSer'\n";
 		my $updatedDiagnosisSer = $UpdatedAppt->setApptDiagnosisSer($SDiagnosisSer); # update
 		print "Will update database entry to '$updatedDiagnosisSer'.\n";
 	}
 	if ($SStatus ne $OStatus) {
+		$change = 1; # change occurred
 		print "Appointment Status has changed from '$OStatus' to '$SStatus'\n";
 		my $updatedStatus = $UpdatedAppt->setApptStatus($SStatus); # update status
 		print "Will update database entry to '$updatedStatus'.\n";
@@ -1537,27 +1544,31 @@ sub compareWith
 		}
 	}
     if ($SState ne $OState) {
+		$change = 1; # change occurred
 		print "Appointment State has changed from '$OState' to '$SState'\n";
 		my $updatedState = $UpdatedAppt->setApptState($SState); # update state
 		print "Will update database entry to '$updatedState'.\n";
 	}
 	if ($SActualStartDate ne $OActualStartDate) {
+		$change = 1; # change occurred
 		print "Appointment Actual Scheduled Start Date has change from '$OActualStartDate' to '$SActualStartDate'\n";
 		my $updatedSDT = $UpdatedAppt->setApptActualStartDate($SActualStartDate); # update start datetime
 		print "Will update database entry to '$updatedSDT'.\n";
 	}
 	if ($SActualEndDate ne $OActualEndDate) {
+		$change = 1; # change occurred
 		print "Appointment Actual Scheduled End Date has changed from '$OActualEndDate' to '$SActualEndDate'\n";
 		my $updatedEDT = $UpdatedAppt->setApptActualEndDate($SActualEndDate); # update end datetime
 		print "Will update database entry to '$updatedEDT'.\n";
 	}
 	 if ($SCronLogSer ne $OCronLogSer) {
+		$change = 1; # change occurred
 		print "Appointment Cron Log Serial has changed from '$OCronLogSer' to '$SCronLogSer'\n";
 		my $updatedCronLogSer = $UpdatedAppt->setApptCronLogSer($SCronLogSer); # update serial
 		print "Will update database entry to '$updatedCronLogSer'.\n";
 	}
 
-	return $UpdatedAppt;
+	return ($UpdatedAppt, $change);
 }
 
 #======================================================================================
