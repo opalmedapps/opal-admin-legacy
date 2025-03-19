@@ -389,7 +389,6 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 
 	// Function to toggle necessary changes when checkin details
 	$scope.checkinDetailsUpdate = function () {
-		debugger
 		// Toggle booleans
 		$scope.checkinSection.open = true;
 
