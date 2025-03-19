@@ -96,7 +96,6 @@
  	<script type="text/javascript" src="js/app/controllers/hospital-map/delete.hospitalMap.js"></script>
 
  	<script type="text/javascript" src="js/app/controllers/notification/notification.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/notification/add.notification.js"></script>
  	<script type="text/javascript" src="js/app/controllers/notification/edit.notification.js"></script>
  	<script type="text/javascript" src="js/app/controllers/notification/delete.notification.js"></script>
  	<script type="text/javascript" src="js/app/controllers/notification/log.notification.js"></script>
