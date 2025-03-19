@@ -41,7 +41,7 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 		}
 
 		var checkboxCellTemplate2 = '<div style="text-align: center;" class="ui-grid-cell-contents">'+
-			'<i ng-class="row.entity.interpretability == 0 ? \'fa-check text-success\' : \'fa-times text-danger\'" class="fa"></i>' +
+			'<i ng-class="row.entity.interpretability == 0 ? \'fa-times text-danger\' : \'fa-check text-success\'" class="fa"></i>' +
 			+'</div>';
 
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">';
@@ -82,8 +82,8 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 			columnDefs: [
 				{ field: 'name_'+Session.retrieveObject('user').language.toUpperCase(), displayName: $filter('translate')('TEST.LIST.NAME'), cellTemplate: cellTemplateName, enableColumnMenu: false },
 				{ field: 'group_'+Session.retrieveObject('user').language.toUpperCase(), displayName: $filter('translate')('TEST.LIST.TEST_GROUP'), cellTemplate: cellTemplateGroupName, width: '15%', enableColumnMenu: false },
-				{ field: 'publish', displayName: $filter('translate')('TEST.LIST.PUBLISH'), width: '15%', cellTemplate: checkboxCellTemplate, enableColumnMenu: false },
-				{ field: 'interpretability', displayName: $filter('translate')('TEST.LIST.INTERPRETABLE'), width: '15%', cellTemplate: checkboxCellTemplate2, enableColumnMenu: false },
+				{ field: 'publish', displayName: $filter('translate')('TEST.LIST.PUBLISH'), width: '10%', cellTemplate: checkboxCellTemplate, enableColumnMenu: false },
+				{ field: 'interpretability', displayName: $filter('translate')('TEST.LIST.INTERPRETABLE'), width: '20%', cellTemplate: checkboxCellTemplate2, enableColumnMenu: false },
 				{ name: $filter('translate')('TEST.LIST.OPERATIONS'), cellTemplate: cellTemplateOperations, sortable: false, width: '15%', enableColumnMenu: false }
 			],
 			useExternalFiltering: true,
