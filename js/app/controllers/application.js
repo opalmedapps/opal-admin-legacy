@@ -33,9 +33,12 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 				if ($rootScope.ormsHost.startsWith(document.referrer)) {
 					// Check if the user only has access to ORMS (Clinician Dashboard)
 					const userAccess = Session.retrieveObject('access');
-					countAccess = userAccess.filter(x => x >= 1).length;
+					const countAccess = userAccess.filter(x => x >= 1).length;
+					// the Clinician Dashboard module ID is 25
+					const ormsAccess = userAccess[25];
 
-					if (countAccess == 1) {
+
+					if (countAccess == 1 && ormsAccess >= 1) {
 						return LogoutService.logout();
 					}
 
