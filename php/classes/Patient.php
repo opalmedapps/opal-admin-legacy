@@ -225,10 +225,9 @@ class Patient extends Module {
      *  6th bit test results (legacy)
      *  7th bit patient test results
      *  8th bit notifications
-     *  9th bit treatment planning
-     *  10th bit general
-     *  11th bit clinical notes
-     *  12 bit treating team messages
+     *  9th bit general
+     *  10th bit clinical notes
+     *  11th bit treating team messages
      *
      * @param $post array - mrn & featureList
      * @return $errCode
@@ -304,7 +303,7 @@ class Patient extends Module {
                 $errCode = "0" . $errCode;
             }
         } else {
-            $errCode = "111111111111";
+            $errCode = "11111111111";
         }
         return $errCode;
     }
