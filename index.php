@@ -227,7 +227,10 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 	<footer class="app-version" ng-class="{'login-footer': isIndexPage()}">
 		<div class="text-right">
-			<a ui-sref="about">{{'ABOUT'|translate}}</a> ·
+			<a ng-if="!isAboutPage()" ui-sref="about">{{'ABOUT'|translate}}</a>
+			<a ng-if="isAboutPage()" ng-attr-ui-sref="{{ isAuthenticated() ? 'home' : 'login' }}">
+				{{'BREADCRUMBS.HOME'|translate}}
+			</a> ·
 			<a href="https://github.com/opalmedapps">{{'SOURCE_CODE'|translate}}</a> ·
 			<span ng-if="build">({{'ENVIRONMENT'|translate}}: {{build.environment_name}})</span>
 		</div>
