@@ -120,10 +120,10 @@ define("OPAL_RESOURCE_PENDING_TABLE", "resourcePending");
 define("OPAL_RESOURCE_PENDING_ERROR_TABLE", "resourcePendingError");
 define("OPAL_RESOURCE_PENDING_MH_TABLE", "resourcePendingMH");
 
-//Define Cronjob patient control table names
-define("OPAL_CRON_CONTROL_PATIENT_DOCUMENT","cronControlPatient_Document");
-define("OPAL_CRON_CONTROL_PATIENT_EDUCATION_MATERIAL", "cronControlPatient_EducationalMaterial");
-define("OPAL_CRON_CONTROL_PATIENT_ANNOUNCEMENT", "cronControlPatient_Announcement");
-define("OPAL_CRON_CONTROL_PATIENT_LEGACY_QUESTIONNAIRE", "cronControlPatient_LegacyQuestionnaire");
-define("OPAL_CRON_CONTROL_PATIENT_PATIENTS_FOR_PATIENTS","cronControlPatient_PatientsForPatients");
-define("OPAL_CRON_CONTROL_PATIENT_TREATMENT_TEAM_MESSAGE", "cronControlPatient_TreatmentTeamMessage");
+// //Define Cronjob patient control table names
+// define("OPAL_CRON_CONTROL_PATIENT_DOCUMENT","cronControlPatient_Document");
+// define("OPAL_CRON_CONTROL_PATIENT_EDUCATION_MATERIAL", "cronControlPatient_EducationalMaterial");
+// define("OPAL_CRON_CONTROL_PATIENT_ANNOUNCEMENT", "cronControlPatient_Announcement");
+// define("OPAL_CRON_CONTROL_PATIENT_LEGACY_QUESTIONNAIRE", "cronControlPatient_LegacyQuestionnaire");
+// define("OPAL_CRON_CONTROL_PATIENT_PATIENTS_FOR_PATIENTS","cronControlPatient_PatientsForPatients");
+// define("OPAL_CRON_CONTROL_PATIENT_TREATMENT_TEAM_MESSAGE", "cronControlPatient_TreatmentTeamMessage");

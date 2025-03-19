@@ -730,17 +730,17 @@ sub getPatientsMarkedForUpdateModularCron {
 	my ($cronLogSer, $cronType) = @_; # cron log serial in args
 
     $control_table = "";
-	if($cronType == 'Document'){
+	if($cronType eq 'Document'){
         $control_table = "cronControlPatient_Document";
-    }elsif($cronType == 'EducationalMaterial'){
+    }elsif($cronType eq 'EducationalMaterial'){
         $control_table = "cronControlPatient_EducationalMaterial";
-    }elsif($cronType == 'Announcement'){
+    }elsif($cronType eq 'Announcement'){
         $control_table = "cronControlPatient_Announcement";
-    }elsif($cronType == 'LegacyQuestionnaire'){
+    }elsif($cronType eq 'LegacyQuestionnaire'){
         $control_table = "cronControlPatient_LegacyQuestionnaire";
-    }elsif($cronType == 'Patients for Patients'){
+    }elsif($cronType eq 'Patients for Patients'){
         $control_table = "cronControlPatient_PatientsForPatients";
-    }elsif($cronType == 'TreatmentTeamMessage'){
+    }elsif($cronType eq 'Treatment Team Message'){
         $control_table = "cronControlPatient_TreatmentTeamMessage";
     }
 
@@ -861,17 +861,17 @@ sub getPatientsMarkedForUpdateModularCronLegacy {
 	my ($cronLogSer, $cronType) = @_; # cron log serial in args
 
     $control_table = "";
-	if($cronType == 'Document'){
+	if($cronType eq 'Document'){
         $control_table = "cronControlPatient_Document";
-    }elsif($cronType == 'EducationalMaterial'){
+    }elsif($cronType eq 'EducationalMaterial'){
         $control_table = "cronControlPatient_EducationalMaterial";
-    }elsif($cronType == 'Announcement'){
+    }elsif($cronType eq 'Announcement'){
         $control_table = "cronControlPatient_Announcement";
-    }elsif($cronType == 'LegacyQuestionnaire'){
+    }elsif($cronType eq 'LegacyQuestionnaire'){
         $control_table = "cronControlPatient_LegacyQuestionnaire";
-    }elsif($cronType == 'Patients for Patients'){
+    }elsif($cronType eq 'Patients for Patients'){
         $control_table = "cronControlPatient_PatientsForPatients";
-    }elsif($cronType == 'TreatmentTeamMessage'){
+    }elsif($cronType eq 'Treatment Team Message'){
         $control_table = "cronControlPatient_TreatmentTeamMessage";
     }
 
@@ -1043,17 +1043,17 @@ sub setPatientLastTransferredModularCron
 	my ($current_datetime, $cronType) = @_; # current datetime, cron module type,
 
     $control_table = "";
-	if($cronType == 'Document'){
+	if($cronType eq 'Document'){
         $control_table = "cronControlPatient_Document";
-    }elsif($cronType == 'EducationalMaterial'){
+    }elsif($cronType eq 'EducationalMaterial'){
         $control_table = "cronControlPatient_EducationalMaterial";
-    }elsif($cronType == 'Announcement'){
+    }elsif($cronType eq 'Announcement'){
         $control_table = "cronControlPatient_Announcement";
-    }elsif($cronType == 'LegacyQuestionnaire'){
+    }elsif($cronType eq 'LegacyQuestionnaire'){
         $control_table = "cronControlPatient_LegacyQuestionnaire";
-    }elsif($cronType == 'Patients for Patients'){
+    }elsif($cronType eq 'Patients for Patients'){
         $control_table = "cronControlPatient_PatientsForPatients";
-    }elsif($cronType == 'TreatmentTeamMessage'){
+    }elsif($cronType eq 'Treatment Team Message'){
         $control_table = "cronControlPatient_TreatmentTeamMessage";
     }
 
@@ -1547,6 +1547,9 @@ sub CheckPatientForUpdateModularCron
 		WHERE PC.PatientSerNum NOT IN 
 			(SELECT cronControlPatientSerNum FROM $control_table);
 ";
+
+	print "SQL: $patients_sql\n\n";
+
 	# prepare query
 	my $query = $SQLDatabase->prepare($patients_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
