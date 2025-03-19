@@ -15,7 +15,7 @@ class DatabaseOpal extends DatabaseAccess {
         parent::__construct($newServer, $newDB, $newPort, $newUserDB, $newPass, $dsn);
         if (!$guestAccess) {
             $newOAUserId = $newOAUserId ?? '0';
-            $newOAUserId = strip_tags($newOAUserId);
+            $newOAUserId = strip_tags(strval($newOAUserId));
 
             if($_SESSION["ID"] && $_SESSION["ID"] == $newOAUserId) {
                 $this->OAUserId = $_SESSION["ID"];
