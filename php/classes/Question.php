@@ -60,10 +60,13 @@ class Question extends QuestionnaireModule {
             foreach($questionToSanitize["options"] as $key=>$value)
                 if ($key != '$$hashKey')
                     $options[strip_tags($key)] = strip_tags($value);
-        $validatedQuestion["options"] = $options;
 
+        // We need to cast our values so the comparison in the _validatePivotalIDs function doesn't fail
+        $validatedQuestion["options"]["ID"] = (int)$options["ID"];
+        $validatedQuestion["options"]["questionsId"] = (int)$options["questionsId"];
+        
+        $numArraySubOptions=0;
         $subOptions = array();
-
         if(!empty($questionToSanitize["subOptions"])) {
             foreach ($questionToSanitize["subOptions"] as $aSub) {
                 $newSub = array();
@@ -71,9 +74,19 @@ class Question extends QuestionnaireModule {
                     if ($key != '$$hashKey')
                         $newSub[strip_tags($key)] = strip_tags($value);
                 array_push($subOptions, $newSub);
+                // Send all the different Sub Options to validatedQuestion variable.
+                // We need to send the values seperatly so we don't get fatal errors.
+                // We also need to cast our values so the comparaison in the _validatePivotalIDs function doesn't fail.
+                $validatedQuestion["subOptions"][$numArraySubOptions]["ID"] = (int)$subOptions[$numArraySubOptions]["ID"];
+                $validatedQuestion["subOptions"][$numArraySubOptions]["parentTableId"] = (int)$subOptions[$numArraySubOptions]["parentTableId"];
+                $validatedQuestion["subOptions"][$numArraySubOptions]["description"] = (int)$subOptions[$numArraySubOptions]["description"];
+                $validatedQuestion["subOptions"][$numArraySubOptions]["order"] = (int)$subOptions[$numArraySubOptions]["order"];
+                $validatedQuestion["subOptions"][$numArraySubOptions]["description_EN"] = $subOptions[$numArraySubOptions]["description_EN"];
+                $validatedQuestion["subOptions"][$numArraySubOptions]["description_FR"] = $subOptions[$numArraySubOptions]["description_FR"];
+                $numArraySubOptions++;
             }
         }
-        $validatedQuestion["subOptions"] = $subOptions;
+       
         if($validatedQuestion["typeId"] === SLIDERS) {
             $validatedQuestion["options"]["minValue"] = floatval($validatedQuestion["options"]["minValue"]);
             $validatedQuestion["options"]["maxValue"] = floatval($validatedQuestion["options"]["maxValue"]);

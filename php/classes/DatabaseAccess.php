@@ -294,14 +294,14 @@ class DatabaseAccess extends HelpSetup
      * @returns constant based if it is an int, bool or a string (int)
      * */
     protected static function _getTypeOf($aVar) {
-        if(strcasecmp($aVar, "true") == 0 || strcasecmp($aVar, "yes") == 0 || strcasecmp($aVar, "on") == 0)
+        if (is_null($aVar))
+            return PDO::PARAM_NULL;
+        else if(strcasecmp($aVar, "true") == 0 || strcasecmp($aVar, "yes") == 0 || strcasecmp($aVar, "on") == 0)
             return PDO::PARAM_STR;
         else if(filter_var($aVar, FILTER_VALIDATE_INT) !== false)
             return PDO::PARAM_INT;
         else if (filter_var($aVar, FILTER_VALIDATE_BOOLEAN) !== false)
             return PDO::PARAM_BOOL;
-        else if (is_null($aVar))
-            return PDO::PARAM_NULL;
         else
             return PDO::PARAM_STR;
     }
