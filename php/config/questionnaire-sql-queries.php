@@ -440,6 +440,13 @@ define("SQL_QUESTIONNAIRE_UPDATE_QUESTIONNAIRE",
     AND deleted = ".NON_DELETED_RECORD.";"
 );
 
+define("SQL_QUESTIONNAIRE_UPDATE_QUESTIONNAIRE_RESPONDENT_NAME",
+    "UPDATE ".ANSWER_QUESTIONNAIRE_TABLE." aq
+    SET
+        aq.respondentDisplayName = :respondentDisplayName
+    WHERE aq.respondentUsername = :username;"
+);
+
 define("SQL_QUESTIONNAIRE_UPDATE_UPDATEDBY_QUESTIONNAIRE",
     "UPDATE ".QUESTIONNAIRE_TABLE."
     SET updatedBy = :updatedBy, lastUpdated = NOW()

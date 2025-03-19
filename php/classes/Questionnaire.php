@@ -469,6 +469,27 @@ class Questionnaire extends QuestionnaireModule {
             $this->questionnaireDB->forceUpdate($updatedQuestionnaire["ID"], QUESTIONNAIRE_TABLE);
     }
 
+    /*
+     * This function updates "QuestionnaireDB.answerQuestionnaire.respondentDisplayName" field
+     * filtered by the username field
+     *
+     * @params  $username  (string)
+     * @params  $firstName (string)
+     * @params  $lastName  (string)
+     * @return  void
+     * */
+    public function updateAnswerQuestionnaireRespondent(
+        string $username,
+        string $firstName,
+        string $lastName
+    ){
+        $respondentDisplayName = $firstName . ' ' . $lastName;
+        $this->questionnaireDB->updateAnswerQuestionnaireRespondent(
+            $username,
+            $respondentDisplayName
+        );
+    }
+
     /**
      * Get the list of questionnaires status, visualization form, studies list and completion date for a specific
      * patient on a site.

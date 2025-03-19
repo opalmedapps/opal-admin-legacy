@@ -1,3 +1,5 @@
+<?php require_once('php/config.php'); ?>
+
 <!DOCTYPE html>
 <!--[if lt IE 7 ]> <html lang="en" class="no-js ie6 lt8"> <![endif]-->
 <!--[if IE 7 ]>    <html lang="en" class="no-js ie7 lt8"> <![endif]-->
@@ -5,7 +7,7 @@
 <!--[if IE 9]><html class="ie9" lang="en"><![endif]-->
 <!--[if gt IE 9]><!--><html lang="en"><!--<![endif]-->
 <head>
-	<base href="/opalAdmin/">
+	<base href="<?php echo(FRONTEND_REL_URL); ?>">
 
 	<title>opal ADMIN</title>
 	<meta charset="utf-8">

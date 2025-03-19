@@ -75,4 +75,4 @@ php-error.log
 
 # ignore composer components
 /vendor/
-composer.lock
+# composer.lock

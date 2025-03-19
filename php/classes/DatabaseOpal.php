@@ -2281,6 +2281,19 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
+     * Get patient's Firebase username
+     * @param  $siteCode : string - target patient's site code
+     * @param  $mrn      : string - target patient's MRN
+     * @return array - patient Firebase username(s)
+     */
+    function getPatientFirebaseUsername($siteCode, $mrn){
+        return $this->_fetchAll(OPAL_GET_PATIENT_FIREBASE_USERNAME, array(
+            array("parameter"=>":siteCode","variable"=>$siteCode,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":MRN","variable"=>$mrn,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
      * Get educational material options
      * @params $matType : string - material category
      * @return array - educ options
@@ -3104,6 +3117,7 @@ class DatabaseOpal extends DatabaseAccess {
         foreach ($toInsert as &$item) {
             $item["createdBy"] = $this->getUsername();
             $item["updatedBy"] = $this->getUsername();
+            $item["deletedBy"] = "";
         }
         return $this->_replaceMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_ALIAS_TABLE, $toInsert);
     }
@@ -4468,3 +4482,4 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_HOSPITAL_MAP_MH, $toUpdate);
     }
 }
+
