@@ -22,6 +22,7 @@ if ($delayedLabs) {
             "message_text_FR" => "",
         );
 
+        $ignore_usernames = [];
         // Call API to send push notification
         $response = customPushNotification::sendNotificationByPatientSerNum($patientSerNum, $language, $messages);
         echo json_encode($response) . PHP_EOL;

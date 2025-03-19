@@ -57,6 +57,7 @@ class DelayedLabPushNotification
                 :notifControlSerNum AS NotificationControlSerNum,
                 -1 AS RefTableRowSerNum,
                 NOW() AS DateAdded,
+                0 AS ReadStatus,
                 res.ReadBy AS ReadBy,
                 :notifControlNameEN AS RefTableRowTitle_EN,
                 :notifControlNameFR AS RefTableRowTitle_FR
@@ -114,7 +115,7 @@ class DelayedLabPushNotification
                 ":notifControlNameEN"   => $notifControlNameEN,
                 ":notifControlNameFR"   => $notifControlNameFR,
             ]);
-            $result = $statement->fetchAll();
+            $result = $statement->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             echo json_encode(["success" => 0, "failure" => 1, "error" => $e]) . PHP_EOL;
             exit();
@@ -137,8 +138,8 @@ class DelayedLabPushNotification
         // Extract from the $delayedLabs associative array the keys and values into separate arrays.
         // The arrays are used in queries below where the keys are the columns and the values are new entries.
         $delayedLabsArray = array_values($delayedLabs);
-        $columns = implode(", ",array_keys($delayedLabs));
-        $values = implode("', '", $delayedLabsArray);
+        $columns = implode(", ",array_keys($delayedLabs[0]));
+        $values = implode("', '", $delayedLabsArray[0]);
 
         $query = "
             INSERT INTO Notification($columns) VALUES ('$values');
