@@ -12,6 +12,8 @@ OpalAdmin is an administrative tool for managing and tagging personal health inf
 
 This project contains a `Dockerfile` as well as a `docker-compose.yml` to run it as a container.
 
+### Step 1: Create the `.env` file
+
 Copy the `.env.sample` to `.env` and fill out the required fields (database credentials, Firebase information, and auth token).
 
 ```shell
@@ -20,6 +22,17 @@ cp .env.sample .env
 
 If the database is enforcing secure transport (SSL/TLS traffic encryption), also update the values for the SSL environment variables:
 `DATABASE_USE_SSL=1` and `SSL_CA=/var/www/html/certs/ca.pem` after copying the `ca.pem` file into the certs directory.
+
+### Step 2: Add the `.npmrc` file
+
+This project uses [AngularJS](https://angularjs.org/) which reached end of life in January 2022.
+This project uses a long-term support version of AngularJS provided by [XLTS.dev](https://www.xlts.dev/).
+If you have an `npm` token to retrieve this version from their registry, place the `.npmrc` file containing the credentials in the root directory.
+
+You can also use the [last available version](https://www.npmjs.com/package/angular) of AngularJS (version 1.8.3).
+To do so, change the value for the `angular` dependency in `package.json` to `angular@1.8.3` and run `npm install` to update the lock file.
+
+### Step 3: Start the container
 
 You can then bring up the container:
 
@@ -82,3 +95,15 @@ docker compose exec app php publisher/php/tests/testPushNotification.php <device
 
 Output will be printed to the terminal to indicate whether the notification was successfully sent, or if there was an error.
 If successful, you’ll receive a test push notification on your device.
+
+## Labs Design
+
+_Please see the [sequence diagram](diagram.png) for the workflow details. The source code of the diagram can be found [here](https://gitlab.com/opalmedapps/docs/-/blob/main/docs/development/architecture/diagrams/labs.puml?ref_type=heads)._
+
+The notification for test results arrives from the interface engine (IE) via POST request to a PHP script.
+
+Using these notifications, one may then obtain the test results using the Oasis webservice via the Oasis [SOAP](https://en.wikipedia.org/wiki/SOAP) service:
+
+```php
+response = oasis_soap_client->getLabList(oasisPatientId, fromDate, toDate); // dates in "Y-m-d"
+```

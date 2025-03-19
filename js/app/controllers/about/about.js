@@ -9,16 +9,22 @@
         .module('opalAdmin.controllers.about', [])
         .controller('about', thirdPartyController);
 
-    thirdPartyController.$inject = ['$scope', '$rootScope', '$filter', '$http', '$sce', '$location', '$anchorScroll'];
+    thirdPartyController.$inject = [
+        '$scope', '$rootScope', '$filter', '$http', '$sce', '$location', '$anchorScroll', '$translate'
+    ];
 
-    function thirdPartyController($scope, $rootScope, $filter, $http, $sce, $location, $anchorScroll) {
+    function thirdPartyController(
+        $scope, $rootScope, $filter, $http, $sce, $location, $anchorScroll, $translate
+    ) {
+        $scope.currentLang = $translate.use();
+
         const customRenderExtension = {
             renderer: {
                 // Turn all license text blocks into collapsible sections using <details><summary>
                 code(code) {
                     return `
                         <details>
-                          <summary>${$filter('translate')('SHOW_LICENSE_TEXT')}</summary>
+                          <summary>${$filter('translate')('ABOUT_OPAL.SHOW_LICENSE_TEXT')}</summary>
                           <pre><code>${code}</code></pre>
                         </details>
                     `;
@@ -35,11 +41,30 @@
         // Configure Marked (GFM for auto-linkifying bare URLs)
         marked.setOptions({ gfm: true });
 
-        const thirdPartyURL = window.location.protocol + '//' + window.location.host + '/THIRDPARTY.md';
+        const thirdPartyURL = 'THIRDPARTY.md';
 
         // Fetch the Markdown file
         $http.get(thirdPartyURL)
             .then(function(response) {
+                const customRenderExtension = {
+                    renderer: {
+                        // Turn all license text blocks into collapsible sections using <details><summary>
+                        code(code) {
+                            return `
+                                <details>
+                                  <summary>${$filter('translate')('SHOW_LICENSE_TEXT')}</summary>
+                                  <pre><code>${code.text}</code></pre>
+                                </details>
+                            `;
+                        },
+                        // Turn all url link into valid herf sections
+                        link(href) {
+                            return `<a href="${href.href}" target="_blank" rel="noopener">${href.text}</a>`
+                        }
+                    }
+                };
+        
+                marked.use(customRenderExtension);
                 let mdContent = response.data;
                 // Remove both the comment block and the section header
                 mdContent = mdContent.replace(/<!--[\s\S]*?-->\s*# Third-Party Dependencies\s*\n/, '');
@@ -48,12 +73,13 @@
                 let parsedHtml = marked.parse(mdContent);
 
                 // If applicable, add a paragraph at the beginning stating that the section has not been translated
-                if ($rootScope.siteLanguage !== 'EN')
+                if ($translate.use() !== 'en') {
                     parsedHtml = `<p class="third-party-pre">
-                            ${$filter('translate')('UNTRANSLATED_PAGE_DISCLAIMER')}
+                            ${$filter('translate')('ABOUT_OPAL.UNTRANSLATED_PAGE_DISCLAIMER')}
                         </p>
                         <hr>`
                     + parsedHtml;
+                }
 
                 // Trust the HTML to bypass Angular's sanitizer
                 $scope.thirdPartyContent = $sce.trustAsHtml(parsedHtml);

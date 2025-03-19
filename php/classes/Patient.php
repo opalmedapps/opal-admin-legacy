@@ -642,7 +642,7 @@ class Patient extends Module {
                 $errCode = "0" . $errCode;
             }
         }
-        if(!array_key_exists("ramq", $post) || $post["ramq"] == "")
+        if(!array_key_exists("ramq", $post))
             $errCode = "1" . $errCode;
         else
             $errCode = "0" . $errCode;
