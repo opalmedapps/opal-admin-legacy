@@ -22,7 +22,6 @@ $path_name =~ s/publisher\/dataControl.pl//g;
 $path_name =~ s/publisher\/dataControl2.pl//g;
 $path_name =~ s/publisher\/modules\/PushNotificationFromPHP.pm//g;
 $path_name =~ s/publisher\/controls\/announcementControl.pl//g;
-$path_name =~ s/publisher\/controls\/test.pl//g;
 $path_name =~ s/publisher\/controls\/documentControl.pl//g;
 $path_name =~ s/publisher\/controls\/txTeamMessagesControl.pl//g;
 $path_name =~ s/publisher\/controls\/patientsForPatientsControl.pl//g;
