@@ -12,11 +12,21 @@ class Document extends Module
         parent::__construct(MODULE_TRIGGER, $guestStatus);
     }
 
+    /**
+     * Validate the input parameters for patient document
+     * Validation code :     
+     *                      1st bit source system invalid or missing
+     *
+     * @param array<mixed> $post - document parameters
+     * @param array<mixed> &$patientSite (Reference) - patient parameters
+     * @param array<mixed> &$source (Reference) - source parameters
+     * @return string $errCode - error code.
+     */
     protected function _validateDocumentSourceExternalId(&$post, &$patientSite, &$source)  {
         $patientSite = array();
         $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
                 
-        // 4th bit - source
+        // 1st bit - source system
         if(!array_key_exists("sourceSystem", $post) || $post["sourceSystem"] == "") {
             $errCode = "1" . $errCode;
         } else {
@@ -33,6 +43,16 @@ class Document extends Module
         return $errCode;
     }
 
+    /**
+     * Validate the input parameters for individual patient appointment
+     * Validation code :     
+     *                      1st bit source system invalid or missing
+     *
+     * @param array<mixed> $post - appointment parameters
+     * @param array<mixed> &$patientSite (Reference) - patient parameters
+     * @param array<mixed> &$source (Reference) - source parameters
+     * @return string $errCode - error code.
+     */    
     protected function _validateInsertDocument(&$post, &$patientSite, &$source) {
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateDocumentSourceExternalId($post, $patientSite, $source);

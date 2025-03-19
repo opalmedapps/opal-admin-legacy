@@ -16,13 +16,14 @@ class Appointment extends Module
 
     /**
      * Validate the input parameters for individual patient appointment
-     *  1st bit site
-     *  2nd bit mrn
+     * Validation code :     
+     *                      1st bit site invalid or missing
+     *                      2nd bit mrn invalid or missing
      *
-     * @param $post array - mrn & featureList
-     * @return $errCode
+     * @param array<mixed> $post - appointment parameters
+     * @return string $errCode - error code.
      */
-    protected function _validateAppointment(&$post): string
+    protected function _validateAppointment($post): string
     {
         $errCode = "";
 
@@ -46,11 +47,30 @@ class Appointment extends Module
         return $errCode;
     }
 
+    /**
+     * Validate the input parameters for individual patient appointment
+     * Validation code :     
+     *                      1st bit site invalid or missing
+     *                      2nd bit mrn invalid or missing
+     *                      3rd bit source invalid or missing
+     *
+     * @param array<mixed> $post - appointment parameters
+     * @param array<mixed> &$patientSite (Reference) - patient parameters
+     *  <pre>
+     *    $patientSite = [
+     *                     'SourceDatabaseSerNum' => (Int) DB ID. Required.
+     *                     'SourceDatabaseName' => (string) DB name. Required.
+     *                     'Enabled' => (Int) DB active. Required.
+     *                   ]
+     * </pre>
+     * @param array<mixed> &$source (Reference) - source parameters
+     * @return string $errCode - error code.
+     */   
     protected function _validateAppointmentSourceExternalId(&$post, &$patientSite, &$source)  {
         $patientSite = array();
         $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
         
-        // 4th bit - source
+        // 3th bit - source
         if(!array_key_exists("sourceSystem", $post) || $post["sourceSystem"] == "") {
             $errCode = "1" . $errCode;
         } else {
@@ -59,59 +79,66 @@ class Appointment extends Module
             if(count($source) != 1) {
                 $source = array();
                 $errCode = "1" . $errCode;
-            }  else {
+            } else {
                 $source = $source[0];
                 $errCode = "0" . $errCode;
             }
         }
-
         return $errCode;
     }
 
     /**
-     * Validate the input parameters for an appointment
-     *  1st bit site
-     *  2nd bit mrn
+     * Validate the input parameters for individual patient appointment
+     * Validation code :     
+     *                      1st bit site invalid or missing
+     *                      2nd bit mrn invalid or missing
+     *                      3rd bit source invalid or missing
+     *                      4rd bit sourceId invalid or missing
+     *                      5th bit appointmentTypeCode invalid or missing
+     *                      6th bit clinicDescription invalid or missing
+     *                      7th bit scheduledTimestamp invalid or missing
+     *                      8th bit status invalid or missing
      *
-     * @param $post array - appointment informations
-     * @return $errCode
-     */
+     * @param array<mixed> $post - appointment parameters
+     * @param array<mixed> &$patientSite (Reference) - patient parameters
+     * @param array<mixed> &$source (Reference) - source parameters
+     * @return string $errCode - error code
+     */    
     protected function _validateInsertAppointment(&$post, &$patientSite, &$source) {
         $post = HelpSetup::arraySanitization($post);
-        $errCode = "";
-        
+                
         if(is_array($post)){
             $errCode = $this->_validateAppointmentSourceExternalId($post, $patientSite, $source);
 
-            //bit 2
+            //bit 4
             if(!array_key_exists("sourceId", $post) || $post["sourceId"] == ""){
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
 
             //bit 5
             if(!array_key_exists("appointmentTypeCode", $post) || $post["appointmentTypeCode"] == ""){
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
             //bit 6
             if(!array_key_exists("clinicDescription", $post) || $post["clinicDescription"] == ""){
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
             //bit 7
             if(!array_key_exists("scheduledTimestamp", $post) || $post["scheduledTimestamp"] == ""){
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
             //bit 8
             if(!array_key_exists("status", $post) || $post["status"] == ""){
                 $errCode = "1" . $errCode;
-            }else{
+            } else {
                 $errCode = "0" . $errCode;
             }
 
@@ -123,8 +150,8 @@ class Appointment extends Module
 
     /**
      *  Return an appointment for a patient with or without date range
-     * @param $post : array contains parameter site/mrn
-     * @return array - appointment JSON object
+     * @param array<mixed> $post : array contains parameter site/mrn
+     * @return array - appointment row object
      */
     public function getAppointment($post)
     {
@@ -157,7 +184,8 @@ class Appointment extends Module
      * Updates the check-in for a particular appointment to checked and send the info to the push notification API. If
      * the call returns an error, a code 502 (bad gateway) is returned to the caller to inform there's a problem with
      * the push notification. Otherwise, a code 200 (all clear) is returned.
-     * @param $post array - contains the source name and the external appointment ID
+     * @param array<mixed> $post - array contains the source name and the external appointment ID
+     * @return void
      */
     public function updateAppointmentCheckIn($post)
     {
@@ -168,10 +196,10 @@ class Appointment extends Module
 
     /**
      * Delete a specific appointment.
-     * @params  $post : array - contains the following info:
+     * @param array<mixed> $post : contains the following info:
      *                          sourceSystem : Source database of appointment (i.e. Aria, Medivisit, Mosaic, etc.)
      *                          sourceId : Source system unique appointment ID (i.e. YYYYA9999999, 9999999)
-     * @return  int - number of records deleted
+     * @return void
      * */
     public function deleteAppointment($post)
     {
@@ -229,24 +257,25 @@ class Appointment extends Module
 
     /**
      * Validate basic information of a specific database source.
+     * Validation code :     
+     *                      1st bit source system invalid or missing
+     *                      2nd bit sourceId (Appointment ID) invalid or missing
+     *                      3rd bit source invalid or missing
      * @param  $post : array - Contains the following information
      *                          sourceSystem : Source database of appointment (i.e. Aria, Medivisit, Mosaic, etc.)
      *                          sourceId : Source system unique appointment ID (i.e. YYYYA9999999, 9999999)
      *                          source : Source database of the diagnosis (mandatory)
-     * Validation code :
-     *                      1: source invalid or missing
+     * @param array<mixed> &$source (Reference) - source parameters
      */
     protected function _validateDeleteAppointment(&$post, &$source)
     {
-
         $errCode = "";
         if (is_array($post)) {
-            // 1th bit - source
+            // 1st bit - source exists
             if (!array_key_exists("sourceSystem", $post) || $post["sourceSystem"] == "") {
                 $errCode = "1" . $errCode;
             } else {
-                $source = $this->opalDB->getSourceDatabaseDetails($post["sourceSystem"]);
-                // 2sd bit - source exists
+                $source = $this->opalDB->getSourceDatabaseDetails($post["sourceSystem"]);                
                 if (count($source) != 1) {
                     $source = array();
                     $errCode = "1" . $errCode;
@@ -255,7 +284,7 @@ class Appointment extends Module
                     $errCode = "0" . $errCode;
                 }
             }
-            // 3th bit - sourceId
+            // 2nd bit - sourceId
             if (!array_key_exists("sourceId", $post) || $post["sourceId"] == "") {
                 $errCode = "1" . $errCode;
             }
@@ -269,6 +298,7 @@ class Appointment extends Module
     /**
      * Insert an appointment
      * @param $post array - contains the source name and the external appointment ID
+     * @return int Appointment ID (new or updated)
      */
     public function insertAppointment($post) {
         $this->checkWriteAccess($post);
@@ -276,6 +306,11 @@ class Appointment extends Module
         return $this->_replaceAppointment($post);
     }
 
+    /**
+     * Insert or update an appointment
+     * @param array $post - contains the source name and the external appointment ID
+     * @return int Appointment ID (new or updated)
+     */
     protected function _replaceAppointment($post) {
         $patientSite = null;
         $source = null;
@@ -375,11 +410,22 @@ class Appointment extends Module
         return false;
     }
 
+    /**
+     * Insert an appointment into AppointmentPending Table
+     * @param array $toInsert - Appointment row data
+     * @return void
+     */
     protected function _updateAppointmentPending($toInsert) {
         $pendingAppointment = $this->opalDB->findPendingAppointment($toInsert["SourceDatabaseSerNum"],$toInsert["AppointmentAriaSer"]);
         $this->opalDB->deleteAppointmentPending($pendingAppointment["AppointmentSerNum"]);
     }
 
+    /**
+     * Insert an appointment into AppointmentPending Table
+     * @param array &$toInsert - Appointment row data
+     * @param array &$source (Reference) - source parameters
+     * @return int Appointment ID (new or updated) set as pending
+     */
     protected function _insertAppointmentPending($toInsert, &$source) {        
         $pendingAppointment = $this->opalDB->findPendingAppointment($source["SourceDatabaseName"],$toInsert["AppointmentAriaSer"]);
         $toInsert["DateModified"] = date("Y-m-d H:i:s");
@@ -387,7 +433,6 @@ class Appointment extends Module
         if(count($pendingAppointment) > 0) {
             $pendingAppointment = $pendingAppointment[0];
             $toInsert["ID"] = $pendingAppointment["ID"];            
-            //$toInsert["AppointmentSerNum"] = $pendingAppointment["AppointmentSerNum"];            
         }
         unset($toInsert["SourceDatabaseSerNum"]);
         unset($toInsert["AppointmentSerNum"]);
@@ -418,24 +463,26 @@ class Appointment extends Module
 
     /**
      * Validate basic information of a specific database source.
-     * @param  $post : array - Contains the following information
+     * Validation code :     
+     *                      1st bit source system invalid or missing
+     *                      2nd bit sourceId (Appointment ID) invalid or missing
+     * 
+     * @param  array $post - Contains the following information
      *                          sourceSystem : Source database of appointment (i.e. Aria, Medivisit, Mosaic, etc.)
      *                          sourceId : Source system unique appointment ID (i.e. YYYYA9999999, 9999999)
      *                          source : Source database of the diagnosis (mandatory)
-     * Validation code :
-     *                      1: source invalid or missing
+     * @return int errCode decimal
      */
     protected function _validateUpdateAppointmentStatus(&$post, &$source)
     {
 
         $errCode = "";
         if (is_array($post)) {
-            // 1th bit - source
+            // 1th bit - source exists
             if (!array_key_exists("sourceSystem", $post) || $post["sourceSystem"] == "") {
                 $errCode = "1" . $errCode;
             } else {
-                $source = $this->opalDB->getSourceDatabaseDetails($post["sourceSystem"]);
-                // 2sd bit - source exists
+                $source = $this->opalDB->getSourceDatabaseDetails($post["sourceSystem"]);                
                 if (count($source) != 1) {
                     $source = array();
                     $errCode = "1" . $errCode;
@@ -444,7 +491,7 @@ class Appointment extends Module
                     $errCode = "0" . $errCode;
                 }
             }
-            // 3th bit - sourceId
+            // 2nd bit - sourceId
             if (!array_key_exists("sourceId", $post) || $post["sourceId"] == "") {
                 $errCode = "1" . $errCode;
             }
@@ -458,10 +505,11 @@ class Appointment extends Module
 
     /**
      * Update a specific appointment status.
-     * @params  $post : array - contains the following info:
+     * @param  $post : array - contains the following info:
      *                          sourceSystem : Source database of appointment (i.e. Aria, Medivisit, Mosaic, etc.)
      *                          sourceId : Source system unique appointment ID (i.e. YYYYA9999999, 9999999)
-     * @return  int - number of records update
+     *                          status : Status of appointment (Open,Inprogress,Completed)
+     * @return  int|void - number of records update
      * */
     public function updateAppointmentStatus($post)
     {
