@@ -29,7 +29,7 @@ Once the image is built and the container running, you can access opalAdmin via 
 
 You can then log in with the test user credentials:
 
-* Username: `testuser`
+* Username: `admin`
 * Password: `Opal123456!!`
 
 ## Built With
