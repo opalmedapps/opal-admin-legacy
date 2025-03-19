@@ -1041,7 +1041,7 @@ define("OPAL_GET_APPOINTMENT", "
 
 define("OPAL_GET_APPOINTMENT_REPORT", "
     SELECT a.ScheduledStartTime AS starttime, a.Status AS status, a.DateAdded AS dateadded,
-    als.AliasName_EN AS aliasname, als.AliasType AS aliastype, r.ResourceName AS resourcename
+    als.AliasName_EN AS aliasname, als.AliasType AS aliastype
     FROM ".OPAL_APPOINTMENTS_TABLE." a, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_ALIAS_TABLE." als
     WHERE PatientSerNum = :pnum AND a.AliasExpressionSerNum = ae.AliasExpressionSerNum
     AND ae.AliasSerNum = als.AliasSerNum;
