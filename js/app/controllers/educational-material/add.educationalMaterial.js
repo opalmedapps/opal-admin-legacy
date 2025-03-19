@@ -158,7 +158,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 
 			$scope.urlSection.open = true;
 
-			if ($scope.newEduMat.url_EN || $scope.newEduMat.url_FR) {
+			if ($scope.urlValidation($scope.newEduMat.url_EN) || $scope.urlValidation($scope.newEduMat.url_FR)) {
 				steps.tocs.completed = true; // Since it will be hidden
 				$scope.tocsSection.show = false;
 			}
@@ -167,7 +167,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 				$scope.tocsSection.show = true;
 			}
 
-			if ($scope.newEduMat.url_EN && $scope.newEduMat.url_FR) {
+			if ($scope.urlValidation($scope.newEduMat.url_EN)  && $scope.urlValidation($scope.newEduMat.url_FR)) {
 
 				// Toggle booleans
 				$scope.shareUrlSection.show = true;
@@ -192,6 +192,14 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
 		};
+
+		$scope.urlValidation = function(url){
+			if (url== undefined){
+				return false;
+			}
+			const regex= /^(https?:\/\/).*\..+$/;
+			return regex.test(url);
+		}
 
 		// Function to toggle necessary changes when updating the types
 		$scope.typeUpdate = function (type, language) {
