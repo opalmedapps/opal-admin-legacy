@@ -339,11 +339,30 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 		};
 
 		// Function to submit the new edu material
-		$scope.submitEduMat = function () {
+		$scope.submitEduMat = function (event) {
 			if ($scope.checkForm()) {
 				// Log who created educational material
 				var currentUser = Session.retrieveObject('user');
 				$scope.newEduMat.user = currentUser;
+
+				// Check for duplicate form values
+				angular.forEach($scope.EduMatTypes, function(value) {
+					if (angular.equals($scope.newEduMat.type_EN, value["EN"])) { //check if entered type_EN equals existing type_EN
+						if (!angular.equals($scope.newEduMat.type_FR, value["FR"])) { //if translations do not match, return invalidEduMatType
+							$scope.invalidEduMatType = true;	
+							event.preventDefault()						
+						}
+					}
+
+					if (angular.equals($scope.newEduMat.type_FR, value["FR"])) { //check if entered type_FR equals exisiting type_FR
+						if (!angular.equals($scope.newEduMat.type_EN, value["EN"])) { //if translations do not match, throw error message
+							$scope.invalidEduMatType = true;	
+							event.preventDefault()						
+						}
+					}
+				  }
+				  );
+
 
 				$.ajax({
 					type: "POST",
