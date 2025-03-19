@@ -191,9 +191,9 @@ class Alias extends Module {
                 $errCode = "0" . $errCode;
 
                 // 2nd bit
-                if (array_key_exists("checkin_details", $post) && $post["checkin_details"] != "") {
+                if ($post["type"] == ALIAS_TYPE_APPOINTMENT_TEXT && array_key_exists("checkin_details", $post) && $post["checkin_details"] != "") {
 
-                    if ($post["type"] != ALIAS_TYPE_APPOINTMENT_TEXT || !array_key_exists("checkin_details", $post) || $post["checkin_details"] == "" ||
+                    if (!array_key_exists("checkin_details", $post) || $post["checkin_details"] == "" ||
                         !array_key_exists("checkin_possible", $post["checkin_details"]) || $post["checkin_details"]["checkin_possible"] == "" ||
                         ($post["checkin_details"]["checkin_possible"] != 0 && $post["checkin_details"]["checkin_possible"] != 1) ||
                         !array_key_exists("instruction_EN", $post["checkin_details"]) || $post["checkin_details"]["instruction_EN"] == "" ||
