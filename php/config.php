@@ -3,7 +3,7 @@
 require_once __DIR__."/../vendor/autoload.php";
 use Dotenv\Dotenv;
 
-// Suppress warnings and errors
+// Suppress warnings and notices
 error_reporting(E_ALL & ~E_NOTICE ^ E_WARNING);
 
 
