@@ -44,11 +44,11 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 					function(response){
 						get_selected_additional_roles(response.data);
 					}).catch(function(err) {
-					ErrorHandler.onError(err, $filter('translate')('USERS.EDIT.ERROR_USER_ADDITIONAL_ROLES'));
-				});
+						ErrorHandler.onError(err, $filter('translate')('USERS.EDIT.ERROR_USER_ADDITIONAL_ROLES'));
+					})
 			}).catch(function(err) {
-			ErrorHandler.onError(err, $filter('translate')('USERS.EDIT.ERROR_ADDITIONAL_ROLES'));
-		});
+				ErrorHandler.onError(err, $filter('translate')('USERS.EDIT.ERROR_ADDITIONAL_ROLES'));
+			})
 		processingModal.close(); // hide modal
 		processingModal = null; // remove reference
 	}).catch(function(err) {
@@ -76,12 +76,12 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 	$scope.user.selected_additionalroles = [];
 	function get_selected_additional_roles(selected_additionalroles_list) {
 		$scope.user.selected_additionalroles = [];
-		for (const [key, value] of Object.entries($scope.additionalroles)) {
+		for (const [,value] of Object.entries($scope.additionalroles)) {
 			  if (selected_additionalroles_list.groups.includes(value.pk)) {
-					group_dict={}
-				  	group_dict.pk = value.pk;
-					group_dict.name = value.name;
-					$scope.user.selected_additionalroles.push(group_dict);
+				  group_dict={}
+				  group_dict.pk = value.pk;
+				  group_dict.name = value.name;
+				  $scope.user.selected_additionalroles.push(group_dict);
 			  }
 		}
 	}

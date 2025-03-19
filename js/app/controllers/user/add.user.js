@@ -105,10 +105,11 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 
 		// Call our API service to get the list of possible additional roles
 		$scope.additional_roles = [];
-		userCollectionService.getAdditionalRoles().then(
+		userCollectionService.getAdditionalRoles($scope.configs.newOpalAdminHost).then(
 			function(response){
 				$scope.additional_roles = response.data;
 			}).catch(function(err) {
+				alert(JSON.stringify(err));
 				ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR_ADDITIONAL_ROLES'));
 			});
 
