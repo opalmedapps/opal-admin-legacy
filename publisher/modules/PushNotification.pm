@@ -231,12 +231,25 @@ sub sendPushNotification
         $dynamicKeys{'\$patientName'} = $firstName;
     }
 
+    my ($usernamesStr, $institution) = getPatientCaregiversAndInstitution($patientser, $controlser, $reftablerowser);
+
+    # special case for detecting wildcards in the message body
+    if (index($message, '$institution') != -1) {
+        # checking if institution is empty
+        if (!$institution) {
+            $sendlog = "An error occurred while getting the patient's institution";
+            insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusFailure, $sendlog);
+            return;
+        }
+
+        # add $institution as a wildcard for replacement
+        $dynamicKeys{'\$institution'} = $institution;
+    }
+
     # loop through potential wildcard keys to execute a string replace
     for my $key (keys %dynamicKeys) {
         $message =~ s/$key/$dynamicKeys{$key}/g;
     }
-
-    $usernamesStr = getPatientCaregivers($patientser, $controlser, $reftablerowser);
 
     if (!$usernamesStr) {
         print "\nPatient username array is empty\n";
@@ -272,10 +285,10 @@ sub sendPushNotification
 #====================================================================================
 # Get patient caregivers
 #====================================================================================
-sub getPatientCaregivers
+sub getPatientCaregiversAndInstitution
 {
     my ($patientser, $controlser, $reftablerowser) = @_; # args
-# get a list of the patient caregivers' device information
+    # get a list of the patient caregivers' device information
     my $apiResponseStr = Api::apiPatientCaregiverDevices($patientser);
     $apiResponse = decode_json($apiResponseStr);
 
@@ -296,18 +309,25 @@ sub getPatientCaregivers
         }
     }
 
+    my $institution = "";
+    if (exists($apiResponse->{'institution'})) {
+       $institution = $apiResponse->{'institution'};
+    }
+
+    # printing for logging purposes
     print "username list: @usernames\n";
+    print "institution is: $institution\n"
 
     if (!@usernames) {
         $sendlog        = "Patient has no related caregivers.";
         insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusWarning, $sendlog);
-        return '';
+        return ('',$institution);
     }
     # convert username array to string for the query
     my $usernamesStr = join("','", @usernames);
     $usernamesStr = "'".$usernamesStr."'";
 
-    return $usernamesStr;
+    return ($usernamesStr, $institution);
 }
 
 #====================================================================================

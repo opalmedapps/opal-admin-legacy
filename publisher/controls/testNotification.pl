@@ -32,7 +32,7 @@ sub pushNotificationToPatient
 {
 my ($patientser, $controlser, $reftablerowser) = @_; # args
 
-    $usernamesStr = PushNotification::getPatientCaregivers($patientser, $controlser, $reftablerowser);
+    ($usernamesStr,$institution) = PushNotification::getPatientCaregiversAndInstitution($patientser, $controlser, $reftablerowser);
 
     if (!$usernamesStr) {
         print "Patient username array is empty\n";
