@@ -1,5 +1,5 @@
 # Build/install JS dependencies
-FROM node:20.8.0-alpine3.18 as js-dependencies
+FROM node:21.0.0-alpine3.18 as js-dependencies
 
 # Install dependencies for bower
 RUN apk add --no-cache git
