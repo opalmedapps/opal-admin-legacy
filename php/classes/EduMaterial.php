@@ -159,8 +159,8 @@ class EduMaterial extends Module {
 		$userSer 		= $eduMatDetails['user']['id'];
 		$sessionId 		= $eduMatDetails['user']['sessionid'];
 
-        $urlExt_EN          = '';
-        $urlExt_FR          = '';
+        $urlExt_EN          = null;
+        $urlExt_FR          = null;
 
 
         $response = array(
@@ -183,6 +183,7 @@ class EduMaterial extends Module {
 
 		try {
             // Validate each table of content or URL
+           
             $extensions = array();
             $sql = "
                 SELECT DISTINCT 
@@ -352,11 +353,12 @@ class EduMaterial extends Module {
 			    	$query->execute();
                 }
             }
-
+            
             $response['value'] = 1; // Success
             return $response;
 
         } catch( PDOException $e) {
+            var_dump("magner");
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for educational material. " . $e->getMessage());
         }
     }
@@ -1003,7 +1005,7 @@ class EduMaterial extends Module {
             // eg: https://youtu.be/AAAA ... ID = AAAA
             $pos = strrpos($url, '/');
             $id = $pos === false ? false : substr($url, $pos + 1);
-            if (!id) {
+            if (!$id) {
                 return $urlCheck;
             }
             $urlCheck = 'https://www.youtube.com/embed/' . $id;
