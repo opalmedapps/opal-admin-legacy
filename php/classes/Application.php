@@ -57,9 +57,7 @@ class Application {
             $versionFile = fopen("../../VERSION", "r")
             or die("Unable to open VERSION file!");
 
-            fgets($versionFile);
             $version = fgets($versionFile);
-            fgets($versionFile);
             $branch = fgets($versionFile);
             fclose($versionFile);
 

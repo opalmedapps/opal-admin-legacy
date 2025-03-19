@@ -44,11 +44,6 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/* \
   && mkdir -p /var/spool/cron/crontabs
 
-# install git
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y git
-
 RUN cpanm --notest install \
       Array::Utils \
       Const::Fast \
@@ -91,5 +86,11 @@ COPY --from=php-dependencies --chown=www-data:www-data /app/vendor ./vendor
 
 COPY --chown=www-data:www-data . .
 COPY docker/crontab /var/spool/cron/crontabs/www-data
+
+ARG GIT_VERSION='undefined'
+ARG GIT_BRANCH='unknown'
+USER root
+RUN echo $GIT_VERSION > /VERSION
+RUN echo $GIT_BRANCH > /VERSION
 
 EXPOSE 8080
