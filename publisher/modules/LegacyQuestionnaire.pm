@@ -449,9 +449,6 @@ sub publishLegacyQuestionnaires
     				my $questionnaireSer = $questionnaire->getLegacyQuestionnaireSer();
     				my $patientSer = $questionnaire->getLegacyQuestionnairePatientSer();
 
-                    # NOTE: Insert a record into the Notification table is being inserted by a trigger called
-                    # "questionnaire_insert_trigger"
-
                     my $wsRespondent =
                     "SELECT d.content
                     FROM OpalDB.QuestionnaireControl QC, 
@@ -465,7 +462,9 @@ sub publishLegacyQuestionnaires
                     	and d.languageId = 2
                     ;";
 
-    				PushNotification::sendPushNotification($patientSer, $questionnaireSer, 'LegacyQuestionnaire');
+                    if ($wsRespondent = 'Patient') {
+    				    PushNotification::sendPushNotification($patientSer, $questionnaireSer, 'LegacyQuestionnaire');
+                    }
     			}
             }
 
