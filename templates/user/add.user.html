@@ -103,7 +103,7 @@
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
-                                            <span ng-if="newUser.role && newUser.additionalprivileges" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                            <span ng-if="newUser.role" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
                                             <strong>{{'USERS.ADD.ROLE'|translate}}</strong>
@@ -329,7 +329,6 @@
                         <div class="row animated" ng-class="{fadeInUp: roleSection.show}" ng-if="roleSection.show">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
-                                    <span style="color:#d9534f"><strong>{{'USERS.ADD.REQUIRED'|translate}}</strong></span>
                                     {{'USERS.ADD.ADDITIONAL_PRIVILEGES_EXPLANATION'|translate}}
                                 </p>
                             </div>

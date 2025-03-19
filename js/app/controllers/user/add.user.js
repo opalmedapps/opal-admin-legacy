@@ -45,7 +45,6 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			username: { completed: false },
 			password: { completed: false },
 			role: { completed: false },
-			additionalprivileges: {completed: false},
 			language: { completed: false }
 		};
 
@@ -53,7 +52,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 		$scope.numOfCompletedSteps = 0;
 
 		// Default total number of steps
-		$scope.stepTotal = 5;
+		$scope.stepTotal = 4;
 
 		// Progress bar based on default completed steps and total
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -230,6 +229,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			if ($scope.newUser.role) {
 				steps.role.completed = true;
 				$scope.newUser.role_display = $scope.newUser.role.name_display;
+				$scope.languageSection.show = true;
 			}
 			else
 				steps.role.completed = false;
@@ -245,16 +245,12 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			if ($scope.newUser.additionalprivileges.length > 0) {
 				steps.additionalprivileges.completed = true;
 				steps.role.completed = true;
-				$scope.languageSection.show = true;
 			}
 			else{
 				steps.additionalprivileges.completed = false;
-				steps.role.completed = false;
-				$scope.newUser.additionalprivileges = "";
+				$scope.newUser.additionalprivileges = null;
 			}
 
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
 		};
 
