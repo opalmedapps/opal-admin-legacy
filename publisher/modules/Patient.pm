@@ -787,16 +787,12 @@ sub getPatientsMarkedForUpdateModularCron {
 			P.AccessLevel,
 			P.DeathDate,
 			P.Email,
-			U.Username,
 		P.RegistrationDate
 		FROM
 			$control_table CCP,
-			Patient P,
-			Users U
-		WHERE
-		CCP.transferFlag = 1
-			AND P.PatientSerNum = CCP.cronControlPatientSerNum
-			AND U.UserTypeSerNum = P.PatientSerNum
+			Patient P
+		WHERE CCP.transferFlag = 1
+		AND P.PatientSerNum = CCP.cronControlPatientSerNum
 	;
 	";
 
