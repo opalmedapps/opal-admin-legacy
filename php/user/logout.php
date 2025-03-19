@@ -13,7 +13,7 @@ $responseCode = HTTP_STATUS_SUCCESS;
     they will be redirected to the legacy opalAdmin login page.
 */
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-	header('Location: /');
+	header('Location: /opalAdmin/');
 	$responseCode = HTTP_STATUS_FOUND;
 }
 
