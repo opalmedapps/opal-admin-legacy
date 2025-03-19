@@ -228,7 +228,7 @@ sub getPostControlsMarkedForPublishModularCron
             ccp.lastPublished
         FROM
             PostControl pc,
-            '$control_table' ccp
+            $control_table ccp
         WHERE
             ccp.publishFlag      = 2
         AND pc.PostControlSerNum = ccp.cronControlPostSerNum
@@ -309,7 +309,7 @@ sub setPostControlLastPublishedModularControllers
     }
 
     my $update_sql = "
-        UPDATE '$control_table' CCP, PostControl PC
+        UPDATE $control_table CCP, PostControl PC
         SET PC.LastPublished = '$current_datetime',
             CCP.lastPublished = '$current_datetime',
             CCP.publishFlag = 1
@@ -346,11 +346,11 @@ sub CheckPostControlsMarkedForPublishModularCron
     # --------------------------------------------------
     # First step is to make sure that the two tables have the same amount of records
 	my $insert_sql = "
-		INSERT INTO '$control_table' (cronControlPostSerNum, publishFlag, lastPublished, lastUpdated, sessionId)
+		INSERT INTO $control_table (cronControlPostSerNum, publishFlag, lastPublished, lastUpdated, sessionId)
 		SELECT PC.PostControlSerNum, PC.PublishFlag, PC.LastPublished, PC.LastUpdated, PC.SessionId
 		FROM PostControl PC
 		WHERE PC.PostType = '$module'
-			AND PC.PostControlSerNum NOT IN (SELECT cronControlPostSerNum FROM $control_table CCP);
+			AND PC.PostControlSerNum NOT IN (SELECT cronControlPostSerNum FROM $control_table);
     	";
 
     # prepare query
@@ -365,7 +365,7 @@ sub CheckPostControlsMarkedForPublishModularCron
     # Second step is to sync the publish flag between the two tables
     # PostControl is the master and cronControlPost is the slave
 	my $update_sql = "
-        UPDATE PostControl PC, '$control_table' CCP
+        UPDATE PostControl PC, $control_table CCP
         SET CCP.publishFlag = PC.PublishFlag
         WHERE PC.PostControlSerNum = CCP.cronControlPostSerNum
             AND CCP.publishFlag <> PC.PublishFlag;
