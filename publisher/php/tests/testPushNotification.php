@@ -2,14 +2,15 @@
 /*
     Updated this test script so that it can be called without changing its code by using command-line arguments.
 
-    The first argument (arg[1]) is device Id.
+    The first argument (arg[1]) is the OpalDB.PatientDeviceIdentifier.RegistrationId for the desired device.
     The second argument (arg[2]) is device type, 0 is IOS and 1 is Android.
     The third argument (arg[3]) is language, en is English and fr is French.
 
-    Run this script by calling  php testPushNotification.php "device Id" "device type" "language"
+    Example run in dev: `dcd exec opaladmin php publisher/php/tests/testPushNotification.php 65e3cb0453f2be9293efc3fd31ec1133a0f6f0d031ee0865d7629de09a487c7a 0 en`
 */
-    include_once "../database.inc";
-    require_once('../PushNotification.php');
+    $scriptDir = dirname(__FILE__);
+    include_once $scriptDir . '/../database.inc';
+    require_once $scriptDir . '/../PushNotification.php';
 
     if(count($argv) < 4)
     {
@@ -17,9 +18,9 @@
             . PHP_EOL
             . "Note: Run the command below together with at least 3 arguments as metioned." . PHP_EOL
             . PHP_EOL
-            . "php testPushNotification.php 'device Id' 'device type' 'language' " . PHP_EOL 
+            . "php testPushNotification.php 'registration id' 'device type' 'language' " . PHP_EOL 
             . PHP_EOL
-            . "* device Id (in the column RegistrationId of PatientDeviceIdentifier table) " . PHP_EOL 
+            . "* registration Id (in the column RegistrationId of PatientDeviceIdentifier table) " . PHP_EOL 
             . PHP_EOL
             . "* device type is 0 (IOS) or 1 (Android) " . PHP_EOL 
             . PHP_EOL
