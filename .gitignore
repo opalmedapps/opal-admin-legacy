@@ -1,6 +1,9 @@
 # ignore configuration file
 config.json
 
+# ignore env file
+.env
+
 # ignore clinical documents
 publisher/clinical/documents/**
 # except readme
