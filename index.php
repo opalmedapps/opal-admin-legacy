@@ -17,23 +17,23 @@
 		
 	<!-- Libraries -->
 	<script src="bower_components/jquery/dist/jquery.js"></script>
-	<script src="bower_components/angular/angular.js"></script>
-	<script src="bower_components/angular-route/angular-route.js"></script>
-	<script src="bower_components/angular-animate/angular-animate.js"></script>
-	<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-	<script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
-	<script src="bower_components/angular-cookies/angular-cookies.js"></script>
-	<script src="bower_components/angular-translate/angular-translate.js"></script>
-	<script src="bower_components/angular-translate-loader-url/angular-translate-loader-url.js"></script>
-	<script src="bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
-	<script src="bower_components/angular-multiple-date-picker/dist/multipleDatePicker.js"></script>
-	<script src="bower_components/angularjs-dropdown-multiselect/dist/angularjs-dropdown-multiselect.min.js"></script>
-	<script src="bower_components/ng-idle/angular-idle.js"></script>
+	<script src="node_modules/angular/angular.js"></script>
+	<script src="node_modules/angular-route/angular-route.js"></script>
+	<script src="node_modules/angular-animate/angular-animate.js"></script>
+	<script src="node_modules/angular-sanitize/angular-sanitize.js"></script>
+	<script src="node_modules/angular-ui-router/release/angular-ui-router.js"></script>
+	<script src="node_modules/angular-cookies/angular-cookies.js"></script>
+	<script src="node_modules/angular-translate/dist/angular-translate.js"></script>
+	<script src="node_modules/angular-translate-loader-url/angular-translate-loader-url.js"></script>
+	<script src="node_modules/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
+	<script src="node_modules/angularjs-dropdown-multiselect/dist/angularjs-dropdown-multiselect.min.js"></script>
+	<script src="node_modules/ng-idle/angular-idle.js"></script>
 	<script src="bower_components/moment/moment.js"></script>
 	<script src="bower_components/moment-timezone/builds/moment-timezone.min.js"></script>
 	<script src="bower_components/moment-timezone/builds/moment-timezone-with-data.min.js"></script>
 	<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-	<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+	<script src="node_modules/multiple-date-picker/dist/multipleDatePicker.js"></script>
+	<script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
 	<script src="node_modules/rangy/lib/rangy-core.js"></script>
 	<script src="node_modules/rangy/lib/rangy-classapplier.js"></script>
 	<script src="node_modules/rangy/lib/rangy-highlighter.js"></script>
@@ -50,11 +50,11 @@
 	<script src="bower_components/cryptojslib/components/mode-cfb-min.js"></script>
 	<script src="bower_components/cryptojslib/components/x64-core.js"></script>
 	<script src="bower_components/cryptojslib/components/sha512.js"></script>
-	<script src="bower_components/highcharts/highcharts.js"></script>
-	<script src="bower_components/highcharts-ng/dist/highcharts-ng.min.js"></script>
+	<script src="node_modules/highcharts/highcharts.js"></script>
+	<script src="node_modules/highcharts-ng/dist/highcharts-ng.js"></script>
 
 
-	<script src="node_modules/angular-ui-grid/ui-grid.min.js"></script>
+	<script src="node_modules/angular-ui-grid/ui-grid.js"></script>
 	<!-- <script src="node_modules/angular-ui-grid/ui-grid.auto-resize.min.js"></script> -->
 
 	
@@ -209,7 +209,7 @@
 
 	<!-- bower:css -->
 	<link rel="stylesheet" href="node_modules/textangularjs/dist/textAngular.css" />
-	<link rel="stylesheet" type="text/css" href="bower_components/angular-multiple-date-picker/dist/multipleDatePicker.css">
+	<link rel="stylesheet" type="text/css" href="node_modules/multiple-date-picker/dist/multipleDatePicker.css">
 	<!-- endbower -->
 
 	<!-- bower:font -->
@@ -227,7 +227,7 @@
 	<link media="all" type="text/css" rel="stylesheet" href="css/lib/docs.min.css">
 	<link media="all" type="text/css" rel="stylesheet" href="node_modules/textangularjs/dist/textAngular.css">
 	<link media="all" type="text/css" rel="stylesheet" href="css/lib/ui.bootstrap.materialPicker.css">
-	<link media="all" type="text/css" rel="stylesheet" href="bower_components/highcharts-ng/dist/highcharts-ng.css">
+	<link media="all" type="text/css" rel="stylesheet" href="node_modules/highcharts-ng/dist/highcharts-ng.css">
 
 	<link media="all" type="text/css" rel="stylesheet" href="css/style.css">
 
