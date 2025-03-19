@@ -27,8 +27,6 @@ sub apiPatientCaregivers($)
 
 	$url = $newBackendHost . "/api/patients/legacy/$patientSerNum/";
 
-	print $url, "\n";
-
     my $ua = LWP::UserAgent->new;
     my $res = $ua->get(
         $url,
