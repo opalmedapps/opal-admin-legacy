@@ -294,7 +294,7 @@ print "Got patient list\n" if $verbose;
 #
 ##########################################################################################
 print "\n--- Start publishEducationalMaterials: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-EducationalMaterial::publishEducationalMaterials($cronLogSer, @patientList);
+EducationalMaterial::publishEducationalMaterials(@patientList);
 print "--- End publishEducationalMaterials: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished Educational materials\n" if $verbose;
 
@@ -302,8 +302,6 @@ print "Finished Educational materials\n" if $verbose;
 EducationalMaterialControl::setEduMatControlLastPublishedModularControllers($start_datetime);
 
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
-# Log that the script is finished in the cronlog
-Cron::setCronLog("Completed educMatControl", $current_datetime);
 print "--- Completed ---- ", $current_datetime, "\n\n";
 
 print "Start Time [educationalMaterialControl]: -->> $start_datetime\n";
