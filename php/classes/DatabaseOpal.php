@@ -4073,17 +4073,6 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Get patient devices information by user names
-     * @param $userNamesStr string - usernames separated by comma
-     * @return array - caregiver devices info
-     */
-    function getPatientDeviceIdentifiers($userNamesStr) {
-        return $this->_fetchAll(OPAL_GET_PATIENT_DEVICE_IDENTIFIERS, array(
-            array("parameter"=>":userNamesStr","variable"=>$userNamesStr,"data_type"=>PDO::PARAM_STR)
-        ));
-    }
-
-    /**
      * Get patient notificaton control detail
      * @param $patientser string - patient ID
      * @param $notificationType string - notification description
