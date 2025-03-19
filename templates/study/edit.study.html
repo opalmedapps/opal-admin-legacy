@@ -270,7 +270,7 @@
                     <ul class="list-items" ng-show="!formPublished">
                         <li ng-repeat="at in consentFormList | filter: consentFormFilter">
                             <label>
-                                <input ng-disabled="formPublished" type="radio" name="formName" value="{{at.ID}}" ng-model="toSubmit.consent_form.id" ng-change="consentFormUpdate(at)"/> {{at.name_display}}
+                                <input ng-disabled="formPublished" type="radio" name="formName" value="{{at.ID}}" ng-model="toSubmit.consent_form.id" ng-change="consentFormUpdate(at)" ng-checked="at.ID == toSubmit.consent_form.id"/> {{at.name_display}}
                             </label>
                         </li>
                     </ul>
