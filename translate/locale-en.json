@@ -1750,7 +1750,7 @@
       "TYPE_EXPLANATION": "Please select the alias type.",
       "CLINICAL_CODES": "Clinical Codes",
       "CLINICAL_EXPLANATION": "Please assign clinical code(s). The information of each clinical code is divided as follows: external ID - code | code description.",
-      "NOTE_PUBLISHED": "<span style=\"font-weight: bold\">Note: </span>Already assigned codes may already be published (already in use by Opal). If you change an assignment of a published code, please mention in the description which alias it used to be assigned to until which date.",
+      "NOTE_PUBLISHED": "<span style=\"font-weight: bold\">Note: </span>Already assigned codes may already be published (already in use by Opal). If you change an assignment of a published code, please mention in the description what alias the published code was assigned to and until which date.",
       "SEARCH": "Search...",
       "SELECT_ALL": "Select All",
       "SHOW_ALL": "Show all",
