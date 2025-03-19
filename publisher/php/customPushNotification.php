@@ -53,99 +53,52 @@
 				exit();
 			}  
 
-			// Ste 2 Get devices and language
-			//Sets parameters for later usage
+			// Step 2 Get devices and language
+			// Sets parameters for later usage
 			$language = $result[0]["Language"];
 			$patientSerNum = $result[0]["PatientSerNum"];
 
-			if ($language == "EN")
-			{
-				$wsmtitle = $message['title_EN'];
-				$wsmdesc = $message["message_EN"];
-			}else{
-				$wsmtitle = $message['title_FR'];
-				$wsmdesc = $message["message_FR"];
-			}
+			// Step 3 Send message to patient devices and record in database
 
-			$messageBody = array(
-				"mtitle"=> $wsmtitle,
-				"mdesc"=> $wsmdesc,
-				"encode"=> "No" // Set the encoding to NO because the French characters works
-			);
-
-			//Obtain patient device identifiers
-//			$patientDevices = self::getDevicesForPatient($patientSerNum);
-           $patientDevices = PushNotifications::getPatientDevicesInfo($patientSerNum);
-
-			//If no identifiers return there are no identifiers
-			if(count($patientDevices)==0)
-			{
-				return array("success"=>0, "failure"=>1,"responseDevices"=>"No patient devices available for that patient");
-				exit();
-			}
-
-			//Send message to patient devices and record in database
-			$resultsArray = array();
-			foreach($patientDevices as $device)
-			{
-
-				// Step 3) Send message
-                //Determine device type
-                if($device["DeviceType"]==0)
-                {
-                    $response = PushNotifications::iOS($messageBody, $device["RegistrationId"]);
-                }else if($device["DeviceType"]==1)
-                {
-                    $response = PushNotifications::android($messageBody, $device["RegistrationId"]);
-                }
-                print "logCustomerPushNotification";
-                //Log result of push notification on database.
-				self::logCustomerPushNotification($device["PatientDeviceIdentifierSerNum"], $patientSerNum, $wsmtitle, $wsmdesc, $response);
-                
-                //Build response
-				$response["DeviceType"] = $device["DeviceType"];
-				$response["RegistrationId"] = $device["RegistrationId"];
-				$resultsArray[] = $response;
-
-                // Step 4) Log message to logAppointmentReminder(mrn, phoneNumber, messageSent, creationDate, creationTime)
-            }
-
-            return array("success"=>1,"failure"=>0,"responseDevices"=>$resultsArray,"message"=>$message);
-            // return array("success"=>1,"failure"=>0);
+            return self::sendNotificationByPatientSerNum($patientSerNum, $language, $message);
        }
 
         /**
-         *    sendNotificationByPatientSerNum($patientSerNum, $language, $messages):
+         *    sendNotificationByPatientSerNum($patientSerNum, $language, $message):
          *    Requires: - PatientSerNum, language, and message. The message is in an array.
          *    Returns:  Object containing keys of success, failure,
          *             responseDevices, which is an array containing, (success, failure,
          *             registrationId, deviceId) for each device, and Message array containing
          *             (title, description),  NotificationSerNum, and error if any.
          **/
-        public static function sendNotificationByPatientSerNum($patientSerNum, $language, $messages)
+        public static function sendNotificationByPatientSerNum($patientSerNum, $language, $message)
         {
-            //Obtain patient device identifiers
+            // Obtain patient device identifiers
             $patientDevices = PushNotifications::getPatientDevicesInfo($patientSerNum);
 
-            //If no identifiers return there are no identifiers
+            // If no identifiers return there are no identifiers
             if (count($patientDevices) == 0) {
-                return array("success" => 0, "failure" => 1, "responseDevices" => "No patient devices available for that patient");
+                return array(
+                    "success" => 0,
+                    "failure" => 1,
+                    "responseDevices" => "No patient devices available for that patient",
+                );
                 exit();
             }
 
             if ($language == "EN") {
-                $wsmtitle = $messages['title_EN'];
-                $wsmdesc = $messages["message_text_EN"];
+                $wsmtitle = $message['title_EN'];
+                $wsmdesc = $message["message_text_EN"];
             } else {
-                $wsmtitle = $messages['title_FR'];
-                $wsmdesc = $messages["message_text_FR"];
+                $wsmtitle = $message['title_FR'];
+                $wsmdesc = $message["message_text_FR"];
             }
 
             // Need this format for PushNotifications functions
             $messageBody = array(
                 "mtitle" => $wsmtitle,
                 "mdesc" => $wsmdesc,
-                "encode" => 'Yes'
+                "encode" => "No",  // Set the encoding to NO because the French characters works
             );
 
             //Send message to patient devices and record in database
@@ -159,7 +112,13 @@
                 }
 
                 //Log result of push notification on database.
-                self::logCustomerPushNotification($device["PatientDeviceIdentifierSerNum"], $patientSerNum, $wsmtitle, $wsmdesc, $response);
+                self::logCustomPushNotification(
+                    $device["PatientDeviceIdentifierSerNum"],
+                    $patientSerNum,
+                    $wsmtitle,
+                    $wsmdesc,
+                    $response,
+                );
 
                 //Build response
                 $response["DeviceType"] = $device["DeviceType"];
@@ -167,7 +126,9 @@
                 $resultsArray[] = $response;
             }
 
-            return array("success" => 1, "failure" => 0, "responseDevices" => $resultsArray, "message" => $messages);
+            // TODO: Log message to logAppointmentReminder(mrn, phoneNumber, messageSent, creationDate, creationTime)
+
+            return array("success" => 1, "failure" => 0, "responseDevices" => $resultsArray, "message" => $message);
         }
  
        /**
@@ -177,14 +138,14 @@
        **/
 
         /**
-        *    (logCustomerPushNotification($deviceSerNum, $patientSerNum, $title, $msg, $response)
+        *    (logCustomPushNotification($deviceSerNum, $patientSerNum, $title, $msg, $response)
         *    Consumes a PatientDeviceIdentifierSerNum, $deviceSerNum, $title, $msg,
         *    and response, $response, where send status is a 1 or 0 for whether is was successfully sent or not.
         *    Inserts a into the PushNotification table or updates SendLog flag.
         *    RegistrationId.
         *    Returns: Returns the send status
         **/
-       private static function logCustomerPushNotification($deviceSerNum, $patientSerNum, $title, $msg, $response)
+       private static function logCustomPushNotification($deviceSerNum, $patientSerNum, $title, $msg, $response)
        {
            global $pdo;
            $sendStatus  = $response['success'];

@@ -28,9 +28,9 @@ class PushNotifications {
 	public static function getPatientDevicesInfo($patientSerNum)
 	{
 		$backendApi = new NewOpalApiCall(
-		'/api/patients/legacy/'.$patientSerNum.'/caregiver-devices/',
-		'GET',
-		'en',
+			'/api/patients/legacy/'.$patientSerNum.'/caregiver-devices/',
+			'GET',
+			'en',
 			[],
 		);
 		$response = $backendApi->execute();

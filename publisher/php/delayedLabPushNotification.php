@@ -34,31 +34,32 @@ class DelayedLabPushNotification
             exit();
         }
 
-        if (count($notifControl) > 0)
+        if (count($notifControl) !== 1)
         {
-            $notifControlSerNum = $notifControl[0]["NotificationControlSerNum"];
-            $notifControlNameEN = $notifControl[0]["Name_EN"];
-            $notifControlNameFR = $notifControl[0]["Name_FR"];
-            $notifControlDescEN = $notifControl[0]["Description_EN"];
-            $notifControlDescFR = $notifControl[0]["Description_FR"];
+            $result = [
+                "success" => 0,
+                "failure" => 1,
+                "error" => "An error occurred while fetching 'NewLabResult' NotificationType from NotificationControl.",
+            ];
+            echo json_encode($result) . PHP_EOL;
+            exit();
         }
-        else {
-            $notifControlSerNum = 2;
-            $notifControlNameEN = 'New Lab Result';
-            $notifControlNameFR = 'Nouveau résultat de laboratoire';
-            $notifControlDescEN = '$patientName: New lab test result';
-            $notifControlDescFR = '$patientName: Nouveau résultat de test de laboratoire';
-        }
+
+        $notifControlSerNum = $notifControl[0]["NotificationControlSerNum"];
+        $notifControlNameEN = $notifControl[0]["Name_EN"];
+        $notifControlNameFR = $notifControl[0]["Name_FR"];
+        $notifControlDescEN = $notifControl[0]["Description_EN"];
+        $notifControlDescFR = $notifControl[0]["Description_FR"];
 
         $labsQuery = "
             SELECT
-            res.PatientSerNum AS PatientSerNum,
-            :notifControlSerNum AS NotificationControlSerNum,
-            -1 AS RefTableRowSerNum,
-            NOW() AS DateAdded,
-            res.ReadBy AS ReadBy,
-            :notifControlNameEN AS RefTableRowTitle_EN,
-            :notifControlNameFR AS RefTableRowTitle_FR
+                res.PatientSerNum AS PatientSerNum,
+                :notifControlSerNum AS NotificationControlSerNum,
+                -1 AS RefTableRowSerNum,
+                NOW() AS DateAdded,
+                res.ReadBy AS ReadBy,
+                :notifControlNameEN AS RefTableRowTitle_EN,
+                :notifControlNameFR AS RefTableRowTitle_FR
             FROM
             (
                 -- Group read lab results by PatientSerNum
@@ -106,6 +107,8 @@ class DelayedLabPushNotification
     {
         global $pdo;
 
+        // Extract from the $delayedLabs associative array the keys and values into separate arrays.
+        // The arrays are used in queries below where the keys are the columns and the values are new entries.
         $delayedLabsArray = array_values($delayedLabs);
         $columns = implode(", ",array_keys($delayedLabs));
         $values = implode("', '", $delayedLabsArray);
