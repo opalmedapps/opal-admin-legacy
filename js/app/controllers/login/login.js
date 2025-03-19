@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.login', ['ngAnimate', 'ui.bootstrap']).
 /******************************************************************************
  * Login controller
  *******************************************************************************/
-controller('login', function ($scope, $rootScope, $state, $filter, $translate, AUTH_EVENTS, HTTP_CODE, AuthService, Idle, Session) {
+controller('login', function ($scope, $rootScope, $state, $filter, $translate, $window, AUTH_EVENTS, HTTP_CODE, AuthService, Idle, Session) {
 
 	// Initialize login object
 	$scope.credentials = {
@@ -77,8 +77,20 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, A
 				$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
 				$rootScope.currentUser = response.data.user;
 				$rootScope.setSiteLanguage(response.data.user);
-				$state.go('home');
-				Idle.watch();
+
+				// Handle users who only have access to ORMS (Clinician Dashboard)
+				// If such a user logs in, redirect them directly to ORMS.
+				const access = response.data.access;
+				const countAccess = access.filter(x => x >= 1).length;
+				// the Clinician Dashboard module ID is 25
+				const ormsAccess = access[25];
+
+				if (countAccess == 1 && ormsAccess >= 1) {
+					$window.location.href = $rootScope.ormsHost;
+				} else {
+					$state.go('home');
+					Idle.watch();
+				}								
 			}).catch(function(err) {
 				$rootScope.$broadcast(AUTH_EVENTS.loginFailed);
 
