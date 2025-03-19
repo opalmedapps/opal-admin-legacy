@@ -120,6 +120,13 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 			return title_FR;
 		};
 
+		$scope.getSelectedPurposeText = function() {
+			var selectedPurpose = $scope.purposeOptions.find(function(purpose) {
+				return purpose.ID === $scope.newEduMat.purpose_ID;
+			});
+			return selectedPurpose ? $scope.translatePurposeTitleDisplay(selectedPurpose.title_EN, selectedPurpose.title_FR) : '';
+		};
+
 		// Initialize lists to hold the distinct edu material types
 		$scope.EduMatTypes = [];
 
@@ -183,7 +190,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 				$scope.typeSection.show = true;
 
 				// Toggle step completion
-				steps.title.completed = true;
+				steps.purpose.completed = true;
 				// Count the number of completed steps
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
 				// Change progress bar
@@ -196,6 +203,8 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
+			// Update the visibility of the purpose section based on title completion
+			$scope.purposeSection.show = steps.title.completed;
 		};
 
 		// Function to toggle necessary changes when updating the urls
@@ -397,7 +406,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 				// Log who created educational material
 				var currentUser = Session.retrieveObject('user');
 				$scope.newEduMat.user = currentUser;
-
+				
 				// Check for duplicate form values
 				angular.forEach($scope.EduMatTypes, function(value) { 
 					//if translations do not match, return invalidEduMatType

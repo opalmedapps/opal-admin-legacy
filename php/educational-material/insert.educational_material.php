@@ -16,7 +16,8 @@
 		'phase_in_tx'		=> $_POST['phase_in_tx'],
 		'triggers'			=> $_POST['triggers'],
 		'tocs'					=> $_POST['tocs'],
-		'user'					=> $_POST['user']
+		'user'					=> $_POST['user'],
+		'purpose_ID'			=> $_POST['purpose_ID']
 	);
 
 	$eduMat = new EduMaterial; // Object

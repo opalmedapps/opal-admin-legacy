@@ -79,21 +79,21 @@
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
-                                            <span ng-if="newEduMat.purpose" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                            <span ng-if="newEduMat.purpose_ID" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
                                             <strong>{{'EDUCATION.ADD.PURPOSE'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':purposeSection.open, 'glyphicon-chevron-right':!purposeSection.open}" ng-if="newEduMat.purpose"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':purposeSection.open, 'glyphicon-chevron-right':!purposeSection.open}" ng-if="newEduMat.purpose_ID"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
                                 <div ng-if="newEduMat.purpose_ID" class="description">
                                     <p>
-                                        <strong>Purpose sidebar</strong>
+                                        <strong>{{'EDUCATION.ADD.PURPOSE'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{newEduMat.purpose_ID}}
+                                        {{ getSelectedPurposeText() }}
                                     </p>
                                 </div>
                             </div>
@@ -327,35 +327,35 @@
                             </div>
                         </div>
                         <!-- SECTION: Purpose -->
-                        <div class="row">
+                        <div class="row" ng-if="purposeSection.show">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
                                         <span class="fas fa-dot-circle"></span>
-                                        <h2>Purpose title segment</h2>
+                                        <h2>{{'EDUCATION.ADD.PURPOSE'|translate}}</h2>
                                     </span>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row" ng-if="purposeSection.show">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span style="color:#d9534f"><strong>{{'EDUCATION.ADD.REQUIRED'|translate}}</strong></span>
-                                    Purpose explanation segment
+                                    {{'EDUCATION.ADD.PURPOSE_EXPLANATION'|translate}}
                                 </p>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row" ng-if="purposeSection.show">
                             <div class="col-xs-12 col-md-6">
-                                <div class="panel" ng-class="(newEduMat.purpose) ? 'panel-success': 'panel-danger'">
+                                <div class="panel" ng-class="(newEduMat.purpose_ID) ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>{{'EDUCATION.ADD.ENGLISH'|translate}}</strong>
-                                        <span ng-hide="newEduMat.purpose" style="float:right"><em>{{'EDUCATION.ADD.INCOMPLETE'|translate}}</em></span>
-                                        <span ng-show="newEduMat.purpose" style="float:right"><em>{{'EDUCATION.ADD.COMPLETE'|translate}}</em></span>
+                                        <span ng-hide="newEduMat.purpose_ID" style="float:right"><em>{{'EDUCATION.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="newEduMat.purpose_ID" style="float:right"><em>{{'EDUCATION.ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body form-horizontal">
                                         <div class="form-group">
                                             <label class="control-label required col-xs-12 col-lg-2">
-                                                Title
+                                                {{'EDUCATION.ADD.PURPOSE'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
                                                 <select ng-model="newEduMat.purpose_ID" ng-change="purposeUpdate()" ng-options="purpose.ID as translatePurposeTitleDisplay(purpose.title_EN, purpose.title_FR) for purpose in purposeOptions" class="form-control"></select>

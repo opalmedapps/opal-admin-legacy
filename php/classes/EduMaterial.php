@@ -158,6 +158,7 @@ class EduMaterial extends Module {
 		$triggers       = $eduMatDetails['triggers'];
 		$userSer 		= $eduMatDetails['user']['id'];
 		$sessionId 		= $eduMatDetails['user']['sessionid'];
+        $purpose_ID     = $eduMatDetails['purpose_ID'];
 
         $urlExt_EN          = null;
         $urlExt_FR          = null;
@@ -167,19 +168,6 @@ class EduMaterial extends Module {
             'value'     => 0,
             'message'   => ''
         );
-
-        // Validate share url extension
-        // Comment out for now because unsure if share url can be anything 
-        /*if ($shareURL_EN || $shareURL_FR) {
-
-            $shareEXT_EN = $this->extensionSearch($shareURL_EN);
-            $shareEXT_FR = $this->extensionSearch($shareURL_FR);
-
-            if ($shareEXT_EN != 'pdf' || $shareEXT_FR != 'pdf') {
-                $response['message'] = 'Supporting PDF fields must be pdfs!';
-                return $response; // return error
-            }
-        }*/
 
 		try {
             // Validate each table of content or URL
@@ -244,7 +232,8 @@ class EduMaterial extends Module {
                         DateAdded,
 						LastPublished,
 						LastUpdatedBy,
-						SessionId
+						SessionId,
+                        EducationalMaterialCategoryId
                     )
                 SELECT DISTINCT
                     \"$name_EN\",
@@ -260,7 +249,8 @@ class EduMaterial extends Module {
                     NOW(),
 					NOW(),
 					'$userSer',
-					'$sessionId'
+					'$sessionId',
+                    '$purpose_ID'
                 FROM 
                     AllowableExtension dummy 
                 LEFT JOIN AllowableExtension ae_en

@@ -1351,6 +1351,7 @@
       "TYPE_EXPLANATION": "Veuillez spécifier le type de matériel éducatif/référence. Cliquez sur le champ de texte, spécifiez un nouveau type ou choisissez dans la liste des types existants.",
       "PHASE_EXPLANATION": "Veuillez assigner la phase de traitement pour laquelle ce matériel éducatif/référence doit être publié.",
       "URL_EXPLANATION": "Veuillez préciser l'emplacement du matériel pédagogique pour les versions anglaise et française. Si vous avez plusieurs matériels pédagogiques, allez à la section <b>Table des matières</b>.",
+      "PURPOSE_EXPLANATION": "Veuillez indiquer l'objectif/l'utilisation de ce matériel éducatif/de référence.",
       "NOTE": "Note: ",
       "ALLOWED_URLS": "L'URL doit commencer par http:// ou https:// et finir par une extension de domaine.",
       "TABLE_EXPLANATION": "Pour plus d'un matériel éducatif/référence dans une table des matières, veuillez attribuer le titre, l'URL et le type respectifs pour les versions anglaise et française.",
