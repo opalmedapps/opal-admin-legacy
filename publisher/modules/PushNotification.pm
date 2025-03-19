@@ -35,6 +35,7 @@ my $SQLDatabase		= $Database::targetDatabase;
 my $ipaddress = Net::Address::IP::Local->public;
 my $thisURL = 'https://' . $ipaddress . $Configs::BACKEND_REL_URL . 'php/sendPushNotification.php';
 # the docker environment is blocking the local net address currently. the direct url for push notifiction is add below
+my $thisURL = Configs::fetchPushNotificationUrl
 # my $thisURL = 'http://localhost:8080/publisher/php/sendPushNotification.php'
 my $statusSuccess = 'T';
 my $statusWarning = 'W';

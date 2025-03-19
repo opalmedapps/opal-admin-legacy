@@ -35,7 +35,7 @@ my $json;
 {
     local $/; # Enable 'slurp' mode
     open my $file_handler, "<", $config_file
-        or die "Could not open config file at $config_file: $!";
+        or die "Could not open config file: $!";
     $json = <$file_handler>;
     close $file_handler;
 }
@@ -94,6 +94,9 @@ const our $MOSAIQ_FTP_DIR       => $config->{'clinicalDocumentPathConfig'}{'mosa
 # YM 2019-01-07 : Production use shared folder
 const our $FTP_LOCAL_DIR        =>  $BACKEND_SHARED_URL . 'clinical/documents'; # PDF directory
 const our $OFFICE_PATH_DIR      => $config->{'clinicalDocumentPathConfig'}{'office_path'}; # Location where office is installed
+
+#DEFINE PUSH NOTIFICATION URL HERE
+const our $PUSH_NOTIFICATION_URL     => $config->{'pushNotificationConfig'}{'url'}
 
 #======================================================================================
 # Subroutine to return source database credentials
@@ -188,6 +191,14 @@ sub fetchFTPCredentials
 
     return $ftpCredentials;
 
+}
+
+#======================================================================================
+# Subroutine to return PUSH NOTIFICATION URL HERE
+#======================================================================================
+sub fetchPushNotificationUrl
+{
+    return $PUSH_NOTIFICATION_URL;
 }
 
 1; # end module
