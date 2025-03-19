@@ -543,12 +543,8 @@ class User extends Module {
      * @param $isInsert boolean - if the process is an insert new user or update a deactivated user
      */
     protected function _insertUpdateUser($type, $username, $language, $password, $roleId, $isInsert = false) {
-        if($isInsert){
+        if($isInsert)
             $test = $this->opalDB->insertUser($type, $username, hash("sha256", $password . USER_SALT), $language, $roleId);
-            // error_log(print_r($test, TRUE));
-            // error_log(print_r($_REQUEST["sessionid"], TRUE));
-            // error_log(print_r("JUST PRINTED", TRUE));
-        }
         else
             $this->opalDB->updateUser($type, $username, hash("sha256", $password . USER_SALT), $language, $roleId);
     }

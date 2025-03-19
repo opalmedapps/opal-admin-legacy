@@ -3,7 +3,6 @@
 class NewOpalApiCall extends ApiCall {
 
     public function __construct($api_route, $method, $language, $data, $content_type = '') {
-        error_log(print_r('I AM IN THE API CALLER',TRUE));
         if ($method == 'POST') {
             $this->setOption(CURLOPT_POST, 1);
         } else {
