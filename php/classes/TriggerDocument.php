@@ -209,11 +209,7 @@ class TriggerDocument extends Trigger
             $toInsert["DocumentSerNum"] = $id;
         } else {
             $action = "UpdDocument";
-            $toInsert["AliasExpressionSerNum"] = $aliasInfos[0]["AliasExpressionSerNum"];
             $toInsert["DocumentSerNum"] = $doc["DocumentSerNum"];
-            $toInsert["PatientSerNum"] = $doc["PatientSerNum"];
-            $toInsert["DateAdded"] = $doc["DateAdded"];
-            $toInsert["ReadBy"] = "[]";
             $this->opalDB->updateDocument($toInsert);
         }
         
