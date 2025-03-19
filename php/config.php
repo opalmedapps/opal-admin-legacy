@@ -43,7 +43,7 @@ const NOT_CHECKED_IN = 0;
 
 const LIMIT_DAYS_AUDIT_SYSTEM_BACKUP = 5;
 
-define("OPAL_CHECKIN_CALL", "http://" . $_SERVER['HTTP_HOST'] . "/opalAdmin/publisher/php/OpalCheckIn.php");
+define("OPAL_CHECKIN_CALL", "https://" . $_SERVER['HTTP_HOST'] . "/opalAdmin/publisher/php/OpalCheckIn.php");
 
 // DEFINE MOSAIQ SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MicrosoftSQL (MSSQL) setup.
