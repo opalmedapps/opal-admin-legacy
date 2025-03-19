@@ -16,7 +16,7 @@
   },
   "homepage": "https://gitlab.com/opalmedapps/opalAdmin#README",
   "dependencies": {
-    "angular": "npm:@xlts.dev/angular@1.9.1",
+    "angular": "npm:@xlts.dev/angular@1.9.0",
     "angular-animate": "npm:@xlts.dev/angular-animate@1.9.1",
     "angular-cookies": "npm:@xlts.dev/angular-cookies@1.9.1",
     "angular-route": "npm:@xlts.dev/angular-route@1.9.1",
