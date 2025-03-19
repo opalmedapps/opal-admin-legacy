@@ -1,6 +1,6 @@
 services:
   app:
-    container_name: opalAdmin
+    container_name: opaladmin
     build: .
     image: opalmedapps/opaladmin
     ports:
@@ -12,3 +12,18 @@ services:
       - /var/www/html/node_modules
       - /var/www/html/bower_components
       - /var/www/html/vendor
+  cron:
+    container_name: opaladmin-cron
+    build: .
+    image: opalmedapps/opaladmin
+    volumes:
+      - .:/var/www/html/
+      - ./docker/crontab:/var/spool/cron/crontabs/www-data
+      # don't overwrite existing content in these directories
+      # needed if you want to manage these through the Docker image build process only
+      - /var/www/html/node_modules
+      - /var/www/html/bower_components
+      - /var/www/html/vendor
+    # cron needs to run as root
+    user: root
+    entrypoint: ['docker/cron.sh']
