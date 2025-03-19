@@ -151,7 +151,6 @@ class Publication extends Module
             $triggersTemp = $this->opalDB->getQuestionnaireTriggersDetails($publicationId, $module["controlTableName"]);
         else
             $triggersTemp = $this->opalDB->getTriggersDetails($publicationId, $module["controlTableName"]);
-        
         $publicationSettings = $this->opalDB->getPublicationSettings();
         $test = array();
 
@@ -1002,11 +1001,11 @@ class Publication extends Module
                             "ScheduledTimeUnit"=>(isset($publication["scheduledtime"]["unit"]["id"])) ? $publication["scheduledtime"]["unit"]["id"]: null,
                             "ScheduledTimeDirection"=>$publication["scheduledtime"]["direction"]["id"]
                         ));
-                        }
+                    }
                         // to delete previous appointment status after adding new one
-                        if ($trigger["type"] == "AppointmentStatus"){
-                            $this->opalDB->deleteFilters($trigger["id"], $trigger["type"], $publication["materialId"]["value"], $controlTableName);
-                        }
+                    if ($trigger["type"] == "AppointmentStatus"){
+                        $this->opalDB->deleteFilters($trigger["id"], $trigger["type"], $publication["materialId"]["value"], $controlTableName);
+                    }
 
                 }
                 // insert only if there are items in `toInsert` array
