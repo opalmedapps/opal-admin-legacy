@@ -36,9 +36,7 @@
     "highcharts-ng": "^1.2.0",
     "multiple-date-picker": "^2.1.0",
     "ng-idle": "^1.3.2",
-    "npm": "^7.5.4",
-    "textangularjs": "^2.1.2",
-    "validate-commit-message": "^3.0.1"
+    "textangularjs": "^2.1.2"
   },
   "resolutions": {
     "angular": "npm:@xlts.dev/angular@1.9.1"

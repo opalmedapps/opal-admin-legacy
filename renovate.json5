@@ -2,18 +2,51 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base",
-    ":rebaseStalePrs",
+    // https://docs.renovatebot.com/presets-default/#pinallexceptpeerdependencies
+    ":pinAllExceptPeerDependencies",
+    // https://docs.renovatebot.com/presets-default/#separatemultiplemajorreleases
     ":separateMultipleMajorReleases",
+    // https://docs.renovatebot.com/presets-default/#separatepatchreleases
+    ":separatePatchReleases",
   ],
-
-  "assignees": ["anton.gladyr"],
+  "assignees": ["asaigammar", "yickmo"],
   "labels": ["dependencies"],
   "separateMinorPatch": true,
+  "ignoreDeps": [
+    "crypto-js",
+    "eslint",
+    "express",
+    "firebase-admin",
+    "highcharts",
+    "highcharts-ng",
+    "multiple-date-picker",
+    "ng-idle",
+    "textangularjs",
+    "jquery",
+    "moment",
+    "bootstrap",
+    "font-awesome",
+    "crypto-js",
+    "cryptojslib",
+    "moment-timezone",
+    "kreait/firebase-php"
+  ],
   "packageRules": [
     // Change commit type to build for Docker-related updates
     {
-      "matchDatasources": ["docker"],
+      "matchDatasources": ["docker", "docker-compose"],
       "semanticCommitType": "build"
+    },
+    // Group xlts angular-related updates
+    {
+      "matchRepositories": [".*xlts.*"],
+      "groupName": "xlts angular packages"
+    },
+    // Group auxiliary angular-related updates
+    {
+      "matchPackagePatterns": ["^angular", "ng-table"],
+      "excludeRepositories": [".*xlts.*"],
+      "groupName": "auxiliary angular packages"
     },
   ],
 }
