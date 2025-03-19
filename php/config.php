@@ -12,6 +12,7 @@ date_default_timezone_set("America/Toronto");
 error_reporting(E_ALL & ~E_NOTICE ^ E_WARNING);
 ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
+ini_set("error_log", __DIR__."/../php-error.log");
 
 // Get directory path of this file
 $pathname 	= __DIR__;
