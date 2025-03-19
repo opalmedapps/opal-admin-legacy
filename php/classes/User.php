@@ -507,8 +507,6 @@ class User extends Module {
         if($backendApi->getHttpCode() != HTTP_STATUS_CREATED && $backendApi->getError())
              HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to New Backend " . $backendApi->getError());
         else if($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS) {
-            echo $backendApi->getHttpCode();
-            print_r($backendApi->getAnswer());
             HelpSetup::returnErrorMessage($backendApi->getHttpCode(), "Error from New Backend: " . $response["error"]);
         }
     }
@@ -544,7 +542,7 @@ class User extends Module {
      */
     protected function _insertUpdateUser($type, $username, $language, $password, $roleId, $isInsert = false) {
         if($isInsert)
-            $test = $this->opalDB->insertUser($type, $username, hash("sha256", $password . USER_SALT), $language, $roleId);
+            $this->opalDB->insertUser($type, $username, hash("sha256", $password . USER_SALT), $language, $roleId);
         else
             $this->opalDB->updateUser($type, $username, hash("sha256", $password . USER_SALT), $language, $roleId);
     }
