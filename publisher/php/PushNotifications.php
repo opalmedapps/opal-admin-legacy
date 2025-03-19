@@ -8,6 +8,8 @@ class PushNotifications {
 	private static $passphrase = CERTIFICATE_PASSWORD;
 	//(iOS) Location of certificate file
 	private static $certificate_file = CERTIFICATE_FILE;
+	// iOS Location of cert key
+	private static $certificate_key = CERTIFICATE_KEY;
 	// (iOS) APNS topic (staging, preprod, prod)
 	private static $apns_topic = APNS_TOPIC;
 	// (iOS) APN Url target (development or sandbox)
@@ -128,12 +130,15 @@ class PushNotifications {
 		curl_setopt($ch, CURLOPT_HTTP_VERSION,3);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, ["apns-topic: $apns_topic"]); //opal app bundle ID
 		curl_setopt($ch, CURLOPT_SSLCERT, self::$certificate_file); //pem file
-		curl_setopt($ch, CURLOPT_SSLCERTPASSWD, self::$passphrase); //pem secret
+		//curl_setopt($ch, CURLOPT_SSLCERTPASSWD, self::$passphrase); //pem secret
+		curl_setopt($ch, CURLOPT_SSLKEY, self::$certificate_key); // cert key
+		//curl_setopt($ch, CURLOPT_SSLKEYPASSWD, ); if we add a password to the key file we'll specify that here
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
 		$response = curl_exec($ch);
 		$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($httpcode != 200) {
-			$response =  array("success"=>0,"failure"=>1,"error"=>"Unable to send packets to APN socket");
+			$err = curl_error($ch);
+			$response =  array("success"=>0,"failure"=>1,"error"=>"$err");
 		} else {
 			$response =  array("success"=>1,"failure"=>0);
         }

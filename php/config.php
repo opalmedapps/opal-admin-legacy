@@ -137,6 +137,7 @@ define( "ANDROID_URL" , $config['pushNotificationConfig']['android']['androidURL
 define( "CERTIFICATE_PASSWORD" , $config['pushNotificationConfig']['apple']['certificate']['password'] );
 define( "CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['filename'] );
 define( "APNS_TOPIC" , $config['pushNotificationConfig']['apple']['certificate']['topic'] );
+define( "CERTIFICATE_KEY" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['key'] );
 define( "IOS_URL" , $config['pushNotificationConfig']['apple']['appleURL'] );
 
 /*
