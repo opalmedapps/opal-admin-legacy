@@ -34,6 +34,8 @@ my $SQLDatabase		= $Database::targetDatabase;
 # global vars
 my $ipaddress = Net::Address::IP::Local->public;
 my $thisURL = 'https://' . $ipaddress . $Configs::BACKEND_REL_URL . 'php/sendPushNotification.php';
+# the docker environment is blocking the local net address currently. the direct url for push notifiction is add below
+# my $thisURL = 'http://localhost:8080/publisher/php/sendPushNotification.php'
 my $statusSuccess = 'T';
 my $statusWarning = 'W';
 my $statusFailure = 'F';
@@ -251,6 +253,7 @@ sub sendPushNotification
 
         # system command to call PHP push notification script
         my $browser = LWP::UserAgent->new;
+        $browser->ssl_opts(verify_hostname => 0, SSL_verify_mode => 0x00);
         my $response = $browser->post($thisURL,
             [
                 'message_title'     => $title,
