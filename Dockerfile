@@ -90,6 +90,6 @@ COPY docker/crontab /var/spool/cron/crontabs/www-data
 ARG GIT_VERSION='undefined'
 ARG GIT_BRANCH='unknown'
 USER root
-RUN echo $GIT_VERSION > ./VERSION && ECHO $GIT_BRANCH >> ./VERSION
+RUN echo $GIT_VERSION > ./VERSION && echo $GIT_BRANCH >> ./VERSION
 
 EXPOSE 8080
