@@ -4326,8 +4326,8 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Get the patient by their mrn
-     * @params  $mrn : string - target patient mrn
+     * Get the patient by their ID (SerNum)
+     * @param $patientser string - target patient ID
      * @return  array - list of patient(s) matching search
      */
     function getPatientSerNum($patientser) {
