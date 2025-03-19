@@ -422,8 +422,6 @@ sub getPatientDeviceIdentifiers
         AND IfNull(RegistrationId, '') <> ''
     ";
 
-    print "$select_sql\n";
-
     # prepare query
 	my $query = $SQLDatabase->prepare($select_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
