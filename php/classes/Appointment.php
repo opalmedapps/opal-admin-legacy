@@ -360,6 +360,7 @@ class Appointment extends Module
             "SessionId" => $this->opalDB->getSessionId(),
         );
 
+        //publish the appointment if the count of the alias in database is equal or greater to 1
         if($countAlias >= 1) {
             $toPublish = $aliasInfos[0]['AliasUpdate'];
         }

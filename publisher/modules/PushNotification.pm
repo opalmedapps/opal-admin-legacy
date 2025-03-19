@@ -254,7 +254,8 @@ sub sendPushNotification
 
         # system command to call PHP push notification script
         my $browser = LWP::UserAgent->new;
-        $browser->ssl_opts(verify_hostname => 0, SSL_verify_mode => 0x00);
+        # Uncomment the line below to skip the ssl verification
+        # $browser->ssl_opts(verify_hostname => 0, SSL_verify_mode => 0x00);
         my $response = $browser->post($thisURL,
             [
                 'message_title'     => $title,
