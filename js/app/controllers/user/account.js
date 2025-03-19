@@ -74,11 +74,11 @@ angular.module('opalAdmin.controllers.account', ['ui.bootstrap']).
 				return;
 			}
 
-			var validationPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/;
+			var validationPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$/;
 
 			if(!password.match(validationPassword)) {
 				$scope.validPassword.status = 'invalid';
-				$scope.validPassword.message = $filter('translate')('PROFILE.SHORT');
+				$scope.validPassword.message = $filter('translate')('PROFILE.INVALID');
 				return;
 			} else if ($scope.account.oldPassword && $scope.account.oldPassword == password) {
 				$scope.validPassword.status = 'warning';
