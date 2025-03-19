@@ -524,6 +524,7 @@ sub getPatientInfoFromSourceDBs
 	        $sourcePatient->setPatientLastName($lastname);
 	        $sourcePatient->setPatientId($id);
 	        $sourcePatient->setPatientId2($id2);
+			$sourcePatient->setPatientSSN($patientSSN);
 	        $sourcePatient->setPatientDOB($dob);
 	        $sourcePatient->setPatientAge($age);
 	        $sourcePatient->setPatientPicture($picture);
