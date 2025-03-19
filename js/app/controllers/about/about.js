@@ -40,6 +40,24 @@
         // Fetch the Markdown file
         $http.get(thirdPartyURL)
             .then(function(response) {
+                const customRenderExtension = {
+                    renderer: {
+                        // Turn all license text blocks into collapsible sections using <details><summary>
+                        code(code) {
+                            return `
+                                <details>
+                                  <summary>${$filter('translate')('SHOW_LICENSE_TEXT')}</summary>
+                                  <pre><code>${code.text}</code></pre>
+                                </details>
+                            `;
+                        },
+                        link(href) {
+                            return `<a href="${href.href}" target="_blank" rel="noopener">${href.text}</a>`
+                        }
+                    }
+                };
+        
+                marked.use(customRenderExtension);
                 let mdContent = response.data;
                 // Remove both the comment block and the section header
                 mdContent = mdContent.replace(/<!--[\s\S]*?-->\s*# Third-Party Dependencies\s*\n/, '');
