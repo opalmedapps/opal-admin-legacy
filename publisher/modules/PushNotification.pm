@@ -241,6 +241,8 @@ sub sendPushNotification
         insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusWarning, $sendlog);
     }
 
+    print "\n***** Push Notification to PatientSerNum: $patientser *****\n";
+
     foreach my $PTDID (@PTDIDs) {
 
         # retrieve params
@@ -248,16 +250,12 @@ sub sendPushNotification
         my $registrationid  = $PTDID->{registrationid};
         my $devicetype      = $PTDID->{devicetype};
 
-        print "\n***** Start Push Notification *****\n";
-        print "PatientSerNum: $patientser\n";
-        print "DeviceType: $devicetype\n";
-        print "Title: $title\n";
-
         ($sendstatus, $sendlog) = postNotification($title, $message, $devicetype, $registrationid);
 
         insertPushNotificationInDB($ptdidser, $patientser, $controlser, $reftablerowser, $sendstatus, $sendlog);
     }
 
+    print "\n***** Push notification to patient caregivers *****\n";
     # get a list of the patient caregivers' device information
     my apiResponse = Api::apiPatientCaregivers($patientser);
     apiResponse = decode_json(apiResponse);
@@ -286,6 +284,10 @@ sub postNotification
     my ($title, $message, $devicetype, $registrationid) = @_; # args
 
     my ($sendstatus, $sendlog); # initialize
+
+    print "\n***** Start Push Notification *****\n";
+    print "DeviceType: $devicetype\n";
+    print "Title: $title\n";
 
     # system command to call PHP push notification script
     my $browser = LWP::UserAgent->new;
