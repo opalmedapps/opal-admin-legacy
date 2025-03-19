@@ -31,8 +31,8 @@
 */2 * * * * /var/www/html/publisher/controls/txTeamMessagesControl.pl > /dev/null 2>> /var/www/html/publisher/logs/executions_txTeamMessages.log
 
 # Pending appointments module
-*/1 * * * * curl http://opaladmin:8080/cron-job/update/resource-pending > /dev/null 2>> /var/www/html/publisher/logs/resource-pending.log
-*/1 * * * * curl http://opaladmin:8080/cron-job/update/appointment-pending > /dev/null 2>> /var/www/html/publisher/logs/appointment-pending.log
+*/1 * * * * curl --silent --show-error http://opaladmin:8080/cron-job/update/resource-pending > /dev/null 2>> /var/www/html/publisher/logs/resource-pending.log
+*/1 * * * * curl --silent --show-error http://opaladmin:8080/cron-job/update/appointment-pending > /dev/null 2>> /var/www/html/publisher/logs/appointment-pending.log
 
 # audit backup cron
-30 00 * * * curl http://opaladmin:8080/php/cron-job/add.audit.system.backup.php > /dev/null 2>> /var/www/html/publisher/logs/system-backup.log
+30 00 * * * curl --silent --show-error http://opaladmin:8080/php/cron-job/add.audit.system.backup.php > /dev/null 2>> /var/www/html/publisher/logs/system-backup.log
