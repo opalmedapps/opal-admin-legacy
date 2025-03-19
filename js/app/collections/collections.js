@@ -663,7 +663,7 @@ angular.module('opalAdmin.collections', [])
 					},
 					withCredentials: true,
 				}
-			)
+			);
 		};
 
 		// Function to get user logs given a serial
