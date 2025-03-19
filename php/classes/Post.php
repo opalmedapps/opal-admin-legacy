@@ -69,7 +69,8 @@ class Post extends Module {
     public function insertPost( $toInsert ) {
         $this->checkWriteAccess($toInsert);
         $toInsert["PublishDate"]="0000-00-00 00:00:00";
-        return $this->opalDB->insertPost($toInsert);
+        $temp = $this->opalDB->insertPost($toInsert);
+        return $temp;
     }
 
     /*

@@ -499,7 +499,7 @@ class DatabaseOpal extends DatabaseAccess {
         );
         return $this->_execute($sqlToUpdate, $toUpdate);
     }
-
+    
     /*
      * Returns the list of modules.
      * @params  void
