@@ -1941,8 +1941,8 @@ class DatabaseOpal extends DatabaseAccess {
     function insertMultipleDiagnosisCodes($toInsert) {
         foreach ($toInsert as &$item) {
             $item["DateAdded"] = date("Y-m-d H:i:s");
-            $item["LastUpdatedBy"] = $this->getOAUserId();
-            $item["SessionId"] = $this->getSessionId();
+            $item["LastUpdatedBy"] = intval($this->getOAUserId());
+            $item["SessionId"] = intval($this->getSessionId());
         }
         return $this->_replaceMultipleRecordsIntoTable(OPAL_DIAGNOSIS_CODE_TABLE, $toInsert);
     }
