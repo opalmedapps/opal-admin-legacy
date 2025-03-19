@@ -143,7 +143,9 @@ sub publishEducationalMaterials
 
     # If we are not within the window to publish the messages then return
     #if ( (($now - $today_at_eightAM) < 0) or (($now - $today_at_eightPM) > 0) ) {return;}
-
+    
+    # Check for any new updates from the main cron control
+    CheckEduMatControlsMarkedForPublishModularCron();
 
     # Retrieve all the controls
     my @eduMatControls = EducationalMaterialControl::getEduMatControlsMarkedForPublishModularCron();
