@@ -35,7 +35,7 @@
         // Configure Marked (GFM for auto-linkifying bare URLs)
         marked.setOptions({ gfm: true });
 
-        const thirdPartyURL = window.location.protocol + '//' + window.location.host + '/THIRDPARTY.md';
+        const thirdPartyURL = 'THIRDPARTY.md';
 
         // Fetch the Markdown file
         $http.get(thirdPartyURL)
