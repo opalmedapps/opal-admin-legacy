@@ -21,24 +21,22 @@ variables:
   TEST_DISABLED: "true"
   DAST_DISABLED: "true"
   POSTGRES_ENABLED: "false"
-  GIT_TEST: "$(git describe)"
 
-setup:
+set variables:
   stage: .pre
   script:
     - apk add --no-cache git
-    - echo $(git describe) > VERSION && echo $(git rev-parse --abbrev-ref HEAD) >> VERSION
+    - echo $(git describe) > variables.env
+    - echo $(git rev-parse --abbrev-ref HEAD) >> variables.env
+  artifacts:
+    reports:
+      dotenv: variables.env
 
 
 build:
   stage: build
   script:
-    - uname -a
-    - apk add --no-cache git
-    - export TEST=$(git describe)
     - export
-    - whoami
-    - cat VERSION
 
 # newjob:
 #   stage: deploy
