@@ -61,6 +61,8 @@ const our $OPAL_DB_USERNAME     => $config->{'databaseConfig'}{'opal'}{'username
 const our $OPAL_DB_PASSWORD     => $config->{'databaseConfig'}{'opal'}{'password'};
 const our $USE_SSL              => $config->{'use_ssl'};
 const our $SSL_CA               => $config->{'ssl_ca'};
+const our $OPAL_DB_SSL_DSN      => 'DBI:mysql:database=' . $OPAL_DB_NAME . ';host=' . $OPAL_DB_HOST . ';port=' . $OPAL_DB_PORT . ';mysql_ssl=1;mysql_ssl_ca_file=' . $SSL_CA;
+
 
 # DEFINE: WRM DATABASE CREDENTIALS HERE
 # NOTE: This works for a MySQL setup.
