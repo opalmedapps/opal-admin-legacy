@@ -306,6 +306,7 @@ sub getAllFiltersFromOurDB
     my @diagnosisFilters            = getDiagnosisFiltersFromOurDB($controlSer, $controlTable);
     my @doctorFilters               = getDoctorFiltersFromOurDB($controlSer, $controlTable);
     my @resourceFilters             = getResourceFiltersFromOurDB($controlSer, $controlTable);
+    # listStatusAndTimeOffset first position is appointmentStatusFilters then the three scheduledtime variables
     my @listStatusAndTimeOffset   = getAppointmentStatusFiltersFromOurDB($controlSer, $controlTable);
     my @appointmentStatusFilters = $listStatusAndTimeOffset[0];
     my $scheduledTimeOffset = $listStatusAndTimeOffset[1];
