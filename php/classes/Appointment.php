@@ -344,7 +344,9 @@ class Appointment extends Module
             $aliasInfos = $this->opalDB->getGenericAlias($post["site"]);
             
             if (count($aliasInfos) > 0) {
-                $this->opalDB->assignToGenericAlias($aliasInfos[1]["AliasSerNum"], $source["SourceDatabaseSerNum"], $post['appointmentTypeCode'], $post['appointmentTypeDescription']);
+                $aliasExpressionId = $this->opalDB->assignToGenericAlias($aliasInfos[0]["AliasSerNum"], $source["SourceDatabaseSerNum"], $post['appointmentTypeCode'], $post['appointmentTypeDescription']);
+                // $aliasInfos is missing the AliasExpressionSerNum at this point
+                $aliasInfos[0]["AliasExpressionSerNum"] = $aliasExpressionId;
             }
         }
 
