@@ -26,8 +26,9 @@ set variables:
   stage: .pre
   script:
     - apk add --no-cache git
-    - echo $(git describe) > variables.env
-    - echo $(git rev-parse --abbrev-ref HEAD) >> variables.env
+    - echo GIT_VERSION=$(git describe) > variables.env
+    - echo GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) >> variables.env
+    - cat variables.env
   artifacts:
     reports:
       dotenv: variables.env
