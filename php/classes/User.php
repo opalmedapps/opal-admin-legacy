@@ -297,6 +297,14 @@ class User extends Module {
 
         $result = $this->opalDB->authenticateSystemUser($username);
         $result = $this->_validateUserAuthentication($result, $username);
+        $backendApi = $this->_loginBackend($username, $password);
+
+        // pass the Set-Cookie headers to the user
+        $headers = $backendApi->getHeaders()['set-cookie'];
+        
+        foreach ($headers as $cookie) {
+            header("Set-Cookie: " . $cookie);
+        }
 
         $_SESSION["ID"] = $result["id"];
         $_SESSION["username"] = $result["username"];
