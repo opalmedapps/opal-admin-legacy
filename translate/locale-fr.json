@@ -2932,18 +2932,18 @@
     }
   },
   "PATIENT_ADMINISTRATION": {
-    "TITLE": "Administration des patients",
-    "DESCRIPTION": "Modifier les informations du compte patient",
+    "TITLE": "Administration des utilisateurs",
+    "DESCRIPTION": "Modifier les informations du compte utilisateur",
     "MENU": {
-      "TITLE": "Administration des patients",
-      "PSEARCH": "Recherche du patient :",
-      "PNAME": "Nom de famille du patient",
+      "TITLE": "Administration des utilisateurs",
+      "PSEARCH": "Recherche de l'utilisateur :",
+      "PNAME": "Nom de famille de l'utilisateur",
       "PRAMQ": "RAMQ du patient",
       "PMRN": "MRN du patient",
       "SUBMIT": "Soumettre",
       "RESET": "Réinitialiser",
       "DB_ERROR": "Une erreur s'est produite lors de la prise de contact avec la base de données:",
-      "MULTIPLE": "Plusieurs patients ont été trouvés correspondant aux critères de recherche, veuillez sélectionner :",
+      "MULTIPLE": "Plusieurs utilisateurs ont été trouvés correspondant aux critères de recherche, veuillez sélectionner :",
       "NONE": "Aucun patient ne correspond aux critères, veuillez réessayer",
       "LAST": "Nom de famille",
       "FIRST": "Prénom",
@@ -2956,10 +2956,10 @@
       "NO_MRN": "Pas de MRN",
       "LANG": "Langue de l'application Opal",
       "OPTIONS": "Options",
-      "UPDATE_EMAIL": "Changer le courriel du patient",
-      "UPDATE_PASSWORD": "Changer le mot de passe du patient",
+      "UPDATE_EMAIL": "Changer le courriel de l’utilisateur",
+      "UPDATE_PASSWORD": "Changer le mot de passe de l’utilisateur",
       "UPDATE_ACCESS_LEVEL": "Changer le niveau d'accès des patients",
-      "UPDATE_SECURITY_QUESTION": "Réinitialiser les questions de sécurité des patients"
+      "UPDATE_SECURITY_QUESTION": "Modifier les questions de sécurité de l’utilisateur"
     },
     "EMAIL": {
       "TITLE": "Changer le courriel du patient",
