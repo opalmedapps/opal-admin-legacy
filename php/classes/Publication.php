@@ -67,10 +67,11 @@ class Publication extends Module
         $results["publication"]["description"]["EN"] = $publicationDetails["type_EN"];
         $results["publication"]["description"]["FR"] = $publicationDetails["type_FR"];
 
-        $subModuleList =  json_decode($module["subModule"]);
+        
         $results["publication"]["unique"] =  $module["unique"];
 
         if($moduleId == MODULE_POST) {
+            $subModuleList =  json_decode($module["subModule"]);
             $postDetails = $this->opalDB->getPostDetails($publicationId);
             foreach($subModuleList as $subModule) {
                 if($postDetails["type"] == $subModule->name_EN) {
@@ -146,7 +147,10 @@ class Publication extends Module
 
         // Because some doctors, appointments or patients can be removed from their tables but still being present in
         // the filter table, we must clean up the filters first before sending the data to the front end.
-        $triggersTemp = $this->opalDB->getTriggersDetails($publicationId, $module["controlTableName"]);
+        if($module["controlTableName"] === "LegacyQuestionnaireControl")
+            $triggersTemp = $this->opalDB->getQuestionnaireTriggersDetails($publicationId, $module["controlTableName"]);
+        else
+            $triggersTemp = $this->opalDB->getTriggersDetails($publicationId, $module["controlTableName"]);
         $publicationSettings = $this->opalDB->getPublicationSettings();
         $test = array();
 
@@ -638,7 +642,8 @@ class Publication extends Module
     protected function _validateFrequency(&$publication, &$subModule, $strictEnforcement = true) {
         $errMsgs = array();                                             //By default, no error message
         $pubSettings = $this->opalDB->getPublicationNonTriggerSettingsPerModule($publication["moduleId"]["value"]);
-        $subModule = json_decode($subModule, true);
+        if($subModule !== NULL)
+            $subModule = json_decode($subModule, true);
         foreach($pubSettings as $setting) {
             $mandatory = false;
             if(is_array($subModule) && count($subModule) > 0) {
@@ -799,9 +804,9 @@ class Publication extends Module
                                 "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
                                 "SessionId"=>$this->opalDB->getSessionId(),
                                 // this change is related to appointment time triggers QSCCD-1526
-                                "ScheduledTimeOffset"=>$publication["scheduledtime"]["offset"],
+                                "ScheduledTimeOffset"=>(isset($publication["scheduledtime"]["offset"])) ? $publication["scheduledtime"]["offset"]: 0,
                                 "ScheduledTimeUnit"=>(isset($publication["scheduledtime"]["unit"]["id"])) ? $publication["scheduledtime"]["unit"]["id"]: null,
-                                "ScheduledTimeDirection"=>$publication["scheduledtime"]["direction"]["id"]
+                                "ScheduledTimeDirection"=>(isset($publication["scheduledtime"]["direction"]["id"])) ? $publication["scheduledtime"]["direction"]["id"]: 'after'
                              ));
                         }
                     }
@@ -814,9 +819,9 @@ class Publication extends Module
                     "DateAdded"=>date("Y-m-d H:i:s"),
                     "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
                     "SessionId"=>$this->opalDB->getSessionId(),
-                    "ScheduledTimeOffset"=>$publication["scheduledtime"]["offset"],
+                    "ScheduledTimeOffset"=>(isset($publication["scheduledtime"]["offset"])) ? $publication["scheduledtime"]["offset"]: 0,
                     "ScheduledTimeUnit"=>(isset($publication["scheduledtime"]["unit"]["id"])) ? $publication["scheduledtime"]["unit"]["id"]: null,
-                    "ScheduledTimeDirection"=>$publication["scheduledtime"]["direction"]["id"]
+                    "ScheduledTimeDirection"=>(isset($publication["scheduledtime"]["direction"]["id"])) ? $publication["scheduledtime"]["direction"]["id"]: 'after'
                 ));
 
             }
@@ -992,15 +997,15 @@ class Publication extends Module
                             "DateAdded"=>date("Y-m-d H:i:s"),
                             "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
                             "SessionId"=>$this->opalDB->getSessionId(),
-                            "ScheduledTimeOffset"=>$publication["scheduledtime"]["offset"],
+                            "ScheduledTimeOffset"=>(isset($publication["scheduledtime"]["offset"])) ? $publication["scheduledtime"]["offset"]: 0,
                             "ScheduledTimeUnit"=>(isset($publication["scheduledtime"]["unit"]["id"])) ? $publication["scheduledtime"]["unit"]["id"]: null,
-                            "ScheduledTimeDirection"=>$publication["scheduledtime"]["direction"]["id"]
+                            "ScheduledTimeDirection"=>(isset($publication["scheduledtime"]["direction"]["id"])) ? $publication["scheduledtime"]["direction"]["id"]: 'after'
                         ));
-                        }
+                    }
                         // to delete previous appointment status after adding new one
-                        if ($trigger["type"] == "AppointmentStatus"){
-                            $this->opalDB->deleteFilters($trigger["id"], $trigger["type"], $publication["materialId"]["value"], $controlTableName);
-                        }
+                    if ($trigger["type"] == "AppointmentStatus"){
+                        $this->opalDB->deleteFilters($trigger["id"], $trigger["type"], $publication["materialId"]["value"], $controlTableName);
+                    }
 
                 }
                 // insert only if there are items in `toInsert` array

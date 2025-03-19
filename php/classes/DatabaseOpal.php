@@ -286,6 +286,13 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":ControlTable","variable"=>$controlTableName,"data_type"=>PDO::PARAM_STR)
         ));
     }
+    function getQuestionnaireTriggersDetails($publicationId, $controlTableName) {
+        return $this->_fetchAll(SQL_OPAL_GET_FILTERS_DETAILS_QUESTIONNAIRE, array(
+            array("parameter"=>":ControlTableSerNum","variable"=>$publicationId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":ControlTable","variable"=>$controlTableName,"data_type"=>PDO::PARAM_STR)
+        ));
+    }
+
 
     /*
      * This function get the appropriate chart log sql query. It fills the tables name, locate the sql query and runn

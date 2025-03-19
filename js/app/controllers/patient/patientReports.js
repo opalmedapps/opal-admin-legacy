@@ -703,8 +703,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 			$scope.noteReport = "";
 			$scope.clinnoteReport = "";
 			$scope.txteamReport = "";
-			$scope.generalReport = "";
-
+			$scope.generalReport = ""; 
 		});
 	};
 
@@ -733,6 +732,8 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 			dataType: "json",
 			success: function (response) {
 				populateTables(response);
+				// Since the data is fetched before tables prints, a simple resize fixes this
+				window.dispatchEvent(new Event('resize')); 
 			},
 			error: function (err) {
 				ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
@@ -752,46 +753,56 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				if (result.diagnosis) {
 					$scope.diagReport = result.diagnosis;
 					strip($scope.diagReport);
+					$scope.calculateGridHeight($scope.diagReport);
 				}
 				if (result.questionnaires) {
 					$scope.qstReport = result.questionnaires;
 					strip($scope.qstReport);
+					$scope.calculateGridHeight( $scope.qstReport);
 				}
 				if (result.education) {
 					$scope.educReport = result.education;
 					strip($scope.educReport);
+					$scope.calculateGridHeight($scope.educReport);
 				}
 				if (result.appointments) {
 					$scope.apptReport = result.appointments;
 					strip($scope.apptReport);
+					$scope.calculateGridHeight($scope.apptReport);
 				}
 				if (result.testresults) {
 					$scope.testReport = result.testresults;
 					strip($scope.testReport);
+					$scope.calculateGridHeight($scope.testReport);
 				}
 				if (result.pattestresults) {
 					$scope.pattestReport = result.pattestresults;
 					strip($scope.pattestReport);
+					$scope.calculateGridHeight($scope.pattestReport);
 				}
 				if (result.notes) {
 					$scope.noteReport = result.notes;
 					strip($scope.noteReport);
+					$scope.calculateGridHeight($scope.noteReport);
 				}
 				if (result.clinicalnotes) {
 					$scope.clinnoteReport = result.clinicalnotes;
 					strip($scope.clinnoteReport);
+					$scope.calculateGridHeight($scope.clinnoteReport);
 				}
 				if (result.treatingteam) {
 					$scope.txteamReport = result.treatingteam;
 					for (var i = 0; i < $scope.txteamReport.length; i++) {
 						$scope.txteamReport[i].body = strip($scope.txteamReport[i].body);
 					}
+					$scope.calculateGridHeight($scope.txteamReport);
 				}
 				if (result.general) {
 					$scope.generalReport = result.general;
 					for (var i = 0; i < $scope.generalReport.length; i++) {
 						$scope.generalReport[i].body = strip($scope.generalReport[i].body);
 					}
+					$scope.calculateGridHeight($scope.generalReport);
 				}
 				$scope.generateFinished = true; //finally we can show report segments
 
@@ -802,11 +813,16 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		});
 	}
 
-
 	//Remove whitespace from input
 	function strip(text) {
 		return text ? String(text).replace(/<[^>]+>/gm, '') : '';
-	}
+	};
+	// Calculate the height of the grid for the populate tables function
+	$scope.calculateGridHeight = function(gridOptionsType) {
+		return {
+			'height': (gridOptionsType.length * 30 + 90) + 'px',
+		};
+	};
 
 });
 

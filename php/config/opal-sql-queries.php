@@ -100,12 +100,17 @@ define("SQL_OPAL_GET_MODULE_BY_ID", "
     SELECT * FROM ".OPAL_MODULE_TABLE." WHERE ID = :ID;
 ");
 
-define("SQL_OPAL_GET_FILTERS_DETAILS", "
+define("SQL_OPAL_GET_FILTERS_DETAILS_QUESTIONNAIRE", "
     SELECT DISTINCT FilterType AS type, FilterId AS id, ScheduledTimeOffset, ScheduledTimeUnit, ScheduledTimeDirection
     FROM ".OPAL_FILTERS_TABLE." WHERE ControlTableSerNum = :ControlTableSerNum AND ControlTable = :ControlTable;
 ");
 
-//define("SQL_OPAL_GET_FILTERS_DETAILS", "
+define("SQL_OPAL_GET_FILTERS_DETAILS", "
+    SELECT DISTINCT FilterType AS type, FilterId AS id
+    FROM ".OPAL_FILTERS_TABLE." WHERE ControlTableSerNum = :ControlTableSerNum AND ControlTable = :ControlTable;
+");
+
+// define("SQL_OPAL_GET_FILTERS_DETAILS", "
 //    SELECT FilterSerNum, FilterType, FilterId FROM ".OPAL_FILTERS_TABLE." WHERE ControlTableSerNum = :ControlTableSerNum AND ControlTable = :ControlTable;
 //");
 

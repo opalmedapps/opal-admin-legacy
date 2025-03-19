@@ -421,7 +421,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 
 					$scope.subModule = JSON.parse(response.data["subModule"]);
 
-					if(response.data.unique === "0") {
+					if(response.data.unique === 0) {
 						$scope.unique = false;
 						if ($scope.toSubmit.name != "undefined") {
 							$scope.toSubmit.name = {
