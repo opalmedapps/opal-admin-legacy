@@ -165,16 +165,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
 		$scope.checkSmsUpdate = function (sms) {
 
 			$scope.changesMade = true;
-			sms.active = parseInt(sms.active);
-			// If the "Update" column has been checked
-			if (sms.active) {
-				sms.active = 0; // set update to "true"
-			}
-
-			// Else the "Update" column was unchecked
-			else {
-				sms.active = 1; // set update to "false"
-			}
+			sms.active = !sms.active;
 			// flag parameter that changed
 			sms.modified = 1;
 		};
@@ -187,7 +178,7 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
 						if(sms.type !== "-")
 							$scope.smsUpdates.push({
 								id: sms.id,
-								active: sms.active,
+								active: sms.active ? 1 : 0,
 								type: sms.type
 							});
 					}

@@ -1,5 +1,5 @@
 # Build/install JS dependencies
-FROM node:20.17.0-alpine3.20 AS js-dependencies
+FROM node:20.18.0-alpine3.20 AS js-dependencies
 
 WORKDIR /app
  
@@ -12,7 +12,7 @@ COPY .npmrc ./
 RUN npm ci
 
 # Build/install PHP dependencies
-FROM composer:2.7.9 AS php-dependencies
+FROM composer:2.8.0 AS php-dependencies
 
 WORKDIR /app
 
