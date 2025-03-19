@@ -141,6 +141,7 @@ class CronJob extends OpalProject {
         $replacementMap = array();
         $appointmentPendingList = $this->opalDB->getOldestAppointmentPendingInProcess();
         $startTime = time();
+        
         while(count($appointmentPendingList) > 0 && (time() - $startTime) < 29) {
             $appointmentPending = array_shift($appointmentPendingList);
             $appointmentPending["SourceDatabaseSerNum"] = $this->opalDB->getSourceId($appointmentPending["sourceName"])[0]['ID'];
@@ -166,7 +167,10 @@ class CronJob extends OpalProject {
                 $this->opalDB->deleteAppointmentPending($appointmentPending["ID"]);
                 unset($appointmentPending["ID"]);
                 $sourceId = $this->opalDB->insertAppointment($appointmentPending);
-                $this->_notifyChange($appointmentPending, $action, $replacementMap,$sourceId);
+                if ($aliasInfos[0]['AliasUpdate'] == 1){
+                    $this->_notifyChange($appointmentPending, $action, $replacementMap,$sourceId);
+                }
+                
             }
         }
     }
