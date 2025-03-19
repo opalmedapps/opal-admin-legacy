@@ -98,7 +98,7 @@
 
 		"abs_path": "/var/www/html/",
 		"relative_url": "/",
-		"registration_url": "PATH_TO_REGISTRATION_WEB_APP",
+		"registration_url": "PATH_TO_REGISTRATION_WEB_APP; Should be an URL to the new registration page (e.g., http://127.0.0.1:8000/patients/access-request-new/)",
 		"shared_drive_path": "PATH_TO_SHARED_DRIVE"
 	},
 	"clinicalDocumentPathConfig": {
