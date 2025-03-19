@@ -299,9 +299,7 @@ class Publication extends Module
      * */
     protected function _validateTriggers(&$triggersToValidate, &$moduleId) {
         $validatedTriggers = array();
-        $errMsgs = array();    
-                                                 //By default, no error message
-       // var_dump($moduleId);
+        $errMsgs = array();    //By default, no error message
         $listTriggers = $this->opalDB->getPublicationSettingsPerModule($moduleId); //Get lists of triggers and their settings
         if (is_array($listTriggers) && count($listTriggers) <= 0) {
             array_push($errMsgs, "Invalid Module.");
@@ -436,7 +434,6 @@ class Publication extends Module
         $currentDate = false;
         if($strictEnforcement)
             $currentDate = (int) $occurrence["start_date"] < strtotime(date("Y-m-d"));
-       // var_dump($currentDate);
 
         if (!HelpSetup::isValidTimeStamp($occurrence["start_date"]) || $currentDate)
             array_push($errMsgs, "Invalid start date.");
@@ -664,7 +661,6 @@ class Publication extends Module
                 $custom = json_decode($setting["custom"], true);
                 if (array_key_exists("dateTime", $custom)) {
                     if(isset($publication["materialId"]["type"]) && $publication["materialId"]["type"] == "Announcement") {
-                      //  var_dump($publication[$setting["internalName"]]);
                         if(!HelpSetup::verifyDate($publication[$setting["internalName"]], true, $custom["dateTime"]))
                             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publishing date.");
                     }
@@ -710,7 +706,6 @@ class Publication extends Module
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid post.");
 
 
-       // var_dump($publication["publishDateTime"]);
         if(isset($publication["publishDateTime"]) && $publication["publishDateTime"] != "")
             $count = $this->opalDB->updatePostPublishDateTime(
                 array("PostControlSerNum"=>$publication["materialId"]["value"],"PublishDate"=>$publication["publishDateTime"])
@@ -1086,7 +1081,6 @@ class Publication extends Module
         $publication = HelpSetup::arraySanitization($publication);
 
         $moduleDetails = $this->opalDB->getModuleSettings($publication["moduleId"]["value"]);
-        //var_dump($publication);
 
         $result = $this->_validateTriggers($publication["triggers"], $moduleDetails["ID"]);
         if(count($result) > 0)

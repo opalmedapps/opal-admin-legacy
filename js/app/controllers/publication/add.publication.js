@@ -774,10 +774,6 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 				}
 
 				if ($scope.publishDate.available) {
-					const now = new Date();
-					const currentDateTime = now.toLocaleString();
-					console.log(currentDateTime);
-					console.log($scope.toSubmit.publishDateTime);
 					if (typeof $scope.toSubmit.publishDateTime !== "undefined") {
 						var tempDate = String(moment($scope.toSubmit.publishDateTime.publish_date).format("YYYY-MM-DD")) + " " +
 							String(moment($scope.toSubmit.publishDateTime.publish_time).format("HH:mm"));

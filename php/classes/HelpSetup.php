@@ -56,17 +56,17 @@ class HelpSetup {
      * @returns boolean true or false if valid or not
      * */
     public static function verifyDate($date, $strict = false, $format = 'Y-m-d H:i') {
-        $dateTime = DateTime::createFromFormat($format, $date);
+        $dateTime = DateTime::createFromFormat($format, $date); // Input time from OpalAdmin 
 
-        $dateTemp= new DateTime();
-        $currentDate = DateTime::createFromFormat($format, $dateTemp->format($format));
+        $dateTemp= new DateTime(); // Temporary time to keep the object of DateTime intact
+        $currentTime = DateTime::createFromFormat($format, $dateTemp->format($format)); // Current time of timezone
         $errors = DateTime::getLastErrors();
 
         if (!empty($errors['warning_count']))
             return false;
 
         if($strict) {
-            if ($currentDate > $dateTime)
+            if ($currentTime > $dateTime)
                 return false;
         }
         return $dateTime !== false;
