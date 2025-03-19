@@ -239,7 +239,6 @@ angular.module('opalAdmin', [
 	.factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
 		return {
 			responseError: function (response) {
-				//console.log(response);
 				$rootScope.$broadcast({
 					401: AUTH_EVENTS.notAuthenticated,
 					// 403: AUTH_EVENTS.notAuthorized,
@@ -265,7 +264,6 @@ angular.module('opalAdmin', [
 					$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
 				} else {
 					// user is not logged in
-					
 					$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
 				}
 			}
