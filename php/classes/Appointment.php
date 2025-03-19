@@ -223,6 +223,7 @@ class Appointment extends Module
             $toUpdate["Status"] = APPOINTMENT_STATUS_CODE_DELETED;
             $toUpdate["State"] = APPOINTMENT_STATE_CODE_DELETED;
             $toUpdate["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];
+            $toUpdate["ReadBy"] = "[]";
             $prevStartDateTime = strtotime($toUpdate["ScheduledStartTime"]);
 
             if ($post["status"] == "Cancelled" || $post["status"] == "Deleted"){
@@ -441,6 +442,8 @@ class Appointment extends Module
                 $toInsert["AppointmentSerNum"] = $this->opalDB->insertAppointment($toInsert);
             } else {
                 $toInsert["AppointmentSerNum"] = $this->opalDB->updateAppointments($toInsert);
+                $toInsert["ReadBy"] = "[]";
+                $this->opalDB->updateAppointments($toInsert);
             }
         }
         
@@ -575,7 +578,8 @@ class Appointment extends Module
             $toUpdate = $currentAppointment[0];
             $toUpdate["Status"] = $post["status"];
             $toUpdate["State"] = APPOINTMENT_STATE_CODE_ACTIVE;
-            $toUpdate["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];            
+            $toUpdate["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];
+            $toUpdate["ReadBy"] = "[]";
             $prevStartDateTime = strtotime($toUpdate["ScheduledStartTime"]);
             if ($post["status"] == "Cancelled"){
                 $action = "AppointmentCancelled";
