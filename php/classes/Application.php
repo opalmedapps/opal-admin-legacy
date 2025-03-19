@@ -36,7 +36,7 @@ class Application {
 	 *
 	 * @return array $build : the application build
 	 */
-	public function getApplicationBuild () {
+    public function getApplicationBuild () {
         $build = array();
         try {
             $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -68,12 +68,12 @@ class Application {
             );
 
             return $build;
-		} catch (PDOException $e) {
-			echo $e->getMessage();
-			return $build;
-		}
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return $build;
+        }
 
-	}
+    }
 	/**
 	 *
 	 * Gets the source databases used for enabled flags
