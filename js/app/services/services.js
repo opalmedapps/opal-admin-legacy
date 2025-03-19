@@ -92,27 +92,38 @@ angular.module('opalAdmin.services', [])
 		};
 	})
 
-	.service('LogoutService', function (Session, $q, $state, $http) {
+	.service('LogoutService', function ($rootScope, Session, $q, $state, $http, $cookies) {
 		this.logLogout = function () {
 			var user = Session.retrieveObject('user');
-			var oaLogoutPromise = $http.post(
+
+			/*
+				Logout of new Opal Admin.
+
+				The post request should include X-CSRFTOKEN header for successful logout (required by Django's backend).
+			*/
+			$http.post(
+                                $rootScope.newOpalAdminHost + '/api/auth/logout/',
+                                null,
+                                {
+                                        'headers': {
+                                                'Content-Type': 'application/json',
+						'x-csrftoken': $cookies.get('csrftoken')
+                                        },
+                                        'withCredentials': true
+                                }
+                        ).then(
+				function (response) {},
+				function (response) { console.error('Unable to logout using api-backend:', response.status); }
+			);
+
+			
+			// Logout of old Opal Admin
+			$http.post(
 				"user/logout",
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
-			
-			// Logout of new Opal Admin	
-			var newOALogoutPromise = $http.post(
-				"http://127.0.0.1:8000/api/auth/logout/",
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				},
-				{
-					"withCredentials": true,
-				}
-                	);
-			$q.all([oaLogoutPromise, newOALogoutPromise]);
 		};
 		
 		this.logout = function () {	
