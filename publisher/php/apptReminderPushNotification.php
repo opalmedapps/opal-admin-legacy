@@ -19,26 +19,23 @@
         *             registrationId, deviceId) for each device, and Message array containing
         *             (title, description),  NotificationSerNum, and error if any.
         **/
-       public static function sendPatientNotification($patientSerNum, $language, $messages)
-       {
-			//Obtain patient device identifiers
-			$patientDevices = self::getDevicesForPatient($patientSerNum);
+        public static function sendPatientNotification($patientSerNum, $language, $messages){
+            //Obtain patient device identifiers
+            $patientDevices = self::getDevicesForPatient($patientSerNum);
 
-			//If no identifiers return there are no identifiers
-			if(count($patientDevices)==0)
-			{
-				return array("success"=>0, "failure"=>1,"responseDevices"=>"No patient devices available for that patient");
-				exit();
-			}
+            //If no identifiers return there are no identifiers
+            if(count($patientDevices)==0){
+                return array("success"=>0, "failure"=>1,"responseDevices"=>"No patient devices available for that patient");
+                exit();
+            }
 
-			if ($language == "EN")
-			{
-				$wsmtitle = $messages['title_EN'];
-				$wsmdesc = $messages["message_text_EN"];
-			}else{
-				$wsmtitle = $messages['title_FR'];
-				$wsmdesc = $messages["message_text_FR"];
-			}
+            if ($language == "EN"){
+                $wsmtitle = $messages['title_EN'];
+                $wsmdesc = $messages["message_text_EN"];
+            }else{
+                $wsmtitle = $messages['title_FR'];
+                $wsmdesc = $messages["message_text_FR"];
+            }
 
             // Need this format for PushNotifications functions
 			$messageBody = array(
@@ -49,8 +46,7 @@
 
 			//Send message to patient devices and record in database
 			$resultsArray = array();
-			foreach($patientDevices as $device)
-			{
+			foreach($patientDevices as $device){
                 //Determine device type
                 if($device["DeviceType"]==0)
                 {
@@ -113,14 +109,12 @@
                 $s = $pdo->prepare($sql);
                 $s->execute();
                 $result = $s->fetchAll();
-            }catch(PDOException $e)
-            {
+            }catch(PDOException $e){
                 return array("success"=>0,"failure"=>1,"error"=>$e);
                 exit();
             }
 
-            if(count($result)==0)
-            {
+            if(count($result)==0){
                 return array("success"=>0,"failure"=>1,"error"=>"No matching appointments in Database");
                 exit();
             }
@@ -137,7 +131,7 @@
         *    (logCustomerPushNotification($deviceSerNum, $patientSerNum, $title, $msg, $response)
         *    Consumes a PatientDeviceIdentifierSerNum, $deviceSerNum, $title, $msg,
         *    and response, $response, where send status is a 1 or 0 for whether is was successfully sent or not.
-        *    Inserts a into the PushNotification table or updates SendLog flag.
+        *    Inserts a row into the PushNotification table or updates SendLog flag.
         *    RegistrationId.
         *    Returns: Returns the send status
         **/
@@ -180,7 +174,7 @@
                             PDI.PatientDeviceIdentifierSerNum, 
                             PDI.RegistrationId, 
                             PDI.DeviceType 
-                        FROM PatientDeviceIdentifier PDI, Users U, Patient, P
+                        FROM PatientDeviceIdentifier PDI, Users U, Patient P
                         WHERE P.PatientSerNum = $patientSerNum
                             AND PDI.Username = U.Username
                             AND P.PatientSerNum = U.UserTypeSerNum
