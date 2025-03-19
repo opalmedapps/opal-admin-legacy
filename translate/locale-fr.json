@@ -2696,6 +2696,15 @@
       "BACK": "Retour"
     }
   },
+  "CLINICIANS": {
+    "MENU": {
+      "TITLE": "Tableau de bord du clinicien",
+      "SUB_TITLE": "Outils du tableau de bord du clinicien",
+      "CLINICAL_AREA": "Domaine clinique",
+      "CLINICAL_AREA_SUB": "Connecter au domaine d'intérêt clinique ORMS.",
+      "BACK": "Retour"
+    }
+  },
   "PATIENTS": {
     "MENU": {
       "TITLE": "Patient",
