@@ -2007,7 +2007,7 @@
       "VALIDATION_GROUP_EN": "English group missing or invalid.",
       "VALIDATION_GROUP_FR": "French group missing or invalid.",
       "VALIDATION_TESTS": "Missing or invalid tests.",
-      "VALIDATION_EDU": "Invalid educational material.",
+      "VALIDATION_EDU": "Invalid educational/reference material.",
       "VALIDATION_LINK": "Invalid addtional links."
     },
     "EDIT": {
