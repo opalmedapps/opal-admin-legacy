@@ -15,8 +15,6 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 		$rootScope.firebaseConfig = null;
 
-		$rootScope.newOpalAdminHost = null;
-
 		$scope.configs = null;
 		$scope.sourceDatabases = null;
 
