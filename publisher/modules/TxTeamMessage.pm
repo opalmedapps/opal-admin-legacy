@@ -432,13 +432,15 @@ sub insertTxTeamMessageIntoOurDB
                 PatientSerNum,
                 CronLogSerNum,
                 PostControlSerNum,
-                DateAdded
+                DateAdded,
+                ReadStatus
             )
         VALUES (
             '$patientser',
             '$cronlogser',
             '$postcontrolser',
-            NOW()
+            NOW(),
+            '0'
         )
     ";
 
