@@ -171,14 +171,21 @@ class Study extends Module {
             // 7th bit
             if (!array_key_exists("investigator_phone", $post) || $post["investigator_phone"] == "")
                 $errCode = "1" . $errCode;
-            else
+            else if($this->_validatePhone($post["investigator_phone"]) == 0){
+                $errCode = "1" . $errCode;
+            }else{
                 $errCode = "0" . $errCode;
-
+            }
+                
             // 8th bit
             if (!array_key_exists("investigator_email", $post) || $post["investigator_email"] == "")
                 $errCode = "1" . $errCode;
-            else
+            else if(!($this->_validateEmail($post["investigator_email"]))){
+                $errCode = "1" . $errCode;
+            }else{
                 $errCode = "0" . $errCode;
+            }
+               
 
             // 9th bit
             if (array_key_exists("start_date", $post) && $post["start_date"] != "") {
@@ -216,9 +223,6 @@ class Study extends Module {
                 if(!is_array($post["patients"]))
                     $errCode = "1" . $errCode;
                 else {
-                    foreach ($post["patients"] as &$id)
-                        $id = intval($id);
-
                     $total = $this->opalDB->getPatientsListByIds($post["patients"]);
                     if (count($total) != count($post["patients"]))
                         $errCode = "1" . $errCode;
@@ -246,14 +250,13 @@ class Study extends Module {
 
             //14th bit
             if (!array_key_exists("consent_form", $post) || $post["consent_form"] == ""){
-                //call questionnaireDB to check if consent form is valid
-                // $this->_connectQuestionnaireDB();
-                // $res = $this->questionnaireDB->getStudyConsentFormTitle(intval($post["consent_form"]));
-                // if(count($res) != 1){
-                //     $errCode = "1" . $errCode;
-                // }else{
-                //     $errCode = "0" . $errCode;
-                // }
+                $this->_connectQuestionnaireDB();
+                $res = $this->questionnaireDB->getStudyConsentFormTitle(intval($post["consent_form"]));
+                if(count($res) != 1){
+                    $errCode = "1" . $errCode;
+                }else{
+                    $errCode = "0" . $errCode;
+                }
             }
             else
                 $errCode = "0" . $errCode;
@@ -277,7 +280,7 @@ class Study extends Module {
             
             // 16th bit 
             if (array_key_exists("investigator_phoneExt", $post) && $post["investigator_phoneExt"] != "") {
-                if (/*!HelpSetup::isValidTimeStamp($post["investigator_phoneExt"])*/0)
+                if (($this->_validatePhoneExt($post["investigator_phoneExt"])) == 0)
                     $errCode = "1" . $errCode;
                 else {
                     $errCode = "0" . $errCode;
@@ -305,6 +308,33 @@ class Study extends Module {
             $errCode .= "11111111111111111";
 
         return $errCode;
+    }
+
+    /**
+     * Validate the users email
+     * @param (str) email
+     * @return (mixed) filtered data for valid false for invalid
+     */
+    protected function _validateEmail($email){
+        return filter_var($email, FILTER_VALIDATE_EMAIL);
+    }
+
+    /**
+     * Validate the users phone number (+1 optional, 10 digit number)
+     * @param (str) phone number
+     * @return (int) 1 for valid 0 for invalid
+     */
+    protected function _validatePhone($phone){
+        return preg_match('/\+?+[0-9]{10}/s', $phone);
+    }
+
+    /**
+     * Validate the users phone extension (0 to 5 digits)
+     * @param (str) phone extension
+     * @return (int) 1 for valid 0 for invalid
+     */
+    protected function _validatePhoneExt($phoneExt){
+        return preg_match('/^\d{0,6}$/', $phoneExt);
     }
 
     /*
@@ -481,5 +511,14 @@ class Study extends Module {
         return $result;
     }
 
+    /**
+     * Check if current consent form has been published to questionnaire control
+     * @return (array) list of forms found
+     */
+    public function getConsentPublished($consentId){
+        $this->checkreadAccess();
+        $result = $this->opalDB->checkConsentFormPublished($consentId);
+        return $result;
+    }
 
 }
