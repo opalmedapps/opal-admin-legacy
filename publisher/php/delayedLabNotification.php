@@ -60,18 +60,20 @@ class DelayedLabNotification
             exit();
         }
 
-        self::createInAppNotifications(
-            $delayedLabs,
-            $notifControlSerNum,
-            $notifControlNameEN,
-            $notifControlNameFR,
-        );
+        if ($delayedLabs) {
+            self::createInAppNotifications(
+                $delayedLabs,
+                $notifControlSerNum,
+                $notifControlNameEN,
+                $notifControlNameFR,
+            );
 
-        self::sendPushNotifications(
-            $delayedLabs,
-            $notifControlNameEN,
-            $notifControlNameFR,
-        );
+            self::sendPushNotifications(
+                $delayedLabs,
+                $notifControlNameEN,
+                $notifControlNameFR,
+            );
+        }
     }
 
     /**
@@ -99,56 +101,54 @@ class DelayedLabNotification
         // The notification is marked as read if at least one lab result is marked as read.
         // This is needed due to UI business rule:
         // if user opens up the main "Lab Results" page ALL lab results' in app notifications should be marked as read.
-        if ($delayedLabs) {
-            foreach ($delayedLabs as &$lab) {
-                // Remove duplicates in ReadBy
-                $readBy = json_decode($lab['ReadBy']);
-                $readBy = array_unique($readBy);
-                $lab["ReadBy"] = json_encode($readBy);
-                // Delete NumLabResults and Language fields
-                unset($lab['NumLabResults']);
-                unset($lab['Language']);
+        foreach ($delayedLabs as &$lab) {
+            // Remove duplicates in ReadBy
+            $readBy = json_decode($lab['ReadBy']);
+            $readBy = array_unique($readBy);
+            $lab["ReadBy"] = json_encode($readBy);
+            // Delete NumLabResults and Language fields
+            unset($lab['NumLabResults']);
+            unset($lab['Language']);
 
-                // Add fields required for creating a notification record
-                $lab["NotificationControlSerNum"] = $notifControlSerNum;
-                $lab["RefTableRowSerNum"] = -1;
-                $date = new \DateTime('now');
-                $lab["DateAdded"] = $date->format('Y-m-d H:i:s');
-                $lab["ReadStatus"] = 0;
-                $lab["RefTableRowTitle_EN"] = $notifControlNameEN;
-                $lab["RefTableRowTitle_FR"] = $notifControlNameFR;
-            }
+            // Add fields required for creating a notification record
+            $lab["NotificationControlSerNum"] = $notifControlSerNum;
+            $lab["RefTableRowSerNum"] = -1;
+            $date = new \DateTime('now');
+            $lab["DateAdded"] = $date->format('Y-m-d H:i:s');
+            $lab["ReadStatus"] = 0;
+            $lab["RefTableRowTitle_EN"] = $notifControlNameEN;
+            $lab["RefTableRowTitle_FR"] = $notifControlNameFR;
+        }
 
-            // Extract from the $delayedLabs associative array the keys and values into separate arrays.
-            // The arrays are used in queries below where the keys are the columns and the values are new entries.
-            // Note, the columns should contain:
-            //         "PatientSerNum",
-            //         "NotificationControlSerNum",
-            //         "DateAdded",
-            //         "ReadStatus",
-            //         "ReadBy",
-            //         "RefTableRowTitle_EN",
-            //         "RefTableRowTitle_FR"
-            $columns = implode(", ", array_keys($delayedLabs[0]));
-            $values = [];
+        // Extract from the $delayedLabs associative array the keys and values into separate arrays.
+        // The arrays are used in queries below where the keys are the columns and the values are new entries.
+        // Note, the columns should contain:
+        //         "PatientSerNum",
+        //         "NotificationControlSerNum",
+        //         "DateAdded",
+        //         "ReadStatus",
+        //         "ReadBy",
+        //         "RefTableRowTitle_EN",
+        //         "RefTableRowTitle_FR"
+        $columns = implode(", ", array_keys($delayedLabs[0]));
+        $values = [];
 
-            foreach ($delayedLabs as $labResult) {
-                $values[] = "('" . implode("', '", $labResult) . "')";
-            }
+        foreach ($delayedLabs as $labResult) {
+            $values[] = "('" . implode("', '", $labResult) . "')";
+        }
 
-            $values = implode(',', $values);
+        $values = implode(',', $values);
 
-            $query = "
-                INSERT INTO Notification ($columns) VALUES $values;
-            ";
+        $query = "
+            INSERT INTO Notification ($columns) VALUES $values;
+        ";
 
-            try {
-                $statement = $pdo->prepare($query);
-                $statement->execute();
-            } catch (PDOException $e) {
-                echo json_encode(["success" => 0, "failure" => 1, "error" => $e]) . PHP_EOL;
-                exit();
-            }
+        try {
+            $statement = $pdo->prepare($query);
+            $statement->execute();
+        } catch (PDOException $e) {
+            echo json_encode(["success" => 0, "failure" => 1, "error" => $e]) . PHP_EOL;
+            exit();
         }
     }
 
