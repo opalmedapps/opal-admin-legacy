@@ -44,9 +44,10 @@ RUN cpanm --notest install \
       Date::Calc \
       DateTime::Format::Strptime \
       DBI \
-      DBD::MariaDB \
+      DBD::mysql \
       File::Spec \
       Net::HTTP \
+      File::JSON::Slurper \
       JSON \
       LWP::UserAgent \
       MIME::Lite \
