@@ -71,11 +71,12 @@ class Study extends Module {
             "description_EN"=>$post["description_EN"],
             "description_FR"=>$post["description_FR"],
             "investigator"=>$post["investigator"],
-            "phoneNumber"=>$post["investigator_phone"],
+            "phone"=>$post["investigator_phone"],
             "email"=>$post["investigator_email"],
             "consentQuestionnaireId"=>$post["consent_form"]
         );
-
+        if(array_key_exists("investigator_phoneExt", $post) && $post["investigator_phoneExt"] != "")
+            $toInsert["phoneExt"] = $post["investigator_phoneExt"];
         if(array_key_exists("start_date", $post) && $post["start_date"] != "")
             $toInsert["startDate"] = gmdate("Y-m-d", $post["start_date"]);
         if(array_key_exists("end_date", $post) && $post["end_date"] != "")
@@ -86,7 +87,7 @@ class Study extends Module {
         if(array_key_exists("patients", $post) && is_array($post["patients"]) && count($post["patients"]) > 0) {
             $toInsertMultiple = array();
             foreach ($post["patients"] as $patient)
-                array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$newStudyId, "consentStatus"=>'invited')); //default invited when patient is added to study
+                array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$newStudyId, "consentStatus"=>1)); //default invited when patient is added to study
             $result = $this->opalDB->insertMultiplePatientsStudy($toInsertMultiple);
         }
 
@@ -118,8 +119,10 @@ class Study extends Module {
      *                      12: patient list (if exists) invalid
      *                      13: questionnaire list (if exists) invalid
      *                      14: consent_form missing
-     *                      15: study ID is missing or invalid if it is an update
-     *                      16: patient consent list (if exists) invalid
+     *                      15: patient consent list (if exists) invalid
+     *                      16: investigator phone extension (if exists) invalid
+     *                      17: study ID is missing or invalid if it is an update
+     *                     
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errCode : array - contains the invalid entries with an error code.
      * */
@@ -242,28 +245,20 @@ class Study extends Module {
                 $errCode = "0" . $errCode;
 
             //14th bit
-            if (!array_key_exists("consent_form", $post) || $post["consent_form"] == "")
-                $errCode = "1" . $errCode;
+            if (!array_key_exists("consent_form", $post) || $post["consent_form"] == ""){
+                //call questionnaireDB to check if consent form is valid
+                // $this->_connectQuestionnaireDB();
+                // $res = $this->questionnaireDB->getStudyConsentFormTitle(intval($post["consent_form"]));
+                // if(count($res) != 1){
+                //     $errCode = "1" . $errCode;
+                // }else{
+                //     $errCode = "0" . $errCode;
+                // }
+            }
             else
                 $errCode = "0" . $errCode;
             
             //15th bit
-            if($isAnUpdate) {
-                if (!array_key_exists("id", $post) || $post["id"] == "")
-                    $errCode = "1" . $errCode;
-                else {
-                    $result = $this->opalDB->getStudyDetails($post["id"]);
-                    if (count($result) < 1)
-                        $errCode = "1" . $errCode;
-                    else if (count($result) == 1)
-                        $errCode = "0" . $errCode;
-                    else
-                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates studies found.");
-                }
-            } else
-                $errCode = "0" . $errCode;
-
-            //16th bit
             if (array_key_exists("patientConsents", $post)) {
                 if(!is_array($post["patientConsents"]))
                     $errCode = "1" . $errCode;
@@ -279,8 +274,35 @@ class Study extends Module {
                 }
             } else
                 $errCode = "0" . $errCode;
+            
+            // 16th bit 
+            if (array_key_exists("investigator_phoneExt", $post) && $post["investigator_phoneExt"] != "") {
+                if (/*!HelpSetup::isValidTimeStamp($post["investigator_phoneExt"])*/0)
+                    $errCode = "1" . $errCode;
+                else {
+                    $errCode = "0" . $errCode;
+                }
+            } else
+                $errCode = "0" . $errCode;
+
+            //17th bit
+            if($isAnUpdate) {
+                if (!array_key_exists("id", $post) || $post["id"] == "")
+                    $errCode = "1" . $errCode;
+                else {
+                    $result = $this->opalDB->getStudyDetails($post["id"]);
+                    if (count($result) < 1)
+                        $errCode = "1" . $errCode;
+                    else if (count($result) == 1)
+                        $errCode = "0" . $errCode;
+                    else
+                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates studies found.");
+                }
+            } else
+                $errCode = "0" . $errCode;
+    
         } else
-            $errCode .= "111111111111111";
+            $errCode .= "11111111111111111";
 
         return $errCode;
     }
@@ -324,7 +346,7 @@ class Study extends Module {
     public function getPatientsList() {
         $this->checkReadAccess();
         $result = $this->opalDB->getPatientsList();
-        usort($result, "self::_sort_name");
+        usort($result, "self::_sortName");
         return $result;
     }
 
@@ -340,7 +362,7 @@ class Study extends Module {
     }
 
 
-    protected static function _sort_name($a, $b){
+    protected static function _sortName($a, $b){
         return strcmp($a["name"], $b["name"]);
     }
 
@@ -364,8 +386,15 @@ class Study extends Module {
             "title_FR"=>$study["title_FR"],
             "description_EN"=>$study["description_EN"],
             "description_FR"=>$study["description_FR"],
-            "investigator"=>$study["investigator"]
+            "investigator"=>$study["investigator"],
+            "phone"=>$post["investigator_phone"],
+            "email"=>$post["investigator_email"],
+            "consentQuestionnaireId"=>$post["consent_form"]
         );
+        if($study["investigator_phoneExt"])
+            $toUpdate["phoneExt"] = $study["investigator_phoneExt"];
+        else
+            $toUpdate['phoneExt'] = null;
         if($study["start_date"])
             $toUpdate["startDate"] = gmdate("Y-m-d", $study["start_date"]);
         else
@@ -398,7 +427,7 @@ class Study extends Module {
         if(count($toAdd) > 0) {
             $toInsertMultiple = array();
             foreach ($toAdd as $patient)
-                array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$study["ID"], "consentStatus"=>'invited'));
+                array_push($toInsertMultiple, array("patientId"=>$patient, "studyId"=>$study["ID"], "consentStatus"=>1));
 
             $total += $this->opalDB->insertMultiplePatientsStudy($toInsertMultiple);
         }
@@ -407,7 +436,7 @@ class Study extends Module {
         if(array_key_exists("patientConsents", $post) && is_array($post["patientConsents"]) && count($post["patientConsents"]) > 0){
             foreach($post["patientConsents"] as $item){
                 if($item['changed'] && $item['consent'] && $item['id']){
-                    $this->opalDB->updateStudyConsent($study["ID"], $item['id'], $item['consent']);  
+                    $this->opalDB->updateStudyConsent($study["ID"], $item['id'], intval($item['consent']));  
                     $total += 1;
                 }
             }

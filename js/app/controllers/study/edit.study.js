@@ -1,3 +1,5 @@
+//const e = require("express");
+
 angular.module('opalAdmin.controllers.study.edit', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
 controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance, $locale, studyCollectionService, Session, ErrorHandler) {
@@ -12,6 +14,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 		investigator: "",
 		investigator_phone: "",
 		investigator_email: "",
+		investigator_phoneExt: "",
 		start_date: "",
 		end_date: "",
 		patientConsents: [],
@@ -35,6 +38,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			name: "",
 			email: "",
 			phone: "",
+			phoneExt: "",
 		},
 		dates: {
 			start_date: "",
@@ -56,7 +60,11 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 		['html', 'insertLink']
 	];
 
-	$scope.consentChoices = ['invited','opalConsented','otherConsented','declined']; //hardcoded until we decide if we want to add a consent choices table in the DB
+	$scope.consentChoices = 
+	[$filter('translate')('STUDY.EDIT.INVITED'), 
+	$filter('translate')('STUDY.EDIT.OPAL_CONSENTED'),
+	$filter('translate')('STUDY.EDIT.OTHER_CONSENTED'),
+	$filter('translate')('STUDY.EDIT.DECLINED')];
 
 	$scope.oldData = {};
 	$scope.changesDetected = false;
@@ -184,6 +192,15 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 
 	$scope.patientConsentChange = function(value){
 		value.changed = true;
+		if(value.consent_display === $filter('translate')('STUDY.EDIT.INVITED')){
+			value.consent = 1;
+		}else if(value.consent_display === $filter('translate')('STUDY.EDIT.OPAL_CONSENTED')){
+			value.consent = 2;
+		}else if(value.consent_display === $filter('translate')('STUDY.EDIT.OTHER_CONSENTED')){
+			value.consent = 3;
+		}else if(value.consent_display === $filter('translate')('STUDY.EDIT.DECLINED')){
+			value.consent = 4;
+		}
 	}
 
 	studyCollectionService.getPatientsList().then(function (response) {
@@ -197,6 +214,22 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 		$scope.patientConsentList = response.data;
 		angular.forEach($scope.patientConsentList, function(value){
 			value.changed = null;
+			switch (parseInt(value.consent)){
+				default:
+					value.consent_display = $filter('translate')('STUDY.EDIT.INVITED'); //default value in DB should always be invited
+					break;
+				case 1:
+					value.consent_display = $filter('translate')('STUDY.EDIT.INVITED');
+					break;
+				case 2:
+					value.consent_display = $filter('translate')('STUDY.EDIT.OPAL_CONSENTED');
+					break;
+				case 3:
+					value.consent_display = $filter('translate')('STUDY.EDIT.OTHER_CONSENTED');
+					break;
+				case 4:
+					value.consent_display = $filter('translate')('STUDY.EDIT.DECLINED');
+			}
 		});
 		$scope.ready[1] = true;
 	}).catch(function(err){
@@ -219,7 +252,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			angular.forEach($scope.questionnaireList, function(value) {
 				value.added = $scope.backupStudy.questionnaire.includes(value.ID);
 			});
-
+			console.log($scope.backupStudy);
 			if($scope.language === "FR"){
 				$scope.consentTitle = $scope.backupStudy.consentQuestionnaireTitle[0].name_FR;
 			}else{
@@ -234,8 +267,10 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			$scope.toSubmit.title_desc.description_EN = $scope.backupStudy.description_EN;
 			$scope.toSubmit.title_desc.description_FR = $scope.backupStudy.description_FR;
 			$scope.toSubmit.investigator.name = $scope.backupStudy.investigator;
-			$scope.toSubmit.investigator.email = $scope.backupStudy.email;
-			$scope.toSubmit.investigator.phone = $scope.backupStudy.phoneNumber;
+			$scope.toSubmit.investigator.email = $scope.backupStudy.email; 
+			$scope.toSubmit.investigator.phone = $scope.backupStudy.phone;
+			$scope.toSubmit.investigator.phoneExt = $scope.backupStudy.phoneExt;
+
 			$scope.toSubmit.consent_form.id = $scope.backupStudy.consentQuestionnaireId;
 			if($scope.backupStudy.startDate !== "" && $scope.backupStudy.startDate !== null) {
 				dateArray = $scope.backupStudy.startDate.split("-");
@@ -434,13 +469,14 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			$scope.readyToSend.investigator = $scope.toSubmit.investigator.name;
 			$scope.readyToSend.investigator_email = $scope.toSubmit.investigator.email;
 			$scope.readyToSend.investigator_phone = $scope.toSubmit.investigator.phone;
+			$scope.readyToSend.investigator_phoneExt = $scope.toSubmit.investigator.phoneExt;
 			$scope.readyToSend.start_date = (($scope.toSubmit.dates.start_date) ? moment($scope.toSubmit.dates.start_date).format('X') : "");
 			$scope.readyToSend.end_date = (($scope.toSubmit.dates.end_date) ? moment($scope.toSubmit.dates.end_date).format('X') : "");
 			$scope.readyToSend.patients = $scope.toSubmit.patients;
 			$scope.readyToSend.questionnaire = $scope.toSubmit.questionnaire;
 			$scope.readyToSend.consent_form = $scope.toSubmit.consent_form.id;
 			$scope.readyToSend.patientConsents = $scope.patientConsentList;
-
+			console.log($scope.readyToSend);
 			$.ajax({
 				type: "POST",
 				url: "study/update/study",

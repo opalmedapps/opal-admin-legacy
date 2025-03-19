@@ -26,6 +26,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			investigator: "",
 			investigator_email: "",
 			investigator_phone: "",
+			investigator_phoneExt: "",
 			start_date: "",
 			end_date: "",
 			patients: [],
@@ -47,6 +48,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				name: "",
 				email: "",
 				phone: "",
+				phoneExt: "",
 			},
 			dates: {
 				start_date: "",
@@ -411,7 +413,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.leftMenu.title_desc.display = $scope.leftMenu.title_desc.open;
 			$scope.leftMenu.title_desc.preview = $scope.leftMenu.title_desc.open;
 		}, true);
-
+	
 		// Function to submit the new diagnosis translation
 		$scope.submitStudy = function () {
 			$scope.readyToSend.code = $scope.toSubmit.details.code;
@@ -422,6 +424,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.readyToSend.investigator = $scope.toSubmit.investigator.name;
 			$scope.readyToSend.investigator_email = $scope.toSubmit.investigator.email;
 			$scope.readyToSend.investigator_phone = $scope.toSubmit.investigator.phone;
+			$scope.readyToSend.investigator_phoneExt = $scope.toSubmit.investigator.phoneExt;
 			$scope.readyToSend.start_date = (($scope.toSubmit.dates.start_date) ? moment($scope.toSubmit.dates.start_date).format('X') : "");
 			$scope.readyToSend.end_date = (($scope.toSubmit.dates.end_date) ? moment($scope.toSubmit.dates.end_date).format('X') : "");
 			$scope.readyToSend.patients = $scope.toSubmit.patients;
