@@ -775,7 +775,9 @@ class Publication extends Module
             "Intro_EN"=>htmlspecialchars_decode($currentQuestionnaire["description_EN"]),
             "Intro_FR"=>htmlspecialchars_decode($currentQuestionnaire["description_FR"]),
             "SessionId"=>$this->opalDB->getSessionId(),
+            'PublishFlag'=> 0,
             "DateAdded"=>date("Y-m-d H:i:s"),
+            'LastPublished'=>date("Y-m-d H:i:s"),
             "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
         );
 
