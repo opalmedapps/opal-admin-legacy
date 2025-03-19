@@ -94,7 +94,8 @@
                             Appointment ap, Patient P
                         WHERE 
                             DATE(ap.ScheduledStartTime) = DATE(DATE_ADD(NOW(), INTERVAL 1 DAY))
-                            AND ap.State = 'Active'
+                            AND ap.State = 'Active' 
+                            AND ap.Status <> 'Deleted' 
                             AND ap.PatientSerNum = P.PatientSerNum) AS AP,
                     
                         (SELECT A.AliasName_FR, A.AliasName_EN, AE.AliasExpressionSerNum
