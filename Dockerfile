@@ -46,6 +46,8 @@ RUN cpanm --notest install \
       Date::Calc \
       DateTime::Format::Strptime \
       DBI \
+      # Aria DB uses Sybase
+      DBI::Sybase \
       DBD::mysql \
       File::Spec \
       Net::HTTP \
