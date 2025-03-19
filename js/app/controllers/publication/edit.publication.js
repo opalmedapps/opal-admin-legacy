@@ -452,7 +452,6 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 			$scope.changesDetected = false;
 			$scope.oldData = JSON.parse(JSON.stringify($scope.toSubmit));
 		}).catch(function (response) {
-			console.log(response);
 			ErrorHandler.onError(response, $filter('translate')('PUBLICATION.EDIT.ERROR_DETAILS'));
 			$uibModalInstance.close();
 		});
