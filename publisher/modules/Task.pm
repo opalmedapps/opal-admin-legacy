@@ -695,10 +695,10 @@ sub insertTaskIntoOurDB
 	my $aliasexpressionser	= $task->getTaskAliasExpressionSer();
 	my $duedatetime		    = $task->getTaskDueDateTime();
 	my $diagnosisser		= $task->getTaskDiagnosisSer();
-	my $priorityser		    = $task->getTaskPrioritySer();
+	my $priorityser		    = ($task->getTaskPrioritySer() eq '' ? 0 : $task->getTaskPrioritySer());
 	my $creationdate	    = $task->getTaskCreationDate();
 	my $status		        = $task->getTaskStatus();
-	my $completiondate	    = $task->getTaskCompletionDate();
+	my $completiondate	    = ($task->getTaskCompletionDate() eq '' ? '0000-00-00 00:00:00' : $task->getTaskPrioritySer());
 	my $state		        = $task->getTaskState();
 	my $cronlogser		    = $task->getTaskCronLogSer();
 
@@ -846,7 +846,7 @@ sub compareWith
 		my $updatedAESer = $UpdatedTask->setTaskAliasExpressionSer($Saliasexpressionser); # update
 		print "Will update database entry to '$updatedAESer'.\n";
 	}
-	if ($Spriorityser ne $Opriorityser) {
+	if (($Spriorityser ne $Opriorityser) and ($Spriorityser ne '')) {
 
 		print "Task Priority serial has changed from '$Opriorityser' to '$Spriorityser'\n";
 		my $updatedPrioritySer = $UpdatedTask->setTaskPrioritySer($Spriorityser); # update
