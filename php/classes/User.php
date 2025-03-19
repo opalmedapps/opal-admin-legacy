@@ -132,20 +132,6 @@ class User extends Module {
             return true;
         }
 
-
-    /*
-     * Legacy authentication system when no AD is available. It validates the username and password directly into
-     * opalDB after encrypting the password.
-     * @params  $username (string) duh!
-     *          $password (string) DUH!
-     * @return  $result (array) details of the user info.
-     * */
-    protected function _userLoginLegacy($username, $password) {
-        $result = $this->opalDB->authenticateUserLegacy($username, hash("sha256", $password . USER_SALT));
-        $result = $this->_validateUserAuthentication($result, $username);
-        return $result;
-    }
-
    /*
     * Validate if user exists when `AD_ENABLED` is `1`.
     * @param $post (array) contains username
@@ -477,13 +463,10 @@ class User extends Module {
         if(!is_array($userDetails))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid user.");
 
-        if(intval($userDetails["type"]) == 2) {
-            if($data["password"] && $data["confirmPassword"]) {
-                $result = $this->_passwordValidation($data["password"], $data["confirmPassword"]);
-                if (count($result) > 0)
-                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
-                $this->opalDB->updateUserPassword($userDetails["serial"], hash("sha256", $data["password"] . USER_SALT));
-            }
+        if($data["password"] && $data["confirmPassword"]) {
+            $result = $this->_passwordValidation($data["password"], $data["confirmPassword"]);
+            if (count($result) > 0)
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
         }
 
         $newRole = $this->opalDB->getRoleDetails($data["roleId"]);
@@ -691,8 +674,7 @@ class User extends Module {
         if(count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
 
-        // use a random password instead of a blank password
-        $this->_insertUpdateUser($type, $username, $language, base64_encode(random_bytes(20)), $roleId, $isInsert);
+        $this->_insertUpdateUser($type, $username, $language, $roleId, $isInsert);
     }
 
     /**
@@ -704,11 +686,12 @@ class User extends Module {
      * @param $roleId int - role of the user
      * @param $isInsert boolean - if the process is an insert new user or update a deactivated user
      */
-    protected function _insertUpdateUser($type, $username, $language, $password, $roleId, $isInsert = false) {
+    protected function _insertUpdateUser($type, $username, $language, $roleId, $isInsert = false) {
         if($isInsert)
-            $this->opalDB->insertUser($type, $username, hash("sha256", $password . USER_SALT), $language, $roleId);
+            // use a random password instead of a blank password
+            $this->opalDB->insertUser($type, $username, hash("sha256", base64_encode(random_bytes(20)) . base64_encode(random_bytes(20))), $language, $roleId);
         else
-            $this->opalDB->updateUser($type, $username, hash("sha256", $password . USER_SALT), $language, $roleId);
+            $this->opalDB->updateUser($type, $username, $language, $roleId);
     }
 
     /*

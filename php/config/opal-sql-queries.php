@@ -468,7 +468,7 @@ define("OPAL_UNDELETE_USER","
 ");
 
 define("OPAL_UPDATE_USER","
-    UPDATE ".OPAL_OAUSER_TABLE." SET oaRoleId = :oaRoleId, type = :type, Language = :Language, Password = :Password,
+    UPDATE ".OPAL_OAUSER_TABLE." SET oaRoleId = :oaRoleId, type = :type, Language = :Language,
     deleted = ".NON_DELETED_RECORD."
     WHERE Username = :Username;
 ");
