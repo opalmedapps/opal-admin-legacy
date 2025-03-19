@@ -4191,8 +4191,20 @@ class DatabaseOpal extends DatabaseAccess {
      * @param  resourceId
      * @return  array Doctor info
      * */
-    function getDoctorResource($sourceId,$resourceId) {
-        return $this->_fetch(OPAL_GET_DOCTOR_RESOURCE, array(
+    function getAriaDoctorResource($sourceId,$resourceId) {
+        return $this->_fetch(OPAL_GET_ARIA_DOCTOR_RESOURCE, array(
+            array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":ResourceId","variable"=>$resourceId,"data_type"=>PDO::PARAM_STR)
+        ));
+    }
+
+    /**
+     * Get doctors resource
+     * @param  resourceId
+     * @return  array Doctor info
+     * */
+    function getNoAriaDoctorResource($sourceId,$resourceId) {
+        return $this->_fetch(OPAL_GET_NO_ARIA_DOCTOR_RESOURCE, array(
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":ResourceId","variable"=>$resourceId,"data_type"=>PDO::PARAM_STR)
         ));
