@@ -81,7 +81,7 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 		color: '',
 		terms: [],
 		checkin_details: {
-			checkin_possible: '',
+			checkin_possible: 0,
 			instruction_EN: '',
 			instruction_FR: ''
 		}
