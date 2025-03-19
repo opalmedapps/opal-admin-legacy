@@ -79,6 +79,16 @@ class Patient extends Module {
     }
 
     /**
+     * Return patient's Firebase username searched by the RAMQ
+     * @return array - list of the Firebase username(s) matching search
+     */
+    public function getPatientFirebaseUsername($ramq) {
+        $this->checkReadAccess();
+        $usernames = $this->opalDB->getPatientFirebaseUsername($ramq);
+        return isset($usernames[0]['username']) ? $usernames[0]['username'] : null;
+    }
+
+    /**
      * Validate the name search parameter for individual reports
      *
      * @param $post : array - Contains the following information

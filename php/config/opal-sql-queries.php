@@ -912,6 +912,13 @@ define("OPAL_GET_PATIENT_RAMQ", "
     FROM ".OPAL_PATIENT_TABLE." WHERE SSN LIKE :SSN;
 ");
 
+define("OPAL_GET_PATIENT_FIREBASE_USERNAME", "
+    SELECT u.Username AS username
+    FROM ".OPAL_USERS_TABLE." u
+    LEFT JOIN ".OPAL_PATIENT_TABLE." p ON u.UserTypeSerNum = p.PatientSerNum
+    WHERE p.SSN LIKE :SSN;
+");
+
 define("OPAL_GET_DIAGNOSIS_REPORT", "
     SELECT DiagnosisSerNum AS sernum, CreationDate AS creationdate, Description_EN AS description
     FROM ".OPAL_DIAGNOSIS_TABLE." WHERE PatientSerNum = :pnum;

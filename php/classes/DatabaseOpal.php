@@ -2281,6 +2281,17 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
+     * Get patient's Firebase username
+     * @param $ssn : string - target patient RAMQ number
+     * @return array - patient Firebase username(s)
+     */
+    function getPatientFirebaseUsername($ssn){
+        return $this->_fetchAll(OPAL_GET_PATIENT_FIREBASE_USERNAME, array(
+            array("parameter"=>":SSN","variable"=>$ssn,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /**
      * Get educational material options
      * @params $matType : string - material category
      * @return array - educ options
@@ -4468,3 +4479,4 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_HOSPITAL_MAP_MH, $toUpdate);
     }
 }
+
