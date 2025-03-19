@@ -20,7 +20,7 @@ COPY bower.json ./
 RUN bower --allow-root --production install
 
 # Build/install PHP dependencies
-FROM composer:2.6.4 as php-dependencies
+FROM composer:2.6.5 as php-dependencies
 
 COPY composer.json composer.lock ./
 
