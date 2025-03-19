@@ -1364,9 +1364,8 @@ CASE WHEN pdi.DeviceType = 0 THEN 'iOS'
 pdi.LastUpdated AS login,
 pdi.appVersion AS appVersion
 FROM ".OPAL_PATIENT_TABLE." p, ".OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE." pdi, ".OPAL_USERS_TABLE." u
-WHERE pdi.PatientSerNum = p.PatientSerNum
+WHERE pdi.Username = u.Username
 AND p.PatientSerNum = u.UserTypeSerNum
-AND u.UserType = 'Patient'
 ORDER BY pdi.LastUpdated DESC LIMIT 20000;
 ");
 
