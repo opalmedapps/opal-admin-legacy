@@ -402,6 +402,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 
 		// Function to submit the new edu material
 		$scope.submitEduMat = function (event) {
+			$scope.invalidEduMatType = false;
 			if ($scope.checkForm()) {
 				// Log who created educational material
 				var currentUser = Session.retrieveObject('user');
@@ -415,7 +416,10 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 							$scope.invalidEduMatType = true;	
 							event.preventDefault();
 					}
-				  });
+				});
+				if ($scope.invalidEduMatType) {
+					return false;
+				}
 
 
 				$.ajax({
