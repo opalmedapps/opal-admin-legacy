@@ -205,6 +205,10 @@ sub sendPushNotification
 
     my ($sendstatus, $sendlog); # initialize
 
+    # add $patientName as a wildcard for replacement
+    my $firstName = Patient::getPatientFirstNameFromSer($patientser);
+    $dynamicKeys{'\$patientName'} = $firstName;
+
     # loop through potential wildcard keys to execute a string replace
     for my $key (keys %dynamicKeys) {
         $message =~ s/$key/$dynamicKeys{$key}/g;
