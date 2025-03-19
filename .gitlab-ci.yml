@@ -16,34 +16,18 @@ stages:
   - cleanup
   - extra
 
-
-# variables:
-#   TEST_DISABLED: "true"
-#   DAST_DISABLED: "true"
-#   POSTGRES_ENABLED: "false"
-
+# workaround to be able to set variables using commands
+# see: https://gitlab.com/gitlab-org/gitlab-runner/-/issues/2814#note_414028555
 set variables:
   stage: .pre
   script:
     - apk add --no-cache git
-    # workaround to be able to set variables using commands
-    # see: https://gitlab.com/gitlab-org/gitlab-runner/-/issues/2814#note_414028555
     - echo GIT_VERSION=$(git describe) > variables.env
     - echo GIT_BRANCH=$CI_COMMIT_REF_NAME >> variables.env
   artifacts:
     reports:
       dotenv: variables.env
 
-
-build:
-  stage: build
-  script:
-    - export
-
-# newjob:
-#   stage: deploy
-#   script:
-#     - whoami
 
 include: 
   - template: Auto-DevOps.gitlab-ci.yml
