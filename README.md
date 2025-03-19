@@ -79,7 +79,7 @@ Open the **config.json** file using your favourite editor and replace the defaul
 
 Visit opalAdmin's database version control page in your web browser at:
 
-http://yourdomain/opalAdmin/dbv
+http://localhost:8091/dbv
 
 Username: dbv -- Password: dbv
 
@@ -91,7 +91,7 @@ On the DBV page, run all revisions by selecting all revisions and clicking *Run 
 
 Visit the opalAdmin site:
 
-http://<your host IP>/opalAdmin/
+http://<your host IP>/
 
 Username: admin -- Password: 123456
 
@@ -136,7 +136,7 @@ git checkout staging
 
 * Check what ports your server is listening on, and verify the ports you want to use are free using the Netstat tool.
 
-* Connect to your localhost using https, even if your web browser throws exceptions. There are security settings within opalAdmin that will require you to attempt a connection using https. Connect to https://localhost/opalAdmin/#/ instead of localhost/opalAdmin/#/ . Your browser might throw a security exception. Just click advanced > proceed anyway. 
+* Connect to your localhost using https, even if your web browser throws exceptions. There are security settings within opalAdmin that will require you to attempt a connection using https. Connect to https://localhost/ instead of http://localhost/. Your browser might throw a security exception. Just click advanced > proceed anyway.
 
 * If you are getting a 401 error from opalAdmin, then your database does not have the standard admin / 123456 login credentials. Try '1234' as the password, or ask a member of opal for help. They might try sending you their copy of OpalDB and let you use their login credentials for now.
 
@@ -145,5 +145,5 @@ git checkout staging
 * [Angular](https://angularjs.org) - The JS web framework used
 * [Bootstrap](http://getbootstrap.com) - CSS
 * [PHP](http://php.net)
-* [Perl](http://perldoc.perl.org) 
+* [Perl](http://perldoc.perl.org)
 * [JavaScript](https://www.javascript.com)
