@@ -104,13 +104,13 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 		});
 
 		// Call our API service to get the list of possible additional roles
-		$scope.additional_roles = []
+		$scope.additional_roles = [];
 		userCollectionService.getAdditionalRoles().then(
 			function(response){
 				$scope.additional_roles = response.data;
 			}).catch(function(err) {
-			ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR_ADDITIONAL_ROLES'));
-		});
+				ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR_ADDITIONAL_ROLES'));
+			});
 
 		// Function to validate username
 		$scope.validUsername = { status: null, message: null };
@@ -242,7 +242,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 		// Function to toggle steps when updating the additional role field
 		$scope.additionalRolesUpdate = function () {
 			$scope.roleSection.open = true;
-			if (JSON.stringify($scope.newUser.additional_roles) != '[]') {
+			if ($scope.newUser.additional_roles.length > 0) {
 				steps.additional_roles.completed = true;
 				steps.role.completed = true;
 				$scope.languageSection.show = true;
