@@ -28,6 +28,7 @@ class Email extends Module {
                 array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
             );
         }
+        $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
         parent::__construct(MODULE_EMAIL, $guestStatus);
     }
@@ -42,8 +43,6 @@ class Email extends Module {
         $this->checkReadAccess();
         $emailList = array();
         try {
-            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
             $sql = "
 				SELECT DISTINCT
 					ec.EmailControlSerNum,
@@ -99,7 +98,6 @@ class Email extends Module {
         $this->checkReadAccess($serial);
         $emailDetails = array();
         try {
-            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
 				SELECT DISTINCT
 					ec.Subject_EN,
@@ -148,7 +146,6 @@ class Email extends Module {
         $this->checkReadAccess();
         $types = array();
         try {
-            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
 			SELECT DISTINCT 
 				et.EmailTypeSerNum,
@@ -198,7 +195,6 @@ class Email extends Module {
         $sessionId 		= $emailDetails['user']['sessionid'];
 
         try {
-            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
 				INSERT INTO 
 					EmailControl (
@@ -255,7 +251,6 @@ class Email extends Module {
         );
 
         try {
-            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
 				UPDATE
 					EmailControl
@@ -303,7 +298,6 @@ class Email extends Module {
         $sessionId = $user['sessionid'];
 
         try {
-            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
 				DELETE FROM
 					EmailControl
@@ -348,8 +342,6 @@ class Email extends Module {
         $this->checkReadAccess($serial);
         $emailLogs = array();
         try {
-            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
             $sql = null;
             if (!$serial) {
                 $sql = "
@@ -450,7 +442,6 @@ class Email extends Module {
 
         $serials = implode(',', $emailIds);
         try {
-            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
                     emmh.EmailControlSerNum,

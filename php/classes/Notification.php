@@ -28,6 +28,7 @@ class Notification extends Module {
                 array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
             );
         }
+        $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
         parent::__construct(MODULE_NOTIFICATION, $guestStatus);
     }
@@ -42,7 +43,6 @@ class Notification extends Module {
         $this->checkReadAccess();
         $notificationList = array();
         try {
-            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
                     nt.NotificationControlSerNum,
@@ -98,7 +98,6 @@ class Notification extends Module {
         $this->checkReadAccess($serial);
         $notificationDetails = array();
         try {
-            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
                     nt.Name_EN,
@@ -150,7 +149,6 @@ class Notification extends Module {
         $this->checkReadAccess();
         $types = array();
 	    try {
-            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
                     ntt.NotificationTypeName,
@@ -201,7 +199,6 @@ class Notification extends Module {
         $sessionId          = $notification['user']['sessionid'];
 
 		try {
-            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 INSERT INTO
                     NotificationControl (
@@ -256,7 +253,6 @@ class Notification extends Module {
         );
 
         try {
-            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 UPDATE
                     NotificationControl
@@ -301,7 +297,6 @@ class Notification extends Module {
         $sessionId  = $user['sessionid'];
 
         try {
-			$this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 DELETE FROM
                     NotificationControl
@@ -343,8 +338,6 @@ class Notification extends Module {
         $this->checkReadAccess($serial);
         $notificationLogs = array();
         try {
-            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
             $sql = null;
             if (!$serial) {
                 $sql = "

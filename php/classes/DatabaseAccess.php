@@ -166,7 +166,6 @@ class DatabaseAccess extends HelpSetup
      * */
     protected function _fetchAll($sqlFetchAll, $paramList = array()) {
         try {
-            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $this->connection->prepare($sqlFetchAll);
             if(is_array($paramList) && count($paramList) > 0) {
                 foreach($paramList as $value) {
@@ -200,7 +199,6 @@ class DatabaseAccess extends HelpSetup
      * */
     protected function _fetch($sqlFetch, $paramList = array()) {
         try {
-            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $this->connection->prepare($sqlFetch);
             if(is_array($paramList) && count($paramList) > 0) {
                 foreach($paramList as $value) {
@@ -235,7 +233,6 @@ class DatabaseAccess extends HelpSetup
     protected function _fetchAllStoredProcedure($sqlFetchAll, $paramList = array()) {
         $results = array();
         try {
-            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $this->connection->prepare($sqlFetchAll);
             if(is_array($paramList) && count($paramList) > 0) {
                 foreach($paramList as $value) {
@@ -274,7 +271,6 @@ class DatabaseAccess extends HelpSetup
      * */
     protected function _execute($sqlQuery, $paramList = array()) {
         try {
-            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $this->connection->prepare($sqlQuery);
             if(is_array($paramList) && count($paramList) > 0) {
                 foreach($paramList as $value) {
@@ -317,7 +313,6 @@ class DatabaseAccess extends HelpSetup
     protected function _queryInsertReplace($sqlInsert, $paramList = array()) {
         $cpt = 0;
         try {
-            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $this->connection->prepare($sqlInsert);
             if(is_array($paramList) && count($paramList) > 0) {
                 foreach($paramList as $value) {

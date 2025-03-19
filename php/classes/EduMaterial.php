@@ -27,6 +27,7 @@ class EduMaterial extends Module {
                 array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
             );
         }
+        $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
         
         parent::__construct(MODULE_EDU_MAT, $guestStatus);
     }
@@ -50,8 +51,6 @@ class EduMaterial extends Module {
 		$userSer = $user['id'];
 		$sessionId = $user['sessionid'];
 		try {
-            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
             foreach ($eduMatList as $edumat) {
 
 				$eduMatPublish  = $edumat['publish'];
@@ -93,7 +92,6 @@ class EduMaterial extends Module {
         // Initialize list of types, separate languages
         $types = array();
         try {          
-            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
                     em.EducationalMaterialType_EN,
@@ -184,8 +182,6 @@ class EduMaterial extends Module {
         }*/
 
 		try {
-			$this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
             // Validate each table of content or URL
             $extensions = array();
             $sql = "
@@ -415,8 +411,6 @@ class EduMaterial extends Module {
         }*/
 
 		try {
-			$this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
             // Validate each table of content or URL
             $extensions = array();
             $sql = "
@@ -754,7 +748,6 @@ class EduMaterial extends Module {
             'message'   => ''
         );
 	    try {
-			$this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 DELETE FROM
                     EducationalMaterialControl
@@ -828,8 +821,6 @@ class EduMaterial extends Module {
         $this->checkReadAccess($serial);
         $educationalMaterialLogs = array();
         try {
-            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
             $sql = null;
             // get all logs for all aliases
             if (!$serial) {

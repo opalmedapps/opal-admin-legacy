@@ -27,6 +27,7 @@ class Cron extends Module {
                 array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
             );
         }
+        $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
         
         parent::__construct(MODULE_CRON_LOG, $guestStatus);
     }
@@ -41,8 +42,6 @@ class Cron extends Module {
         $this->checkReadAccess();
         $cronDetails = array();
         try {
-            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
             $sql = "
 				SELECT DISTINCT 
 					Cron.CronSerNum,
@@ -97,8 +96,6 @@ class Cron extends Module {
         $repeatInterval	= $cronDetails['repeatInterval'];
 
         try {
-            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
             $sql ="
 				UPDATE 
 					Cron
