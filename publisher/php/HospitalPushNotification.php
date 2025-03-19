@@ -147,7 +147,7 @@
             $message = self::buildMessageForRoomNotification($room["room_".$language], $messageLabels["Name_".$language ],$messageLabels["Description_".$language] );
 
             // Obtain patient device identifiers (patient's caregivers including self-caregiver)
-            $patientDevices = PublisherPatient::getCaregiverDeviceIdentifiers(
+            list($patientDevices, $institution_acronym_en, $institution_acronym_fr) = PublisherPatient::getCaregiverDeviceIdentifiers(
                 $patientSerNum,
             );
 
