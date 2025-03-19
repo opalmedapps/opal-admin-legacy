@@ -80,11 +80,11 @@
                 <div class="col-xs-12 col-sm-10">
                     <div class="row">
                         <label class="control-label col-xs-12 col-md-2">
-                        {{'USERS.EDIT.ADDITIONAL_ROLES'|translate}}
+                        {{'USERS.EDIT.ADDITIONAL_PRIVILEGES'|translate}}
                         </label>
                         <div class="col-sm-6">
-                            <select multiple="true" ng-disabled="roleDisabled" ng-model="user.selected_additionalroles" ng-change="roleUpdate()" ng-options="additionalrole as additionalrole.name for additionalrole in additionalroles track by additionalrole.pk" class="form-control">
-                                <option ng-hide="user.role" value="">{{'USERS.EDIT.SELECT_ROLE'|translate}}</option>
+                            <select multiple="true" ng-disabled="roleDisabled" ng-model="user.selected_additionalprivileges" ng-change="roleUpdate()" ng-options="additionalprivilege as additionalprivilege.name for additionalprivilege in additionalprivileges track by additionalprivilege.pk" class="form-control">
+                                <option ng-hide="user.role" value="">{{'USERS.EDIT.SELECT_PRIVILEGES'|translate}}</option>
                             </select>
                             <p style="margin-bottom: 0;"><em><small>{{'USERS.EDIT.MUTIPLE_SELECT_TIPS'|translate}}</small></em></p>
                         </div>
