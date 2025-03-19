@@ -303,12 +303,7 @@ class Alias extends Module {
                 if(!in_array(intval($term), $listIds))
                     array_push($listIds, intval($term));
 
-            if($isAnUpdate) {
-                if (count($this->opalDB->getPublishedAliasExpression($post["id"])) + count($this->opalDB->getDeactivatedAliasExpressions($post["id"])) + count($listIds) <= 0) {
-                    $errCode = "1" . $errCode;
-                    $validTerms = false;
-                }
-            } else {
+            if(!$isAnUpdate) {
                 if(count($listIds) <= 0) {
                     $errCode = "1" . $errCode;
                     $validTerms = false;
