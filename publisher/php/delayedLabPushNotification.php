@@ -107,6 +107,13 @@ class DelayedLabPushNotification
     {
         global $pdo;
 
+        if (!$delayedLabs) {
+            $errMsg = "An error occurred while creating notifications for delayed lab results.";
+            $errMsg .= "\nThe array of delayed labs is empty.\n";
+            echo json_encode(["success" => 0, "failure" => 1, "error" => $errMsg]) . PHP_EOL;
+            exit();
+        }
+
         // Extract from the $delayedLabs associative array the keys and values into separate arrays.
         // The arrays are used in queries below where the keys are the columns and the values are new entries.
         $delayedLabsArray = array_values($delayedLabs);
