@@ -963,8 +963,7 @@ sub updateDatabase
 sub compareWith
 {
     my ($SuspectTR, $OriginalTR) = @_; # our two TR objects
-    my $UpdatedTestResult = dclone($OriginalTR);
-	my $change = 0; # boolean to recognize an actual difference between objects
+    my $UpdatedTR = dclone($OriginalTR);
 
     # retrieve params
     # Suspect TR
@@ -1011,23 +1010,23 @@ sub compareWith
 		or $Sunitdesc ne $Ounitdesc
 		or $Svalidentry ne $Ovalidentry
 	) {
-		$change = 1; # change occurred
-		$UpdatedTestResult->setTestResultExpressionSer($Sexpressionser);
-		$UpdatedTestResult->setTestResultName($Sname);
-		$UpdatedTestResult->setTestResultFacName($Sfacname);
-		$UpdatedTestResult->setTestResultAbnormalFlag($Sabnormalflag);
-		$UpdatedTestResult->setTestResultTestDate($Stestdate);
-		$UpdatedTestResult->setTestResultMaxNorm($Smaxnorm);
-		$UpdatedTestResult->setTestResultMinNorm($Sminnorm);
-		$UpdatedTestResult->setTestResultApprovedFlag($Sapprvflag);
-		$UpdatedTestResult->setTestResultTestValue($Stestvalue);
-		$UpdatedTestResult->setTestResultTestValueString($Stestvaluestring);
-		$UpdatedTestResult->setTestResultUnitDesc($Sunitdesc);
-		$UpdatedTestResult->setTestResultValidEntry($Svalidentry);
-		$UpdatedTestResult->setTestResultCronLogSer($Scronlogser);
+		$UpdatedTR->setTestResultExpressionSer($Sexpressionser);
+		$UpdatedTR->setTestResultName($Sname);
+		$UpdatedTR->setTestResultFacName($Sfacname);
+		$UpdatedTR->setTestResultAbnormalFlag($Sabnormalflag);
+		$UpdatedTR->setTestResultTestDate($Stestdate);
+		$UpdatedTR->setTestResultMaxNorm($Smaxnorm);
+		$UpdatedTR->setTestResultMinNorm($Sminnorm);
+		$UpdatedTR->setTestResultApprovedFlag($Sapprvflag);
+		$UpdatedTR->setTestResultTestValue($Stestvalue);
+		$UpdatedTR->setTestResultTestValueString($Stestvaluestring);
+		$UpdatedTR->setTestResultUnitDesc($Sunitdesc);
+		$UpdatedTR->setTestResultValidEntry($Svalidentry);
+		$UpdatedTR->setTestResultCronLogSer($Scronlogser);
+
 	}
 
-    return ($UpdatedTestResult, $change);
+    return $UpdatedTR;
 }
 
 #======================================================================================

@@ -512,13 +512,10 @@ foreach my $Appointment (@ApptList) {
 
 		# compare our retrieve Appointment with existing Appointment
 		# update is done on the original (existing) Appointment
-		my ($UpdatedAppointment, $change)  = $Appointment->compareWith($ExistingAppointment);
+		my $UpdatedAppointment = $Appointment->compareWith($ExistingAppointment);
 
 		# after updating our Appointment object, update the database
-        # if there was an actual change in comparison
-        if ($change) {
-			$UpdatedAppointment->updateDatabase();
-		};
+		$UpdatedAppointment->updateDatabase();
 
 	} else { # appointment DNE
 
@@ -689,13 +686,10 @@ foreach my $TestResult (@TRList) {
 
 		# compare our retrieve TR with existing TR
 		# update is done on the original (existing) TR
-		my ($UpdatedTR, $change) = $TestResult->compareWith($ExistingTR);
+		my $UpdatedTR = $TestResult->compareWith($ExistingTR);
 
 		# after updating our TR object, update the database
-        # if there was an actual change in comparison
-        if ($change) {
-    		$UpdatedTR->updateDatabase();
-        };
+		$UpdatedTR->updateDatabase();
 
 	} else { # TR DNE
 
