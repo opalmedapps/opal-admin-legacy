@@ -173,61 +173,61 @@
                     <div class="row" ng-if="featureList.diagnosis && generateFinished">
                         <div class="col-xs-12">
                             <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.DIAGNOSIS.TITLE'|translate}}</h2>
-                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="diagGridOptions" ui-grid-resize-columns ng-style="{'height':{{diagReport.length * 30 + 90}}}"></div>
+                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="diagGridOptions" ui-grid-resize-columns ng-style="calculateGridHeight(diagReport)"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.appointments && generateFinished">
                         <div class="col-xs-12">
                             <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.APPOINTMENT.TITLE'|translate}}</h2>
-                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="apptGridOptions" ui-grid-resize-columns ng-style="{'height':{{apptReport.length * 30 + 90}}}"></div>
+                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="apptGridOptions" ui-grid-resize-columns ng-style="calculateGridHeight(apptReport)"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.questionnaires && generateFinished">
                         <div class="col-xs-12">
                             <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.QUESTIONNAIRE.TITLE'|translate}}</h2>
-                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="qstGridOptions" ui-grid-resize-columns ng-style="{'height':{{qstReport.length * 30 + 90}}}"></div>
+                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="qstGridOptions" ui-grid-resize-columns ng-style="calculateGridHeight(qstReport)"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.education && generateFinished">
                         <div class="col-xs-12">
                             <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.EDUCATIONAL_MATERIAL.TITLE'|translate}}</h2>
-                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="educGridOptions" ui-grid-resize-columns ng-style="{'height':{{educReport.length * 30 + 90}}}"></div>
+                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="educGridOptions" ui-grid-resize-columns ng-style="calculateGridHeight(educReport)"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.testresults && generateFinished">
                         <div class="col-xs-12">
                             <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.LEGACY_LAB_TESTS.TITLE'|translate}}</h2>
-                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="testGridOptions" ui-grid-resize-columns ng-style="{'height':{{testReport.length * 30 + 90}}}"></div>
+                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="testGridOptions" ui-grid-resize-columns ng-style="calculateGridHeight(testReport)"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.pattestresults && generateFinished">
                         <div class="col-xs-12">
                             <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.LAB_TESTS.TITLE'|translate}}</h2>
-                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="pattestGridOptions" ui-grid-resize-columns ng-style="{'height':{{pattestReport.length * 30 + 90}}}"></div>
+                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="pattestGridOptions" ui-grid-resize-columns ng-style="calculateGridHeight(pattestReport)"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.notifications && generateFinished">
                         <div class="col-xs-12">
                             <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.NOTES.TITLE'|translate}}</h2>
-                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="noteGridOptions" ui-grid-resize-columns ng-style="{'height':{{noteReport.length * 30 + 90}}}"></div>
+                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="noteGridOptions" ui-grid-resize-columns ng-style="calculateGridHeight(noteReport)"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.clinicalnotes && generateFinished">
                         <div class="col-xs-12">
                             <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.CLINICAL_NOTES.TITLE'|translate}}</h2>
-                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="clinnoteGridOptions" ui-grid-resize-columns ng-style="{'height':{{clinnoteReport.length * 30 + 90}}}"></div>
+                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="clinnoteGridOptions" ui-grid-resize-columns ng-style="calculateGridHeight(clinnoteReport)"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.treatingteam && generateFinished">
                         <div class="col-xs-12">
                             <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.TREATMENT_TEAM.TITLE'|translate}}</h2>
-                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="txteamGridOptions" ui-grid-resize-columns ng-style="{'height':{{txteamReport.length * 30 + 90}}}"></div>
+                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="txteamGridOptions" ui-grid-resize-columns ng-style="calculateGridHeight(txteamReport)"></div>
                         </div>
                     </div>
                     <div class="row" ng-if="featureList.general && generateFinished">
                         <div class="col-xs-12">
                             <h2 style="text-align: center;">{{'PATIENTS.REPORT.COLUMNS.GENERAL.TITLE'|translate}}</h2>
-                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="generalGridOptions" ui-grid-resize-columns ng-style="{'height':{{generalReport.length * 30 + 90}}}"></div>
+                            <div class="gridStyle" style="border:none; max-height:370px;" ui-grid="generalGridOptions" ui-grid-resize-columns ng-style="calculateGridHeight(generalReport)"></div>
                         </div>
                     </div>
                 </div>
