@@ -138,7 +138,7 @@ class PushNotifications {
 		} else {
 			$response =  array("success"=>1,"failure"=>0);
         }
-        echo $httpcode;
+       // echo $httpcode;
 		return $response;
 	}
 	// Curl
