@@ -818,9 +818,9 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		return text ? String(text).replace(/<[^>]+>/gm, '') : '';
 	};
 	// Calculate the height of the grid for the populate tables function
-	$scope.calculateGridHeight = function(data) {
+	$scope.calculateGridHeight = function(gridOptionsType) {
 		return {
-			'height': (data.length * 30 + 90) + 'px',
+			'height': (gridOptionsType.length * 30 + 90) + 'px',
 		};
 	};
 
