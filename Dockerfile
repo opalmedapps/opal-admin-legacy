@@ -1,10 +1,10 @@
 # Build/install JS dependencies
-FROM node:16.18.1-alpine3.16 as js-dependencies
+FROM node:16.20.2-alpine3.18 as js-dependencies
 
 # Install dependencies for bower
 RUN apk add --no-cache git
 
-RUN npm install -g bower@1.8.14
+RUN npm install -g bower
 
 WORKDIR /app
 
@@ -20,14 +20,14 @@ COPY bower.json ./
 RUN bower --allow-root --production install
 
 # Build/install PHP dependencies
-FROM composer:2.4.4 as php-dependencies
+FROM composer:2.6.4 as php-dependencies
 
 COPY composer.json composer.lock ./
 
 RUN composer install --no-dev --no-scripts --ignore-platform-reqs --optimize-autoloader
 
 # Build final image
-FROM php:8.0.26-apache-bullseye
+FROM php:8.0.30-apache-bullseye
 
 # Install dependencies
 RUN apt-get update \
@@ -37,8 +37,6 @@ RUN apt-get update \
       # to install Perl modules
       cpanminus \
       # Perl modules
-      # Aria DB uses Sybase
-      libdbd-sybase-perl \
       # Perl mysql dependency
       libmariadb-dev-compat \
   # cleaning up unused files
@@ -53,7 +51,7 @@ RUN cpanm --notest install \
       Date::Calc \
       DateTime::Format::Strptime \
       DBI \
-      DBD::mysql \
+      DVEEDEN/DBD-mysql-4.051.tar.gz \
       File::Spec \
       Net::HTTP \
       JSON \
