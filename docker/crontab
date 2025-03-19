@@ -21,4 +21,18 @@
 # For more information see the manual pages of crontab(5) and cron(8)
 # 
 # m h  dom mon dow   command
-* * * * * bash -c "echo 'foobar'"
+# Primary cron job
+*/2 * * * * /var/www/html/opalAdmin/publisher/dataControl.pl > /dev/null 2>> /var/www/html/opalAdmin/publisher/logs/executions.log
+
+# New cron controls
+*/1 * * * * /var/www/html/opalAdmin/publisher/controls/announcementControl.pl > /dev/null 2>> /var/www/html/opalAdmin/publisher/logs/executions_announcement.log
+*/2 * * * * /var/www/html/opalAdmin/publisher/controls/educationalMaterialControl.pl > /dev/null 2>> /var/www/html/opalAdmin/publisher/logs/executions_educationalMaterial.log
+*/2 * * * * /var/www/html/opalAdmin/publisher/controls/legacyQuestionnaireControl.pl > /dev/null 2>> /var/www/html/opalAdmin/publisher/logs/executions_legacyQuestionnaire.log
+*/2 * * * * /var/www/html/opalAdmin/publisher/controls/txTeamMessagesControl.pl > /dev/null 2>> /var/www/html/opalAdmin/publisher/logs/executions_txTeamMessages.log
+
+# Pending appointments module
+*/1 * * * * curl http://opaladmin/cron-job/update/resource-pending > /dev/null 2>> /var/www/html/opalAdmin/publisher/logs/resource-pending.log
+*/1 * * * * curl http://opaladmin/cron-job/update/appointment-pending > /dev/null 2>> /var/www/html/opalAdmin/publisher/logs/appointment-pending.log
+
+# audit backup cron
+30 00 * * * curl http://opaladmin/php/cron-job/add.audit.system.backup.php > /dev/null 2>> /var/www/html/opalAdmin/publisher/logs/system-backup.log
