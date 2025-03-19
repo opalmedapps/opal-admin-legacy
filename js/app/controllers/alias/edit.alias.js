@@ -449,3 +449,4 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 				checkinDetailsDefined && hospitalMapDefined));
 		};
 	});
+	
