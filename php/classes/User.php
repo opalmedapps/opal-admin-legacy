@@ -475,6 +475,56 @@ class User extends Module {
     }
 
     /**
+     * Update a user privilege in the new backend by calling the endpoint `/api/users/username/(un)set-manager-user/`.
+     * if the user being updated has a role that has users `Read/Write/Delete` privilege set the user as
+     * manager user in new backend. Otherwise, remove them from manager users group.
+     * @param $post array - contains all the user info
+     */
+    public function checkUpdateUserPrivilege($post) {
+        $language = strtolower($_POST['language']);
+        $user_to_update = HelpSetup::arraySanitization($post);
+        $username = "";
+
+        // when it comes from updating user the key is `edited_username` if it is from insert user key is `username`
+        if(isset($user_to_update['edited_username'])){
+            $username = $user_to_update['edited_username'];
+        }else{
+            $username = $user_to_update['username'];
+        }
+
+        // get operations related to the role
+        $role_operations = $this->opalDB->getRoleOperations($user_to_update["roleId"]);
+
+        // check if users module is in the updated operations
+        $newbackend_action_name = 'unset-manager-user';
+        foreach($role_operations as $sub) {
+            // if user module added and access is READ/WRITE/DELETE
+            if(isset($sub['moduleId']) && $sub['moduleId'] ==  json_encode(MODULE_USER)  && $sub['access'] >= (int) ACCESS_READ ){
+                $newbackend_action_name = 'set-manager-user';
+                // break if users module read/write/delete access right granted otherwise continue
+                break;
+            }
+        }
+
+        // make api request for the edited user to add/remove from managers group in new backend.
+        $backendApi = new NewOpalApiCall(
+            '/api/users/' . $username . '/' . $newbackend_action_name . '/',
+            'PUT',
+            $language,
+            '',
+            'Content-Type: application/json',
+        );
+
+        $response = $backendApi->execute(); // response is string json
+
+        if($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS && $backendApi->getError())
+             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to New Backend " . $backendApi->getError());
+        else if($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS) {
+            HelpSetup::returnErrorMessage($backendApi->getHttpCode(), "Error from New Backend: " . $response["error"]);
+        }
+    }
+
+    /**
      * Insert a new user into the OAUser table after sanitizing and validating the data. Depending if the AD system is
      * active or not, the insertion is done differently. Also, if the user already exists but was deleted, the record
      * will be undeleted and updated.
@@ -542,12 +592,11 @@ class User extends Module {
 
         $response = $backendApi->execute(); // response is string json
 
-        if($backendApi->getHttpCode() != HTTP_STATUS_CREATED && $backendApi->getError())
-             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to New Backend " . $backendApi->getError());
-        else if($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS) {
-            HelpSetup::returnErrorMessage($backendApi->getHttpCode(), "Error from New Backend: " . $response["error"]);
+        if ($backendApi->getHttpCode() != HTTP_STATUS_CREATED && $backendApi->getError()){
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to New Backend " . $backendApi->getError());
         }
     }
+
     /**
      * Insert an user with a password because the AD system is inactive or N/A, or the user is a third party system.
      * @param $type int - type of user (human/system)
