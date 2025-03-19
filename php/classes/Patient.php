@@ -804,7 +804,7 @@ class Patient extends Module {
             $patientData["Sex"] = $post["gender"];
         }
 
-        // Avoid the case when deceasedDateTime value is "0000-00-00"
+        // Avoid the case when deceasedDateTime value is valid value
         if(array_key_exists("deceasedDateTime", $post) && (strtotime($post["deceasedDateTime"]) > 0)) {
             $patientData["StatusReasonTxt"] = "Deceased patient";
             $patientData["BlockedStatus"] = 1;
