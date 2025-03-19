@@ -103,17 +103,34 @@ angular.module('opalAdmin', [
 			if (response.status == 200) {
 
 				try {
-					backendResponse = await $http.post(
-						$rootScope.newOpalAdminHost + '/api/auth/login/',
+					// The sessionid cookie is HttpOnly and can not be accessed via JavaScript.
+					// Force a reset of any old sessionid cookies from the backend.
+					// Otherwise, the login might fail due to the CSRF check.
+					backendResponse = await $http.head(
+						$rootScope.newOpalAdminHost + "/api/auth/user/",
 						{
-							"username": username,
-							"password": password,
-						},
-						{
-							"headers": {'Content-Type': 'application/json'},
-							'withCredentials': true
+							"withCredentials": true
 						}
 					);
+				} catch (error) {
+					backendResponse = error;
+				}
+				try {
+					// If the previous response status is 200 the session is still valid.
+					// Otherwise, log in.
+					if (backendResponse.status != 200) {
+						backendResponse = await $http.post(
+							$rootScope.newOpalAdminHost + '/api/auth/login/',
+							{
+								"username": username,
+								"password": password,
+							},
+							{
+								"headers": {'Content-Type': 'application/json'},
+								'withCredentials': true
+							}
+						);
+					}
 				} catch (error) {
 					backendResponse = error;
 				}

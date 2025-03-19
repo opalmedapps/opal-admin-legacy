@@ -479,18 +479,15 @@ sub getInstitutionAcronym
     my ($language) = @_; # args
     # call Django-backend endpoint to get institution's info
     my $apiResponseStr = Api::apiInstitutions($language);
-    $apiResponse = decode_json($apiResponseStr);
 
-    print "api response: $apiResponseStr\n";
+    print "\napi response: $apiResponseStr\n";
 
-    # If response is empty return an empty string
-    if (!$apiResponse) {
-        return '';
-    }
+    my @$apiResponse = @{decode_json($apiResponseStr)};
 
-    if (exists($apiResponse[0]->{'acronym'})) {
+    if (exists($apiResponse[0]) and $apiResponse[0]->{'acronym'}) {
         return $apiResponse[0]->{'acronym'};
     } else {
+        # If response is empty return an empty string
         return '';
     }
 }

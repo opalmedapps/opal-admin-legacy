@@ -72,12 +72,11 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 		$scope.gridOptions = {
 			data: 'eduMatList',
 			columnDefs: [
-				// { field: 'locked', enableColumnMenu: false, displayName: '', cellTemplate: cellTemplateLocked, width: '2%', sortable: false, enableFiltering: false},
 				{
 					field: 'name_' + Session.retrieveObject('user').language.toUpperCase(),
 					displayName: $filter('translate')('EDUCATION.LIST.TITLE_2'),
 					cellTemplate: cellTemplateName,
-					width: '45%',
+					width: '35%',
 					enableColumnMenu: false
 				},
 				{
@@ -92,7 +91,13 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 					field: 'type_' + Session.retrieveObject('user').language.toUpperCase(),
 					enableColumnMenu: false,
 					displayName: $filter('translate')('EDUCATION.LIST.TYPE'),
-					width: '20%'
+					width: '15%'
+				},
+				{
+					field: 'purpose.title_' + Session.retrieveObject('user').language.toUpperCase(),
+					enableColumnMenu: false,
+					displayName: $filter('translate')('EDUCATION.LIST.PURPOSE'),
+					width: '15%'
 				},
 				{
 					field: 'lastupdated',
@@ -259,6 +264,12 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 								{
 									field: 'type_' + Session.retrieveObject('user').language.toUpperCase(),
 									displayName: 'Type (EN)',
+									width: '145',
+									enableColumnMenu: false
+								},
+								{
+									field: 'purpose_' + Session.retrieveObject('user').language.toUpperCase(),
+									displayName: 'Purpose (EN)',
 									width: '145',
 									enableColumnMenu: false
 								}
