@@ -35,12 +35,12 @@ $path_name =~ s/publisher\/controls\/testNotification.pl//g;
 const our $OPAL_DB_NAME         => $ENV{'OPAL_DB_NAME'};
 const our $OPAL_DB_HOST         => $ENV{'OPAL_DB_HOST'};
 const our $OPAL_DB_PORT         => $ENV{'OPAL_DB_PORT'};
-const our $OPAL_DB_DSN          => 'DBI:mysql:database=' . $OPAL_DB_NAME . ';host=' . $OPAL_DB_HOST . ';port=' . $OPAL_DB_PORT;
+const our $OPAL_DB_DSN          => 'DBI:MariaDB:database=' . $OPAL_DB_NAME . ';host=' . $OPAL_DB_HOST . ';port=' . $OPAL_DB_PORT;
 const our $OPAL_DB_USERNAME     => $ENV{'OPAL_DB_USER'};
 const our $OPAL_DB_PASSWORD     => $ENV{'OPAL_DB_PASSWORD'};
 const our $USE_SSL              => $ENV{'DATABASE_USE_SSL'};
 const our $SSL_CA               => $ENV{'SSL_CA'};
-const our $OPAL_DB_SSL_DSN      => 'DBI:mysql:database=' . $OPAL_DB_NAME . ';host=' . $OPAL_DB_HOST . ';port=' . $OPAL_DB_PORT . ';mysql_ssl=1;mysql_ssl_ca_file=' . $SSL_CA;
+const our $OPAL_DB_SSL_DSN      => 'DBI:MariaDB:database=' . $OPAL_DB_NAME . ';host=' . $OPAL_DB_HOST . ';port=' . $OPAL_DB_PORT . ';mariadb_ssl=1;mariadb_ssl_verify_server_cert=1;mariadb_ssl_ca_file=' . $SSL_CA;
 
 # Environment-specific variables
 const our $FRONTEND_ABS_PATH    => $ENV{'ABS_PATH'};
