@@ -21,11 +21,13 @@ variables:
   TEST_DISABLED: "true"
   DAST_DISABLED: "true"
   POSTGRES_ENABLED: "false"
+  GIT_TEST: "$(git describe)"
 
 setup:
   stage: .pre
   script:
     - apk add --no-cache git
+    - echo $(git describe) > VERSION && echo $(git rev-parse --abbrev-ref HEAD) >> VERSION
 
 
 build:
@@ -36,6 +38,7 @@ build:
     - export TEST=$(git describe)
     - export
     - whoami
+    - cat VERSION
 
 # newjob:
 #   stage: deploy
