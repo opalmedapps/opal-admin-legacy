@@ -23,7 +23,7 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 	];
 
 	// Translate the 'title_display' property based on the user's language
-    $scope.translateTitleDisplay = function (title_EN, title_FR) {
+    $scope.translatePurposeTitleDisplay = function (title_EN, title_FR) {
         if ($scope.language === 'EN') {
             return title_EN;
         } else if ($scope.language === 'FR') {
@@ -72,12 +72,9 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 			keyboard: false,
 		});
 	};
-	// Show processing dialog
-	// $scope.showProcessingModal();
 
 	// Call our API service to get the current educational material details
 	educationalMaterialCollectionService.getEducationalMaterialDetails($scope.currentEduMat.serial).then(function (response) {
-		console.log(response.data);
 		$scope.eduMat = response.data;
 	}).catch(function(err) {
 		ErrorHandler.onError(err, $filter('translate')('EDUCATION.EDIT.ERROR_DETAILS'));
@@ -92,7 +89,7 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 	// Function to check necessary form fields are complete
 	$scope.checkForm = function () {
 		if ($scope.eduMat.name_EN && $scope.eduMat.name_FR && (($scope.eduMat.url_EN && $scope.eduMat.url_FR)
-			|| $scope.tocsComplete) && $scope.changesMade) {
+			|| $scope.tocsComplete) && $scope.changesMade  && $scope.eduMat.purpose_ID) {
 			return true;
 		}
 		else
@@ -188,18 +185,12 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 		}
 	};
 
-	$scope.selectedPurpose = $scope.eduMat.purpose_ID;
-	$scope.updatePurpose = function() {
-		$scope.eduMat.purpose.ID = $scope.selectedPurpose;
-		$scope.setChangesMade();
-	};
 
 	// Submit changes
 	$scope.updateEduMat = function () {
 
 		if ($scope.checkForm()) {
 			$scope.eduMat.user = Session.retrieveObject('user');
-
 			// Submit form
 			$.ajax({
 				type: "POST",

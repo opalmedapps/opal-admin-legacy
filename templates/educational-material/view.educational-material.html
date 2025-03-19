@@ -38,8 +38,11 @@
                 </div>
             </uib-accordion-heading>
             <div class="row">
-                <div class="col-xs-12 col-sm-6">
-                    <select ng-model="eduMat.purpose_ID" ng-change="setChangesMade()" ng-options="purpose_ID as translateTitleDisplay(purpose.title_EN, purpose.title_FR) for purpose in purposeOptions" class="form-control">
+                <div class="col-xs-12 col-md-16" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.PURPOSE'|translate}}</span>
+                        <select ng-model="eduMat.purpose_ID" ng-change="detailsUpdated()" ng-options="purpose.ID as translatePurposeTitleDisplay(purpose.title_EN, purpose.title_FR) for purpose in purposeOptions" class="form-control"></select>
+                    </div>
                 </div>
             </div>
         </div>

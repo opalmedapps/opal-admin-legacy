@@ -249,7 +249,6 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 		function getEducationalMaterialsList() {
 			educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
 				$scope.eduMatList = [];
-				console.log(response.data);
 				var educationalMaterials = response.data;
 				// Assign value
 				for (var i = 0; i < educationalMaterials.length; i++) {

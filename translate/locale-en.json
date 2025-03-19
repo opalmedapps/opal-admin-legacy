@@ -1350,7 +1350,8 @@
       "ERROR_TYPES": "An error occurred while getting the educational/reference material types.",
       "ERROR_PHASES": "An error occurred while getting the phases in treatment.",
       "ERROR_INSERT": "An error occurred while creating the educational/reference material.",
-      "ERROR_DUPLICATE_TYPE": "Educational/Reference material type and corresponding translation already exists, please use existing type."
+      "ERROR_DUPLICATE_TYPE": "Educational/Reference material type and corresponding translation already exists, please use existing type.",
+      "PURPOSE": "Purpose"
     },
     "EDIT": {
       "TITLE": "Edit Educational/Reference Material",
