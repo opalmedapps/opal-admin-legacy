@@ -510,6 +510,7 @@ class User extends Module {
             echo $backendApi->getHttpCode();
             print_r($backendApi->getAnswer());
             HelpSetup::returnErrorMessage($backendApi->getHttpCode(), "Error from New Backend: " . $response["error"]);
+        }
     }
     /**
      * Insert an user with a password because the AD system is inactive or N/A, or the user is a third party system.
