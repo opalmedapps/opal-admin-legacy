@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+# export
+# exit 1
+
 # don't expose that PHP is used on server
 # https://php.net/expose-php
 sed -ri -e 's!expose_php =.*!expose_php = Off!g' /usr/local/etc/php/php.ini
@@ -25,3 +28,7 @@ sed -ri -e 's!memory_limit =.*!memory_limit = 4096M!g' /usr/local/etc/php/php.in
 # increase since educational material data can be quite large
 # https://php.net/post-max-size
 sed -ri -e 's!post_max_size =.*!post_max_size = 128M!g' /usr/local/etc/php/php.ini
+
+if [ "$PHP_ENV" == "production" ]; then
+    sed -i 's/error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT/error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_STRICT \& ~E_WARNING/' /usr/local/etc/php/php.ini
+fi

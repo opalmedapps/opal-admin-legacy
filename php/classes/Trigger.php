@@ -1,6 +1,7 @@
 <?php
 
-include('../lib/JWadhams/JsonLogic.php');
+// TODO: if needed: use the actual package via composer: https://packagist.org/packages/jwadhams/json-logic-php
+// include('../lib/JWadhams/JsonLogic.php');
 /*
  * Trigger class object and methods
  * */
