@@ -12,7 +12,7 @@ http_response_code(HTTP_STATUS_SUCCESS);
 // Update patient data_access in new opal DB
 $data_access = $_POST['accessLevel'] == 1 ? 'NTK' : 'ALL';
 $legacy_id = $_POST['PatientSerNum'];
-$language = strtolower($_POST['lan']);
+$language = strtolower($_POST['language']);
 
 $backendApi = new NewOpalApiCall(
     '/api/patients/legacy/'.$legacy_id.'/',
