@@ -1,5 +1,5 @@
 # Build/install JS dependencies
-FROM node:20.18.0-alpine3.20 AS js-dependencies
+FROM node:22.10.0-alpine3.20 AS js-dependencies
 
 WORKDIR /app
  
