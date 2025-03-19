@@ -99,7 +99,6 @@ class PushNotifications {
 			$wsBody =  $result[1];
 		}
 		else {
-			// Data not an array error
 			$response =  array("success"=>0,"failure"=>1,"error"=>"Request data invalid, unable to send push notification.");
 			return $response;
 		}

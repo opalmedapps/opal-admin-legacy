@@ -149,7 +149,7 @@ git checkout staging
 
 ### Prerequisites
 
-If testing on a server:
+#### If testing on a server:
 
 1. Connect to the server and use your own credentials to log in.
 2. To grant your account privileged access to opalsupt resources, so that you can run commands that you could not run
@@ -165,12 +165,13 @@ sudo su - opalsupt
 dcd exec opaladmin bash
 ```
 
-If testing locally:
+#### If testing locally:
 
 1. Make sure your Firebase service account file is in the directory `config/firebase/`.
 2. Make sure the following `.env` variables have been correctly set:
    1. `FIREBASE_ADMIN_KEY_PATH`
    2. `PUSH_NOTIFICATION_URL`
+   3. `PUSH_NOTIFICATION_ANDROID_URL` (if using Android)
 3. Build a copy of your local Opal app and install it on a mobile device. Make sure to allow push notifications.
 
 
@@ -178,12 +179,12 @@ After the above setup, you can test push notifications as follows using the test
 
 ### Step 1
 
-Log into the app so that a row in PatientDeviceIdentifier gets updated with your device's push notification registration ID (in the column RegistrationId).
-This is required because the RegistrationId may change at any time, and always changes each time you reinstall the app.
+Log into the app so that a row in `PatientDeviceIdentifier` gets updated with your device's push notification registration ID (in the column `RegistrationId`).
+This is required because the registration ID may change at any time (including each time you reinstall the app).
 
 ### Step 2
 
-Use a database client to check the PatientDeviceIdentifier table: copy the RegistrationId from your latest login and keep it somewhere to be used later.
+Use a database client to check the PatientDeviceIdentifier table: copy the `RegistrationId` from your latest login and keep it somewhere to be used later.
 
 ### Step 3
 
@@ -200,7 +201,7 @@ Run the script in the docker container by calling the command below:
 php testPushNotification.php <device-id> <device-type> <language>
 ```
 
- * `<device-id>`: Value from the column RegistrationId mentioned above.
+ * `<device-id>`: Value from the column `RegistrationId` mentioned above.
  * `<device-type>`: `0` (iOS) or `1` (Android)
  * `<language>`: `en` (English) or `fr` (French)
 
