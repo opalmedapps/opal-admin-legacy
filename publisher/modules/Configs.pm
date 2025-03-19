@@ -32,7 +32,7 @@ $path_name =~ s/publisher\/controls\/testNotification.pl//g;
 
 # DEFINE OPAL DATABASE SETTINGS FROM ENV FILE
 # NOTE: This works for a MySQL setup.
-const our $OPAL_DB_NAME         => $ENV{'OPAL_DB_NAME'};
+const our $OPAL_DB_NAME         => 'OpalDB';
 const our $OPAL_DB_HOST         => $ENV{'OPAL_DB_HOST'};
 const our $OPAL_DB_PORT         => $ENV{'OPAL_DB_PORT'};
 const our $OPAL_DB_DSN          => 'DBI:MariaDB:database=' . $OPAL_DB_NAME . ';host=' . $OPAL_DB_HOST . ';port=' . $OPAL_DB_PORT;
@@ -43,13 +43,13 @@ const our $SSL_CA               => $ENV{'SSL_CA'};
 const our $OPAL_DB_SSL_DSN      => 'DBI:MariaDB:database=' . $OPAL_DB_NAME . ';host=' . $OPAL_DB_HOST . ';port=' . $OPAL_DB_PORT . ';mariadb_ssl=1;mariadb_ssl_verify_server_cert=1;mariadb_ssl_ca_file=' . $SSL_CA;
 
 # Environment-specific variables
-const our $FRONTEND_ABS_PATH    => $ENV{'ABS_PATH'};
-const our $FRONTEND_REL_URL     => $ENV{'RELATIVE_URL'};
+const our $FRONTEND_ABS_PATH    => '/var/www/html/';
+const our $FRONTEND_REL_URL     => '/';
 const our $BACKEND_ABS_PATH     => $FRONTEND_ABS_PATH . 'publisher/'; # absolute path of this project (include trailing slash)
 const our $BACKEND_REL_URL      => $FRONTEND_REL_URL . 'publisher/'; # relative path of this project from http host (include trailing slash)
 
 # YM 2019-01-07 : Production use shared folder
-const our $BACKEND_SHARED_URL => $ENV{'SHARED_DRIVE_PATH'};
+const our $BACKEND_SHARED_URL => $ENV{'CLINICAL_REPORTS_PATH'};
 
 # DEFINE FTP CREDENTIALS HERE
 # NOTE: This is for sending clinical documents

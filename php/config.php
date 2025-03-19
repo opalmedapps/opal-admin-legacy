@@ -16,23 +16,22 @@ $dotenv->required('ENVIRONMENT_NAME')->notEmpty();
 // Opal Database Settings
 $dotenv->required('OPAL_DB_HOST')->notEmpty();
 $dotenv->required('OPAL_DB_PORT')->notEmpty();
-$dotenv->required('OPAL_DB_NAME')->notEmpty();
 $dotenv->required('OPAL_DB_USER')->notEmpty();
 $dotenv->required('OPAL_DB_PASSWORD')->notEmpty();
 // Questionnaire Database Settings
 $dotenv->required('QUESTIONNAIRE_DB_HOST')->notEmpty();
 $dotenv->required('QUESTIONNAIRE_DB_PORT')->notEmpty();
-$dotenv->required('QUESTIONNAIRE_DB_NAME')->notEmpty();
 $dotenv->required('QUESTIONNAIRE_DB_USER')->notEmpty();
 $dotenv->required('QUESTIONNAIRE_DB_PASSWORD')->notEmpty();
-$dotenv->required('QUESTIONNAIRE_DB_ENABLED')->notEmpty();
 // New OpalAdmin Settings
 $dotenv->required('NEW_OPALADMIN_HOST_INTERNAL')->notEmpty();
 $dotenv->required('NEW_OPALADMIN_HOST_EXTERNAL')->notEmpty();
 $dotenv->required('NEW_OPALADMIN_TOKEN')->notEmpty();
 // SSL configurations
 $dotenv->required('DATABASE_USE_SSL')->notEmpty();
-$dotenv->required('SSL_CA')->notEmpty();
+if (getenv('DATABASE_USE_SSL')) {
+    $dotenv->required('SSL_CA')->notEmpty();
+}
 // Push notification configurations
 $dotenv->required('PUSH_NOTIFICATION_URL')->notEmpty();
 $dotenv->required('PUSH_NOTIFICATION_ANDROID_URL')->notEmpty();
@@ -45,24 +44,16 @@ $dotenv->required('APPLE_TOPIC')->notEmpty();
 $dotenv->required('FIREBASE_DATABASE_URL')->notEmpty();
 $dotenv->required('FIREBASE_ADMIN_KEY_PATH')->notEmpty();
 // Path configurations
-$dotenv->required('ABS_PATH')->notEmpty();
-$dotenv->required('RELATIVE_URL')->notEmpty();
-$dotenv->required('SHARED_DRIVE_PATH')->notEmpty();
-// Path configurations for clinical document
-// Disabled since most likely unused.
-// $dotenv->required('ARIA_DOCUMENT_PATH')->notEmpty();
-// $dotenv->required('MOSAIQ_DOCUMENT_PATH')->notEmpty();
-// $dotenv->required('OFFICE_DOCUMENT_PATH')->notEmpty();
+$dotenv->required('CLINICAL_REPORTS_PATH')->notEmpty();
 // Active Directory configurations
 $dotenv->required('FEDAUTH_INSTITUTION')->notEmpty();
 $dotenv->required('FEDAUTH_API_ENDPOINT')->notEmpty();
 $dotenv->required('AD_ENABLED')->notEmpty();
-# ORMS & OIE
+# ORMS
 $dotenv->required('ORMS_ENABLED')->isBoolean();
-$dotenv->required('ORMS_HOST')->notEmpty();
 
 if ($_ENV['ORMS_ENABLED']) {
-    $dotenv->required('OIE_HOST');
+    $dotenv->required('ORMS_HOST')->notEmpty();
 }
 
 
@@ -141,15 +132,18 @@ const LIMIT_DAYS_AUDIT_SYSTEM_BACKUP = 5;
 define ("USE_SSL", $_ENV["DATABASE_USE_SSL"]);
 define ("SSL_CA", $_ENV["SSL_CA"]);
 
+const ABS_PATH = "/var/www/html/";
+const RELATIVE_URL = "/";
+
 // Environment-specific variables
-define("FRONTEND_ABS_PATH", str_replace("/", DIRECTORY_SEPARATOR, $_ENV["ABS_PATH"]));
-define("FRONTEND_REL_URL", str_replace("/", DIRECTORY_SEPARATOR, $_ENV["RELATIVE_URL"]));
+define("FRONTEND_ABS_PATH", str_replace("/", DIRECTORY_SEPARATOR, ABS_PATH));
+define("FRONTEND_REL_URL", str_replace("/", DIRECTORY_SEPARATOR, RELATIVE_URL));
 define("BACKEND_ABS_PATH", FRONTEND_ABS_PATH . "publisher/" );
 define("BACKEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", BACKEND_ABS_PATH) );
 define("FRONTEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", FRONTEND_ABS_PATH) );
 define("UPLOAD_ABS_PATH", FRONTEND_ABS_PATH . "uploads/" );
 define("UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
-define("CLINICAL_DOC_PATH", $_ENV["SHARED_DRIVE_PATH"] . "clinical/documents/");
+define("CLINICAL_DOC_PATH", $_ENV["CLINICAL_REPORTS_PATH"]);
 
 // Define Firebase variables
 define("FIREBASE_DATABASEURL", $_ENV["FIREBASE_DATABASE_URL"]);
