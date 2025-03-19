@@ -458,9 +458,6 @@ class User extends Module {
             ];
         // set the payload in json format
         $json_payload= json_encode($payload);
-         error_log(print_r("THE PAYLOAD IS",TRUE));
-        error_log(print_r($json_payload,TRUE));
-        error_log(print_r('/api/users/' . $payload['username'] . '/',TRUE));
         $backendApi = new NewOpalApiCall(
             '/api/users/' . $payload['username'] . '/',
             'PUT',
@@ -468,9 +465,7 @@ class User extends Module {
             $json_payload,
             'Content-Type: application/json',
         );
-        error_log(print_r("BEFORE_EXECUTRE",TRUE));
         $response = $backendApi->execute(); // response is string json
-        error_log(print_r("AFTER_EXECUTE",TRUE));
         if($backendApi->getError())
              HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to New Backend " . $backendApi->getError());
         else if($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS) {
