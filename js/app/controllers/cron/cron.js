@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.cron', ['ngAnimate', 'ui.bootstrap', 'highcharts-ng']).
+angular.module('opalAdmin.controllers.cron', ['ngAnimate', 'ui.bootstrap']).
 
 	/******************************************************************************
 	 * Cron Page controller

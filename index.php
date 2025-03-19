@@ -45,8 +45,6 @@
 	<script src="node_modules/textangularjs/dist/textAngularSetup.js"></script>
 	<script src="node_modules/crypto-js/crypto-js.js"></script>
 
-	<script src="node_modules/highcharts/highcharts.js"></script>
-	<script src="node_modules/highcharts-ng/dist/highcharts-ng.js"></script>
 
 
 	<script src="node_modules/angular-ui-grid/ui-grid.js"></script>
@@ -219,7 +217,6 @@
 	<link media="all" type="text/css" rel="stylesheet" href="css/lib/docs.min.css">
 	<link media="all" type="text/css" rel="stylesheet" href="node_modules/textangularjs/dist/textAngular.css">
 	<link media="all" type="text/css" rel="stylesheet" href="css/lib/ui.bootstrap.materialPicker.css">
-	<link media="all" type="text/css" rel="stylesheet" href="node_modules/highcharts-ng/dist/highcharts-ng.css">
 
 	<link media="all" type="text/css" rel="stylesheet" href="css/style.css">
 

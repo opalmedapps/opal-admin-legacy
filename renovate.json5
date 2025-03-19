@@ -16,8 +16,6 @@
   "assignees": ["Douzeyu"],
   "labels": ["dependencies"],
   "ignoreDeps": [
-    "highcharts",
-    "highcharts-ng",
     "bootstrap",
     "font-awesome",
   ],
