@@ -248,6 +248,11 @@ sub sendPushNotification
         my $registrationid  = $PTDID->{registrationid};
         my $devicetype      = $PTDID->{devicetype};
 
+        print "\n***** Start Push Notification *****\n";
+        print "PatientSerNum: $patientser\n";
+        print "DeviceType: $devicetype\n";
+        print "Title: $title\n";
+
         ($sendstatus, $sendlog) = postNotification($title, $message, $devicetype, $registrationid);
 
         insertPushNotificationInDB($ptdidser, $patientser, $controlser, $reftablerowser, $sendstatus, $sendlog);
@@ -281,11 +286,6 @@ sub postNotification
     my ($title, $message, $devicetype, $registrationid) = @_; # args
 
     my ($sendstatus, $sendlog); # initialize
-
-    print "\n***** Start Push Notification *****\n";
-    print "PatientSerNum: $patientser\n";
-    print "DeviceType: $devicetype\n";
-    print "Title: $title\n";
 
     # system command to call PHP push notification script
     my $browser = LWP::UserAgent->new;
