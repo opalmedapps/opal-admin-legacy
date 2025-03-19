@@ -54,7 +54,7 @@ class Application {
 
             $buildName = $data[0];
 
-            $versionFile = fopen("../../VERSION", "r")
+            $versionFile = fopen("../../versions/VERSION", "r")
             or die("Unable to open VERSION file!");
 
             $version = fgets($versionFile);
