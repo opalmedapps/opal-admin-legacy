@@ -45,7 +45,8 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			username: { completed: false },
 			password: { completed: false },
 			role: { completed: false },
-			language: { completed: false }
+			language: { completed: false },
+			additionalprivileges: {completed: false}
 		};
 
 		// Default count of completed steps
@@ -83,7 +84,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			confirmPassword: null,
 			role: null,
 			role_display: null,
-			additional_roles: null,
+			additionalprivileges: null,
 			language: null,
 			language_display: null
 		};
@@ -244,14 +245,13 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			$scope.roleSection.open = true;
 			if ($scope.newUser.additionalprivileges.length > 0) {
 				steps.additionalprivileges.completed = true;
-				steps.role.completed = true;
 			}
 			else{
 				steps.additionalprivileges.completed = false;
-				$scope.newUser.additionalprivileges = null;
+				$scope.newUser.additionalprivileges =null;
 			}
 
-
+			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 		};
 
 		// Function to toggle steps when updating the language field
