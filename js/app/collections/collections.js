@@ -640,7 +640,7 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		// Function to get the list of existing groups from new backend
+		// Function to get the list of existing additional roles `groups` from new backend
 		userAPI.getAdditionalRoles = function () {
 			return $http.get(
 				$rootScope.newOpalAdminHost + '/api/groups/',
@@ -653,7 +653,7 @@ angular.module('opalAdmin.collections', [])
 			)
 		};
 
-		// Function to get the list of existing groups from new backend
+		// Function to get the list of user-selected additional roles `groups` from new backend
 		userAPI.getUserSelectedAdditionalRoles = function (OAUsername) {
 			return $http.get(
 				$rootScope.newOpalAdminHost + '/api/users/' + OAUsername + '/',
