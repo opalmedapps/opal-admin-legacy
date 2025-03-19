@@ -13,11 +13,6 @@ class PushNotifications {
 	// (iOS) APN Url target (development or sandbox)
 	private static $ios_url = IOS_URL;
 
-	// Change the above three vriables as per your app.
-	public function __construct() {
-		exit('Init function is not allowed');
-	}
-
 	// **************************************************
 	// Sends Push notification for Android users
 	// **************************************************
@@ -101,16 +96,20 @@ class PushNotifications {
 	*             push notification.
 	**/
 	public static function iOS($data, $devicetoken) {
-		//check encoding
-		$wsFlag = (isset($data['encode'])? $data['encode'] :'Yes' );
-		// prepare title and body
-		if ($wsFlag == 'Yes') {
-			$wsTitle = utf8_encode($data['mtitle']);
-			$wsBody = utf8_encode($data['mdesc']);
-		} else {
-			$wsTitle = $data['mtitle'];
-			$wsBody = $data['mdesc'];
+		//validation and message prep
+		if(is_array($data)){
+			if(isset($data['encode']) && ($data['encode'] == 'Yes')){
+				$wsTitle = utf8_encode($data['mtitle']);
+				$wsBody = utf8_encode($data['mdesc']);
+			}else{ // caller did not set encode property
+				$wsTitle = $data['mtitle'];
+				$wsBody = $data['mdesc'];
+			}
+		}else{ //data not array error
+			$response =  array("success"=>0,"failure"=>1,"error"=>"Request data invalid, unable to send push notification.");
+			return $reponse;
 		}
+
 		// Create the payload body
 		$body['aps'] = array(
 			'alert' => array(
@@ -138,7 +137,6 @@ class PushNotifications {
 		} else {
 			$response =  array("success"=>1,"failure"=>0);
         }
-       // echo $httpcode;
 		return $response;
 	}
 	// Curl
