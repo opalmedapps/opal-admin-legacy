@@ -269,6 +269,7 @@ class Role extends Module {
                 '/api/users/' . $user['username'] . '/' . $newbackend_action_name . '/',
                 'PUT',
                 $language,
+                '',
                 'Content-Type: application/json',
             );
 
