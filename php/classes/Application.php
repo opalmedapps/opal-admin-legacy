@@ -37,8 +37,8 @@ class Application {
 	 * @return array $build : the application build
 	 */
 	public function getApplicationBuild () {
-		$build = array();
-		try {
+        $build = array();
+        try {
             $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
@@ -53,7 +53,7 @@ class Application {
             $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
 
             $buildName = $data[0];
-            
+
             $versionFile = fopen("../../VERSION", "r")
             or die("Unable to open VERSION file!");
 
