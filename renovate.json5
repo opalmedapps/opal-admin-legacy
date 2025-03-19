@@ -39,13 +39,13 @@
     },
     // Group xlts angular-related updates
     {
-      "matchRepositories": [".*xlts.*"],
+      "matchRepositories": ["/.*xlts.*/"],
       "groupName": "xlts angular packages"
     },
     // Group auxiliary angular-related updates
     {
       "matchPackagePatterns": ["^angular", "ng-table"],
-      "excludeRepositories": [".*xlts.*"],
+      "excludeRepositories": ["/.*xlts.*/"],
       "groupName": "auxiliary angular packages"
     },
   ],
