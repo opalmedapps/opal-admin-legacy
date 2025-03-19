@@ -810,6 +810,9 @@ class Patient extends Module {
             $patientData["BlockedStatus"] = 1;
             $this->opalDB->updatePatientPublishFlag($patientSerNum, 0);
             $patientData["DeathDate"] = $post["deceasedDateTime"];
+            $uid = $this->getPatientFirebaseUsername($post["mrns"]);
+            $firebase = new FirebaseOpal();
+            $firebase->disableUser($uid);
         }
 
         // Deal with the cases when deceasedDateTime values contain empty string, NULL, "0000-00-00" and some invalid date strings

@@ -50,4 +50,17 @@ class FirebaseOpal extends HelpSetup
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY, "An error occur during updating password: " . $err->getMessage());
         }
     }
+
+    /**
+     * Update the password of a given patient in firebase.
+     * @param $uid string - patient user name
+     * @return array - user information
+     */
+    function disableUser($uid) {
+        try {
+            return $this->auth->disableUser($uid);
+        } catch (Throwable $err) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY, "An error occur during disabling a user: " . $err->getMessage());
+        }
+    }
 }
