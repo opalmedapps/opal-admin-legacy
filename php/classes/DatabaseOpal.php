@@ -4204,7 +4204,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  array Doctor info
      * */
     function getNonAriaDoctorResource($sourceId,$resourceId) {
-        return $this->_fetch(OPAL_GET_NO_ARIA_DOCTOR_RESOURCE, array(
+        return $this->_fetch(OPAL_GET_NON_ARIA_DOCTOR_RESOURCE, array(
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":ResourceId","variable"=>$resourceId,"data_type"=>PDO::PARAM_STR)
         ));
