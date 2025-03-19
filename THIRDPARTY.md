@@ -1131,8 +1131,6 @@ the terms above.
 * Homepage: https://github.com/kreait/firebase-php
 * Repository: https://github.com/kreait/firebase-php
 * License: `MIT`
-* License (reported by package registry): `['MIT']`
-* License (reported by GitHub): `{'key': 'mit', 'name': 'MIT License', 'spdx_id': 'MIT', 'url': 'https://api.github.com/licenses/mit', 'node_id': 'MDc6TGljZW5zZTEz'}`
 * Version: `7.15.0`
 
 ```text

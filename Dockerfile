@@ -25,7 +25,7 @@ COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-scripts --ignore-platform-reqs --optimize-autoloader
 
 # Build final image
-FROM php:8.4.2-apache-bookworm
+FROM php:8.4.5-apache-bookworm
 
 # Install dependencies
 RUN apt-get update \
@@ -103,6 +103,7 @@ COPY --from=js-dependencies --chown=www-data:www-data /app/node_modules ./node_m
 COPY --from=php-dependencies --chown=www-data:www-data /app/vendor ./vendor
 
 # Specifically add only the required files
+COPY --chown=www-data:www-data ./THIRDPARTY.md ./
 COPY --chown=www-data:www-data ./favicon.png ./
 COPY --chown=www-data:www-data ./index.php ./
 COPY --chown=www-data:www-data ./.htaccess ./
