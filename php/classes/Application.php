@@ -54,12 +54,12 @@ class Application {
             $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
 
             $buildName = $data[0];
-			$environment_name = $_ENV["ENVIRONMENT_NAME"];
-			$version = 'undefined';
-			$branch = 'undefined';
+            $environment_name = $_ENV["ENVIRONMENT_NAME"];
+            $version = 'undefined';
+            $branch = 'undefined';
             $build = array(
                 'version'		=> $version,
-				'environment_name' => $environment_name,
+                'environment_name' => $environment_name,
                 'environment'	=> $buildName,
                 'branch'		=> $branch
             );
