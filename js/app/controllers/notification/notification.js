@@ -143,9 +143,6 @@ controller('notification', function ($scope, $uibModal, $filter, $state, notific
 				case "PatientsForPatients":
 					entry.type = $filter('translate')('NOTIFICATIONS.ADD.PATIENTS_FOR_PATIENTS');
 					break;
-				case "Questionnaire":
-					entry.type = $filter('translate')('NOTIFICATIONS.ADD.QUESTIONNAIRE');
-					break;
 				case "LegacyQuestionnaire":
 					entry.type = $filter('translate')('NOTIFICATIONS.ADD.LEGACY_QUESTIONNAIRE');
 					break;
