@@ -3434,5 +3434,5 @@
   "ACCESS_LEVEL_1": "1 : Need-to-know information",
   "ACCESS_LEVEL_2": "2 : ",
   "ACCESS_LEVEL_3": "2 : All data",
-  "PLOTLY_REPLACEMENT": "Plotly replacements will be coming soon!"
+  "CHART_UNAVAILABLE": "The charts are currently unavailable."
 }

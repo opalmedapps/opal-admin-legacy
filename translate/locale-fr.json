@@ -3454,5 +3454,5 @@
   "ACCESS_LEVEL_1": "1 : Informations transmises sur la base du besoin",
   "ACCESS_LEVEL_2": "2 : ",
   "ACCESS_LEVEL_3": "2 : Toutes les données",
-  "PLOTLY_REPLACEMENT": "Les remplacements de Plotly arriveront bientot !"
+  "CHART_UNAVAILABLE": "Les graphiques sont actuellement indisponibles."
 }
