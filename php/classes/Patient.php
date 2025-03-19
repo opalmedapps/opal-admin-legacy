@@ -814,7 +814,7 @@ class Patient extends Module {
 
         // Deal with the cases when deceasedDateTime values contain empty string, NULL, "0000-00-00" and some invalid date strings
         if(array_key_exists("deceasedDateTime", $post) && (strtotime($post["deceasedDateTime"]) <= 0)) {
-            $patientData["StatusReasonTxt"] = " ";
+            $patientData["StatusReasonTxt"] = "";
             $patientData["BlockedStatus"] = 0;
             $this->opalDB->updatePatientPublishFlag($patientSerNum, 1);
         }
