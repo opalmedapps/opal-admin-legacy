@@ -26,7 +26,6 @@
     "moment",
     "bootstrap",
     "font-awesome",
-    "crypto-js",
     "cryptojslib",
     "moment-timezone",
     "kreait/firebase-php"
