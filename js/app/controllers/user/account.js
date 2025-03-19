@@ -136,7 +136,6 @@ angular.module('opalAdmin.controllers.account', ['ui.bootstrap']).
 					password: $scope.account.password,
 					oldPassword: $scope.account.oldPassword,
 					confirmPassword: $scope.account.confirmPassword,
-					OAUserId: Session.retrieveObject('user').id,
 				};
 
 				$.ajax({
@@ -164,7 +163,6 @@ angular.module('opalAdmin.controllers.account', ['ui.bootstrap']).
 		// Function when language changes
 		$scope.updateLanguage = function (user) {
 			var toSend = {
-				OAUserId: Session.retrieveObject('user').id,
 				language: user.language
 			};
 

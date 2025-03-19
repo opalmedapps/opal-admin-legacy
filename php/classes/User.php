@@ -295,7 +295,7 @@ class User extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
         }
 
-        $result = $this->opalDB->authenticateSystemUser($username, hash("sha256", $password . USER_SALT));
+        $result = $this->opalDB->authenticateSystemUser($username);
         $result = $this->_validateUserAuthentication($result, $username);
 
         $_SESSION["ID"] = $result["id"];
@@ -384,16 +384,17 @@ class User extends Module {
     }
 
     /*
-     * Updates the password of a specific user after validating it.
+     * Updates the password of the current user after validating it.
      * @param   $post (array) array of data coming from the frontend that contains username, password and confirm
      *          password.
      * @return  number of updated record
      * */
     public function updatePassword($post) {
         $post = HelpSetup::arraySanitization($post);
+        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        $this->_insertAudit($moduleName, $methodeName, $post, ACCESS_GRANTED);
 
-        $username = $this->opalDB->getUserDetails($post["OAUserId"]);
-        $username = $username["username"];
+        $username = $_SESSION["username"];
         $oldPassword = $post["oldPassword"];
         $password = $post["password"];
         $confirmPassword = $post["confirmPassword"];
@@ -440,10 +441,10 @@ class User extends Module {
      * @returns number of records modified
      * */
     public function updateLanguage($post) {
-        HelpSetup::getModuleMethodName($moduleName, $methodeName);
-        $this->_insertAudit($moduleName, $methodeName, HelpSetup::arraySanitization($post), ACCESS_GRANTED);
-
         $post = HelpSetup::arraySanitization($post);
+        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        $this->_insertAudit($moduleName, $methodeName, $post, ACCESS_GRANTED);
+
         $post["language"] = strtoupper($post["language"]);
 
         if($post["language"] != "EN" && $post["language"] != "FR")
@@ -635,9 +636,9 @@ class User extends Module {
     protected function _insertUserNewBackend($post) {
         $language = strtolower($post['language']);
         $payload = [
-            "username"=>$post['username'],
-            "password"=>$post['password'],
-            "password2"=>$post['confirmPassword'],
+            "username" => $post['username'],
+            "password" => $post['password'],
+            "password2" => $post['confirmPassword'],
         ];
 
         // check if no groups are selected by the user
@@ -682,7 +683,8 @@ class User extends Module {
         if(count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
 
-        $this->_insertUpdateUser($type, $username, $language, $password, $roleId, $isInsert);
+        // use a random password instead of a blank password
+        $this->_insertUpdateUser($type, $username, $language, base64_encode(random_bytes(20)), $roleId, $isInsert);
     }
 
     /**

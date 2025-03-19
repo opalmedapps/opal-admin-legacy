@@ -414,7 +414,7 @@ define("SQL_OPAL_VALIDATE_OAUSER_LOGIN","
 ");
 
 define("SQL_OPAL_VALIDATE_SYSTEM_OAUSER_LOGIN","
-    SELECT * FROM ".OPAL_LOGIN_VIEW." WHERE username = :username AND password = :password AND type = " . SYSTEM_USER . ";
+    SELECT * FROM ".OPAL_LOGIN_VIEW." WHERE username = :username AND type = " . SYSTEM_USER . ";
 ");
 
 define("SQL_OPAL_VALIDATE_OAUSER_LOGIN_AD","
@@ -456,7 +456,7 @@ define("OPAL_GET_USERS_LIST","
 ");
 
 define("OPAL_COUNT_USERNAME","
-    SELECT COUNT(*) AS total FROM ".OPAL_OAUSER_TABLE." WHERE Username = :Username AND deleted = ".NON_DELETED_RECORD."
+    SELECT COUNT(*) AS total FROM ".OPAL_OAUSER_TABLE." WHERE Username = :Username
 ");
 
 define("OPAL_IS_USER_EXISTS","
