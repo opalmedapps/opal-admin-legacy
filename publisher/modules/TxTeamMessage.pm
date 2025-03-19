@@ -440,7 +440,7 @@ sub insertTxTeamMessageIntoOurDB
             '$cronlogser',
             '$postcontrolser',
             NOW(),
-            '0'
+            0
         )
     ";
 
