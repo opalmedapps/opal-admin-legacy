@@ -51,6 +51,7 @@
                                 </details>
                             `;
                         },
+                        // Turn all url link into valid herf sections
                         link(href) {
                             return `<a href="${href.href}" target="_blank" rel="noopener">${href.text}</a>`
                         }
