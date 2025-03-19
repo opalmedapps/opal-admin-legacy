@@ -212,3 +212,10 @@ php testPushNotification.php "device Id" "device type" "language"
 
 ### Step 4
 Output will be printed to the terminal to indicate whether the notification was successfully sent, or if there was an error. If successful, you’ll receive a test push notification on your device.
+
+## Version file
+
+Make sure there is a `VERSION` file in the root folder.
+The file is expected to have two lines.
+The first line contains the version number.
+The second line contains the branch name.
