@@ -43,6 +43,7 @@
 	<script src="node_modules/textangularjs/dist/textAngular.js"></script>
 	<script src="node_modules/textangularjs/dist/textAngular-sanitize.js"></script>
 	<script src="node_modules/textangularjs/dist/textAngularSetup.js"></script>
+	<script src="node_modules/crypto-js/crypto-js.js"></script>
 
 	<script src="node_modules/highcharts/highcharts.js"></script>
 	<script src="node_modules/highcharts-ng/dist/highcharts-ng.js"></script>
