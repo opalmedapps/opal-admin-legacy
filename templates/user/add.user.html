@@ -103,7 +103,7 @@
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
-                                            <span ng-if="newUser.role" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                            <span ng-if="newUser.role && newUser.additional_roles" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
                                             <strong>{{'USERS.ADD.ROLE'|translate}}</strong>
@@ -320,6 +320,26 @@
                                     <div class="col-xs-12 col-sm-6">
                                         <select ng-model="newUser.role" ng-change="roleUpdate()" ng-options="role as role.name_display for role in roles" class="form-control">
                                             <option ng-hide="newUser.role" value="">{{'USERS.ADD.SELECT_ROLE'|translate}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Sub-section: Additional Roles -->
+                        <div class="row animated" ng-class="{fadeInUp: roleSection.show}" ng-if="roleSection.show">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="color:#d9534f"><strong>{{'USERS.ADD.REQUIRED'|translate}}</strong></span>
+                                    {{'USERS.ADD.ADDITIONAL_ROLES_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: roleSection.show}" ng-if="roleSection.show" style="margin-bottom: 15px;">
+                            <div class="col-xs-12 col-sm-8">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-6">
+                                        <select multiple="true" ng-model="newUser.additional_roles" ng-change="additionalRolesUpdate()" ng-options="additionalrole as additionalrole.name for additionalrole in additional_roles" class="form-control">
+                                            <option ng-hide="newUser.additional_roles" value="">{{'USERS.ADD.SELECT_ROLE'|translate}}</option>
                                         </select>
                                     </div>
                                 </div>
