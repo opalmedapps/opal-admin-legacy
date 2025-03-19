@@ -126,7 +126,7 @@ sub setAppointmentStatusFilters
 }
 
 #======================================================================================
-# Subroutine to set the appointment status filters
+# Subroutine to set the appointment scheduled time offset filters
 #======================================================================================
 sub setAppointmentScheduledTimeOffset
 {
@@ -136,7 +136,7 @@ sub setAppointmentScheduledTimeOffset
 }
 
 #======================================================================================
-# Subroutine to set the appointment status filters
+# Subroutine to set the appointment scheduled time unit filters
 #======================================================================================
 sub setAppointmentScheduledTimeUnit
 {
@@ -146,7 +146,7 @@ sub setAppointmentScheduledTimeUnit
 }
 
 #======================================================================================
-# Subroutine to set the appointment status filters
+# Subroutine to set the appointment scheduled time direction filters
 #======================================================================================
 sub setAppointmentScheduledTimeDirection
 {
