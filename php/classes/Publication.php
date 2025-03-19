@@ -705,7 +705,6 @@ class Publication extends Module
         if(is_array($postDetails) && count($postDetails) <= 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid post.");
 
-
         if(isset($publication["publishDateTime"]) && $publication["publishDateTime"] != "")
             $count = $this->opalDB->updatePostPublishDateTime(
                 array("PostControlSerNum"=>$publication["materialId"]["value"],"PublishDate"=>$publication["publishDateTime"])
