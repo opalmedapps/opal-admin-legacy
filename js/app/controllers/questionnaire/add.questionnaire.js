@@ -68,8 +68,8 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	$scope.newQuestionnaire = {
 		title_EN: "",
 		title_FR: "",
-		short_name_EN: "",
-		short_name_FR: "",
+		//short_name_EN: "",
+		//short_name_FR: "",
 		description_EN: "",
 		description_FR: "",
 		purpose: undefined,
@@ -120,7 +120,7 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		$scope.titleDescriptionSection.open = true;
 
 		if ($scope.newQuestionnaire.title_EN && $scope.newQuestionnaire.title_FR &&
-			$scope.newQuestionnaire.short_name_EN && $scope.newQuestionnaire.short_name_FR &&
+			//$scope.newQuestionnaire.short_name_EN && $scope.newQuestionnaire.short_name_FR &&
 			$scope.newQuestionnaire.description_EN && $scope.newQuestionnaire.description_FR) {
 			steps.titleDescriptionSection.completed = true;
 			$scope.purposeRespondentSection.show = true;
@@ -345,8 +345,8 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		var newFormat = {
 			title_EN : oldData.title_EN,
 			title_FR : oldData.title_FR,
-			short_name_EN: oldData.short_name_EN,
-			short_name_FR: oldData.short_name_FR,
+			//short_name_EN: oldData.short_name_EN,
+			//short_name_FR: oldData.short_name_FR,
 			description_EN : oldData.description_EN,
 			description_FR : oldData.description_FR,
 			purpose : oldData.purpose.ID,
