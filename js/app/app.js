@@ -101,7 +101,6 @@ angular.module('opalAdmin', [
 				console.error("Unable to connect to old Opal Admin: ",response.status);
 			});
 			/******* 
-			 
 			 	.then(
 			Goes to first option if there is a catch
 				() => console.log("after a catch the chain is restored"), // "after a catch the chain is restored"
