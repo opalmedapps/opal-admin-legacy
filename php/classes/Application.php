@@ -55,13 +55,9 @@ class Application {
 
             $buildName = $data[0];
             $environment_name = $_ENV["ENVIRONMENT_NAME"];
-            $version = 'undefined';
-            $branch = 'undefined';
             $build = array(
-                'version'		=> $version,
                 'environment_name' => $environment_name,
                 'environment'	=> $buildName,
-                'branch'		=> $branch
             );
 
             return $build;
