@@ -167,9 +167,9 @@ dcd exec opaladmin bash
 
 #### If testing locally:
 
-1. Make sure your Firebase service account file is in the directory `config/firebase/`.
+1. Make sure your Firebase service account file is available inside the container.
 2. Make sure the following `.env` variables have been correctly set:
-   1. `FIREBASE_ADMIN_KEY_PATH`
+   1. `FIREBASE_ADMIN_KEY_PATH` (to the absolute path of the file inside the container).
    2. `PUSH_NOTIFICATION_URL`
    3. `PUSH_NOTIFICATION_ANDROID_URL` (if using Android)
 3. Build a copy of your local Opal app and install it on a mobile device. Make sure to allow push notifications.
