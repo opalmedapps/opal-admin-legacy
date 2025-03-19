@@ -35,3 +35,4 @@ include:
     inputs:
       package-file: package.json
       composer-file: composer.json
+      additional-dependencies: jQueryUI ui.bootstrap.materialPicker
