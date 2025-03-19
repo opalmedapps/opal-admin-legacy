@@ -58,16 +58,15 @@ class HelpSetup {
     public static function verifyDate($date, $strict = false, $format = 'Y-m-d H:i') {
         $dateTime = DateTime::createFromFormat($format, $date);
 
-        $currentDate = new DateTime();
+        $dateTemp= new DateTime();
+        $currentDate = DateTime::createFromFormat($format, $dateTemp->format($format));
         $errors = DateTime::getLastErrors();
 
         if (!empty($errors['warning_count']))
             return false;
 
         if($strict) {
-            //var_dump($dateTime);
-            //var_dump($currentDate->format($format));
-            if ($currentDate->format($format) >= $dateTime)
+            if ($currentDate > $dateTime)
                 return false;
         }
         return $dateTime !== false;
