@@ -81,6 +81,9 @@ sub fetchSourceCredentials
 
     if (!$sourceDBser) {return $sourceCredentials;} # return null object
 
+    # These variables are not used anymore, they are removed from the environment file.
+    # we are commenting the following lines for now, to cleanup this code later
+    # TODO: check this function and remove it if it is not used
     # ARIA
     #if ($sourceDBser eq 1) {
 
