@@ -144,7 +144,7 @@
                     </div>
                     <div class="row animated fadeInRight" ng-show="foundPatient&&writeAccess">
                         <!-- customize report section -->
-                        <div class="col-xs-12" style="width: 25%" ng-if="selectedName.user_type == 'Caregiver'">
+                        <div class="col-xs-12" style="width: 25%" ng-if="selectedName.puid != null">
                             <div class="panel-container animated" ng-class="{pulse: hoverEmail}" ng-mouseenter="hoverEmail=true" ng-mouseleave="hoverEmail=false" style="cursor:pointer;" ng-click="updateEmail()">
                                 <div class="side-panel-info-sm" style="height: 70px; line-height:3">
                                     <div class="panel-content" style="padding: 3px">
@@ -153,7 +153,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12" style="width: 25%" ng-if="selectedName.user_type == 'Caregiver'">
+                        <div class="col-xs-12" style="width: 25%" ng-if="selectedName.puid != null">
                             <div class="panel-container animated" ng-class="{pulse: hoverPassword}" ng-mouseenter="hoverPassword=true" ng-mouseleave="hoverPassword=false" style="cursor:pointer;" ng-click="updatePassword()">
                                 <div class="side-panel-info-sm" style="height: 70px; line-height:3">
                                     <div class="panel-content" style="padding: 3px">
@@ -162,7 +162,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12" style="width: 25%" ng-if="selectedName.user_type != 'Caregiver'">
+                        <div class="col-xs-12" style="width: 25%" ng-if="selectedName.user_type == 'Patient'">
                             <div class="panel-container animated" ng-class="{pulse: hoverAccessLevel}" ng-mouseenter="hoverAccessLevel=true" ng-mouseleave="hoverAccessLevel=false" style="cursor:pointer;" ng-click="updateAccessLevel()">
                                 <div class="side-panel-info-sm" style="height: 70px; line-height:3">
                                     <div class="panel-content" style="padding: 3px">
@@ -171,7 +171,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12" style="width: 25%" ng-if="selectedName.user_type == 'Caregiver'">
+                        <div class="col-xs-12" style="width: 25%" ng-if="selectedName.puid != null">
                             <div class="panel-container animated" ng-class="{pulse: hoverSecurityQuestion}" ng-mouseenter="hoverSecurityQuestion=true" ng-mouseleave="hoverSecurityQuestion=false" style="cursor:pointer;" ng-click="updateSecurityQuestion()">
                                 <div class="side-panel-info-sm" style="height: 70px; line-height:3">
                                     <div class="panel-content" style="padding: 3px">
