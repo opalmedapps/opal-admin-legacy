@@ -40,6 +40,8 @@ RUN apt-get update \
       # Perl modules
       # Perl mysql dependency
       libmariadb-dev-compat \
+      # IntlDateFormatter dependency
+      libicu-dev \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/* \
@@ -66,7 +68,7 @@ RUN cpanm --notest install \
 # Enable apache2 mods
 RUN a2enmod headers rewrite \
   # Install and enable PHP extensions
-  && docker-php-ext-install pdo pdo_mysql
+  && docker-php-ext-install pdo pdo_mysql intl
 
 # which php.ini to use, can be either production or development
 ARG PHP_ENV=production

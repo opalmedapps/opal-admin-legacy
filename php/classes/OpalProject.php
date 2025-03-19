@@ -393,10 +393,10 @@ abstract class OpalProject
             $StartDateTime = strtotime(date("Y-m-d H:i:s"));
             $action = "CheckInNotification";
             $replacementMap = array();
-            setlocale(LC_TIME, 'fr_CA');        
-            $replacementMap["\$getDateTime"] =  strftime('%R', $StartDateTime);
-            setlocale(LC_TIME, 'en_CA');        
-            $replacementMap["\$getDateTime"] =  strftime('%l:%M %p', $StartDateTime);
+            $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
+            $replacementMap["\$getDateTime"] =  $formatter->format($StartDateTime);
+            $formatter = new \IntlDateFormatter('en_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
+            $replacementMap["\$getDateTime"] =  $formatter->format($StartDateTime);
                     
             $scheduledStartTime = strtotime($currentAppointment["ScheduledStartTime"]);
             if ($scheduledStartTime >= $today){
