@@ -42,7 +42,6 @@ use PostControl;
 use Alias;
 use EducationalMaterialControl;
 use Document;
-use Cron;
 
 #-----------------------------------------------------------------------
 # Monitor this script's execution
@@ -347,8 +346,6 @@ print "Finished document list\n" if $verbose;
 Alias::setAliasLastTransferredModularControllers($start_datetime, 'Document');
 
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
-# Log that the script is finished in the cronlog
-Cron::setCronLog("Completed documentControl", $current_datetime);
 print "--- Completed ---- ", $current_datetime, "\n\n";
 
 print "Start Time [documentControl]: -->> $start_datetime\n";
