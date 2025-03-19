@@ -1865,7 +1865,8 @@
       "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour de l'alias.",
       "SUCCESS_EDIT": "L'alias a été mis à jour avec succès.",
       "ERROR_COLOR": "Une erreur s'est produite lors de l'obtention de la liste des codes de couleur",
-      "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails de l'alias."
+      "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails de l'alias.",
+      "ERROR_MISSING_MAP": "Une carte de l'hôpital doit être définie pour être soumise."
     },
     "LOG": {
       "TITLE": "Journaux",
