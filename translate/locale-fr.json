@@ -2691,7 +2691,7 @@
       "INSTITUTION_SUB": "Le bouton <strong>Établissement</strong> renvoie à la page Établissement dans Opal Admin v2.0",
       "SITE": "Créer et mettre à jour les sites appartenant à un établissement",
       "SITE_SUB": "Le bouton <strong>Sites</strong> renvoie à la page Sites dans Opal Admin v2.0",
-      "BACK": "Back"
+      "BACK": "Retour"
     }
   },
   "PATIENTS": {
