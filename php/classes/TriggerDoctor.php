@@ -114,7 +114,7 @@ class TriggerDoctor extends Trigger
             if ($post["sourceSystem"] == 'Aria') {
                 $resource = $this->opalDB->getAriaDoctorResource($source["SourceDatabaseSerNum"], $post["resourceId"]);
             } else {
-                $resource = $this->opalDB->getNoAriaDoctorResource($source["SourceDatabaseSerNum"], $post["resourceId"]);
+                $resource = $this->opalDB->getNonAriaDoctorResource($source["SourceDatabaseSerNum"], $post["resourceId"]);
             }
             
             if ($resource === false) {
