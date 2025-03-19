@@ -89,7 +89,6 @@ COPY docker/crontab /var/spool/cron/crontabs/www-data
 
 ARG GIT_VERSION='undefined'
 ARG GIT_BRANCH='unknown'
-RUN mkdir -p ./versions
 RUN echo "$GIT_VERSION" > ./versions/VERSION && echo "$GIT_BRANCH" >> ./versions/VERSION
 
 EXPOSE 8080
