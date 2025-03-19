@@ -25,14 +25,16 @@ COPY composer.json composer.lock ./
 
 RUN composer install --no-dev --no-scripts --ignore-platform-reqs --optimize-autoloader
 
-# Build/install Perl dependencies
-FROM perl:5.36.0-bullseye as perl-dependencies
+# Build final image
+FROM php:8.0.26-apache-bullseye
 
 # Install dependencies
 RUN apt-get update \
   && apt-get install -y \
       # to install Perl modules
       cpanminus \
+      # Perl mysql dependency
+      libmariadb-dev-compat \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*
@@ -47,16 +49,12 @@ RUN cpanm --notest install \
       DBD::mysql \
       File::Spec \
       Net::HTTP \
-      File::JSON::Slurper \
       JSON \
       LWP::UserAgent \
       MIME::Lite \
       Net::Address::IP::Local \
       Storable \
       String::Util
-
-# Build final image
-FROM php:8.0.26-apache-bullseye
 
 # Enable apache2 mods
 RUN a2enmod headers rewrite
@@ -76,7 +74,6 @@ RUN chown -R www-data:www-data /var/www/
 USER www-data
 
 # copy only the dependencies in...
-COPY --from=perl-dependencies /usr/local /usr/local
 COPY --from=js-dependencies --chown=www-data:www-data /app/node_modules ./node_modules
 COPY --from=js-dependencies --chown=www-data:www-data /app/bower_components ./bower_components
 COPY --from=php-dependencies --chown=www-data:www-data /app/vendor ./vendor
