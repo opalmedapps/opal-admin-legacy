@@ -276,15 +276,15 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 
 		// Function to register user
 		$scope.registerUser = function () {
-			// set the additional privileges to the form `{'groups': [group_1.pk,...]}`
-			var additionalprivileges_map = {'groups':[]};
-			if ($scope.newUser.additionalprivileges && $scope.newUser.additionalprivileges.length > 0) {
-				for (const item in $scope.newUser.additionalprivileges) {
-					additionalprivileges_map.groups.push($scope.newUser.additionalprivileges[item].pk);
-				}
-			}
-			$scope.newUser.additionalprivileges_map = additionalprivileges_map;
 			if ($scope.checkRegistrationForm()) {
+				// set the additional privileges to the form `{'groups': [group_1.pk,...]}`
+				var additionalprivileges_map = {'groups':[]};
+				if ($scope.newUser.additionalprivileges && $scope.newUser.additionalprivileges.length > 0) {
+					for (const item in $scope.newUser.additionalprivileges) {
+						additionalprivileges_map.groups.push($scope.newUser.additionalprivileges[item].pk);
+					}
+				}
+				$scope.newUser.additionalprivileges_map = additionalprivileges_map;
 				var data = {
 					OAUserId: Session.retrieveObject('user').id,
 					type: $scope.newUser.type,
