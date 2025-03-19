@@ -56,6 +56,12 @@ $dotenv->required('FEDAUTH_INSTITUTION')->notEmpty();
 $dotenv->required('FEDAUTH_API_ENDPOINT')->notEmpty();
 $dotenv->required('AD_ENABLED')->notEmpty();
 $dotenv->required('LOGIN_LEGACY_SALT')->notEmpty();
+# ORMS & OIE
+$dotenv->required('ORMS_ENABLED')->isBoolean();
+
+if ($_ENV['ORMS_ENABLED']) {
+    $dotenv->required('OIE_HOST');
+}
 
 
 /*
@@ -87,21 +93,24 @@ define("REGISTRATION_PATH", $_ENV["NEW_OPALADMIN_HOST_EXTERNAL"] . '/patients/ac
 
 // ORMS SMS api call
 define("ORMS_ENABLED", $_ENV["ORMS_ENABLED"]);
-define("WRM_API_URL", $_ENV["OIE_HOST"]);
-define("WRM_API_METHOD", [
-    "getSmsAppointments" => "/SmsAppointment/get",
-    "getMessages" => "/SmsMessage/get",
-    "updateSmsAppointment" => "/SmsAppointment/update",
-    "updateMessage" => "/SmsMessage/update",
-    "getSpecialityGroups" => "/Hospital/SpecialityGroups",
-    "getTypes" => "/SmsMessage/Types"
-]);
-define("WRM_API_CONFIG", [
-    "64" => 0,
-    "19913" =>  1,
-    "47" =>  1,
-    "10023" => ["Content-Type: application/json"]
-]);
+
+if (ORMS_ENABLED) {
+    define("WRM_API_URL", $_ENV["OIE_HOST"]);
+    define("WRM_API_METHOD", [
+        "getSmsAppointments" => "/SmsAppointment/get",
+        "getMessages" => "/SmsMessage/get",
+        "updateSmsAppointment" => "/SmsAppointment/update",
+        "updateMessage" => "/SmsMessage/update",
+        "getSpecialityGroups" => "/Hospital/SpecialityGroups",
+        "getTypes" => "/SmsMessage/Types"
+    ]);
+    define("WRM_API_CONFIG", [
+        "64" => 0,
+        "19913" =>  1,
+        "47" =>  1,
+        "10023" => ["Content-Type: application/json"]
+    ]);
+}
 
 // Turn on all errors except for notices
 error_reporting(E_ALL & ~E_NOTICE ^ E_WARNING);
