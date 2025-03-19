@@ -207,38 +207,7 @@
            $result = $pdo->query($sql);
            return $sendStatus;
        }
-
-       /**
-        *    (getDevicesForPatient($patientId, $Site)
-        *    Consumes a PatientId, $patientId
-        *    Returns: Returns array with devices that match that particular PatiendId.
-        **/
-       private static function getDevicesForPatient($patientId, $site)
-       {
-           global $pdo;
-           //Retrieving device registration id for notification and device
-           try{
-               $sql = "SELECT PDI.PatientDeviceIdentifierSerNum, PDI.RegistrationId, PDI.DeviceType 
-                        FROM PatientDeviceIdentifier PDI, Patient_Hospital_Identifier PHI
-                        WHERE PHI.MRN = :patientId 
-                            and PHI.Hospital_Identifier_Type_Code = :sitecode
-                            AND PHI.PatientSerNum = PDI.PatientSerNum
-                            AND length(trim(PDI.RegistrationId)) > 0
-                            AND PDI.DeviceType in (0,1)
-                    ";
-               $s = $pdo->prepare($sql);
-               $s->bindValue(':patientId', $patientId);
-               $s->bindValue(':sitecode', $site);
-               $s->execute();
-               $result = $s->fetchAll();
-           }catch(PDOException $e)
-           {
-               echo $e;
-               exit();
-           }
-          return $result;
-       }
-
+       
        /**
         *    (buildMessageForRoomNotification($room, $title, $description)
         *    Consumes a room, a title and a description of message
