@@ -86,8 +86,7 @@ define("AD_LOGIN_ACTIVE", $_ENV["AD_ENABLED"]);
 define("REGISTRATION_PATH", $_ENV["NEW_OPALADMIN_HOST_EXTERNAL"] . '/patients/access-request/');
 
 // ORMS SMS api call
-define("WRM_DB_ENABLED", true);
-define("WRM_API_URL", "https://lxvmri02.muhcad.muhcfrd.ca/");
+define("WRM_API_URL", $_ENV["OIE_HOST"]);
 define("WRM_API_METHOD", [
     "getSmsAppointments" => "/SmsAppointment/get",
     "getMessages" => "/SmsMessage/get",
