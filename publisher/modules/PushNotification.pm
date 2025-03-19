@@ -289,8 +289,11 @@ sub getPatientCaregiversAndInstitution
 {
     my ($patientser, $controlser, $reftablerowser) = @_; # args
     # get a list of the patient caregivers' device information
-    my $apiResponseStr = Api::apiPatientCaregiverDevices($patientser);
-    $apiResponse = decode_json($apiResponseStr);
+    my $apiResponse = Api::apiPatientCaregiverDevices($patientser);
+    # decoding the response
+    my $apiResponseContent = $apiResponse->content;
+    my $apiResponseLanguage = $apiResponse->header('content-language');
+    $apiResponse = decode_json($apiResponseContent);
 
     print "api response: $apiResponseStr\n";
 
@@ -312,11 +315,13 @@ sub getPatientCaregiversAndInstitution
     my $institution = "";
     if (exists($apiResponse->{'institution'})) {
        $institution = $apiResponse->{'institution'};
+       $acronymKey = "acronym_" . $apiResponseLanguage;
+       $localizedInstitutionName = $institution->{$acronymKey};
     }
 
     # printing for logging purposes
     print "username list: @usernames\n";
-    print "institution is: $institution\n"
+    print "institution is: $institution->{$acronymKey}\n";
 
     if (!@usernames) {
         $sendlog        = "Patient has no related caregivers.";
@@ -327,7 +332,7 @@ sub getPatientCaregiversAndInstitution
     my $usernamesStr = join("','", @usernames);
     $usernamesStr = "'".$usernamesStr."'";
 
-    return ($usernamesStr, $institution);
+    return ($usernamesStr, $localizedInstitutionName);
 }
 
 #====================================================================================
