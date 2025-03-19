@@ -192,13 +192,13 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
 		};
-
+		// Function that restrict the user from entering invalid url
 		$scope.urlValidation = function(url){
-			if (url== undefined){
+			if (!url || typeof url !== 'string') {
 				return false;
 			}
-			const regex= /^(https?:\/\/).*\..+$/;
-			return regex.test(url);
+			const regex= /^(https?:\/\/).*\..+$/; // Regex to respect when entering the url
+			return regex.test(url); // Returns either true or false depending if the url respects the regex
 		}
 
 		// Function to toggle necessary changes when updating the types
