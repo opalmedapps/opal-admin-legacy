@@ -1709,6 +1709,13 @@ define("OPAL_GET_ALIAS_EXPRESSION","
     AND AE.Description LIKE :Description;
 ");
 
+define("OPAL_GET_GENERIC_APPOINTMENT_ALIAS", "
+    SELECT A.AliasSerNum, A.AliasUpdate, A.SourceDatabaseSerNum
+    FROM ".OPAL_ALIAS_TABLE." A
+    WHERE A.AliasType = 'Appointment'
+    AND A.AliasName_EN LIKE :AliasName;
+");
+
 define("OPAL_DELETE_ALIAS_EXPRESSIONS","
     DELETE ae FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa ON
     msa.ID = ae.masterSourceAliasId

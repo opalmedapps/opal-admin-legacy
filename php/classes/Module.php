@@ -24,7 +24,7 @@ abstract class Module extends OpalProject
              * If the session expire, force the front end to display the login page. Otherwise, update the timer.
              * */
             if (isset($_SESSION['lastActivity']) && (time() - $_SESSION['lastActivity'] > PHP_SESSION_TIMEOUT))
-                HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "config error");
+                HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "not authenticated");
             else
                 $_SESSION['lastActivity'] = time(); // update last activity time stamp
 

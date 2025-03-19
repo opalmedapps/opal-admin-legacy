@@ -336,7 +336,21 @@ class Appointment extends Module
         $newStartDateTime = strtotime($post["scheduledTimestamp"]);
         $prevStartDateTime = strtotime($post["scheduledTimestamp"]);
 
-        $aliasInfos = $this->opalDB->getAlias('Appointment',$post['appointmentTypeCode'], $post['appointmentTypeDescription']);
+        $aliasInfos = $this->opalDB->getAlias('Appointment', $post['appointmentTypeCode'], $post['appointmentTypeDescription']);
+        // If there is no alias for this appointment code, retrieve the generic alias for the site
+        // and assign the code to the generic alias
+        if (count($aliasInfos) == 0) {
+            $aliasInfos = $this->opalDB->getGenericAlias($post["site"]);
+            
+            if (count($aliasInfos) > 0) {
+                $aliasExpressionId = $this->opalDB->assignToGenericAlias($aliasInfos[0]["AliasSerNum"], $source["SourceDatabaseSerNum"], $post['appointmentTypeCode'], $post['appointmentTypeDescription']);
+                // $aliasInfos is missing the AliasExpressionSerNum at this point
+                $aliasInfos[0]["AliasExpressionSerNum"] = $aliasExpressionId;
+            } else {
+                HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, json_encode(array("details" => "No alias found for appointment code.")));
+            }
+        }
+
         $countAlias = count($aliasInfos);
 
         $toInsert = array(
@@ -362,8 +376,9 @@ class Appointment extends Module
             "SessionId" => $this->opalDB->getSessionId(),
         );
 
-        //publish the appointment if the count of the alias in database is equal or greater to 1
+        // publish the appointment if the count of the alias in database is equal or greater to 1
         if($countAlias >= 1) {
+            // AliasUpdate is 1 if the alias is published
             $toPublish = $aliasInfos[0]['AliasUpdate'];
         }
 
@@ -377,9 +392,6 @@ class Appointment extends Module
             $replacementMap["\$newAppointmentDateEN"] =  $formatter->format($newStartDateTime);
             $formatter = new \IntlDateFormatter(locale: 'en_CA', dateType: \IntlDateFormatter::NONE, timeType: \IntlDateFormatter::SHORT, pattern: "h:mm a");
             $replacementMap["\$newAppointmentTimeEN"] =  $formatter->format($newStartDateTime);
-            
-        } else {
-
         }
         
         if($countAlias == 0 || $toPublish == 0) {
@@ -390,9 +402,7 @@ class Appointment extends Module
             $toInsert["ID"] = $this->_insertAppointmentPending($toInsert, $source);
 
             $this->_insertAppointmentPendingMH($toInsert, $source);
-
         } else {
-
             $this->_updateAppointmentPending($toInsert);
             unset($toInsert["sourceName"]);
             unset($toInsert["updatedBy"]);
@@ -406,7 +416,6 @@ class Appointment extends Module
                 $toInsert["ScheduledEndTime"]  = $post["scheduledTimestamp"];
                 $toInsert["SessionId"] = $this->opalDB->getSessionId();
             }
-
 
             $toInsert["SourceDatabaseSerNum"] = $source["SourceDatabaseSerNum"];
             $toInsert["AliasExpressionSerNum"] = $aliasInfos[0]['AliasExpressionSerNum'];

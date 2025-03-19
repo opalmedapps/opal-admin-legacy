@@ -3441,6 +3441,47 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
+     * Get the generic appointment alias for the given site code.
+     * 
+     * The alias is looked up by the English alias name "<site> Appointment".
+     * 
+     * @param string $site the code of the site/hospital
+     * @return array a list of generic aliases for the given site
+     */
+    function getGenericAlias($site) {
+        $params = array(
+            array("parameter" => ":AliasName", "variable" => $site . " Appointment", "data_type" => PDO::PARAM_STR),
+        );
+        return $this->_fetchAll(OPAL_GET_GENERIC_APPOINTMENT_ALIAS, $params);
+    }
+
+    /**
+     * Assigns the appointment code to the given alias for the given master source.
+     * 
+     * @param int $aliasId the ID of the generic alias
+     * @param int $sourceId the ID of the master source alias
+     * @param string $typeCode the appointment code
+     * @param string $typeDesc the appointment description
+     * 
+     * @return int|boolean the ID of the inserted element or false if it failed
+     */
+    function assignToGenericAlias($aliasId, $sourceId, $typeCode, $typeDesc) {
+        $sourceAlias = $this->getSourceAliasDetails($typeCode, $sourceId, $typeCode, ALIAS_TYPE_APPOINTMENT);
+        $masterSourceAliasId = $sourceAlias[0]["ID"];
+
+        $toInsert = array(
+            "AliasSerNum" => $aliasId,
+            "masterSourceAliasId" => $masterSourceAliasId,
+            "ExpressionName" => $typeCode,
+            "Description" => $typeDesc,
+            "LastUpdatedBy" => $this->getOAUserId(),
+            "SessionId" => $this->getSessionId(),
+        );
+
+        return $this->_replaceRecordIntoTable(OPAL_ALIAS_EXPRESSION_TABLE, $toInsert);
+    }
+
+    /**
      * Update an alias.
      * @param $toUpdate
      * @return int - number of row updated
