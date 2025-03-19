@@ -1679,9 +1679,11 @@ define("OPAL_HOSP_MAP_COND", "ifnull(HospitalMapSerNum, -1) != :HospitalMapSerNu
 
 define("OPAL_GET_ALIAS_EXPRESSION","
     SELECT A.AliasSerNum, A.AliasUpdate, A.SourceDatabaseSerNum, AE.AliasExpressionSerNum, AE.ExpressionName, AE.Description
-    FROM ".OPAL_ALIAS_TABLE." A, ".OPAL_ALIAS_EXPRESSION_TABLE." AE
+    FROM ".OPAL_ALIAS_TABLE." A, ".OPAL_ALIAS_EXPRESSION_TABLE." AE, ".OPAL_MASTER_SOURCE_ALIAS_TABLE." MSA
     WHERE A.AliasSerNum = AE.AliasSerNum
+    AND AE.masterSourceAliasId = MSA.ID
     AND A.AliasType = :AliasType
+    AND MSA.deleted = 0
     AND AE.ExpressionName = :ExpressionName
     AND AE.Description LIKE :Description;
 ");
