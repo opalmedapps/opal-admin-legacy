@@ -37,6 +37,11 @@ class CrontabManager {
 			// Create an array of all the arguments which were passed
 			$arguments = func_get_args();
 
+			// Escape each argument using escapeshellarg()
+			foreach ($arguments as &$arg) {
+				$arg = escapeshellarg($arg);
+			}
+
 			// A single line string representation of the actual Linux
 			// commands we'll be executing.
 			$command_string = ($argument_count > 1) ? implode(" && ", $arguments) : $arguments[0];
