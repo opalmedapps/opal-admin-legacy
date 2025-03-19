@@ -21,7 +21,6 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		testresults: false,
 		pattestresults: false,
 		notifications: false,
-		treatplan: false,
 		clinicalnotes: false,
 		treatingteam: false,
 		general: false,
