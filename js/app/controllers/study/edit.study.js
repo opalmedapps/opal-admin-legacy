@@ -540,7 +540,6 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			$scope.readyToSend.questionnaire = $scope.toSubmit.questionnaire;
 			$scope.readyToSend.consent_form = $scope.toSubmit.consent_form.id;
 			$scope.readyToSend.patientConsents = $scope.patientConsentList;
-
 			$.ajax({
 				type: "POST",
 				url: "study/update/study",

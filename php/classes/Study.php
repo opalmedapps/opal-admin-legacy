@@ -118,7 +118,7 @@ class Study extends Module {
      *                      11: date range (if start date and end date exist) invalid
      *                      12: patient list (if exists) invalid
      *                      13: questionnaire list (if exists) invalid
-     *                      14: consent_form missing
+     *                      14: consent_form missing or invalid
      *                      15: patient consent list (if exists) invalid
      *                      16: investigator phone extension (if exists) invalid
      *                      17: study ID is missing or invalid if it is an update
@@ -254,19 +254,27 @@ class Study extends Module {
                 }
             } else
                 $errCode = "0" . $errCode;
-
-            //14th bit
-            if (!array_key_exists("consent_form", $post) || $post["consent_form"] == ""){
-                $this->_connectQuestionnaireDB();
-                $res = $this->questionnaireDB->getStudyConsentFormTitle(intval($post["consent_form"]));
-                if(count($res) != 1){
-                    $errCode = "1" . $errCode;
-                }else{
-                    $errCode = "0" . $errCode;
+            // //14th bit
+            if(array_key_exists("consent_form", $post) && $post["consent_form"] != ""){
+                $curConsent = $this->getConsentFormByStudyId(intval($post["ID"]));
+                if(count($this->getConsentPublished($curConsent[0]["consentQuestionnaireId"])) == 1){ //the current consent form for this study is published
+                    if($curConsent != $post["consent_form"]){ // if posted form doesnt match current, then someone is trying to bypass our rules for consent forms
+                        $errCode = "1" . $errCode;
+                    }else{
+                        $errCode = "0" . $errCode;
+                    }
+                }else{// we are okay to change the consent form, just need to check that the posted form exists
+                    $this->_connectQuestionnaireDB();
+                    $res = $this->questionnaireDB->getStudyConsentFormTitle(intval($post["consent_form"]));
+                    if(count($res) != 1){
+                        $errCode = "1" . $errCode;
+                    }else{
+                        $errCode = "0" . $errCode;
+                    }
                 }
             }
             else
-                $errCode = "0" . $errCode;
+                $errCode = "1" . $errCode;
             
             //15th bit
             if (array_key_exists("patientConsents", $post)) {
@@ -499,9 +507,17 @@ class Study extends Module {
      * @return (array) list of forms found
      */
     public function getConsentPublished($consentId){
-        $this->checkreadAccess();
+        $this->checkReadAccess();
         $result = $this->opalDB->checkConsentFormPublished($consentId);
         return $result;
+    }
+
+    /**
+     * Get this study's current consent form
+     * @return array length 1 , consentQuestionnaireId
+     */
+    protected function getConsentFormByStudyId($studyId){
+        return $this->opalDB->getConsentFormByStudyId($studyId);
     }
 
 }
