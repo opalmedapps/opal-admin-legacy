@@ -376,8 +376,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 				// Log who created this alias
 				const currentUser = Session.retrieveObject('user');
 				toSubmit.user = currentUser;
-
-
+				
 				$.ajax({
 					type: "POST",
 					url: "alias/update/alias",

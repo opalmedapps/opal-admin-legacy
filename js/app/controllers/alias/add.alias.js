@@ -497,9 +497,6 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 			const currentUser = Session.retrieveObject('user');
 			toSubmit.user = currentUser;
 
-			console.log(toSubmit);
-			return;
-
 			// Submit form
 			$.ajax({
 				type: "POST",
