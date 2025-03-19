@@ -35,6 +35,9 @@ RUN apt-get update \
       busybox-static \
       # to install Perl modules
       cpanminus \
+      # Perl modules
+      # Aria DB uses Sybase
+      libdbd-sybase-perl \
       # Perl mysql dependency
       libmariadb-dev-compat \
   # cleaning up unused files
@@ -49,8 +52,6 @@ RUN cpanm --notest install \
       Date::Calc \
       DateTime::Format::Strptime \
       DBI \
-      # Aria DB uses Sybase
-      DBI::Sybase \
       DBD::mysql \
       File::Spec \
       Net::HTTP \
