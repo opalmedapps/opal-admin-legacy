@@ -52,7 +52,7 @@ class FirebaseOpal extends HelpSetup
     }
 
     /**
-     * Update the password of a given patient in firebase.
+     * Disable the given patient account in firebase.
      * @param $uid string - patient user name
      * @return array - user information
      */
