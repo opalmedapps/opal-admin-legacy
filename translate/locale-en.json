@@ -2673,9 +2673,9 @@
       "TITLE": "Hospital Settings",
       "SUB_TITLE": "Hospital Settings Tools",
       "INSTITUTION": "Institutions",
-      "INSTITUTION_SUB": "Create or update an institution",
+      "INSTITUTION_SUB": "Create or update an institution.",
       "SITE": "Sites",
-      "SITE_SUB": "Create and update the sites belonging to an institution",
+      "SITE_SUB": "Create and update the sites belonging to an institution.",
       "BACK": "Back"
     }
   },
