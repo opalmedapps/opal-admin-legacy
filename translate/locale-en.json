@@ -2913,7 +2913,7 @@
   },
   "PATIENT_ADMINISTRATION": {
     "TITLE": "Opal User Administration",
-    "DESCRIPTION": "Modify patient account information",
+    "DESCRIPTION": "Modify User account information",
     "MENU": {
       "TITLE": "Opal User Administration",
       "PSEARCH": "Search User",
@@ -2939,7 +2939,7 @@
       "UPDATE_EMAIL": "Change User Email",
       "UPDATE_PASSWORD": "Change User Password",
       "UPDATE_ACCESS_LEVEL": "Change Patient Access Level",
-      "UPDATE_SECURITY_QUESTION": "Reset User Security Questions"
+      "UPDATE_SECURITY_QUESTION": "Modify User Security Questions"
     },
     "EMAIL": {
       "TITLE": "Change Patient Email",
