@@ -41,7 +41,7 @@ class User extends Module {
      *          $password (string) DUH!
      * @return  $result (array) details of the user info.
      * */
-    protected function _userLoginActiveDirectory($username, $password) {
+    protected function _userLogin($username, $password) {
         // Ensure that the username exists
         $users = $this->opalDB->authenticateUserAD($username);
         if (count($users) != 1) {
@@ -190,7 +190,7 @@ class User extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
         }
 
-        $result = $this->_userLoginActiveDirectory($username, $password);
+        $result = $this->_userLogin($username, $password);
 
         $_SESSION["ID"] = $result["id"];
         $_SESSION["username"] = $result["username"];
@@ -321,58 +321,6 @@ class User extends Module {
         $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_GRANTED);
 
         return $result;
-    }
-
-    /*
-     * Login for registration of patient. Before each inscription, the login of the user must be validated. Validation
-     * is made base on the Patient module write access. If the user got a valid user/pass and correct access level
-     * (read and write), then it is authorized to proceed. Otherwise, return error 401. No matter what, logs the result
-     * in the audit table.
-     * @param   $post (array) contains username, password
-     * @return  200 (success), 401 (denied) or 500 (server error, oops!)
-     * */
-    public function userLoginRegistration($post) {
-        $data = HelpSetup::arraySanitization($post);
-
-        if(!is_array($data)) {
-            HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>"UNKNOWN USER"), ACCESS_DENIED, "UNKNOWN USER");
-            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
-        }
-
-        $username = $data["username"];
-        $password = $data["password"];
-
-        if($username == "" || $password == "") {
-            HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>($data["username"] ? $data["username"] : "UNKNOWN USER")), ACCESS_DENIED, ($data["username"] ? $data["username"] : "UNKNOWN USER"));
-            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
-        }
-
-        if(AD_LOGIN_ACTIVE)
-            $resultUser = $this->_userLoginActiveDirectory($username, $password);
-        else
-            $resultUser = $this->_userLoginLegacy($username, $password);
-
-        $this->_connectAsMain($resultUser["id"]);
-
-        HelpSetup::getModuleMethodName($moduleName, $methodeName);
-        $result = $this->opalDB->getUserAccessRegistration($resultUser["role"]);
-
-        if(count($result) != 1) {
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
-            HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "No access found. Please contact your administrator.");
-        }
-        $result = $result[0];
-
-        if(!(($result["access"] >> 1) & 1) || !(($result["operation"] >> 1) & 1)) {
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
-            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Access denied.");
-        }
-
-        $this->_logActivity($resultUser["id"], HelpSetup::makeSessionId(), 'LoginRegistration');
-        $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_GRANTED, $username);
-        return HTTP_STATUS_SUCCESS;
     }
 
     /*
