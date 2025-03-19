@@ -12,7 +12,7 @@ http_response_code(HTTP_STATUS_SUCCESS);
 // Update user email in new opal DB
 $username = $_POST['puid'];
 $email = $_POST['email'];
-$language = strtolower($_POST['lan']);
+$language = strtolower($_POST['language']);
 
 $backendApi = new NewOpalApiCall(
     '/api/users/caregivers/'.$username.'/',

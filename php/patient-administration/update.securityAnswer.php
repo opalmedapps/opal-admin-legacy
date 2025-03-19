@@ -3,14 +3,12 @@
 include_once("../config.php");
 include_once("../classes/NewOpalApiCall.php");
 
-$patientObj = new PatientAdministration(); //Object, check firebase credential
+$patientObj = new PatientAdministration(); //Object
 //$response = $patientObj->updatePatientSecurityAnswer($_POST);
 
-print json_encode($_POST);
-
-// Update patient data_access in new opal DB
+// Update patient security questions and answers in new opal DB
 $username = $_POST['username'];
-$language = strtolower($_POST['lan']);
+$language = strtolower($_POST['language']);
 $question = $_POST['question'];
 $answer = $_POST['answer'];
 $answer_id = $_POST['answer_id'];

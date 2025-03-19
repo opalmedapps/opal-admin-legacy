@@ -6,7 +6,7 @@ $patientObj = new PatientAdministration(); //Object, check firebase credential
 //$response = $patientObj->getAllSecurityQuestions();
 
 // Get all security questions
-$language = strtolower($_POST['lan']);
+$language = strtolower($_POST['language']);
 
 $backendApi = new NewOpalApiCall(
     '/api/security-questions/',

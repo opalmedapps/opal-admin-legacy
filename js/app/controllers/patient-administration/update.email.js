@@ -45,7 +45,7 @@ angular.module('opalAdmin.controllers.update.email', ['ngAnimate', 'ui.bootstrap
 				url: "patient-administration/update/external-email",
 				data: {
 					puid: $scope.puid,
-					lan: $scope.plang,
+					language: $scope.plang,
 					email: $scope.new_email.firstTime,
 				},
 				success: function () {

@@ -431,7 +431,7 @@ angular.module('opalAdmin.collections', [])
 			return $http.post(
 				"patient-administration/get/all-security-questions",
 				$.param({
-					lan: language,
+					language: language,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -445,7 +445,7 @@ angular.module('opalAdmin.collections', [])
 				"patient-administration/get/patient-security-questions",
 				$.param({
 					username: username,
-                    lan: language,
+                    language: language,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},

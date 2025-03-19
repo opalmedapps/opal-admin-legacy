@@ -4,11 +4,10 @@ include_once("../classes/NewOpalApiCall.php");
 
 $patientObj = new PatientAdministration(); //Object. check firebase credential
 //$response = $patientObj->getPatientSecurityQuestions($_POST);
-//print json_encode($_POST); // Return response
 
 // Get patient security questions
 $username = $_POST['username'];
-$language = strtolower($_POST['lan']);
+$language = strtolower($_POST['language']);
 
 $backendApi = new NewOpalApiCall(
     '/api/caregivers/'.$username.'/security-questions/',
@@ -18,6 +17,4 @@ $backendApi = new NewOpalApiCall(
     );
 
 $response = $backendApi->execute(); // response is string json
-
-header('Content-Type: application/javascript');
 print $response; // Return response

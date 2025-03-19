@@ -161,7 +161,7 @@ angular.module('opalAdmin.controllers.update.securityAnswer',
 			url: "patient-administration/update/security-answer",
 			data: {
 				username: $scope.puid,
-				lan: $scope.plang,
+				language: $scope.plang,
 				question: question,
 				answer: CryptoJS.SHA512(answer.toUpperCase()).toString(),
 				answer_id: answer_id,
@@ -185,7 +185,7 @@ angular.module('opalAdmin.controllers.update.securityAnswer',
 	function getPatientSecurityQuestions () {
 		getAllSecurityQuestions();
 		patientAdministrationCollectionService.getPatientSecurityQuestions($scope.puid, $scope.plang).then(function (response){
-			const results = response.data.results;
+			const results = response.data;
 
 			$scope.patientSecurityQuestions = {
 				firstQuestion_old: results[0].question,
@@ -212,7 +212,7 @@ angular.module('opalAdmin.controllers.update.securityAnswer',
 
 	function getAllSecurityQuestions () {
 		patientAdministrationCollectionService.getAllSecurityQuestions($scope.plang).then(function (response) {
-			const results = response.data.results;
+			const results = response.data;
 			$scope.questionList = [];
 			results.forEach(function (row) {
 				const question = {
