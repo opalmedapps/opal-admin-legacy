@@ -5,8 +5,30 @@
  *
  */
 class Notification extends Module {
+    private $host_db_link;
 
     public function __construct($guestStatus = false) {
+        // Setup class-wide database connection with or without SSL
+        if(USE_SSL == 1){
+            $this->$host_db_link = new PDO(
+                OPAL_DB_DSN,
+                OPAL_DB_USERNAME,
+                OPAL_DB_PASSWORD,
+                array(
+                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
+                    PDO::MYSQL_ATTR_SSL_CA => SSL_CA,
+                    PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => true,
+                )
+            );
+        }else{
+            $this->$host_db_link = new PDO(
+                OPAL_DB_DSN,
+                OPAL_DB_USERNAME,
+                OPAL_DB_PASSWORD,
+                array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
+            );
+        }
+
         parent::__construct(MODULE_NOTIFICATION, $guestStatus);
     }
 
@@ -20,8 +42,7 @@ class Notification extends Module {
         $this->checkReadAccess();
         $notificationList = array();
         try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
                     nt.NotificationControlSerNum,
@@ -36,7 +57,7 @@ class Notification extends Module {
                 WHERE
                     nt.NotificationTypeSerNum   = ntt.NotificationTypeSerNum
             ";
-		    $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+		    $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -77,8 +98,7 @@ class Notification extends Module {
         $this->checkReadAccess($serial);
         $notificationDetails = array();
         try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
                     nt.Name_EN,
@@ -94,7 +114,7 @@ class Notification extends Module {
                 AND ntt.NotificationTypeSerNum      = nt.NotificationTypeSerNum
             ";
 
-	        $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+	        $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
@@ -130,8 +150,7 @@ class Notification extends Module {
         $this->checkReadAccess();
         $types = array();
 	    try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
                     ntt.NotificationTypeName,
@@ -144,7 +163,7 @@ class Notification extends Module {
                 WHERE
                     nt.NotificationTypeSerNum IS NULL
             ";
-		    $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+		    $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -182,8 +201,7 @@ class Notification extends Module {
         $sessionId          = $notification['user']['sessionid'];
 
 		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 INSERT INTO
                     NotificationControl (
@@ -207,7 +225,7 @@ class Notification extends Module {
                     '$sessionId'
                 )
             ";
-            $query = $host_db_link->prepare( $sql );
+            $query = $this->$host_db_link->prepare( $sql );
 			$query->execute();
         } catch( PDOException $e) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for notification. " . $e->getMessage());
@@ -238,8 +256,7 @@ class Notification extends Module {
         );
 
         try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 UPDATE
                     NotificationControl
@@ -254,7 +271,7 @@ class Notification extends Module {
                     NotificationControl.NotificationControlSerNum = $serial
             ";
 
-	        $query = $host_db_link->prepare( $sql );
+	        $query = $this->$host_db_link->prepare( $sql );
             $query->execute();
 
             $response['value'] = 1;
@@ -284,15 +301,14 @@ class Notification extends Module {
         $sessionId  = $user['sessionid'];
 
         try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 DELETE FROM
                     NotificationControl
                 WHERE
                     NotificationControl.NotificationControlSerNum = $serial
             ";
-            $query = $host_db_link->prepare( $sql );
+            $query = $this->$host_db_link->prepare( $sql );
             $query->execute();
 
             $sql = "
@@ -305,7 +321,7 @@ class Notification extends Module {
                 ORDER BY NotificationControlMH.RevSerNum DESC 
                 LIMIT 1
             ";
-            $query = $host_db_link->prepare( $sql );
+            $query = $this->$host_db_link->prepare( $sql );
             $query->execute();
 
             $response['value'] = 1;
@@ -327,8 +343,7 @@ class Notification extends Module {
         $this->checkReadAccess($serial);
         $notificationLogs = array();
         try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             $sql = null;
             if (!$serial) {
@@ -383,7 +398,7 @@ class Notification extends Module {
                 ";
             }
 
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             $notificationSeries = array();

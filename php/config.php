@@ -45,19 +45,9 @@ const LIMIT_DAYS_AUDIT_SYSTEM_BACKUP = 5;
 
 define("OPAL_CHECKIN_CALL", "https://" . $_SERVER['HTTP_HOST'] . "/opalAdmin/publisher/php/OpalCheckIn.php");
 
-// Define SSL setting for database connection strings
+// Define SSL setting for database connection strings and path to cert file
 define ("USE_SSL", $config['use_ssl']);
 define ("SSL_CA", $config['ssl_ca']);
-
-define("DB_OPTS", array(PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false));
-if(USE_SSL == 1){
-    define( "OPTS", array(
-        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
-        PDO::MYSQL_ATTR_SSL_CA => SSL_CA,
-        PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => true
-    ));
-}
-
 
 // DEFINE MOSAIQ SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MicrosoftSQL (MSSQL) setup.

@@ -5,8 +5,30 @@
  *
  */
 class Email extends Module {
+    private $host_db_link;
 
     public function __construct($guestStatus = false) {
+        // Setup class-wide database connection with or without SSL
+        if(USE_SSL == 1){
+            $this->$host_db_link = new PDO(
+                OPAL_DB_DSN,
+                OPAL_DB_USERNAME,
+                OPAL_DB_PASSWORD,
+                array(
+                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
+                    PDO::MYSQL_ATTR_SSL_CA => SSL_CA,
+                    PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => true,
+                )
+            );
+        }else{
+            $this->$host_db_link = new PDO(
+                OPAL_DB_DSN,
+                OPAL_DB_USERNAME,
+                OPAL_DB_PASSWORD,
+                array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
+            );
+        }
+
         parent::__construct(MODULE_EMAIL, $guestStatus);
     }
 
@@ -20,8 +42,7 @@ class Email extends Module {
         $this->checkReadAccess();
         $emailList = array();
         try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             $sql = "
 				SELECT DISTINCT
@@ -37,7 +58,7 @@ class Email extends Module {
 				WHERE
 					ec.EmailTypeSerNum = et.EmailTypeSerNum
 			";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -78,8 +99,7 @@ class Email extends Module {
         $this->checkReadAccess($serial);
         $emailDetails = array();
         try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
 				SELECT DISTINCT
 					ec.Subject_EN,
@@ -92,7 +112,7 @@ class Email extends Module {
 				WHERE
 					ec.EmailControlSerNum = $serial
 			";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
@@ -128,8 +148,7 @@ class Email extends Module {
         $this->checkReadAccess();
         $types = array();
         try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
 			SELECT DISTINCT 
 				et.EmailTypeSerNum,
@@ -142,7 +161,7 @@ class Email extends Module {
 			WHERE
 				ec.EmailTypeSerNum IS NOT NULL
 		";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -179,8 +198,7 @@ class Email extends Module {
         $sessionId 		= $emailDetails['user']['sessionid'];
 
         try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
 				INSERT INTO 
 					EmailControl (
@@ -204,7 +222,7 @@ class Email extends Module {
 					'$sessionId'
 				)
 			";
-            $query = $host_db_link->prepare( $sql );
+            $query = $this->$host_db_link->prepare( $sql );
             $query->execute();
         } catch( PDOException $e) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for email. " . $e->getMessage());
@@ -237,8 +255,7 @@ class Email extends Module {
         );
 
         try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
 				UPDATE
 					EmailControl
@@ -252,7 +269,7 @@ class Email extends Module {
 				WHERE
 					EmailControl.EmailControlSerNum = $serial
 			";
-            $query = $host_db_link->prepare( $sql );
+            $query = $this->$host_db_link->prepare( $sql );
             $query->execute();
 
             $response['value'] = 1;
@@ -286,15 +303,14 @@ class Email extends Module {
         $sessionId = $user['sessionid'];
 
         try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
 				DELETE FROM
 					EmailControl
 				WHERE
 					EmailControl.EmailControlSerNum = $serial 
 			";
-            $query = $host_db_link->prepare( $sql );
+            $query = $this->$host_db_link->prepare( $sql );
             $query->execute();
 
             $sql = "
@@ -307,7 +323,7 @@ class Email extends Module {
                 ORDER BY EmailControlMH.RevSerNum DESC 
                 LIMIT 1
             ";
-            $query = $host_db_link->prepare( $sql );
+            $query = $this->$host_db_link->prepare( $sql );
             $query->execute();
 
             $response['value'] = 1;
@@ -332,8 +348,7 @@ class Email extends Module {
         $this->checkReadAccess($serial);
         $emailLogs = array();
         try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             $sql = null;
             if (!$serial) {
@@ -389,7 +404,7 @@ class Email extends Module {
                 ";
             }
 
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             $emailSeries = array();
@@ -435,8 +450,7 @@ class Email extends Module {
 
         $serials = implode(',', $emailIds);
         try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
                     emmh.EmailControlSerNum,
@@ -456,7 +470,7 @@ class Email extends Module {
                 AND emmh.CronLogSerNum              IN ($serials)
             ";
 
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
