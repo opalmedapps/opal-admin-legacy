@@ -629,7 +629,7 @@ class Question extends QuestionnaireModule {
             $fieldLists = $this->pivotal_question_options_fields;
 
         foreach($updatedQuestion["options"] as $key=>$value) {
-            if(in_array($key, $fieldLists) && $oldQuestion["options"][$key] !== $value) {
+            if(in_array($key, $fieldLists) && $oldQuestion["options"][$key] != $value) {
                 $answer = false;
                 break;
             }
@@ -638,7 +638,7 @@ class Question extends QuestionnaireModule {
         foreach($updatedQuestion["subOptions"] as $sub) {
             $tempId = $sub["ID"];
             foreach ($sub as $key => $value) {
-                if (in_array($key, $this->pivotal_question_sub_options_fields) && $value !== $arrayOldOption[$tempId][$key]) {
+                if (in_array($key, $this->pivotal_question_sub_options_fields) && $value != $arrayOldOption[$tempId][$key]) {
                     $answer = false;
                     break;
                 }
