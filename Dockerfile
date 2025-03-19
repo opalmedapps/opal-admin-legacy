@@ -35,6 +35,9 @@ RUN apt-get update \
       cpanminus \
       # Perl mysql dependency
       libmariadb-dev-compat \
+      # Perl modules
+      # Aria DB uses Sybase
+      libdbd-sybase-perl \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*
@@ -46,8 +49,6 @@ RUN cpanm --notest install \
       Date::Calc \
       DateTime::Format::Strptime \
       DBI \
-      # Aria DB uses Sybase
-      DBI::Sybase \
       DBD::mysql \
       File::Spec \
       Net::HTTP \
