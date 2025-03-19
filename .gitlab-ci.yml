@@ -20,3 +20,8 @@ stages:
 include: 
   - project: 'opalmedapps/engineering/ci-templates'
     file: '/templates/autodevops/Auto-DevOps.gitlab-ci.yml'
+  - component: $CI_SERVER_FQDN/opalmedapps/engineering/ci-templates/check-thirdparty-notice@main
+    inputs:
+      package-file: package.json
+      composer-file: composer.json
+      additional-dependencies: jQueryUI ui.bootstrap.materialPicker
