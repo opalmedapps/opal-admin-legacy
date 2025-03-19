@@ -258,6 +258,8 @@ sub sendPushNotification
     my $usernamesStr = join("','", @usernames);
     $usernamesStr = "'".$usernamesStr."'";
 
+    print "\n***** Get Patient Device Identifiers *****\n";
+
     # get a list of the patient's device information
     my @PTDIDs  = getPatientDeviceIdentifiers($usernamesStr);
 
@@ -388,10 +390,9 @@ sub getPatientDeviceIdentifiers
             ptdid.DeviceType
         FROM
             PatientDeviceIdentifier ptdid
-        WHERE
-            AND ptdid.DeviceType in ('0', '1')
-            AND Username in ($usernamesStr)
-            AND IfNull(RegistrationId, '') <> ''
+        WHERE ptdid.DeviceType in ('0', '1')
+        AND Username in ($usernamesStr)
+        AND IfNull(RegistrationId, '') <> ''
     ";
 
     # prepare query
