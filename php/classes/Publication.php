@@ -798,7 +798,11 @@ class Publication extends Module
                                 "DateAdded"=>date("Y-m-d H:i:s"),
                                 "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
                                 "SessionId"=>$this->opalDB->getSessionId(),
-                            ));
+                                // this change is related to appointment time triggers QSCCD-1526
+                                "ScheduledTimeOffset"=>$publication["scheduledtime"]["offset"],
+                                "ScheduledTimeUnit"=>(isset($publication["scheduledtime"]["unit"]["id"])) ? $publication["scheduledtime"]["unit"]["id"]: null,
+                                "ScheduledTimeDirection"=>$publication["scheduledtime"]["direction"]["id"]
+                             ));
                         }
                     }
                 }
@@ -810,6 +814,9 @@ class Publication extends Module
                     "DateAdded"=>date("Y-m-d H:i:s"),
                     "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
                     "SessionId"=>$this->opalDB->getSessionId(),
+                    "ScheduledTimeOffset"=>$publication["scheduledtime"]["offset"],
+                    "ScheduledTimeUnit"=>(isset($publication["scheduledtime"]["unit"]["id"])) ? $publication["scheduledtime"]["unit"]["id"]: null,
+                    "ScheduledTimeDirection"=>$publication["scheduledtime"]["direction"]["id"]
                 ));
 
             }
