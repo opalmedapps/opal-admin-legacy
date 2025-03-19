@@ -103,8 +103,4 @@ COPY --chown=www-data:www-data ./translate ./translate
 COPY docker/crontab /var/spool/cron/crontabs/www-data
 COPY docker/cron.sh /cron.sh
 
-ARG GIT_VERSION='undefined'
-ARG GIT_BRANCH='unknown'
-RUN echo "$GIT_VERSION" > ./VERSION && echo "$GIT_BRANCH" >> ./VERSION
-
 EXPOSE 8080

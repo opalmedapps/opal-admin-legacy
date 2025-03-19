@@ -215,7 +215,7 @@
 	<div id="page">
 		<div ui-view style="position: relative; height: inherit;"></div>
 		<div ng-if="build" class="app-version">
-			{{build.version}} ( E: {{build.environment}} - B: {{build.branch}})
+			(Environment: {{build.environment_name}})
 		</div>
 	</div>
  
