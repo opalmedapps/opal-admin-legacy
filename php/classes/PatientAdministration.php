@@ -11,7 +11,7 @@ class PatientAdministration extends Module {
 
     public function __construct($guestStatus = false) {
         parent::__construct(MODULE_PATIENT_ADMINISTRATION, $guestStatus);
-//        $this->firebaseDB = new FirebaseOpal();
+        $this->firebaseDB = new FirebaseOpal();
     }
 
     /**

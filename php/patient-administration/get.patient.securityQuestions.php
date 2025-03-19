@@ -2,7 +2,7 @@
 include_once("../config.php");
 include_once("../classes/NewOpalApiCall.php");
 
-//$patientObj = new PatientAdministration(); //Object
+$patientObj = new PatientAdministration(); //Object. check firebase credential
 //$response = $patientObj->getPatientSecurityQuestions($_POST);
 //print json_encode($_POST); // Return response
 
