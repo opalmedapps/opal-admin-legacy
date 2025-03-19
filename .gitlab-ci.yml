@@ -27,3 +27,14 @@ include:
       package-file: package.json
       composer-file: composer.json
       additional-dependencies: jQueryUI ui.bootstrap.materialPicker
+
+# for some reason, a branch pipeline is added as well
+check_thirdparty_notice:
+  rules:
+    # Add the job to merge request pipelines if there's an open merge request.
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    # Don't add it to a *branch* pipeline if it's already in a merge request pipeline.
+    - if: $CI_OPEN_MERGE_REQUESTS
+      when: never
+    # If there's no open merge request, add it to a *branch* pipeline instead.
+    - if: '$CI_COMMIT_TAG || $CI_COMMIT_BRANCH'
