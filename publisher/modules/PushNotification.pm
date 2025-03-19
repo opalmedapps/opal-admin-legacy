@@ -233,35 +233,36 @@ sub sendPushNotification
         $message =~ s/$key/$dynamicKeys{$key}/g;
     }
 
-    print "\n***** Push notification to patient caregivers *****\n";
     # get a list of the patient caregivers' device information
     my $apiResponse = Api::apiPatientCaregivers($patientser);
     $apiResponse = decode_json($apiResponse);
 
+    # get caregiver's username array
+    my @usernames = ();
     if (exists($apiResponse->{'caregivers'})) {
         my $caregivers = $apiResponse->{'caregivers'};
         foreach $caregiver (@{ $caregivers }) {  # anonymous array traverse
-            my $devices = $caregiver->{'devices'};
-            foreach $device (@{ $devices }) {  # anonymous array traverse
-                my $deviceType = $device->{'type'};
-                my $push_token = $device->{'push_token'};
-                if ($deviceType != 'WEB') {
-                    $deviceType = $deviceType == 'IOS' ? 0 : 1;
-                    postNotification($title, $message, $deviceType, $push_token);
-                }
-            }
+            push @usernames, $caregiver->{'username'};
         }
     }
+    if (!@usernames) {
+        $sendlog        = "Patient has no related caregivers.";
+        insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusWarning, $sendlog);
+        return;
+    }
+    # convert username array to string for the query
+    my $usernameStrs = join(',', @usernames);
 
     # get a list of the patient's device information
-    my @PTDIDs  = getPatientDeviceIdentifiers($patientser);
+    my @PTDIDs  = getPatientDeviceIdentifiers($patientser, $usernameStrs);
 
     if (!@PTDIDs) { # not identifiers listed
         $sendlog        = "Patient has no device identifier! No push notification sent.";
         insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusWarning, $sendlog);
+        return;
     }
 
-    print "\n***** Push Notification to PatientSerNum: $patientser *****\n";
+    print "\n***** Push notification to patient caregivers *****\n";
 
     foreach my $PTDID (@PTDIDs) {
 
@@ -368,7 +369,7 @@ sub insertPushNotificationInDB
 #====================================================================================
 sub getPatientDeviceIdentifiers
 {
-    my ($patientser) = @_; # patient serial from args
+    my ($patientser, $usernameStrs) = @_; # patient serial from args
 
     # initialize list
     my @PTDIDs = ();
@@ -385,6 +386,7 @@ sub getPatientDeviceIdentifiers
         WHERE
             ptdid.PatientSerNum = '$patientser'
             AND ptdid.DeviceType in ('0', '1')
+            AND FIND_IN_SET(Username, '$usernameStrs')
             AND IfNull(RegistrationId, '') <> ''
     ";
 
