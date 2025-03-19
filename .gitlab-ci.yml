@@ -54,7 +54,7 @@ check_thirdparty_notice:
 
 phpunit:
   stage: test
-  image: php:8.4.2-apache-bookworm
+  image: php:8.4.5-apache-bookworm
   before_script:
     - apt-get update && apt-get install -y curl unzip libxml2-dev
     # Install SOAP extension
