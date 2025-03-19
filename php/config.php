@@ -56,7 +56,6 @@ if ($_ENV['ORMS_ENABLED']) {
     $dotenv->required('ORMS_HOST')->notEmpty();
 }
 
-
 /*
 * PHP global settings:
 */
@@ -83,11 +82,10 @@ define("MSSS_ACTIVE_DIRECTORY_CONFIG", [
 define("AD_LOGIN_ACTIVE", $_ENV["AD_ENABLED"]);
 
 // ORMS
-define("ORMS_HOST", $_ENV["ORMS_HOST"]);
-// ORMS SMS api call
 define("ORMS_ENABLED", $_ENV["ORMS_ENABLED"]);
 
 if (ORMS_ENABLED) {
+    define("ORMS_HOST", $_ENV["ORMS_HOST"]);
     define("WRM_API_URL", $_ENV["ORMS_HOST_INTERNAL"]);
     define("WRM_API_METHOD", [
         # Get all existing SmsAppointment records from OrmsDatabase.SmsAppointment (this table joins a patient appointment with the sms resources associated to it)
@@ -130,7 +128,10 @@ const LIMIT_DAYS_AUDIT_SYSTEM_BACKUP = 5;
 
 // Define SSL setting for database connection strings and path to cert file
 define ("USE_SSL", $_ENV["DATABASE_USE_SSL"]);
-define ("SSL_CA", $_ENV["SSL_CA"]);
+
+if (USE_SSL) {
+    define("SSL_CA", $_ENV["SSL_CA"]);
+}
 
 const ABS_PATH = "/var/www/html/";
 const RELATIVE_URL = "/";
@@ -159,7 +160,6 @@ define("ALIAS_TYPE_DOCUMENT", 3);
 
 // Push Notification FCM and APN variables and credentials
 define("ANDROID_URL" , $_ENV["PUSH_NOTIFICATION_ANDROID_URL"]);
-define("CERTIFICATE_PASSWORD" , $_ENV["APPLE_CERT_PASSWORD"]);
 define("CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $_ENV["APPLE_CERT_FILENAME"]);
 define("APNS_TOPIC" , $_ENV["APPLE_TOPIC"]);
 define("CERTIFICATE_KEY" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $_ENV["APPLE_CERT_KEY"]);
@@ -194,7 +194,6 @@ const APPLE_PUSH_NOTIFICATION_CONFIG = array(
     CURLOPT_HTTPHEADER=>["apns-topic: ".APNS_TOPIC],
     CURLOPT_SSLCERT=>CERTIFICATE_FILE,
     CURLOPT_SSLKEY=>CERTIFICATE_KEY,
-    CURLOPT_SSLKEYPASSWD=>CERTIFICATE_PASSWORD,
     CURLOPT_RETURNTRANSFER=>true,
     CURLOPT_TIMEOUT=>5,
     CURLOPT_CONNECTTIMEOUT=>5,
