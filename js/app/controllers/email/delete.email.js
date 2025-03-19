@@ -10,6 +10,7 @@ controller('email.delete', function ($scope, $uibModal, $uibModalInstance, $filt
 		$.ajax({
 			type: "POST",
 			url: "email/delete/email",
+			dataType: "json",
 			data: $scope.emailToDelete,
 			success: function (response) {
 				// Show success or failure depending on response
