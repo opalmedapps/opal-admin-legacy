@@ -70,7 +70,9 @@ class PushNotifications {
 		";
 
 		try {
-			return $pdo->query($sql);
+			$stmt = $pdo->prepare($sql);
+			$stmt->execute();
+			return $stmt->fetchAll();
 		} catch(PDOException $e) {
 			return array();
 		}
