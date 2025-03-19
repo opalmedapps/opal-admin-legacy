@@ -208,18 +208,25 @@ class Alias extends Module {
 
                 // 3rd bit
                 if (array_key_exists("hospitalMap", $post)) {
-                    if($post["type"] != ALIAS_TYPE_APPOINTMENT_TEXT || $post["hospitalMap"] == "") {
-                        $errCode = "1" . $errCode;
+                    if($post["type"] != ALIAS_TYPE_APPOINTMENT_TEXT) {
+                        if ($post["hospitalMap"] != "") {
+                            $errCode = "1" . $errCode;
+                        }
                     }
                     else {
-                        $total = $this->opalDB->countHospitalMap($post["hospitalMap"]);
-                        $total = intval($total["total"]);
-                        if ($total <= 0)
+                        if ($post["hospitalMap"] == "") {
                             $errCode = "1" . $errCode;
-                        else if ($total == 1)
-                            $errCode = "0" . $errCode;
-                        else
-                            HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, "Duplicate hospital maps found.");
+                        }
+                        else {
+                            $total = $this->opalDB->countHospitalMap($post["hospitalMap"]);
+                            $total = intval($total["total"]);
+                            if ($total <= 0)
+                                $errCode = "1" . $errCode;
+                            else if ($total == 1)
+                                $errCode = "0" . $errCode;
+                            else
+                                HelpSetup::returnErrorMessage(HTTP_STATUS_UNPROCESSABLE_ENTITY_ERROR, "Duplicate hospital maps found.");
+                        }
                     }
                 } else
                     $errCode = "0" . $errCode;

@@ -355,6 +355,7 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 
 		if (type.name != "Appointment") {
 			steps.checkin.completed = true;
+			steps.hospital_map.completed = true;
 		}
 		else {
 			if ($scope.newAlias.name_EN && $scope.newAlias.name_FR &&
@@ -366,6 +367,9 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 			if (!$scope.newAlias.checkin_details.instruction_EN || !$scope.newAlias.checkin_details.instruction_FR || $scope.newAlias.checkin_details.checkin_possible == null) {
 				steps.checkin.completed = false;
 
+			}
+			if (!$scope.newAlias.hospitalMap) {
+				steps.hospital_map.completed = false;
 			}
 		}
 
