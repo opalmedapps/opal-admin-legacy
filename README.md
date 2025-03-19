@@ -175,15 +175,22 @@ git checkout staging
 Log into the app so that a row in PatientDeviceIdentifier gets updated with your device's push notification registration ID (in the column RegistrationId). This is required because the RegistrationId may change at any time, and it also changes every time you reinstall the app.
 
 ### Step 2
-Log into server(testing in RI-Dev) and use HeidiSQL to check PatientDeviceIdentifier table to copy the RegistrationId. 
+Log into server(testing in RI-Dev) and use HeidiSQL to check PatientDeviceIdentifier table to copy the RegistrationId and keep it somewhere to be used after. 
 
-Run PUTTY to open RI-Dev and call 
+### Step 3
+Run PUTTY to open RI-Dev and use your own crendential to login (if you don't have one, please reacho out to Greg for help)
+
+to grant your account privileged access to opalsupt resources so that you can run commands that they cannot run under your regular accounts and call (there will be 2nd time password required to input)
 
 sudo su - opalsupt
 
 To enter docker container and call
 
 dcd exec opaladmin bash
+
+To change directory to the right folder where the test script is kept and call
+
+cd publisher/php/tests
 
 ### Step 3
 Run the script in the docker container by calling the command below
