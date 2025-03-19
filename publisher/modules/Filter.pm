@@ -33,6 +33,10 @@ sub new
         _appointmentStatuses=> undef,
         _checkin            => undef,
         _frequencyflag      => undef,
+        _scheduledTimeOffset => undef,
+        _scheduledTimeUnit => undef,
+        _scheduledTimeDirection => undef,
+
     };
 
 	# bless associates an object with a class so Perl knows which package to search for
@@ -119,6 +123,36 @@ sub setAppointmentStatusFilters
     my ($filter, @appointmentStatuses) = @_; # filter object with provided statuses in arguments
     @{$filter->{_appointmentStatuses}} = @appointmentStatuses; # set the statuses
     return @{$filter->{_appointmentStatuses}};
+}
+
+#======================================================================================
+# Subroutine to set the appointment status filters
+#======================================================================================
+sub setAppointmentScheduledTimeOffset
+{
+    my ($filter, $scheduledTimeOffset) = @_; # filter object with provided statuses in arguments
+    $filter->{_scheduledTimeOffset} = $scheduledTimeOffset; # set the statuses
+    return $filter->{_scheduledTimeOffset};
+}
+
+#======================================================================================
+# Subroutine to set the appointment status filters
+#======================================================================================
+sub setAppointmentScheduledTimeUnit
+{
+    my ($filter, $scheduledTimeUnit) = @_; # filter object with provided statuses in arguments
+    $filter->{_scheduledTimeUnit} = $scheduledTimeUnit; # set the statuses
+    return $filter->{_scheduledTimeUnit};
+}
+
+#======================================================================================
+# Subroutine to set the appointment status filters
+#======================================================================================
+sub setAppointmentScheduledTimeDirection
+{
+    my ($filter, $scheduledTimeDirection) = @_; # filter object with provided statuses in arguments
+    $filter->{_scheduledTimeDirection} = $scheduledTimeDirection; # set the statuses
+    return $filter->{_scheduledTimeDirection};
 }
 
 #======================================================================================
@@ -214,6 +248,33 @@ sub getAppointmentStatusFilters
 }
 
 #======================================================================================
+# Subroutine to get the scheduled time offset filters
+#======================================================================================
+sub getScheduledTimeOffsetFilters
+{
+    my ($filter) = @_; # our filter object
+    return $filter->{_scheduledTimeOffset};
+}
+
+#======================================================================================
+# Subroutine to get the scheduled time unit filters
+#======================================================================================
+sub getScheduledTimeUnitFilters
+{
+    my ($filter) = @_; # our filter object
+    return $filter->{_scheduledTimeUnit};
+}
+
+#======================================================================================
+# Subroutine to get the scheduled time direction filters
+#======================================================================================
+sub getScheduledTimeDirectionFilters
+{
+    my ($filter) = @_; # our filter object
+    return $filter->{_scheduledTimeDirection};
+}
+
+#======================================================================================
 # Subroutine to get the checkin filters
 #======================================================================================
 sub getCheckinFilters
@@ -245,7 +306,11 @@ sub getAllFiltersFromOurDB
     my @diagnosisFilters            = getDiagnosisFiltersFromOurDB($controlSer, $controlTable);
     my @doctorFilters               = getDoctorFiltersFromOurDB($controlSer, $controlTable);
     my @resourceFilters             = getResourceFiltersFromOurDB($controlSer, $controlTable);
-    my @appointmentStatusFilters    = getAppointmentStatusFiltersFromOurDB($controlSer, $controlTable);
+    my @listStatusAndTimeOffset   = getAppointmentStatusFiltersFromOurDB($controlSer, $controlTable);
+    my @appointmentStatusFilters = $listStatusAndTimeOffset[0];
+    my $scheduledTimeOffset = $listStatusAndTimeOffset[1];
+    my $scheduledTimeUnit = $listStatusAndTimeOffset[2];
+    my $scheduledTimeDirection = $listStatusAndTimeOffset[3];
     my @checkinFilter               = getCheckinFiltersFromOurDB($controlSer, $controlTable);
     my $frequencyFilter             = getFrequencyFilterFromOurDB($controlSer, $controlTable);
 
@@ -259,6 +324,9 @@ sub getAllFiltersFromOurDB
     $Filter->setDoctorFilters(@doctorFilters);
     $Filter->setResourceFilters(@resourceFilters);
     $Filter->setAppointmentStatusFilters(@appointmentStatusFilters);
+    $Filter->setAppointmentScheduledTimeOffset($scheduledTimeOffset);
+    $Filter->setAppointmentScheduledTimeUnit($scheduledTimeUnit);
+    $Filter->setAppointmentScheduledTimeDirection($scheduledTimeDirection);
     $Filter->setCheckinFilters(@checkinFilter);
     $Filter->setFrequencyFilter($frequencyFilter);
 
@@ -518,9 +586,13 @@ sub getAppointmentStatusFiltersFromOurDB
     my ($controlSer, $controlTable) = @_; # args
 
     my @appointmentStatusFilters = (); # initialize list
+    my @offsetFields = ();
     my $select_sql = "
         SELECT DISTINCT
-            Filters.FilterId
+            Filters.FilterId,
+            Filters.ScheduledTimeOffset,
+            Filters.ScheduledTimeUnit,
+            Filters.ScheduledTimeDirection
         FROM
             Filters
         WHERE
@@ -539,9 +611,10 @@ sub getAppointmentStatusFiltersFromOurDB
     
     while (my @data = $query->fetchrow_array()) {
         push(@appointmentStatusFilters, $data[0]);
+        push(@offsetFields, $data[1], $data[2], $data[3]);
     }
 
-    return @appointmentStatusFilters;
+    return (@appointmentStatusFilters, @offsetFields);
 }
 #======================================================================================
 # Subroutine to get checkin filters from DB given a control serial number and table name
