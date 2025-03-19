@@ -230,16 +230,15 @@ angular.module('opalAdmin', [
 			}
 		};
 	})
-	.run(function ($rootScope, AUTH_EVENTS, AuthService, $state, $window) {
+	.run(function ($rootScope, $transitions, AUTH_EVENTS, AuthService, $state, $window) {
 
-		$rootScope.$on('$stateChangeStart', function (event, next, toParams) {
-			var requireLogin = next.data.requireLogin;
-			var authorizedRoles = next.data.authorizedRoles;
-			var installAccess = next.data.installAccess;
-			var accessible = next.data.accessible;
+		$transitions.onStart({}, function (transition) {
+			var requireLogin = transition.to().data.requireLogin;
+			var authorizedRoles = transition.to().data.authorizedRoles;
+			var installAccess = transition.to().data.installAccess;
+			var accessible = transition.to().data.accessible;
 
 			if (!AuthService.isAuthorized(authorizedRoles) && requireLogin) {
-				event.preventDefault();
 
 				if (AuthService.isAuthenticated()) {
 					// user is not allowed
@@ -252,7 +251,6 @@ angular.module('opalAdmin', [
 
 			if (accessible !== undefined) {
 				if (!accessible) {
-					event.preventDefault();
 					// user is not allowed
 					$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
 				}
@@ -260,14 +258,13 @@ angular.module('opalAdmin', [
 
 			// open a page when a state has an external URL (e.g., new opalAdmin host)
 			// https://stackoverflow.com/questions/30220947/how-would-i-have-ui-router-go-to-an-external-link-such-as-google-com
-			if (next.external) {
-				if (next.url == 'http://do-not-change.external-opal-admin') {
+			if (transition.to().external) {
+				if (transition.to().url == 'http://do-not-change.external-opal-admin') {
 					// replace a placeholder with the newOpalAdmin host url
-					next.url = $rootScope.newOpalAdminHost;
+					transition.to().url = $rootScope.newOpalAdminHost;
 				}
 				
-				event.preventDefault();
-				$window.open(next.url, '_self');
+				$window.open(transition.to().url, '_self');
 			}
 		});
 	})
