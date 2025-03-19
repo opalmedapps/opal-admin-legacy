@@ -454,79 +454,88 @@ print "Got global patientInfo list\n" if $verbose;
 # Data Retrieval PRIORITIES - get list of priority info updated since last update
 #
 ##########################################################################################
-print "\n--- Start getPrioritiesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@PriorityList = Priority::getPrioritiesFromSourceDB(\@patientList, $global_patientInfo_sql);
-print "--- End getPrioritiesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Got priority list\n" if $verbose;
 
-#=========================================================================================
-# Loop over each priority. Various functions are done.
-#=========================================================================================
-print "-- Start Loop over each priority: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-foreach my $Priority (@PriorityList) {
 
-	# check if priority exists in our database
-	my $PriorityExists = $Priority->inOurDatabase();
+# 2023-06-12 Per Yick's instructions we can disable Priorities entirely.
+##########################################################################################
 
-	if ($PriorityExists) { # priority exists
+# print "\n--- Start getPrioritiesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# @PriorityList = Priority::getPrioritiesFromSourceDB(\@patientList, $global_patientInfo_sql);
+# print "--- End getPrioritiesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Got priority list\n" if $verbose;
 
-		my $ExistingPriority = dclone($PriorityExists); # reassign variable
+# #=========================================================================================
+# # Loop over each priority. Various functions are done.
+# #=========================================================================================
+# print "-- Start Loop over each priority: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# foreach my $Priority (@PriorityList) {
 
-		# compare our retrieve Priority with existing Priority
-		# update is done on the original (existing) Priority
-		my $UpdatedPriority = $Priority->compareWith($ExistingPriority);
+# 	# check if priority exists in our database
+# 	my $PriorityExists = $Priority->inOurDatabase();
 
-		# after updating our Priority object, update the database
-		$UpdatedPriority->updateDatabase();
+# 	if ($PriorityExists) { # priority exists
 
-	} else { # priority DNE
+# 		my $ExistingPriority = dclone($PriorityExists); # reassign variable
 
-		# insert Priority into our database
-		$Priority->insertPriorityIntoOurDB();
-	}
-}
-print "-- End Loop over each priority: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished priority list\n" if $verbose;
+# 		# compare our retrieve Priority with existing Priority
+# 		# update is done on the original (existing) Priority
+# 		my $UpdatedPriority = $Priority->compareWith($ExistingPriority);
+
+# 		# after updating our Priority object, update the database
+# 		$UpdatedPriority->updateDatabase();
+
+# 	} else { # priority DNE
+
+# 		# insert Priority into our database
+# 		$Priority->insertPriorityIntoOurDB();
+# 	}
+# }
+# print "-- End Loop over each priority: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Finished priority list\n" if $verbose;
 
 ##########################################################################################
 #
 # Data Retrieval TASKS - get list of patients with tasks updated since last update
 #
 ##########################################################################################
-print "\n--- Start getTasksFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@TaskList = Task::getTasksFromSourceDB($cronLogSer, \@patientList, $global_patientInfo_sql);
-print "--- End getTasksFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Got task list\n" if $verbose;
 
-#=========================================================================================
-# Loop over each task. Various functions are done.
-#=========================================================================================
-print "-- Start Loop over each task: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-foreach my $Task (@TaskList) {
+# 2023-06-12 Per Yick's instructions we can disable Tasks entirely.
+##########################################################################################
 
-	# check if task exists in our database
-	my $TaskExists = $Task->inOurDatabase();
+# print "\n--- Start getTasksFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# @TaskList = Task::getTasksFromSourceDB($cronLogSer, \@patientList, $global_patientInfo_sql);
+# print "--- End getTasksFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Got task list\n" if $verbose;
 
-	if ($TaskExists) { # task exists
+# #=========================================================================================
+# # Loop over each task. Various functions are done.
+# #=========================================================================================
+# print "-- Start Loop over each task: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# foreach my $Task (@TaskList) {
 
-		my $ExistingTask = dclone($TaskExists); # reassign variable
+# 	# check if task exists in our database
+# 	my $TaskExists = $Task->inOurDatabase();
 
-		# compare our retrieve Task with existing Task
-		# update is done on the original (existing) Task
-		my $UpdatedTask = $Task->compareWith($ExistingTask);
+# 	if ($TaskExists) { # task exists
 
-		# after updating our Task object, update the database
-		$UpdatedTask->updateDatabase();
+# 		my $ExistingTask = dclone($TaskExists); # reassign variable
 
-	} else { # task DNE
+# 		# compare our retrieve Task with existing Task
+# 		# update is done on the original (existing) Task
+# 		my $UpdatedTask = $Task->compareWith($ExistingTask);
 
-		# insert Task into our database
-		$Task = $Task->insertTaskIntoOurDB();
-	}
+# 		# after updating our Task object, update the database
+# 		$UpdatedTask->updateDatabase();
 
-}
-print "-- End Loop over each task: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished task list\n" if $verbose;
+# 	} else { # task DNE
+
+# 		# insert Task into our database
+# 		$Task = $Task->insertTaskIntoOurDB();
+# 	}
+
+# }
+# print "-- End Loop over each task: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Finished task list\n" if $verbose;
 ##########################################################################################
 #
 # Data Retrieval APPOINTMENTS - get list of patients with appointments updated since last update
