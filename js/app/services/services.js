@@ -5,7 +5,7 @@ angular.module('opalAdmin.services', [])
 
 	.service('Session', function ($cookies) {
 		this.create = function (data) {
-			$cookies.put('django_language', data.user.language.toLowerCase(), {samesite: 'lax'});
+			$cookies.put('django_language', data.user.language.toLowerCase(), {samesite: 'lax', path: '/'});
 
 			angular.forEach(data.menu, function(category) {
 				category.name = (data.user.language == "EN" ? category.name_EN : category.name_FR);
@@ -23,7 +23,7 @@ angular.module('opalAdmin.services', [])
 			return JSON.parse(sessionStorage.getItem(data));
 		};
 		this.updateUser = function (user) {
-			$cookies.put('django_language', user.language.toLowerCase(), {samesite: 'lax'});
+			$cookies.put('django_language', user.language.toLowerCase(), {samesite: 'lax', path: '/'});
 			navMenu = JSON.parse(sessionStorage.getItem("menu"));
 			angular.forEach(navMenu, function(category) {
 				category.name = (user.language == "EN" ? category.name_EN : category.name_FR);
