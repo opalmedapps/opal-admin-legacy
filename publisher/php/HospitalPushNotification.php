@@ -207,7 +207,7 @@
            $result = $pdo->query($sql);
            return $sendStatus;
        }
-       
+
        /**
         *    (buildMessageForRoomNotification($room, $title, $description)
         *    Consumes a room, a title and a description of message

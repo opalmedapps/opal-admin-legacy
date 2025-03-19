@@ -4070,9 +4070,9 @@ class DatabaseOpal extends DatabaseAccess {
      * @param $typeDesc string - appointment type description
      * @return array - data found if any
      */
-    function getPatientDeviceIdentifiers($patientser) {
+    function getPatientDeviceIdentifiers($userNamesStr) {
         return $this->_fetchAll(OPAL_GET_PATIENT_DEVICE_IDENTIFIERS, array(
-            array("parameter"=>":Patientser","variable"=>$patientser,"data_type"=>PDO::PARAM_STR)
+            array("parameter"=>":userNamesStr","variable"=>$userNamesStr,"data_type"=>PDO::PARAM_STR)
         ));
     }
 
