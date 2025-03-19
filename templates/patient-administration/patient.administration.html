@@ -95,39 +95,43 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-xs-6 col-lg-4">{{'PATIENT_ADMINISTRATION.MENU.SEX'|translate}}</label>
-                                        <div class="col-xs-4 col-lg-2">{{psex}}</div>
+                                        <div ng-show="selectedName.user_type == 'Patient'" class="col-xs-4 col-lg-2">{{psex}}</div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-xs-6 col-lg-4">{{'PATIENT_ADMINISTRATION.MENU.SERIAL'|translate}}</label>
-                                        <div class="col-xs-4 col-lg-2">{{psnum}}</div>
+                                        <div ng-show="selectedName.user_type == 'Patient'" class="col-xs-4 col-lg-2">{{psnum}}</div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-xs-6 col-lg-4">{{'PATIENT_ADMINISTRATION.MENU.EMAIL'|translate}}</label>
-                                        <div class="col-xs-4 col-lg-2">{{pemail}}</div>
+                                        <div ng-show="selectedName.puid != null" class="col-xs-4 col-lg-2">{{pemail}}</div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-xs-6 col-lg-4">{{'PATIENT_ADMINISTRATION.MENU.ACCESS'|translate}}</label>
-                                        <div class="col-xs-4 col-lg-2">{{paccess}}</div>
+                                        <div ng-show="selectedName.user_type == 'Patient'" class="col-xs-4 col-lg-2">{{paccess}}</div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-xs-6 col-lg-4">RAMQ</label>
-                                        <div ng-show="pramq" class="col-xs-4 col-lg-8">{{pramq}}</div>
-                                        <div ng-show="!pramq" class="col-xs-4 col-lg-8">{{'PATIENT_ADMINISTRATION.MENU.NO_RAMQ'|translate}}</div>
+                                        <div ng-show="selectedName.user_type == 'Patient'">
+                                            <div ng-show="pramq" class="col-xs-4 col-lg-8">{{pramq}}</div>
+                                            <div ng-show="!pramq" class="col-xs-4 col-lg-8">{{'PATIENT_ADMINISTRATION.MENU.NO_RAMQ'|translate}}</div>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-xs-6 col-lg-4">MRN</label>
-                                        <div ng-if="MRN.length > 0" class="col-xs-4 col-lg-8">
-                                            <div ng-repeat="result in MRN">
-                                                {{result.hospital}} - {{result.MRN}}
+                                        <div ng-show="selectedName.user_type == 'Patient'">
+                                            <div ng-if="MRN.length > 0" class="col-xs-4 col-lg-8">
+                                                <div ng-repeat="result in MRN">
+                                                    {{result.hospital}} - {{result.MRN}}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div ng-if="MRN.length <= 0" class="col-xs-4 col-lg-8">
-                                            {{'PATIENT_ADMINISTRATION.MENU.NO_MRN'|translate}}
+                                            <div ng-if="MRN.length <= 0" class="col-xs-4 col-lg-8">
+                                                {{'PATIENT_ADMINISTRATION.MENU.NO_MRN'|translate}}
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-xs-6 col-lg-4">{{'PATIENT_ADMINISTRATION.MENU.LANG'|translate}}</label>
-                                        <div class="col-xs-4 col-lg-2">{{plang}}</div>
+                                        <div ng-show="selectedName.puid != null" class="col-xs-4 col-lg-2">{{plang}}</div>
                                     </div>
                                 </div>
                             </div>
@@ -144,7 +148,7 @@
                     </div>
                     <div class="row animated fadeInRight" ng-show="foundPatient&&writeAccess">
                         <!-- customize report section -->
-                        <div class="col-xs-12" style="width: 25%" ng-if="selectedName.user_type == 'Caregiver'">
+                        <div class="col-xs-12" style="width: 25%" ng-if="selectedName.puid != null">
                             <div class="panel-container animated" ng-class="{pulse: hoverEmail}" ng-mouseenter="hoverEmail=true" ng-mouseleave="hoverEmail=false" style="cursor:pointer;" ng-click="updateEmail()">
                                 <div class="side-panel-info-sm" style="height: 70px; line-height:3">
                                     <div class="panel-content" style="padding: 3px">
@@ -153,7 +157,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12" style="width: 25%" ng-if="selectedName.user_type == 'Caregiver'">
+                        <div class="col-xs-12" style="width: 25%" ng-if="selectedName.puid != null">
                             <div class="panel-container animated" ng-class="{pulse: hoverPassword}" ng-mouseenter="hoverPassword=true" ng-mouseleave="hoverPassword=false" style="cursor:pointer;" ng-click="updatePassword()">
                                 <div class="side-panel-info-sm" style="height: 70px; line-height:3">
                                     <div class="panel-content" style="padding: 3px">
@@ -162,7 +166,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12" style="width: 25%" ng-if="selectedName.user_type != 'Caregiver'">
+                        <div class="col-xs-12" style="width: 25%" ng-if="selectedName.user_type == 'Patient'">
                             <div class="panel-container animated" ng-class="{pulse: hoverAccessLevel}" ng-mouseenter="hoverAccessLevel=true" ng-mouseleave="hoverAccessLevel=false" style="cursor:pointer;" ng-click="updateAccessLevel()">
                                 <div class="side-panel-info-sm" style="height: 70px; line-height:3">
                                     <div class="panel-content" style="padding: 3px">
@@ -171,7 +175,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12" style="width: 25%" ng-if="selectedName.user_type == 'Caregiver'">
+                        <div class="col-xs-12" style="width: 25%" ng-if="selectedName.puid != null">
                             <div class="panel-container animated" ng-class="{pulse: hoverSecurityQuestion}" ng-mouseenter="hoverSecurityQuestion=true" ng-mouseleave="hoverSecurityQuestion=false" style="cursor:pointer;" ng-click="updateSecurityQuestion()">
                                 <div class="side-panel-info-sm" style="height: 70px; line-height:3">
                                     <div class="panel-content" style="padding: 3px">
