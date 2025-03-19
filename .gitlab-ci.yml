@@ -30,9 +30,9 @@ set variables:
 
 
 include: 
+  - template: Auto-DevOps.gitlab-ci.yml
   - component: $CI_SERVER_FQDN/opalmedapps/engineering/ci-templates/check-thirdparty-notice@main
     inputs:
       package-file: package.json
       composer-file: composer.json
       additional-dependencies: jQueryUI ui.bootstrap.materialPicker
-  - template: Auto-DevOps.gitlab-ci.yml
