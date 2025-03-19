@@ -1012,18 +1012,17 @@ define("OPAL_GET_APPOINTMENT", "
     hm.MapUrl,hm.MapURL_EN,hm.MapURL_FR,hm.MapName_EN,hm.MapName_FR,hm.MapDescription_EN,hm.MapDescription_FR,
     a.ScheduledStartTime AS starttime, a.ScheduledEndTime AS endtime,
     a.checkin,a.SourceDatabaseSerNum,a.AppointmentAriaSer,em.ReadStatus,
-    r.ResourceName,r.ResourceType,a.Status ,
+    a.Status ,
     a.RoomLocation_EN,a.RoomLocation_FR,
     ac.CheckinPossible,ac.CheckinInstruction_EN,ac.CheckinInstruction_FR,
     hm.HospitalMapSerNum,
     a.ScheduledStartTime AS starttime, a.Status AS status, a.DateAdded AS dateadded,
-    als.AliasName_EN AS aliasname, als.AliasType AS aliastype, r.ResourceName AS resourcename
+    als.AliasName_EN AS aliasname, als.AliasType AS aliastype
     FROM ".OPAL_APPOINTMENTS_TABLE." a,
      ".OPAL_HOSPITAL_MAP_TABLE." hm,
     ".OPAL_ALIAS_TABLE." als,
     ".OPAL_APPOINTMENT_CHECK_IN_TABLE." ac,
      ".OPAL_ALIAS_EXPRESSION_TABLE." ae,
-    ".OPAL_RESOURCE_TABLE." r, ".OPAL_RESOURCE_APPOINTMENT_TABLE." ra,
     ".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE ." phi,
     ".OPAL_EDUCATION_MATERIAL_CONTROL_TABLE." emc ,
     ".OPAL_EDUCATION_MATERIAL_TABLE." em
@@ -1036,8 +1035,6 @@ define("OPAL_GET_APPOINTMENT", "
     AND ae.AliasSerNum = als.AliasSerNum
     AND als.AliasSerNum = ac.AliasSerNum
     AND als.HospitalMapSerNum = hm.HospitalMapSerNum
-    AND r.ResourceSerNum = ra.ResourceSerNum
-    AND ra.AppointmentSerNum = a.AppointmentSerNum
     AND (:startDate IS NULL OR ScheduledStartTime >=  CAST(:startDate AS DATETIME))
     AND (:endDate IS NULL OR ScheduledStartTime <= CAST(:endDate AS DATETIME));
 ");
@@ -1045,11 +1042,9 @@ define("OPAL_GET_APPOINTMENT", "
 define("OPAL_GET_APPOINTMENT_REPORT", "
     SELECT a.ScheduledStartTime AS starttime, a.Status AS status, a.DateAdded AS dateadded,
     als.AliasName_EN AS aliasname, als.AliasType AS aliastype, r.ResourceName AS resourcename
-    FROM ".OPAL_APPOINTMENTS_TABLE." a, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_ALIAS_TABLE." als,
-    ".OPAL_RESOURCE_TABLE." r, ".OPAL_RESOURCE_APPOINTMENT_TABLE." ra
+    FROM ".OPAL_APPOINTMENTS_TABLE." a, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_ALIAS_TABLE." als
     WHERE PatientSerNum = :pnum AND a.AliasExpressionSerNum = ae.AliasExpressionSerNum
-    AND ae.AliasSerNum = als.AliasSerNum AND r.ResourceSerNum = ra.ResourceSerNum
-    AND ra.AppointmentSerNum = a.AppointmentSerNum;
+    AND ae.AliasSerNum = als.AliasSerNum;
 ");
 
 define("OPAL_GET_QUESTIONNAIRE_REPORT", "
