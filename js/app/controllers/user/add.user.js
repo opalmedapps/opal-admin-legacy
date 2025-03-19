@@ -45,7 +45,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			username: { completed: false },
 			password: { completed: false },
 			role: { completed: false },
-			additional_roles: {completed: false},
+			additionalprivileges: {completed: false},
 			language: { completed: false }
 		};
 
@@ -103,14 +103,13 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR_ROLES'));
 		});
 
-		// Call our API service to get the list of possible additional roles
-		$scope.additional_roles = [];
-		userCollectionService.getAdditionalRoles($scope.configs.newOpalAdminHost).then(
+		// Call our API service to get the list of possible additional privileges
+		$scope.additionalprivileges = [];
+		userCollectionService.getAdditionalPrivileges().then(
 			function(response){
-				$scope.additional_roles = response.data;
+				$scope.additionalprivileges = response.data;
 			}).catch(function(err) {
-				alert(JSON.stringify(err));
-				ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR_ADDITIONAL_ROLES'));
+				ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR_ADDITIONAL_PRIVILEGES'));
 			});
 
 		// Function to validate username
@@ -240,18 +239,18 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 
 		};
 
-		// Function to toggle steps when updating the additional role field
-		$scope.additionalRolesUpdate = function () {
+		// Function to toggle steps when updating the additional privileges field
+		$scope.additionalPrivilegesUpdate = function () {
 			$scope.roleSection.open = true;
-			if ($scope.newUser.additional_roles.length > 0) {
-				steps.additional_roles.completed = true;
+			if ($scope.newUser.additionalprivileges.length > 0) {
+				steps.additionalprivileges.completed = true;
 				steps.role.completed = true;
 				$scope.languageSection.show = true;
 			}
 			else{
-				steps.additional_roles.completed = false;
+				steps.additionalprivileges.completed = false;
 				steps.role.completed = false;
-				$scope.newUser.additional_roles = "";
+				$scope.newUser.additionalprivileges = "";
 			}
 
 			$scope.numOfCompletedSteps = stepsCompleted(steps);

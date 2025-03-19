@@ -37,17 +37,17 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 		$scope.user = response.data;
 		$scope.roleDisabled = (OAUserId == $scope.user.serial);
 		// introduce synchronous functions to run in order
-		userCollectionService.getAdditionalRoles().then(
+		userCollectionService.getAdditionalPrivileges().then(
 			function(response){
-				$scope.additionalroles = response.data;
-				userCollectionService.getUserSelectedAdditionalRoles($scope.user.username).then(
+				$scope.additionalprivileges = response.data;
+				userCollectionService.getUserSelectedAdditionalPrivileges($scope.user.username).then(
 					function(response){
-						get_selected_additional_roles(response.data);
+						get_selected_additional_privileges(response.data);
 					}).catch(function(err) {
-						ErrorHandler.onError(err, $filter('translate')('USERS.EDIT.ERROR_USER_ADDITIONAL_ROLES'));
+						ErrorHandler.onError(err, $filter('translate')('USERS.EDIT.ERROR_USER_ADDITIONAL_PRIVILEGES'));
 					})
 			}).catch(function(err) {
-				ErrorHandler.onError(err, $filter('translate')('USERS.EDIT.ERROR_ADDITIONAL_ROLES'));
+				ErrorHandler.onError(err, $filter('translate')('USERS.EDIT.ERROR_ADDITIONAL_PRIVILEGES'));
 			})
 		processingModal.close(); // hide modal
 		processingModal = null; // remove reference
@@ -69,16 +69,16 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 		ErrorHandler.onError(err, $filter('translate')('USERS.EDIT.ERROR_ROLES'));
 	});
 
-	// Function to create a map for the selected additional roles
-	$scope.user.selected_additionalroles = [];
-	function get_selected_additional_roles(selected_additionalroles_list) {
-		$scope.user.selected_additionalroles = [];
-		for (const [,value] of Object.entries($scope.additionalroles)) {
-			  if (selected_additionalroles_list.groups.includes(value.pk)) {
+	// Function to create a map for the selected additional privileges
+	$scope.user.selected_additionalprivileges = [];
+	function get_selected_additional_privileges(selected_additionalprivileges_list) {
+		$scope.user.selected_additionalprivileges = [];
+		for (const [,value] of Object.entries($scope.additionalprivileges)) {
+			  if (selected_additionalprivileges_list.groups.includes(value.pk)) {
 				  group_dict={}
 				  group_dict.pk = value.pk;
 				  group_dict.name = value.name;
-				  $scope.user.selected_additionalroles.push(group_dict);
+				  $scope.user.selected_additionalprivileges.push(group_dict);
 			  }
 		}
 	}
