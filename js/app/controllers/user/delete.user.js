@@ -8,7 +8,7 @@ controller('user.delete', function ($scope, $uibModal, $uibModalInstance,  $filt
 			$.ajax({
 				type: "POST",
 				url: "user/delete/user",
-				data: {"ID": $scope.userToDelete.serial, "OAUserId": Session.retrieveObject('user').id},
+				data: {"ID": $scope.userToDelete.serial, "OAUserId": Session.retrieveObject('user').id, "username": $scope.userToDelete.username},
 				success: function () {
 					$scope.setBannerClass('success');
 					$scope.$parent.bannerMessage = $filter('translate')('USERS.DELETE.SUCCESS');

@@ -36,46 +36,44 @@ class Application {
 	 *
 	 * @return array $build : the application build
 	 */
-	public function getApplicationBuild () {
-		$build = array();
-		try {
+    public function getApplicationBuild () {
+        $build = array();
+        try {
             $this->$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			$sql = "
-				SELECT DISTINCT
-					bt.Name
-				FROM
-					BuildType bt
-				LIMIT 1
-			";
-			$query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
+            $sql = "
+                SELECT DISTINCT
+                    bt.Name
+                FROM
+                    BuildType bt
+                LIMIT 1
+            ";
+            $query = $this->$host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
 
-			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
+            $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
 
-			$buildName = $data[0];
+            $buildName = $data[0];
 
-			// $versionFile = fopen("../../VERSION", "r")
-			// 	or die("Unable to open VERSION file!");
+            $versionFile = fopen("../../VERSION", "r")
+            or die("Unable to open VERSION file!");
 
-			// $version = fgets($versionFile);
-			// fclose($versionFile);
+            $version = fgets($versionFile);
+            $branch = fgets($versionFile);
+            fclose($versionFile);
 
-			$version = shell_exec('git describe');
-			$branch = shell_exec('git rev-parse --abbrev-ref HEAD');
+            $build = array(
+                'version'		=> $version,
+                'environment'	=> $buildName,
+                'branch'		=> $branch
+            );
 
-			$build = array(
-				'version'		=> $version,
-				'environment'	=> $buildName,
-				'branch'		=> $branch
-			);
+            return $build;
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return $build;
+        }
 
-			return $build;
-		} catch (PDOException $e) {
-			echo $e->getMessage();
-			return $build;
-		}
-
-	}
+    }
 	/**
 	 *
 	 * Gets the source databases used for enabled flags
