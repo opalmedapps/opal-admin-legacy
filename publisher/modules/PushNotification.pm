@@ -259,10 +259,10 @@ sub sendPushNotification
     apiResponse = decode_json(apiResponse);
 
     if (exists(apiResponse->{'caregivers'})) {
-        my @caregivers = dclone(apiResponse->{'caregivers'});
-        foreach $caregiver (@caregivers) {
-            my @devices = dclone($caregiver->{'devices'});
-            foreach $device (@devices) {
+        my $caregivers = apiResponse->{'caregivers'};
+        foreach $caregiver (@{ $caregivers }) {  # anonymous array traverse
+            my $devices = $caregiver->{'devices'};
+            foreach $device (@{ $devices }) {  # anonymous array traverse
                 my $deviceType = $device->{'type'};
                 my $push_token = $device->{'push_token'};
                 if ($deviceType != 'WEB') {
