@@ -440,7 +440,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			// check whether required data is defined (by converting to boolean)
 			let nameDefined = !!($scope.alias.name_EN && $scope.alias.name_FR);
 			let descriptionDefined = !!($scope.alias.description_EN && $scope.alias.description_FR);
-			let checkinDetailsDefined = !!($scope.alias.checkin_details.instruction_EN && $scope.alias.checkin_details.instruction_FR);
+			let checkinDetailsDefined = !!($scope.alias.checkin_details && $scope.alias.checkin_details.instruction_EN && $scope.alias.checkin_details.instruction_FR);
 			let typeDefined = !!$scope.alias.type;
 			let hospitalMapDefined = !!$scope.alias.hospitalMap;
 
