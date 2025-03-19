@@ -105,9 +105,9 @@ class PushNotifications {
 				$wsTitle = $data['mtitle'];
 				$wsBody = $data['mdesc'];
 			}
-		}else{ //data not array error
+        }else{ //data not array error
 			$response =  array("success"=>0,"failure"=>1,"error"=>"Request data invalid, unable to send push notification.");
-			return $reponse;
+			return $response;
 		}
 
 		// Create the payload body
