@@ -364,8 +364,6 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 					$scope.preview.display = 2;
 			}
 
-			console.log(response);
-
 			let publicationSettings = [];
 			response.data['publicationSettings'].forEach((id) => {
 				publicationSettings.push(parseInt(id));
