@@ -452,18 +452,6 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 				if (term.added) total++;
 			});
 
-			// console.log(total);
-			// console.log($scope.changesMade);
-			// console.log($scope.alias.name_EN && $scope.alias.name_FR && $scope.alias.description_EN
-				// && $scope.alias.description_FR && $scope.alias.type);
-			// console.log(total + $scope.alias.deleted.length + $scope.alias.published.length > 0);
-			// console.log($scope.alias.type);
-			// console.log($scope.alias.checkin_details);
-			// console.log($scope.alias.checkin_details.instruction_EN);
-			// console.log($scope.alias.checkin_details.instruction_FR);
-
-			// console.log($scope.alias.type != 'Appointment' || ($scope.alias.type == 'Appointment' && $scope.alias.checkin_details.instruction_EN && $scope.alias.checkin_details.instruction_FR));
-
 			return !!(($scope.alias.name_EN && $scope.alias.name_FR && $scope.alias.description_EN
 				&& $scope.alias.description_FR && $scope.alias.type && (total + $scope.alias.deleted.length + $scope.alias.published.length > 0)
 				&& $scope.changesMade) && ($scope.alias.type != 'Appointment' || ($scope.alias.type == 'Appointment' &&
