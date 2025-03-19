@@ -132,7 +132,7 @@ class Alias extends Module {
         $result["checkin_details"] = ($result["checkin_possible"] != "" ? array("checkin_possible"=>$result["checkin_possible"], "instruction_EN"=>$result["instruction_EN"], "instruction_FR"=>$result["instruction_FR"]) : array());
 
         $result["eduMat"] = ($result["eduMatSer"] != "" ? $this->_getEducationalMaterialDetails($result["eduMatSer"]) : "");
-        $result["terms"] = $this->opalDB->getUnpublishedAliasExpression($result["serial"]);
+        $result["terms"] = $this->opalDB->getAliasExpressions($result["serial"]);
         $result["published"] = $this->opalDB->getPublishedAliasExpression($result["serial"]);
         $result["deleted"] = $this->opalDB->getDeactivatedAliasExpressions($result["serial"]);
 

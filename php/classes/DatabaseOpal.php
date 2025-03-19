@@ -3210,6 +3210,17 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
+     * Get the list of all alias expressions of an alias (published and unpublished).
+     * @param $aliasId int - ID of the alias
+     * @return array - list of all alias expressions
+     */
+    function getAliasExpressions($aliasId) {
+        return $this->_fetchAll(OPAL_GET_ALIAS_EXPRESSIONS, array(
+            array("parameter" => ":AliasSerNum", "variable" => $aliasId, "data_type" => PDO::PARAM_INT)
+        ));
+    }
+
+    /**
      * Get the list of alias expressions of an alias not yet published (or not used)
      * @param $aliasId int - ID of the alias
      * @return array - list of unpublished alias expressions

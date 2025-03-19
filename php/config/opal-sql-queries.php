@@ -1503,6 +1503,14 @@ define("OPAL_GET_ALIASES","
     sd.Enabled = ".ACTIVE_RECORD." AND a.AliasType != 'Task';
 ");
 
+define("OPAL_GET_ALIAS_EXPRESSIONS","
+    SELECT ae.masterSourceAliasId, ae.ExpressionName AS id, ae.Description AS description, m.externalId, 1 AS added FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae
+    LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m ON m.ID = ae.masterSourceAliasId
+    RIGHT JOIN ".OPAL_ALIAS_TABLE." al ON al.AliasSerNum = ae.AliasSerNum
+    WHERE ae.AliasSerNum = :AliasSerNum
+    AND m.deleted = ".NON_DELETED_RECORD.";
+");
+
 define("OPAL_GET_ALIASES_UNPUBLISHED_EXPRESSION","
     SELECT ae.masterSourceAliasId, ae.ExpressionName AS id, ae.Description AS description, m.externalId, 1 AS added FROM ".OPAL_ALIAS_EXPRESSION_TABLE." ae
     LEFT JOIN ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m ON m.ID = ae.masterSourceAliasId

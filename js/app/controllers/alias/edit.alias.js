@@ -219,6 +219,10 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 						if (term.masterSourceAliasId === selectedTerm.masterSourceAliasId) { // If term is selected (from current alias)
 							term.added = 1; // term added?
 							term.assigned = null; // remove self assigned alias
+							// ensure that published aliases assigned to this alias can not be changed
+							// they can only be changed by assigning it to another alias
+							let publishedIndex = $scope.alias.published.findIndex(x => x.id === term.id && x.description === term.description && x.externalId === term.externalId);
+							term.disabled = term.masterSourceAliasId === selectedTerm.masterSourceAliasId && publishedIndex >= 0;
 						}
 					});
 
