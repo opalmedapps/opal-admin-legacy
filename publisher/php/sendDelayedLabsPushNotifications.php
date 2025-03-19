@@ -6,7 +6,5 @@ require_once('delayedLabNotification.php');
 
 
 // Create in app notifications for the delayed lab results that are available between NOW() and NOW() - 2 hours
-DelayedLabNotification::createInAppNotifications();
-
 // Send push notifications for the released delayed lab results that are available between NOW() and NOW() - 2 hours
-DelayedLabNotification::sendPushNotifications();
+DelayedLabNotification::createAndSendNotifications();
