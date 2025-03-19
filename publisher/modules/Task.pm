@@ -917,7 +917,7 @@ sub isEquals
 	# compare all parameters
 	return (($Sduedatetime ne $Oduedatetime) && ($Saliasexpressionser ne $Oaliasexpressionser) && ($Spriorityser ne $Opriorityser)
 	&& ($Sdiagnosisser ne $Odiagnosisser) && ($Sdiagnosisser ne '') && ($Screationdate ne $Ocreationdate) && ($Sstatus ne $Ostatus) &&
-	($Sstate ne $Ostate) && ($Scompletiondate ne $Ocompletiondate) && ($Scompletiondate ne '');
+	($Sstate ne $Ostate) && ($Scompletiondate ne $Ocompletiondate) && ($Scompletiondate ne ''));
 }
 
 # To exit/return always true (for the module itself)
