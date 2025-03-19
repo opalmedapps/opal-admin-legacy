@@ -637,9 +637,7 @@ define("SQL_GET_QUESTIONNAIRE_LIST_ORMS","
 define("GET_ANSWERS_CHART_TYPE","
     SELECT a.dateTimeAnswered,
         GROUP_CONCAT(CONVERT(getDisplayName(cOpt.description, :languageId), CHAR(516)) SEPARATOR '|') AS answer,
-        a.ID AS answerId,
-        NULL AS min_Value,
-        NULL AS max_Value	
+        a.ID AS answerId
     FROM (SELECT UNIX_TIMESTAMP(DATE_FORMAT(aq.lastUpdated, '%Y-%m-%d')) AS dateTimeAnswered,
         a.ID,
         a.ID AS answerId
@@ -692,9 +690,7 @@ define("GET_ANSWERS_CHART_TYPE","
         ELSE 
             NULL
         END) AS answer,
-        a.ID AS answerId,
-        s.minValue AS min_Value,
-        s.maxValue AS max_Value	
+        a.ID AS answerId
     FROM ".ANSWER_TABLE." a
         INNER JOIN ".ANSWER_SECTION_TABLE." aSec ON a.answerSectionId = aSec.ID
         AND a.deleted = ".NON_DELETED_RECORD."
@@ -710,7 +706,6 @@ define("GET_ANSWERS_CHART_TYPE","
         AND qSec.ID = :questionSectionId 
         AND q.deleted = ".NON_DELETED_RECORD."
         AND getDisplayName(q.question, :languageId) = :questionText
-        LEFT JOIN ".SLIDER_TABLE." s on s.questionId = q.ID
     ;
 ");
 
@@ -758,12 +753,15 @@ define("SQL_GET_QUESTIONS_BY_QUESTIONNAIRE_ID","
         getDisplayName(display, ".FRENCH_LANGUAGE.") AS display_FR,
         lt.legacyName AS legacyTypeName,
         q.legacyTypeId AS legacyTypeId,
-        qSec.order AS questionOrder
+        qSec.order AS questionOrder,
+        s.minValue AS min_Value,
+        s.maxValue AS max_Value	        
     FROM ".QUESTIONNAIRE_TABLE." qtnn
         LEFT JOIN ".SECTION_TABLE." sec ON (sec.questionnaireId = qtnn.ID)
         LEFT JOIN ".QUESTION_SECTION_TABLE." qSec ON (qSec.sectionId = sec.ID)
         LEFT JOIN ".QUESTION_TABLE." q ON (qSec.questionId = q.ID)
         LEFT JOIN ".LEGACY_TYPE_TABLE." lt ON (q.legacyTypeId = lt.ID)
+        LEFT JOIN ".SLIDER_TABLE." s on s.questionId = q.ID
     WHERE qtnn.ID = :ID
         AND qtnn.deleted = ".NON_DELETED_RECORD."
         AND sec.deleted = ".NON_DELETED_RECORD."
