@@ -16,43 +16,13 @@ class DelayedLabNotification
     {
         global $pdo;
 
-        // Fetch notification control SerNum and description
-        $notificationControlQuery = "
-            SELECT
-                ntc.NotificationControlSerNum as NotificationControlSerNum,
-                ntc.Name_EN AS Name_EN,
-                ntc.Name_FR AS Name_FR,
-                ntc.Description_EN AS Description_EN,
-                ntc.Description_FR AS Description_FR
-            FROM NotificationControl ntc
-            WHERE ntc.NotificationType = 'NewLabResult';
-        ";
+        $notifControl = self::fetchLabResultsNotificationControl();
 
-        try {
-            $statement = $pdo->prepare($notificationControlQuery);
-            $statement->execute();
-            $notifControl = $statement->fetchAll();
-        } catch (PDOException $e) {
-            echo json_encode(["success" => 0, "failure" => 1, "error" => $e]) . PHP_EOL;
-            exit();
-        }
-
-        if (count($notifControl) !== 1)
-        {
-            $result = [
-                "success" => 0,
-                "failure" => 1,
-                "error" => "An error occurred while fetching 'NewLabResult' NotificationType from NotificationControl.",
-            ];
-            echo json_encode($result) . PHP_EOL;
-            exit();
-        }
-
-        $notifControlSerNum = $notifControl[0]["NotificationControlSerNum"];
-        $notifControlNameEN = $notifControl[0]["Name_EN"];
-        $notifControlNameFR = $notifControl[0]["Name_FR"];
-        $notifControlDescEN = $notifControl[0]["Description_EN"];
-        $notifControlDescFR = $notifControl[0]["Description_FR"];
+        $notifControlSerNum = $notifControl["NotificationControlSerNum"];
+        $notifControlNameEN = $notifControl["Name_EN"];
+        $notifControlNameFR = $notifControl["Name_FR"];
+        $notifControlDescEN = $notifControl["Description_EN"];
+        $notifControlDescFR = $notifControl["Description_FR"];
 
         // Fetch patient for whom in app notifications should be created
         $labsQuery = "
@@ -157,6 +127,10 @@ class DelayedLabNotification
     public static function sendPushNotifications() {
         global $pdo;
 
+        $notifControl = self::fetchLabResultsNotificationControl();
+        $notifControlNameEN = $notifControl["Name_EN"];
+        $notifControlNameFR = $notifControl["Name_FR"];
+
         // Fetch the number of (delayed) lab results that are available now and the union of ReadBy of all of them.
         $delayedLabsQuery = "
             SELECT
@@ -209,14 +183,56 @@ class DelayedLabNotification
             );
 
             $messages = array(
-                "title_EN" => $lab["RefTableRowTitle_EN"],
+                "title_EN" => $notifControlNameEN,
                 "message_text_EN" => "",
-                "title_FR" => $lab["RefTableRowTitle_FR"],
+                "title_FR" => $notifControlNameFR,
                 "message_text_FR" => "",
             );
             // Call API to send push notification
             $response = customPushNotification::sendNotificationByPatientSerNum($patientSerNum, $language, $messages);
             echo json_encode($response) . PHP_EOL;
         }
+    }
+
+    /**
+     * Get an associative array for lab results notification control that contains type name and description
+     * @return array notification control for lab results
+     */
+    protected static function fetchLabResultsNotificationControl() {
+        global $pdo;
+
+        // Fetch notification control SerNum and description
+        $notificationControlQuery = "
+            SELECT
+                ntc.NotificationControlSerNum as NotificationControlSerNum,
+                ntc.Name_EN AS Name_EN,
+                ntc.Name_FR AS Name_FR,
+                ntc.Description_EN AS Description_EN,
+                ntc.Description_FR AS Description_FR
+            FROM NotificationControl ntc
+            WHERE ntc.NotificationType = 'NewLabResult';
+        ";
+
+        try {
+            $statement = $pdo->prepare($notificationControlQuery);
+            $statement->execute();
+            $notifControl = $statement->fetchAll();
+        } catch (PDOException $e) {
+            echo json_encode(["success" => 0, "failure" => 1, "error" => $e]) . PHP_EOL;
+            exit();
+        }
+
+        if (count($notifControl) !== 1)
+        {
+            $result = [
+                "success" => 0,
+                "failure" => 1,
+                "error" => "An error occurred while fetching 'NewLabResult' NotificationType from NotificationControl.",
+            ];
+            echo json_encode($result) . PHP_EOL;
+            exit();
+        }
+
+        return $notifControl[0];
     }
 }
