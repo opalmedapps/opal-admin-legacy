@@ -2936,8 +2936,8 @@
     "DESCRIPTION": "Modifier les informations du compte utilisateur",
     "MENU": {
       "TITLE": "Administration des utilisateurs",
-      "PSEARCH": "Recherche du patient :",
-      "PNAME": "Nom de famille du patient",
+      "PSEARCH": "Recherche de l'utilisateur :",
+      "PNAME": "Nom de famille de l'utilisateur",
       "PRAMQ": "RAMQ du patient",
       "PMRN": "MRN du patient",
       "SUBMIT": "Soumettre",
