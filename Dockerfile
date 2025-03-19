@@ -103,6 +103,7 @@ COPY --from=js-dependencies --chown=www-data:www-data /app/node_modules ./node_m
 COPY --from=php-dependencies --chown=www-data:www-data /app/vendor ./vendor
 
 # Specifically add only the required files
+COPY --chown=www-data:www-data ./THIRDPARTY.md ./
 COPY --chown=www-data:www-data ./favicon.png ./
 COPY --chown=www-data:www-data ./index.php ./
 COPY --chown=www-data:www-data ./.htaccess ./
