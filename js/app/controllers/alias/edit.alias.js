@@ -3,6 +3,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 	.controller('alias.edit', function ($scope, $uibModal, $uibModalInstance, $filter, aliasCollectionService, Session, ErrorHandler) {
 
 		// Default Booleans
+		$scope.formIsValid = false; // assume form is not valid initially
 		$scope.changesMade = false; // changes have been made? 
 		$scope.emptyTitle = false; // alias title field empty? 
 		$scope.emptyDescription = false; // alias description field empty?
@@ -13,6 +14,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		$scope.hideAssigned = false;
 		$scope.language = Session.retrieveObject('user').language;
 		$scope.noteDeactivated = $filter('translate')('ALIAS.EDIT.NOTE_DEACTIVATED');
+		$scope.showHospitalMapError = false; // make a more obvious error message when hospital map is missing, since this is a new requirement
 
 		// Default toolbar for wysiwyg
 		$scope.toolbar = [
@@ -435,6 +437,11 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			$uibModalInstance.dismiss('cancel');
 		};
 
+		$scope.$watch('alias', function() {
+			$scope.formIsValid = $scope.checkForm();
+			$scope.showHospitalMapError = !$scope.alias.hospitalMap;
+		}, true);
+
 		// Function to return boolean for form completion
 		$scope.checkForm = function () {
 			// check whether required data is defined (by converting to boolean)
@@ -443,7 +450,6 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			let checkinDetailsDefined = !!($scope.alias.checkin_details && $scope.alias.checkin_details.instruction_EN && $scope.alias.checkin_details.instruction_FR);
 			let typeDefined = !!$scope.alias.type;
 			let hospitalMapDefined = !!$scope.alias.hospitalMap;
-
 			return $scope.changesMade && nameDefined && descriptionDefined && typeDefined
 				&& ($scope.alias.type != 'Appointment' || ($scope.alias.type == 'Appointment' &&
 				checkinDetailsDefined && hospitalMapDefined));
