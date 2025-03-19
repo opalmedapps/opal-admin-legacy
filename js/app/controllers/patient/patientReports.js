@@ -249,8 +249,8 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		enableColumnResizing: true,
 	};
 	let cellTemplateWarnings = `<div style="text-align:center; padding-top: 5px;"><strong>
-									<i ng-if="row.entity.publishflag !== '1'" title="${$filter('translate')('PATIENTS.REPORT.GENERAL.UNPUBLISHED')}" class="fa fa-warning" aria-hidden="true"></i>
-								</strong></div>`;
+		<i ng-if="row.entity.publishflag !== '1'" title="${$filter('translate')('PATIENTS.REPORT.GENERAL.UNPUBLISHED')}" class="fa fa-warning" aria-hidden="true"></i>
+	</strong></div>`;
 	$scope.pattestGridOptions = {
 		data: 'pattestReport',
 		columnDefs: [
