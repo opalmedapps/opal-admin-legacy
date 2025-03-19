@@ -69,10 +69,7 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 		ErrorHandler.onError(err, $filter('translate')('USERS.EDIT.ERROR_ROLES'));
 	});
 
-	// Call our API service to get the list of possible groups from new backend
-
-
-	// Call our API service to get the list of user selected groups from new backend
+	// Function to create a map for the selected additional roles
 	$scope.user.selected_additionalroles = [];
 	function get_selected_additional_roles(selected_additionalroles_list) {
 		$scope.user.selected_additionalroles = [];
