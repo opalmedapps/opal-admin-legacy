@@ -1562,32 +1562,6 @@ define("OPAL_GET_SOURCE_DATABASES","
     WHERE Enabled = ".ACTIVE_RECORD." ORDER BY SourceDatabaseSerNum
 ");
 
-//define("OPAL_GET_ARIA_SOURCE_ALIASES","
-//    SELECT m.ID AS masterSourceAliasId, m.description AS name, m.code AS id, m.description, m.externalId, a.AliasName_EN AS assigned
-//    FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m
-//    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = m.ID
-//    LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
-//    WHERE m.type = :type AND m.source = :source
-//    AND CASE
-//        WHEN a.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
-//        WHEN a.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." app WHERE app.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
-//        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
-//    END
-//    AND m.deleted = ".NON_DELETED_RECORD." ORDER BY m.code");
-
-//define("OPAL_GET_SOURCE_ALIASES","
-//    SELECT m.ID AS masterSourceAliasId, CONCAT(m.code, ' (', m.description, ')') AS name, m.code AS id, m.description, m.externalId,
-//    a.AliasName_EN AS assigned FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." m
-//    LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = m.ID
-//    LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
-//    WHERE m.type = :type AND m.source = :source
-//    AND CASE
-//        WHEN a.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
-//        WHEN a.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." app WHERE app.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
-//        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
-//    END
-//    AND m.deleted = ".NON_DELETED_RECORD." ORDER BY m.code");
-
 define("OPAL_GET_SOURCE_ALIASES","
     SELECT 
         m.ID AS masterSourceAliasId, 
@@ -1599,11 +1573,11 @@ define("OPAL_GET_SOURCE_ALIASES","
     LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = m.ID
     LEFT JOIN ".OPAL_ALIAS_TABLE." a ON a.AliasSerNum = ae.AliasSerNum
     WHERE m.type = :type AND m.source = :source
-    AND CASE
-        WHEN a.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
-        WHEN a.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." app WHERE app.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
-        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
-    END
+    -- AND CASE
+    --    WHEN a.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+    --    WHEN a.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." app WHERE app.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+    --    ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+    -- END
     AND m.deleted = ".NON_DELETED_RECORD." ORDER BY m.code");
 
 define("OPAL_GET_DEACTIVATED_DIAGNOSIS_CODES","
@@ -1681,11 +1655,11 @@ define("OPAL_SELECT_ALIAS_EXPRESSIONS_TO_INSERT","
     LEFT JOIN ".OPAL_ALIAS_EXPRESSION_TABLE." ae ON ae.masterSourceAliasId = msa.ID
     LEFT JOIN ".OPAL_ALIAS_TABLE." al ON al.AliasSerNum = ae.AliasSerNum
     WHERE ID IN (%%LISTIDS%%)
-    AND CASE
-        WHEN al.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
-        WHEN al.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." a WHERE a.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
-        ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
-    END
+    -- AND CASE
+    --    WHEN al.AliasType='Task' THEN (SELECT COUNT(*) FROM ".OPAL_TASK_TABLE." t WHERE t.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+    --    WHEN al.AliasType='Appointment' THEN (SELECT COUNT(*) FROM ".OPAL_APPOINTMENTS_TABLE." a WHERE a.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+    --    ELSE (SELECT COUNT(*) FROM ".OPAL_DOCUMENT_TABLE." d WHERE d.AliasExpressionSerNum = ae.AliasExpressionSerNum) <= 0
+    -- END
     AND deleted = ".NON_DELETED_RECORD.";
 ");
 

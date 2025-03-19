@@ -3283,10 +3283,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return array
      */
     function getSourceAliasesByTypeAndSource($type, $source) {
-//        if ($source == ARIA_SOURCE_DB)
-//            $sqlQuery = OPAL_GET_ARIA_SOURCE_ALIASES;
-//        else
-            $sqlQuery = OPAL_GET_SOURCE_ALIASES;
+        $sqlQuery = OPAL_GET_SOURCE_ALIASES;
 
         return $this->_fetchAll($sqlQuery, array(
             array("parameter"=>":type","variable"=>$type,"data_type"=>PDO::PARAM_INT),
