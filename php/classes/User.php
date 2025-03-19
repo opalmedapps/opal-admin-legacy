@@ -467,7 +467,7 @@ class User extends Module {
 
         $response = $backendApi->execute(); // response is string json
 
-        if($backendApi->getError())
+        if($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS && $backendApi->getError())
              HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to New Backend " . $backendApi->getError());
         else if($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS) {
             HelpSetup::returnErrorMessage($backendApi->getHttpCode(), "Error from New Backend: " . $response["error"]);
