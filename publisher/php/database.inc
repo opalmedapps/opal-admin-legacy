@@ -3,7 +3,6 @@
 	$pathname 	= __DIR__;
 	$abspath 	= str_replace('publisher' . DIRECTORY_SEPARATOR . 'php', '', $pathname);
 
-	$ignoreSecuredConnection = true;
 	include_once($abspath . 'php' . DIRECTORY_SEPARATOR . 'config.php');
 
     $options = array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8");
