@@ -97,7 +97,7 @@ angular.module('opalAdmin', [
 			oaPromise.then((response)=>{
 				
 				return response;
-			}).catch((response)=> {
+			}).catch((response) => {
 				console.error("Unable to connect to old Opal Admin: ",response.status);
 			});
 			/******* 
