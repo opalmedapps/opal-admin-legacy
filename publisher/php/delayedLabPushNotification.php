@@ -14,20 +14,51 @@ class DelayedLabPushNotification
     {
         global $pdo;
 
-        $query = "
+        $notificationControlQuery = "
+            SELECT
+                ntc.NotificationControlSerNum as NotificationControlSerNum,
+                ntc.Name_EN AS Name_EN,
+                ntc.Name_FR AS Name_FR,
+                ntc.Description_EN AS Description_EN,
+                ntc.Description_FR AS Description_FR
+            FROM NotificationControl ntc
+            WHERE ntc.NotificationType = 'NewLabResult';
+        ";
+
+        try {
+            $statement = $pdo->prepare($notificationControlQuery);
+            $statement->execute();
+            $notifControl = $statement->fetchAll();
+        } catch (PDOException $e) {
+            echo json_encode(["success" => 0, "failure" => 1, "error" => $e]) . PHP_EOL;
+            exit();
+        }
+
+        if (count($notifControl) > 0)
+        {
+            $notifControlSerNum = $notifControl[0]["NotificationControlSerNum"];
+            $notifControlNameEN = $notifControl[0]["Name_EN"];
+            $notifControlNameFR = $notifControl[0]["Name_FR"];
+            $notifControlDescEN = $notifControl[0]["Description_EN"];
+            $notifControlDescFR = $notifControl[0]["Description_FR"];
+        }
+        else {
+            $notifControlSerNum = 2;
+            $notifControlNameEN = 'New Lab Result';
+            $notifControlNameFR = 'Nouveau résultat de laboratoire';
+            $notifControlDescEN = '$patientName: New lab test result';
+            $notifControlDescFR = '$patientName: Nouveau résultat de test de laboratoire';
+        }
+
+        $labsQuery = "
             SELECT
             res.PatientSerNum AS PatientSerNum,
-            (
-                SELECT
-                    ntc.NotificationControlSerNum
-                FROM NotificationControl ntc
-                WHERE ntc.NotificationType = 'NewLabResult'
-            ) AS NotificationControlSerNum,
+            :notifControlSerNum AS NotificationControlSerNum,
             -1 AS RefTableRowSerNum,
             NOW() AS DateAdded,
             res.ReadBy AS ReadBy,
-            'New Lab Result' AS RefTableRowTitle_EN,
-            'Nouveau résultat de laboratoire' AS RefTableRowTitle_FR
+            :notifControlNameEN AS RefTableRowTitle_EN,
+            :notifControlNameFR AS RefTableRowTitle_FR
             FROM
             (
                 -- Group read lab results by PatientSerNum
@@ -56,8 +87,12 @@ class DelayedLabPushNotification
         ";
 
         try {
-            $statement = $pdo->prepare($query);
-            $statement->execute();
+            $statement = $pdo->prepare($labsQuery);
+            $statement->execute([
+                ":notifControlSerNum"   => $notifControlSerNum,
+                ":notifControlNameEN"   => $notifControlNameEN,
+                ":notifControlNameFR"   => $notifControlNameFR,
+            ]);
             $result = $statement->fetchAll();
         } catch (PDOException $e) {
             echo json_encode(["success" => 0, "failure" => 1, "error" => $e]) . PHP_EOL;
