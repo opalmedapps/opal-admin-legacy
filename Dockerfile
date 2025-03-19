@@ -27,7 +27,7 @@ COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-scripts --ignore-platform-reqs --optimize-autoloader
 
 # Build final image
-FROM php:8.0.26-apache-bullseye
+FROM php:8.2.8-apache-bullseye
 
 # Install dependencies
 RUN apt-get update \
