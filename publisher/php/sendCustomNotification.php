@@ -40,7 +40,7 @@
   flush();
 
   // Call API to send push notification
-  $response = customPushNotification::sendPatientNotification($patientId, $wsSite, $messages);
+  $response = customPushNotification::sendNotificationByPatientMRNAndSite($patientId, $wsSite, $messages);
   
   // Return response
   // print json_encode($response);
