@@ -20,7 +20,6 @@ use Time::Piece; # perl module
 use Array::Utils qw(:all);
 use POSIX; # perl module
 use LWP::UserAgent; # for post requests
-use Storable qw(dclone);
 use JSON;
 use Net::Address::IP::Local;
 use Cwd;
