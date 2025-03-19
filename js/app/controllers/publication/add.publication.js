@@ -418,8 +418,6 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 						else
 							entry.name_display = entry.name_EN;
 					});
-					console.log(response.data.unique === 0);
-					console.log(response.data.unique);
 
 					$scope.subModule = JSON.parse(response.data["subModule"]);
 
