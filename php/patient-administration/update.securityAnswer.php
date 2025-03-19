@@ -4,7 +4,6 @@ include_once("../config.php");
 include_once("../classes/NewOpalApiCall.php");
 
 $patientObj = new PatientAdministration(); //Object
-//$response = $patientObj->updatePatientSecurityAnswer($_POST);
 
 // Update patient security questions and answers in new opal DB
 $username = $_POST['username'];
