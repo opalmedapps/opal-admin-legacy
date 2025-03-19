@@ -31,16 +31,19 @@ FROM php:8.0.26-apache-bullseye
 # Install dependencies
 RUN apt-get update \
   && apt-get install -y \
+      # for cronjobs
+      busybox-static \
       # to install Perl modules
       cpanminus \
-      # Perl mysql dependency
-      libmariadb-dev-compat \
       # Perl modules
       # Aria DB uses Sybase
       libdbd-sybase-perl \
+      # Perl mysql dependency
+      libmariadb-dev-compat \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-  && rm -rf /var/lib/apt/lists/*
+  && rm -rf /var/lib/apt/lists/* \
+  && mkdir -p /var/spool/cron/crontabs 
 
 RUN cpanm --notest install \
       Array::Utils \
@@ -82,5 +85,6 @@ COPY --from=js-dependencies --chown=www-data:www-data /app/bower_components ./bo
 COPY --from=php-dependencies --chown=www-data:www-data /app/vendor ./vendor
 
 COPY --chown=www-data:www-data . .
+COPY docker/crontab /var/spool/cron/crontabs/www-data
 
 EXPOSE 8080
