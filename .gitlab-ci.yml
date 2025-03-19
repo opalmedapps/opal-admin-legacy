@@ -18,4 +18,5 @@ stages:
 
 
 include: 
-  - template: Auto-DevOps.gitlab-ci.yml
+  - project: 'opalmedapps/engineering/ci-templates'
+    file: '/templates/autodevops/Auto-DevOps.gitlab-ci.yml'
