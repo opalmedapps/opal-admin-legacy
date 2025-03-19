@@ -347,21 +347,16 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 
 				// Check for duplicate form values
 				angular.forEach($scope.EduMatTypes, function(value) {
-					if (angular.equals($scope.newEduMat.type_EN, value["EN"])) { //if translations do not match, return invalidEduMatType
-						if (!angular.equals($scope.newEduMat.type_FR, value["FR"])) {
+					if (angular.equals($scope.newEduMat.type_EN, value["EN"]) && !angular.equals($scope.newEduMat.type_FR, value["FR"])) { //if translations do not match, return invalidEduMatType
 							$scope.invalidEduMatType = true;	
-							event.preventDefault();						
-						}
+							event.preventDefault();
 					}
 
-					if (angular.equals($scope.newEduMat.type_FR, value["FR"])) { //if translations do not match, return invalidEduMatType
-						if (!angular.equals($scope.newEduMat.type_EN, value["EN"])) {
+					if (angular.equals($scope.newEduMat.type_FR, value["FR"]) && !angular.equals($scope.newEduMat.type_EN, value["EN"])) { //if translations do not match, return invalidEduMatType
 							$scope.invalidEduMatType = true;	
 							event.preventDefault();						
-						}
 					}
-				  }
-				  );
+				  });
 
 
 				$.ajax({
