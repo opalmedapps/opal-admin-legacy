@@ -554,11 +554,11 @@ class Patient extends Module {
 
         $errCode = $this->_validatePatientParams($post) . $errCode;
 
-        $invalidValue = false;
+        $invalidValue = true;
         foreach ($post["mrns"] as $identifier) {
 
             $patientSite = $this->opalDB->getPatientSite($identifier["mrn"], $identifier["site"]);
-            $invalidValue = boolVal(count($patientSite)) | $invalidValue;
+            $invalidValue = !boolVal(count($patientSite)) && $invalidValue;
             if (count($patientSite) == 1){
                 print_r($patientSite,true);
             }
@@ -571,11 +571,12 @@ class Patient extends Module {
             $response['data']  = json_encode($patientSite);
         }
 
+        print_r("errCode : " . $errCode);
+
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
 
         return $response;
-
     }
 
 
