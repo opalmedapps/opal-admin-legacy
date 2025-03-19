@@ -71,7 +71,17 @@ class DelayedLabPushNotification
                         ']'
                     ) AS ReadBy
                 FROM PatientTestResult ptr
-                WHERE DATE(ptr.AvailableAt) = CURDATE()
+                -- fetch the delayed labs that are available between NOW() and NOW() - 2 HOURS
+                -- the time range should be set in accordance with the cronjob (please see docker/crontab)
+                WHERE ptr.AvailableAt >= NOW() - INTERVAL 2 HOUR AND ptr.AvailableAt <= NOW()
+                -- fetch only the delayed labs (the regular ones should be ignored)
+                AND ptr.TestExpressionSerNum IN (
+                    SELECT
+                        TE.TestExpressionSerNum
+                    FROM TestExpression TE
+                    LEFT JOIN TestControl TC ON TC.TestControlSerNum = TE.TestControlSerNum
+                    WHERE TC.InterpretationRecommended = 1
+                )
                 AND ptr.ReadBy NOT LIKE '[]'
                 GROUP BY ptr.PatientSerNum
                 UNION
@@ -80,7 +90,17 @@ class DelayedLabPushNotification
                     ptr.PatientSerNum AS PatientSerNum,
                     ptr.ReadBy AS ReadBy
                 FROM PatientTestResult ptr
-                WHERE DATE(ptr.AvailableAt) = CURDATE()
+                -- fetch the delayed labs that are available between NOW() and NOW() - 2 HOURS
+                -- the time range should be set in accordance with the cronjob (please see docker/crontab)
+                WHERE ptr.AvailableAt >= NOW() - INTERVAL 2 HOUR AND ptr.AvailableAt <= NOW()
+                -- fetch only the delayed labs (the regular ones should be ignored)
+                AND ptr.TestExpressionSerNum IN (
+                    SELECT
+                        TE.TestExpressionSerNum
+                    FROM TestExpression TE
+                    LEFT JOIN TestControl TC ON TC.TestControlSerNum = TE.TestControlSerNum
+                    WHERE TC.InterpretationRecommended = 1
+                )
                 AND ptr.ReadBy LIKE '[]'
                 GROUP BY ptr.PatientSerNum
             ) res

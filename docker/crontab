@@ -40,5 +40,6 @@
 # Opal appointment reminder push notification
 0 14 * * * php /var/www/html/publisher/php/apptReminder.php >> /var/www/html/publisher/logs/apptReminder.log
 
-# Delayed notifications for lab results
-* * * * * php /var/www/html/publisher/php/sendDelayedLabsPushNotifications.php
+# Delayed notifications for lab results. Runs every two hours.
+# If the frequency is changed the query in the delayedLabPushNotification.php should be updated as well.
+0 */2 * * * php /var/www/html/publisher/php/sendDelayedLabsPushNotifications.php
