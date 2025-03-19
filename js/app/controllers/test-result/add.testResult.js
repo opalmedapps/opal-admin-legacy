@@ -401,7 +401,6 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 					$state.go('test-result');
 				},
 				error: function(err) {
-					console.log(err.responseText);
 					err.responseText = JSON.parse(err.responseText);
 					ErrorHandler.onError(err, $filter('translate')('TEST.ADD.ERROR_ADD'), arrValidationInsert);
 				},

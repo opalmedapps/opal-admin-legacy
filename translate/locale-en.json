@@ -1967,7 +1967,7 @@
       "TEST_GROUP_FR": "Test Group FR",
       "TEST_GROUP_EXPLANATION": "Please assign an English and French test group.",
       "EDUCATION_EXPLANATION": "Assigning an educational material will provide a rich-text description of the test result.",
-      "INTERPRETABILITY_EXPLANATION": "Please check this box if this lab result generally requires clinician interpretation prior to sharing with a patient of their caregiver.",
+      "INTERPRETABILITY_EXPLANATION": "Please check this box if this lab result generally requires clinician interpretation prior to sharing with a patient or their caregiver.",
       "INTERPRETABILITY_OPTION": "Clinician interpretation recommended",
       "LINKS_EXPLANATION": "Please provide additional links for more information on this test result.",
       "URL": "URL",
