@@ -251,7 +251,8 @@ sub sendPushNotification
         return;
     }
     # convert username array to string for the query
-    my $usernamesStr = join(',', @usernames);
+    my $usernamesStr = join("','", @usernames);
+    $usernamesStr = "'".$usernamesStr."'";
 
     # get a list of the patient's device information
     my @PTDIDs  = getPatientDeviceIdentifiers($usernamesStr);
@@ -385,9 +386,11 @@ sub getPatientDeviceIdentifiers
             PatientDeviceIdentifier ptdid
         WHERE
             AND ptdid.DeviceType in ('0', '1')
-            AND FIND_IN_SET(Username, '$usernamesStr')
+            AND Username in ($usernamesStr)
             AND IfNull(RegistrationId, '') <> ''
     ";
+
+    print $select_sql;
 
     # prepare query
 	my $query = $SQLDatabase->prepare($select_sql)
