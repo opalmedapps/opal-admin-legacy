@@ -329,14 +329,6 @@ class Sms extends Module {
      * @return mixed - data received from OPMS
      */
     protected function _postRequest($url, array $postParameters = array()) {
-        // Verify encoding for each value in $postParameters
-        foreach ($postParameters as $key => $value) {
-            if (!mb_detect_encoding($value, 'UTF-8', true)) {
-                // Log or throw an error if the string is not UTF-8 encoded
-                error_log("Warning: $key is not UTF-8 encoded. Re-encoding now.");
-                $postParameters[$key] = utf8_encode($value);
-            }
-        }
         $api = new ApiCall(WRM_API_CONFIG);
         $api->setUrl($url);
         $api->setPostFields( json_encode($postParameters,JSON_NUMERIC_CHECK));
