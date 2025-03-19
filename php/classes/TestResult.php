@@ -13,7 +13,7 @@ class TestResult extends Module
     /*
      * Validate and sanitize a test result.
      * @params  $post : array - data for the test result to validate
-     * Validation code :    Error validation code is coded as an int of 9 bits (value from 0 to 511). Bit informations
+     * Validation code :    Error validation code is coded as an int of 10 bits (value from 0 to 511). Bit informations
      *                      are coded from right to left:
      *                      1: english name missing
      *                      2: french name missing
@@ -24,6 +24,7 @@ class TestResult extends Module
      *                      7: test names missing or invalid
      *                      8: educational material (if present) invalid
      *                      9: serial is missing or invalid (when updating only)
+     *                      10: interpretability missing
      * @return  $toInsert : array - Contains data correctly formatted and ready to be inserted
      *          $errMsgs : array - contains the invalid entries with an error code.
      * */
@@ -160,9 +161,14 @@ class TestResult extends Module
             } else
                 $errCode = "0" . $errCode;
 
+            //10th bit
+            if (!array_key_exists("interpretability", $post) || $post["interpretability"] == "")
+                $errCode = "1" . $errCode;
+            else
+                $errCode = "0" . $errCode;
 
         } else
-            $errCode = "111111111";
+            $errCode = "1111111111";
         return $errCode;
     }
 
@@ -303,6 +309,7 @@ class TestResult extends Module
             "Group_FR" => $post['group_FR'],
             "PublishFlag" => 0,
             "EducationalMaterialControlSerNum" => (is_array($post['eduMat']) && isset($post['eduMat']['serial'])) ? $post['eduMat']['serial'] : null,
+            "InterpretabilityFlag" => $post['interpretability'],
         );
 
         $newId = $this->opalDB->insertTestResult($toInsert);
@@ -462,6 +469,7 @@ class TestResult extends Module
             "group_FR" => $post['group_FR'],
             "EducationalMaterialControlSerNum" => (is_array($post['eduMat']) && isset($post['eduMat']['serial'])) ? $post['eduMat']['serial'] : null,
             "TestControlSerNum" => $post['serial'],
+            "InterpretabilityFlag" => $post['interpretability'] ? 1 : 0,
         );
 
         $result = $this->opalDB->updateTestControl($toUpdate);
