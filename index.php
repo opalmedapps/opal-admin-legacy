@@ -28,9 +28,9 @@
 	<script src="node_modules/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
 	<script src="node_modules/angularjs-dropdown-multiselect/dist/angularjs-dropdown-multiselect.min.js"></script>
 	<script src="node_modules/ng-idle/angular-idle.js"></script>
-	<script src="node_modules/moment/dist/moment.js"></script>
-	<script src="node_modules/moment-timezone/builds/moment-timezone.min.js"></script>
-	<script src="node_modules/moment-timezone/builds/moment-timezone-with-data.min.js"></script>
+	<script src="node_modules/moment/moment.js"></script>
+	<script src="node_modules/moment-timezone/builds/moment-timezone.min.js" defer></script>
+	<script src="node_modules/moment-timezone/builds/moment-timezone-with-data.min.js" defer></script>
 	<script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 	<script src="node_modules/multiple-date-picker/dist/multipleDatePicker.js"></script>
 	<script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
@@ -53,7 +53,7 @@
 	<!-- <script src="node_modules/angular-ui-grid/ui-grid.auto-resize.min.js"></script> -->
 
 	
-	<script src="js/lib/bootstrap/bootstrap-datetimepicker.min.js"></script>
+	<script src="js/lib/bootstrap/bootstrap-datetimepicker.min.js" defer></script>
 	<script src="js/lib/bootstrap/ui.bootstrap.materialPicker.js"></script>
 	<script src="js/lib/livicon/raphael-min.js"></script>
 	<script src="js/lib/livicon/livicons-1.4-custom.min.js"></script>
