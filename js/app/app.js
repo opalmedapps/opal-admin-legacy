@@ -78,7 +78,8 @@ angular.module('opalAdmin', [
 		var authService = {};
 
 		authService.login = function (username, password) {
-			let oaPromise = $http.post( // Log in to the old Opal Admin API
+			// Log in to the old Opal Admin API
+			let oaPromise = $http.post(
 				"user/validate-login",
 				$.param({
 					username: username,
@@ -89,18 +90,26 @@ angular.module('opalAdmin', [
 				}
 			);
 
-			return $http.post( // Log in to the new back end API
+			/*
+				Log in to the new back end API.
+
+				$http.post config should include 'withCredentials' option so the request includes authentication info.
+
+				https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#requests_with_credentials
+			*/
+			return $http.post(
 				$rootScope.newOpalAdminHost + '/api/auth/login/',
 				{
 					"username": username,
 					"password": password,
 				},
 				{
-					"withCredentials": true
+					"headers": {'Content-Type': 'application/json'},
+					'withCredentials': true
 				}
 			).then(
 				function (response) { return oaPromise; }, // Success
-				function (response) { 			  // Error
+				function (response) { // Error
 					console.error('Unable to connect to the api-backend:', response.status);
 					return oaPromise;
 				}
@@ -184,7 +193,7 @@ angular.module('opalAdmin', [
 			.state('sms',{ url: '/sms', templateUrl: "templates/sms/sms.html", controller: "sms", data:{ requireLogin: false } })
 			.state('sms/message',{ url: '/sms/message', templateUrl: "templates/sms/add.sms.html", controller: "add.sms", data:{ requireLogin: false } })
 			.state('patient-administration',{ url: '/patient-administration', templateUrl: "templates/patient-administration/patient.administration.html", controller: "patient.administration", data:{ requireLogin: true } })
-			.state('parking', { url: 'http://do-not-change.external-opal-admin', external: true, data: { requireLogin: true }});
+			.state('hospital-settings', { url: 'http://do-not-change.external-opal-admin', external: true, data: { requireLogin: true }});
 
 	}])
 
