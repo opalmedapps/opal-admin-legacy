@@ -46,9 +46,9 @@ class PublisherPatient {
 		$userNameArrayString = implode(",", $userNameArray);
 		$patientDevices = self::getPatientDeviceIdentifiers($userNameArrayString);
 		foreach ($patientDevices as $ptdId) {
-			$device_id = $ptdId['RegistrationId'];
+			$device_id = $ptdId['PatientDeviceIdentifierSerNum'];
 			$identifiers[$device_id] = [];
-			$identifiers[$device_id]['legacy_id'] =  $ptdId['PatientDeviceIdentifierSerNum'];
+			$identifiers[$device_id]['registration_id'] =  $ptdId['RegistrationId'];
 			$identifiers[$device_id]['device_type'] = $ptdId['DeviceType'];
 			$language = $userLanguageArray[$ptdId['Username']];
 			$identifiers[$device_id]['language'] = $language;

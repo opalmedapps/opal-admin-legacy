@@ -52,8 +52,8 @@ class CustomPushNotification{
         //Send message to patient devices and record in database
         $resultsArray = array();
         foreach ($patientDevices as $device => $detail) {
-            $wsmtitle = $message['title_'.$device['language']];
-            $wsmdesc = $message['message_text_'.$device['language']];
+            $wsmtitle = $message['title_'.$detail['language']];
+            $wsmdesc = $message['message_text_'.$detail['language']];
             
             // Need this format for PushNotification functions
             $messageBody = array(
@@ -63,15 +63,15 @@ class CustomPushNotification{
             );
 
             //Determine device type
-            if ($device["type"] == 0) {
-                $response = PushNotification::iOS($messageBody, $device);
-            } else if ($device["type"] == 1) {
-                $response = PushNotification::android($messageBody, $device);
+            if ($detail["device_type"] == 0) {
+                $response = PushNotification::iOS($messageBody, $detail["registration_id"]);
+            } else if ($detail["device_type"] == 1) {
+                $response = PushNotification::android($messageBody, $detail["registration_id"]);
             }
 
             //Log result of push notification on database.
             self::logCustomPushNotification(
-                $detail["legacy_id"],
+                $device,
                 $patientSerNum,
                 $wsmtitle,
                 $wsmdesc,
@@ -80,7 +80,7 @@ class CustomPushNotification{
 
             //Build response
             $response["DeviceType"] = $detail["device_type"];
-            $response["RegistrationId"] = $device;
+            $response["RegistrationId"] = $detail["registration_id"];
             $resultsArray[] = $response;
         }
 

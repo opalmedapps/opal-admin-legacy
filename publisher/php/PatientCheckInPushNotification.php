@@ -72,17 +72,17 @@ class PatientCheckInPushNotification{
 
             // Determine device type (0 = iOS & 1 = Android)
             if($detail["device_type"]==0) {
-                $response = PushNotification::iOS($message, $device);
+                $response = PushNotification::iOS($message, $detail["registration_id"]);
             } else if($detail["device_type"]==1) {
-                $response = PushNotification::android($message, $device);
+                $response = PushNotification::android($message, $detail["registration_id"]);
             }
             // Log result of push notification on database.
             // NOTE: Inserting -1 for appointmentSerNum
-            self::pushNotificationDatabaseUpdate($detail["legacy_id"], $patientSerNum, -1, $response);
+            self::pushNotificationDatabaseUpdate($device, $patientSerNum, -1, $response);
 
             // Build response
             $response["DeviceType"] = $detail["device_type"];
-            $response["RegistrationId"] = $device;
+            $response["RegistrationId"] = $detail["registration_id"];
             $resultsArray[] = $response;
         }
         return array("success"=>1,"failure"=>0,"responseDevices"=>$resultsArray,"message"=>$message);
