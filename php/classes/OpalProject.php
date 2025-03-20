@@ -198,23 +198,23 @@ abstract class OpalProject
         try {
             $patient = $this->opalDB->getPatientSerNum($data['PatientSerNum'])[0];
         } catch (Exception $e) {
-            $sendlog = "An error occurred while querying the patient's first name: $e";
+            $sendlog = "An error occurred while querying the patient's information: $e";
             $pushNotificationDetail = $this->_buildNotification($this->statusFailure, $sendlog, $refTableId, $controlser, $data['PatientSerNum'], null);
             $this->opalDB->insertPushNotification($pushNotificationDetail);
             return;
         }
         $this->_insertNotification($data, $controlser, $refTableId);
 
-        $patientDevices = PublisherPatient::getCaregiverDeviceIdentifiers($data["PatientSerNum"]);
+        $caregiverDevices = PublisherPatient::getCaregiverDeviceIdentifiers($data["PatientSerNum"]);
 
-        if (count($patientDevices) == 0){
+        if (count($caregiverDevices) == 0){
             $sendlog = "Patient has no device identifier! No push notification sent.";
             $pushNotificationDetail = $this->_buildNotification($this->statusWarning, $sendlog, $refTableId, $controlser, $data["PatientSerNum"], null);
             $this->opalDB->insertPushNotification($pushNotificationDetail);
         } else {
 
             // NOTE! Push notifications are sent based on the target caregivers's language.
-            foreach($patientDevices as $ptdId => $detail) {
+            foreach($caregiverDevices as $ptdId => $detail) {
                 $ptdidser        = $ptdId;
                 $registrationId  = $detail['registration_id'];
                 $deviceType      = $detail["device_type"];

@@ -150,10 +150,10 @@ include_once "database.inc";
             $messageLabels = $result->fetch();
 
             // Obtain patient device identifiers (patient's caregivers including self-caregiver)
-            $patientDevices = PublisherPatient::getCaregiverDeviceIdentifiers($patientSerNum);
+            $caregiverDevices = PublisherPatient::getCaregiverDeviceIdentifiers($patientSerNum);
 
             //If no identifiers return there are no identifiers
-            if(count($patientDevices) == 0)
+            if(count($caregiverDevices) == 0)
             {
                 return array("success"=>1, "failure"=>0,"responseDevices"=>"No patient devices available for that patient");
                 exit();
@@ -161,7 +161,7 @@ include_once "database.inc";
 
             //Send message to patient devices and record in database
             $resultsArray = array();
-            foreach($patientDevices as $device => $detail)
+            foreach($caregiverDevices as $device => $detail)
             {
                 $language = strtoupper($detail['language']);
                 $message = self::buildMessageForRoomNotification($room["room_".$language], $messageLabels["Name_".$language ],$messageLabels["Description_".$language] );

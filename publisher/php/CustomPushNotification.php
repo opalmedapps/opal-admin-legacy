@@ -32,13 +32,13 @@ class CustomPushNotification{
         $ignoredUsernames = [],
     ) {
         // Obtain patient device identifiers (patient's caregivers including self-caregiver)
-        $patientDevices = PublisherPatient::getCaregiverDeviceIdentifiers(
+        $caregiverDevices = PublisherPatient::getCaregiverDeviceIdentifiers(
             $patientSerNum,
             $ignoredUsernames,
         );
 
         // If no identifiers return there are no identifiers
-        if (count($patientDevices) == 0) {
+        if (count($caregiverDevices) == 0) {
             return array(
                 "success" => 0,
                 "failure" => 1,
@@ -51,7 +51,7 @@ class CustomPushNotification{
 
         //Send message to patient devices and record in database
         $resultsArray = array();
-        foreach ($patientDevices as $device => $detail) {
+        foreach ($caregiverDevices as $device => $detail) {
             $wsmtitle = $message['title_'.$detail['language']];
             $wsmdesc = $message['message_text_'.$detail['language']];
             

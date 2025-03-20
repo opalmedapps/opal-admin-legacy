@@ -53,16 +53,16 @@ class PatientCheckInPushNotification{
         //================================================================
 
         // Obtain patient device identifiers (patient's caregivers including self-caregiver)
-        $patientDevices = PublisherPatient::getCaregiverDeviceIdentifiers($patientSerNum);
+        $caregiverDevices = PublisherPatient::getCaregiverDeviceIdentifiers($patientSerNum);
 
         // If no device identifiers return there are no device identifiers
-        if(count($patientDevices) == 0) {
+        if(count($caregiverDevices) == 0) {
             return array("success"=>1, "failure"=>0,"responseDevices"=>"No patient devices available for that patient");
         }
         
         $resultsArray = array();
 
-        foreach($patientDevices as $device => $detail) {
+        foreach($caregiverDevices as $device => $detail) {
 
             $response = null;
             $language = strtoupper($detail['language']);
