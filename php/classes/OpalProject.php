@@ -214,7 +214,6 @@ abstract class OpalProject
         } else {
 
             // NOTE! Push notifications are sent based on the target caregivers's language.
-            // regardless of Marge's language setting.
             foreach($patientDevices as $ptdId => $detail) {
                 $ptdidser        = $ptdId;
                 $registrationId  = $detail['registration_id'];
