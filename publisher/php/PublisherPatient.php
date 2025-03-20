@@ -49,7 +49,7 @@ class PublisherPatient {
 			$device_id = $ptdId['RegistrationId'];
 			$identifiers[$device_id] = [];
 			$identifiers[$device_id]['legacy_id'] =  $ptdId['PatientDeviceIdentifierSerNum'];
-			$identifiers[$device_id]['type'] = $ptdId['DeviceType'];
+			$identifiers[$device_id]['device_type'] = $ptdId['DeviceType'];
 			$language = $userLanguageArray[$ptdId['Username']];
 			$identifiers[$device_id]['language'] = $language;
 			$identifiers[$device_id]['institution_acronym'] = $response['institution']['acronym_'.$language];

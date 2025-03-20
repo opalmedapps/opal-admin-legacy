@@ -79,7 +79,7 @@ class CustomPushNotification{
             );
 
             //Build response
-            $response["DeviceType"] = $detail["type"];
+            $response["DeviceType"] = $detail["device_type"];
             $response["RegistrationId"] = $device;
             $resultsArray[] = $response;
         }

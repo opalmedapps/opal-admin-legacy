@@ -71,9 +71,9 @@ class PatientCheckInPushNotification{
             $message = (!$allSuccessful)? self::buildMessageForPushNotification('CheckInError', $language) : self::buildMessageForPushNotification('CheckInNotification', $language);
 
             // Determine device type (0 = iOS & 1 = Android)
-            if($detail["type"]==0) {
+            if($detail["device_type"]==0) {
                 $response = PushNotification::iOS($message, $device);
-            } else if($detail["type"]==1) {
+            } else if($detail["device_type"]==1) {
                 $response = PushNotification::android($message, $device);
             }
             // Log result of push notification on database.
@@ -81,7 +81,7 @@ class PatientCheckInPushNotification{
             self::pushNotificationDatabaseUpdate($detail["legacy_id"], $patientSerNum, -1, $response);
 
             // Build response
-            $response["DeviceType"] = $detail["type"];
+            $response["DeviceType"] = $detail["device_type"];
             $response["RegistrationId"] = $device;
             $resultsArray[] = $response;
         }

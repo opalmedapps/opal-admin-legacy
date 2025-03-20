@@ -218,7 +218,7 @@ abstract class OpalProject
             foreach($patientDevices as $ptdId => $detail) {
                 $ptdidser        = $detail['legacy_id'];
                 $registrationId  = $ptdId;
-                $deviceType      = $detail['type'];
+                $deviceType      = $detail["device_type"];
                 $language        = $detail['language'];
                 $messageTemplate = $messageTemplates[$language];
                 $messageTitle    = $messageTitles[$language];

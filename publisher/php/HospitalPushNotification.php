@@ -166,10 +166,10 @@ include_once "database.inc";
                 $language = strtoupper($detail['language']);
                 $message = self::buildMessageForRoomNotification($room["room_".$language], $messageLabels["Name_".$language ],$messageLabels["Description_".$language] );
                 //Determine device type
-                if($detail["type"]==0)
+                if($detail["device_type"]==0)
                 {
                     $response = PushNotification::iOS($message, $device);
-                }else if($detail["type"]==1)
+                }else if($detail["device_type"]==1)
                 {
                     $response = PushNotification::android($message, $device);
                 }
@@ -177,7 +177,7 @@ include_once "database.inc";
                 //Log result of push notification on database.
                 self::pushNotificationDatabaseUpdate($detail["legacy_id"], $patientSerNum, $appointmentSerNum, $response);
                 //Build response
-                $response["DeviceType"] = $detail["type"];
+                $response["DeviceType"] = $detail["device_type"];
                 $response["RegistrationId"] = $device;
                 $resultsArray[] = $response;
             }
