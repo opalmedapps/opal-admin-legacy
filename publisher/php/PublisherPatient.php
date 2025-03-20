@@ -33,7 +33,7 @@ class PublisherPatient {
 		$caregivers = $response && $response['caregivers'] ? $response['caregivers'] : [];
 		$userNameArray = [];
 		$userLanguageArray = [];
-		$result = [];
+		$identifiers = [];
 
 		foreach ($caregivers as $caregiver) {
 			// Check if fetched username exists in an $ignoredUsernames
@@ -46,13 +46,13 @@ class PublisherPatient {
 		$userNameArrayString = implode(",", $userNameArray);
 		$patientDevices = self::getPatientDeviceIdentifiers($userNameArrayString);
 		foreach ($patientDevices as $ptdId) {
-			$result[$ptdId['RegistrationId']] = [];
-			$result[$ptdId['RegistrationId']]['legacy_id'] =  $ptdId['PatientDeviceIdentifierSerNum'];
-			$result[$ptdId['RegistrationId']]['type'] = $ptdId['DeviceType'];
-			$result[$ptdId['RegistrationId']]['language'] = $userLanguageArray[$ptdId['Username']];
-			$result[$ptdId['RegistrationId']]['institution_acronym'] = $response['institution']['acronym_'.$userLanguageArray[$ptdId['Username']]];
+			$identifiers[$ptdId['RegistrationId']] = [];
+			$identifiers[$ptdId['RegistrationId']]['legacy_id'] =  $ptdId['PatientDeviceIdentifierSerNum'];
+			$identifiers[$ptdId['RegistrationId']]['type'] = $ptdId['DeviceType'];
+			$identifiers[$ptdId['RegistrationId']]['language'] = $userLanguageArray[$ptdId['Username']];
+			$identifiers[$ptdId['RegistrationId']]['institution_acronym'] = $response['institution']['acronym_'.$userLanguageArray[$ptdId['Username']]];
 		}
-		return $result;
+		return $identifiers;
     }
 
     /**
