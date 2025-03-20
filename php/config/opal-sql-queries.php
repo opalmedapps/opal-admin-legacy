@@ -1921,7 +1921,7 @@ WHERE p.PatientSerNum              = :Patientser
 
 const OPAL_GET_PATIENT_DEVICE_IDENTIFIERS = "
 SELECT DISTINCT ptdid.PatientDeviceIdentifierSerNum,
-    ptdid.RegistrationId, ptdid.DeviceType
+    ptdid.RegistrationId, ptdid.DeviceType,
     ptdid.Username
 FROM ".OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE." ptdid
 WHERE

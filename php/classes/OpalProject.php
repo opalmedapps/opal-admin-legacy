@@ -205,7 +205,7 @@ abstract class OpalProject
         }
         $this->_insertNotification($data, $controlser, $refTableId);
 
-        list($patientDevices, $institution_acronym_en, $institution_acronym_fr, $language_list) = PublisherPatient::getCaregiverDeviceIdentifiers($data["PatientSerNum"]);
+        $patientDevices = PublisherPatient::getCaregiverDeviceIdentifiers($data["PatientSerNum"]);
 
         if (count($patientDevices) == 0){
             $sendlog = "Patient has no device identifier! No push notification sent.";
@@ -215,11 +215,11 @@ abstract class OpalProject
 
             // NOTE! Push notifications are sent based on the target caregivers's language.
             // regardless of Marge's language setting.
-            foreach($patientDevices as $ptdId) {
-                $ptdidser        = $ptdId["PatientDeviceIdentifierSerNum"];
-                $registrationId  = $ptdId["RegistrationId"];
-                $deviceType      = $ptdId["DeviceType"];
-                $language        = $language_list[$ptdId['Username']];
+            foreach($patientDevices as $ptdId => $detail) {
+                $ptdidser        = $detail['legacy_id'];
+                $registrationId  = $ptdId;
+                $deviceType      = $detail['type'];
+                $language        = $detail['language'];
                 $messageTemplate = $messageTemplates[$language];
                 $messageTitle    = $messageTitles[$language];
 
@@ -232,16 +232,12 @@ abstract class OpalProject
 
                 // Special case for replacing the $institution wildcard
                 if (str_contains($messageTemplate, '$institution')) {
-                    if ($language == 'en'){
-                        // Add $institution as a wildcard for replacement
-                        $dynamicKeys['$institution'] = $institution_acronym_en;
-                    } elseif ($language == 'fr') {
-                        $dynamicKeys['$institution'] = $institution_acronym_fr;
-                    } else {
+                    if (!$detail['institution_acronym']){
                         $sendlog = "An error occurred while getting the patient's institution";
                         $pushNotificationDetail = $this->_buildNotification($this->statusFailure, $sendlog, $refTableId, $controlser, $data['PatientSerNum'], null);
                         return;
                     }
+                    $dynamicKeys['$institution'] = $detail['institution_acronym'];
                 }
                 // prepare array for replacements
                 $patterns           = array();

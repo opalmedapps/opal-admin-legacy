@@ -31,35 +31,29 @@ class NextDayAppointmentNotification
         // Step 2: Prepare the Push Notification message
         foreach ($result as $row) {
             $patientSerNum = $row["PatientSerNum"];
-            $language = $row["Language"];
             $titleEN = "Opal Appointment Reminder";
             $titleFR = "Rappel de rendez-vous d'Opal";
             $appointmentDate = $row["Date"];
             $appointmentTime = $row["Time"];
             $appointmentAliasEN = $row["AliasName_EN"];
             $appointmentAliasFR = $row["AliasName_FR"];
-
-            if ($language == "EN") {
-                $messageTextEN = "Opal reminder for an appointment at the "
-                    . $hospitalEN . ": " . $appointmentAliasEN
-                    . " on " . $appointmentDate . " at " . $appointmentTime;
-            } else {
-                $messageTextFR = "Opal rappel pour un rendez-vous au "
-                    . $hospitalFR . ": " . $appointmentAliasFR
-                    . " le " . $appointmentDate . " à " . $appointmentTime;
-            }
+            $messageTextEN = "Opal reminder for an appointment at the "
+                . $hospitalEN . ": " . $appointmentAliasEN
+                . " on " . $appointmentDate . " at " . $appointmentTime;
+            $messageTextFR = "Opal rappel pour un rendez-vous au "
+                . $hospitalFR . ": " . $appointmentAliasFR
+                . " le " . $appointmentDate . " à " . $appointmentTime;
 
             $messages = array(
-                "title_EN" => $titleEN,
-                "message_text_EN" => $messageTextEN,
-                "title_FR" => $titleFR,
-                "message_text_FR" => $messageTextFR
+                "title_en" => $titleEN,
+                "message_text_en" => $messageTextEN,
+                "title_fr" => $titleFR,
+                "message_text_fr" => $messageTextFR
             );
 
             // Call API to send push notification
             $response = CustomPushNotification::sendNotificationByPatientSerNum(
                 $patientSerNum,
-                $language,
                 $messages,
             );
             echo json_encode($response) . PHP_EOL;
@@ -76,14 +70,12 @@ class NextDayAppointmentNotification
 
         // Get the list of appointments for the next day
         $sql = "select AP.PatientSerNum,
-                        AP.`Language`,
                         AP.`Date`,
                         AP.`Time`,
                         ALIAS.AliasName_FR,
                         ALIAS.AliasName_EN
                     from (SELECT
                             ap.PatientSerNum,
-                            P.`Language`,
                             ap.AliasExpressionSerNum,
                             DATE_FORMAT(ap.ScheduledStartTime, '%Y-%m-%d') `Date`,
                             DATE_FORMAT(ap.ScheduledStartTime, '%H:%i') `Time`,

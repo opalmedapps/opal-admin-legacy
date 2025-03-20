@@ -28,12 +28,11 @@ class CustomPushNotification{
      **/
     public static function sendNotificationByPatientSerNum(
         $patientSerNum,
-        $language,
         $message,
         $ignoredUsernames = [],
     ) {
         // Obtain patient device identifiers (patient's caregivers including self-caregiver)
-        list($patientDevices, $institution_acronym_en, $institution_acronym_fr) = PublisherPatient::getCaregiverDeviceIdentifiers(
+        $patientDevices = PublisherPatient::getCaregiverDeviceIdentifiers(
             $patientSerNum,
             $ignoredUsernames,
         );
@@ -48,34 +47,31 @@ class CustomPushNotification{
             exit();
         }
 
-        if ($language == "EN") {
-            $wsmtitle = $message['title_EN'];
-            $wsmdesc = $message["message_text_EN"];
-        } else {
-            $wsmtitle = $message['title_FR'];
-            $wsmdesc = $message["message_text_FR"];
-        }
-
-        // Need this format for PushNotification functions
-        $messageBody = array(
-            "mtitle" => $wsmtitle,
-            "mdesc" => $wsmdesc,
-            "encode" => "No",  // Set the encoding to NO because the French characters works
-        );
+        
 
         //Send message to patient devices and record in database
         $resultsArray = array();
-        foreach ($patientDevices as $device) {
+        foreach ($patientDevices as $device => $detail) {
+            $wsmtitle = $message['title_'.$device['language']];
+            $wsmdesc = $message['message_text_'.$device['language']];
+            
+            // Need this format for PushNotification functions
+            $messageBody = array(
+                "mtitle" => $wsmtitle,
+                "mdesc" => $wsmdesc,
+                "encode" => "No",  // Set the encoding to NO because the French characters works
+            );
+
             //Determine device type
-            if ($device["DeviceType"] == 0) {
-                $response = PushNotification::iOS($messageBody, $device["RegistrationId"]);
-            } else if ($device["DeviceType"] == 1) {
-                $response = PushNotification::android($messageBody, $device["RegistrationId"]);
+            if ($device["type"] == 0) {
+                $response = PushNotification::iOS($messageBody, $device);
+            } else if ($device["type"] == 1) {
+                $response = PushNotification::android($messageBody, $device);
             }
 
             //Log result of push notification on database.
             self::logCustomPushNotification(
-                $device["PatientDeviceIdentifierSerNum"],
+                $detail["legacy_id"],
                 $patientSerNum,
                 $wsmtitle,
                 $wsmdesc,
@@ -83,8 +79,8 @@ class CustomPushNotification{
             );
 
             //Build response
-            $response["DeviceType"] = $device["DeviceType"];
-            $response["RegistrationId"] = $device["RegistrationId"];
+            $response["DeviceType"] = $detail["type"];
+            $response["RegistrationId"] = $device;
             $resultsArray[] = $response;
         }
 

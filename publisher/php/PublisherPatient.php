@@ -15,8 +15,8 @@ class PublisherPatient {
      * 
 	 * @param $patientSerNum - patient serial number for whom the device identifiers are fetched
 	 * @param array $ignoredUsernames - an optional list of usernames that should be ignored when device IDs are fetched
-	 * @return array an array with caregiver devices info at index 0, the institution acronym in English at index 1, 
-	 * institution acronym in French at index 2, and user language infor at index 3.
+	 * @return array an array with caregiver devices info as the key and device detail(legacy_id, 
+	 * type, language, institution_acronym) as value.
 	 */
     public static function getCaregiverDeviceIdentifiers(
         $patientSerNum,
@@ -33,6 +33,7 @@ class PublisherPatient {
 		$caregivers = $response && $response['caregivers'] ? $response['caregivers'] : [];
 		$userNameArray = [];
 		$userLanguageArray = [];
+		$result = [];
 
 		foreach ($caregivers as $caregiver) {
 			// Check if fetched username exists in an $ignoredUsernames
@@ -43,13 +44,15 @@ class PublisherPatient {
 		}
 
 		$userNameArrayString = implode(",", $userNameArray);
-
-		return array(
-			self::getPatientDeviceIdentifiers($userNameArrayString),
-			$response['institution']['acronym_en'],
-			$response['institution']['acronym_fr'],
-			$userLanguageArray,
-		);
+		$patientDevices = self::getPatientDeviceIdentifiers($userNameArrayString);
+		foreach ($patientDevices as $ptdId) {
+			$result[$ptdId['RegistrationId']] = [];
+			$result[$ptdId['RegistrationId']]['legacy_id'] =  $ptdId['PatientDeviceIdentifierSerNum'];
+			$result[$ptdId['RegistrationId']]['type'] = $ptdId['DeviceType'];
+			$result[$ptdId['RegistrationId']]['language'] = $userLanguageArray[$ptdId['Username']];
+			$result[$ptdId['RegistrationId']]['institution_acronym'] = $response['institution']['acronym_'.$userLanguageArray[$ptdId['Username']]];
+		}
+		return $result;
     }
 
     /**
