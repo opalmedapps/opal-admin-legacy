@@ -164,7 +164,26 @@ include_once "database.inc";
             foreach($caregiverDevices as $device => $detail)
             {
                 $language = strtoupper($detail['language']);
-                $message = self::buildMessageForRoomNotification($room["room_".$language], $messageLabels["Name_".$language ],$messageLabels["Description_".$language] );
+                $message = self::buildMessageForRoomNotification($room["room_".$language], $messageLabels["Name_".$language ], $messageLabels["Description_".$language]);
+                $dynamicKeys = [];
+            
+                // Special case for replacing the $institution wildcard
+                if (str_contains($message["mdesc"], '$institution')) {
+                    $dynamicKeys['$institution'] = $detail['institution_acronym'];
+                }
+                // prepare array for replacements
+                $patterns           = array();
+                $replacements       = array();
+                $indice             = 0;
+                foreach($dynamicKeys as $key=>$val) {
+                    $patterns[$indice] = $key;
+                    $replacements[$indice] = $val;
+                    $indice +=1;
+                }
+
+                ksort($patterns);
+                ksort($replacements);
+                $message["mdesc"] =  str_replace($patterns, $replacements, $message["mdesc"]);
                 //Determine device type
                 if($detail["device_type"]==0)
                 {

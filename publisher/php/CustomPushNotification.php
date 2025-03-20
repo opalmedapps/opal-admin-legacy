@@ -54,7 +54,26 @@ class CustomPushNotification{
         foreach ($caregiverDevices as $device => $detail) {
             $wsmtitle = $message['title_'.$detail['language']];
             $wsmdesc = $message['message_text_'.$detail['language']];
+            $dynamicKeys = [];
             
+            // Special case for replacing the $institution wildcard
+            if (str_contains($wsmdesc, '$institution')) {
+                $dynamicKeys['$institution'] = $detail['institution_acronym'];
+            }
+            // prepare array for replacements
+            $patterns           = array();
+            $replacements       = array();
+            $indice             = 0;
+            foreach($dynamicKeys as $key=>$val) {
+                $patterns[$indice] = $key;
+                $replacements[$indice] = $val;
+                $indice +=1;
+            }
+
+            ksort($patterns);
+            ksort($replacements);
+            $message =  str_replace($patterns, $replacements, $wsmdesc);
+
             // Need this format for PushNotification functions
             $messageBody = array(
                 "mtitle" => $wsmtitle,

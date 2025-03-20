@@ -69,6 +69,25 @@ class PatientCheckInPushNotification{
             
             // Prepare the success message title and body
             $message = (!$allSuccessful)? self::buildMessageForPushNotification('CheckInError', $language) : self::buildMessageForPushNotification('CheckInNotification', $language);
+            $dynamicKeys = [];
+            
+            // Special case for replacing the $institution wildcard
+            if (str_contains($message["mdesc"], '$institution')) {
+                $dynamicKeys['$institution'] = $detail['institution_acronym'];
+            }
+            // prepare array for replacements
+            $patterns           = array();
+            $replacements       = array();
+            $indice             = 0;
+            foreach($dynamicKeys as $key=>$val) {
+                $patterns[$indice] = $key;
+                $replacements[$indice] = $val;
+                $indice +=1;
+            }
+    
+            ksort($patterns);
+            ksort($replacements);
+            $message["mdesc"] =  str_replace($patterns, $replacements, $message["mdesc"]);
 
             // Determine device type (0 = iOS & 1 = Android)
             if($detail["device_type"]==0) {
