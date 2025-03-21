@@ -195,6 +195,8 @@ abstract class OpalProject
             "fr"=>$notificationControl[0]["Message_FR"],
         );
         
+        $this->_insertNotification($data, $controlser, $refTableId);
+        
         try {
             $patient = $this->opalDB->getPatientSerNum($data['PatientSerNum'])[0];
         } catch (Exception $e) {
@@ -203,7 +205,6 @@ abstract class OpalProject
             $this->opalDB->insertPushNotification($pushNotificationDetail);
             return;
         }
-        $this->_insertNotification($data, $controlser, $refTableId);
 
         $caregiverDevices = PublisherPatient::getCaregiverDeviceIdentifiers($data["PatientSerNum"]);
 
