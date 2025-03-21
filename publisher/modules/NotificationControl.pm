@@ -151,14 +151,10 @@ sub getNotificationControlDetails
     my $select_sql = "
         SELECT DISTINCT
             NotificationControl.NotificationControlSerNum,
-            CASE
-                WHEN Patient.Language = 'EN' THEN NotificationControl.Description_EN
-                WHEN Patient.Language = 'FR' THEN NotificationControl.Description_FR
-            END AS Message,
-            CASE 
-                WHEN Patient.Language = 'EN' THEN NotificationControl.Name_EN
-                WHEN Patient.Language = 'FR' THEN NotificationControl.Name_FR
-            END AS Name,
+            NotificationControl.Description_EN,
+            NotificationControl.Description_FR,
+            NotificationControl.Name_EN,
+            NotificationControl.Name_FR,
             Patient.Language AS Language
         FROM
             Patient,
@@ -180,9 +176,15 @@ sub getNotificationControlDetails
 	
 	while (my @data = $query->fetchrow_array()) {
         $ser        = $data[0];
-        $message    = $data[1];
-        $title      = $data[2];
-        $language   = $data[3];
+        $message    = {
+            en => $data[1],
+            fr => $data[2],
+        };
+        $title      = {
+            en => $data[3],
+            fr => $data[4],
+        };
+        $language   = $data[5];
 
         $notification->setNotificationControlSer($ser);
         $notification->setNotificationControlDescription($message);

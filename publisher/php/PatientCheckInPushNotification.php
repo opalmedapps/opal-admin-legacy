@@ -33,11 +33,6 @@ class PatientCheckInPushNotification{
         $allSuccessful = true;
 
         //
-        // GET THE PATIENTS SELECTED LANGUAGE
-        //====================================================
-        $language = self::getPatientLanguage($patientSerNum);
-
-        //
         // POPULATE NOTIFICATIONS TABLE
         //=========================================================
         // Insert checkin notifications into opaldb
@@ -58,19 +53,58 @@ class PatientCheckInPushNotification{
         //================================================================
 
         // Obtain patient device identifiers (patient's caregivers including self-caregiver)
-        list($patientDevices, $institution_acronym_en, $institution_acronym_fr) = PublisherPatient::getCaregiverDeviceIdentifiers(
-            $patientSerNum,
-        );
+        $caregiverDevices = PublisherPatient::getCaregiverDeviceIdentifiers($patientSerNum);
 
         // If no device identifiers return there are no device identifiers
-        if(count($patientDevices) == 0) {
+        if(count($caregiverDevices) == 0) {
             return array("success"=>1, "failure"=>0,"responseDevices"=>"No patient devices available for that patient");
         }
+        
+        $resultsArray = array();
 
-        // Prepare the success message title and body
-        $message = (!$allSuccessful)? self::buildMessageForPushNotification('CheckInError', $language) : self::buildMessageForPushNotification('CheckInNotification', $language);
+        foreach($caregiverDevices as $device => $detail) {
 
-        return self::sendPushNotifications($patientDevices, $patientSerNum, $message);
+            $response = null;
+            $language = strtoupper($detail['language']);
+            
+            // Prepare the success message title and body
+            $message = (!$allSuccessful)? self::buildMessageForPushNotification('CheckInError', $language) : self::buildMessageForPushNotification('CheckInNotification', $language);
+            $dynamicKeys = [];
+            
+            // Special case for replacing the $institution wildcard
+            if (str_contains($message["mdesc"], '$institution')) {
+                $dynamicKeys['$institution'] = $detail['institution_acronym'];
+            }
+            // prepare array for replacements
+            $patterns           = array();
+            $replacements       = array();
+            $indice             = 0;
+            foreach($dynamicKeys as $key=>$val) {
+                $patterns[$indice] = $key;
+                $replacements[$indice] = $val;
+                $indice +=1;
+            }
+    
+            ksort($patterns);
+            ksort($replacements);
+            $message["mdesc"] =  str_replace($patterns, $replacements, $message["mdesc"]);
+
+            // Determine device type (0 = iOS & 1 = Android)
+            if($detail["device_type"] == 0) {
+                $response = PushNotification::iOS($message, $detail["registration_id"]);
+            } else if($detail["device_type"] == 1) {
+                $response = PushNotification::android($message, $detail["registration_id"]);
+            }
+            // Log result of push notification on database.
+            // NOTE: Inserting -1 for appointmentSerNum
+            self::pushNotificationDatabaseUpdate($device, $patientSerNum, -1, $response);
+
+            // Build response
+            $response["DeviceType"] = $detail["device_type"];
+            $response["RegistrationId"] = $detail["registration_id"];
+            $resultsArray[] = $response;
+        }
+        return array("success"=>1,"failure"=>0,"responseDevices"=>$resultsArray,"message"=>$message);
     }
 
 
@@ -79,31 +113,6 @@ class PatientCheckInPushNotification{
      *                    HELPER FUNCTIONS
      * ==============================================================================
      **/
-
-    /**
-     * @name getPatientLanguage
-     * @desc queries OpalDB for patient's language and their sernum
-     * @param $patientSerNum
-     * @return array containing language and patientsernum
-     */
-    private static function getPatientLanguage($patientSerNum){
-        global $pdo;
-
-        $sql = "SELECT Patient.Language
-                FROM Patient
-                WHERE Patient.PatientSerNum = :patientSerNum;";
-
-        // Replace the parameter :patientId with a value and run query
-        try{
-            $s = $pdo->prepare($sql);
-            $s->bindValue(':patientSerNum', $patientSerNum);
-            $s->execute();
-            $result = $s->fetch();
-            return $result['Language'];
-        }catch(PDOException $e) {
-            return array("success"=>0,"failure"=>1,"error"=>$e);
-        }
-    }
 
     /**
      * @name insertCheckInNotification
@@ -217,42 +226,6 @@ class PatientCheckInPushNotification{
         }catch(PDOException $e) {
             return array("success"=>0,"failure"=>1,"error"=>$e);
         }
-    }
-
-    /**
-     * @name sendPushNotifications
-     * @desc consumes a list of patientDevices and for each device sends a push notification letting the user know their check in status and any checkin errors that may have occurred.
-     * @param $patientDevices
-     * @param $patientSerNum
-     * @param $message
-     * @param null $error_message
-     * @return array
-     */
-    private static function sendPushNotifications($patientDevices, $patientSerNum, $message){
-
-        $resultsArray = array();
-
-        foreach($patientDevices as $device) {
-
-            $response = null;
-            $responseError = null;
-
-            // Determine device type (0 = iOS & 1 = Android)
-            if($device["DeviceType"]==0) {
-                $response = PushNotification::iOS($message, $device["RegistrationId"]);
-            } else if($device["DeviceType"]==1) {
-                $response = PushNotification::android($message, $device["RegistrationId"]);
-            }
-            // Log result of push notification on database.
-            // NOTE: Inserting -1 for appointmentSerNum
-            self::pushNotificationDatabaseUpdate($device["PatientDeviceIdentifierSerNum"], $patientSerNum, -1, $response);
-
-            // Build response
-            $response["DeviceType"] = $device["DeviceType"];
-            $response["RegistrationId"] = $device["RegistrationId"];
-            $resultsArray[] = $response;
-        }
-        return array("success"=>1,"failure"=>0,"responseDevices"=>$resultsArray,"message"=>$message);
     }
 
     /**

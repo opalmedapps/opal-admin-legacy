@@ -13,9 +13,10 @@ class PublisherPatient {
     /**
      * Get patient caregiver devices information (patient's caregivers including self-caregiver)
      * 
-	 * @param $patientSerNum - patient serial number for whom the device identifiers are fetched
+	 * @param $patientSerNum          - patient serial number for whom the device identifiers are fetched
 	 * @param array $ignoredUsernames - an optional list of usernames that should be ignored when device IDs are fetched
-	 * @return array an array with caregiver devices info at index 0, the institution acronym in English at index 1, and institution acronym in French at index 2
+	 * @return array                  - a dictionary with caregivers' device info where the key is PatientDeviceIdentifierSerNum
+         *                                  and the value contains caregiver-related details.
 	 */
     public static function getCaregiverDeviceIdentifiers(
         $patientSerNum,
@@ -31,21 +32,29 @@ class PublisherPatient {
 		$response = $response ? json_decode($response, true) : NULL;
 		$caregivers = $response && $response['caregivers'] ? $response['caregivers'] : [];
 		$userNameArray = [];
+		$userLanguageArray = [];
+		$identifiers = [];
 
 		foreach ($caregivers as $caregiver) {
 			// Check if fetched username exists in an $ignoredUsernames
 			// If the username is in the list, skip it
 			if (!in_array($caregiver['username'], $ignoredUsernames))
 				$userNameArray[] = $caregiver['username'];
+				$userLanguageArray[$caregiver['username']] = $caregiver['language'];
 		}
 
 		$userNameArrayString = implode(",", $userNameArray);
-
-		return array(
-			self::getPatientDeviceIdentifiers($userNameArrayString),
-			$response['institution']['acronym_en'],
-			$response['institution']['acronym_fr'],
-		);
+		$patientDevices = self::getPatientDeviceIdentifiers($userNameArrayString);
+		foreach ($patientDevices as $ptdId) {
+			$device_id = $ptdId['PatientDeviceIdentifierSerNum'];
+			$identifiers[$device_id] = [];
+			$identifiers[$device_id]['registration_id'] =  $ptdId['RegistrationId'];
+			$identifiers[$device_id]['device_type'] = $ptdId['DeviceType'];
+			$language = $userLanguageArray[$ptdId['Username']];
+			$identifiers[$device_id]['language'] = $language;
+			$identifiers[$device_id]['institution_acronym'] = $response['institution']['acronym_'.$language];
+		}
+		return $identifiers;
     }
 
     /**
