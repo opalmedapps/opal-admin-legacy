@@ -90,9 +90,9 @@ class PatientCheckInPushNotification{
             $message["mdesc"] =  str_replace($patterns, $replacements, $message["mdesc"]);
 
             // Determine device type (0 = iOS & 1 = Android)
-            if($detail["device_type"]==0) {
+            if($detail["device_type"] == 0) {
                 $response = PushNotification::iOS($message, $detail["registration_id"]);
-            } else if($detail["device_type"]==1) {
+            } else if($detail["device_type"] == 1) {
                 $response = PushNotification::android($message, $detail["registration_id"]);
             }
             // Log result of push notification on database.
