@@ -187,15 +187,14 @@ class DelayedLabNotification
             );
 
             $messages = array(
-                "title_EN" => $notifControlNameEN,
-                "message_text_EN" => "",
-                "title_FR" => $notifControlNameFR,
-                "message_text_FR" => "",
+                "title_en" => $notifControlNameEN,
+                "message_text_en" => "",
+                "title_fr" => $notifControlNameFR,
+                "message_text_fr" => "",
             );
             // Call API to send push notification
             $response = CustomPushNotification::sendNotificationByPatientSerNum(
                 $lab["PatientSerNum"],
-                $lab["Language"],
                 $messages,
                 $ignoredUsernames,
             );

@@ -36,7 +36,7 @@ sub pushNotificationToPatient
 {
 my ($patientser, $controlser, $reftablerowser) = @_; # args
 
-    $usernamesStr = PushNotification::getPatientCaregivers($patientser, $controlser, $reftablerowser);
+    ($usernamesStr, $institution_acronym_en, $institution_acronym_fr, $userLanguageList) = getPatientCaregivers($patientser, $controlser, $reftablerowser);
 
     if (!$usernamesStr) {
         print "Patient username array is empty\n";
@@ -59,6 +59,7 @@ my ($patientser, $controlser, $reftablerowser) = @_; # args
     print "\n***** Push notification to patient caregivers *****\n";
 
     $title = 'test notifications';
+    $message = 'test notifications';
 
     foreach my $PTDID (@PTDIDs) {
          # retrieve params

@@ -28,18 +28,17 @@ class CustomPushNotification{
      **/
     public static function sendNotificationByPatientSerNum(
         $patientSerNum,
-        $language,
         $message,
         $ignoredUsernames = [],
     ) {
         // Obtain patient device identifiers (patient's caregivers including self-caregiver)
-        list($patientDevices, $institution_acronym_en, $institution_acronym_fr) = PublisherPatient::getCaregiverDeviceIdentifiers(
+        $caregiverDevices = PublisherPatient::getCaregiverDeviceIdentifiers(
             $patientSerNum,
             $ignoredUsernames,
         );
 
         // If no identifiers return there are no identifiers
-        if (count($patientDevices) == 0) {
+        if (count($caregiverDevices) == 0) {
             return array(
                 "success" => 0,
                 "failure" => 1,
@@ -48,34 +47,50 @@ class CustomPushNotification{
             exit();
         }
 
-        if ($language == "EN") {
-            $wsmtitle = $message['title_EN'];
-            $wsmdesc = $message["message_text_EN"];
-        } else {
-            $wsmtitle = $message['title_FR'];
-            $wsmdesc = $message["message_text_FR"];
-        }
-
-        // Need this format for PushNotification functions
-        $messageBody = array(
-            "mtitle" => $wsmtitle,
-            "mdesc" => $wsmdesc,
-            "encode" => "No",  // Set the encoding to NO because the French characters works
-        );
+        
 
         //Send message to patient devices and record in database
         $resultsArray = array();
-        foreach ($patientDevices as $device) {
+        foreach ($caregiverDevices as $device => $detail) {
+            $wsmtitle = $message['title_'.$detail['language']];
+            $wsmdesc = $message['message_text_'.$detail['language']];
+            $dynamicKeys = [];
+            
+            // Special case for replacing the $institution wildcard
+            if (str_contains($wsmdesc, '$institution')) {
+                $dynamicKeys['$institution'] = $detail['institution_acronym'];
+            }
+            // prepare array for replacements
+            $patterns           = array();
+            $replacements       = array();
+            $indice             = 0;
+            foreach($dynamicKeys as $key=>$val) {
+                $patterns[$indice] = $key;
+                $replacements[$indice] = $val;
+                $indice +=1;
+            }
+
+            ksort($patterns);
+            ksort($replacements);
+            $message =  str_replace($patterns, $replacements, $wsmdesc);
+
+            // Need this format for PushNotification functions
+            $messageBody = array(
+                "mtitle" => $wsmtitle,
+                "mdesc" => $wsmdesc,
+                "encode" => "No",  // Set the encoding to NO because the French characters works
+            );
+
             //Determine device type
-            if ($device["DeviceType"] == 0) {
-                $response = PushNotification::iOS($messageBody, $device["RegistrationId"]);
-            } else if ($device["DeviceType"] == 1) {
-                $response = PushNotification::android($messageBody, $device["RegistrationId"]);
+            if ($detail["device_type"] == 0) {
+                $response = PushNotification::iOS($messageBody, $detail["registration_id"]);
+            } else if ($detail["device_type"] == 1) {
+                $response = PushNotification::android($messageBody, $detail["registration_id"]);
             }
 
             //Log result of push notification on database.
             self::logCustomPushNotification(
-                $device["PatientDeviceIdentifierSerNum"],
+                $device,
                 $patientSerNum,
                 $wsmtitle,
                 $wsmdesc,
@@ -83,8 +98,8 @@ class CustomPushNotification{
             );
 
             //Build response
-            $response["DeviceType"] = $device["DeviceType"];
-            $response["RegistrationId"] = $device["RegistrationId"];
+            $response["DeviceType"] = $detail["device_type"];
+            $response["RegistrationId"] = $detail["registration_id"];
             $resultsArray[] = $response;
         }
 

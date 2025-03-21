@@ -1907,14 +1907,10 @@ AND SourceDatabaseSerNum = :SourceDatabaseSerNum;
 
 const OPAL_GET_NOTIFICATION_CONTROL_DETAILS = "
 SELECT DISTINCT nc.NotificationControlSerNum,
-    CASE
-        WHEN p.Language = 'EN' THEN nc.Description_EN
-        WHEN p.Language = 'FR' THEN nc.Description_FR
-    END AS Message,
-    CASE 
-        WHEN p.Language = 'EN' THEN nc.Name_EN
-        WHEN p.Language = 'FR' THEN nc.Name_FR
-    END AS Name,
+    nc.Description_EN AS Message_EN,
+    nc.Description_FR AS Message_FR,
+    nc.Name_EN AS Name_EN,
+    nc.Name_FR AS Name_FR,
     p.Language AS Language
 FROM   ".OPAL_PATIENT_TABLE." p, ".OPAL_NOTIFICATION_CONTROL_TABLE." nc,
         ".OPAL_NOTIFICATION_TYPES_TABLE." nt
@@ -1925,7 +1921,8 @@ WHERE p.PatientSerNum              = :Patientser
 
 const OPAL_GET_PATIENT_DEVICE_IDENTIFIERS = "
 SELECT DISTINCT ptdid.PatientDeviceIdentifierSerNum,
-    ptdid.RegistrationId, ptdid.DeviceType
+    ptdid.RegistrationId, ptdid.DeviceType,
+    ptdid.Username
 FROM ".OPAL_PATIENT_DEVICE_IDENTIFIER_TABLE." ptdid
 WHERE
     INSTR(:userNamesStr, Username) > 0

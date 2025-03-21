@@ -65,19 +65,19 @@ include_once "database.inc";
         *             registrationId, deviceId) for each device, and Message array containing
         *             (title,description),  NotificationSerNum, and error if any.
         **/
-       public static function sendCallPatientNotification($patientId, $room, $SourceSystemID, $mrn = null, $site = null)
-       {
-           global $pdo;
+        public static function sendCallPatientNotification($patientId, $room, $SourceSystemID, $mrn = null, $site = null)
+        {
+            global $pdo;
 
-           // determine patientId or MRN
-           $patientId = self::getPatientIDorMRN($patientId, $mrn);
+            // determine patientId or MRN
+            $patientId = self::getPatientIDorMRN($patientId, $mrn);
 
-           // $wsSite is the site of the hospital code (should be three digit)
+            // $wsSite is the site of the hospital code (should be three digit)
             // If $wsSite is empty, then default it to RVH because it could be from a legacy call
             $wsSite = empty($site) ? "RVH" : $site;
 
-           //Obtain Patient and appointment information from Database i.e. PatientSerNum, AppointmentSerNum and Language
-           $sql = "SELECT P.Language, P.PatientSerNum, A.AppointmentSerNum 
+            //Obtain Patient and appointment information from Database i.e. PatientSerNum, AppointmentSerNum and Language
+            $sql = "SELECT P.PatientSerNum, A.AppointmentSerNum 
                     FROM Appointment A, Patient P, Patient_Hospital_Identifier PHI
                     WHERE P.PatientSerNum = PHI.PatientSerNum
                         AND PHI.MRN = :patientId
@@ -85,60 +85,60 @@ include_once "database.inc";
                         AND P.PatientSerNum = A.PatientSerNum 
                         AND A.SourceSystemID = :sourceSer
                     ";
-           try{
+            try{
                 $s = $pdo->prepare($sql);
                 $s->bindValue(':patientId', $patientId);
                 $s->bindValue(':sitecode', $wsSite);
                 $s->bindValue(':sourceSer', $SourceSystemID);
                 $s->execute();
                 $result = $s->fetchAll();
-           }catch(PDOException $e)
-           {
-               return array("success"=>0,"failure"=>1,"error"=>$e);
-               exit();
-           }
-           if(count($result)==0)
-           {
-               return array("success"=>0,"failure"=>1,"error"=>"No matching PatientSerNum or AppointmentSerNum in Database");
-               exit();
-           }
+            }catch(PDOException $e)
+            {
+                return array("success"=>0,"failure"=>1,"error"=>$e);
+                exit();
+            }
+            if(count($result)==0)
+            {
+                return array("success"=>0,"failure"=>1,"error"=>"No matching PatientSerNum or AppointmentSerNum in Database");
+                exit();
+            }
 
-           //Sets parameters for later usage
-            $language = $result[0]["Language"];
+            //Sets parameters for later usage
             $patientSerNum = $result[0]["PatientSerNum"];
             $appointmentSerNum = $result[0]["AppointmentSerNum"];
 
 
-           //Update appointment room location in database
-           try{
-               $sql = "UPDATE Appointment SET RoomLocation_EN = '".$room['room_EN']."', RoomLocation_FR = '".$room['room_FR']."' WHERE Appointment.SourceSystemID = ".$SourceSystemID." AND Appointment.PatientSerNum = ".$patientSerNum;
-                $resultAppointment = $pdo->query($sql);
-           }catch(PDOException $e)
-           {
-               return array("success"=>0,"failure"=>1,"error"=>$e);
-               exit();
-           }
+            //Update appointment room location in database
+            try{
+                $sql = "UPDATE Appointment SET RoomLocation_EN = '".$room['room_EN']."', RoomLocation_FR = '".$room['room_FR']."' WHERE Appointment.SourceSystemID = ".$SourceSystemID." AND Appointment.PatientSerNum = ".$patientSerNum;
+                $pdo->query($sql);
+            }catch(PDOException $e)
+            {
+                return array("success"=>0,"failure"=>1,"error"=>$e);
+                exit();
+            }
 
           //Insert into notifications table
-          try{
-             $sql = 'INSERT INTO `Notification` (`PatientSerNum`, `NotificationControlSerNum`, `RefTableRowSerNum`, `DateAdded`, `ReadStatus`, `RefTableRowTitle_EN`, `RefTableRowTitle_FR`)
+            try{
+                $sql = 'INSERT INTO `Notification` (`PatientSerNum`, `NotificationControlSerNum`, `RefTableRowSerNum`, `DateAdded`, `ReadStatus`, `RefTableRowTitle_EN`, `RefTableRowTitle_FR`)
                     SELECT '.$result[0]["PatientSerNum"].',ntc.NotificationControlSerNum,'.$result[0]["AppointmentSerNum"].', NOW(), 0,
                       getRefTableRowTitle('. $result[0]["AppointmentSerNum"] . ', "APPOINTMENT", "EN") EN, getRefTableRowTitle('. $result[0]["AppointmentSerNum"] . ', "APPOINTMENT", "FR") FR
                     FROM NotificationControl ntc WHERE ntc.NotificationType = "RoomAssignment"';
-             $resultNotification = $pdo->query($sql);
-           }catch(PDOException $e)
-           {
-               return array("success"=>0,"failure"=>1,"error"=>$e);
-               exit();
-           }
+                $pdo->query($sql);
+            }catch(PDOException $e)
+            {
+                return array("success"=>0,"failure"=>1,"error"=>$e);
+                exit();
+            }
 
 
-           //Obtain NotificationSerNum for the last inserted Id.
+            //Obtain NotificationSerNum for the last inserted Id.
             //$notificationSerNum = $pdo->lastInsertId();
 
             //Obtain message for room assignment
             try{
-                $sql = 'SELECT Name_'.$language.', Description_'.$language.' FROM NotificationControl WHERE NotificationType = "RoomAssignment"';
+                $sql = 'SELECT Name_EN, Description_EN, Name_FR, Description_FR
+                        FROM NotificationControl WHERE NotificationType = "RoomAssignment"';
                 $result = $pdo->query($sql);
             }catch(PDOException $e)
             {
@@ -149,15 +149,11 @@ include_once "database.inc";
             //Build message, replace the $roomLocation with the actual room location argument $room
             $messageLabels = $result->fetch();
 
-            $message = self::buildMessageForRoomNotification($room["room_".$language], $messageLabels["Name_".$language ],$messageLabels["Description_".$language] );
-
             // Obtain patient device identifiers (patient's caregivers including self-caregiver)
-            list($patientDevices, $institution_acronym_en, $institution_acronym_fr) = PublisherPatient::getCaregiverDeviceIdentifiers(
-                $patientSerNum,
-            );
+            $caregiverDevices = PublisherPatient::getCaregiverDeviceIdentifiers($patientSerNum);
 
             //If no identifiers return there are no identifiers
-            if(count($patientDevices) == 0)
+            if(count($caregiverDevices) == 0)
             {
                 return array("success"=>1, "failure"=>0,"responseDevices"=>"No patient devices available for that patient");
                 exit();
@@ -165,27 +161,48 @@ include_once "database.inc";
 
             //Send message to patient devices and record in database
             $resultsArray = array();
-            foreach($patientDevices as $device)
+            foreach($caregiverDevices as $device => $detail)
             {
+                $language = strtoupper($detail['language']);
+                $message = self::buildMessageForRoomNotification($room["room_".$language], $messageLabels["Name_".$language ], $messageLabels["Description_".$language]);
+                $dynamicKeys = [];
+            
+                // Special case for replacing the $institution wildcard
+                if (str_contains($message["mdesc"], '$institution')) {
+                    $dynamicKeys['$institution'] = $detail['institution_acronym'];
+                }
+                // prepare array for replacements
+                $patterns           = array();
+                $replacements       = array();
+                $indice             = 0;
+                foreach($dynamicKeys as $key=>$val) {
+                    $patterns[$indice] = $key;
+                    $replacements[$indice] = $val;
+                    $indice +=1;
+                }
+
+                ksort($patterns);
+                ksort($replacements);
+                $message["mdesc"] =  str_replace($patterns, $replacements, $message["mdesc"]);
                 //Determine device type
-                if($device["DeviceType"]==0)
+                if($detail["device_type"]==0)
                 {
-                    $response = PushNotification::iOS($message, $device["RegistrationId"]);
-                }else if($device["DeviceType"]==1)
+                    $response = PushNotification::iOS($message, $detail["registration_id"]);
+                }else if($detail["device_type"]==1)
                 {
-                    $response = PushNotification::android($message, $device["RegistrationId"]);
+                    $response = PushNotification::android($message, $detail["registration_id"]);
                 }
 
                 //Log result of push notification on database.
-                self::pushNotificationDatabaseUpdate($device["PatientDeviceIdentifierSerNum"], $patientSerNum, $appointmentSerNum, $response);
+                self::pushNotificationDatabaseUpdate($device, $patientSerNum, $appointmentSerNum, $response);
                 //Build response
-                $response["DeviceType"] = $device["DeviceType"];
-                $response["RegistrationId"] = $device["RegistrationId"];
+                $response["DeviceType"] = $detail["device_type"];
+                $response["RegistrationId"] = $detail["registration_id"];
                 $resultsArray[] = $response;
             }
 
             return array("success"=>1,"failure"=>0,"responseDevices"=>$resultsArray,"message"=>$message);
-       }
+        }
 
        /**
        * ==============================================================================
