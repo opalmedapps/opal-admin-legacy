@@ -3372,6 +3372,23 @@
       "UNKNOWN": "Unknown error. Please try again later."
     }
   },
+  "ABOUT_OPAL": {
+    "TITLE": "About Opal",
+    "LICENSE_INFORMATION_TITLE": "License Information",
+    "LICENSE_INFORMATION": "Unless otherwise stated, this code is subject to the terms of the <a href='LICENSE' class='url-link'>GNU Affero General Public License version 3 or later (AGPL)</a>, a copy of which is linked here for your convenience. This code is also distributed under the terms of the <a href='' ng-click='gotoDisclaimer()' class='url-link'>Healthcare Disclaimer</a>, which can be found further below.",
+    "WEBSITES": "Websites",
+    "OPAL_WEBSITE": "The Opal website: <a href='https://www.opalmedapps.com' class='url-link'>https://www.opalmedapps.com/en</a>",
+    "OPAL_GITHUB": "The Opal GitHub organization: <a href='https://github.com/opalmedapps' class='url-link'>https://github.com/opalmedapps</a>",
+    "COPYRIGHT_TITLE": "Copyright",
+    "COPYRIGHT": "Copyright information for most files in the distribution can be found within each file.",
+    "HEALTHCARE_DISCLAIMER_TITLE": "Healthcare Disclaimer",
+    "HEALTHCARE_DISCLAIMER": "In Canada, or any other jurisdictions where they may apply, the following additional healthcare disclaimer of warranty and limitation of liability are hereby incorporated into the terms and conditions of the GNU Affero General Public License:",
+    "HEALTHCARE_DISCLAIMER_FIRST_CLAUSE": "No warranties of any kind whatsoever are made as to the results that you will obtain from relying upon the covered code (or any information or content obtained by way of the covered code), including but not limited to compliance with privacy laws or regulations or clinical care industry standards and protocols. Use of the covered code is not a substitute for a health care provider's standard practice or professional judgment. Any decision with regard to the appropriateness of treatment, or the validity or reliability of information or content made available by the covered code, is the sole responsibility of the health care provider. Consequently, it is incumbent upon each health care provider to verify all medical history and treatment plans with each patient.",
+    "HEALTHCARE_DISCLAIMER_SECOND_CLAUSE": "Under no circumstances and under no legal theory, whether tort (including negligence), contract, or otherwise, shall any contributor, or anyone who distributes covered software as permitted by the license, be liable to you for any indirect, special, incidental, consequential damages of any character including, without limitation, damages for loss of goodwill, work stoppage, computer failure or malfunction, or any and all other damages or losses, of any nature whatsoever (direct or otherwise) on account of or associated with the use or inability to use the covered content (including, without limitation, the use of information or content made available by the covered code, all documentation associated therewith, and the failure of the covered code to comply with privacy laws and regulations or clinical care industry standards and protocols), even if such party shall have been informed of the possibility of such damages.",
+    "THIRD_PARTY_TITLE": "Third-Party Dependencies",
+    "UNTRANSLATED_PAGE_DISCLAIMER": "This section has not yet been translated, but its original content is provided below for reference purposes. Thank you for your understanding.",
+    "SHOW_LICENSE_TEXT": "Show license text"
+  },
   "PATIENT_REGISTRATION_TITLE": "Opal Registration",
   "PATIENT_REGISTRATION_SEARCH_HEADER": "Registration Search",
   "PATIENT_REGISTRATION_SEARCH_DESCRIPTION": "Please enter a valid <strong>12-character</strong> Medicare card number along with the <strong>patient ID</strong> to start the registration process.",
@@ -3439,6 +3456,6 @@
   "ENVIRONMENT": "Environment",
   "ABOUT": "About",
   "SOURCE_CODE": "View Source Code",
-  "SHOW_LICENSE_TEXT": "Show license text",
-  "UNTRANSLATED_PAGE_DISCLAIMER": "This section has not yet been translated, but its original content is provided below for reference purposes. Thank you for your understanding."
+  "UNTRANSLATED_PAGE_DISCLAIMER": "This section has not yet been translated, but its original content is provided below for reference purposes. Thank you for your understanding.",
+  "HOME_PAGE": "Return to Home Page"
 }
