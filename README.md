@@ -7,7 +7,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 # Legacy OpalAdmin
 
 > [!CAUTION]
-> This version of OpalAdmin is in maintenance mode. The functionality provided by it is going to be migrated to the [new OpalAdmin](https://github.com/opalmedapps/opal-admin) over time. See the [documentation on the future direction](https://docs.opalmedapps.com/development/architecture/#future-vision).
+> This version of OpalAdmin is in maintenance mode. The functionality provided by it is going to be migrated to the [new OpalAdmin](https://github.com/opalmedapps/opal-admin) over time. See the [documentation on our future architectural vision](https://docs.opalmedapps.com/development/architecture/#future-vision).
 > New features are only added to `opal-admin`. However, we will still fix issues, keep dependencies up to date, and address any security concerns. PRs addressing these topics are welcome.
 
 OpalAdmin is an administrative tool for managing and tagging personal health information that is published to Opal.
