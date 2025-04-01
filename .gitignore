@@ -41,7 +41,7 @@ node_modules
 # ignore idea for PhpStorm
 .idea
 
-# ignore npmrc file for xlts
+# ignore npmrc file from HeroDevs (for AngularJS NES)
 .npmrc
 
 # ignore uploaded file paths
