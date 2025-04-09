@@ -303,4 +303,3 @@ angular.module('opalAdmin.controllers.user.add.ad', ['ui.bootstrap', 'ui.grid'])
 			}
 		});
 	});
-

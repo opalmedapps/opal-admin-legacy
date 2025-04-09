@@ -171,4 +171,3 @@ angular.module('opalAdmin.controllers.customCode', ['ngAnimate', 'ngSanitize', '
 			});
 		};
 	});
-

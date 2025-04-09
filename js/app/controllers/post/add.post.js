@@ -222,4 +222,3 @@ controller('post.add', function ($scope, $filter, $state, $sce, $uibModal, $loca
 		}
 	});
 });
-

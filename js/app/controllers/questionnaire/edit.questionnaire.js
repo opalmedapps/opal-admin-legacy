@@ -297,7 +297,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 				return false;
 		};
 
-		// Function for updating the questionnaire 
+		// Function for updating the questionnaire
 		$scope.updateQuestionnaire = function () {
 
 			if ($scope.checkForm()) {

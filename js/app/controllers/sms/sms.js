@@ -225,4 +225,3 @@ angular.module('opalAdmin.controllers.sms', ['ngAnimate', 'ui.bootstrap', 'ui.gr
 			});
 		};
 	});
-

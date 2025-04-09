@@ -150,9 +150,9 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		};
 		// Function to set dropdown active for administration menu
 		$scope.currentActiveAdministration = function () {
-			var adminstrationPages = ['diagnosis-translation','cron','patients','patients-register',
+			var administrationPages = ['diagnosis-translation','cron','patients','patients-register',
 				'patient-activity','users','user-activity'];
-			if (adminstrationPages.indexOf($state.current.name) !== -1) {
+			if (administrationPages.indexOf($state.current.name) !== -1) {
 				return true;
 			}
 			else return false;
@@ -195,4 +195,3 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		};
 
 	});
-

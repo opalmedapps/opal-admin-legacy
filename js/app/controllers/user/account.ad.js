@@ -84,4 +84,3 @@ angular.module('opalAdmin.controllers.account.ad', ['ui.bootstrap']).
 			});
 		};
 	});
-

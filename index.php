@@ -20,7 +20,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 	<meta content="text/html; X-Content-Type-Options=nosniff" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		
+
 	<!-- Libraries -->
 	<script src="node_modules/jquery/dist/jquery.min.js"></script>
 	<script src="node_modules/angular/angular.js"></script>
@@ -50,7 +50,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 	<script src="node_modules/textangularjs/dist/textAngular-sanitize.js"></script>
 	<script src="node_modules/textangularjs/dist/textAngularSetup.js"></script>
 	<script src="node_modules/crypto-js/crypto-js.js"></script>
-	<script src="node_modules/angular-ui-grid/ui-grid.js"></script>	
+	<script src="node_modules/angular-ui-grid/ui-grid.js"></script>
 	<script src="node_modules/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js" defer></script>
 	<script src="js/lib/bootstrap/ui.bootstrap.materialPicker.js"></script>
 	<script src="node_modules/marked/marked.min.js"></script>
@@ -65,7 +65,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
  	<script type="text/javascript" src="js/app/controllers/navigation.js"></script>
 
 	<script type="text/javascript" src="js/app/controllers/home/home.js"></script>
-	 
+
  	<script type="text/javascript" src="js/app/controllers/alias/alias.js"></script>
  	<script type="text/javascript" src="js/app/controllers/alias/add.alias.js"></script>
  	<script type="text/javascript" src="js/app/controllers/alias/edit.alias.js"></script>
@@ -235,6 +235,6 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 			<span ng-if="build">({{'ENVIRONMENT'|translate}}: {{build.environment_name}})</span>
 		</div>
 	</footer>
- 
+
 </body>
 </html>

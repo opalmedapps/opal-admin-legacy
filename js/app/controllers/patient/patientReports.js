@@ -30,7 +30,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 		general: false,
 	};
 
-	// Initialize varibales for patient search parameters, patient identifiers, and patient report segments
+	// Initialize variables for patient search parameters, patient identifiers, and patient report segments
 	$scope.searchName = ""; //search parameters
 	$scope.searchMRN = "";
 	$scope.searchRAMQ = "";
@@ -707,7 +707,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 			$scope.noteReport = "";
 			$scope.clinnoteReport = "";
 			$scope.txteamReport = "";
-			$scope.generalReport = ""; 
+			$scope.generalReport = "";
 		});
 	};
 
@@ -737,7 +737,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 			success: function (response) {
 				populateTables(response);
 				// Since the data is fetched before tables prints, a simple resize fixes this
-				window.dispatchEvent(new Event('resize')); 
+				window.dispatchEvent(new Event('resize'));
 			},
 			error: function (err) {
 				ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
@@ -810,7 +810,7 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 				}
 				$scope.generateFinished = true; //finally we can show report segments
 
-			} else { //something went wrong, no result recieved
+			} else { //something went wrong, no result received
 				ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.SEARCH_FAIL'));
 			}
 
@@ -829,4 +829,3 @@ angular.module('opalAdmin.controllers.patientReports', ['ngAnimate', 'ui.bootstr
 	};
 
 });
-

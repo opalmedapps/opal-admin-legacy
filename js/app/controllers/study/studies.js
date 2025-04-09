@@ -108,7 +108,7 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 					if(value.phone && value.phoneExt){ //add dashes for readability
 						if(value.phone.length === 10){
 							value.phone = value.phone.substr(0,3) + "-" + value.phone.substr(3,3) + "-" + value.phone.substr(6,4);
-						}else if(value.phone.length === 11){ 
+						}else if(value.phone.length === 11){
 							value.phone = "+" + value.phone.substr(0,1) + " " + value.phone.substr(1,3) + "-" + value.phone.substr(4,3) + "-" + value.phone.substr(7,4);
 						}else if(value.phone.length === 12){
 							value.phone = "+" + value.phone.substr(0,2) + " " + value.phone.substr(2,3) + "-" + value.phone.substr(5,3) + "-" + value.phone.substr(8,4);
@@ -117,11 +117,11 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 						}
 						value.combinedPhone = value.phone + " ext. " + value.phoneExt;
 					}else if(value.phone && !value.phoneExt){ //add dashes for readability
-						if(value.phone.length === 10){ 
+						if(value.phone.length === 10){
 							value.phone = value.phone.substr(0,3) + "-" + value.phone.substr(3,3) + "-" + value.phone.substr(6,4);
-						}else if(value.phone.length === 11){ 
+						}else if(value.phone.length === 11){
 							value.phone = "+" + value.phone.substr(0,1) + " " + value.phone.substr(1,3) + "-" + value.phone.substr(4,3) + "-" + value.phone.substr(7,4);
-						}else if(value.phone.length === 12){ 
+						}else if(value.phone.length === 12){
 							value.phone = "+" + value.phone.substr(0,2) + " " + value.phone.substr(2,3) + "-" + value.phone.substr(5,3) + "-" + value.phone.substr(8,4);
 						}else{
 							value.phone = value.phone;
@@ -130,7 +130,7 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 					}else{
 						value.combinedPhone = "N/A";
 					}
-					
+
 				});
 			}).catch(function(err) {
 				ErrorHandler.onError(err, $filter('translate')('STUDY.LIST.ERROR_PUBLICATION'));
@@ -154,4 +154,3 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 			});
 		};
 	});
-

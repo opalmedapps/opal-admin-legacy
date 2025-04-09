@@ -73,7 +73,7 @@ angular.module('opalAdmin', [
 	.constant('USER_ROLES', {
 		admin: '1',
 		registrant: '4',
-	})	
+	})
 
 
 	// Authentication and authorization service
