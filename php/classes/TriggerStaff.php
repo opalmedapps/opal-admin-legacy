@@ -11,8 +11,8 @@ class TriggerStaff extends Trigger
 {
 
     /**
-     * Validate the input parameters 
-     * Validation code :     
+     * Validate the input parameters
+     * Validation code :
      *                      1st bit source system invalid or missing
      *
      * @param array<mixed> $post (Reference) - document parameters
@@ -28,7 +28,7 @@ class TriggerStaff extends Trigger
         if (!array_key_exists("source", $post) || $post["source"] == "") {
             $errCode = "1" . $errCode;
         } else {
-            $source = $this->opalDB->getSourceDatabaseDetails($post["source"]);            
+            $source = $this->opalDB->getSourceDatabaseDetails($post["source"]);
             if (count($source) != 1) {
                 $source = array();
                 $errCode = "1" . $errCode;
@@ -37,13 +37,13 @@ class TriggerStaff extends Trigger
                 $errCode = "0" . $errCode;
             }
         }
-        
+
         return $errCode;
     }
 
     /**
      * Validate the input parameters for individual staff information
-     * Validation code :     
+     * Validation code :
      *                      1st bit invalid or missing source system
      *                      2nd bit invalid or missing user ID
      *                      3rd bit invalid or missing first name
@@ -56,7 +56,7 @@ class TriggerStaff extends Trigger
     protected function _validateStaff(&$post,  &$source)
     {
         $errCode = $this->_validateSourceExternalId($post, $source);
-        
+
         if (bindec($errCode) != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation" => $errCode)));
 
@@ -84,7 +84,7 @@ class TriggerStaff extends Trigger
         return $errCode;
     }
 
-    /** 
+    /**
      * Insert or update staff resource after validation.
      * @param  $post - array - contains document details
      * @return void
@@ -96,7 +96,7 @@ class TriggerStaff extends Trigger
         $this->_updateStaff($post);
     }
 
-    /** 
+    /**
      * This function insert or update a staff informations after its validation.
      * @param  $post : array - details of staff information to insert/update.
      * @return  void
@@ -104,7 +104,7 @@ class TriggerStaff extends Trigger
     protected function _updateStaff(&$post)
     {
 
-        $source = null;       
+        $source = null;
 
         $errCode = $this->_validateStaff($post, $source);
         $errCode = bindec($errCode);
@@ -114,7 +114,7 @@ class TriggerStaff extends Trigger
 
         $staff = $this->opalDB->getStaff($post["userId"],$source["SourceDatabaseSerNum"]);
 
-        $staffData = array(            
+        $staffData = array(
             "SourceDatabaseSerNum" => $source["SourceDatabaseSerNum"],
             "StaffId" => $post["userId"],
             "LastName" => $post["lastName"],
@@ -131,8 +131,8 @@ class TriggerStaff extends Trigger
         $staffData["LastUpdated"] = $post["lastUpdated"];
 
         if ($staff === false) {
-            $this->opalDB->insertStaff($staffData);            
-        } else {            
+            $this->opalDB->insertStaff($staffData);
+        } else {
             $this->opalDB->updateStaff($staffData);
         }
     }

@@ -17,9 +17,9 @@
 
 	// Construct array
 	$cronArray	= array(
-		'nextCronDate' 	=> $nextCronDate, 
-		'repeatUnits' 	=> $repeatUnits, 
-		'nextCronTime' 	=> $nextCronTime, 
+		'nextCronDate' 	=> $nextCronDate,
+		'repeatUnits' 	=> $repeatUnits,
+		'nextCronTime' 	=> $nextCronTime,
 		'repeatInterval'=> $repeatInterval
 	);
 

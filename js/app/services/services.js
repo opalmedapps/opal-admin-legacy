@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 // Angular Service
-// 
+//
 
 angular.module('opalAdmin.services', [])
 
@@ -125,7 +125,7 @@ angular.module('opalAdmin.services', [])
                 function (response) { console.error('Unable to logout using api-backend:', response.status); }
 			);
 
-			
+
 			// Logout of old Opal Admin
 			$http.post(
 				"user/logout",
@@ -142,8 +142,8 @@ angular.module('opalAdmin.services', [])
 			$cookies.remove("clinicHubName", {path: "/"});
 			$cookies.remove("hospitalCode", {path: "/"});
 		};
-		
-		this.logout = function () {	
+
+		this.logout = function () {
 			this.logLogout();
 			Session.destroy();
 			$state.go('login');

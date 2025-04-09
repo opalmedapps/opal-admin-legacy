@@ -7,7 +7,7 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 04-May-2016 ++ File: Filter.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a filter class. This module calls a constructor to 
+# Perl module that creates a filter class. This module calls a constructor to
 # create a filter object that contains filter information stored as parameters
 #
 # There exists various subroutines to set / get filter information
@@ -22,7 +22,7 @@ use Database; # Our custom module Database.pm
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our Filters class 
+# Constructor for our Filters class
 #====================================================================================
 sub new
 {
@@ -42,7 +42,7 @@ sub new
 
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
-	bless $filter, $class; 
+	bless $filter, $class;
 	return $filter;
 }
 
@@ -297,7 +297,7 @@ sub getSexFilterFromOurDB
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
         $sexFilter = $data[0];
     }
@@ -331,14 +331,14 @@ sub getAgeFilterFromOurDB
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
         my @ageSplit = split(',', $data[0]);
         $ageFilter = {
             _min    => @ageSplit[0],
             _max    => @ageSplit[1]
         };
-            
+
     }
 
     return $ageFilter;
@@ -371,7 +371,7 @@ sub getPatientFiltersFromOurDB
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
         push(@patientFilters, $data[0]);
     }
@@ -405,7 +405,7 @@ sub getAppointmentFiltersFromOurDB
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
         push(@appointmentFilters, $data[0]);
     }
@@ -439,7 +439,7 @@ sub getDiagnosisFiltersFromOurDB
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
         push(@diagnosisFilters, $data[0]);
     }
@@ -473,7 +473,7 @@ sub getDoctorFiltersFromOurDB
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
         push(@doctorFilters, $data[0]);
     }
@@ -507,7 +507,7 @@ sub getResourceFiltersFromOurDB
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
         push(@resourceFilters, $data[0]);
     }
@@ -541,7 +541,7 @@ sub getAppointmentStatusFiltersFromOurDB
     # execute query
     $query->execute()
         or die "Could not execute query: " . $query->errstr;
-    
+
     while (my @data = $query->fetchrow_array()) {
         push(@appointmentStatusFilters, $data[0]);
     }
@@ -574,7 +574,7 @@ sub getCheckinFiltersFromOurDB
     # execute query
     $query->execute()
         or die "Could not execute query: " . $query->errstr;
-    
+
     while (my @data = $query->fetchrow_array()) {
         push(@checkinFilters, $data[0]);
     }
@@ -592,7 +592,7 @@ sub getFrequencyFilterFromOurDB
     my $frequencyFlag = undef; # initialize
     my $select_sql = "
         SELECT DISTINCT
-            fe.MetaKey 
+            fe.MetaKey
         FROM
             FrequencyEvents fe
         WHERE
@@ -608,7 +608,7 @@ sub getFrequencyFilterFromOurDB
     # execute query
     $query->execute()
         or die "Could not execute query: " . $query->errstr;
-    
+
     while (my @data = $query->fetchrow_array()) {
         $frequencyFlag = 1;
     }

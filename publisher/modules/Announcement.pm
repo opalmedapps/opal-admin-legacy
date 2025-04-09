@@ -39,7 +39,7 @@ my $SQLDatabase		= $Database::targetDatabase;
 my $verbose = 0;
 
 #====================================================================================
-# Constructor for our Announcement class 
+# Constructor for our Announcement class
 #====================================================================================
 sub new
 {
@@ -142,7 +142,7 @@ sub publishAnnouncements
 
     #my $today_date = strftime("%Y-%m-%d", localtime(time));
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
-	
+
 	# Check for any new updates from the main cron control
 	PostControl::CheckPostControlsMarkedForPublishModularCron('Announcement');
 
@@ -185,10 +185,10 @@ sub publishAnnouncements
 				# The reason is that the patient filter will combine as an OR with the non-patient filters
 				# If any of the non-patient filters exist, all non-patient filters combine in an AND (i.e. intersection)
 				# However, we don't want to lose the exception that a patient filter has been defined
-				# If there is a patient filter defined, then we only send the content to the patients 
+				# If there is a patient filter defined, then we only send the content to the patients
 				# selected in the filter UNLESS other non-patient filters have been defined. In that case,
 				# we send to the patients defined in the patient filters AND to the patients that pass
-				# in the non-patient filters  
+				# in the non-patient filters
 				my $isNonPatientSpecificFilterDefined = 0;
 				my $isPatientSpecificFilterDefined = 0;
 				my $patientPassed = 0;
@@ -198,13 +198,13 @@ sub publishAnnouncements
                 my @diagnosisNames = Diagnosis::getPatientsDiagnosesFromOurDB($patientSer);
 
                 my @patientDoctors = PatientDoctor::getPatientsDoctorsFromOurDB($patientSer);
-                    
+
                 # Fetch appointment filters (if any)
                 my @appointmentFilters =  $postFilters->getAppointmentFilters();
                 if (@appointmentFilters) {
 
 					print "Appointment filters exist for this announcement\n" if $verbose;
-      
+
 					# toggle flag
 					$isNonPatientSpecificFilterDefined = 1;
 
@@ -221,7 +221,7 @@ sub publishAnnouncements
                     }
 
                     # if all appointments were selected as triggers then patient passes
-	                # else do further checks 
+	                # else do further checks
 	                unless ('ALL' ~~ @appointmentFilters and @aliasSerials) {
 
 	                    # Finding the existence of the patient appointment in the appointment filters
@@ -256,7 +256,7 @@ sub publishAnnouncements
 					$isNonPatientSpecificFilterDefined = 1;
 
 					# if all diagnoses were selected as triggers then patient passes
-	                # else do further checks 
+	                # else do further checks
 	                unless ('ALL' ~~ @diagnosisFilters and @diagnosisNames) {
 	                    # Finding the intersection of the patient's diagnosis and the diagnosis filters
 						# If there is an intersection, then patient is so far part of this publishing announcement
@@ -287,7 +287,7 @@ sub publishAnnouncements
 					$isNonPatientSpecificFilterDefined = 1;
 
 					# if all doctors were selected as triggers then patient passes
-	                # else do further checks 
+	                # else do further checks
 	                unless ('ALL' ~~ @doctorFilters and @patientDoctors) {
 	                    # Finding the intersection of the patient's doctor(s) and the doctor filters
 						# If there is an intersection, then patient is so far part of this publishing announcement
@@ -318,7 +318,7 @@ sub publishAnnouncements
 					$isNonPatientSpecificFilterDefined = 1;
 
 					# if all resources were selected as triggers then patient passes
-	                # else do further checks 
+	                # else do further checks
 	                unless ('ALL' ~~ @resourceFilters and @patientResources) {
 	                    # Finding the intersection of the patient resource(s) and the resource filters
 						# If there is an intersection, then patient is so far part of this publishing announcement
@@ -340,17 +340,17 @@ sub publishAnnouncements
 					}
                 }
 
-				# We look into whether any patient-specific filters have been defined 
+				# We look into whether any patient-specific filters have been defined
 				# If we enter this if statement, then we check if that patient is in that list
 				if (@patientFilters) {
 
 					# if the patient-specific flag was enabled then it means this patient failed
-					# one of the filters above 
+					# one of the filters above
 					# OR if the non patient specific flag was disabled then there were no filters defined above
 					# and this is the last test to see if this patient passes
 					if ($isPatientSpecificFilterDefined eq 1 or $isNonPatientSpecificFilterDefined eq 0) {
 						# Finding the existence of the patient in the patient-specific filters
-						# If the patient exists, or all patients were selected as triggers, 
+						# If the patient exists, or all patients were selected as triggers,
 	                    # then patient passes else move on to next patient
                         if ($patientSer  ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
                         	$patientPassed = 1;
@@ -364,9 +364,9 @@ sub publishAnnouncements
 				}
 
 	            if ($isNonPatientSpecificFilterDefined eq 1 or $isPatientSpecificFilterDefined eq 1 or ($isNonPatientSpecificFilterDefined eq 0 and $patientPassed eq 1)) {
-				
+
 	                # If we've reached this point, we've passed all catches (filter restrictions). We make
-	                # an announcement object, check if it exists already in the database. If it does 
+	                # an announcement object, check if it exists already in the database. If it does
 	                # this means the announcement has already been published to the patient. If it doesn't
 	                # exist then we publish to the patient (insert into DB).
 	                $announcement = new Announcement();
@@ -376,7 +376,7 @@ sub publishAnnouncements
 	                $announcement->setAnnouncementPostControlSer($postControlSer);
 
 	                if (!$announcement->inOurDatabase()) {
-	    
+
 						print "Announcement not in our database \n" if $verbose;
 	                    $announcement = $announcement->insertAnnouncementIntoOurDB();
 
@@ -390,7 +390,7 @@ sub publishAnnouncements
 	            }
             } # End if postPublishDate
 
-        } # End forEach PostControl   
+        } # End forEach PostControl
 
     } # End forEach Patient
 
@@ -430,7 +430,7 @@ sub inOurDatabase
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
 
         $serInDB    = $data[0];
@@ -442,9 +442,9 @@ sub inOurDatabase
         $ExistingAnnouncement = new Announcement(); # initialize object
 
         # set parameters
-        $ExistingAnnouncement->setAnnouncementSer($serInDB); 
+        $ExistingAnnouncement->setAnnouncementSer($serInDB);
         $ExistingAnnouncement->setAnnouncementPatientSer($patientser);
-        $ExistingAnnouncement->setAnnouncementPostControlSer($postcontrolser); 
+        $ExistingAnnouncement->setAnnouncementPostControlSer($postcontrolser);
         $ExistingAnnouncement->setAnnouncementReadStatus($readstatus);
 
         return $ExistingAnnouncement; # this is true (ie. announcement exists, return object)
@@ -458,7 +458,7 @@ sub inOurDatabase
 #======================================================================================
 sub insertAnnouncementIntoOurDB
 {
-    my ($announcement) = @_; # our announcement object 
+    my ($announcement) = @_; # our announcement object
 
     my $patientser      = $announcement->getAnnouncementPatientSer();
     my $postcontrolser  = $announcement->getAnnouncementPostControlSer();
@@ -490,10 +490,10 @@ sub insertAnnouncementIntoOurDB
 
 	# Set the Serial in our object
 	$announcement->setAnnouncementSer($ser);
-	
+
 	return $announcement;
 }
 
 
 # To exit/return always true (for the module itself)
-1;	
+1;

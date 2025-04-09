@@ -40,7 +40,7 @@ class User extends Module {
 
     /**
      * Log user in on backend.
-     * 
+     *
      * @param $username the username
      * @param $password the password
      */
@@ -64,7 +64,7 @@ class User extends Module {
             $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $backendApi->getError());
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Wrong username and/or password.");
         }
-        // other errors 
+        // other errors
         else if ($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS && $backendApi->getError())
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to New Backend " . $backendApi->getError());
         else if ($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS) {
@@ -420,7 +420,7 @@ class User extends Module {
         if ($backendApi->getHttpCode() == HTTP_STATUS_BAD_REQUEST_ERROR && $backendApi->getError()) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Update failed.");
         }
-        // other errors 
+        // other errors
         else if ($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS && $backendApi->getError())
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_GATEWAY,"Unable to connect to New Backend " . $backendApi->getError());
         else if ($backendApi->getHttpCode() != HTTP_STATUS_SUCCESS) {
@@ -500,7 +500,7 @@ class User extends Module {
         $payload = [
             "username" => $post['edited_username'],
         ];
-        
+
         if (!empty($post["password"]) && !empty($post["confirmPassword"])) {
             $payload["password"] = $post['password'];
             $payload["password2"] = $post['confirmPassword'];
@@ -662,7 +662,7 @@ class User extends Module {
      * @param $type int - type of user (human/system)
      * @param $username string - username of the user
      * @param $password string - password requested for the user
-     * @param $confirmPassword string - confirmation of the password to make sure there's no typo 
+     * @param $confirmPassword string - confirmation of the password to make sure there's no typo
      * @param $language string - preferred language (en/fr)
      * @param $roleId int - role of the user
      * @param $isInsert boolean - if the process is an insert new user or update a deactivated user

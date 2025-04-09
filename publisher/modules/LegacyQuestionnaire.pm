@@ -7,7 +7,7 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 29-Sept-2017 ++ File: LegacyQuestionnaire.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a legacy questionnaire class. This module calls a 
+# Perl module that creates a legacy questionnaire class. This module calls a
 # constructor to create a legacy questionnaire object that contains legacy questionnaire information stored
 # as object variables.
 #
@@ -22,12 +22,12 @@ use Array::Utils qw(:all);
 use POSIX; # perl module
 use Data::Dumper;
 
-use Patient; # Our custom patient module 
+use Patient; # Our custom patient module
 use Filter; # Our custom filter module
 use Appointment; # Our custom appointment module
 use Alias; # Our custom alias module
 use Diagnosis; # Our custom diagnosis module
-use PatientDoctor; # Our custom patient doctor module 
+use PatientDoctor; # Our custom patient doctor module
 use PushNotification; # Our custom push notification module
 
 #---------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ use PushNotification; # Our custom push notification module
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our questionnaire class 
+# Constructor for our questionnaire class
 #====================================================================================
 sub new
 {
@@ -46,7 +46,7 @@ sub new
 		_patientser 				=> undef,
 		_questionnairecontrolser 	=> undef,
 		_filters 					=> undef,
-	}; 
+	};
 
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
@@ -136,11 +136,11 @@ sub getLegacyQuestionnaireFilters
 sub publishLegacyQuestionnaires
 {
 	my (@patientList) = @_; # patient list and cron log serial from args
-	
+
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
 
 	# Retrieve all the legacy questionnaire controls
-	my @legacyQuestionnaireControls = getLegacyQuestionnaireControlsMarkedForPublish(); 
+	my @legacyQuestionnaireControls = getLegacyQuestionnaireControlsMarkedForPublish();
 
 	foreach my $Patient (@patientList) {
 
@@ -158,14 +158,14 @@ sub publishLegacyQuestionnaires
 			# The reason is that the patient filter will combine as an OR with the non-patient filters
 			# If any of the non-patient filters exist, all non-patient filters combine in an AND (i.e. intersection)
             # However, we don't want to lose the exception that a patient filter has been defined
-			# If there is a patient filter defined, then we only send the content to the patients 
+			# If there is a patient filter defined, then we only send the content to the patients
 			# selected in the filter UNLESS other non-patient filters have been defined. In that case,
 			# we send to the patients defined in the patient filters AND to the patients that pass
-			# in the non-patient filters  
+			# in the non-patient filters
 			my $isNonPatientSpecificFilterDefined = 0;
             my $isPatientSpecificFilterDefined = 0;
             my $patientPassed = 0;
-            # We flag whether this legacy questionnaire is a recurring event for recurring filters 
+            # We flag whether this legacy questionnaire is a recurring event for recurring filters
             # (appointment, appointment status, checkin status, frequency events)
             # If there are recurring filters, then we flag = 1. This will allow publishing the same
             # legacy questionnaire more than once based on whether or not we published already today
@@ -259,7 +259,7 @@ sub publishLegacyQuestionnaires
                     # else no patient filters were defined and failed to match the checkin filter
                     # move on to the next questionnaire
                     else{next;}
-                } 
+                }
             }
 
             # Fetch appointment status filters (if any)
@@ -281,7 +281,7 @@ sub publishLegacyQuestionnaires
                     # else no patient filters were defined and failed to match the status filter
                     # move on to the next questionnaire
                     else{next;}
-                } 
+                }
             }
 
 			# Fetch appointment filters (if any)
@@ -293,7 +293,7 @@ sub publishLegacyQuestionnaires
                 $recurringFlag = 1;
 
                 # if all appointments were selected as triggers then patient passes
-                # else do further checks 
+                # else do further checks
                 unless ('ALL' ~~ @appointmentFilters and @aliasSerials) {
                     # Finding the existence of the patient expressions in the appointment filters
                     # If there is an intersection, then patient is so far part of this publishing legacy questionnaire
@@ -306,7 +306,7 @@ sub publishLegacyQuestionnaires
                         # else no patient filters were defined and failed to match the appointment filter
                         # move on to the next questionnaire
                         else{next;}
-                    } 
+                    }
                 }
             }
 
@@ -318,7 +318,7 @@ sub publishLegacyQuestionnaires
 				$isNonPatientSpecificFilterDefined = 1;
 
                 # if all diagnoses were selected as triggers then patient passes
-                # else do further checks 
+                # else do further checks
                 unless ('ALL' ~~ @diagnosisFilters and @diagnosisNames) {
                     # Finding the intersection of the patient's diagnosis and the diagnosis filters
                     # If there is an intersection, then patient is so far part of this publishing legacy questionnaire
@@ -344,7 +344,7 @@ sub publishLegacyQuestionnaires
 
 
                 # if all doctors were selected as triggers then patient passes
-                # else do further checks 
+                # else do further checks
                 unless ('ALL' ~~ @doctorFilters and @patientDoctors) {
                     # Finding the intersection of the patient's doctor(s) and the doctor filters
                     # If there is an intersection, then patient is so far part of this publishing legacy questionnaire
@@ -357,7 +357,7 @@ sub publishLegacyQuestionnaires
                         # else no patient filters were defined and failed to match the doctor filter
                         # move on to the next questionnaire
                         else{next;}
-                    } 
+                    }
                 }
             }
 
@@ -369,7 +369,7 @@ sub publishLegacyQuestionnaires
                 $isNonPatientSpecificFilterDefined = 1;
 
                 # if all resources were selected as triggers then patient passes
-                # else do further checks 
+                # else do further checks
                 unless ('ALL' ~~ @resourceFilters and @patientResources) {
                     # Finding the intersection of the patient resource(s) and the resource filters
                     # If there is an intersection, then patient is so far part of this publishing legacy questionnaire
@@ -388,17 +388,17 @@ sub publishLegacyQuestionnaires
                 }
             }
 
-			# We look into whether any patient-specific filters have been defined 
+			# We look into whether any patient-specific filters have been defined
 			# If we enter this if statement, then we check if that patient is in that list
             if (@patientFilters) {
 
                 # if the patient-specific flag was enabled then it means this patient failed
-                # one of the filters above 
+                # one of the filters above
                 # OR if the non patient specific flag was disabled then there were no filters defined above
                 # and this is the last test to see if this patient passes
                 if ($isPatientSpecificFilterDefined eq 1 or $isNonPatientSpecificFilterDefined eq 0) {
     				# Finding the existence of the patient in the patient-specific filters
-    				# If the patient exists, or all patients were selected as triggers, 
+    				# If the patient exists, or all patients were selected as triggers,
                     # then patient passes else move on to next patient
     				if ($patientSer ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
                         $patientPassed = 1;
@@ -416,16 +416,16 @@ sub publishLegacyQuestionnaires
             if ($isNonPatientSpecificFilterDefined eq 1 or $isPatientSpecificFilterDefined eq 1 or ($isNonPatientSpecificFilterDefined eq 0 and $patientPassed eq 1)) {
 
                 # If we've reached this point, we've passed all catches (filter restrictions). We make
-                # a questionnaire object, check if it exists already in the database. If it does 
+                # a questionnaire object, check if it exists already in the database. If it does
                 # this means the questionnaire has already been publish to the patient. If it doesn't
                 # exist then we publish to the patient (insert into DB).
     			$questionnaire = new LegacyQuestionnaire();
 
-    			# set the necessary values 
+    			# set the necessary values
     			$questionnaire->setLegacyQuestionnaireControlSer($questionnaireControlSer);
                 $questionnaire->setLegacyQuestionnairePatientSer($patientSer);
 
-    			if (!$questionnaire->inOurDatabase($recurringFlag)) { 
+    			if (!$questionnaire->inOurDatabase($recurringFlag)) {
 
     				$questionnaire = $questionnaire->insertLegacyQuestionnaireIntoOurDB();
 
@@ -435,9 +435,9 @@ sub publishLegacyQuestionnaires
 
                     my $wsRespondent_sql =
                     "SELECT d.content
-                    FROM OpalDB.QuestionnaireControl QC, 
-                    	QuestionnaireDB.questionnaire q, 
-                    	QuestionnaireDB.dictionary d, 
+                    FROM OpalDB.QuestionnaireControl QC,
+                    	QuestionnaireDB.questionnaire q,
+                    	QuestionnaireDB.dictionary d,
                     	QuestionnaireDB.respondent r
                     where QC.QuestionnaireDBSerNum = q.ID
                     	and QC.QuestionnaireControlSerNum = $questionnaireControlSer
@@ -475,7 +475,7 @@ sub publishLegacyQuestionnaires
 sub inOurDatabase
 {
     # our questionnaire object in args
-	my ($questionnaire, $recurringflag) = @_; 
+	my ($questionnaire, $recurringflag) = @_;
 
 	my $patientser 				= $questionnaire->getLegacyQuestionnairePatientSer();
 	my $questionnaireControlSer	= $questionnaire->getLegacyQuestionnaireControlSer();
@@ -493,7 +493,7 @@ sub inOurDatabase
 		AND Questionnaire.QuestionnaireControlSerNum 	= '$questionnaireControlSer'
     ";
     if ($recurringflag) {
-        $inDB_sql .= " 
+        $inDB_sql .= "
             AND DATE(Questionnaire.DateAdded)= DATE(NOW())
         ";
     }
@@ -505,7 +505,7 @@ sub inOurDatabase
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
 
 		$serInDB = $data[0];
@@ -537,7 +537,7 @@ sub insertLegacyQuestionnaireIntoOurDB
     my $questionnaireControlSer     = $questionnaire->getLegacyQuestionnaireControlSer();
 
 	my $insert_sql = "
-		INSERT INTO 
+		INSERT INTO
 			Questionnaire (
 				PatientSerNum,
 				QuestionnaireControlSerNum,
@@ -548,8 +548,8 @@ sub insertLegacyQuestionnaireIntoOurDB
 			'$questionnaireControlSer',
 			NOW()
 		)
-	"; 
-	
+	";
+
 	#print "$insert_sql\n";
     # prepare query
 	my $query = $SQLDatabase->prepare($insert_sql)
@@ -564,7 +564,7 @@ sub insertLegacyQuestionnaireIntoOurDB
 
 	# Set the Serial in our object
 	$questionnaire->setLegacyQuestionnaireSer($ser);
-	
+
 	return $questionnaire;
 }
 
@@ -575,10 +575,10 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
 {
     my @questionnaireControlList = (); # initialize a list
 
-    # this query combines the retrieval of all legacy questionnaires with a publish flag turned on 
+    # this query combines the retrieval of all legacy questionnaires with a publish flag turned on
     # and checks whether a questionnaire lands on the scheduled frequency time that is defined, if it is defined
     # (See the "Publish Frequency" section on opalAdmin for legacy questionnaires)
-    # complex query inspiration from 
+    # complex query inspiration from
     # https://stackoverflow.com/questions/5183630/calendar-recurring-repeating-events-best-storage-method
     my $info_sql = "
         SELECT DISTINCT
@@ -602,7 +602,7 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
 		WHERE
         -- Flag
 			QuestionnaireControl.PublishFlag = 1
-        AND ( 
+        AND (
             -- Compare day interval
             (
                 -- Number of days passed since start is divisible by repeat interval
@@ -621,7 +621,7 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
                     -- or week repeat not even defined at all
                     OR fe3.MetaValue IS NULL
                 )
-                -- If repeat_day_iw define, we override basic repeat week logic 
+                -- If repeat_day_iw define, we override basic repeat week logic
                 OR (
                     -- Number of weeks passed since start is divisible by repeat interval
                     -- BUT shift both start date and now to Sunday to compare weeks passed
@@ -635,28 +635,28 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
                         ),
                         fe3.MetaValue
                     ) = 0
-                    -- today is in list of days in week 
+                    -- today is in list of days in week
                     AND find_in_set(DAYOFWEEK(NOW()), fe6.MetaValue) > 0
                 )
             )
             -- Compare month interval
             AND (
-                -- If only the month interval is defined 
+                -- If only the month interval is defined
                 (
                     -- Number of months passed since start is divisible by repeat interval
                     -- https://stackoverflow.com/questions/288984/the-difference-in-months-between-dates-in-mysql
                     MOD(
-                        TIMESTAMPDIFF(MONTH,FROM_UNIXTIME(fe1.MetaValue), NOW()) 
+                        TIMESTAMPDIFF(MONTH,FROM_UNIXTIME(fe1.MetaValue), NOW())
                         + DATEDIFF(
-                            NOW(), 
+                            NOW(),
                             FROM_UNIXTIME(fe1.MetaValue) + INTERVAL TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(fe1.MetaValue), NOW()) MONTH
                         ) /
                         DATEDIFF(
                             FROM_UNIXTIME(fe1.MetaValue) + INTERVAL TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(fe1.MetaValue), NOW()) + 1 MONTH,
-                            FROM_UNIXTIME(fe1.MetaValue) + INTERVAL TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(fe1.MetaValue), NOW()) MONTH 
-                        ), 
+                            FROM_UNIXTIME(fe1.MetaValue) + INTERVAL TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(fe1.MetaValue), NOW()) MONTH
+                        ),
                         fe4.MetaValue
-                    ) = 0 
+                    ) = 0
                     -- No repeat_day_iw defined
                     AND fe6.MetaValue IS NULL
                     -- No repeat_week_im defined
@@ -668,8 +668,8 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
                 )
                 -- If other repeats are defined in conjuntion to month repeat
                 OR (
-                    -- Number of months passed since start is divisible by repeat interval 
-                    -- BUT shift both start date and today's date to the 1st to compare months passed 
+                    -- Number of months passed since start is divisible by repeat interval
+                    -- BUT shift both start date and today's date to the 1st to compare months passed
                     -- Because if triggers are on 2nd and 3rd of the month and today is the 15th, then
                     -- we shouldn't trigger on the next 2nd and 3rd if we check every 2 months even though
                     -- a true month hasn't passed
@@ -684,9 +684,9 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
                     AND (
                         -- logic for day and week in month
                         (
-                            -- today lands on the defined day in week 
+                            -- today lands on the defined day in week
                             MOD(DAYOFWEEK(NOW()), fe6.MetaValue) = 0
-                            -- today lands on the week number in month 
+                            -- today lands on the week number in month
                             AND (
                                 -- logic for week number other than last day in month
                                 (
@@ -694,7 +694,7 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
                                         WEEK(NOW(),3) - WEEK(NOW() - INTERVAL DAY(NOW()) - 1 DAY,3),
                                         fe7.MetaValue
                                     ) = 0
-                                    -- if not looking for last day in month 
+                                    -- if not looking for last day in month
                                     AND fe7.MetaValue != 6
                                 )
                                 -- logic for last day in month
@@ -719,11 +719,11 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
 
                     -- Number of years passed (in days) since start is divisible by repeat interval
                     MOD(TIMESTAMPDIFF(DAY, FROM_UNIXTIME(fe1.MetaValue), NOW())/365, fe5.MetaValue) = 0
-                    -- No day in week defined 
+                    -- No day in week defined
                     AND fe6.MetaValue IS NULL
-                    -- No repeat_week_im defined 
+                    -- No repeat_week_im defined
                     AND fe7.MetaValue IS NULL
-                    -- No repeat_month_iy defined 
+                    -- No repeat_month_iy defined
                     AND fe9.MetaValue IS NULL
                     -- or year repeat interval not defined at all
                     OR fe5.MetaValue IS NULL
@@ -732,12 +732,12 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
                 OR (
                     -- Subtract year number since start is divisible by repeat interval
                     MOD (YEAR(NOW()) - YEAR(FROM_UNIXTIME(fe1.MetaValue)), fe5.MetaValue) = 0
-                    -- 
+                    --
                     AND (
-                        -- logic for day and week in month 
+                        -- logic for day and week in month
                         (
                             MOD(DAYOFWEEK(NOW()), fe6.MetaValue) = 0
-                            -- today lands on the week number in month 
+                            -- today lands on the week number in month
                             AND (
                                 -- logic for week number other than last day in month
                                 (
@@ -745,7 +745,7 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
                                         WEEK(NOW(),3) - WEEK(NOW() - INTERVAL DAY(NOW()) - 1 DAY,3),
                                         fe7.MetaValue
                                     ) = 0
-                                    -- if not looking for last day in month 
+                                    -- if not looking for last day in month
                                     AND fe7.MetaValue != 6
                                 )
                                 -- logic for last day in month
@@ -754,22 +754,22 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
                                     AND fe7.MetaValue = 6
                                 )
                             )
-                            -- and repeat_month_iy not defined 
+                            -- and repeat_month_iy not defined
                             AND fe9.MetaValue IS NULL
                         )
-                        -- logic for months in year 
+                        -- logic for months in year
                         OR (
-                            -- today's month in list of months 
+                            -- today's month in list of months
                             find_in_set(MONTH(NOW()), fe9.MetaValue) > 0
                             -- and repeat_day_iw is null
-                            AND fe6.MetaValue IS NULL 
-                            -- and repeat_week_im is null 
+                            AND fe6.MetaValue IS NULL
+                            -- and repeat_week_im is null
                             AND fe7.MetaValue IS NULL
                         )
-                        -- logic for both day and week and months in year 
+                        -- logic for both day and week and months in year
                         OR (
                             MOD(DAYOFWEEK(NOW()), fe6.MetaValue) = 0
-                            -- today lands on the week number in month 
+                            -- today lands on the week number in month
                             AND (
                                 -- logic for week number other than last day in month
                                 (
@@ -777,7 +777,7 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
                                         WEEK(NOW(),3) - WEEK(NOW() - INTERVAL DAY(NOW()) - 1 DAY,3),
                                         fe7.MetaValue
                                     ) = 0
-                                    -- if not looking for last day in month 
+                                    -- if not looking for last day in month
                                     AND fe7.MetaValue != 6
                                 )
                                 -- logic for last day in month
@@ -786,7 +786,7 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
                                     AND fe7.MetaValue = 6
                                 )
                             )
-                            -- today's month in list of months 
+                            -- today's month in list of months
                             AND find_in_set(MONTH(NOW()), fe9.MetaValue) > 0
                         )
                     )
@@ -794,16 +794,16 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
             )
             -- today must be greater than start date
             AND FROM_UNIXTIME(fe1.MetaValue) <= NOW()
-            -- end date logic 
+            -- end date logic
             AND (
-                -- today must be less than end date 
+                -- today must be less than end date
                 DATE(NOW()) <= FROM_UNIXTIME(fe10.MetaValue)
-                -- or no end date is defined 
+                -- or no end date is defined
                 OR fe10.MetaValue IS NULL
             )
-            -- or no start date is set at all 
+            -- or no start date is set at all
             OR fe1.MetaValue IS NULL
-        ) 
+        )
     ";
 
     # prepare query
@@ -835,6 +835,5 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
 }
 
 
-# Exit smoothly 
+# Exit smoothly
 1;
-

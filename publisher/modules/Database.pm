@@ -7,12 +7,12 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 18-Dec-2013 ++ File: Database.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a database class. It connects first to the ARIA 
+# Perl module that creates a database class. It connects first to the ARIA
 # database. A database object is created for the MySQL database connection.
-# This module calls a constructor to create this object and then calls a 
+# This module calls a constructor to create this object and then calls a
 # subroutine to connect to the MySQL database with the parameters given.
 #
-# Although all these object variables are set within this module, I provide 
+# Although all these object variables are set within this module, I provide
 # setter subroutines in case the user wishes to changed the object variables.
 
 package Database; # Declare package name
@@ -34,9 +34,9 @@ our $databaseObject = new Database(
 our $targetDatabase = $databaseObject->connectToTargetDatabase();
 
 #====================================================================================
-# Constructor for our Databases class 
+# Constructor for our Databases class
 #====================================================================================
-sub new 
+sub new
 {
 	my $class = shift;
 	my $database = {
@@ -49,7 +49,7 @@ sub new
 
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
-	bless $database, $class; 
+	bless $database, $class;
 	return $database;
 }
 
@@ -87,8 +87,8 @@ sub sourceDatabaseIsEnabled
 	my $enabled = undef;
 
 	my $enabled_sql = "
-		SELECT 
-			sdb.Enabled 
+		SELECT
+			sdb.Enabled
 		FROM
 			SourceDatabase sdb
 		WHERE

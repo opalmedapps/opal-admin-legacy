@@ -7,12 +7,12 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 07-Aug-2015 ++ File: Patient.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a patient class. This module calls a constructor to 
-# create a patient object that contains patient information stored as object 
+# Perl module that creates a patient class. This module calls a constructor to
+# create a patient object that contains patient information stored as object
 # variables.
 #
 # There exists various subroutines to set patient information and compare patient
-# information between two patient objects. 
+# information between two patient objects.
 # There exists various subroutines that use the Database.pm module to update the
 # MySQL database.
 
@@ -22,7 +22,7 @@ use Exporter; # To export subroutines and variables
 use Database; # Use our custom database module Database.pm
 use Configs; # Use our custom configs module
 use Email; # Use our custom email module
-use Time::Piece; 
+use Time::Piece;
 use POSIX;
 use Storable qw(dclone); # for deep copies
 use Data::Dumper;
@@ -36,7 +36,7 @@ my $today = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our Patient class 
+# Constructor for our Patient class
 #====================================================================================
 sub new
 {
@@ -62,7 +62,7 @@ sub new
 	};
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
-	bless $patient, $class; 
+	bless $patient, $class;
 	return $patient;
 }
 
@@ -212,7 +212,7 @@ sub setPatientDeathDate
 #======================================================================================
 sub setPatientEmail
 {
-	my ($patient, $email) = @_; # patient object with provided email in arguments 
+	my ($patient, $email) = @_; # patient object with provided email in arguments
 	$patient->{_email} = $email; # set the email
 	return $patient->{_email};
 }
@@ -222,7 +222,7 @@ sub setPatientEmail
 #======================================================================================
 sub setPatientFirebaseUID
 {
-	my ($patient, $firebaseuid) = @_; # patient object with provided uid in arguments 
+	my ($patient, $firebaseuid) = @_; # patient object with provided uid in arguments
 	$patient->{_firebaseuid} = $firebaseuid; # set the uid
 	return $patient->{_firebaseuid};
 }
@@ -393,10 +393,10 @@ sub getPatientRegistrationDate
 #======================================================================================
 # Subroutine to get all patient info from source dbs
 #======================================================================================
-sub getPatientInfoFromSourceDBs 
+sub getPatientInfoFromSourceDBs
 {
     my ($Patient) = @_; # our patient object
-    my @patientList = (); # initialize a list 
+    my @patientList = (); # initialize a list
 
 	my $patientSSN       = $Patient->getPatientSSN(); # retrieve the ssn
 	my $PatientAriaSer	 = $Patient->getPatientSourceUID(); #patientAriaSer
@@ -418,11 +418,11 @@ sub getPatientInfoFromSourceDBs
 	    my $sourcePatient  = undef;
 
 		# YM 2020-03-09
-		# Temporary comment out the Picture field for now until we can fix the memory size error when trying to 
+		# Temporary comment out the Picture field for now until we can fix the memory size error when trying to
 		# fetch the picture of the patient from Aria
 
 	    my $patientInfo_sql = "
-	        SELECT DISTINCT 
+	        SELECT DISTINCT
 	            isnull(pt.PatientSer, '') PatientSer,
 	            isnull(pt.FirstName, '') FirstName,
 	            isnull(pt.LastName, '') LastName,
@@ -431,10 +431,10 @@ sub getPatientInfoFromSourceDBs
 	            isnull(CONVERT(VARCHAR, pt.DateOfBirth, 120), '') DateOfBirth,
 					'' as Picture,
 	            isnull(RTRIM(pt.Sex), '') Sex,
-	            isnull((Select ppt.DeathDate 
-						from VARIAN.dbo.PatientParticular ppt 
-						where ppt.PatientSer = pt.PatientSer), '') DeathDate 
-	        FROM 
+	            isnull((Select ppt.DeathDate
+						from VARIAN.dbo.PatientParticular ppt
+						where ppt.PatientSer = pt.PatientSer), '') DeathDate
+	        FROM
 	            VARIAN.dbo.Patient pt
 	        WHERE LEFT(LTRIM(pt.SSN), 12)   = '$patientSSN'
 			";
@@ -451,12 +451,12 @@ sub getPatientInfoFromSourceDBs
 
 		# Patient Does not exist in Aria so default to our database
 		unless ( @$data ) {
-			
+
 			print "Patient does not exit in Aria. Now retrieving from OpalDB\n\n";
 
 			# Query
 			my $patients_sql = "
-			SELECT DISTINCT 
+			SELECT DISTINCT
 				0 as PatientSer,
 				ifnull(pt.FirstName, '') FirstName,
 				ifnull(pt.LastName, '') LastName,
@@ -467,7 +467,7 @@ sub getPatientInfoFromSourceDBs
 				ifnull(RTRIM(pt.Sex), '') Sex,
 				ifnull(pt.DeathDate, '') DeathDate
 			From Patient pt, Patient_Hospital_Identifier phi
-			Where pt.PatientSerNum = phi.PatientSerNum 
+			Where pt.PatientSerNum = phi.PatientSerNum
 				and phi.Hospital_Identifier_Type_Code = 'RVH'
 				and phi.Is_Active = 1
 				and phi.MRN = '$id'
@@ -536,29 +536,29 @@ sub getPatientsMarkedForUpdate
 
 	# Update PatientControl Transfer flag form 0 to 1
 	MarkPatientForUpdate();
-	
+
 	my @patientList = (); # initialize list of patient objects
-	my ($wsPatientSerNum, $wsPatientAriaSer, $wsPatientId, $wsPatientId2, $wsFirstName, $wsLastName, $wsDateOfBirth, $wsAge, 
-		$wsSex, $wsProfileImage, $wsRAMQ, $wslastTransferred, $wsAccessLevel, $wsDeathDate, $wsEmail, $wsUsername, 
+	my ($wsPatientSerNum, $wsPatientAriaSer, $wsPatientId, $wsPatientId2, $wsFirstName, $wsLastName, $wsDateOfBirth, $wsAge,
+		$wsSex, $wsProfileImage, $wsRAMQ, $wslastTransferred, $wsAccessLevel, $wsDeathDate, $wsEmail, $wsUsername,
 		$wsRegistrationDate);
-	
+
 	# Query
 	my $patients_sql = "
 		SELECT DISTINCT
 			P.PatientSerNum,
 			ifnull(P.PatientAriaSer, 0) PatientAriaSer,
-			IFNULL((SELECT MRN 
-				FROM Patient_Hospital_Identifier 
-				WHERE Hospital_Identifier_Type_Code = 'RVH' 
+			IFNULL((SELECT MRN
+				FROM Patient_Hospital_Identifier
+				WHERE Hospital_Identifier_Type_Code = 'RVH'
 					AND Is_Active = 1
 					AND PatientSerNum = P.PatientSerNum
 				ORDER BY MRN
 				LIMIT 1
 				), '') PatientId,
-			IFNULL((SELECT MRN 
-				FROM Patient_Hospital_Identifier 
+			IFNULL((SELECT MRN
+				FROM Patient_Hospital_Identifier
 				WHERE Hospital_Identifier_Type_Code = 'MGH'
-					AND Is_Active = 1 
+					AND Is_Active = 1
 					AND PatientSerNum = P.PatientSerNum
 				ORDER BY MRN
 				LIMIT 1
@@ -646,17 +646,17 @@ sub getPatientsMarkedForUpdateLegacy
 
 	# Update PatientControl Transfer flag form 0 to 1
 	MarkPatientForUpdate();
-	
+
 	my @patientList = (); # initialize list of patient objects
 	my ($lasttransfer, $id, $registrationdate);
-	
+
 	# Query
 	my $patients_sql = "
 		SELECT DISTINCT
 			PatientControl.LastTransferred,
-            IFNULL((SELECT MRN 
-				FROM Patient_Hospital_Identifier 
-				WHERE Hospital_Identifier_Type_Code = 'RVH' 
+            IFNULL((SELECT MRN
+				FROM Patient_Hospital_Identifier
+				WHERE Hospital_Identifier_Type_Code = 'RVH'
 					AND Is_Active = 1
 					AND PatientSerNum = Patient.PatientSerNum
 				ORDER BY MRN
@@ -704,7 +704,7 @@ sub getPatientsMarkedForUpdateLegacy
 }
 
 sub getPatientsMarkedForUpdateModularCron {
-	
+
 	my ($cronType) = @_; # cron log serial in args
 
     $control_table = "";
@@ -721,10 +721,10 @@ sub getPatientsMarkedForUpdateModularCron {
     }
 
 	my @patientList = (); # initialize list of patient objects
-	my ($wsPatientSerNum, $wsPatientAriaSer, $wsPatientId, $wsPatientId2, $wsFirstName, $wsLastName, $wsDateOfBirth, $wsAge, 
-		$wsSex, $wsProfileImage, $wsRAMQ, $wslastTransferred, $wsAccessLevel, $wsDeathDate, $wsEmail, $wsUsername, 
+	my ($wsPatientSerNum, $wsPatientAriaSer, $wsPatientId, $wsPatientId2, $wsFirstName, $wsLastName, $wsDateOfBirth, $wsAge,
+		$wsSex, $wsProfileImage, $wsRAMQ, $wslastTransferred, $wsAccessLevel, $wsDeathDate, $wsEmail, $wsUsername,
 		$wsRegistrationDate);
-	
+
 	# Check if the list of patient is up to date.
 	CheckPatientForUpdateModularCron($control_table);
 
@@ -736,17 +736,17 @@ sub getPatientsMarkedForUpdateModularCron {
 		SELECT DISTINCT
 			P.PatientSerNum,
 			ifnull(P.PatientAriaSer, 0) PatientAriaSer,
-			IFNULL((SELECT MRN 
-				FROM Patient_Hospital_Identifier 
-				WHERE Hospital_Identifier_Type_Code = 'RVH' 
+			IFNULL((SELECT MRN
+				FROM Patient_Hospital_Identifier
+				WHERE Hospital_Identifier_Type_Code = 'RVH'
 					AND Is_Active = 1
 					AND PatientSerNum = P.PatientSerNum
 				ORDER BY MRN
 				LIMIT 1
 				), '') PatientId,
-			IFNULL((SELECT MRN 
-				FROM Patient_Hospital_Identifier 
-				WHERE Hospital_Identifier_Type_Code = 'MGH' 
+			IFNULL((SELECT MRN
+				FROM Patient_Hospital_Identifier
+				WHERE Hospital_Identifier_Type_Code = 'MGH'
 					AND Is_Active = 1
 					AND PatientSerNum = P.PatientSerNum
 				ORDER BY MRN
@@ -828,7 +828,7 @@ sub getPatientsMarkedForUpdateModularCron {
 }
 
 sub getPatientsMarkedForUpdateModularCronLegacy {
-	
+
 	my ($cronType) = @_; # cron log serial in args
 
     $control_table = "";
@@ -848,7 +848,7 @@ sub getPatientsMarkedForUpdateModularCronLegacy {
 
 	my @patientList = (); # initialize list of patient objects
 	my ($lasttransfer, $id, $registrationdate);
-	
+
 	# Check if the list of patient is up to date.
 	CheckPatientForUpdateModularCron($control_table);
 
@@ -859,9 +859,9 @@ sub getPatientsMarkedForUpdateModularCronLegacy {
 	my $patients_sql = "
 		SELECT DISTINCT
 			$control_table.lastTransferred,
-			IFNULL((SELECT MRN 
-				FROM Patient_Hospital_Identifier 
-				WHERE Hospital_Identifier_Type_Code = 'RVH' 
+			IFNULL((SELECT MRN
+				FROM Patient_Hospital_Identifier
+				WHERE Hospital_Identifier_Type_Code = 'RVH'
 					AND Is_Active = 1
 					AND PatientSerNum = Patient.PatientSerNum
 				ORDER BY MRN
@@ -962,7 +962,7 @@ sub unsetPatientControl
 			PatientControl
 		SET
 			PatientUpdate = 0
-		WHERE	
+		WHERE
 			PatientSerNum = $patientSer
 	";
 
@@ -985,7 +985,7 @@ sub setPatientLastTransferredIntoOurDB
 
 	my $update_sql = "
 
-		UPDATE 
+		UPDATE
 			PatientControl
 		SET
 			LastTransferred	= '$current_datetime',
@@ -1013,10 +1013,10 @@ sub getPatientAccessLevelFromSer
 
     my $accesslevel = 1;
     my $sql = "
-        SELECT 
+        SELECT
             pt.Accesslevel
         FROM
-            Patient pt 
+            Patient pt
         WHERE
             pt.PatientSerNum = '$patientSer'
     ";
@@ -1089,17 +1089,17 @@ sub inOurDatabase
         SELECT DISTINCT
             Patient.PatientSerNum,
             Patient.PatientAriaSer,
-			IFNULL((SELECT MRN 
-				FROM Patient_Hospital_Identifier 
-				WHERE Hospital_Identifier_Type_Code = 'RVH' 
+			IFNULL((SELECT MRN
+				FROM Patient_Hospital_Identifier
+				WHERE Hospital_Identifier_Type_Code = 'RVH'
 					AND Is_Active = 1
 					AND PatientSerNum = Patient.PatientSerNum
 				ORDER BY MRN
 				LIMIT 1
 				), '') PatientId,
-			IFNULL((SELECT MRN 
-				FROM Patient_Hospital_Identifier 
-				WHERE Hospital_Identifier_Type_Code = 'MGH' 
+			IFNULL((SELECT MRN
+				FROM Patient_Hospital_Identifier
+				WHERE Hospital_Identifier_Type_Code = 'MGH'
 					AND Is_Active = 1
 					AND PatientSerNum = Patient.PatientSerNum
 				ORDER BY MRN
@@ -1179,7 +1179,7 @@ sub inOurDatabase
 
 	else {return $ExistingPatient;} # this is false (ie. patient DNE, return empty)
 }
-    
+
 #======================================================================================
 # Subroutine to insert our patient info in our database
 #======================================================================================
@@ -1243,7 +1243,7 @@ sub insertPatientIntoOurDB
 
 	return $patient;
 }
-    
+
 #======================================================================================
 # Subroutine to update our database with the patient's updated info
 #======================================================================================
@@ -1263,7 +1263,7 @@ sub updateDatabase
     # my $patientSex          = $patient->getPatientSex();
     # my $patientSSN          = $patient->getPatientSSN();
     my $patientDeathDate 	= $patient->getPatientDeathDate();
-    
+
 	# my $update_sql = "
     #     UPDATE
     #         Patient
@@ -1311,7 +1311,7 @@ sub updateDatabase
 sub compareWith
 {
 	my ($SuspectPatient, $OriginalPatient) = @_; # our two patient objects from arguments
-	my $UpdatedPatient = dclone($OriginalPatient); 
+	my $UpdatedPatient = dclone($OriginalPatient);
 
 	my $change = 0; # boolean to recognize an actual difference between objects
 
@@ -1328,7 +1328,7 @@ sub compareWith
     # my $SPatientPicture     = $SuspectPatient->getPatientPicture();
     # my $SPatientDeathDate 	= $SuspectPatient->getPatientDeathDate();
 	# my $SPatientSSN 		= $SuspectPatient->getPatientSSN();
-	
+
 	# Original Patient...
     my $OPatientSourceUID   = $OriginalPatient->getPatientSourceUID();
 	my $OPatientId			= $OriginalPatient->getPatientId();
@@ -1363,7 +1363,7 @@ sub compareWith
 	# 	print "Patient ID2 has changed from $OPatientId2 to $SPatientId2!\n";
 	# 	my $updatedId2 = $UpdatedPatient->setPatientId2($SPatientId2); # update patient id2
 	# 	print "Will update database entry to \"$updatedId2\".\n";
-	# }	
+	# }
 	# if ($SPatientDOB ne $OPatientDOB and (isValidDate($SPatientDOB) or isValidDate($OPatientDOB))) {
 
 	# 	$change = 1; # change occurred
@@ -1414,7 +1414,7 @@ sub compareWith
 	# }
 	# YM 2020-03-05
 	# Temporary disable the update of the patient images due to the freetds bug in getting the images
-	
+
 	# if ($SPatientPicture ne $OPatientPicture) {
 
 	# 	$change = 1; # change occurred
@@ -1427,15 +1427,15 @@ sub compareWith
 
 	# 	$change = 1; # change occurred
 	# 	print "Patient Death Date has changed from $OPatientDeathDate to $SPatientDeathDate!\n";
-	# 	my $updatedDeathDate = $UpdatedPatient->setPatientDeathDate($SPatientDeathDate); # update patient death date 
+	# 	my $updatedDeathDate = $UpdatedPatient->setPatientDeathDate($SPatientDeathDate); # update patient death date
 	# 	print "Will update database entry to \"$updatedDeathDate\" and block patient.\n";
 
 	# 	# block deceased patient
-	# 	blockPatient($UpdatedPatient, "Deceased patient"); 
-	# 	# turn off patient control 
+	# 	blockPatient($UpdatedPatient, "Deceased patient");
+	# 	# turn off patient control
 	# 	unsetPatientControl($UpdatedPatient);
 	# }
-	
+
 	# if ($SPatientSSN ne $OPatientSSN) {
 
 	# 	$change = 1; # change occurred
@@ -1473,7 +1473,7 @@ sub isValidDate
 }
 
 #======================================================================================
-# Subroutine the transfer flag to 1 where patient control is active (PatientUpdate = 1) 
+# Subroutine the transfer flag to 1 where patient control is active (PatientUpdate = 1)
 #======================================================================================
 sub MarkPatientForUpdate
 {
@@ -1493,16 +1493,16 @@ sub MarkPatientForUpdate
 #======================================================================================
 # Subroutine to make sure that the cronControlPatient have the same records as in the
 # PatientControl. Reason is that the cronControlPatient handles the last update for
-# specific cron type 
+# specific cron type
 #======================================================================================
 sub CheckPatientForUpdateModularCron
-{	
+{
 	my ($control_table) = @_; #args cronType module name
 
 	my $patients_sql = "
 		INSERT INTO $control_table (cronControlPatientSerNum, LastTransferred, LastUpdated, TransferFlag)
 		SELECT PatientSerNum, LastTransferred, LastUpdated, 0 TransferFlag  FROM PatientControl PC
-		WHERE PC.PatientSerNum NOT IN 
+		WHERE PC.PatientSerNum NOT IN
 			(SELECT cronControlPatientSerNum FROM $control_table);
 ";
 
@@ -1517,19 +1517,19 @@ sub CheckPatientForUpdateModularCron
 
 #======================================================================================
 # Subroutine the transfer flag to 1 where patient control is active (PatientUpdate = 1)
-# This subroutine is for a specific cron type when getting the list of patient 
+# This subroutine is for a specific cron type when getting the list of patient
 #======================================================================================
 sub MarkPatientForUpdateModularCron
-{	
+{
 	my ($control_table) = @_; #args cronType module name
 
 	my $patients_sql = "
-	UPDATE 
+	UPDATE
 		$control_table,
 		PatientControl
-	SET 
+	SET
 		$control_table.transferFlag = 1
-	WHERE 
+	WHERE
 		PatientControl.PatientUpdate 	= 1
 		AND PatientControl.PatientSerNum = $control_table.cronControlPatientSerNum ";
 	# prepare query
@@ -1540,7 +1540,5 @@ sub MarkPatientForUpdateModularCron
 		or die "Could not execute query: " . $query->errstr;
 
  }
-#exit module 
+#exit module
 1;
-
-

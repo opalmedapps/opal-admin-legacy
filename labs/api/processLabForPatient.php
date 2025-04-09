@@ -123,12 +123,12 @@ function processLabResult(
 
             $testControl = getTestControl($dbh, $testCode);
             $testControls[$testCode] = $testControl;
-            
+
             // copy the Datetime object to only modify the copy
             $availableAt = clone $lab["resultDatetime"];
-            
+
             if (!$backendPatient->is_adult) {
-                $daysToAdd = ($testControl["InterpretationRecommended"] === 1) 
+                $daysToAdd = ($testControl["InterpretationRecommended"] === 1)
                 ? $backendPatient->non_interpretable_lab_result_delay
                 : $backendPatient->interpretable_lab_result_delay;
                 $availableAt = $availableAt->modify("+{$daysToAdd} days");
@@ -136,7 +136,7 @@ function processLabResult(
 
             $labs[] = $lab;
             $labs[count($labs) - 1]["availableAt"] = $availableAt;
-            
+
             //insert the patient's lab result
             updateTestResult(
                 dbh:                $dbh,
@@ -235,7 +235,7 @@ function updateTestComponent(PDO $dbh, string $testCode, string $testCodeDescrip
 function getTestControl(PDO $dbh, string $testCode): array
 {
     $controlQuery = $dbh->prepare("
-        SELECT 
+        SELECT
             tc.PublishFlag, tc.InterpretationRecommended
         FROM
             TestControl AS tc

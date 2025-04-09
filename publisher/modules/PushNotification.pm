@@ -203,8 +203,8 @@ sub getPushNotificationSendLog
 
 #====================================================================================
 # Subroutine to send/log push notification
-# 
-# NOTE: The same functionality already exists in Perl (PushNotification.pm). 
+#
+# NOTE: The same functionality already exists in Perl (PushNotification.pm).
 # Any change to the logic here needs to be applied there as well.
 #====================================================================================
 sub sendPushNotification
@@ -217,7 +217,7 @@ sub sendPushNotification
     my $description         = $notification->getNotificationControlDescription();
 
     my ($sendstatus, $sendlog); # initialize
-    
+
     # query the patient's first name
     my $firstName;
     try {

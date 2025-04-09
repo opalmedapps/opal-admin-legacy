@@ -24,7 +24,7 @@ use Filter; # Our custom Filter.pm
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our EducationalMaterialControl class 
+# Constructor for our EducationalMaterialControl class
 #====================================================================================
 sub new
 {
@@ -38,7 +38,7 @@ sub new
 
     # bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
-	bless $edumatcontrol, $class; 
+	bless $edumatcontrol, $class;
 	return $edumatcontrol;
 }
 
@@ -211,7 +211,7 @@ sub getEduMatControlsMarkedForPublishModularCron
 }
 
 #======================================================================================
-# Subroutine to set/update the "last published" field to current time 
+# Subroutine to set/update the "last published" field to current time
 #======================================================================================
 sub setEduMatControlLastPublishedIntoOurDB
 {
@@ -225,7 +225,7 @@ sub setEduMatControlLastPublishedIntoOurDB
         WHERE
             PublishFlag = 1
     ";
-    	
+
     # prepare query
 	my $query = $SQLDatabase->prepare($update_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -253,7 +253,7 @@ sub setEduMatControlLastPublishedModularControllers
             ccem.cronControlEducationalMaterialControlSerNum = EMC.EducationalMaterialControlSerNum
             AND ccem.publishFlag = 2;
     ";
-    	
+
     # prepare query
 	my $query = $SQLDatabase->prepare($update_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -265,5 +265,3 @@ sub setEduMatControlLastPublishedModularControllers
 
 # exit smoothly for module
 1;
-
-

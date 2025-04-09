@@ -10,8 +10,8 @@
 class TriggerDoctor extends Trigger
 {
     /**
-     * Validate input parameters 
-     * Validation code :     
+     * Validate input parameters
+     * Validation code :
      *                      1st bit source system invalid or missing
      *
      * @param array<mixed> &$post (Reference) - doctor parameters
@@ -27,7 +27,7 @@ class TriggerDoctor extends Trigger
         if (!array_key_exists("sourceSystem", $post) || $post["sourceSystem"] == "") {
             $errCode = "1" . $errCode;
         } else {
-            $source = $this->opalDB->getSourceDatabaseDetails($post["sourceSystem"]);            
+            $source = $this->opalDB->getSourceDatabaseDetails($post["sourceSystem"]);
             if (count($source) != 1) {
                 $source = array();
                 $errCode = "1" . $errCode;
@@ -36,17 +36,17 @@ class TriggerDoctor extends Trigger
                 $errCode = "0" . $errCode;
             }
         }
-        
+
         return $errCode;
     }
 
     /**
      * Validate input parameters for individual doctor
-     * Validation code :     
+     * Validation code :
      *                      1st bit invalid or missing source system
      *                      2nd bit invalid or missing resource ID
      *                      3rd bit invalid or missing first name
-     *                      4th bit invalid or missing last name 
+     *                      4th bit invalid or missing last name
      *
      * @param array<mixed> &$post (Reference) - doctor parameters
      * @param array<mixed> &$source (Reference) - source parameters
@@ -55,7 +55,7 @@ class TriggerDoctor extends Trigger
     protected function _validateDoctor(&$post,  &$source)
     {
         $errCode = $this->_validateSourceExternalId($post, $source);
-        
+
         if (bindec($errCode) != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation" => $errCode)));
 
@@ -85,7 +85,7 @@ class TriggerDoctor extends Trigger
 
     /**
      * Validate the input parameters of patient doctor
-     * Validation code :     
+     * Validation code :
      *                      1st bit invalid or missing MRN
      *                      2nd bit invalid or missing Site
      *                      3rd bit Identifier MRN-site-patient does not exists
@@ -105,11 +105,11 @@ class TriggerDoctor extends Trigger
     {
         $patientSite = array();
         $doctor = array();
-        $errCode = $this->_validateBasicPatientInfo($post, $patientSite);        
+        $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
         $errCode = $errCode . $this->_validateSourceExternalId($post, $source);
 
         if (bindec($errCode) != 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation" => $errCode)));                     
+            HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation" => $errCode)));
 
         if (!array_key_exists("resourceId", $post) || $post["resourceId"] == "") {
             $errCode = "1" . $errCode;
@@ -120,20 +120,20 @@ class TriggerDoctor extends Trigger
             } else {
                 $resource = $this->opalDB->getNonAriaDoctorResource($source["SourceDatabaseSerNum"], $post["resourceId"]);
             }
-            
+
             if ($resource === false) {
                 $errCode = $errCode . '1';
             } else {
                 $errCode = $errCode . '0';
                 $doctor = $this->opalDB->getDoctor($resource["ResourceSerNum"]);
-            
+
                 if ($doctor === false) {
                     $errCode = $errCode . '1';
                 } else {
                     $errCode = $errCode . '0';
                 }
             }
-        }        
+        }
 
         if (!array_key_exists("oncologistFlag", $post) || $post["oncologistFlag"] == "") {
             $errCode = "1" . $errCode;
@@ -146,12 +146,12 @@ class TriggerDoctor extends Trigger
         } else {
             $errCode = "0" . $errCode;
         }
-        
+
 
         return $errCode;
     }
 
-    /** 
+    /**
      * Insert or update doctor resource after validation.
      * @param  $post - array - contains document details
      * @return void
@@ -163,7 +163,7 @@ class TriggerDoctor extends Trigger
         $this->_updateDoctor($post);
     }
 
-    /** 
+    /**
      * Insert or update patient doctor after validation.
      * @param  $post - array - contains document details
      * @return void
@@ -175,7 +175,7 @@ class TriggerDoctor extends Trigger
         $this->_updatePatientDoctor($post);
     }
 
-    /** 
+    /**
      * This function insert or update a doctor resource informations after its validation.
      * @param  $post : array - details of resource information to insert/update.
      * @param array<mixed> $post (Reference) - resource parameters
@@ -210,10 +210,10 @@ class TriggerDoctor extends Trigger
             $resourceData["ResourceName"] = $post["alias"];
 
             $this->opalDB->updateDoctorResource($resourceData);
-        }        
+        }
     }
 
-    /** 
+    /**
      * This function insert or update a doctor informations after its validation.
      * @param array<mixed> $post - details of doctor information to insert/update.
      * @return void
@@ -262,13 +262,13 @@ class TriggerDoctor extends Trigger
         $doctorData["FirstName"] = $post["firstName"];
 
         if ($doctor === false) {
-            $this->opalDB->insertDoctor($doctorData);            
-        } else {            
+            $this->opalDB->insertDoctor($doctorData);
+        } else {
             $this->opalDB->updateDoctor($doctorData);
         }
     }
 
-    /** 
+    /**
      * This function insert or update a patient doctor informations after its validation.
      * @param array<mixed> $post - details of patient doctor information to insert/update.
      * @return void
@@ -280,10 +280,10 @@ class TriggerDoctor extends Trigger
         $patientSite = null;
         $doctor = null;
 
-        $errCode = $this->_validatePatientDoctor($post, $patientSite, $source, $doctor);                
+        $errCode = $this->_validatePatientDoctor($post, $patientSite, $source, $doctor);
         if (bindec($errCode) != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
-        
+
         $patientDoctor = $this->opalDB->getPatientDoctor($doctor["DoctorSerNum"],$patientSite["PatientSerNum"]);
 
         if ($patientDoctor === false){
@@ -293,7 +293,7 @@ class TriggerDoctor extends Trigger
                 "OncologistFlag" => $post["oncologistFlag"],
                 "PrimaryFlag" => $post["primaryOncologistFlag"],
             );
-            
+
             $this->opalDB->insertPatientDoctor($doctorData);
         } else {
             $patientDoctor["OncologistFlag"] = $post["oncologistFlag"];

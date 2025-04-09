@@ -9,4 +9,3 @@ header('Content-Type: application/javascript');
 include_once('cron.inc');
 
 $cron = new Cron; // Object
-

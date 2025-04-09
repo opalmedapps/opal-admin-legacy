@@ -8,11 +8,11 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 		// Default Booleans
 		$scope.formIsValid = false; // assume form is not valid initially
-		$scope.changesMade = false; // changes have been made? 
-		$scope.emptyTitle = false; // alias title field empty? 
+		$scope.changesMade = false; // changes have been made?
+		$scope.emptyTitle = false; // alias title field empty?
 		$scope.emptyDescription = false; // alias description field empty?
 		$scope.nameMod = false; // name modified?
-		$scope.termsMod = false; // terms modified? 
+		$scope.termsMod = false; // terms modified?
 		$scope.selectAll = false;
 		$scope.showAssigned = false;
 		$scope.hideAssigned = false;
@@ -58,7 +58,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 		$scope.alertMessage = "";
 		$scope.hiddenAlert = true;
-		// Function to show alert 
+		// Function to show alert
 		$scope.showAlert = function (message) {
 			$scope.hiddenAlert = false;
 			$scope.alertMessage = message;
@@ -121,7 +121,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			$scope.cancel();
 		});
 
-		// Function to assign termFilter when textbox is changing 
+		// Function to assign termFilter when textbox is changing
 		$scope.changeTermFilter = function (termFilter) {
 			$scope.termFilter = termFilter;
 			$scope.selectAll = false;
@@ -135,7 +135,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 					|| ($scope.clinicalCodeFilter == 'other' && term.assigned && !term.added) || ($scope.clinicalCodeFilter == 'none' && !term.added && !term.assigned)));
 		};
 
-		// Function to assign eduMatFilter when textbox is changing 
+		// Function to assign eduMatFilter when textbox is changing
 		$scope.changeEduMatFilter = function (eduMatFilter) {
 			$scope.eduMatFilter = eduMatFilter;
 		};
@@ -146,7 +146,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			return !$scope.eduMatFilter || keyword.test($scope.language.toUpperCase() === "FR"?edumat.name_FR:edumat.name_EN);
 		};
 
-		// Function to assign hospitalMapFilter when textbox is changing 
+		// Function to assign hospitalMapFilter when textbox is changing
 		$scope.changeHospitalMapFilter = function (hospitalMapFilter) {
 			$scope.hospitalMapFilter = hospitalMapFilter;
 		};
@@ -220,7 +220,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			aliasCollectionService.getExpressions($scope.alias.source_db.serial, $scope.alias.type).then(function (response) {
 				$scope.termList = response.data; // Assign value
 
-				// Loop within current alias' expressions (terms) 
+				// Loop within current alias' expressions (terms)
 				angular.forEach($scope.alias.terms, function (selectedTerm) {
 					angular.forEach($scope.termList, function (term) {
 						if (term.masterSourceAliasId === selectedTerm.masterSourceAliasId) { // If term is selected (from current alias)
@@ -376,7 +376,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 				// Log who created this alias
 				const currentUser = Session.retrieveObject('user');
 				toSubmit.user = currentUser;
-				
+
 				$.ajax({
 					type: "POST",
 					url: "alias/update/alias",
@@ -460,4 +460,4 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 				checkinDetailsDefined && hospitalMapDefined));
 		};
 	});
-	
+

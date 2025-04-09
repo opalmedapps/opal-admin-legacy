@@ -19,7 +19,7 @@ class NewOpalApiCall extends ApiCall
         } else {
             $this->setOption(CURLOPT_CUSTOMREQUEST, $method);
         }
-        
+
         if ($api_route == '/api/auth/login/') {
             $header = [
                 $content_type,
@@ -68,7 +68,7 @@ class NewOpalApiCall extends ApiCall
             function ($curl, $header) use (&$headers) {
                 $length = strlen($header);
                 $header = explode(':', $header, 2);
-                
+
                 // ignore invalid headers
                 if (count($header) < 2)
                     return $length;
@@ -80,7 +80,7 @@ class NewOpalApiCall extends ApiCall
         );
 
         $result = curl_exec($ch);
-        
+
         $this->answerInfo = curl_getinfo($ch);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
@@ -114,4 +114,3 @@ class NewOpalApiCall extends ApiCall
         return $this->headers;
     }
 }
-

@@ -30,7 +30,7 @@ class PushNotification {
 	*                push notification to android device
 	*   Requires: $data must contain mtitle, and mdesc for the
 	*             push notification.
-	* 
+	*
 	**/
 	public static function android($data, $reg_id) {
 		$url = ANDROID_URL;
@@ -125,9 +125,9 @@ class PushNotification {
 		);
 		// Encode the payload as JSON
         $payload = json_encode($body);
-	
+
 		$apns_topic = self::$apns_topic;
-		$url = self::$ios_url . $devicetoken;    
+		$url = self::$ios_url . $devicetoken;
         $ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
 		curl_setopt($ch, CURLOPT_HTTP_VERSION,3);
@@ -183,7 +183,7 @@ class PushNotification {
 			return $result;
 		}
    }
-   
+
 	// **************************************************
 	// encode Payload
 	// **************************************************
@@ -197,17 +197,17 @@ class PushNotification {
 	*				$inBody -> body of the message
 	**/
 	private static function encodePayload($inTitle, $inBody) {
-	
+
 		$validUTF8inTitle = mb_check_encoding($inTitle, 'UTF-8');
 		$validUTF8inBody = mb_check_encoding($inBody, 'UTF-8');
-	
+
 		if ($validUTF8inTitle) {
 			$outTitle = stripslashes($inTitle);
 		} else {
 			$titleStr =  mb_convert_encoding($inTitle, 'UTF-8', 'ISO-8859-1');
 			$outTitle = stripslashes($titleStr);
 		}
-	
+
 		if ($validUTF8inBody) {
 			$outBody = stripslashes($inBody);
 		} else {

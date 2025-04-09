@@ -11,7 +11,7 @@ class MasterSourceAppointment extends MasterSourceAlias {
     }
 
     public function insertSourceAppointments($post) {
-        $this->checkWriteAccess($post);       
+        $this->checkWriteAccess($post);
         return $this->_insertSourceAliases($post, ALIAS_TYPE_APPOINTMENT);
     }
 

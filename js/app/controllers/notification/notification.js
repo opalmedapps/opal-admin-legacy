@@ -13,7 +13,7 @@ controller('notification', function ($scope, $uibModal, $filter, $state, notific
 	$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.notification]) & (1 << 0)) !== 0);
 	$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.notification]) & (1 << 1)) !== 0);
 	$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.notification]) & (1 << 2)) !== 0);
-	
+
 	// Function to control search engine model
 	$scope.filterNotification = function (filterValue) {
 		$scope.filterValue = filterValue;

@@ -77,12 +77,12 @@ include_once "database.inc";
             $wsSite = empty($site) ? "RVH" : $site;
 
             //Obtain Patient and appointment information from Database i.e. PatientSerNum, AppointmentSerNum and Language
-            $sql = "SELECT P.PatientSerNum, A.AppointmentSerNum 
+            $sql = "SELECT P.PatientSerNum, A.AppointmentSerNum
                     FROM Appointment A, Patient P, Patient_Hospital_Identifier PHI
                     WHERE P.PatientSerNum = PHI.PatientSerNum
                         AND PHI.MRN = :patientId
                         and PHI.Hospital_Identifier_Type_Code = :sitecode
-                        AND P.PatientSerNum = A.PatientSerNum 
+                        AND P.PatientSerNum = A.PatientSerNum
                         AND A.SourceSystemID = :sourceSer
                     ";
             try{
@@ -166,7 +166,7 @@ include_once "database.inc";
                 $language = strtoupper($detail['language']);
                 $message = self::buildMessageForRoomNotification($room["room_".$language], $messageLabels["Name_".$language ], $messageLabels["Description_".$language]);
                 $dynamicKeys = [];
-            
+
                 // Special case for replacing the $institution wildcard
                 if (str_contains($message["mdesc"], '$institution')) {
                     $dynamicKeys['$institution'] = $detail['institution_acronym'];
@@ -258,7 +258,7 @@ include_once "database.inc";
          * getPatientIDorMRN($patientId, $mrn)
          * Description: This fucntion is to determine if it is to use PatientId or MRN and return
          * the value.
-         * 
+         *
          * Returns: returns patientId
          **/
         public static function getPatientIDorMRN($patientId, $mrn)
@@ -267,7 +267,7 @@ include_once "database.inc";
             $patientId = empty($patientId) ? "---NA---" : $patientId;
             // $wsMRN is the hospital medical ID
             $wsMRN = empty($mrn) ? "---NA---" : $mrn;
-            
+
             // Only one MRN is accepted if somehow both $patientId and $wsMRN is provided then we want to replace
             // the $patientId with the $wsMRN. If no $patientId provided, but $wsMRN is then we copy the $wsMRN to $patientId.
             // The $patientId is the original parameter in this entire code, so it is easier to just re-use it.
@@ -283,7 +283,7 @@ include_once "database.inc";
         /**
          * sanitizeInput($inString)
          * Description: This function is a basic string input sanitizer
-         * 
+         *
          * Returns: returns outString
          **/
         public static function sanitizeInput($inString)

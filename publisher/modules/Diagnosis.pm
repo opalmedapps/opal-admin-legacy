@@ -270,7 +270,7 @@ sub getDiagnosesFromSourceDB
 			from VARIAN.dbo.Patient p;
 			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
 			";
-			
+
 			my $diagInfo_sql = $patientInfo_sql . "
 		    	SELECT DISTINCT
 			    	dx.DiagnosisSer,

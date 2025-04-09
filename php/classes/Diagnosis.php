@@ -152,7 +152,7 @@ class Diagnosis extends Module {
         return $this->opalDB->insertMultipleDiagnosisCodes($toInsert);
     }
 
-    /** 
+    /**
      * get the list of all the diagnosis translations.
      * @param  void
      * @return  array - list of diagnosis translations.

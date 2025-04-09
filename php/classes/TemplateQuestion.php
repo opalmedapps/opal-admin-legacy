@@ -92,7 +92,7 @@ class TemplateQuestion extends QuestionnaireModule {
             return false;
         return $sliderOptions;
     }
-    
+
     /*
      * This function validate the pivotal IDs of an updated type template to insure it will not compromise the data when
      * updating the database.

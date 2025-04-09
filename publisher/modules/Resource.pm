@@ -7,8 +7,8 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 10-Aug-2015 ++ File: Resource.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a resource class. This module calls a constructor to 
-# create a resource object that contains resource information stored as object 
+# Perl module that creates a resource class. This module calls a constructor to
+# create a resource object that contains resource information stored as object
 # variables.
 #
 # There exists various subroutines to set resource information, get resource information
@@ -26,7 +26,7 @@ use Storable qw(dclone); # for deep copies
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our Doctor class 
+# Constructor for our Doctor class
 #====================================================================================
 sub new
 {
@@ -45,7 +45,7 @@ sub new
 }
 
 #====================================================================================
-# Subroutine to set the resource serial 
+# Subroutine to set the resource serial
 #====================================================================================
 sub setResourceSer
 {
@@ -75,7 +75,7 @@ sub setResourceSourceUID
 }
 
 #====================================================================================
-# Subroutine to set the resource name 
+# Subroutine to set the resource name
 #====================================================================================
 sub setResourceName
 {
@@ -162,7 +162,7 @@ sub getResourceInfoFromSourceDB
     	my $resource_sql = "
             use VARIAN;
 
-	    	SELECT DISTINCT 
+	    	SELECT DISTINCT
 		    	vv_ResourceName.ResourceName,
                 Resource.ResourceType
 	    	FROM
@@ -175,17 +175,17 @@ sub getResourceInfoFromSourceDB
 	    # prepare query
     	my $query = $sourceDatabase->prepare($resource_sql)
 	    	or die "Could not prepare query: " . $sourceDatabase->errstr;
-    
+
 	    # execute query
     	$query->execute()
 	    	or die "Could not execute query: " . $query->errstr;
 
     	while (my @data = $query->fetchrow_array()) {
-    
+
 	    	# query results
 		    $name = $data[0];
             $type = $data[1];
-    
+
 	    	$Resource->setResourceName($name);
             $Resource->setResourceType($type);
 	    }
@@ -212,17 +212,17 @@ sub getResourceInfoFromSourceDB
         # prepare query
     	my $query = $sourceDatabase->prepare($resource_sql)
 	    	or die "Could not prepare query: " . $sourceDatabase->errstr;
-    
+
 	    # execute query
     	$query->execute()
 	    	or die "Could not execute query: " . $query->errstr;
 
     	while (my @data = $query->fetchrow_array()) {
-    
+
 	    	# query results
 		    $name = $data[0];
             $type = 'Other'; # resource type not defined yet in source db
-    
+
 	    	$Resource->setResourceName($name);
             $Resource->setResourceType($type);
 	    }
@@ -242,13 +242,13 @@ sub getResourceInfoFromSourceDB
     	# prepare query
     	my $query = $sourceDatabase->prepare($resource_sql)
 	    	or die "Could not prepare query: " . $sourceDatabase->errstr;
-    
+
 	    # execute query
     	$query->execute()
 	    	or die "Could not execute query: " . $query->errstr;
 
     	while (my @data = $query->fetchrow_array()) {
-    
+
     		# use setters to set appropriate resource information from query
 
     	}
@@ -295,7 +295,7 @@ sub inOurDatabase
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
 
 		$ser			        = $data[0];
@@ -306,7 +306,7 @@ sub inOurDatabase
 	}
 
 	if ($ResourceSourceUIDInDB) {
-		
+
 		$ExistingResource = new Resource(); # initialize new object
 
 		$ExistingResource->setResourceSer($ser);
@@ -317,7 +317,7 @@ sub inOurDatabase
 
 		return $ExistingResource; # this is truthful (ie. resource exists) return object
 	}
-	
+
 	else {return $ExistingResource;} # this is false (ie. resource DNE) return empty
 }
 
@@ -401,7 +401,7 @@ sub updateDatabase
 
 	# execute query
 	$query->execute()
-		or die "Could not execute query: " . $query->errstr;	
+		or die "Could not execute query: " . $query->errstr;
 }
 
 #======================================================================================
@@ -410,7 +410,7 @@ sub updateDatabase
 #======================================================================================
 sub compareWith
 {
-	my ($SuspectResource, $OriginalResource) = @_; # two resource objects 
+	my ($SuspectResource, $OriginalResource) = @_; # two resource objects
 	my $UpdatedResource = dclone($OriginalResource); # deep copy
 
 	# retrieve params
@@ -430,7 +430,7 @@ sub compareWith
 	}
 	if ($Stype ne $Otype) {
 		print "Resource Type has changed from '$Otype' to '$Stype'\n";
-		my $updatedType = $UpdatedResource->setResourceType($Stype); # update 
+		my $updatedType = $UpdatedResource->setResourceType($Stype); # update
 		print "Will update database entry to '$updatedType'.\n";
 	}
 
@@ -438,12 +438,12 @@ sub compareWith
 }
 
 #======================================================================================
-# Subroutine to reassign our resource serial in ARIA to a resource serial in MySQL. 
+# Subroutine to reassign our resource serial in ARIA to a resource serial in MySQL.
 # In the process, insert resource into our database if it DNE
 #======================================================================================
 sub reassignResource
 {
-	my ($sourceuid, $sourcedbser) = @_; # serial from arguments 
+	my ($sourceuid, $sourcedbser) = @_; # serial from arguments
 
     # first check if the resource serial is defined
     # if not, return zero
@@ -488,4 +488,4 @@ sub reassignResource
 }
 
 # To exit/return always true (for the module itself)
-1;	
+1;

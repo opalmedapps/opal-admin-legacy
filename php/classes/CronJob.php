@@ -61,9 +61,9 @@ class CronJob extends OpalProject {
     public function updateResourcePending() {
         $this->_checkCronAccess();
         $out=$this->opalDB->updateResourcePendingLevelInProcess();
-        
+
         $resourcePending = $this->opalDB->getOldestResourcePendingInProcess();
-        
+
         $startTime = time();
         while(count($resourcePending) > 0 && (time() - $startTime) < 29) {
             $resourcePending = $resourcePending[0];
@@ -125,7 +125,7 @@ class CronJob extends OpalProject {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, $e->getMessage());
         }
     }
-    
+
     /**
      * Update appointment in appointmentPending table.
      */
@@ -134,7 +134,7 @@ class CronJob extends OpalProject {
         $replacementMap = array();
         $appointmentPendingList = $this->opalDB->getOldestAppointmentPendingInProcess();
         $startTime = time();
-                
+
         while(count($appointmentPendingList) > 0 && (time() - $startTime) < 29) {
             $today = strtotime(date("Y-m-d H:i:s"));
             $appointmentPending = array_shift($appointmentPendingList);
@@ -146,7 +146,7 @@ class CronJob extends OpalProject {
             if($countAlias == 1) {
                 $toPublish = $aliasInfos[0]['AliasUpdate'];
             }
-            
+
             if($countAlias == 1 && $toPublish == 1) {
 
                 unset($appointmentPending["Level"]);
@@ -156,8 +156,8 @@ class CronJob extends OpalProject {
                 unset($appointmentPending["appointmentTypeCode"]);
                 unset($appointmentPending["appointmentTypeDescription"]);
                 $appointmentPending["AliasExpressionSerNum"] = $aliasInfos[0]['AliasExpressionSerNum'];
-                
-                $action = 'AppointmentNew';                    
+
+                $action = 'AppointmentNew';
                 $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
                 $replacementMap["\$newAppointmentDateFR"] =  $formatter->format($SStartDateTime);
                 $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
@@ -171,10 +171,10 @@ class CronJob extends OpalProject {
                 $this->opalDB->deleteAppointmentPending($appointmentPending["ID"]);
                 unset($appointmentPending["ID"]);
                 $sourceId = $this->opalDB->insertAppointment($appointmentPending);
-                
+
                 if ($SStartDateTime >= $today) {
                     $this->_notifyChange($appointmentPending, $action, $replacementMap,$sourceId);
-                }                
+                }
             }
         }
     }

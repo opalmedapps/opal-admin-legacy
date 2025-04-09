@@ -6,7 +6,7 @@
 
 header('Content-Type: application/javascript');
   /* Script to send push notifications given the following POST requests. */
-  
+
   include_once('HospitalPushNotification.php');
 
   // print "Title: " . $_POST['message_title'] . "\n\n";

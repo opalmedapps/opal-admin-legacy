@@ -410,7 +410,7 @@ sub setAliasLastTransferredModularControllers
 	my ($current_datetime, $module) = @_; # our current datetime in arguments
 
 	my $update_sql = "
-	UPDATE 
+	UPDATE
 		cronControlAlias,
 		Alias,
 		AliasExpression

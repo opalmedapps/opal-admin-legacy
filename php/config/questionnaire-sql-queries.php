@@ -151,7 +151,7 @@ define("SQL_QUESTIONNAIRE_GET_ID_FROM_TEMPLATE_TYPES_OPTION",
 );
 
 define("SQL_QUESTIONNAIRE_GET_ALL_LIBRARIES",
-    "SELECT 
+    "SELECT
     l.ID AS serNum,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = l.name AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = l.name AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR
@@ -160,7 +160,7 @@ define("SQL_QUESTIONNAIRE_GET_ALL_LIBRARIES",
 );
 
 define("SQL_QUESTIONNAIRE_GET_USER_LIBRARIES",
-    "SELECT 
+    "SELECT
     l.ID
     FROM ".LIBRARY_TABLE." l
     WHERE l.deleted = ".NON_DELETED_RECORD." AND (l.OAUserId = :OAUserId OR l.private = 0) AND l.ID IN (%%LISTOFIDS%%);"
@@ -348,7 +348,7 @@ define("SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_DETAILS",
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS title_FR,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS description_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR,
-    q.purposeId AS purpose, q.respondentId AS respondent 
+    q.purposeId AS purpose, q.respondentId AS respondent
     FROM ".QUESTIONNAIRE_TABLE." q
     WHERE q.ID = :ID AND (q.private = 0 OR q.OAUserId = :OAUserId) AND q.deleted = ".NON_DELETED_RECORD.";"
 );
@@ -424,7 +424,7 @@ define("SQL_QUESTIONNAIRE_UPDATE_TYPE_TEMPLATE",
     SET updatedBy = :updatedBy, private = :private
     WHERE ID = :ID
     AND (private = 0 OR OAUserId = :OAUserId)
-    AND (private != :private) 
+    AND (private != :private)
     AND deleted = ".NON_DELETED_RECORD.";"
 );
 
@@ -618,7 +618,7 @@ define("SQL_QUESTIONNAIRE_GET_CONSENT_FORMS",
 );
 
 define("SQL_QUESTIONNAIRE_GET_CONSENT_FORM_TITLE","
-    SELECT q.ID, 
+    SELECT q.ID,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR
     FROM ".QUESTIONNAIRE_TABLE." q WHERE q.ID = :consentId AND q.final = ".FINAL_RECORD.";"
@@ -634,7 +634,7 @@ define("SQL_GET_QUESTIONNAIRE_LIST_ORMS","
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = p.title AND d.languageId = ".FRENCH_LANGUAGE.") AS purpose_FR,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS respondent_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = r.title AND d.languageId = ".FRENCH_LANGUAGE.") AS respondent_FR
-    FROM ".OPAL_DB_NAME.".".OPAL_QUESTIONNAIRE_CONTROL_TABLE." QC, ".OPAL_DB_NAME.".".OPAL_QUESTIONNAIRE_TABLE." Q, 
+    FROM ".OPAL_DB_NAME.".".OPAL_QUESTIONNAIRE_CONTROL_TABLE." QC, ".OPAL_DB_NAME.".".OPAL_QUESTIONNAIRE_TABLE." Q,
     ".OPAL_DB_NAME.".".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." PHI, ".QUESTIONNAIRE_TABLE." qDB_q
     LEFT JOIN ".PURPOSE_TABLE." p ON p.ID = qDB_q.purposeId LEFT JOIN ".RESPONDENT_TABLE." r ON r.ID = qDB_q.respondentId
     WHERE QC.QuestionnaireControlSerNum = Q.QuestionnaireControlSerNum AND qDB_q.ID = QC.QuestionnaireDBSerNum
@@ -658,14 +658,14 @@ define("GET_ANSWERS_CHART_TYPE","
         AND a.deleted = ".NON_DELETED_RECORD."
         AND a.typeId = ".CHECKBOXES."
         INNER JOIN ".ANSWER_QUESTIONNAIRE_TABLE." aq ON aq.questionnaireId = :questionnaireId
-        AND aq.ID = aSec.answerQuestionnaireId 
+        AND aq.ID = aSec.answerQuestionnaireId
         AND aq.patientId = :patientId
         AND aq.status = ".QUESTIONNAIRE_STATUS_COMPLETED."
         AND aq.deleted = ".NON_DELETED_RECORD."
-        INNER JOIN ".QUESTION_SECTION_TABLE." qSec ON a.sectionId = qSec.sectionId 
+        INNER JOIN ".QUESTION_SECTION_TABLE." qSec ON a.sectionId = qSec.sectionId
         AND qSec.questionId = a.questionId
-        INNER JOIN ".QUESTION_TABLE." q ON qSec.questionId = q.ID 
-        AND qSec.ID = :questionSectionId 
+        INNER JOIN ".QUESTION_TABLE." q ON qSec.questionId = q.ID
+        AND qSec.ID = :questionSectionId
         AND q.deleted = ".NON_DELETED_RECORD."
         AND getDisplayName(q.question, :languageId) = :questionText
     ) as a,
@@ -680,15 +680,15 @@ define("GET_ANSWERS_CHART_TYPE","
             When a.typeId = ".SLIDERS." Then (SELECT CONVERT(asr.value, CHAR(516))
                                                 FROM ".ANSWER_SLIDER_TABLE." asr
                                                 WHERE asr.answerId = a.ID)
-            When a.typeId = ".TEXT_BOX." Then (SELECT CONVERT(atb.value, CHAR(516)) 
+            When a.typeId = ".TEXT_BOX." Then (SELECT CONVERT(atb.value, CHAR(516))
                                                 FROM ".ANSWER_TEXT_BOX_TABLE." atb
                                                 WHERE atb.answerId = a.ID)
-            When a.typeId = ".RADIO_BUTTON." Then (SELECT CONVERT(getDisplayName(rbOpt.description, :languageId), CHAR(516)) 
-                                                FROM ".ANSWER_RADIO_BUTTON_TABLE." aRB 
+            When a.typeId = ".RADIO_BUTTON." Then (SELECT CONVERT(getDisplayName(rbOpt.description, :languageId), CHAR(516))
+                                                FROM ".ANSWER_RADIO_BUTTON_TABLE." aRB
                                                 INNER JOIN ".RADIO_BUTTON_OPTION_TABLE." rbOpt
                                                 ON rbOpt.ID = aRB.value
                                                 WHERE aRB.answerId = a.ID)
-            When a.typeId = ".LABEL." Then (SELECT CONVERT(getDisplayName(lOpt.description, :languageId), CHAR(516)) 
+            When a.typeId = ".LABEL." Then (SELECT CONVERT(getDisplayName(lOpt.description, :languageId), CHAR(516))
                                                 FROM ".ANSWER_LABEL_TABLE." aL
                                                 INNER JOIN ".LABEL_OPTION_TABLE." lOpt
                                                 ON lOpt.ID = aL.value
@@ -699,7 +699,7 @@ define("GET_ANSWERS_CHART_TYPE","
             When a.typeId = ".DATE." Then (SELECT CONVERT(adt.value, CHAR(516))
                                                 FROM ".ANSWER_DATE_TABLE." adt
                                                 WHERE adt.answerId = a.ID)
-        ELSE 
+        ELSE
             NULL
         END) AS answer,
         a.ID AS answerId
@@ -708,14 +708,14 @@ define("GET_ANSWERS_CHART_TYPE","
         AND a.deleted = ".NON_DELETED_RECORD."
         AND a.typeId <> ".CHECKBOXES."
         INNER JOIN ".ANSWER_QUESTIONNAIRE_TABLE." aq ON aq.questionnaireId = :questionnaireId
-        AND aq.ID = aSec.answerQuestionnaireId 
+        AND aq.ID = aSec.answerQuestionnaireId
         AND aq.patientId = :patientId
         AND aq.status = ".QUESTIONNAIRE_STATUS_COMPLETED."
         AND aq.deleted = ".NON_DELETED_RECORD."
-        INNER JOIN ".QUESTION_SECTION_TABLE." qSec ON a.sectionId = qSec.sectionId 
+        INNER JOIN ".QUESTION_SECTION_TABLE." qSec ON a.sectionId = qSec.sectionId
         AND qSec.questionId = a.questionId
-        INNER JOIN ".QUESTION_TABLE." q ON qSec.questionId = q.ID 
-        AND qSec.ID = :questionSectionId 
+        INNER JOIN ".QUESTION_TABLE." q ON qSec.questionId = q.ID
+        AND qSec.ID = :questionSectionId
         AND q.deleted = ".NON_DELETED_RECORD."
         AND getDisplayName(q.question, :languageId) = :questionText
     ;
@@ -740,7 +740,7 @@ define("SQL_GET_ANSWERED_QUESTIONNAIRES_PATIENT","
     AS Age, qDB_q.visualization AS Visualization FROM ".OPAL_DB_NAME.".".OPAL_QUESTIONNAIRE_CONTROL_TABLE." QC,
     ".OPAL_DB_NAME.".".OPAL_QUESTIONNAIRE_TABLE." Q, ".OPAL_DB_NAME.".".OPAL_PATIENT_TABLE." P,
     ".OPAL_DB_NAME.".".OPAL_USERS_TABLE." U, ".QUESTIONNAIRE_TABLE." qDB_q, ".OPAL_DB_NAME.".".OPAL_PATIENT_HOSPITAL_IDENTIFIER_TABLE." PHI
-    WHERE QC.QuestionnaireControlSerNum = Q.QuestionnaireControlSerNum AND qDB_q.ID = QC.QuestionnaireDBSerNum 
+    WHERE QC.QuestionnaireControlSerNum = Q.QuestionnaireControlSerNum AND qDB_q.ID = QC.QuestionnaireDBSerNum
     AND qDB_q.deleted = ".NON_DELETED_RECORD." AND Q.PatientSerNum = P.PatientSerNum AND U.UserTypeSerNum = P.PatientSerNum
     AND PHI.PatientSerNum = P.PatientSerNum AND PHI.MRN = :MRN AND PHI.Hospital_Identifier_Type_Code = :Hospital_Identifier_Type_Code
     AND Q.CompletedFlag = ".OPAL_QUESTIONNAIRE_COMPLETED_FLAG." GROUP BY QC.QuestionnaireDBSerNum, QC.QuestionnaireName_EN,
@@ -767,7 +767,7 @@ define("SQL_GET_QUESTIONS_BY_QUESTIONNAIRE_ID","
         q.legacyTypeId AS legacyTypeId,
         qSec.order AS questionOrder,
         s.minValue AS min_Value,
-        s.maxValue AS max_Value	        
+        s.maxValue AS max_Value
     FROM ".QUESTIONNAIRE_TABLE." qtnn
         LEFT JOIN ".SECTION_TABLE." sec ON (sec.questionnaireId = qtnn.ID)
         LEFT JOIN ".QUESTION_SECTION_TABLE." qSec ON (qSec.sectionId = sec.ID)
@@ -782,7 +782,7 @@ define("SQL_GET_QUESTIONS_BY_QUESTIONNAIRE_ID","
 ");
 
 define("SQL_GET_COMPLETED_QUESTIONNAIRE_INFO","
-	SELECT 
+	SELECT
 		aq.ID AS answerQuestionnaireId,
 		aq.patientId,
 		DATE_FORMAT(aq.lastUpdated, '%Y-%m-%d') AS dateTimeAnswered,
@@ -819,29 +819,29 @@ define("SQL_GET_QUESTION_OPTIONS", "
 		getDisplayName(rbOpt.description, ".FRENCH_LANGUAGE.") AS description_FR
 	FROM ".RADIO_BUTTON_TABLE." rb, ".RADIO_BUTTON_OPTION_TABLE." rbOpt
 	WHERE rb.Id = rbOpt.parentTableId AND rb.questionId = :questionId
-	UNION ALL 
+	UNION ALL
 	SELECT
 		cOpt.order AS value,
 		getDisplayName(cOpt.description, ".ENGLISH_LANGUAGE.") AS description_EN,
 		getDisplayName(cOpt.description, ".FRENCH_LANGUAGE.") AS description_FR
 	FROM ".CHECKBOX_TABLE." c, ".CHECKBOX_OPTION_TABLE." cOpt
 	WHERE c.ID = cOpt.parentTableId AND c.questionId = :questionId
-	UNION ALL 
-	SELECT 
+	UNION ALL
+	SELECT
 		sld.minValue - 1 AS value,
 		getDisplayName(sld.minCaption, ".ENGLISH_LANGUAGE.") AS description_EN,
 		getDisplayName(sld.minCaption, ".FRENCH_LANGUAGE.") AS description_FR
 	FROM ".SLIDER_TABLE." sld
 	WHERE sld.questionId = :questionId
-	UNION ALL 
-	SELECT 
+	UNION ALL
+	SELECT
 		sld.maxValue AS value,
 		getDisplayName(sld.maxCaption, ".ENGLISH_LANGUAGE.") AS description_EN,
 		getDisplayName(sld.maxCaption, ".FRENCH_LANGUAGE.") AS description_FR
 	FROM ".SLIDER_TABLE." sld
 	WHERE sld.questionId = :questionId
-	UNION ALL 
-	SELECT 
+	UNION ALL
+	SELECT
 		lOpt.order AS value,
 		getDisplayName(lOpt.description, ".ENGLISH_LANGUAGE.") AS description_EN,
 		getDisplayName(lOpt.description, ".FRENCH_LANGUAGE.") AS description_FR
@@ -898,9 +898,9 @@ WHERE A.deleted = ".NON_DELETED_RECORD."
     AND A.typeId = ".RADIO_BUTTON."
     AND A.answerSectionId = aSec.ID
     AND aSec.answerQuestionnaireId = :answerQuestionnaireId
-                    
+
 UNION
-    
+
 SELECT CONVERT(getDisplayName(lOpt.description, :languageId), CHAR(516))
 FROM ".ANSWER_TABLE." A, ".ANSWER_SECTION_TABLE." aSec, ".ANSWER_LABEL_TABLE." aL, ".LABEL_OPTION_TABLE." lOpt
 WHERE A.deleted = ".NON_DELETED_RECORD."
@@ -911,7 +911,7 @@ WHERE A.deleted = ".NON_DELETED_RECORD."
     AND A.typeId = ".LABEL."
     AND A.answerSectionId = aSec.ID
     AND aSec.answerQuestionnaireId = :answerQuestionnaireId
-        
+
 UNION
 
 SELECT CONVERT(atm.value, CHAR(516))
@@ -923,7 +923,7 @@ WHERE A.deleted = ".NON_DELETED_RECORD."
     AND A.typeId = ".TIME."
     AND A.answerSectionId = aSec.ID
     AND aSec.answerQuestionnaireId = :answerQuestionnaireId
-        
+
 UNION
 
 SELECT CONVERT(adt.value, CHAR(516))

@@ -269,7 +269,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 		for(var i=0; i< $scope.dxTriggerList.length; i++){
 			$scope.dxTriggerList[i].id = $scope.dxTriggerList[i].id.toString();
 		}
-		
+
 		$scope.doctorTriggerList = response.data.doctors;
 		for(var i = 0; i < $scope.doctorTriggerList.length; i++){
 			$scope.doctorTriggerList[i].id= $scope.doctorTriggerList[i].id.toString();
