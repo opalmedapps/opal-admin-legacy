@@ -32,8 +32,10 @@ jobs:
         with:
           persist-credentials: false
       - name: Add npmrc
+        env:
+          NPMRC_FILE: ${{ secrets.NPMRC_FILE }}
         run: |
-          echo ${{ secrets.NPMRC_FILE }} >> .npmrc
+          echo "$NPMRC_FILE" > .npmrc
       - uses: opalmedapps/.github/.github/actions/docker-build@add-build-action
         id: build-image
         with:
