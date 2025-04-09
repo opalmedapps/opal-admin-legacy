@@ -787,5 +787,3 @@ class EduMaterial extends Module {
 
 
 }
-
-
