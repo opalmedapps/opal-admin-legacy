@@ -52,5 +52,5 @@ activate BE
     opt there is an action and a published alias and the appointment is today or later
         BE -> BE: notify user of change
     end
-    
+
 @enduml
