@@ -109,7 +109,6 @@ COPY --chown=www-data:www-data ./index.php ./
 COPY --chown=www-data:www-data ./.htaccess ./
 COPY --chown=www-data:www-data ./css ./css
 COPY --chown=www-data:www-data ./docker ./docker
-COPY --chown=www-data:www-data ./fonts ./fonts
 COPY --chown=www-data:www-data ./images ./images
 COPY --chown=www-data:www-data ./js ./js
 COPY --chown=www-data:www-data ./labs ./labs
