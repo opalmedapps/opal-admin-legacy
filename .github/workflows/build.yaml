@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (C) 2025 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
-name: ci
+name: build
 
 on:
   push:
@@ -19,18 +19,26 @@ permissions:
   contents: read
 
 jobs:
-
-  lint:
+  build-image:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: ${{ github.repository }}
     steps:
       - uses: actions/checkout@v4.2.2
         with:
           persist-credentials: false
-      - uses: mschoettle/pre-commit-action@v4.2.3
-        if: '!cancelled()'
+      - uses: opalmedapps/.github/.github/actions/docker-build@add-build-action
+        id: build-image
+        with:
+          registry: ${{ env.REGISTRY }}
+          image: ${{ env.IMAGE_NAME }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Test the image
         env:
-          SKIP: reuse-lint-file
-
-
-  run-reuse-workflow:
-    uses: opalmedapps/.github/.github/workflows/reuse.yaml@main
+          TAG: ${{ steps.build-image.outputs.tag }}
+        run: docker run --rm "$TAG" php vendor/autoload.php
