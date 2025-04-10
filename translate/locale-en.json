@@ -194,7 +194,7 @@
       "DELETE": "Delete",
       "CANCEL": "Cancel",
       "DELETED": "The question has being successfully deleted.",
-      "ERROR": "An error occured while deleting the question."
+      "ERROR": "An error occurred while deleting the question."
     },
     "QUESTION_LOCKED": {
       "TITLE": "Question locked",
@@ -334,7 +334,7 @@
       "PRIVATE_QUESTION": "When selecting a private question, a questionnaire has to be set to private.",
       "ERROR_QUESTION_LIST": "An error occurred while getting the list of questions.",
       "ERROR_PURPOSES_RESPONDENTS": "An error occurred while getting the list of purposes and respondents.",
-      "ERROR_CREATION_QUESTIONNAIRE": "An error occured while creating the questionnaire.",
+      "ERROR_CREATION_QUESTIONNAIRE": "An error occurred while creating the questionnaire.",
       "NAME": "Name",
       "LIBRARY": "Library"
     },
@@ -345,7 +345,7 @@
       "DELETE": "Delete",
       "CANCEL": "Cancel",
       "DELETED": "The questionnaire has being successfully deleted.",
-      "ERROR": "An error occured while deleting the questionnaire."
+      "ERROR": "An error occurred while deleting the questionnaire."
     },
     "QUESTIONNAIRE_LOCKED": {
       "TITLE": "Questionnaire locked",
@@ -477,7 +477,7 @@
       "DELETE": "Delete",
       "CANCEL": "Cancel",
       "DELETED": "The response type has being successfully deleted.",
-      "ERROR": "An error occured while deleting the response type."
+      "ERROR": "An error occurred while deleting the response type."
     },
     "TEMPLATE_QUESTION_EDIT": {
       "TITLE": "Edit Response Type Template",
@@ -570,7 +570,6 @@
       "QUESTIONNAIRE_PUBLISH": "Questionnaire to publish",
       "QUESTIONNAIRE_PUBLISH_EXP": "Please choose the questionnaire to publish.",
       "LIST_QUESTIONNAIRES": "List of questionnaires",
-      "PUBLISH_FRENQUENCY": "Publish Frequency",
       "OPTIONAL_FIELD": "Optional field:",
       "PUBLISH_EXPLANATION": "Select a frequency at which this questionnaire will be published.",
       "ADD_2": "Add",
@@ -737,7 +736,7 @@
       "STUDY_EXPLANATION": "Select one of more study below. This will target patients being part of the specific studies. Press select all to trigger on all studies. Leave blank for no trigger.",
       "ERROR_FILTERS": "An error occurred while getting the filters list.",
       "ERROR_TRIGGERS": "An error occurred while getting the triggers list.",
-      "PUBLISH_FRENQUENCY": "Publish Frequency",
+      "PUBLISH_FREQUENCY": "Publish Frequency",
       "PUBLISH_EXPLANATION": "Select a frequency at which this material will be published.",
       "ADD_2": "Add",
       "REMOVE": "Remove",
@@ -806,7 +805,6 @@
       "SELECT": "Select",
       "TODAY": "Today",
       "RESET": "Clear",
-      "PUBLISH_FREQUENCY": "Publish Frequency",
       "REPEAT": "Repeat",
       "EVERY": "Every",
       "NA": "N/A",
@@ -833,7 +831,7 @@
       "RESET_DATE": "Reset publish date"
     },
     "EDIT": {
-      "GENERAL": "General informations",
+      "GENERAL": "General information",
       "TITLE": "Edit the publication",
       "TITLE_VIEW": "View the publication",
       "NAME": "Name",
@@ -2010,7 +2008,7 @@
       "VALIDATION_GROUP_FR": "French group missing or invalid.",
       "VALIDATION_TESTS": "Missing or invalid tests.",
       "VALIDATION_EDU": "Invalid educational/reference material.",
-      "VALIDATION_LINK": "Invalid addtional links."
+      "VALIDATION_LINK": "Invalid additional links."
     },
     "EDIT": {
       "TITLE": "Edit Lab Result",
@@ -2355,7 +2353,7 @@
       "CLOSE": "Close",
       "TITLE": "Edit Custom code",
       "TITLE_VIEW": "View Custom code",
-      "GENERAL": "General Informations",
+      "GENERAL": "General Information",
       "CODE": "Code",
       "DESCRIPTION": "Description",
       "MODULE": "Module",
@@ -2457,8 +2455,8 @@
       "NA": "Not available",
       "PATIENTS_SELECTED": "patient(s) selected",
       "QUESTIONNAIRE_SELECTED": "questionnaire(s) selected",
-      "ERROR_ADD": "An error occured while creating the study.",
-      "ERROR_PATIENTS_LIST": "An error occured while dowloading the list of patients.",
+      "ERROR_ADD": "An error occurred while creating the study.",
+      "ERROR_PATIENTS_LIST": "An error occurred while downloading the list of patients.",
       "CONSENT_SELECTED": "Consent form selected",
       "CONSENT_FORM": "Consent Form",
       "CONSENT_FORM_EXPLANATION": "Please select the study consent form from the list.",
@@ -2944,7 +2942,7 @@
       "PRAMQ": "Patient RAMQ",
       "SUBMIT": "Submit",
       "RESET": "Reset",
-      "DB_ERROR": "An error occured while contacting the database: ",
+      "DB_ERROR": "An error occurred while contacting the database: ",
       "MULTIPLE": "Multiple users found matching search criteria, please select:",
       "NONE": "No Patients found matching criteria, please try again",
       "LAST": "Last Name",
@@ -2992,7 +2990,7 @@
       "TITLE": "Change Patient Access Level",
       "DESCRIPTION": "Change the access level of the user account.",
       "CURRENT_LEVEL": "Current access level :",
-      "CHOOSEN_LEVEL": "Select from following :",
+      "CHOSEN_LEVEL": "Select from following :",
       "FULL_ACCESS": "Full Access",
       "NEED_TO_KNOW": "Need to Know",
       "SUBMIT": "Submit",
@@ -3112,7 +3110,7 @@
       "LANGUAGE_EXPLANATION": "Please assign a language to the new user.",
       "SELECT_LANGUAGE": "Select Language",
       "ERROR_ROLES": "An error occurred while getting the list of roles.",
-      "ERROR_ADDITIONAL_PRIVILEGES": "An error occured while obtaining list of additional privileges.",
+      "ERROR_ADDITIONAL_PRIVILEGES": "An error occurred while obtaining list of additional privileges.",
       "ERROR_USERNAME_USED": "This username already exists.",
       "ERROR_AD_USERNAME_NOT_EXIST": "This username is not an ADFS user.",
       "ERROR_USERNAME_UNKNOWN": "An error occurred while verifying the username.",
@@ -3132,8 +3130,8 @@
       "SYSTEM": "Computer system",
       "TYPE_USER": "Type of user",
       "TYPE_USER_EXPLANATION": "By default, select 'Human'. Only use 'Computer system' if you want to give access of the API to an external specific system. In case of doubt, please contact your administrator.",
-      "BASIC_INFO": "Basic informations",
-      "BASIC_INFO_EXPLANATION": "Please provide the informations for the new user below.",
+      "BASIC_INFO": "Basic information",
+      "BASIC_INFO_EXPLANATION": "Please provide the information for the new user below.",
       "WARNING_USER": "You have selected 'Computer System'. Please be advised that type of user cannot log into the OpalAdmin as a regular user and should only be used by other external systems.",
       "CONFIDENTIAL": "Confidential"
     },
@@ -3160,7 +3158,7 @@
       "TYPE": "Type of user",
       "HUMAN": "Human",
       "SYSTEM": "Computer system",
-      "MUTIPLE_SELECT_TIPS": "Hold Ctrl and choose additional privileges for multiple selection.",
+      "MULTIPLE_SELECT_TIPS": "Hold Ctrl and choose additional privileges for multiple selection.",
       "ERROR_DETAILS": "An error occurred while getting the user details.",
       "ERROR_ADDITIONAL_PRIVILEGES": "An error occurred while obtaining the list of additional privileges.",
       "ERROR_USER_ADDITIONAL_PRIVILEGES": "An error occurred while obtaining user-specific additional privileges.",
@@ -3168,7 +3166,7 @@
       "ERROR_PASSWORD_LENGTH": "The password must contains at least 6 characters.",
       "ERROR_PASSWORD_FORMAT": "Invalid password format.",
       "ERROR_PASSWORD_INVALID": "The passwords do not match.",
-      "ERROR_UPDATE": "An error occurred while updating the user informations.",
+      "ERROR_UPDATE": "An error occurred while updating the user information.",
       "SUCCESS_EDIT": "The user has being updated successfully."
     },
     "LOG": {

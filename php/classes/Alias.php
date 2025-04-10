@@ -165,7 +165,7 @@ class Alias extends Module {
 
     /**
      * Validate and sanitize an alias
-     * Validation code :    Error validation code is coded as an int of 12 bits (value from 0 to 4095). Bit informations
+     * Validation code :    Error validation code is coded as an int of 12 bits (value from 0 to 4095). Bit information
      *                      are coded from right to left:
      *                      1: type of alias missing or invalid
      *                      2: checkin details missing or invalid (if appointment. If not and present, error)

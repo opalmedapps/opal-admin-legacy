@@ -17,7 +17,7 @@ class TestResult extends Module
     /*
      * Validate and sanitize a test result.
      * @params  $post : array - data for the test result to validate
-     * Validation code :    Error validation code is coded as an int of 10 bits (value from 0 to 511). Bit informations
+     * Validation code :    Error validation code is coded as an int of 10 bits (value from 0 to 511). Bit information
      *                      are coded from right to left:
      *                      1: english name missing
      *                      2: french name missing

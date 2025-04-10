@@ -21,7 +21,7 @@ class CrontabManager {
 		/* Default directory for our temporary cron file */
 		$this->path = getcwd() . '/'; // Current directory for simplicity
 
-		/* Dafault file name for the temp cron file */
+		/* Default file name for the temp cron file */
 		$this->handle = 'crontab.txt';
 
 		// Concat the path and handle together
@@ -82,7 +82,7 @@ class CrontabManager {
 
 		// Check if the cron file exists
 		// If the file does exist, just return
-		if ( !$this->crontab_file_exists() ) { // File DNE
+		if ( !$this->crontab_file_exists() ) { // File DONE
 
 			// Check the $path and $handle to determine whether or not they're NULL
 			// If either of them are NULL, we use the predefined fallbacks from our
@@ -129,7 +129,7 @@ class CrontabManager {
 		$install_cron = "crontab {$this->cron_file}";
 
 		// Before executing these commands, we call "write_to_file()" to create
-		// the temp cron file. Then whithin a chain, we execute these commands,
+		// the temp cron file. Then within a chain, we execute these commands,
 		// and call "remove_file()" to delete the temp file. (Neat!)
 		$this->write_to_file()->exec($append_cronfile, $install_cron)->remove_file();
 

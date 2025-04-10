@@ -521,7 +521,7 @@ sub inOurDatabase
 		return $ExistingLegacyQuestionnaire; # this is true (i.e. questionnaire exists. return object)
 	}
 
-	else {return $ExistingLegacyQuestionnaire}; # this is false (i.e. questionnaire DNE)
+	else {return $ExistingLegacyQuestionnaire}; # this is false (i.e. questionnaire DONE)
 }
 
 #======================================================================================
@@ -664,7 +664,7 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
                     -- or month repeat interval not defined at all
                     OR fe4.MetaValue IS NULL
                 )
-                -- If other repeats are defined in conjuntion to month repeat
+                -- If other repeats are defined in conjunction to month repeat
                 OR (
                     -- Number of months passed since start is divisible by repeat interval
                     -- BUT shift both start date and today's date to the 1st to compare months passed

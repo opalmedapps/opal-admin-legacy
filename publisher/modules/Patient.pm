@@ -1153,7 +1153,7 @@ sub inOurDatabase
 
     if ($PatientIdInDB) {
 
-        $ExistingPatient = new Patient(); # initialze patient object
+        $ExistingPatient = new Patient(); # initialize patient object
 
         $ExistingPatient->setPatientSer($serial);
         $ExistingPatient->setPatientSourceUID($sourceuid);
@@ -1175,7 +1175,7 @@ sub inOurDatabase
         return $ExistingPatient; # this is true (ie. patient exists, return object)
 	}
 
-	else {return $ExistingPatient;} # this is false (ie. patient DNE, return empty)
+	else {return $ExistingPatient;} # this is false (ie. patient DONE, return empty)
 }
 
 #======================================================================================

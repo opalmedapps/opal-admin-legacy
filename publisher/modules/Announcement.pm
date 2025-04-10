@@ -448,7 +448,7 @@ sub inOurDatabase
         return $ExistingAnnouncement; # this is true (ie. announcement exists, return object)
     }
 
-    else {return $ExistingAnnouncement;} # this is false (ie. announcement DNE, return empty)
+    else {return $ExistingAnnouncement;} # this is false (ie. announcement DONE, return empty)
 }
 
 #======================================================================================

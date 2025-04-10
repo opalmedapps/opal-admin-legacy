@@ -18,7 +18,7 @@ class MasterSourceAlias extends MasterSourceModule {
     /**
      * Get the source alias details
      * Validation code :    in case of error returns code 422 with validation code. Error validation code is coded as
-     *                      an int of 3 bits (value from 0 to 15). Bit informations are from right to left:
+     *                      an int of 3 bits (value from 0 to 15). Bit information are from right to left:
      *                      1: source invalid or missing
      *                      2: externalId invalid or missing
      *                      3: code invalid or missing
@@ -94,7 +94,7 @@ class MasterSourceAlias extends MasterSourceModule {
      * Check if a specific alias exists. Used in the OpalAdmin to warn the user a master source alias with the
      * same external ID and source already exists. Validation done on the incoming data.
      * Validation code :    in case of error returns code 422 with validation code. Error validation code is coded as
-     *                      an int of 2 bits (value from 0 to 3). Bit informations are coded from right to left:
+     *                      an int of 2 bits (value from 0 to 3). Bit information are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId invalid or missing
      * @param $post array       Contains source and externalId
@@ -121,7 +121,7 @@ class MasterSourceAlias extends MasterSourceModule {
     /**
      * Validate and sanitize a list of aliases before an insert. Returns one array with proper data sanitized
      * and ready, and another array with list of invalid aliases. Inserting a record when it exists already, will
-     * update some fields. Inserting a record that already exists bu it marked as deleted will update it completly.
+     * update some fields. Inserting a record that already exists bu it marked as deleted will update it completely.
      * @params  $post : array - $_POST content. Each entry must contains the following:
      *                          source : source database ID. See table SourceDatabase (mandatory)
      *                          externalID : external ID of the alias in the source database (mandatory)
@@ -129,7 +129,7 @@ class MasterSourceAlias extends MasterSourceModule {
      *                          description : description of the alias (mandatory)
      *                          creationDate - creation date of the record in the source database (optional)
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 6 bits (value from 0 to 63). Bit informations
+     *                      Error validation code is coded as an int of 6 bits (value from 0 to 63). Bit information
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId invalid or missing
@@ -222,7 +222,7 @@ class MasterSourceAlias extends MasterSourceModule {
      * and ready, and another array with list of invalid aliases. Updating a record that does not exists or is deleted
      * returns an error. If the received code is different than the current code, update is rejected.
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 6 bits (value from 0 to 63). Bit informations
+     *                      Error validation code is coded as an int of 6 bits (value from 0 to 63). Bit information
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId invalid or missing
@@ -299,7 +299,7 @@ class MasterSourceAlias extends MasterSourceModule {
      *                          code : code of the alias (mandatory)
      *                          description : description of the alias (mandatory)
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit informations
+     *                      Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit information
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId invalid or missing

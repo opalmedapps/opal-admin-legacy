@@ -43,12 +43,12 @@ class CronJob extends OpalProject {
      */
     protected function _checkCronAccess($arguments = array()) {
         $arguments = HelpSetup::arraySanitization($arguments);
-        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        HelpSetup::getModuleMethodName($moduleName, $methodName);
         if(!in_array(HelpSetup::getUserIP(), LOCALHOST_ADDRESS)) {
-            $this->_insertAudit($moduleName, $methodeName, $arguments, ACCESS_DENIED, $this->opalDB->getUsername());
+            $this->_insertAudit($moduleName, $methodName, $arguments, ACCESS_DENIED, $this->opalDB->getUsername());
             HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
         }
-        $this->_insertAudit($moduleName, $methodeName, $arguments, ACCESS_GRANTED, $this->opalDB->getUsername());
+        $this->_insertAudit($moduleName, $methodName, $arguments, ACCESS_GRANTED, $this->opalDB->getUsername());
         return false;
     }
 

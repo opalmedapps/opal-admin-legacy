@@ -105,7 +105,7 @@ abstract class OpalProject
      * @param $post - contain MRN and site to validate
      * @param $patientSite - hospital site info
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 3 bits (value from 0 to 7). Bit informations
+     *                      Error validation code is coded as an int of 3 bits (value from 0 to 7). Bit information
      *                      are coded from right to left:
      *                      1: MRN invalid or missing
      *                      2: site invalid or missing

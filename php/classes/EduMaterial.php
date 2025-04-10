@@ -740,7 +740,7 @@ class EduMaterial extends Module {
 
     /**
      *
-     * Does a url check for cetain domains (eg.youtube)
+     * Does a url check for certain domains (eg.youtube)
      *
      * @param string $url       : the url
      * @return string $url

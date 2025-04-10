@@ -64,7 +64,7 @@ class TriggerDocument extends Trigger
      *                      14th bit invalid or missing creator user (staff) ID
      *                      15th bit invalid or missing create date time
      *
-     * @param array<mixed> $post (Reference) - docuement parameters
+     * @param array<mixed> $post (Reference) - document parameters
      * @param array<mixed> &$patientSite (Reference) - patient parameters
      * @param array<mixed> &$source (Reference) - source parameters
      * @return string $errCode - error code.
@@ -84,7 +84,7 @@ class TriggerDocument extends Trigger
         }
 
         //bit 6
-        if(!array_key_exists("appovalUserId", $post) || $post["appovalUserId"] == ""){
+        if(!array_key_exists("approvalUserId", $post) || $post["approvalUserId"] == ""){
             $errCode = "1" . $errCode;
         } else{
             $errCode = "0" . $errCode;
@@ -163,7 +163,7 @@ class TriggerDocument extends Trigger
     }
 
     /**
-     * This function insert or update a document informations after its validation.
+     * This function insert or update a document information after its validation.
      * @param  $post : array - details of document information to insert/update.
      * @return  void
      */
@@ -182,7 +182,7 @@ class TriggerDocument extends Trigger
             "PatientSerNum" => $patientSite["PatientSerNum"],
             "SourceDatabaseSerNum" => $source["SourceDatabaseSerNum"],
             "DocumentId" => $post["documentId"],
-            "ApprovedBySerNum" => $this->opalDB->getStaffDetail($source["SourceDatabaseSerNum"],$post["appovalUserId"])["StaffSerNum"],
+            "ApprovedBySerNum" => $this->opalDB->getStaffDetail($source["SourceDatabaseSerNum"],$post["approvalUserId"])["StaffSerNum"],
             "ApprovedTimeStamp" => $post["approvalDatetime"],
             "AuthoredBySerNum" => $this->opalDB->getStaffDetail($source["SourceDatabaseSerNum"],$post["authorUserId"])["StaffSerNum"],
             "DateOfService" => $post["noteDatetime"],

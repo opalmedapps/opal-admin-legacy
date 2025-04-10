@@ -202,7 +202,7 @@ class Cron extends Module {
              * In this case, we are concerned about modifying the existing cronjob
              * that calls the dataControl.pl script. If we've reached this point,
              * this means the scheduled nextCron control setting has fired and
-             * so we pick up the neccesary settings to properly automate any
+             * so we pick up the necessary settings to properly automate any
              * future execution of our dataControl.pl script. In other words
              * modify the cronjob based on the repeat options setting.
              */

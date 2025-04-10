@@ -261,7 +261,7 @@ sub getPatientLocationsFromSourceDB
 
 				if ($sourceDBSer eq $aliasSourceDBSer) {
 					if (!exists $expressionHash{$sourceDBSer}) {
-						$expressionHash{$sourceDBSer} = {}; # intialize key value
+						$expressionHash{$sourceDBSer} = {}; # initialize key value
 					}
 
 					foreach my $Expression (@expressions) {
@@ -418,7 +418,7 @@ sub getPatientLocationsFromSourceDB
 
 				if ($sourceDBSer eq $aliasSourceDBSer) {
 					if (!exists $expressionHash{$sourceDBSer}) {
-						$expressionHash{$sourceDBSer} = {}; # intialize key value
+						$expressionHash{$sourceDBSer} = {}; # initialize key value
 					}
 
 					foreach my $Expression (@expressions) {
@@ -563,7 +563,7 @@ sub getPatientLocationsFromSourceDB
 
 				if ($sourceDBSer eq $aliasSourceDBSer) {
 					if (!exists $expressionHash{$sourceDBSer}) {
-						$expressionHash{$sourceDBSer} = {}; # intialize key value
+						$expressionHash{$sourceDBSer} = {}; # initialize key value
 					}
 
 					foreach my $Expression (@expressions) {
@@ -907,7 +907,7 @@ sub inOurDatabase
 		return $ExistingPL; # this is true (i.e. PL exists, return object)
 	}
 
-	else {return $ExistingPL;} # this is false (i.e. PL DNE, return empty)
+	else {return $ExistingPL;} # this is false (i.e. PL DONE, return empty)
 }
 
 #======================================================================================
@@ -981,7 +981,7 @@ sub inOurDatabaseMH
 		return $ExistingPL; # this is true (i.e. PL exists, return object)
 	}
 
-	else {return $ExistingPL;} # this is false (i.e. PL DNE, return empty)
+	else {return $ExistingPL;} # this is false (i.e. PL DONE, return empty)
 }
 
 #======================================================================================
@@ -1180,7 +1180,7 @@ sub compareWith
 	my ($SuspectPL, $OriginalPL) = @_; # our two PL objects from arguments
 	my $UpdatedPL = dclone($OriginalPL);
 
-	# retrive params
+	# retrieve params
 	# Suspect PL...
 	my $SRevCount 			= $SuspectPL->getPatientLocationRevisionCount();
 	my $SCheckedInFlag 		= $SuspectPL->getPatientLocationCheckedInFlag();

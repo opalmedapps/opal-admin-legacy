@@ -123,7 +123,7 @@ class Publication extends Module
                 $occurrenceArray['set'] = 1;
 
                 $customFlag = $data["CustomFlag"];
-                // the type of meta key and which content it belongs to is separated by the | delimeter
+                // the type of meta key and which content it belongs to is separated by the | delimiter
                 list($metaKey, $dontNeed) = explode('|', $data["MetaKey"]);
                 $metaValue = $data["MetaValue"];
 
@@ -372,7 +372,7 @@ class Publication extends Module
                     }
                     else if ($trigger["custom"]["enum"]) {
                         if(!in_array($trigger["data"][0], $trigger["custom"]["enum"])) {
-                            array_push($errMsgs, "$key: non-existant value requested.");
+                            array_push($errMsgs, "$key: non-existent value requested.");
                         }
                     }
                     else
@@ -429,7 +429,7 @@ class Publication extends Module
     /*
      * Validates the date time and insure it is a valid timestamp, and check if the timestamp are setup in the past.
      *
-     * @params  $occurence (array) date and time to validate
+     * @params  $occurrence (array) date and time to validate
      *          $errMsgs (array) list of current error messages
      *          $strictEnforcement (boolean) if a dateTime can be set in the past or not.
      * @returns void
@@ -636,7 +636,7 @@ class Publication extends Module
     /*
      * Validation of the frequency of a publication. for each setting of a publication, the functions doest the
      * following: 1) Check if the setting is mandatory or not. 2) If it is datetime, check if is valid and required.
-     * 3) If the occurence is a regular, call the function _validateStandardRepeat but if it is not, call the function
+     * 3) If the occurrence is a regular, call the function _validateStandardRepeat but if it is not, call the function
      * _validateCustomRepeat.
      *
      * @params  $publication(array) details of the publication to validate

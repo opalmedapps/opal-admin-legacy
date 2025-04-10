@@ -5,21 +5,27 @@
 [default.extend-words]
 muhc = "muhc"
 mch = "mch"
+nd = "nd"
 # part of translation keys
 2nd = "2nd"
+2ND = "2ND"
 # part of SerNum
 ser = "ser"
-# readby = "readby"
 # SQL queries
-tre = "tre"
+als = "als"
 tge = "tge"
+tre = "tre"
 varian = "varian"
 # not worth it to fix
 typ = "typ"
+ptdid = "ptdid"
+ptd = "ptd"
+complet = "complet"
 # chart specific
 iy = "iy"
 # French
 raison = "raison"
+optionnel = "optionnel"
 
 [files]
 extend-exclude = [

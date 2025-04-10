@@ -471,7 +471,7 @@ sub inOurDatabase
 		return $ExistingPriority; # this is true (ie. priority exists, return object)
 	}
 
-	else {return $ExistingPriority;} # this is false (ie. priority DNE, return 0)
+	else {return $ExistingPriority;} # this is false (ie. priority DONE, return 0)
 }
 
 #======================================================================================

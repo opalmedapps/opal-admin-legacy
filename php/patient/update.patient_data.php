@@ -12,7 +12,7 @@ $questionnaire = new Questionnaire();
 $data = json_decode(file_get_contents('php://input'), true);
 $patient->updatePatient($data);
 
-// If patient was successfuly updated/synced
+// If patient was successfully updated/synced
 // get patient's Firebase username
 // and update the "QuestionnaireDB.answerQuestionnaire.respondentDisplayName" field
 

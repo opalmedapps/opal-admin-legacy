@@ -622,7 +622,7 @@ sub getDocsFromSourceDB
 
 			# 	if ($sourceDBSer eq $aliasSourceDBSer) {
 			# 		if (!exists $expressionHash{$sourceDBSer}) {
-			# 			$expressionHash{$sourceDBSer} = {}; # intialize key value
+			# 			$expressionHash{$sourceDBSer} = {}; # initialize key value
 			# 		}
 
 			# 		foreach my $Expression (@expressions) {
@@ -669,7 +669,7 @@ sub getDocsFromSourceDB
 
 				if ($sourceDBSer eq $aliasSourceDBSer) {
 					if (!exists $expressionHash{$sourceDBSer}) {
-						$expressionHash{$sourceDBSer} = {}; # intialize key value
+						$expressionHash{$sourceDBSer} = {}; # initialize key value
 					}
 
 					foreach my $Expression (@expressions) {
@@ -799,7 +799,7 @@ sub inOurDatabase
 		return $ExistingDoc; # this is true (ie. document exists, return object)
 	}
 
-	else {return $ExistingDoc;} # this is false (ie. document DNE, return empty)
+	else {return $ExistingDoc;} # this is false (ie. document DONE, return empty)
 }
 
 #======================================================================================
@@ -826,7 +826,7 @@ sub transferPatientDocuments
 
         my $ftpObject = FTP::getFTPCredentials($sourceDBSer);
 
-        # Exit if ftp is not defined (no clincial directory)
+        # Exit if ftp is not defined (no clinical directory)
         if (!$ftpObject) {
         	next;
         }
@@ -1027,7 +1027,7 @@ END
                 }
 
 
-			} else { # document DNE in our database
+			} else { # document DONE in our database
 
 				print "NEW DOCUMENT\n" if $verbose;
 
@@ -1183,7 +1183,7 @@ END
 			}
         }
 
-		# document file DNE
+		# document file DONE
 		else
 		{
 			# set the transfer status to false
@@ -1202,7 +1202,7 @@ END
 				# simply update document log
 				$UpdatedDoc->updateDatabase();
 
-			} else { # document log DNE in our database
+			} else { # document log DONE in our database
 
 				# insert Document log into our database
 				$Document = $Document->insertDocIntoOurDB();

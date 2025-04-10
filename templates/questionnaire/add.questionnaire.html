@@ -501,7 +501,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
                                             <h3>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.FRENCH'|translate}}</h3>
                                             <div ng-repeat="selectedGroupObj in newQuestionnaire.questions">
                                                 <h4>{{selectedGroupObj.type_FR}}:</h4>
-                                                <p>{{selectedGroupObj.question_FR}}<span style="color:#d9534f;;"> ({{selectedGroupObj.optional == 1 ? 'optionel' : 'requis'}})</span></p>
+                                                <p>{{selectedGroupObj.question_FR}}<span style="color:#d9534f;;"> ({{selectedGroupObj.optional == 1 ? 'optionnel' : 'requis'}})</span></p>
                                                 <!-- Answer type preview -->
                                                 <div ng-if="selectedGroupObj.typeId == '4'">
                                                     <div ng-repeat="option in selectedGroupObj.subOptions">

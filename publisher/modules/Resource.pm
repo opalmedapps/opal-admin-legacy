@@ -316,7 +316,7 @@ sub inOurDatabase
 		return $ExistingResource; # this is truthful (ie. resource exists) return object
 	}
 
-	else {return $ExistingResource;} # this is false (ie. resource DNE) return empty
+	else {return $ExistingResource;} # this is false (ie. resource DONE) return empty
 }
 
 #======================================================================================
@@ -437,7 +437,7 @@ sub compareWith
 
 #======================================================================================
 # Subroutine to reassign our resource serial in ARIA to a resource serial in MySQL.
-# In the process, insert resource into our database if it DNE
+# In the process, insert resource into our database if it DONE
 #======================================================================================
 sub reassignResource
 {
@@ -473,7 +473,7 @@ sub reassignResource
 
 		return $resourceSer;
 	}
-	else { # resource DNE
+	else { # resource DONE
 
 		# insert resource into our DB
 		$Resource = $Resource->insertResourceIntoOurDB();

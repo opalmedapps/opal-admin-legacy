@@ -71,12 +71,12 @@ abstract class Module extends OpalProject
      * */
     public function checkReadAccess($arguments = array()) {
         $arguments = HelpSetup::arraySanitization($arguments);
-        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        HelpSetup::getModuleMethodName($moduleName, $methodName);
         if(!(($this->access >> 0) & 1)) {
-            $this->_insertAudit($moduleName, $methodeName, $arguments, ACCESS_DENIED);
+            $this->_insertAudit($moduleName, $methodName, $arguments, ACCESS_DENIED);
             HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
         }
-        $this->_insertAudit($moduleName, $methodeName, $arguments, ACCESS_GRANTED);
+        $this->_insertAudit($moduleName, $methodName, $arguments, ACCESS_GRANTED);
         return false;
     }
 
@@ -87,12 +87,12 @@ abstract class Module extends OpalProject
      * */
     public function checkWriteAccess($arguments = array()) {
         $arguments = HelpSetup::arraySanitization($arguments);
-        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        HelpSetup::getModuleMethodName($moduleName, $methodName);
         if(!(($this->access >> 1) & 1)) {
-            $this->_insertAudit($moduleName, $methodeName, $arguments, ACCESS_DENIED);
+            $this->_insertAudit($moduleName, $methodName, $arguments, ACCESS_DENIED);
             HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
         }
-        $this->_insertAudit($moduleName, $methodeName, $arguments, ACCESS_GRANTED);
+        $this->_insertAudit($moduleName, $methodName, $arguments, ACCESS_GRANTED);
         return false;
     }
 
@@ -104,12 +104,12 @@ abstract class Module extends OpalProject
     public function checkDeleteAccess($arguments = array())
     {
         $arguments = HelpSetup::arraySanitization($arguments);
-        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        HelpSetup::getModuleMethodName($moduleName, $methodName);
         if(!(($this->access >> 2) & 1)) {
-            $this->_insertAudit($moduleName, $methodeName, $arguments, ACCESS_DENIED);
+            $this->_insertAudit($moduleName, $methodName, $arguments, ACCESS_DENIED);
             HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
         }
-        $this->_insertAudit($moduleName, $methodeName, $arguments, ACCESS_GRANTED);
+        $this->_insertAudit($moduleName, $methodName, $arguments, ACCESS_GRANTED);
         return false;
     }
 

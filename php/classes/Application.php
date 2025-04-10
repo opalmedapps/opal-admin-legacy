@@ -121,7 +121,7 @@ class Application {
 
 		/**
 	     *
-	     * Updates source datbase enabled flag details in the database
+	     * Updates source database enabled flag details in the database
 	     *
 	     * @param array $sourceDatabaseDetails : the source database details
 	     * @return array : response

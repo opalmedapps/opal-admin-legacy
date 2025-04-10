@@ -545,7 +545,7 @@ class Patient extends Module {
      *
      * @return $errCode
      */
-    protected function _validatePatientExisitParams($post) {
+    protected function _validatePatientExistParams($post) {
 
         $errCode = "";
 
@@ -582,7 +582,7 @@ class Patient extends Module {
         $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
 
-        $errCode = $this->_validatePatientExisitParams($post) . $errCode;
+        $errCode = $this->_validatePatientExistParams($post) . $errCode;
 
         if(array_key_exists("mrn", $post)) {
             if(preg_match(REGEX_MRN, $post["mrn"])) {

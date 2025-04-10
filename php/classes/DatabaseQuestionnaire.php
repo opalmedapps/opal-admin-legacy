@@ -47,7 +47,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * languages, empty entries will be created with the mention XX_ in the content where XX is the iso-lang code in
      * upper case.
      * Entry:   associative array of language id and its content.
-     *          example: array(1=>"exemple", "2"=>"example")
+     *          example: array(1=>"example", "2"=>"example")
      *          table name where is used the entry
      * Return:  new contentID of matching all entries.
      */
@@ -86,7 +86,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * Return:  new contentID of matching all entries.
      * */
     function copyToDictionary($contentId, $tableName) {
-        $toCopy = $this->_fetchAll(SQL_QUESTIONNAIRE_GET_DICTIONNARY_TEXT, array(array("parameter"=>":contentId", "variable"=>$contentId, "data_type"=>PDO::PARAM_INT)));
+        $toCopy = $this->_fetchAll(SQL_QUESTIONNAIRE_GET_DICTIONARY_TEXT, array(array("parameter"=>":contentId", "variable"=>$contentId, "data_type"=>PDO::PARAM_INT)));
         if (!is_array($toCopy) || count($toCopy) <= 0) return false;
         $tableId = $this->getTableId($tableName);
         $newContentId = $this->_getNextContentId();
@@ -542,7 +542,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
     /*
      * Insert the options of a specific question to the correct table
      * @params  table name options where to do the insert (string)
-     *          array of options to insert in the table mentionned above
+     *          array of options to insert in the table mentioned above
      * @returns ID of the record.
      * */
     function insertQuestionOptions($tableName, $toInsert) {

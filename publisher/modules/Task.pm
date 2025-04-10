@@ -515,7 +515,7 @@ sub getTasksFromSourceDB
 
 			# 	if ($sourceDBSer eq $aliasSourceDBSer) {
 			# 		if (!exists $expressionHash{$sourceDBSer}) {
-			# 			$expressionHash{$sourceDBSer} = {}; # intialize key value
+			# 			$expressionHash{$sourceDBSer} = {}; # initialize key value
 			# 		}
 
 			# 		foreach my $Expression (@expressions) {
@@ -564,7 +564,7 @@ sub getTasksFromSourceDB
 
 				if ($sourceDBSer eq $aliasSourceDBSer) {
 					if (!exists $expressionHash{$sourceDBSer}) {
-						$expressionHash{$sourceDBSer} = {}; # intialize key value
+						$expressionHash{$sourceDBSer} = {}; # initialize key value
 					}
 
 					foreach my $Expression (@expressions) {
@@ -682,7 +682,7 @@ sub inOurDatabase
 		return $ExistingTask; # this is true (ie. task exists, return object)
 	}
 
-	else {return $ExistingTask;} # this is false (ie. task DNE, return empty)
+	else {return $ExistingTask;} # this is false (ie. task DONE, return empty)
 }
 
 #======================================================================================

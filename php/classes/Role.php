@@ -106,7 +106,7 @@ class Role extends Module {
      * 3) Operation 1 (read), 3 (read and write) and 7 (read, write and delete) are the only authorized ones
      * 4) operations are authorized in accordance with data stored in the module table.
      * In case of errors, store the error in an array and return it.
-     * @params  $role : array - new role informations to validate
+     * @params  $role : array - new role information to validate
      * @return  $errMsgs : array - empty if no error found, other error messages.
      * */
     protected function _validateRole(&$role) {
@@ -142,7 +142,7 @@ class Role extends Module {
     }
 
     /*
-     * Update a role with new informations. First it insures the role to update exists, then it sanitize and validate
+     * Update a role with new information. First it insures the role to update exists, then it sanitize and validate
      * the data. It loads the current role details and split the details of the operations in three list: one of IDs
      * to keep (because the others do not exists anymore, thus they need to be deleted), one of IDs and access to
      * update, and one of operations to add. Lastly, even if oaRole was not updated because the names were not changed,
