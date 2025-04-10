@@ -21,7 +21,7 @@
     {
         echo "*********Push Notification Test Script Usage*************************" . PHP_EOL
             . PHP_EOL
-            . "Note: Run the command below together with at least 3 arguments as metioned." . PHP_EOL
+            . "Note: Run the command below together with at least 3 arguments as mentioned." . PHP_EOL
             . PHP_EOL
             . "php testPushNotification.php 'registration id' 'device type' 'language' " . PHP_EOL
             . PHP_EOL

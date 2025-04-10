@@ -230,8 +230,8 @@ filter('deliberatelyTrustAsHtml', function ($sce) {
 				// Call our API to get post logs
 				postCollectionService.getPostChartLogs().then(function (response) {
 					$scope.postChartLogs = $scope.chartConfig.series = response.data;
-					angular.forEach($scope.postChartLogs, function(serie) {
-						angular.forEach(serie.data, function(log) {
+					angular.forEach($scope.postChartLogs, function(series) {
+						angular.forEach(series.data, function(log) {
 							log.x = new Date(log.x);
 						});
 					});

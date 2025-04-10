@@ -13,8 +13,8 @@ controller('testResult.log', function ($scope, $uibModal, $filter, $uibModalInst
 	// Call our API to get alias logs
 	testResultCollectionService.getTestResultChartLogs($scope.currentTestResult.serial).then(function (response) {
 		$scope.testResultChartLogs = $scope.chartConfig.series = response.data;
-		angular.forEach($scope.testResultChartLogs, function(serie) {
-			angular.forEach(serie.data, function(log) {
+		angular.forEach($scope.testResultChartLogs, function(series) {
+			angular.forEach(series.data, function(log) {
 				log.x = new Date(log.x);
 			});
 		});

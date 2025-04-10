@@ -342,7 +342,7 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 			}
 
 		}
-		else { // Orignally not added, add it
+		else { // Originally not added, add it
 
 			test.added = 1;
 
@@ -362,7 +362,7 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 
 	};
 
-	// Function to add additioanl links to newTestResult object
+	// Function to add additional links to newTestResult object
 /*	$scope.addAdditionalLink = function () {
 		$scope.newTestResult.additional_links.push({
 			name_EN: "",

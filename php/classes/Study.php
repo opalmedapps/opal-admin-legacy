@@ -55,7 +55,7 @@ class Study extends Module {
 
     /*
      * Sanitize, validate and insert a new study into the database.
-     * @params  $post (array) data received from the fron end.
+     * @params  $post (array) data received from the frontend.
      * @return  number of record inserted (should be one) or a code 500
      * */
     public function insertStudy($post) {

@@ -12,8 +12,8 @@ controller('educationalMaterial.log', function ($scope, $uibModal, $filter, educ
 	// Call our API to get educational material logs
 	educationalMaterialCollectionService.getEducationalMaterialChartLogs($scope.currentEduMat.serial).then(function (response) {
 		$scope.educationalMaterialChartLogs = $scope.chartConfig.series = response.data;
-		angular.forEach($scope.educationalMaterialChartLogs, function(serie) {
-			angular.forEach(serie.data, function(log) {
+		angular.forEach($scope.educationalMaterialChartLogs, function(series) {
+			angular.forEach(series.data, function(log) {
 				log.x = new Date(log.x);
 			});
 		});

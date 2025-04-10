@@ -1744,7 +1744,7 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Get the categories of the navigation meny
+     * Get the categories of the navigation menu
      * @params  void
      * @return  array - list of categories
      * */

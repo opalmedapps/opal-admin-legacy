@@ -13,8 +13,8 @@ controller('email.log', function ($scope, $uibModal, $filter, emailCollectionSer
 	// Call our API to get email logs
 	emailCollectionService.getEmailChartLogs($scope.currentEmail.serial).then(function (response) {
 		$scope.emailChartLogs = $scope.chartConfig.series = response.data;
-		angular.forEach($scope.emailChartLogs, function(serie) {
-			angular.forEach(serie.data, function(log) {
+		angular.forEach($scope.emailChartLogs, function(series) {
+			angular.forEach(series.data, function(log) {
 				log.x = new Date(log.x);
 			});
 		});
