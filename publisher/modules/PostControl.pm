@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # SPDX-FileCopyrightText: Copyright (C) 2016 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -7,10 +5,10 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 04-May-2016 ++ File: PostControl.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a post control class. This module calls a constructor to 
+# Perl module that creates a post control class. This module calls a constructor to
 # create a post control object that contains post control information stored parameters
-# 
-# There exists various subroutines to set / get post control information. 
+#
+# There exists various subroutines to set / get post control information.
 
 package PostControl; # Declare package name
 
@@ -23,7 +21,7 @@ use Filter; # Our custom module Filter.pm
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our PostControl class 
+# Constructor for our PostControl class
 #====================================================================================
 sub new
 {
@@ -39,7 +37,7 @@ sub new
 
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
-	bless $postcontrol, $class; 
+	bless $postcontrol, $class;
 	return $postcontrol;
 }
 
@@ -163,7 +161,7 @@ sub getPostControlFilters
 sub getPostControlsMarkedForPublish
 {
     my ($postType) = @_; # the type from args
-    my @postControlList = (); # initialize a list 
+    my @postControlList = (); # initialize a list
 
     my $info_sql = "
         SELECT DISTINCT
@@ -274,7 +272,7 @@ sub getPostControlsMarkedForPublishModularCron
 }
 
 #======================================================================================
-# Subroutine to set/update the "last published" field to current time 
+# Subroutine to set/update the "last published" field to current time
 #======================================================================================
 sub setPostControlLastPublishedIntoOurDB
 {
@@ -288,7 +286,7 @@ sub setPostControlLastPublishedIntoOurDB
         WHERE
             PublishFlag = 1
     ";
-    	
+
     # prepare query
 	my $query = $SQLDatabase->prepare($update_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -322,7 +320,7 @@ sub setPostControlLastPublishedModularControllers
             AND CCP.publishFlag = 2
         ;
     ";
-    	
+
     # prepare query
 	my $query = $SQLDatabase->prepare($update_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -333,7 +331,7 @@ sub setPostControlLastPublishedModularControllers
 }
 
 #======================================================================================
-# Subroutine to sync the master table to the slave table and then set the publish flag 
+# Subroutine to sync the master table to the slave table and then set the publish flag
 # from 1 to 2. This will identify what is currently being process by the cron job vs what
 # have just been activated during the cron running
 #======================================================================================

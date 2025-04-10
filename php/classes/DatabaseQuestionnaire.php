@@ -1180,7 +1180,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
 
     /*
      * Returns questionnaire info (including answers) from a questionnaire
-     * @params  int : $patientQuestionnaireSer - serial number of the particular questionnaire-patient relation 
+     * @params  int : $patientQuestionnaireSer - serial number of the particular questionnaire-patient relation
      * @return  questionnaire results (array)
      * */
     function getQuestionnaireResults($patientQuestionnaireSer, $language) {
@@ -1192,8 +1192,8 @@ class DatabaseQuestionnaire extends DatabaseAccess
 
     /*
      * Returns questionnaire info (including answers) from a questionnaire
-     * @params  int : $questionnaireId - id of the particular questionnaire 
-     * @params  int : $patientSerNum - serial of the patient 
+     * @params  int : $questionnaireId - id of the particular questionnaire
+     * @params  int : $patientSerNum - serial of the patient
      * @return  questionnaire details (array)
      * */
     function getLastAnsweredQuestionnaire($questionnaireId, $patientSerNum) {

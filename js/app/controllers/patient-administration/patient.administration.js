@@ -15,7 +15,7 @@ angular.module('opalAdmin.controllers.patient.administration', ['ngAnimate', 'ui
 	$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient_administration]) & (1 << 1)) !== 0);
 	$scope.foundPatient = false; //only show the report once patient is found/selected
 
-	// Initialize varibales for patient search parameters, patient identifiers, and patient report segments
+	// Initialize variables for patient search parameters, patient identifiers, and patient report segments
 	$scope.searchName = ""; //search parameters
 	$scope.searchMRN = "";
 	$scope.searchRAMQ = "";

@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # SPDX-FileCopyrightText: Copyright (C) 2015 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -7,11 +5,11 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 07-Aug-2015 ++ File: PatientDoctor.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a patientdoctor (PD) class. This module calls a constructor to 
+# Perl module that creates a patientdoctor (PD) class. This module calls a constructor to
 # create a PD object that contains PD information stored as object variables.
 #
 # There exists various subroutines to set PD information, get PD information
-# and compare PD information between two PD objects. 
+# and compare PD information between two PD objects.
 # There exists various subroutines that use the Database.pm module to update the
 # MySQL database and check if a PD exists already in this database.
 
@@ -32,7 +30,7 @@ use Doctor; # Our Doctor module
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our PatientDoctor class 
+# Constructor for our PatientDoctor class
 #====================================================================================
 sub new
 {
@@ -150,7 +148,7 @@ sub getPatientDoctorPrimaryFlag
 #====================================================================================
 sub getPatientDoctorsFromSourceDB
 {
-	my (@patientList) = @_; # a patient list from args 
+	my (@patientList) = @_; # a patient list from args
 	my @PDList = (); # initialize a list for PD objects
 
 	# for query results
@@ -174,7 +172,7 @@ sub getPatientDoctorsFromSourceDB
 		    		dr.ResourceSer,
 			    	pd.OncologistFlag,
 				    pd.PrimaryFlag
-    			FROM	
+    			FROM
 	    			VARIAN.dbo.Doctor dr,
 		    		VARIAN.dbo.PatientDoctor pd,
 		    		VARIAN.dbo.Patient pt
@@ -183,30 +181,30 @@ sub getPatientDoctorsFromSourceDB
     			AND	pt.PatientSer			= '$patientAriaSer'
 	    		AND	dr.ResourceSer	    	= pd.ResourceSer
 		    	AND	pd.HstryDateTime		> '$lastTransfer'
-    		";  
-    
+    		";
+
 	    	# prepare query
 		    my $query = $sourceDatabase->prepare($pd_sql)
 			    or die "Could not prepare query: " . $sourceDatabase->errstr;
-        
+
     		# execute query
 	        $query->execute()
 		    	or die "Could not execute query: " . $query->errstr;
 
     		while (my @data = $query->fetchrow_array()) {
-	
+
 	    		my $patientdoctor = new PatientDoctor(); # new PD object
-	    
+
 		    	$doctorsernum	= Doctor::reassignDoctor($data[0], $sourceDBSer);
 			    $oncflag	    = $data[1];
     			$primaryflag	= $data[2];
-	    
+
 		    	# set PD information
 			    $patientdoctor->setPatientDoctorPatientSer($patientSer);
     			$patientdoctor->setPatientDoctorDoctorSer($doctorsernum);
 	    		$patientdoctor->setPatientDoctorOncFlag($oncflag);
 		    	$patientdoctor->setPatientDoctorPrimaryFlag($primaryflag);
-    	
+
 	    		push(@PDList, $patientdoctor);
 		    }
 
@@ -220,22 +218,22 @@ sub getPatientDoctorsFromSourceDB
 	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
         if ($sourceDatabase) {
 
-    		my $pd_sql = "SELECT 'QUERY_HERE'";  
-    
+    		my $pd_sql = "SELECT 'QUERY_HERE'";
+
 	    	# prepare query
 		    my $query = $sourceDatabase->prepare($pd_sql)
 			    or die "Could not prepare query: " . $sourceDatabase->errstr;
-        
+
     		# execute query
 	        $query->execute()
 		    	or die "Could not execute query: " . $query->errstr;
 
     		while (my @data = $query->fetchrow_array()) {
-	
+
 	    		# my $patientdoctor = new PatientDoctor(); # uncomment for use
-	    
+
 		    	# use setters to set appropriate PD information from query
-    	
+
 	    		#push(@PDList, $patientdoctor); # uncomment for use
 		    }
 
@@ -249,22 +247,22 @@ sub getPatientDoctorsFromSourceDB
 	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
         if ($sourceDatabase) {
 
-    		my $pd_sql = "SELECT 'QUERY_HERE'";  
-    
+    		my $pd_sql = "SELECT 'QUERY_HERE'";
+
 	    	# prepare query
 		    my $query = $sourceDatabase->prepare($pd_sql)
 			    or die "Could not prepare query: " . $sourceDatabase->errstr;
-        
+
     		# execute query
 	        $query->execute()
 		    	or die "Could not execute query: " . $query->errstr;
 
     		while (my @data = $query->fetchrow_array()) {
-	
+
 	    		# my $patientdoctor = new PatientDoctor(); # uncomment for use
-	    
+
 		    	# use setters to set appropriate PD information from query
-    	
+
 	    		#push(@PDList, $patientdoctor); # uncomment for use
 		    }
 
@@ -286,7 +284,7 @@ sub getPatientsDoctorsFromOurDB
     my @doctors = (); # initialize a list
 
     my $select_sql = "
-        SELECT DISTINCT 
+        SELECT DISTINCT
             dr.DoctorAriaSer
         FROM
             PatientDoctor pd,
@@ -319,7 +317,7 @@ sub getPatientsDoctorsFromOurDB
 #======================================================================================
 sub inOurDatabase
 {
-	my ($patientdoctor) = @_; # our PD object 
+	my ($patientdoctor) = @_; # our PD object
 	my $patientSer = $patientdoctor->getPatientDoctorPatientSer();
 	my $doctorSer = $patientdoctor->getPatientDoctorDoctorSer();
 
@@ -348,7 +346,7 @@ sub inOurDatabase
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
 
 		$PDSerInDB		= $data[0];
@@ -365,10 +363,10 @@ sub inOurDatabase
 		$ExistingPD->setPatientDoctorDoctorSer($doctorSer);
 		$ExistingPD->setPatientDoctorOncFlag($oncflag);
 		$ExistingPD->setPatientDoctorPrimaryFlag($primaryflag);
-		
+
 		return $ExistingPD; # this is truthful (ie. PD exists, return object)
 	}
-	
+
 	else {return $ExistingPD;} # this is falseful (ie. PD DNE, return empty)
 }
 
@@ -378,20 +376,20 @@ sub inOurDatabase
 sub insertPatientDoctorIntoOurDB
 {
 	my ($patientdoctor) = @_; # our PD object to insert
-	
+
 	my $patientSer 		= $patientdoctor->getPatientDoctorPatientSer();
 	my $doctorSer		= $patientdoctor->getPatientDoctorDoctorSer();
 	my $oncflag			= $patientdoctor->getPatientDoctorOncFlag();
 	my $primaryflag		= $patientdoctor->getPatientDoctorPrimaryFlag();
 
 	my $insert_sql = "
-		INSERT INTO 
+		INSERT INTO
 			PatientDoctor (
-				PatientDoctorSerNum, 
-				PatientSerNum, 
-				DoctorSerNum, 
-				OncologistFlag, 
-				PrimaryFlag, 
+				PatientDoctorSerNum,
+				PatientSerNum,
+				DoctorSerNum,
+				OncologistFlag,
+				PrimaryFlag,
 				LastUpdated
 			)
 		VALUES (
@@ -452,7 +450,7 @@ sub updateDatabase
 #======================================================================================
 sub compareWith
 {
-	my ($SuspectPD, $OriginalPD) = @_; # our two PD objects from arguments 
+	my ($SuspectPD, $OriginalPD) = @_; # our two PD objects from arguments
 	my $UpdatedPD = dclone($OriginalPD);
 
 	# retrieve parameters...
@@ -484,4 +482,4 @@ sub compareWith
 
 
 # To exit/return always true (for the module itself)
-1;		
+1;

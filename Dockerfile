@@ -6,7 +6,7 @@
 FROM node:22.14.0-alpine3.21 AS js-dependencies
 
 WORKDIR /app
- 
+
 # install modules
 # allow to cache by not copying the whole application code in (yet)
 # see: https://stackoverflow.com/questions/35774714/how-to-cache-the-run-npm-install-instruction-when-docker-build-a-dockerfile
@@ -109,7 +109,6 @@ COPY --chown=www-data:www-data ./index.php ./
 COPY --chown=www-data:www-data ./.htaccess ./
 COPY --chown=www-data:www-data ./css ./css
 COPY --chown=www-data:www-data ./docker ./docker
-COPY --chown=www-data:www-data ./fonts ./fonts
 COPY --chown=www-data:www-data ./images ./images
 COPY --chown=www-data:www-data ./js ./js
 COPY --chown=www-data:www-data ./labs ./labs

@@ -252,7 +252,7 @@ fieldset {
 
 /*
  * 1. Corrects color not being inherited in IE6/7/8/9
- * 2. Corrects text not wrapping in FF3 
+ * 2. Corrects text not wrapping in FF3
  * 3. Corrects alignment displayed oddly in IE6/7
  */
 legend {
@@ -380,7 +380,7 @@ table {
     border-spacing: 0; }
 
 /* =============================================================================
-   Helper classes that are used throughout the pages 
+   Helper classes that are used throughout the pages
    ========================================================================== */
 /* For modern browsers */
 .clearfix:before,
@@ -442,7 +442,7 @@ body {
 }
 .nav, .pagination, .pager, .carousel, .panel-title a { cursor: pointer; }
 /* ===============================================
- * Generic Styles 
+ * Generic Styles
  * =============================================== */
 h1, h2, h3, h4, h5, h6 {
     font-weight: normal;
@@ -515,7 +515,7 @@ code {
     border-radius: 8px; }
 
 
-/* 
+/*
  * HEADER
  */
 
@@ -1339,8 +1339,8 @@ img {
 }
 
 
-/* 
- * FOOTER 
+/*
+ * FOOTER
  */
 footer {
     clear: both; }
@@ -1703,7 +1703,7 @@ footer {
     text-decoration: underline;
 }
 
-/* 
+/*
  * Custom Styles for ngGrid
  */
 .ngTotalSelectContainer {

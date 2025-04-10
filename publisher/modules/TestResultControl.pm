@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # SPDX-FileCopyrightText: Copyright (C) 2020 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -13,13 +11,13 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 04-Jan-2018 ++ File: TestResult.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a test result control class. This module calls a constructor to 
-# create a test result control object that contains test result control information stored as object 
+# Perl module that creates a test result control class. This module calls a constructor to
+# create a test result control object that contains test result control information stored as object
 # variables.
 #
 # There exists various subroutines to set / get test result control information.
 
-package TestResultControl; 
+package TestResultControl;
 
 use Database; # Our custom module Database.pm
 
@@ -29,7 +27,7 @@ use Database; # Our custom module Database.pm
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our Test Result Control class 
+# Constructor for our Test Result Control class
 #====================================================================================
 sub new
 {
@@ -44,7 +42,7 @@ sub new
 
     # bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
-	bless $testresultcontrol, $class; 
+	bless $testresultcontrol, $class;
 	return $testresultcontrol;
 }
 
@@ -79,7 +77,7 @@ sub setTestResultControlPublishFlag
 }
 
 #======================================================================================
-# Subroutine to set the test result control last published 
+# Subroutine to set the test result control last published
 #======================================================================================
 sub setTestResultControlLastPublished
 {
@@ -148,7 +146,7 @@ sub getTestResultControlExpressions
 #======================================================================================
 sub getTestResultControlsMarkedForUpdate
 {
-	my @testResultControlList = (); # initialize a list 
+	my @testResultControlList = (); # initialize a list
 	my ($ser, $sourcedbser, $lastpublished);
 	my @expressions;
 
@@ -190,7 +188,7 @@ sub getTestResultControlsMarkedForUpdate
 		# get expressions for this test result
 		@expressions	= $TestResultControl->getTestResultControlExpressionsFromOurDB();
 
-		# finally, set expressions 
+		# finally, set expressions
 		$TestResultControl->setTestResultControlExpressions(@expressions);
 
 		push(@testResultControlList, $TestResultControl);
@@ -208,7 +206,7 @@ sub getTestResultControlExpressionsFromOurDB
 
 	my @expressions = (); # initialize a list of expressions
 
-	# get test result control serial 
+	# get test result control serial
 	my $ser = $TestResultControl->getTestResultControlSer();
 
 	#======================================================================================
@@ -221,9 +219,9 @@ sub getTestResultControlExpressionsFromOurDB
 			tre.LastPublished
 		FROM
 			TestResultControl trc,
-			TestResultExpression tre 
+			TestResultExpression tre
 		WHERE
-			trc.TestResultControlSerNum 	= $ser 
+			trc.TestResultControlSerNum 	= $ser
 		AND trc.TestResultControlSerNum 	= tre.TestResultControlSerNum
 	";
 
@@ -248,14 +246,14 @@ sub getTestResultControlExpressionsFromOurDB
 }
 
 #======================================================================================
-# Subroutine to set/update the "last published" field to current time 
+# Subroutine to set/update the "last published" field to current time
 #======================================================================================
 sub setTestResultLastPublishedIntoOurDB
-{	
+{
 	my ($current_datetime) = @_; # our current datetime in arguments
 
 	my $update_sql = "
-		
+
 		UPDATE
 			TestResultControl,
 			TestResultExpression

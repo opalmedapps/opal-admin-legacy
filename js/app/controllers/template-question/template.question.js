@@ -92,7 +92,7 @@ angular.module('opalAdmin.controllers.template.question', ['ngAnimate', 'ngSanit
 
 		// Banner
 		$scope.bannerMessage = "";
-		// Function to show page banner 
+		// Function to show page banner
 		$scope.showBanner = function () {
 			$(".bannerMessage").slideDown(function () {
 				setTimeout(function () {
@@ -103,7 +103,7 @@ angular.module('opalAdmin.controllers.template.question', ['ngAnimate', 'ngSanit
 
 		// Function to set banner class
 		$scope.setBannerClass = function (classname) {
-			// Remove any classes starting with "alert-" 
+			// Remove any classes starting with "alert-"
 			$(".bannerMessage").removeClass(function (index, css) {
 				return (css.match(/(^|\s)alert-\S+/g) || []).join(' ');
 			});

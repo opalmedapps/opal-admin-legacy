@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # SPDX-FileCopyrightText: Copyright (C) 2015 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -995,7 +993,7 @@ sub compareWith
 	my ($SuspectAppt, $OriginalAppt) = @_; # our two appt objects from arguments
 	my $UpdatedAppt = dclone($OriginalAppt);
 	my $change = 0; # boolean to recognize an actual difference between objects
-	
+
 	# retrieve parameters
 	# Suspect Appointment...
 	my $SAliasExpressionSer	= $SuspectAppt->getApptAliasExpressionSer();
@@ -1125,7 +1123,7 @@ sub compareWith
 		        pattern   => '%s',
 		        time_zone => 'America/New_York'
 		    );
-			
+
 			# 2019-03-25 YM: Removed the date tme format since it is already formated
 			# $SStartDateTime = $timestamp->format_datetime($strp->parse_datetime($SStartDateTime)); # convert to timestamp
 

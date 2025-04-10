@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # SPDX-FileCopyrightText: Copyright (C) 2015 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -476,7 +474,7 @@ sub getDocsFromSourceDB
 			from PatientInfo c;
 			Create Index temporaryindexClinic1 on #tempClinic (PatientAriaSer);
 			Create Index temporaryindexClinic2 on #tempClinic (PatientSerNum);
-			
+
 			Select p.PatientSer, p.PatientId into #tempPatient
 			from VARIAN.dbo.Patient p;
 			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
@@ -491,7 +489,7 @@ sub getDocsFromSourceDB
 					visit_note.revised_ind,
 					visit_note.valid_entry_ind,
 					visit_note.err_rsn_txt,
-					case 
+					case
 						when CHARINDEX('\\DOCUMENTS\\20', upper(FolderName1)) = 0 then FL.[FileName]
 						when CHARINDEX('\\DOCUMENTS\\20', upper(FolderName1)) > 0 then concat(Right(FolderName1, 6), '/', FL.[FileName])
 					end AS doc_file_loc,
@@ -853,7 +851,7 @@ sub transferPatientDocuments
 		my $Errorfilename = (split '/', $finalfilenum)[-1];
 
 		my $clinicalDir = $ftpObject->getFTPClinicalDir(); # get local directory of documents
-		
+
 		my $sourcefile = "$clinicalDir/$finalfileloc"; # concatenate directory and file
 
         print "Source file: $sourcefile\n" if $verbose;
@@ -894,7 +892,7 @@ sub transferPatientDocuments
 	            			FROM
 				            	VARIAN.dbo.visit_note visit_note
 	            			WHERE
-				            	visit_note.doc_file_loc = 
+				            	visit_note.doc_file_loc =
 									case when CHARINDEX('/', '$finalfileloc') = 0 then '$finalfileloc'
 									else substring('$finalfileloc', CHARINDEX('/', '$finalfileloc') + 1, len('$finalfileloc'))
 									end
@@ -1055,7 +1053,7 @@ END
 	            			FROM
 				            	VARIAN.dbo.visit_note visit_note
 	            			WHERE
-				            	visit_note.doc_file_loc = 
+				            	visit_note.doc_file_loc =
 									case when CHARINDEX('/', '$finalfileloc') = 0 then '$finalfileloc'
 									else substring('$finalfileloc', CHARINDEX('/', '$finalfileloc') + 1, len('$finalfileloc'))
 									end

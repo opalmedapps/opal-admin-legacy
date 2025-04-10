@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # SPDX-FileCopyrightText: Copyright (C) 2014 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -11,11 +9,11 @@
 # This module calls a constructor to create an FTP class and then calls a
 # subroutine to connect to the host server with the parameters given.
 #
-# It is assumed that the host, username and password will remain static 
+# It is assumed that the host, username and password will remain static
 # through the whole process so we pre-define those variables in the constructor.
 # However, when creating a new FTP object, we pass the remote and local directories
 # as arguments incase we wish to quickly change these parameters when modifying
-# this module. 
+# this module.
 #
 # Although all these object variables are set within this module, I provide setter and getter
 # subroutines in case the user wishes to change these variables.
@@ -25,7 +23,7 @@ package FTP; # Declare package name
 use Configs; # Custom Configurations
 
 #====================================================================================
-# Constructor for our FTP class 
+# Constructor for our FTP class
 #====================================================================================
 sub new
 {
@@ -38,12 +36,12 @@ sub new
 
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
-	bless $ftp, $class; 
+	bless $ftp, $class;
 	return $ftp;
 }
 
 #====================================================================================
-# CSubroutine to set the FTP connection 
+# CSubroutine to set the FTP connection
 #====================================================================================
 sub getFTPCredentials
 {

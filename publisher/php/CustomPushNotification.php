@@ -47,7 +47,7 @@ class CustomPushNotification{
             exit();
         }
 
-        
+
 
         //Send message to patient devices and record in database
         $resultsArray = array();
@@ -55,7 +55,7 @@ class CustomPushNotification{
             $wsmtitle = $message['title_'.$detail['language']];
             $wsmdesc = $message['message_text_'.$detail['language']];
             $dynamicKeys = [];
-            
+
             // Special case for replacing the $institution wildcard
             if (str_contains($wsmdesc, '$institution')) {
                 $dynamicKeys['$institution'] = $detail['institution_acronym'];

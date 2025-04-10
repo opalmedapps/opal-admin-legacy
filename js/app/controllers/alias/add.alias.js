@@ -301,7 +301,7 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 
 		if ($scope.newAlias.hospitalMap || $scope.hospitalMapSection.open) {
 			$scope.newAlias.hospitalMap = hospitalMap;
-			
+
 			steps.hospital_map.completed = true;
 		}
 
@@ -723,6 +723,3 @@ controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, a
 	});
 
 });
-
-
-

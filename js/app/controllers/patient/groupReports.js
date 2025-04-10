@@ -57,9 +57,9 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
     $scope.width = '900px';
     $scope.height = '600px';
 
-    
-    
-	//Display variables 
+
+
+	//Display variables
 	$scope.selectedQuestionnaire = ""; //user selected questionnaire from qstList
 	$scope.showQstReport = false;
     $scope.showEducReport = false;
@@ -109,7 +109,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
         enableFiltering: true,
         enableColumnResizing: true,
     };
-    
+
     $scope.qstGridOptions = {
         data: 'qstReport',
         columnDefs: [
@@ -149,7 +149,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
     var refresh = function(){
         $scope.refresh = true;
         $timeout(function(){
-            $scope.refresh = false;        
+            $scope.refresh = false;
         }, 20);
     };
 
@@ -189,7 +189,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                     $scope.materialType = "Treatment Guidelines";
                 }
             }
-        });    
+        });
         //need to clear selected material here to prevent 422 error from data validation
         $scope.selectedMaterial = "";
         $.ajax({
@@ -204,7 +204,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                 ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
             }
         });
-    
+
     }
 
     /**
@@ -215,7 +215,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
             type: "POST",
             url: "patient/get/educ-report",
             data: {
-                type: $scope.materialType, 
+                type: $scope.materialType,
                 name: $scope.selectedMaterial},
             dataType: "json",
             success: function(response){
@@ -223,7 +223,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
             },
             error: function(err){
                 ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.DB_ERROR'));
-            }       
+            }
          });
     }
 
@@ -231,7 +231,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
     function prepareEducList(inp){
 
         $scope.safeApply(function() {
-            
+
             $scope.educList = [];
             var tmp = "";
             if(inp && (inp !== null)){
@@ -246,10 +246,10 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
             }
 
         });
-		
+
 
     }
-    
+
     // Helper function prepare educational material report for display
     function prepareEducReport(inp){
 
@@ -268,22 +268,22 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                     }
                     if(!$scope.educReport[i].psex){
                         $scope.educReport[i].psex = "N/A";
-                    }         
+                    }
                 }
                 $scope.educReportLength = $scope.educReport.length;
                 $scope.showEducReport = true;
                 refresh();
                 prepareEducStats();
-    
-    
-    
+
+
+
             }else{ //error, no result returned
                 ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.SEARCH_FAIL'));
             }
 
         });
 
-    
+
     }
 
 
@@ -356,7 +356,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
 
     /**
      * Generate questionnaire report from selected questionnaire
-     * 
+     *
      */
     $scope.genQstReport = function(){
         $.ajax({
@@ -387,7 +387,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
             }else{ // no questionnaires returned
                 ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.SEARCH_FAIL'));
             }
-    
+
         });
 
     }
@@ -418,10 +418,10 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
             }else{
                 ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.SEARCH_FAIL'));
             }
-    
+
             prepareQstStats();
         });
-        
+
     }
 
     // Helper function to generate patient questionnaire statistics
@@ -480,7 +480,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
             for(var j = 0; j < uniquePatDobs.length; j++){
                 patAges.push(date_diff_days(uniquePatDobs[j],new Date()));
             }
-            for(var k = 0; k<patAges.length; k++){                
+            for(var k = 0; k<patAges.length; k++){
                 if(isNaN(patAges[k])){
                     invalids++;
                 }else{
@@ -498,7 +498,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                 sum += completionTimes[n];
             }
             $scope.qstAvgCompletTime = (sum/completionTimes.length).toFixed(2);
-        
+
         });
 
     }
@@ -510,7 +510,7 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
 
     /**
      * Generate full patient list for demographics information
-     * 
+     *
      */
     $scope.genPatientReport = function(){
         $.ajax({
@@ -578,22 +578,22 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
                 $scope.patientReportLength = $scope.patientReport.length;
                 $scope.diagnosisdata.forEach(x => x.y = x.y/$scope.patientReportLength*100);
                 $scope.diagnosisdata.sort((a,b) => {return a.name.localeCompare(b.name)});
-                refresh(); 
+                refresh();
                 prepareDemoStats();
             }else{
                 ErrorHandler.onError(err, $filter('translate')('PATIENTS.REPORT.SEARCH.SEARCH_FAIL'));
             }
         });
 
-        
-        
+
+
     }
 
     // Helper function to generate demographics statistics
     function prepareDemoStats(){
         $scope.safeApply(function(){
 
-        
+
             var femCount = 0;
             var malCount = 0;
             var unkCount = 0;
@@ -634,8 +634,8 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
 
                 //registration date tracking (to be plotted)
                 $scope.regPlotData.push([new Date($scope.patientReport[i].preg).getTime(), i]);
-                
-                
+
+
                 // diagnosis breakdown
                 if($scope.patientReport[i].diagdesc in diagDict){
                     diagDict[$scope.patientReport[i].diagdesc]++;
@@ -653,8 +653,8 @@ controller('groupReports', function($scope, $rootScope, Session, ErrorHandler, M
 
 
             }
-        });   
-       
+        });
+
 
     }
 

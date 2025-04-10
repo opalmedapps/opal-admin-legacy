@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # SPDX-FileCopyrightText: Copyright (C) 2016 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -7,14 +5,14 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 06-May-2016 ++ File: EducationalMaterial.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates an educational material class. This module calls a 
+# Perl module that creates an educational material class. This module calls a
 # constructor to create an edumat object that contains edumat information stored
 # as object variables.
 #
 # There exists various subroutines to set and get edumat information and compare
 # edumat information between two edumat objects.
 
-package EducationalMaterial; # Declaring package name 
+package EducationalMaterial; # Declaring package name
 
 use Database; # Our custom database module
 use Time::Piece; # perl module
@@ -37,7 +35,7 @@ use PushNotification;
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our edumat class 
+# Constructor for our edumat class
 #====================================================================================
 sub new
 {
@@ -148,7 +146,7 @@ sub publishEducationalMaterials
 
     # If we are not within the window to publish the messages then return
     #if ( (($now - $today_at_eightAM) < 0) or (($now - $today_at_eightPM) > 0) ) {return;}
-    
+
     # Check for any new updates from the main cron control
     CheckEduMatControlsMarkedForPublishModularCron();
 
@@ -170,15 +168,15 @@ sub publishEducationalMaterials
 			# The reason is that the patient filter will combine as an OR with the non-patient filters
 			# If any of the non-patient filters exist, all non-patient filters combine in an AND (i.e. intersection)
             # However, we don't want to lose the exception that a patient filter has been defined
-			# If there is a patient filter defined, then we only send the content to the patients 
+			# If there is a patient filter defined, then we only send the content to the patients
 			# selected in the filter UNLESS other non-patient filters have been defined. In that case,
 			# we send to the patients defined in the patient filters AND to the patients that pass
-			# in the non-patient filters  
+			# in the non-patient filters
 			my $isNonPatientSpecificFilterDefined = 0;
             my $isPatientSpecificFilterDefined = 0;
             my $patientPassed = 0;
 
-            # Fetch sex filter (if any) 
+            # Fetch sex filter (if any)
             my $sexFilter =  $eduMatFilters->getSexFilter();
             if ($sexFilter) {
 
@@ -226,7 +224,7 @@ sub publishEducationalMaterials
             my @diagnosisNames = Diagnosis::getPatientsDiagnosesFromOurDB($patientSer);
 
             my @patientDoctors = PatientDoctor::getPatientsDoctorsFromOurDB($patientSer);
-                
+
             # Fetch appointment filters (if any)
             my @appointmentFilters =  $eduMatFilters->getAppointmentFilters();
             if (@appointmentFilters) {
@@ -247,7 +245,7 @@ sub publishEducationalMaterials
                 }
 
                 # if all appointments were selected as triggers then patient passes
-                # else do further checks 
+                # else do further checks
                 unless ('ALL' ~~ @appointmentFilters and @aliasSerials) {
                     # Finding the existence of the patient appointment in the appointment filters
                     # If there is an intersection, then patient is so far part of this publishing educational material
@@ -260,7 +258,7 @@ sub publishEducationalMaterials
                         # else no patient filters were defined and failed to match the appointment filter
                         # move on to the next educational material
                         else{next;}
-                    } 
+                    }
                 }
             }
 
@@ -272,7 +270,7 @@ sub publishEducationalMaterials
 				$isNonPatientSpecificFilterDefined = 1;
 
                 # if all diagnoses were selected as triggers then patient passes
-                # else do further checks 
+                # else do further checks
                 unless ('ALL' ~~ @diagnosisFilters and @diagnosisNames) {
                     # Finding the intersection of the patient's diagnosis and the diagnosis filters
                     # If there is an intersection, then patient is so far part of this publishing educational material
@@ -297,7 +295,7 @@ sub publishEducationalMaterials
 				$isNonPatientSpecificFilterDefined = 1;
 
                 # if all doctors were selected as triggers then patient passes
-                # else do further checks 
+                # else do further checks
                 unless ('ALL' ~~ @doctorFilters and @patientDoctors) {
                     # Finding the intersection of the patient's doctor(s) and the doctor filters
                     # If there is an intersection, then patient is so far part of this publishing educational material
@@ -310,7 +308,7 @@ sub publishEducationalMaterials
                         # else no patient filters were defined and failed to match the doctor filter
                         # move on to the next educational material
                         else{next;}
-                    } 
+                    }
                 }
             }
 
@@ -322,7 +320,7 @@ sub publishEducationalMaterials
                 $isNonPatientSpecificFilterDefined = 1;
 
                 # if all resources were selected as triggers then patient passes
-                # else do further checks 
+                # else do further checks
                 unless ('ALL' ~~ @resourceFilters and @patientResources) {
                     # Finding the intersection of the patient resource(s) and the resource filters
                     # If there is an intersection, then patient is so far part of this publishing educational material
@@ -341,17 +339,17 @@ sub publishEducationalMaterials
                 }
             }
 
-			# We look into whether any patient-specific filters have been defined 
+			# We look into whether any patient-specific filters have been defined
 			# If we enter this if statement, then we check if that patient is in that list
             if (@patientFilters) {
 
                 # if the patient-specific flag was enabled then it means this patient failed
-                # one of the filters above 
+                # one of the filters above
                 # OR if the non patient specific flag was disabled then there were no filters defined above
                 # and this is the last test to see if this patient passes
                 if ($isPatientSpecificFilterDefined eq 1 or $isNonPatientSpecificFilterDefined eq 0) {
     				# Finding the existence of the patient in the patient-specific filters
-    				# If the patient exists, or all patients were selected as triggers, 
+    				# If the patient exists, or all patients were selected as triggers,
                     # then patient passes else move on to next patient
                     if ($patientSer  ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
                         $patientPassed = 1;
@@ -362,7 +360,7 @@ sub publishEducationalMaterials
 
             if ($isNonPatientSpecificFilterDefined eq 1 or $isPatientSpecificFilterDefined eq 1 or ($isNonPatientSpecificFilterDefined eq 0 and $patientPassed eq 1)) {
                 # If we've reached this point, we've passed all catches (filter restrictions). We make
-                # an educational material object, check if it exists already in the database. If it does 
+                # an educational material object, check if it exists already in the database. If it does
                 # this means the edumat has already been publish to the patient. If it doesn't
                 # exist then we publish to the patient (insert into DB).
                 $eduMat = new EducationalMaterial();
@@ -372,9 +370,9 @@ sub publishEducationalMaterials
                 $eduMat->setEduMatControlSer($eduMatControlSer);
 
                 if (!$eduMat->inOurDatabase()) {
-        
+
                     $eduMat = $eduMat->insertEducationalMaterialIntoOurDB();
-        
+
                     # send push notification
                     my $eduMatSer = $eduMat->getEduMatSer();
                     my $patientSer = $eduMat->getEduMatPatientSer();
@@ -382,7 +380,7 @@ sub publishEducationalMaterials
 
                 }
             }
-        } # End forEach Educational Material Control   
+        } # End forEach Educational Material Control
 
     } # End forEach Patient
 
@@ -423,7 +421,7 @@ sub inOurDatabase
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
 
         $serInDB    = $data[0];
@@ -457,7 +455,7 @@ sub insertEducationalMaterialIntoOurDB
     my $edumatcontrolser    = $edumat->getEduMatControlSer();
 
     my $insert_sql = "
-        INSERT INTO 
+        INSERT INTO
             EducationalMaterial (
                 PatientSerNum,
                 EducationalMaterialControlSerNum,
@@ -471,7 +469,7 @@ sub insertEducationalMaterialIntoOurDB
             NOW()
         )
     ";
-        
+
     # prepare query
 	my $query = $SQLDatabase->prepare($insert_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -485,18 +483,18 @@ sub insertEducationalMaterialIntoOurDB
 
 	# Set the Serial in our object
 	$edumat->setEduMatSer($ser);
-	
+
 	return $edumat;
 }
 
 #======================================================================================
-# Subroutine to sync the master table to the slave table and then set the publish flag 
+# Subroutine to sync the master table to the slave table and then set the publish flag
 # from 1 to 2. This will identify what is currently being process by the cron job vs what
 # have just been activated during the cron running
 #======================================================================================
 sub CheckEduMatControlsMarkedForPublishModularCron
 {
-	my ($module) = @_; # current datetime, cron module type, 
+	my ($module) = @_; # current datetime, cron module type,
 
     # --------------------------------------------------
     # First step is to make sure that the two tables have the same amount of records
@@ -552,6 +550,5 @@ sub CheckEduMatControlsMarkedForPublishModularCron
 		or die "Could not execute query: " . $query->errstr;
 
 }
-# Exit smoothly 
+# Exit smoothly
 1;
-

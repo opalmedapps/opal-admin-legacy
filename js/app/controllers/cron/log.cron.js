@@ -100,7 +100,7 @@ controller('cron.log', function ($scope, $filter, $uibModalInstance, cronCollect
 					{ field: 'patient_serial', displayName: $filter('translate')('CRON.DETAILS.PATIENTSER'), enableColumnMenu: false } ,
 					{ field: 'read_status', displayName: $filter('translate')('CRON.DETAILS.READ_STATUS'), enableColumnMenu: false } ,
 					{ field: 'date_added', displayName: $filter('translate')('CRON.DETAILS.DATETIME_SENT'), enableColumnMenu: false } ,
-					{ field: 'mod_action', displayName: $filter('translate')('CRON.DETAILS.ACTION'), enableColumnMenu: false } 
+					{ field: 'mod_action', displayName: $filter('translate')('CRON.DETAILS.ACTION'), enableColumnMenu: false }
 				],
 				rowHeight: 30,
 				useExternalFiltering: true,
@@ -118,7 +118,7 @@ controller('cron.log', function ($scope, $filter, $uibModalInstance, cronCollect
 					{ field: 'patient_serial', displayName: $filter('translate')('CRON.DETAILS.PATIENTSER'), enableColumnMenu: false } ,
 					{ field: 'read_status', displayName: $filter('translate')('CRON.DETAILS.READ_STATUS'), enableColumnMenu: false } ,
 					{ field: 'date_added', displayName: $filter('translate')('CRON.DETAILS.DATETIME_SENT'), enableColumnMenu: false } ,
-					{ field: 'mod_action', displayName: $filter('translate')('CRON.DETAILS.ACTION'), enableColumnMenu: false } 
+					{ field: 'mod_action', displayName: $filter('translate')('CRON.DETAILS.ACTION'), enableColumnMenu: false }
 				],
 				rowHeight: 30,
 				useExternalFiltering: true,
@@ -136,7 +136,7 @@ controller('cron.log', function ($scope, $filter, $uibModalInstance, cronCollect
 					{ field: 'patient_serial', displayName: $filter('translate')('CRON.DETAILS.PATIENTSER'), enableColumnMenu: false } ,
 					{ field: 'read_status', displayName: $filter('translate')('CRON.DETAILS.READ_STATUS'), enableColumnMenu: false } ,
 					{ field: 'date_added', displayName: $filter('translate')('CRON.DETAILS.DATETIME_SENT'), enableColumnMenu: false } ,
-					{ field: 'mod_action', displayName: $filter('translate')('CRON.DETAILS.ACTION'), enableColumnMenu: false } 
+					{ field: 'mod_action', displayName: $filter('translate')('CRON.DETAILS.ACTION'), enableColumnMenu: false }
 				],
 				rowHeight: 30,
 				useExternalFiltering: true,
@@ -154,7 +154,7 @@ controller('cron.log', function ($scope, $filter, $uibModalInstance, cronCollect
 					{ field: 'patient_serial', displayName: $filter('translate')('CRON.DETAILS.PATIENTSER'), enableColumnMenu: false } ,
 					{ field: 'read_status', displayName: $filter('translate')('CRON.DETAILS.READ_STATUS'), enableColumnMenu: false } ,
 					{ field: 'date_added', displayName: $filter('translate')('CRON.DETAILS.DATETIME_SENT'), enableColumnMenu: false } ,
-					{ field: 'mod_action', displayName: $filter('translate')('CRON.DETAILS.ACTION'), enableColumnMenu: false } 
+					{ field: 'mod_action', displayName: $filter('translate')('CRON.DETAILS.ACTION'), enableColumnMenu: false }
 				],
 				rowHeight: 30,
 				useExternalFiltering: true,
@@ -172,7 +172,7 @@ controller('cron.log', function ($scope, $filter, $uibModalInstance, cronCollect
 					{ field: 'patient_serial', displayName: $filter('translate')('CRON.DETAILS.PATIENTSER'), enableColumnMenu: false } ,
 					{ field: 'type', displayName: $filter('translate')('CRON.DETAILS.EMAIL_TYPE'), enableColumnMenu: false } ,
 					{ field: 'date_added', displayName: $filter('translate')('CRON.DETAILS.DATETIME_SENT'), enableColumnMenu: false } ,
-					{ field: 'mod_action', displayName: $filter('translate')('CRON.DETAILS.ACTION'), enableColumnMenu: false } 
+					{ field: 'mod_action', displayName: $filter('translate')('CRON.DETAILS.ACTION'), enableColumnMenu: false }
 				],
 				rowHeight: 30,
 				useExternalFiltering: true,
@@ -192,7 +192,7 @@ controller('cron.log', function ($scope, $filter, $uibModalInstance, cronCollect
 					{ field: 'completed', displayName: $filter('translate')('CRON.DETAILS.COMPLETED'), enableColumnMenu: false } ,
 					{ field: 'completion_date', displayName: $filter('translate')('CRON.DETAILS.PATIENTQUESTIONNAIREDBSER'), enableColumnMenu: false } ,
 					{ field: 'date_added', displayName: $filter('translate')('CRON.DETAILS.COMPLETED_DATE'), enableColumnMenu: false } ,
-					{ field: 'mod_action', displayName: $filter('translate')('CRON.DETAILS.ACTION'), enableColumnMenu: false } 
+					{ field: 'mod_action', displayName: $filter('translate')('CRON.DETAILS.ACTION'), enableColumnMenu: false }
 				],
 				rowHeight: 30,
 				useExternalFiltering: true,
@@ -209,10 +209,10 @@ controller('cron.log', function ($scope, $filter, $uibModalInstance, cronCollect
 					{ field: 'cron_serial', displayName: $filter('translate')('CRON.DETAILS.CRONLOGSER'), enableColumnMenu: false } ,
 					{ field: 'patient_serial', displayName: $filter('translate')('CRON.DETAILS.PATIENTSER'), enableColumnMenu: false } ,
 					{ field: 'type', displayName: $filter('translate')('CRON.DETAILS.NOTIFICATION'), enableColumnMenu: false } ,
-					{ field: 'ref_table_serial', displayName: $filter('translate')('CRON.DETAILS.REF_TABLE_SER'), enableColumnMenu: false } ,
+					{ field: 'ref_table_serial', displayName: $filter('translate')('CRON.DETAILS.REF_TABLE_SET'), enableColumnMenu: false } ,
 					{ field: 'read_status', displayName: $filter('translate')('CRON.DETAILS.READ_STATUS'), enableColumnMenu: false } ,
 					{ field: 'date_added', displayName: $filter('translate')('CRON.DETAILS.DATETIME_SENT'), enableColumnMenu: false } ,
-					{ field: 'mod_action', displayName: $filter('translate')('CRON.DETAILS.ACTION'), enableColumnMenu: false } 
+					{ field: 'mod_action', displayName: $filter('translate')('CRON.DETAILS.ACTION'), enableColumnMenu: false }
 				],
 				rowHeight: 30,
 				useExternalFiltering: true,
@@ -239,7 +239,7 @@ controller('cron.log', function ($scope, $filter, $uibModalInstance, cronCollect
 					{ field: 'valid', displayName: $filter('translate')('CRON.DETAILS.VALID'), enableColumnMenu: false } ,
 					{ field: 'read_status', displayName: $filter('translate')('CRON.DETAILS.READ_STATUS'), enableColumnMenu: false } ,
 					{ field: 'date_added', displayName: $filter('translate')('CRON.DETAILS.DATETIME_SENT'), enableColumnMenu: false } ,
-					{ field: 'mod_action', displayName: $filter('translate')('CRON.DETAILS.ACTION'), enableColumnMenu: false } 
+					{ field: 'mod_action', displayName: $filter('translate')('CRON.DETAILS.ACTION'), enableColumnMenu: false }
 				],
 				rowHeight: 30,
 				useExternalFiltering: true,

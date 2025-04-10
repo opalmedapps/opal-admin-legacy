@@ -37,4 +37,4 @@ Please search on the [issue track](../) before creating one.
 <!-- If you can, link to the line of code that might be responsible for the problem -->
 
 <!-- Add label ~bug ~reproduced ~needs-investigation etc. -->
-<!-- /assign users @akimosupremo --> 
+<!-- /assign users @akimosupremo -->

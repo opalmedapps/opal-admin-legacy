@@ -59,18 +59,18 @@ class PatientCheckInPushNotification{
         if(count($caregiverDevices) == 0) {
             return array("success"=>1, "failure"=>0,"responseDevices"=>"No patient devices available for that patient");
         }
-        
+
         $resultsArray = array();
 
         foreach($caregiverDevices as $device => $detail) {
 
             $response = null;
             $language = strtoupper($detail['language']);
-            
+
             // Prepare the success message title and body
             $message = (!$allSuccessful)? self::buildMessageForPushNotification('CheckInError', $language) : self::buildMessageForPushNotification('CheckInNotification', $language);
             $dynamicKeys = [];
-            
+
             // Special case for replacing the $institution wildcard
             if (str_contains($message["mdesc"], '$institution')) {
                 $dynamicKeys['$institution'] = $detail['institution_acronym'];
@@ -84,7 +84,7 @@ class PatientCheckInPushNotification{
                 $replacements[$indice] = $val;
                 $indice +=1;
             }
-    
+
             ksort($patterns);
             ksort($replacements);
             $message["mdesc"] =  str_replace($patterns, $replacements, $message["mdesc"]);

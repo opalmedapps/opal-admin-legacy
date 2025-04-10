@@ -3458,9 +3458,9 @@ class DatabaseOpal extends DatabaseAccess {
 
     /**
      * Get the generic appointment alias for the given site code.
-     * 
+     *
      * The alias is looked up by the English alias name "<site> Appointment".
-     * 
+     *
      * @param string $site the code of the site/hospital
      * @return array a list of generic aliases for the given site
      */
@@ -3473,12 +3473,12 @@ class DatabaseOpal extends DatabaseAccess {
 
     /**
      * Assigns the appointment code to the given alias for the given master source.
-     * 
+     *
      * @param int $aliasId the ID of the generic alias
      * @param array $source the source database
      * @param string $typeCode the appointment code
      * @param string $typeDesc the appointment description
-     * 
+     *
      * @return int|boolean the ID of the inserted element or false if it failed
      */
     function assignToGenericAlias($aliasId, $source, $typeCode, $typeDesc) {
@@ -3712,7 +3712,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return int - number of row modified
      */
     function insertPendingMHAppointment($toInsert) {
-        return $this->_insertRecordIntoTable(OPAL_APPOINTMENTS_PENDING_MH_TABLE, $toInsert);        
+        return $this->_insertRecordIntoTable(OPAL_APPOINTMENTS_PENDING_MH_TABLE, $toInsert);
     }
 
     /**
@@ -3737,7 +3737,7 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":AppointmentSerNum","variable"=>$toUpdate['AppointmentSerNum'],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$toUpdate['SourceDatabaseSerNum'],"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":Status","variable"=>$toUpdate['Status'],"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":State","variable"=>$toUpdate['State'],"data_type"=>PDO::PARAM_STR),            
+            array("parameter"=>":State","variable"=>$toUpdate['State'],"data_type"=>PDO::PARAM_STR),
         ));
     }
 
@@ -3981,7 +3981,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @param $toUpdate - appointment details
      * @return int - number of row modified
      */
-    function updateAppointment($toUpdate) {        
+    function updateAppointment($toUpdate) {
         $this->_execute(OPAL_UPDATE_APPOINTMENT_STATUS, array(
             array("parameter"=>":Status","variable"=>$toUpdate['Status'],"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":State","variable"=>$toUpdate['State'],"data_type"=>PDO::PARAM_STR),
@@ -4065,7 +4065,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return array - data found if any
      */
     function getDocument($sourceId,$documentId) {
-        return $this->_fetchAll(OPAL_GET_DOCUMENT, array(            
+        return $this->_fetchAll(OPAL_GET_DOCUMENT, array(
             array("parameter"=>":SourceDatabaseSerNum","variable"=>$sourceId,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":DocumentId"   ,"variable"=>$documentId,"data_type"=>PDO::PARAM_STR)
         ));
@@ -4125,12 +4125,12 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-    /** 
+    /**
      * Insert a new pushnotification
      * @param  array of the pushnotification infos
      * @return  ID of the entry
      */
-    function insertPushNotification($toInsert) {        
+    function insertPushNotification($toInsert) {
         return $this->_replaceRecordIntoTable(OPAL_PUSH_NOTIFICATION_TABLE, $toInsert);
     }
 
@@ -4145,7 +4145,7 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-    /** 
+    /**
     * Get Alias and alias expression information
     * @param $expresionId - aliasExpressionSerNum
     * @return array - data found if any
@@ -4156,19 +4156,19 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-    /** 
+    /**
      * Insert a new notification
      * @param  array of the notification infos
      * @return  array - ID of the entry
      */
-    function insertNotification($toInsert) {        
+    function insertNotification($toInsert) {
         return $this->_replaceRecordIntoTable(OPAL_NOTIFICATION_TABLE, $toInsert);
     }
 
-    /** 
+    /**
      * Get Staff Serial Number
      * @param  int source database serial number
-     * @param  int staff ID 
+     * @param  int staff ID
      * @return  array Staff Detail
      */
     function getStaffDetail($sourceId,$staffId){

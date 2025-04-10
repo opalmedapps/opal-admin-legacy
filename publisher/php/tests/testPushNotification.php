@@ -19,17 +19,17 @@
 
     if(count($argv) < 4)
     {
-        echo "*********Push Notification Test Script Usage*************************" . PHP_EOL 
+        echo "*********Push Notification Test Script Usage*************************" . PHP_EOL
             . PHP_EOL
             . "Note: Run the command below together with at least 3 arguments as metioned." . PHP_EOL
             . PHP_EOL
-            . "php testPushNotification.php 'registration id' 'device type' 'language' " . PHP_EOL 
+            . "php testPushNotification.php 'registration id' 'device type' 'language' " . PHP_EOL
             . PHP_EOL
-            . "* registration Id (in the column RegistrationId of PatientDeviceIdentifier table) " . PHP_EOL 
+            . "* registration Id (in the column RegistrationId of PatientDeviceIdentifier table) " . PHP_EOL
             . PHP_EOL
-            . "* device type is 0 (IOS) or 1 (Android) " . PHP_EOL 
+            . "* device type is 0 (IOS) or 1 (Android) " . PHP_EOL
             . PHP_EOL
-            . "* language is en (English) or fr (French) " . PHP_EOL 
+            . "* language is en (English) or fr (French) " . PHP_EOL
             . PHP_EOL
             . "*********************************************************************" . PHP_EOL;
     }
@@ -51,12 +51,12 @@
                 "encode"=>'Yes'
             );
         }
-             
+
         // device id
         $device = $argv[1];
-    
+
         echo "<br />SENDING at " . date("Y-m-d H:i:s") . "<br />";
-    
+
         if($argv[2]=="0")
         {
             $response = PushNotification::iOS($message, $device);
@@ -65,9 +65,9 @@
         {
             $response = PushNotification::android($message, $device);
         }
-    
+
         echo "<br />Complete<br />\n";
-    
+
         // Return responses
         print json_encode($response);
         echo "\n";

@@ -13,7 +13,7 @@ class TriggerDocument extends Trigger
 
     /**
      * Validate the input parameters for patient document
-     * Validation code :     
+     * Validation code :
      *                      1st bit invalid or missing MRN
      *                      2nd bit invalid or missing Site
      *                      3rd bit Identifier MRN-site-patient does not exists
@@ -27,7 +27,7 @@ class TriggerDocument extends Trigger
     protected function _validateDocumentSourceExternalId(&$post, &$patientSite, &$source)  {
         $patientSite = array();
         $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
-                
+
         // 1st bit - source system
         if(!array_key_exists("sourceSystem", $post) || $post["sourceSystem"] == "") {
             $errCode = "1" . $errCode;
@@ -41,13 +41,13 @@ class TriggerDocument extends Trigger
                 $source = $source[0];
                 $errCode = "0" . $errCode;
             }
-        }        
+        }
         return $errCode;
     }
 
     /**
      * Validate the input parameters for individual patient document
-     * Validation code :     
+     * Validation code :
      *                       1st bit invalid or missing MRN
      *                       2nd bit invalid or missing Site
      *                       3rd bit Identifier MRN-site-patient does not exists
@@ -68,11 +68,11 @@ class TriggerDocument extends Trigger
      * @param array<mixed> &$patientSite (Reference) - patient parameters
      * @param array<mixed> &$source (Reference) - source parameters
      * @return string $errCode - error code.
-     */    
+     */
     protected function _validateInsertDocument(&$post, &$patientSite, &$source) {
         $post = HelpSetup::arraySanitization($post);
         $errCode = $this->_validateDocumentSourceExternalId($post, $patientSite, $source);
-        
+
         if($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, json_encode(array("validation"=>$errCode)));
 
@@ -94,7 +94,7 @@ class TriggerDocument extends Trigger
         if(array_key_exists("approvalDatetime", $post) && $post["approvalDatetime"] != "") {
             if(!HelpSetup::verifyDate($post["approvalDatetime"], false, 'Y-m-d H:i:s'))
                 $errCode = "1" . $errCode;
-            else {                
+            else {
                 $errCode = "0" . $errCode;
             }
         }
@@ -117,7 +117,7 @@ class TriggerDocument extends Trigger
         if(array_key_exists("noteDatetime", $post) && $post["noteDatetime"] != "") {
             if(!HelpSetup::verifyDate($post["noteDatetime"], false, 'Y-m-d H:i:s'))
                 $errCode = "1" . $errCode;
-            else {                
+            else {
                 $errCode = "0" . $errCode;
             }
         }
@@ -135,7 +135,7 @@ class TriggerDocument extends Trigger
         } else{
             $errCode = "0" . $errCode;
         }
-       
+
         //bit 13
         if(!array_key_exists("fileName", $post) || $post["fileName"] == ""){
             $errCode = "1" . $errCode;
@@ -154,11 +154,11 @@ class TriggerDocument extends Trigger
         if(array_key_exists("creationDatetime", $post) && $post["creationDatetime"] != "") {
             if(!HelpSetup::verifyDate($post["creationDatetime"], false, 'Y-m-d H:i:s'))
                 $errCode = "1" . $errCode;
-            else {                
+            else {
                 $errCode = "0" . $errCode;
             }
         }
-        
+
         return $errCode;
     }
 
@@ -170,12 +170,12 @@ class TriggerDocument extends Trigger
     protected function _insertDocument($post){
         $yesterday = strtotime(date("Y-m-d H:i:s",strtotime("-1 hours")));
         $patientSite = null;
-        $source = null;        
+        $source = null;
         $errCode = $this->_validateInsertDocument($post, $patientSite, $source);
         $errCode = bindec($errCode);
         if ($errCode != 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, array("validation" => $errCode));
-           
+
         $doc = $this->opalDB->getDocument($source["SourceDatabaseSerNum"], $post["documentId"]);
         $countDoc = count($doc);
         $toInsert = array(
@@ -216,13 +216,13 @@ class TriggerDocument extends Trigger
             $toInsert["DocumentSerNum"] = $doc[0]["DocumentSerNum"];
             $this->opalDB->updateDocument($toInsert);
         }
-        
+
         $patientAccessLevel = $this->opalDB->getPatientAccessLevel($patientSite["PatientSerNum"]);
         $modifyDatetime = strtotime($post["modifiedDatetime"]);
         if(array_key_exists("Accesslevel", $patientAccessLevel) && $patientAccessLevel["Accesslevel"] == 3 && $modifyDatetime >= $yesterday){
             $this->_notifyChange($toInsert, $action, array(), $toInsert["DocumentSerNum"]);
         }
-        
+
         if (array_key_exists("documentString", $post) && $post["documentString"] != "")  {
             $filename = basename($post["fileName"]);
             $output_file = CLINICAL_DOC_PATH . $filename;
@@ -240,8 +240,8 @@ class TriggerDocument extends Trigger
      * @return void
      */
     public function insertDocument($post) {
-        $this->checkWriteAccess($post);        
+        $this->checkWriteAccess($post);
         $post = HelpSetup::arraySanitization($post);
         $this->_insertDocument($post);
-    }    
+    }
 }

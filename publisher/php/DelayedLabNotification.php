@@ -175,7 +175,7 @@ class DelayedLabNotification
             // Note that array contains the username duplicates that indicate how many delayed labs user has read.
             // E.g., ["QXmz5ANVN3Qp9ktMlqm2tJ2YYBz2", "SipDLZCcOyTYj7O3C8HnWLalb4G3", "QXmz5ANVN3Qp9ktMlqm2tJ2YYBz2"]
             $usersReadsPerPatient = json_decode($lab['ReadBy']);
-            
+
             // Create a dictionary that contains read counts per user for a specific patient
             $readCountsPerUser = array_count_values($usersReadsPerPatient);
 

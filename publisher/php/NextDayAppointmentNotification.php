@@ -24,7 +24,7 @@ class NextDayAppointmentNotification
             echo json_encode($result) . PHP_EOL;
             exit();
         }
-        
+
         // set the hopital acronym
         $hospitalEN = self::getInstitutionAcronym('en');
         $hospitalFR = self::getInstitutionAcronym('fr');
@@ -82,20 +82,20 @@ class NextDayAppointmentNotification
                             ap.SourceDatabaseSerNum
                         FROM
                             Appointment ap, Patient P
-                        WHERE 
+                        WHERE
                             DATE(ap.ScheduledStartTime) = DATE(DATE_ADD(NOW(), INTERVAL 1 DAY))
                             AND TIME(ap.ScheduledStartTime) >= '02:00'
-                            AND ap.State = 'Active' 
-                            AND ap.Status <> 'Deleted' 
+                            AND ap.State = 'Active'
+                            AND ap.Status <> 'Deleted'
                             AND ap.PatientSerNum = P.PatientSerNum) AS AP,
-                    
+
                         (SELECT A.AliasName_FR, A.AliasName_EN, AE.AliasExpressionSerNum
                         FROM Alias A, AliasExpression AE
                         WHERE A.AliasSerNum = AE.AliasSerNum) AS ALIAS
-                    
+
                     where AP.AliasExpressionSerNum = ALIAS.AliasExpressionSerNum
                     Order by AP.PatientSerNum, AP.`Time`
-                ;    
+                ;
             ";
 
         try {

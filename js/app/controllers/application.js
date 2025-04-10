@@ -119,7 +119,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 			$scope.build = response.data;
 
 		}).catch(function(response) {
-			console.error('Error occured getting application build: ', response.status, response.data);
+			console.error('Error occurred getting application build: ', response.status, response.data);
 		});
 
 		$scope.inAuthLoginModal = false;

@@ -6,16 +6,16 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 <div id="main">
     <div id="top">
-        <div class="row">           
+        <div class="row">
             <!-- Load side menu -->
             <div id="side-panel-scrollbar" class="col-lg-2">
                 <div ng-include="'templates/patient/menu-side.html'"></div>
             </div>
-    
+
             <div class="col-lg-10 animated fadeIn">
                 <div class="row main-title">
                     <div class="col-xs-12 col-md-8 title-content">
-                        <span class="fa fa-address-card"></span> 
+                        <span class="fa fa-address-card"></span>
                         <h1><strong>{{'PATIENTS.REPORT.GROUP.TITLE'|translate}}</strong></h1>
                     </div>
                     <!-- breadcrumbs -->
@@ -98,7 +98,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
                                             <label class="control-label">{{'PATIENTS.REPORT.GROUP.MF'|translate}}</label>
                                         </div>
                                         <div class="col-xs-12 col-md-6">
-                                            {{educFemPcnt}}% / {{educMalPcnt}}% / {{educUnkPcnt}}% 
+                                            {{educFemPcnt}}% / {{educMalPcnt}}% / {{educUnkPcnt}}%
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -114,7 +114,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
                                             <label class="control-label">{{'PATIENTS.REPORT.GROUP.READ'|translate}}</label>
                                         </div>
                                         <div class="col-xs-12 col-md-6">
-                                            {{educReadPcnt}}% 
+                                            {{educReadPcnt}}%
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -143,7 +143,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
                             <div resize ng-if="!refresh" class="gridStyle" style="border:none;" ng-style="{ 'width' : width, 'height' : height}" ui-grid="educGridOptions"></div>
                         </div>
                     </div>
-                
+
 
                     <div class="row" ng-show="category.questionnaire">
                         <div class="col-md-6 animated fadeInRight">
@@ -212,11 +212,11 @@ SPDX-License-Identifier: AGPL-3.0-or-later
                                             {{qstAvgCompletTime}} {{'PATIENTS.REPORT.GROUP.DY'|translate}}
                                         </div>
                                     </div>
-                                        
+
                                 </div>
                             </div>
                         </div>
-                    </div>    
+                    </div>
                     <div class="row" ng-show="showQstReport && category.questionnaire">
                         <div class="col-xs-12 side-menu-title">
                             <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
@@ -231,7 +231,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
                             <div resize ng-if="!refresh" class="gridStyle" style="border:none;" ng-style="{ 'width' : width, 'height' : height}" ui-grid="qstGridOptions"></div>
                         </div>
                     </div>
-                    
+
                     <div class="row" ng-show="category.demographics">
                         <div class="col-md-8 animated fadeInRight">
                             <div class="panel">
@@ -279,9 +279,9 @@ SPDX-License-Identifier: AGPL-3.0-or-later
                                         </div>
                                     </div>
                                 </div>
-                            </div> 
+                            </div>
                         </div>
-                    </div>    
+                    </div>
                     <div class="row" ng-show="category.demographics">
                         <div class="col-xs-12 side-menu-title">
                             <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
@@ -296,7 +296,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
                             <div resize ng-if="!refresh" class="gridStyle" style="border:none;" ng-style="{ 'width' : width, 'height' : height}" ui-grid="demoGridOptions"></div>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
 

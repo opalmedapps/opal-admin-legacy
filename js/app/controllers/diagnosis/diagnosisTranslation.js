@@ -149,4 +149,3 @@ angular.module('opalAdmin.controllers.diagnosisTranslation', ['ngAnimate', 'ui.b
 			});
 		}
 	});
-

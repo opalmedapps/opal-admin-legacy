@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # SPDX-FileCopyrightText: Copyright (C) 2014 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -173,7 +171,7 @@ sub getPrioritiesFromSourceDB
 {
 	my @patientList = @_[0];
     my $global_patientInfo_sql = @_[1];
-	
+
 	my @priorityList = (); # initialize a list of priority objects
 
 	my ($patientser, $sourceuid, $datestamp, $code); # when we retrieve query results
@@ -192,7 +190,7 @@ sub getPrioritiesFromSourceDB
 
                 IF OBJECT_ID('tempdb.dbo.#tempPriority', 'U') IS NOT NULL
                 	DROP TABLE #tempPriority;
-				
+
 				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
 					DROP TABLE #tempPatient;
 
@@ -204,7 +202,7 @@ sub getPrioritiesFromSourceDB
 			from PatientInfo c;
 			Create Index temporaryindexPriority1 on #tempPriority (PatientAriaSer);
 			Create Index temporaryindexPriority2 on #tempPriority (PatientSerNum);
-			
+
 			Select p.PatientSer, p.PatientId into #tempPatient
 			from VARIAN.dbo.Patient p;
 			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);

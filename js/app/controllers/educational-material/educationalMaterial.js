@@ -35,8 +35,8 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 			'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
 			'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
 			'ng-checked="grid.appScope.updatePublishFlag(row.entity.publish)" ng-model="row.entity.publish"></div>';
-		
-		
+
+
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">';
 		if($scope.readAccess)
 			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.showEduMatLog(row.entity)"><i title="' + $filter('translate')('EDUCATION.LIST.LOGS') + '" class="fa fa-area-chart" ></i></a></strong> ';
@@ -47,7 +47,7 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 		if($scope.deleteAccess)
 			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.deleteEduMat(row.entity)"><i title="' + $filter('translate')('EDUCATION.LIST.DELETE') + '" class="fa fa-trash" ></i></a></strong>';
 		cellTemplateOperations += '</div>';
-		
+
 		var expandableRowTemplate = '<div ui-grid="row.entity.subGridOptions"></div>';
 		var ratingCellTemplate = '<div class="ui-grid-cell-contents" ng-show="row.entity.rating == -1">' + $filter('translate')('EDUCATION.LIST.NO_RATING') + '</div>' +
 			'<div class="ui-grid-cell-contents" ng-hide="row.entity.rating == -1"><stars number="{{row.entity.rating}}"></stars> </div>';
@@ -316,5 +316,3 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 			}
 		};
 	});
-
-

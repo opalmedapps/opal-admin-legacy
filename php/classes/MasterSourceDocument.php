@@ -9,7 +9,7 @@ class MasterSourceDocument extends MasterSourceAlias {
         $this->checkReadAccess($post);
         return $this->_getSourceAliasDetails($post, ALIAS_TYPE_DOCUMENT);
     }
-    
+
     public function insertSourceDocuments($post) {
         $this->checkWriteAccess($post);
         return $this->_insertSourceAliases($post, ALIAS_TYPE_DOCUMENT);

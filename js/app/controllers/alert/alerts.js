@@ -92,7 +92,7 @@ angular.module('opalAdmin.controllers.alert', ['ngAnimate', 'ngSanitize', 'ui.bo
 			cellTemplatePublish = '<div style="text-align: center;" class="ui-grid-cell-contents">'+
 				'<i ng-class="row.entity.active == 1 ? \'fa-check text-success\' : \'fa-times text-danger\'" class="fa"></i>' +
 				+'</div>';
-		
+
 		// Data binding for main table
 		$scope.gridOptions = {
 			data: 'alertsList',
@@ -173,7 +173,7 @@ angular.module('opalAdmin.controllers.alert', ['ngAnimate', 'ngSanitize', 'ui.bo
 				});
 			}
 		};
-		
+
 		// Initialize object for storing questionnaires
 		$scope.alertsList = [];
 
@@ -223,4 +223,3 @@ angular.module('opalAdmin.controllers.alert', ['ngAnimate', 'ngSanitize', 'ui.bo
 			});
 		};
 	});
-

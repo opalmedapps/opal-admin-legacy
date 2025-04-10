@@ -6,7 +6,7 @@ openapi: 3.0.0
 info:
   title: Legacy OpalAdmin API
   description: "API to integrate source data with the Opal data ecosystem. These API endpoints allow
-    hospitals or institutions to send JSON-formatted data for Opal patients into the Opal databases 
+    hospitals or institutions to send JSON-formatted data for Opal patients into the Opal databases
     to then be provided to Opal patients via the Opal app. This is not an exhaustive listing of all API
     provided by this application, but rather the minimum set of API required for integrating a source data system
     with Opal.
@@ -1193,12 +1193,12 @@ paths:
       tags:
         - institution integration
       summary: Fetch and process historical test results for a patient
-      description: | 
+      description: |
         **Optional Integration Endpoint**
-        
-        Fetches historical lab results for an Opal patient given an MRN and site. 
+
+        Fetches historical lab results for an Opal patient given an MRN and site.
         Optionally takes fromDate, toDate. Requires opal-labs to be configured with access to a VSign SOAP Webservice.
-      
+
       requestBody:
         content:
           application/json:

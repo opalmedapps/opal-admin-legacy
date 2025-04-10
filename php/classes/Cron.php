@@ -33,7 +33,7 @@ class Cron extends Module {
             );
         }
         $this->host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-        
+
         parent::__construct(MODULE_CRON_LOG, $guestStatus);
     }
 
@@ -48,14 +48,14 @@ class Cron extends Module {
         $cronDetails = array();
         try {
             $sql = "
-				SELECT DISTINCT 
+				SELECT DISTINCT
 					Cron.CronSerNum,
-					Cron.NextCronDate, 
-					Cron.RepeatUnits, 
-					DATE_FORMAT(Cron.NextCronTime, '%H:%i'), 
+					Cron.NextCronDate,
+					Cron.RepeatUnits,
+					DATE_FORMAT(Cron.NextCronTime, '%H:%i'),
 					Cron.RepeatInterval
-				FROM 
-					Cron 
+				FROM
+					Cron
 			";
 
             $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -102,14 +102,14 @@ class Cron extends Module {
 
         try {
             $sql ="
-				UPDATE 
+				UPDATE
 					Cron
-	 			SET 
-					Cron.NextCronDate 	= '$nextCronDate', 
-					Cron.RepeatUnits 	= '$repeatUnits', 
+	 			SET
+					Cron.NextCronDate 	= '$nextCronDate',
+					Cron.RepeatUnits 	= '$repeatUnits',
 					Cron.NextCronTime 	= '$nextCronTime',
-					Cron.RepeatInterval	= '$repeatInterval' 
-				WHERE 
+					Cron.RepeatInterval	= '$repeatInterval'
+				WHERE
 					Cron.CronSerNum 	= $cronSer
 			";
 
@@ -256,7 +256,7 @@ class Cron extends Module {
         }
     }
 
-   
+
     /**
      *
      * Gets list logs of content during one or many cron sessions

@@ -184,8 +184,8 @@ angular.module('opalAdmin.controllers.cron', ['ngAnimate', 'ui.bootstrap']).
 		// Call our API to get cron logs
 		cronCollectionService.getCronChartLogs().then(function (response) {
 			$scope.cronChartLogs = $scope.chartConfig.series = response.data;
-			angular.forEach($scope.cronChartLogs, function(serie) {
-				angular.forEach(serie.data, function(log) {
+			angular.forEach($scope.cronChartLogs, function(series) {
+				angular.forEach(series.data, function(log) {
 					log.x = new Date(log.x);
 					log.y = parseInt(log.y);
 				});

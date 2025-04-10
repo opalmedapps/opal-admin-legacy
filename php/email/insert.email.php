@@ -21,5 +21,5 @@
 
 	// Call function
 	$emailObject->insertEmail($emailArray);
-	
+
 ?>

@@ -33,7 +33,7 @@ class EduMaterial extends Module {
             );
         }
         $this->host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-        
+
         parent::__construct(MODULE_EDU_MAT, $guestStatus);
     }
 
@@ -44,7 +44,7 @@ class EduMaterial extends Module {
      * @param array $eduMatList : the list of educational materials
 	 * @param object $user : the current user in session
      * @return array $response : response
-     */    
+     */
     public function updatePublishFlags( $eduMatList, $user ) {
         $this->checkWriteAccess(array($eduMatList, $user));
 
@@ -62,13 +62,13 @@ class EduMaterial extends Module {
                 $eduMatSer      = $edumat['serial'];
 
 				$sql = "
-					UPDATE 
-						EducationalMaterialControl 	
-					SET 
+					UPDATE
+						EducationalMaterialControl
+					SET
 						EducationalMaterialControl.PublishFlag = $eduMatPublish,
 						EducationalMaterialControl.LastUpdatedBy = $userSer,
 						EducationalMaterialControl.SessionId = '$sessionId'
-					WHERE 
+					WHERE
 						EducationalMaterialControl.EducationalMaterialControlSerNum = $eduMatSer
 				";
 
@@ -96,7 +96,7 @@ class EduMaterial extends Module {
 
         // Initialize list of types, separate languages
         $types = array();
-        try {          
+        try {
             $sql = "
                 SELECT DISTINCT
                     em.EducationalMaterialType_EN,
@@ -176,11 +176,11 @@ class EduMaterial extends Module {
 
 		try {
             // Validate each table of content or URL
-           
+
             $extensions = array();
             $sql = "
-                SELECT DISTINCT 
-                    ae.Name 
+                SELECT DISTINCT
+                    ae.Name
                 FROM
                     AllowableExtension ae
             ";
@@ -211,8 +211,8 @@ class EduMaterial extends Module {
                     $toc['url_EN'] = $this->urlCheck($toc['url_EN']);
                     $toc['url_FR'] = $this->urlCheck($toc['url_FR']);
 
-                    $tocExt_EN      = $this->extensionSearch($toc['url_EN']); 
-                    $tocExt_FR      = $this->extensionSearch($toc['url_FR']); 
+                    $tocExt_EN      = $this->extensionSearch($toc['url_EN']);
+                    $tocExt_FR      = $this->extensionSearch($toc['url_FR']);
 
                     if (!in_array($tocExt_FR, $extensions) || !in_array($tocExt_EN, $extensions)) {
                         $response['message'] = "Allowable extensions for URLs are: " . implode(',', $extensions);
@@ -222,12 +222,12 @@ class EduMaterial extends Module {
             }
 
             $sql = "
-                INSERT INTO 
+                INSERT INTO
                     EducationalMaterialControl (
                         Name_EN,
                         Name_FR,
                         URL_EN,
-                        URL_FR, 
+                        URL_FR,
                         URLType_EN,
                         URLType_FR,
                         ShareURL_EN,
@@ -256,13 +256,13 @@ class EduMaterial extends Module {
 					'$userSer',
 					'$sessionId',
                     '$purpose_ID'
-                FROM 
-                    AllowableExtension dummy 
+                FROM
+                    AllowableExtension dummy
                 LEFT JOIN AllowableExtension ae_en
                 ON ae_en.Name = '$urlExt_EN'
                 LEFT JOIN AllowableExtension ae_fr
                 ON ae_fr.Name = '$urlExt_FR'
-                
+
             ";
 			$query = $this->host_db_link->prepare( $sql );
 			$query->execute();
@@ -283,9 +283,9 @@ class EduMaterial extends Module {
                     $toc['url_EN'] = $this->urlCheck($toc['url_EN']);
                     $toc['url_FR'] = $this->urlCheck($toc['url_FR']);
 
-                    $tocExt_EN      = $this->extensionSearch($toc['url_EN']); 
-                    $tocExt_FR      = $this->extensionSearch($toc['url_FR']); 
-    
+                    $tocExt_EN      = $this->extensionSearch($toc['url_EN']);
+                    $tocExt_FR      = $this->extensionSearch($toc['url_FR']);
+
                     $sql = "
                         INSERT INTO
                             EducationalMaterialControl (
@@ -303,7 +303,7 @@ class EduMaterial extends Module {
 								LastUpdatedBy,
 								SessionId
                             )
-                        SELECT 
+                        SELECT
                             \"$tocType_EN\",
                             \"$tocType_FR\",
                             \"$tocName_EN\",
@@ -317,7 +317,7 @@ class EduMaterial extends Module {
 							NOW(),
 							'$userSer',
 							'$sessionId'
-                        FROM 
+                        FROM
                             AllowableExtension ae_en,
                             AllowableExtension ae_fr
                         WHERE
@@ -326,7 +326,7 @@ class EduMaterial extends Module {
                     ";
                     $query = $this->host_db_link->prepare( $sql );
 	    			$query->execute();
-    
+
 	    		    $tocSer = $this->host_db_link->lastInsertId();
 
                     $sql = "
@@ -348,7 +348,7 @@ class EduMaterial extends Module {
 			    	$query->execute();
                 }
             }
-            
+
             $response['value'] = 1; // Success
             return $response;
 
@@ -397,8 +397,8 @@ class EduMaterial extends Module {
             // Validate each table of content or URL
             $extensions = array();
             $sql = "
-                SELECT DISTINCT 
-                    ae.Name 
+                SELECT DISTINCT
+                    ae.Name
                 FROM
                     AllowableExtension ae
             ";
@@ -429,8 +429,8 @@ class EduMaterial extends Module {
                     $toc['url_EN'] = $this->urlCheck($toc['url_EN']);
                     $toc['url_FR'] = $this->urlCheck($toc['url_FR']);
 
-                    $tocExt_EN      = $this->extensionSearch($toc['url_EN']); 
-                    $tocExt_FR      = $this->extensionSearch($toc['url_FR']); 
+                    $tocExt_EN      = $this->extensionSearch($toc['url_EN']);
+                    $tocExt_FR      = $this->extensionSearch($toc['url_FR']);
 
                     if (!in_array($tocExt_FR, $extensions) || !in_array($tocExt_EN, $extensions)) {
                         $response['message'] = "Allowable extensions for URLs are: " . implode(',', $extensions);
@@ -465,7 +465,7 @@ class EduMaterial extends Module {
                         AND ae_en.Name = '$urlExt_EN'
                         AND ae_fr.Name = '$urlExt_FR'
                     ";
-                
+
         			$query = $this->host_db_link->prepare( $sql );
         			$query->execute();
                 }
@@ -487,7 +487,7 @@ class EduMaterial extends Module {
                         WHERE
                             EducationalMaterialControl.EducationalMaterialControlSerNum = $eduMatSer
                     ";
-                
+
                     $query = $this->host_db_link->prepare( $sql );
                     $query->execute();
                 }
@@ -495,8 +495,8 @@ class EduMaterial extends Module {
 
             if ($tocsUpdated) {
                 $sql = "
-                    SELECT 
-                        em.EducationalMaterialControlSerNum 
+                    SELECT
+                        em.EducationalMaterialControlSerNum
                     FROM
                         EducationalMaterialControl em,
                         EducationalMaterialTOC toc
@@ -506,7 +506,7 @@ class EduMaterial extends Module {
                 ";
                 $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
     			$query->execute();
-        
+
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                     $sql = "
@@ -514,7 +514,7 @@ class EduMaterial extends Module {
                             EducationalMaterialControl
                         WHERE
                             EducationalMaterialControl.EducationalMaterialControlSerNum = $data[0]
-                    ";         
+                    ";
                     $secondQuery = $this->host_db_link->prepare( $sql );
                     $secondQuery->execute();
                 }
@@ -542,9 +542,9 @@ class EduMaterial extends Module {
                         $toc['url_EN'] = $this->urlCheck($toc['url_EN']);
                         $toc['url_FR'] = $this->urlCheck($toc['url_FR']);
 
-                        $tocExt_EN      = $this->extensionSearch($toc['url_EN']); 
-                        $tocExt_FR      = $this->extensionSearch($toc['url_FR']); 
-        
+                        $tocExt_EN      = $this->extensionSearch($toc['url_EN']);
+                        $tocExt_FR      = $this->extensionSearch($toc['url_FR']);
+
                         $sql = "
                             INSERT INTO
                                 EducationalMaterialControl (
@@ -561,7 +561,7 @@ class EduMaterial extends Module {
                                     LastUpdatedBy,
                                     SessionId
                                 )
-                            SELECT 
+                            SELECT
                                 \"$tocType_EN\",
                                 \"$tocType_FR\",
                                 \"$tocName_EN\",
@@ -574,7 +574,7 @@ class EduMaterial extends Module {
                                 NOW(),
                                 '$userSer',
                                 '$sessionId'
-                            FROM 
+                            FROM
                                 AllowableExtension ae_en,
                                 AllowableExtension ae_fr
                             WHERE
@@ -583,9 +583,9 @@ class EduMaterial extends Module {
                         ";
                         $query = $this->host_db_link->prepare( $sql );
     	    			$query->execute();
-        
+
     	    		    $tocSer = $this->host_db_link->lastInsertId();
-                        
+
                         $sql = "
                             INSERT INTO
                                 EducationalMaterialTOC (
@@ -653,8 +653,8 @@ class EduMaterial extends Module {
 			$query->execute();
 
             $sql = "
-                SELECT 
-                    em.EducationalMaterialControlSerNum 
+                SELECT
+                    em.EducationalMaterialControlSerNum
                 FROM
                     EducationalMaterialControl em,
                     EducationalMaterialTOC toc
@@ -664,7 +664,7 @@ class EduMaterial extends Module {
             ";
             $query = $this->host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
-    
+
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                 $sql = "
@@ -672,7 +672,7 @@ class EduMaterial extends Module {
                         EducationalMaterialControl
                     WHERE
                         EducationalMaterialControl.EducationalMaterialControlSerNum = $data[0]
-                ";         
+                ";
                 $secondQuery = $this->host_db_link->prepare( $sql );
                 $secondQuery->execute();
             }
@@ -694,7 +694,7 @@ class EduMaterial extends Module {
 		}
 	}
 
-    
+
 
      /**
      *
@@ -704,7 +704,7 @@ class EduMaterial extends Module {
     public function getEducationalMaterialListLogs($eduIds) {
         $this->checkReadAccess($eduIds);
         return $this->opalDB->getEduMaterialLogs($eduIds);
-    }  
+    }
 
     /**
      *
@@ -733,7 +733,7 @@ class EduMaterial extends Module {
             if ($pathExtension) {return $pathExtension;}
             else {return $extension;} // eg. youtube.com/embed/h583d89 -- return host extension instead (com)
         }
-            
+
         return $extension;
 
     }
@@ -756,7 +756,7 @@ class EduMaterial extends Module {
         // if no host return url
         if (!$host) {return $urlCheck;}
 
-        // YouTube .. So it can render/embed properly in app 
+        // YouTube .. So it can render/embed properly in app
         if (strpos($host, 'youtube') !== false) {
             // First remove any potential arguments in url
             // Eg. https://www.youtube.com/watch?v=AAAA&feature=youtu.be -> https://www.youtube.com/watch?v=AAAA
@@ -770,7 +770,7 @@ class EduMaterial extends Module {
         }
         // Youtu.be .. same reason
         if (strpos($host, 'youtu.be') !== false) {
-            // get youtube ID 
+            // get youtube ID
             // eg: https://youtu.be/AAAA ... ID = AAAA
             $pos = strrpos($url, '/');
             $id = $pos === false ? false : substr($url, $pos + 1);
@@ -787,5 +787,3 @@ class EduMaterial extends Module {
 
 
 }
-       
-    

@@ -19,7 +19,7 @@ class Appointment extends Module
 
     /**
      * Validate the input parameters for individual patient appointment
-     * Validation code :     
+     * Validation code :
      *                      1st bit site invalid or missing
      *                      2nd bit mrn invalid or missing
      *
@@ -52,7 +52,7 @@ class Appointment extends Module
 
     /**
      * Validate the input parameters for individual patient appointment
-     * Validation code :     
+     * Validation code :
      *                      1st bit site invalid or missing
      *                      2nd bit mrn invalid or missing
      *                      3rd bit source invalid or missing
@@ -68,11 +68,11 @@ class Appointment extends Module
      * </pre>
      * @param array<mixed> &$source (Reference) - source parameters
      * @return string $errCode - error code.
-     */   
+     */
     protected function _validateAppointmentSourceExternalId(&$post, &$patientSite, &$source)  {
         $patientSite = array();
         $errCode = $this->_validateBasicPatientInfo($post, $patientSite);
-        
+
         // 3th bit - source
         if(!array_key_exists("sourceSystem", $post) || $post["sourceSystem"] == "") {
             $errCode = "1" . $errCode;
@@ -92,7 +92,7 @@ class Appointment extends Module
 
     /**
      * Validate the input parameters for individual patient appointment
-     * Validation code :     
+     * Validation code :
      *                      1st bit site invalid or missing
      *                      2nd bit mrn invalid or missing
      *                      3rd bit source invalid or missing
@@ -106,7 +106,7 @@ class Appointment extends Module
      * @param array<mixed> &$patientSite (Reference) - patient parameters
      * @param array<mixed> &$source (Reference) - source parameters
      * @return string $errCode - error code
-     */    
+     */
     protected function _validateInsertAppointment(&$post, &$patientSite, &$source) {
         $post = HelpSetup::arraySanitization($post);
 
@@ -207,7 +207,7 @@ class Appointment extends Module
         $countPending = count($pendingAppointment);
 
         if ($countAppt > 1){
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates appointment found.");                    
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates appointment found.");
         } else if ($countAppt == 1){
             $toUpdate = $currentAppointment[0];
             $toUpdate["Status"] = APPOINTMENT_STATUS_CODE_DELETED;
@@ -228,7 +228,7 @@ class Appointment extends Module
                 $replacementMap["\$oldAppointmentDateEN"] =  $formatter->format($prevStartDateTime);
                 $formatter = new \IntlDateFormatter(locale: 'en_CA', dateType: \IntlDateFormatter::NONE, timeType: \IntlDateFormatter::SHORT, pattern: "h:mm a");
                 $replacementMap["\$oldAppointmentTimeEN"] =  $formatter->format($prevStartDateTime);
-                
+
                 if ($prevStartDateTime >= $today){
                     $this->_notifyChange($toUpdate,  $action, $replacementMap, $toUpdate["AppointmentSerNum"]);
                 }
@@ -240,21 +240,21 @@ class Appointment extends Module
             $toInsert = $pendingAppointment[0];
             $toInsert["Status"] = APPOINTMENT_STATUS_CODE_DELETED;
             $toInsert["State"] = APPOINTMENT_STATUS_CODE_DELETED;
-            $toInsert["DateModified"] = date("Y-m-d H:i:s");            
+            $toInsert["DateModified"] = date("Y-m-d H:i:s");
             $toInsert["sourceName"] = $source["SourceDatabaseName"];
             $this->opalDB->insertPendingAppointment($toInsert);
 
             unset($toInsert["DateModified"]);
-            $this->_insertAppointmentPendingMH($toInsert, $source);            
-            
+            $this->_insertAppointmentPendingMH($toInsert, $source);
+
         } else if ($countAppt == 0 && $countPending == 0) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, "Appointment not found.");
-        }      
+        }
     }
 
     /**
      * Validate basic information of a specific database source.
-     * Validation code :     
+     * Validation code :
      *                      1st bit source system invalid or missing
      *                      2nd bit sourceId (Appointment ID) invalid or missing
      *                      3rd bit source invalid or missing
@@ -272,7 +272,7 @@ class Appointment extends Module
             if (!array_key_exists("sourceSystem", $post) || $post["sourceSystem"] == "") {
                 $errCode = "1" . $errCode;
             } else {
-                $source = $this->opalDB->getSourceDatabaseDetails($post["sourceSystem"]);                
+                $source = $this->opalDB->getSourceDatabaseDetails($post["sourceSystem"]);
                 if (count($source) != 1) {
                     $source = array();
                     $errCode = "1" . $errCode;
@@ -332,7 +332,7 @@ class Appointment extends Module
         // and assign the code to the generic alias
         if (count($aliasInfos) == 0) {
             $aliasInfos = $this->opalDB->getGenericAlias($post["site"]);
-            
+
             if (count($aliasInfos) > 0) {
                 $aliasExpressionId = $this->opalDB->assignToGenericAlias($aliasInfos[0]["AliasSerNum"], $source, $post['appointmentTypeCode'], $post['appointmentTypeDescription']);
                 // $aliasInfos is missing the AliasExpressionSerNum at this point
@@ -374,7 +374,7 @@ class Appointment extends Module
         }
 
         if($countAppt == 0 ) {
-            $action = 'AppointmentNew';                    
+            $action = 'AppointmentNew';
             $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
             $replacementMap["\$newAppointmentDateFR"] =  $formatter->format($newStartDateTime);
             $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
@@ -384,7 +384,7 @@ class Appointment extends Module
             $formatter = new \IntlDateFormatter(locale: 'en_CA', dateType: \IntlDateFormatter::NONE, timeType: \IntlDateFormatter::SHORT, pattern: "h:mm a");
             $replacementMap["\$newAppointmentTimeEN"] =  $formatter->format($newStartDateTime);
         }
-        
+
         if($countAlias == 0 || $toPublish == 0) {
             $toInsert["Level"]  = 1;
             $toInsert["appointmentTypeCode"] = $post['appointmentTypeCode'];
@@ -418,7 +418,7 @@ class Appointment extends Module
 
                 // Use the following line for debugging
                 // print_r("Difference between " . $appointment["ScheduledStartTime"] . " and " . $post["scheduledTimestamp"] . " is " . $hourdiff ."\n\n");
-                                
+
                 if ($hourdiff >= 2) {
                     $action = 'AppointmentTimeChange';
                     $formatter = new \IntlDateFormatter('fr_CA', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
@@ -470,13 +470,13 @@ class Appointment extends Module
      * @param array &$source (Reference) - source parameters
      * @return int Appointment ID (new or updated) set as pending
      */
-    protected function _insertAppointmentPending($toInsert, &$source) {        
+    protected function _insertAppointmentPending($toInsert, &$source) {
         $pendingAppointment = $this->opalDB->findPendingAppointment($source["SourceDatabaseName"],$toInsert["SourceSystemID"]);
         $toInsert["DateModified"] = date("Y-m-d H:i:s");
 
         if(count($pendingAppointment) > 0) {
             $pendingAppointment = $pendingAppointment[0];
-            $toInsert["ID"] = $pendingAppointment["ID"];            
+            $toInsert["ID"] = $pendingAppointment["ID"];
         }
         unset($toInsert["SourceDatabaseSerNum"]);
         unset($toInsert["AppointmentSerNum"]);
@@ -485,14 +485,14 @@ class Appointment extends Module
     }
 
     protected function _insertAppointmentPendingMH($toInsert, &$source) {
-        $pendingAppointment = $this->opalDB->findPendingMHAppointment($source["SourceDatabaseName"],$toInsert["SourceSystemID"]);        
-        unset($toInsert["DateAdded"]);        
+        $pendingAppointment = $this->opalDB->findPendingMHAppointment($source["SourceDatabaseName"],$toInsert["SourceSystemID"]);
+        unset($toInsert["DateAdded"]);
 
         if(count($pendingAppointment) > 0) {
             $pendingAppointment = $pendingAppointment[0];
             //$toInsert["AppointmentSerNum"] = $pendingAppointment["AppointmentSerNum"];
             $toInsert["AppointmentPendingId"] = $pendingAppointment["AppointmentPendingId"];
-            
+
             $toInsert["PendingDate"] = $pendingAppointment["PendingDate"];
             $toInsert["action"] = "UPDATE";
         } else {
@@ -509,10 +509,10 @@ class Appointment extends Module
 
     /**
      * Validate basic information of a specific database source.
-     * Validation code :     
+     * Validation code :
      *                      1st bit source system invalid or missing
      *                      2nd bit sourceId (Appointment ID) invalid or missing
-     * 
+     *
      * @param  array $post - Contains the following information
      *                          sourceSystem : Source database of appointment (i.e. Aria, Medivisit, Mosaic, etc.)
      *                          sourceId : Source system unique appointment ID (i.e. YYYYA9999999, 9999999)
@@ -528,7 +528,7 @@ class Appointment extends Module
             if (!array_key_exists("sourceSystem", $post) || $post["sourceSystem"] == "") {
                 $errCode = "1" . $errCode;
             } else {
-                $source = $this->opalDB->getSourceDatabaseDetails($post["sourceSystem"]);                
+                $source = $this->opalDB->getSourceDatabaseDetails($post["sourceSystem"]);
                 if (count($source) != 1) {
                     $source = array();
                     $errCode = "1" . $errCode;
@@ -574,7 +574,7 @@ class Appointment extends Module
         $countPending = count($pendingAppointment);
 
         if ($countAppointment > 1){
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates appointment found.");                    
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Duplicates appointment found.");
         } else if ($countAppointment == 1){
             $toUpdate = $currentAppointment[0];
             $toUpdate["Status"] = $post["status"];
@@ -594,7 +594,7 @@ class Appointment extends Module
                 $replacementMap["\$oldAppointmentDateEN"] =  $formatter->format($prevStartDateTime);
                 $formatter = new \IntlDateFormatter(locale: 'en_CA', dateType: \IntlDateFormatter::NONE, timeType: \IntlDateFormatter::SHORT, pattern: "h:mm a");
                 $replacementMap["\$oldAppointmentTimeEN"] =  $formatter->format($prevStartDateTime);
-                
+
                 if ($prevStartDateTime >= $today){
                     $this->_notifyChange($toUpdate, $action, $replacementMap, $toUpdate["AppointmentSerNum"]);
                 }
@@ -607,12 +607,12 @@ class Appointment extends Module
             $toInsert["Status"] = $post["status"];
             $toUpdate["State"] = APPOINTMENT_STATE_CODE_ACTIVE;
             $toInsert["DateModified"] = date("Y-m-d H:i:s");
-            
+
             $this->opalDB->insertPendingAppointment($toInsert);
 
             unset($toInsert["DateModified"]);
-            $this->_insertAppointmentPendingMH($toInsert, $source);            
-            
+            $this->_insertAppointmentPendingMH($toInsert, $source);
+
         } else if ($countAppointment < 1 && $countPending < 1) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, "Appointment not found.");
         }

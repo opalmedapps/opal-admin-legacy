@@ -411,13 +411,13 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 				// Log who created educational material
 				var currentUser = Session.retrieveObject('user');
 				$scope.newEduMat.user = currentUser;
-				
+
 				// Check for duplicate form values
-				angular.forEach($scope.EduMatTypes, function(value) { 
+				angular.forEach($scope.EduMatTypes, function(value) {
 					//if translations do not match, return invalidEduMatType
 					if ((angular.equals($scope.newEduMat.type_EN.toLowerCase(), value["EN"].toLowerCase()) && !angular.equals($scope.newEduMat.type_FR.toLowerCase(), value["FR"].toLowerCase()))
-						|| (angular.equals($scope.newEduMat.type_FR.toLowerCase(), value["FR"].toLowerCase()) && !angular.equals($scope.newEduMat.type_EN.toLowerCase(), value["EN"].toLowerCase()))) { 
-							$scope.invalidEduMatType = true;	
+						|| (angular.equals($scope.newEduMat.type_FR.toLowerCase(), value["FR"].toLowerCase()) && !angular.equals($scope.newEduMat.type_EN.toLowerCase(), value["EN"].toLowerCase()))) {
+							$scope.invalidEduMatType = true;
 							event.preventDefault();
 					}
 				});

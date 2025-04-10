@@ -84,7 +84,7 @@ Version 2.1.9.0:
  - Merge branch 'develop' into 'staging'
  - Merge branch 'staging' into 'preproduction'
  - Merge branch 'develop' into 'staging'
- - corret the text
+ - correct the text
  - Delete composer.lock
  - remove hard coding for firebase init
  - refactor search query for pulling username from db
@@ -106,7 +106,7 @@ Version 2.1.9.0:
  - Merge branch 'staging' into preproduction
  - Merge branch 'develop' into 'staging'
  - Initialize the main menu
- - add encription and translate text
+ - add encryption and translate text
  - rename the files
  - start the front end of the main menu of the module
  - build php scripts for modification tool
@@ -144,7 +144,7 @@ Version 2.1.6.0:
 
 Version 2.1.5.0:
  - Merge branch 'OPAL-1192' into 'develop'
- - Fix the push notificaiton for French characters
+ - Fix the push notification for French characters
 
 Version 2.1.4.0:
  - Merge branch 'OPAL-1174' into 'develop'
@@ -289,7 +289,7 @@ Version 2.1.1.0:
     OPAL-887 Opal - API for inserting / updating Resource
     OPAL-900 Opal - Questionnaire API for generating questionnaire list
     OPAL-912 Study - Database changes add consent status to a study
-    OPAL-913 Study - Add investigator contact information (email and phone number) 
+    OPAL-913 Study - Add investigator contact information (email and phone number)
     OPAL-998 Multi-site - attach hospital table for Publication and Cron
 
 
@@ -306,7 +306,7 @@ Version 2.0.0.0:
  - opal-609 - changed from cookies to sessionStorage in the frontend or it will be impossible to store more new module in the nav menu.
  - Merge branch 'opal-559' of https://gitlab.com/akimosupremo/opalAdmin into staging
  - opal-559 - updated error msgs and codes for diagnosis
- - Hot Fix Alais Expression and Resource Appointment
+ - Hot Fix Alias Expression and Resource Appointment
  - Merge branch 'opal-559' of https://gitlab.com/akimosupremo/opalAdmin into staging
  - opal-559 - updated error msgs and codes for diagnosis
  - Merge branch 'opal-559' of https://gitlab.com/akimosupremo/opalAdmin into staging
@@ -316,7 +316,7 @@ Version 2.0.0.0:
  - Fix the ignore of this file
  - Hot fix for the Alias Expression for ORMS
  - opal-559 - added insert patient diagnosis.
- - opal-559 trimed questionnaire add/insert post of unecessary data sent.
+ - opal-559 trimmed questionnaire add/insert post of unnecessary data sent.
  - HOTFIX - add and edit questionnaire limits the amount of data sent
  - Merge branch 'opal-559' of https://gitlab.com/akimosupremo/opalAdmin into staging
  - opal-559 - added comments
@@ -350,7 +350,7 @@ Version 2.0.0.0:
  - opal-530 - added registrationLogin method
  - opal-530 - adding user login registration underway
  - Merge branch 'opal-530' of https://gitlab.com/akimosupremo/opalAdmin into staging
- - opal-530 - updated user audit so we can at least get the decoded informations but not the password or the cypher.
+ - opal-530 - updated user audit so we can at least get the decoded information but not the password or the cypher.
  - opal-530 - finished view audit code.
  - opal-530 - user login failed will track username in createdBy field.
  - opal-530 - finished audit view list
@@ -491,7 +491,7 @@ Version 0.20.0.0:
  - Validating triggers integrity
  - Coding of add publication done.
  - Removed duplicates from doctors and machines triggers.
- - Fixing diagnosis and appoitment listing.
+ - Fixing diagnosis and appointment listing.
  - Redone patient section selection
  - Redone patient section selection
  - Debugging filter manupilation list
@@ -804,7 +804,7 @@ Version 0.19.0.0:
  - Started modifying the questions listings and fixed filter bug
 
 Version 0.18.19.6:
- - Enabled push notificaiton for appointment changes
+ - Enabled push notification for appointment changes
 
 Version 0.18.19.5:
  - FIxed the push notification for French characters
@@ -818,7 +818,7 @@ Version 0.18.19.3:
  - Merge branch 'hotfix-0.18.19.1' into staging
 
 Version 0.18.19.2:
- - Quick fix on additinal single quote for $defaultLastTransferred
+ - Quick fix on additional single quote for $defaultLastTransferred
  - Merge branch 'hotfix-0.18.19.1'
 
 Version 0.18.19.1:
@@ -859,7 +859,7 @@ Version 0.18.18.0:
  - Merge branch 'master' into staging
  -    --- backup 2018-12-04
  - Modified files to write queries into a text file for testing
- - --- Optimized queries   -- Some modules had the optimized query (just added an if statement for source database existance)   -- Other modules missing current optimization (had query in loops)
+ - --- Optimized queries   -- Some modules had the optimized query (just added an if statement for source database existence)   -- Other modules missing current optimization (had query in loops)
  - Merge branch 'hotfix-0.18.17.2' into develop
  - Merge remote-tracking branch 'origin/master' into develop
  - Merge branch 'hotfix-0.18.16.17' into develop
@@ -884,7 +884,7 @@ Version 0.18.18.0:
  - Merge branch 'hotfix-0.18.16.2' into develop
  - Merge branch 'hotfix-0.18.16.1' into develop
  - Merge branch 'hotfix-0.18.16.1' into develop
- - Modified the Patient to dispaly email and RAMQ
+ - Modified the Patient to display email and RAMQ
  - Update Version
 
 Version 0.18.17.7:
@@ -979,7 +979,7 @@ Version 0.18.16.7:
 
 Version 0.18.16.6:
  - Merge branch 'hotfix-0.18.16.5'
- -    --- Remove empy Registration Id Devices when retrieving the Patient Devices
+ -    --- Remove empty Registration Id Devices when retrieving the Patient Devices
 
 Version 0.18.16.5:
 
@@ -1007,7 +1007,7 @@ Version 0.18.16.2:
  - Merge branch 'develop'
  - Merge branch 'develop' into preproduction
  - Merge branch 'develop'
- - Added CC to the dataContorl.pl when emailing
+ - Added CC to the dataControl.pl when emailing
  - Merge branch 'hotfix-0.18.15.2' into develop
  - Merge branch 'hotfix-0.18.15.2' into preproduction
  - Merge branch 'hotfix-0.18.15.2'
@@ -1115,7 +1115,7 @@ Version 0.18.9.2:
  - Merge branch 'hotfix-0.18.9.1'
  -     --- Fixed crash in patient location MH
  - Merge branch 'hotfix-0.18.9.1'
- -     --- Fixed mising definers
+ -     --- Fixed missing definers
  - Merge branch 'hotfix-0.18.9.1'
 
 Version 0.18.9.1:
@@ -1128,7 +1128,7 @@ Version 0.18.9.1:
  - Merge branch 'hotfix-0.18.7.1'
 
 Version 0.18.9.0:
- -     --- Added email type in database revision     --- Fixed dev implentations that weren't meant to be in production     --- Fixed crash for test results
+ -     --- Added email type in database revision     --- Fixed dev implementations that weren't meant to be in production     --- Fixed crash for test results
  -     --- Removed migration files since we track from dbv
  -     --- Cleanup of files and tracking
  - Merge branch 'release-0.18.8.0' into develop
@@ -1211,7 +1211,7 @@ Version 0.18.4.1:
  - Merge branch 'hotfix-0.18.3.2' into preproduction
 
 Version 0.18.4.0:
- -     --- Significantly reduced publisher execution time         -- Optimized queries to group expressions based on their respective last transferred time.         Best case (which is most cases), all expressions have the same last transferred date.         Intermediate case, when new expressions have been added to the alias so there will be         two groups (1. existing expressions have last transfered of 5 mins ago, 2. new expressions         have last transferred at the beginning of time). Each group will have their "IN" clause as         a concatenation of expressions with their respective last transferred.         -- Changed "LIKE" clause for exact "=" for checking patient SSN. This significantly reduced         query execution time.         -- This has been tested for when all expressions have been aliased! Reduced time from > 3 mins         to ~ 16 seconds!
+ -     --- Significantly reduced publisher execution time         -- Optimized queries to group expressions based on their respective last transferred time.         Best case (which is most cases), all expressions have the same last transferred date.         Intermediate case, when new expressions have been added to the alias so there will be         two groups (1. existing expressions have last transferred of 5 mins ago, 2. new expressions         have last transferred at the beginning of time). Each group will have their "IN" clause as         a concatenation of expressions with their respective last transferred.         -- Changed "LIKE" clause for exact "=" for checking patient SSN. This significantly reduced         query execution time.         -- This has been tested for when all expressions have been aliased! Reduced time from > 3 mins         to ~ 16 seconds!
  - Merge branch 'hotfix-0.18.3.2' into develop
  -     --- Fixed blank tables for ui-grid in accordions
  - Merge branch 'hotfix-0.18.3.1' into develop
@@ -1271,7 +1271,7 @@ Version 0.18.1.0:
 
 Version 0.18.0.0:
  - Merge branch 'selectAllFeature' into develop
- -     --- Improved trigger logic         -- Checking both the case that triggers are defined and that the patient has things         to compare in the first place (eg. has doctors). Before this check wasn't made and         would still send to patient if "ALL" is defined but a patient has no appointments today for example.     --- Fixed issue where educational material triggers weren't updating upon selecting an individual trigger     --- Changed publishing logic for educational material         -- Originally woud get all patient's appointments retrospectively. But should only check for         prospective appointments. So if new patient had new start before registration, it will not send         educational material for start of radiotherapy.         -- Patient diagnosis was based on patient appointments but if patient has none, then it would seem         patient doesn't have a diagnosis. So now getting diagnosis from Diagnosis call and not from appointments.         -- Above point same for legacy questionnaires
+ -     --- Improved trigger logic         -- Checking both the case that triggers are defined and that the patient has things         to compare in the first place (eg. has doctors). Before this check wasn't made and         would still send to patient if "ALL" is defined but a patient has no appointments today for example.     --- Fixed issue where educational material triggers weren't updating upon selecting an individual trigger     --- Changed publishing logic for educational material         -- Originally would get all patient's appointments retrospectively. But should only check for         prospective appointments. So if new patient had new start before registration, it will not send         educational material for start of radiotherapy.         -- Patient diagnosis was based on patient appointments but if patient has none, then it would seem         patient doesn't have a diagnosis. So now getting diagnosis from Diagnosis call and not from appointments.         -- Above point same for legacy questionnaires
  -     --- Added select all functionality to publisher         -- patient will automatically pass for a given trigger if "ALL" is selected for said trigger         Else, continue respective checks as usual
  -     --- Fixed flawed logic in publishers for triggers         -- If only patient triggers were defined, it would not have passed even if the         patient was in the list of patient triggers
  -     --- Added select all feature to legacy questionnaire module     --- Changed all instances of "filter" to "trigger"     --- Changed all instances of "resource" to "machine"
@@ -1312,7 +1312,7 @@ Version 0.17.0.0:
  -     --- Downgraded font awesome from 5 to 4         -- textAngular still uses version 4 and migration file does not work         -- required fixing class names     --- Added rich-text to all previously plain-text description fields
  - --- Started verbose print statements
  - Merge branch 'hotfix-0.16.0.1' into develop
- -     --- Fixed missing template reference after restruction
+ -     --- Fixed missing template reference after restriction
  -     --- Redesigned template and controller structures         -- removed all instances of script injections on html pages and made it its own html template.         Eg: a template was injected for edit post on the post.html. Now it's its own template in edit.post.html         -- same goes with the controllers. Now every "edit" and "delete" functionality has its own controller         -- see directory tree for design but basically each feature has its own directory (alias, post, questionnaire, etc)         -- Now, edits, deletes, adds are fully separated
  -     --- Starting to restructure directories and separate templates/controllers
  -     --- Bolded the titles in content tables     --- Changed format of session duration in user activity
@@ -1346,9 +1346,9 @@ Version 0.16.0.0:
  -     --- Added appointment status filter to new legacy questionnaire page
  -     --- Removed "repeat once" option from frequency filter         -- By default, it will only publish once so it's redundant     --- Added conditional logic for recurring filters         -- If appointment, status, checkin, or frequency filters are defined,         it will flag to check if the questionnaire has been published today (to         publish according to recurring schedule, but no more than once a day). If not,         it will check it has been published for all time (to publish only once forever).
  -     --- Trigger update on changing repeat interval
- -     --- Reverted auto-increment optimization in commit: 66ed1b5f961799023b7085c71461a5ea3629791b         -- Turns out auto-increment still augments even after update         (See: https://stackoverflow.com/questions/23516958/on-duplicate-key-auto-increment-issue-mysql)         -- Optimized by removing FrequencyEventsSerNum in database since it will never be used.         Only metas set will display in table instead of the '*' wildcard for unused meta keys         -- Reverted scripts that were manipulating '*' wildcards
+ -     --- Reverted auto-increment optimization in commit: 66ed1b5f961799023b7085c71461a5ea3629791b         -- Turns out auto-increment still augments even after update         (See: https://stackoverflow.com/questions/23516958/on-duplicate-key-auto-increment-issue-mysql)         -- Optimized by removing FrequencyEventsSetNum in database since it will never be used.         Only metas set will display in table instead of the '*' wildcard for unused meta keys         -- Reverted scripts that were manipulating '*' wildcards
  -     --- Fixed crash on settings when switching from custom freuqncy to preset frequency
- -     --- Optimized frequency filter         -- To avoid auto increment primary key to potentially increase to a very large number         after every update to the legacy questionnaire (because it would delete everything         and put the new settings in the FrequencyEvents table), all settings are "flushed"         (i.e. all metas are wildcarded '*') and new settings are updated in the database.         This avoids having new FrequencyEventsSerNum values for every update.         This is a tradeoff between having low FrequencyEventsSerNum values with 9 static allocated         rows and potentially high FrequencyEventsSerNum with allocated rows corresponding to the         settings made (min:0, max:5 rows)         -- MetaKey's now have a pipe delimeter to identify the type of meta key and associate the         metakey to the corresponding legacy questionnaire (note the 'lqc' = LegacyQuestionnaireControl         -> underscore serial number of the legacy questionnaire control)
+ -     --- Optimized frequency filter         -- To avoid auto increment primary key to potentially increase to a very large number         after every update to the legacy questionnaire (because it would delete everything         and put the new settings in the FrequencyEvents table), all settings are "flushed"         (i.e. all metas are wildcarded '*') and new settings are updated in the database.         This avoids having new FrequencyEventsSetNum values for every update.         This is a tradeoff between having low FrequencyEventsSetNum values with 9 static allocated         rows and potentially high FrequencyEventsSetNum with allocated rows corresponding to the         settings made (min:0, max:5 rows)         -- MetaKey's now have a pipe delimiter to identify the type of meta key and associate the         metakey to the corresponding legacy questionnaire (note the 'lqc' = LegacyQuestionnaireControl         -> underscore serial number of the legacy questionnaire control)
  -     --- Finished publisher logic for frequency filter     --- Will optimize metas
  -     --- Fixed crashes     --- Almost completed the publisher of legacy questionnaires based on frequency filters
  -     --- Started publisher logic for frequency filter         -- Will retrieve loegacy questionnaires that fall under the defined frequency intervals
@@ -1360,7 +1360,7 @@ Version 0.16.0.0:
  - Merge branch 'release-0.15.0.0' into develop
 
 Version 0.15.0.0:
- -     --- Fixed failed publishing issue         -- When more than one patient filter is defined, the logic would fail to see an         existance of a patient in the filter list even though it is there. Marked down as         a coding error. Changed logic to check if it does exist. The else contains the next statement.
+ -     --- Fixed failed publishing issue         -- When more than one patient filter is defined, the logic would fail to see an         existence of a patient in the filter list even though it is there. Marked down as         a coding error. Changed logic to check if it does exist. The else contains the next statement.
  -     --- Added checkin and appointment status filters to legacy questionnaires
  -     --- Fixed bug where save changes button didn't enable when updating a filter     --- Changed publisher to use alias appointment filters instead of aria expressions
  - --- Made section variables more meaningful --- Changed "terms" filter to appointment alias filter now
@@ -1564,7 +1564,7 @@ Version 0.10.2:
  - Update README.md
 
 Version 0.10.1:
- -     --- Created a temporary table called QuestionnaireControlNew and adjusted scripts accordingly         -- The old questionnaire system already has a table named QuestionnaireControl. So         to avoid overwritting, we will execute a phase in / phase out so that when we're ready         to use the new questionnaire system, we will change the table names/scripts accordingly.
+ -     --- Created a temporary table called QuestionnaireControlNew and adjusted scripts accordingly         -- The old questionnaire system already has a table named QuestionnaireControl. So         to avoid overwriting, we will execute a phase in / phase out so that when we're ready         to use the new questionnaire system, we will change the table names/scripts accordingly.
  -     --- Added install access functionality (not completed)
  -     --- Added a new file to handle config file generations
  -     --- Set default install access flag to true         -- Makes sense considering the first installation of opalAdmin requires default access
@@ -1587,7 +1587,7 @@ Version 0.10.1:
  - --- Fixed issue where alias educational material was not auto filled in list
  - --- Fixed deprecated PHP file call
  - --- Fixed merge errors
- - --- Renamed files to more sensible names     -- For better readability and understand of each script without necessarily having to open the file     -- Words in PHP files in /php and /api are now separated by underscores and lowercases (for consistency)     -- Prefixes added to each PHP filename that either gets, insert, deletes, or updates (for better readibility)
+ - --- Renamed files to more sensible names     -- For better readability and understand of each script without necessarily having to open the file     -- Words in PHP files in /php and /api are now separated by underscores and lowercases (for consistency)     -- Prefixes added to each PHP filename that either gets, insert, deletes, or updates (for better readability)
  - 	--- Added phpstorm gitignore 	--- fixed indentation
  - Merge branch 'release-0.10.0' into develop
  -     --- Debugged queries
@@ -1616,7 +1616,7 @@ Version 0.10.0:
  - --- Changed variable name in backend that was changed on frontend
  - --- Refactored code for better readability
  - --- Added Questionnaire module to publisher --- Fixed format in collectionsJS --- Testing a change from success callback to then callback
- -     --- Improved functionaility when editing questionnaires         -- Existing tags were not showing up when opening the accordion in the edit modal         -- Current groups were not preselected in the table in the group section of the edit modal         -- There was a bit of confusion between current and new groups as one could add the same             group even if it already existed in the object
+ -     --- Improved functionality when editing questionnaires         -- Existing tags were not showing up when opening the accordion in the edit modal         -- Current groups were not preselected in the table in the group section of the edit modal         -- There was a bit of confusion between current and new groups as one could add the same             group even if it already existed in the object
  - --- Debugging
  - --- Fixing bugs on questionnaire edit
  -     --- Modifications
@@ -1637,7 +1637,7 @@ Version 0.10.0:
  - 	--- Added questionnaire bits
 
 Version 0.9.5:
- -     --- Removed Venue index from PLs         -- VenueSerNums can be 0 if a stored procedure to uncheckin a patient occurs (no resource/venue)
+ -     --- Removed Venue index from PLs         -- VenueSetNums can be 0 if a stored procedure to uncheckin a patient occurs (no resource/venue)
  -     --- Added SQL migration for patient location
  - --- Added patientlocation support in publisher
  -     --- Added text to questionnaires
@@ -1869,7 +1869,7 @@ Version 0.6.1:
  -     -- Removed file from tracking. SHOULD NOT BE THERE!
  - Merge branch 'hotfix-0.3.1' into develop
  - Merge branch 'hotfix-0.3.1'
- -     --- Replaced overflow of text with ellipses on eahc Name column         -- Better readability.
+ -     --- Replaced overflow of text with ellipses on each Name column         -- Better readability.
  - Version bump to 0.3.1
  -     -- Ignored php configs
  - Merge branch 'release-0.2' into develop
@@ -1976,7 +1976,7 @@ Version 0.1.0
  -     -- Removed file from tracking. SHOULD NOT BE THERE!
  - Merge branch 'hotfix-0.3.1' into develop
  - Merge branch 'hotfix-0.3.1'
- -     --- Replaced overflow of text with ellipses on eahc Name column         -- Better readability.
+ -     --- Replaced overflow of text with ellipses on each Name column         -- Better readability.
  - Version bump to 0.3.1
  -     -- Ignored php configs
  - Merge branch 'release-0.2' into develop

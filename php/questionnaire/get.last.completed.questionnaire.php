@@ -11,4 +11,3 @@ $results = $questionnaire->getLastCompletedQuestionnaire($_POST);
 
 header('Content-Type: application/javascript');
 echo json_encode($results);
-

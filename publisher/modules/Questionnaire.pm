@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # SPDX-FileCopyrightText: Copyright (C) 2017 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -7,7 +5,7 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 15-Aug-2017 ++ File: Questionnaire.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a questionnaire class. This module calls a 
+# Perl module that creates a questionnaire class. This module calls a
 # constructor to create a questionnaire object that contains questionnaire information stored
 # as object variables.
 #
@@ -21,12 +19,12 @@ use Time::Piece; # perl module
 use Array::Utils qw(:all);
 use POSIX; # perl module
 
-use Patient; # Our custom patient module 
+use Patient; # Our custom patient module
 use Filter; # Our custom filter module
 use Appointment; # Our custom appointment module
 use Alias; # Our custom alias module
 use Diagnosis; # Our custom diagnosis module
-use PatientDoctor; # Our custom patient doctor module 
+use PatientDoctor; # Our custom patient doctor module
 use PushNotification; # Our custom push notification module
 
 #---------------------------------------------------------------------------------
@@ -35,7 +33,7 @@ use PushNotification; # Our custom push notification module
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our questionnaire class 
+# Constructor for our questionnaire class
 #====================================================================================
 sub new
 {
@@ -46,7 +44,7 @@ sub new
 		_questionnairecontrolser 	=> undef,
 		_userser 					=> undef,
 		_filters 					=> undef,
-	}; 
+	};
 
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
@@ -157,12 +155,12 @@ sub publishQuestionnaires
 	my (@patientList) = @_; # patient list from args
 
 	# Retrieve all the questionnaire controls
-	my @questionnaireControls = getQuestionnaireControlsMarkedForPublish(); 
+	my @questionnaireControls = getQuestionnaireControlsMarkedForPublish();
 
 	foreach my $Patient (@patientList) {
 
-		my $patientSer = $Patient->getPatientSer(); 
-		
+		my $patientSer = $Patient->getPatientSer();
+
 		foreach my $QuestionnaireControl (@questionnaireControls) {
 
 			my $questionnaireControlSer 	= $QuestionnaireControl->getQuestionnaireControlSer();
@@ -175,10 +173,10 @@ sub publishQuestionnaires
 			# The reason is that the patient filter will combine as an OR with the non-patient filters
 			# If any of the non-patient filters exist, all non-patient filters combine in an AND (i.e. intersection)
             # However, we don't want to lose the exception that a patient filter has been defined
-			# If there is a patient filter defined, then we only send the content to the patients 
+			# If there is a patient filter defined, then we only send the content to the patients
 			# selected in the filter UNLESS other non-patient filters have been defined. In that case,
 			# we send to the patients defined in the patient filters AND to the patients that pass
-			# in the non-patient filters  
+			# in the non-patient filters
 			my $isNonPatientSpecificFilterDefined = 0;
             my $isPatientSpecificFilterDefined = 0;
 
@@ -265,7 +263,7 @@ sub publishQuestionnaires
                     # else no patient filters were defined and failed to match the appointment filter
                     # move on to the next questionnaire
                     else{next;}
-                } 
+                }
             }
 
             # Fetch diagnosis filters (if any)
@@ -307,7 +305,7 @@ sub publishQuestionnaires
                     # else no patient filters were defined and failed to match the doctor filter
                     # move on to the next questionnaire
                     else{next;}
-                }  
+                }
             }
 
             # Fetch resource filters (if any)
@@ -333,13 +331,13 @@ sub publishQuestionnaires
                 }
             }
 
-			# We look into whether any patient-specific filters have been defined 
+			# We look into whether any patient-specific filters have been defined
 			# If we enter this if statement, then we check if that patient is in that list
 			my $patientPassed = 0;
             if (@patientFilters) {
 
                 # if the patient-specific flag was enabled then it means this patient failed
-                # one of the filters above 
+                # one of the filters above
                 # OR if the non patient specific flag was disabled then there were no filters defined above
                 # and this is the last test to see if this patient passes
                 if ($isPatientSpecificFilterDefined eq 1 or $isNonPatientSpecificFilterDefined eq 0) {
@@ -355,12 +353,12 @@ sub publishQuestionnaires
             if (isNonPatientSpecificFilterDefined eq 1 or ($isPatientSpecificFilterDefined eq 1 and $patientPassed eq 1)) {
 
                 # If we've reached this point, we've passed all catches (filter restrictions). We make
-                # a questionnaire object, check if it exists already in the database. If it does 
+                # a questionnaire object, check if it exists already in the database. If it does
                 # this means the questionnaire has already been publish to the patient. If it doesn't
                 # exist then we publish to the patient (insert into DB).
     			$questionnaire = new Questionnaire();
 
-    			# set the necessary values 
+    			# set the necessary values
     			$questionnaire->setQuestionnaireControlSer($questionnaireControlSer);
     			$questionnaire->setQuestionnairePatientSer($patientSer);
 
@@ -393,7 +391,7 @@ sub inOurDatabase
 	my $questionnairecontrolser	= $questionnaire->getQuestionnaireControlSer();
 
 	my $serInDB = 0; # false by default. Will be true if questionnaire exists
-	my $ExistingQuestionnaire = (); # data to be entered if questionnaire exists 
+	my $ExistingQuestionnaire = (); # data to be entered if questionnaire exists
 
 	my $inDB_sql = "
 		SELECT DISTINCT
@@ -412,7 +410,7 @@ sub inOurDatabase
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
 
 		$serInDB = $data[0];
@@ -444,7 +442,7 @@ sub insertQuestionnaireIntoOurDB
 	my $questionnairecontrolser = $questionnaire->getQuestionnaireControlSer();
 
 	my $insert_sql = "
-		INSERT INTO 
+		INSERT INTO
 			Questionnaire_patient (
 				patient_serNum,
 				questionnaire_serNum
@@ -453,8 +451,8 @@ sub insertQuestionnaireIntoOurDB
 			'$patientser',
 			'$questionnairecontrolser'
 		)
-	"; 
-	
+	";
+
 	#print "$insert_sql\n";
     # prepare query
 	my $query = $SQLDatabase->prepare($insert_sql)
@@ -469,7 +467,7 @@ sub insertQuestionnaireIntoOurDB
 
 	# Set the Serial in our object
 	$questionnaire->setQuestionnaireSer($ser);
-	
+
 	return $questionnaire;
 }
 
@@ -518,6 +516,5 @@ sub getQuestionnaireControlsMarkedForPublish
 }
 
 
-# Exit smoothly 
+# Exit smoothly
 1;
-
