@@ -36,7 +36,7 @@ jobs:
           NPMRC_FILE: ${{ secrets.NPMRC_FILE }}
         run: |
           echo "$NPMRC_FILE" > .npmrc
-      - uses: opalmedapps/.github/.github/actions/docker-build@add-build-action
+      - uses: opalmedapps/.github/.github/actions/docker-build@main
         id: build-image
         with:
           registry: ${{ env.REGISTRY }}
