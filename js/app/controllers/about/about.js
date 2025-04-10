@@ -36,7 +36,7 @@
                 }
             }
         };
-        
+
         marked.use(customRenderExtension);
         // Configure Marked (GFM for auto-linkifying bare URLs)
         marked.setOptions({ gfm: true });
@@ -63,7 +63,7 @@
                         }
                     }
                 };
-        
+
                 marked.use(customRenderExtension);
                 let mdContent = response.data;
                 // Remove both the comment block and the section header

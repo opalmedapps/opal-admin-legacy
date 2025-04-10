@@ -30,7 +30,7 @@ class Trigger extends Module {
     /*
      * Validate and sanitize post data and check if module id is set. If there is a problem return an error 422.
      * @params  array  $postdata : POST data containing a starting-point identifier
-     * @params  integer  $sourceModuleId : the module id of the source content 
+     * @params  integer  $sourceModuleId : the module id of the source content
      * @return int $errCode : error code (if any error found. 0 = no error)
      * */
     protected function _validateTrigger(&$postData, &$moduleId) {
@@ -71,7 +71,7 @@ class Trigger extends Module {
      * Gets questionnaire answers
      *
      * @param integer $patientQuestionnaireSer : the patient-questionnaire relation serial number
-     * @return array questionnaire results along with explicit questionnaire ID and patientSerNum 
+     * @return array questionnaire results along with explicit questionnaire ID and patientSerNum
      */
     protected function _getQuestionnaireResults($patientQuestionnaireSer, $language){
         $questionnaireResults = $this->questionnaireDB->getQuestionnaireResults($patientQuestionnaireSer, $language);
@@ -101,7 +101,7 @@ class Trigger extends Module {
      * Function that gets the necessary data that will be used to check the logic against
      * @params  integer  $id : starting-point identifier to search for source data
      * @params  integer  $sourceModuleId : the module id of the source content
-     * @return  array : respective data based on module 
+     * @return  array : respective data based on module
      * */
     protected function _getData($id, $sourceModuleId, $language) {
         $result = array();
@@ -118,10 +118,10 @@ class Trigger extends Module {
     }
 
     /*
-     * Execute event method when trigger logic passes 
+     * Execute event method when trigger logic passes
      * @params  array  $trigger : current trigger entry
-     * @params  integer  $patientSerNum : patient serial 
-     * @return  
+     * @params  integer  $patientSerNum : patient serial
+     * @return
      * */
     protected function _triggerEvent(&$trigger, &$patientSerNum) {
         $result = false;
@@ -166,8 +166,8 @@ class Trigger extends Module {
     /*
      * Main method to process triggers
      * @params  array  $postdata : POST data containing a starting-point identifier
-     * @params  integer  $sourceModuleId : the module id of the source content 
-     * @return  boolean : true if end of method is reached 
+     * @params  integer  $sourceModuleId : the module id of the source content
+     * @return  boolean : true if end of method is reached
      * */
     public function executeTrigger($postData, $sourceModuleId) {
         $this->checkWriteAccess($postData);

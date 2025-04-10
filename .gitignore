@@ -57,7 +57,7 @@ publisher/logs/**
 # ignore Visual Studio Code
 .vscode
 
-# ignore push notificaiton test script
+# ignore push notification test script
 publisher/php/ykmTestNotification.php
 publisher/php/TestNotification.php
 publisher/php/test.php

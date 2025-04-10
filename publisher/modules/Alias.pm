@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # SPDX-FileCopyrightText: Copyright (C) 2014 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -410,7 +408,7 @@ sub setAliasLastTransferredModularControllers
 	my ($current_datetime, $module) = @_; # our current datetime in arguments
 
 	my $update_sql = "
-	UPDATE 
+	UPDATE
 		cronControlAlias,
 		Alias,
 		AliasExpression

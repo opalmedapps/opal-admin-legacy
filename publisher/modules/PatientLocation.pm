@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # SPDX-FileCopyrightText: Copyright (C) 2017 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -299,13 +297,13 @@ sub getPatientLocationsFromSourceDB
 				WITH PatientInfo (PatientAriaSer, LastTransfer, PatientSerNum) AS (
 			";
 			$patientInfo_sql .= $global_patientInfo_sql; #use pre-loaded patientInfo from dataControl
-			
+
 			$patientInfo_sql .= ")
 			Select c.* into #tempPL
 			from PatientInfo c;
 			Create Index temporaryindex on #tempPL (PatientAriaSer);
 			Create Index temporaryindex2 on #tempPL (PatientSerNum);
-			
+
 			Select p.PatientSer, p.PatientId into #tempPatient
 			from VARIAN.dbo.Patient p;
 			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
@@ -450,7 +448,7 @@ sub getPatientLocationsFromSourceDB
 			my $numOfPatients = @patientList;
 			my $counter = 0;
 			my $databaseName = $Configs::OPAL_DB_NAME;
-			
+
 
 			my $plInfo_sql = "
 				SELECT DISTINCT
@@ -502,9 +500,9 @@ sub getPatientLocationsFromSourceDB
 				}
 			}
 
-		
+
 			# prepare query
-			
+
 			my $query = $sourceDatabase->prepare($plInfo_sql)
 				or die "Could not prepare query: " . $sourceDatabase->errstr;
 
@@ -710,15 +708,15 @@ sub getPatientLocationsMHFromSourceDB
 						PatientLocationMH plmh,
 						Venue
 					WHERE
-						mval.PatientSerNum 			=  (select pt.PatientSerNum 
+						mval.PatientSerNum 			=  (select pt.PatientSerNum
 						from Patient pt where pt.PatientId = '$id')
 					AND mval.AppointmentSerNum		= plmh.AppointmentSerNum
 					AND plmh.CheckinVenueName  		= Venue.VenueId
 					AND plmh.PatientLocationSerNum 	= '$sourceuid'
 					and mval.AppointSys <> 'Aria'
-					
+
 					UNION
-					
+
 					SELECT DISTINCT
 						pl.PatientLocationSerNum,
 						pl.PatientLocationRevCount,
@@ -731,7 +729,7 @@ sub getPatientLocationsMHFromSourceDB
 						PatientLocation pl,
 						Venue
 					WHERE
-						mval.PatientSerNum 			= (select pt.PatientSerNum 
+						mval.PatientSerNum 			= (select pt.PatientSerNum
 						from Patient pt where pt.PatientId = '$id')
 					AND mval.AppointmentSerNum		= pl.AppointmentSerNum
 					AND pl.CheckinVenueName  		= Venue.VenueId

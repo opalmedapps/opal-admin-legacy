@@ -12,4 +12,3 @@ $testResult = new TestResult; // Object
 
 $response = $testResult->insertTestResult($_POST);
 print json_encode($response); // Return response
-

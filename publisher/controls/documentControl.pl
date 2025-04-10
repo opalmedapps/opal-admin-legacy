@@ -17,7 +17,7 @@
 This is the first phase for now in separating the dataContorl.pl
 
 Second phase will be modifying the OpalAdmin to use the new tables for
-the publishing control. This will allow a slow transition so that 
+the publishing control. This will allow a slow transition so that
 it is easy to troubleshoot and validate the changes.
 
 YM 2021-06-28
@@ -361,5 +361,3 @@ $json_log->{'run'}->{'count'} = 0;
 $json_log->{'crash'}->{'count'} = 0;
 
 writeToLogFile($monitor_log, encode_json($json_log), ">");
-
-

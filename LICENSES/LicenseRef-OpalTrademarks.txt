@@ -6,7 +6,7 @@ Trademark policy
 
 3) Your use of the Marks must be non-disparaging and you must avoid any attempt to unfairly or confusingly capitalize on the goodwill of the Marks. Use of the Marks must in no way indicate a greater degree of association between you and the Opal Health Informatics Group than actually exists.
 
-4) You should not include any of the Marks in the name of your application, product, service, grant applications, or communications without our written permission, regardless of whether it’s commercial or non-commercial in nature. 
+4) You should not include any of the Marks in the name of your application, product, service, grant applications, or communications without our written permission, regardless of whether it’s commercial or non-commercial in nature.
 
 4.1) If you are producing new software that is intended to provide integration with a product using a Mark, you may use the Mark in a way which indicates the intent of your product. For example, if you are developing a plugin to integrate Opal with another system, acceptable project titles might be “Opal plugin for …” or “Opal integration for …”. However, you may not use the Marks in a way which implies an endorsement where that doesn’t exist, or which attempts to unfairly or confusingly capitalize on the goodwill or brand of the project.
 

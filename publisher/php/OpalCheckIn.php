@@ -69,7 +69,7 @@ class OpalCheckin{
         //======================================================
 
         // Get the Opal Patient ID using the Aria Serial Number
-        $sql = "select PHI.PatientSerNum 
+        $sql = "select PHI.PatientSerNum
                 From Patient_Hospital_Identifier PHI
                 where PHI.MRN = '$patientId'
                     and PHI.Hospital_Identifier_Type_Code = '$site'
@@ -269,9 +269,9 @@ class OpalCheckin{
             AND CheckedInFlag = 1";
         } else { // if the site is not RVH, then return an empty query results
                  // in theory, PatientLocationSer is an auto increment so it should never be a negative number
-            $sql = "SELECT ScheduledActivitySer AS AppointmentSerNum 
+            $sql = "SELECT ScheduledActivitySer AS AppointmentSerNum
                     FROM VARIAN.dbo.PatientLocation
-                    WHERE PatientLocationSer = -9999999"; 
+                    WHERE PatientLocationSer = -9999999";
         }
 
         $host_db_link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

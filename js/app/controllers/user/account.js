@@ -189,4 +189,3 @@ angular.module('opalAdmin.controllers.account', ['ui.bootstrap']).
 
 
 	});
-

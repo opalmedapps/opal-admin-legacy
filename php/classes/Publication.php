@@ -71,7 +71,7 @@ class Publication extends Module
         $results["publication"]["description"]["EN"] = $publicationDetails["type_EN"];
         $results["publication"]["description"]["FR"] = $publicationDetails["type_FR"];
 
-        
+
         $results["publication"]["unique"] =  $module["unique"];
 
         if($moduleId == MODULE_POST) {

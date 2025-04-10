@@ -448,5 +448,3 @@ filter('deliberatelyTrustAsHtml', function ($sce) {
 			}
 		};
 	});
-
-

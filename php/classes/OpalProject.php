@@ -128,13 +128,13 @@ abstract class OpalProject
         } else {
             $errCode = "0" . $errCode;
         }
-        
+
         // 3rd bit - MRN and site combo must exists
         if(bindec($errCode) != 0) {
             $patientSite = array();
             $errCode = "1" . $errCode;
-        } else {            
-            $patientSite = $this->opalDB->getPatientSite($post["mrn"], $post["site"]);            
+        } else {
+            $patientSite = $this->opalDB->getPatientSite($post["mrn"], $post["site"]);
 
             if(count($patientSite) != 1) {
                 $patientSite = array();
@@ -165,7 +165,7 @@ abstract class OpalProject
                 "ResourceType"=>$resource["type"],
             );
 
-            $result = $this->opalDB->countResource($data);            
+            $result = $this->opalDB->countResource($data);
             if (intval($result["total"]) <= 0)
                 $this->opalDB->insertResource($data);
             else
@@ -173,11 +173,11 @@ abstract class OpalProject
         }
 
         $resourceAppointmentList = $this->opalDB->getResourceIds($resources, $sourceDatabaseId, $appointmentId);
-		
+
         $resourceIdList = array();
         foreach ($resourceAppointmentList as $id)
             array_push($resourceIdList, intval($id["ResourceSerNum"]));
-        
+
         $this->opalDB->deleteResourcesForAppointment($appointmentId, $resourceIdList);
         $this->opalDB->insertResourcesForAppointment($resourceAppointmentList);
     }
@@ -194,9 +194,9 @@ abstract class OpalProject
             "en"=>$notificationControl[0]["Message_EN"],
             "fr"=>$notificationControl[0]["Message_FR"],
         );
-        
+
         $this->_insertNotification($data, $controlser, $refTableId);
-        
+
         try {
             $patient = $this->opalDB->getPatientSerNum($data['PatientSerNum'])[0];
         } catch (Exception $e) {
@@ -299,7 +299,7 @@ abstract class OpalProject
             "DateAdded" => date("Y-m-d H:i:s"),
             "ReadStatus" => 0
         );
-        
+
         if (is_array($aliasExpressionDetail) && array_key_exists("AliasName_FR", $aliasExpressionDetail)) {
             $newNotification["RefTableRowTitle_FR"]  = $aliasExpressionDetail["AliasName_FR"];
         }
@@ -307,7 +307,7 @@ abstract class OpalProject
         if (is_array($aliasExpressionDetail) && array_key_exists("AliasName_EN", $aliasExpressionDetail)) {
             $newNotification["RefTableRowTitle_EN"]  = $aliasExpressionDetail["AliasName_EN"];
         }
-        
+
         $this->opalDB->insertNotification($newNotification);
     }
 }

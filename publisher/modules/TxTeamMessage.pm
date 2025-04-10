@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # SPDX-FileCopyrightText: Copyright (C) 2016 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -140,7 +138,7 @@ sub publishTxTeamMessages
 
     my $today_date = strftime("%Y-%m-%d", localtime(time));
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
-    
+
     # Check for any new updates from the main cron control
 	PostControl::CheckPostControlsMarkedForPublishModularCron('Treatment Team Message');
 

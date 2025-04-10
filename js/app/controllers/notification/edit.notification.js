@@ -7,7 +7,7 @@ angular.module('opalAdmin.controllers.notification.edit', ['ngAnimate', 'ngSanit
 	controller('notification.edit', function ($scope, $uibModal, $uibModalInstance, $filter, $state, $sce, notificationCollectionService, Session, ErrorHandler) {
 
 		// Default Booleans
-		$scope.changesMade = false; // changes have been made? 
+		$scope.changesMade = false; // changes have been made?
 		$scope.notification = {}; // initialize notification object
 
 		/* Function for the "Processing" dialog */

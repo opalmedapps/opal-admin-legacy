@@ -6,7 +6,7 @@ angular.module('opalAdmin.controllers.loginModal', ['ngAnimate', 'ui.bootstrap']
 
 
 	/******************************************************************************
-	* Login controller 
+	* Login controller
 	*******************************************************************************/
 	controller('loginModal', function ($scope, $rootScope, $state, $filter, AUTH_EVENTS, HTTP_CODE, AuthService, $uibModalInstance, Session) {
 
@@ -17,7 +17,7 @@ angular.module('opalAdmin.controllers.loginModal', ['ngAnimate', 'ui.bootstrap']
 		};
 
 		$scope.bannerMessage = "";
-		// Function to show page banner 
+		// Function to show page banner
 		$scope.showBanner = function () {
 			$(".bannerMessage").slideDown(function () {
 				setTimeout(function () {
@@ -27,7 +27,7 @@ angular.module('opalAdmin.controllers.loginModal', ['ngAnimate', 'ui.bootstrap']
 		};
 		// Function to set banner class
 		$scope.setBannerClass = function (classname) {
-			// Remove any classes starting with "alert-" 
+			// Remove any classes starting with "alert-"
 			$(".bannerMessage").removeClass(function (index, css) {
 				return (css.match(/(^|\s)alert-\S+/g) || []).join(' ');
 			});
@@ -111,4 +111,3 @@ angular.module('opalAdmin.controllers.loginModal', ['ngAnimate', 'ui.bootstrap']
 		};
 
 	});
-

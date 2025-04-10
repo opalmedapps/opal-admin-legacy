@@ -312,12 +312,12 @@ class Notification extends Module {
 
             $sql = "
                 UPDATE NotificationControlMH
-                SET 
+                SET
                     NotificationControlMH.LastUpdatedBy = '$userSer',
                     NotificationControlMH.SessionId = '$sessionId'
                 WHERE
                     NotificationControlMH.NotificationControlSerNum = $serial
-                ORDER BY NotificationControlMH.RevSerNum DESC 
+                ORDER BY NotificationControlMH.RevSerNum DESC
                 LIMIT 1
             ";
             $query = $this->host_db_link->prepare( $sql );
@@ -331,7 +331,7 @@ class Notification extends Module {
 		}
 	}
 
-   
+
 
     /**
      * Gets list logs of notifications during one or many cron sessions

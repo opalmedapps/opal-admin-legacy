@@ -257,7 +257,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 					entry.name_display = entry.name_FR;
 				}else{
 					entry.name_display = entry.name_EN;
-				}	
+				}
 			});
 			$scope.consentFormList = response.data;
 		}).catch(function(err){
@@ -273,7 +273,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$('.form-box-right').addClass('fadeInRight');
 		};
 
-	
+
 		$scope.consentFormUpdate = function(form){
 			if($scope.toSubmit.consent_form.id){
 				$scope.selectedName = form.name_display;
@@ -283,7 +283,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				$scope.validator.consent_form.completed = $scope.leftMenu.consent_form.open;
 			}
 		}
-	
+
 
 		$scope.popupStart = {};
 		$scope.popupEnd = {};
@@ -466,7 +466,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.leftMenu.title_desc.display = $scope.leftMenu.title_desc.open;
 			$scope.leftMenu.title_desc.preview = $scope.leftMenu.title_desc.open;
 		}, true);
-	
+
 		// Function to submit the new diagnosis translation
 		$scope.submitStudy = function () {
 			$scope.readyToSend.code = $scope.toSubmit.details.code;
@@ -483,7 +483,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.readyToSend.patients = $scope.toSubmit.patients;
 			$scope.readyToSend.questionnaire = $scope.toSubmit.questionnaire
 			$scope.readyToSend.consent_form = $scope.toSubmit.consent_form.id;
-			
+
 			$.ajax({
 				type: 'POST',
 				url: 'study/insert/study',

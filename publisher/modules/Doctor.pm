@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # SPDX-FileCopyrightText: Copyright (C) 2015 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -7,12 +5,12 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 10-Aug-2015 ++ File: Doctor.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a doctor class. This module calls a constructor to 
-# create a doctor object that contains doctor information stored as object 
+# Perl module that creates a doctor class. This module calls a constructor to
+# create a doctor object that contains doctor information stored as object
 # variables.
 #
 # There exists various subroutines to set doctor information, get doctor information
-# and compare doctor information between two doctor objects. 
+# and compare doctor information between two doctor objects.
 # There exists various subroutines that use the Database.pm module to update the
 # MySQL database and check if a doctor exists already in this database.
 
@@ -32,7 +30,7 @@ use Storable qw(dclone); # for deep copies
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our Doctor class 
+# Constructor for our Doctor class
 #====================================================================================
 sub new
 {
@@ -53,7 +51,7 @@ sub new
 }
 
 #====================================================================================
-# Subroutine to set the doctor serial 
+# Subroutine to set the doctor serial
 #====================================================================================
 sub setDoctorSer
 {
@@ -63,7 +61,7 @@ sub setDoctorSer
 }
 
 #====================================================================================
-# Subroutine to set the doctor source database serial 
+# Subroutine to set the doctor source database serial
 #====================================================================================
 sub setDoctorSourceDatabaseSer
 {
@@ -198,7 +196,7 @@ sub getDoctorInfoFromSourceDB
 
 	# when we retrieve query results
 	my ($resourcesernum, $firstname, $lastname, $email);
-	
+
     ######################################
     # ARIA
     ######################################
@@ -210,15 +208,15 @@ sub getDoctorInfoFromSourceDB
 		    	dr.FirstName,
 			    dr.LastName,
                 addr.EMailAddress
-	    	FROM 
+	    	FROM
 		    	VARIAN.dbo.Doctor dr
-            LEFT JOIN VARIAN.dbo.ResourceAddress ra 
+            LEFT JOIN VARIAN.dbo.ResourceAddress ra
             ON ra.ResourceSer       = dr.ResourceSer
             LEFT JOIN VARIAN.dbo.Address addr
             ON addr.AddressSer      = ra.AddressSer
 	    	WHERE
 		    	dr.ResourceSer	    = '$doctorSourceUID'
-    		
+
 	    ";
 
     	# prepare query
@@ -230,14 +228,14 @@ sub getDoctorInfoFromSourceDB
 		    or die "Could not execute query: " . $query->errstr;
 
     	while (my @data = $query->fetchrow_array()) {
-	    
+
 		    # query results
     		$firstname	= $data[0];
 	    	$lastname	= $data[1];
             $email      = $data[2];
 
     		$resourcesernum = Resource::reassignResource($doctorSourceUID, $doctorSourceDBSer);
-		
+
     		# set doctor information
 	    	$Doctor->setDoctorResourceSer($resourcesernum);
 		    $Doctor->setDoctorFirstName($firstname);
@@ -326,7 +324,7 @@ sub inOurDatabase
 			Doctor.FirstName,
 			Doctor.LastName,
             Doctor.Email
-		FROM	
+		FROM
 			Doctor
 		WHERE
 			Doctor.DoctorAriaSer        = '$doctorSourceUID'
@@ -340,7 +338,7 @@ sub inOurDatabase
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
 
 		$ser			        = $data[0];
@@ -349,7 +347,7 @@ sub inOurDatabase
 		$firstname		        = $data[3];
 		$lastname		        = $data[4];
         $email                  = $data[5];
-		
+
 	}
 
 	if ($DoctorSourceUIDInDB) {
@@ -366,7 +364,7 @@ sub inOurDatabase
 
 		return $ExistingDoctor; # this is truthful (ie. doctor exists) return object
 	}
-	
+
 	else {return $ExistingDoctor;} # this is false (ie. doctor DNE) return empty
 }
 
@@ -376,7 +374,7 @@ sub inOurDatabase
 sub insertDoctorIntoOurDB
 {
 	my ($doctor) = @_; # our doctor object
-	
+
 	# Retrieve all the necessary details from this object
 	my $sourceuid	= $doctor->getDoctorSourceUID();
     my $sourcedbser = $doctor->getDoctorSourceDatabaseSer();
@@ -386,13 +384,13 @@ sub insertDoctorIntoOurDB
     my $email       = $doctor->getDoctorEmail();
 
 	my $insert_sql = "
-		INSERT INTO 
+		INSERT INTO
 			Doctor (
-				DoctorSerNum, 
+				DoctorSerNum,
                 SourceDatabaseSerNum,
 				DoctorAriaSer,
-				ResourceSerNum, 
-				FirstName, 
+				ResourceSerNum,
+				FirstName,
 				LastName,
                 Email
 			)
@@ -429,8 +427,8 @@ sub insertDoctorIntoOurDB
 #======================================================================================
 sub updateDatabase
 {
-	my ($doctor) = @_; # our doctor object to update 
-	
+	my ($doctor) = @_; # our doctor object to update
+
 	my $sourceuid   = $doctor->getDoctorSourceUID();
     my $sourcedbser = $doctor->getDoctorSourceDatabaseSer();
 	my $firstname	= $doctor->getDoctorFirstName();
@@ -454,7 +452,7 @@ sub updateDatabase
 
 	# execute query
 	$query->execute()
-		or die "Could not execute query: " . $query->errstr;	
+		or die "Could not execute query: " . $query->errstr;
 }
 
 #======================================================================================
@@ -476,7 +474,7 @@ sub compareWith
 	my $Ofirstname	= $OriginalDoctor->getDoctorFirstName();
 	my $Olastname	= $OriginalDoctor->getDoctorLastName();
     my $Oemail      = $OriginalDoctor->getDoctorEmail();
-	
+
 	# go through each parameter
 	if ($Sfirstname ne $Ofirstname) {
 		print "Doctor First Name has changed from '$Ofirstname' to '$Sfirstname'\n";
@@ -498,13 +496,13 @@ sub compareWith
 }
 
 #======================================================================================
-# Subroutine to reassign our doctor id to a doctor serial in MySQL. 
+# Subroutine to reassign our doctor id to a doctor serial in MySQL.
 # In the process, insert doctor into our database if it DNE
 #======================================================================================
 sub reassignDoctor
 {
 	my ($doctorSourceUID, $doctorSourceDBSer) = @_; # doctor info from arguments
-	
+
 	my $Doctor = new Doctor(); # initialize doctor object
 
 	$Doctor->setDoctorSourceUID($doctorSourceUID); # assign our uid
@@ -541,4 +539,4 @@ sub reassignDoctor
 }
 
 # To exit/return always true (for the module itself)
-1;	
+1;

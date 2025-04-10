@@ -151,7 +151,7 @@ class Email extends Module {
         $types = array();
         try {
             $sql = "
-			SELECT DISTINCT 
+			SELECT DISTINCT
 				et.EmailTypeSerNum,
 				et.EmailTypeName,
 				et.EmailTypeId
@@ -200,7 +200,7 @@ class Email extends Module {
 
         try {
             $sql = "
-				INSERT INTO 
+				INSERT INTO
 					EmailControl (
 						Subject_EN,
 						Subject_FR,
@@ -306,19 +306,19 @@ class Email extends Module {
 				DELETE FROM
 					EmailControl
 				WHERE
-					EmailControl.EmailControlSerNum = $serial 
+					EmailControl.EmailControlSerNum = $serial
 			";
             $query = $this->host_db_link->prepare( $sql );
             $query->execute();
 
             $sql = "
                 UPDATE EmailControlMH
-                SET 
+                SET
                     EmailControlMH.LastUpdatedBy = '$userSer',
                     EmailControlMH.SessionId = '$sessionId'
                 WHERE
                     EmailControlMH.EmailControlSerNum = $serial
-                ORDER BY EmailControlMH.RevSerNum DESC 
+                ORDER BY EmailControlMH.RevSerNum DESC
                 LIMIT 1
             ";
             $query = $this->host_db_link->prepare( $sql );
@@ -335,7 +335,7 @@ class Email extends Module {
 
     }
 
-   
+
 
     /**
      * Gets list logs of emails during one or many cron sessions
@@ -365,7 +365,7 @@ class Email extends Module {
                     EmailType emt
                 WHERE
                     emmh.EmailControlSerNum  = emc.EmailControlSerNum
-                AND emc.EmailTypeSerNum      = emt.EmailTypeSerNum 
+                AND emc.EmailTypeSerNum      = emt.EmailTypeSerNum
                 AND emmh.CronLogSerNum              IN ($serials)
             ";
 

@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # SPDX-FileCopyrightText: Copyright (C) 2014 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -7,12 +5,12 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 11-Mar-2014 ++ File: Staff.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a staff class. This module calls a constructor to 
-# create a staff object that contains staff information stored as object 
+# Perl module that creates a staff class. This module calls a constructor to
+# create a staff object that contains staff information stored as object
 # variables.
 #
 # There exists various subroutines to set staff information, get staff information
-# and compare staff information between two staff objects. 
+# and compare staff information between two staff objects.
 # There exists various subroutines that use the Database.pm module to update the
 # MySQL database and check if a staff exists already in this database.
 
@@ -28,7 +26,7 @@ use Storable qw(dclone); # for deep copies
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our Staff class 
+# Constructor for our Staff class
 #====================================================================================
 sub new
 {
@@ -43,7 +41,7 @@ sub new
 	};
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
-	bless $staff, $class; 
+	bless $staff, $class;
 	return $staff;
 }
 
@@ -168,7 +166,7 @@ sub getStaffInitials
 sub getStaffInfoFromSourceDB
 {
 	my ($Staff) = @_; # Staff object
-		
+
 	my $sourceuid   = $Staff->getStaffSourceUID();
     my $sourcedbser = $Staff->getStaffSourceDatabaseSer();
 
@@ -186,7 +184,7 @@ sub getStaffInfoFromSourceDB
 	    		userid.user_first_name,
 		    	userid.user_last_name,
 			    userid.user_initial
-    		FROM 
+    		FROM
 	    		VARIAN.dbo.userid userid
 		    WHERE
 			    userid.stkh_id = '$id'
@@ -201,11 +199,11 @@ sub getStaffInfoFromSourceDB
 		    or die "Could not execute query: " . $query->errstr;
 
     	while (my @data = $query->fetchrow_array()) {
-    
+
 	    	$firstname	= $data[0];
 		    $lastname	= $data[1];
     		$initials	= $data[2];
-	    
+
 		    $Staff->setStaffFirstName($firstname);
     		$Staff->setStaffLastName($lastname);
 	    	$Staff->setStaffInitials($initials);
@@ -292,7 +290,7 @@ sub inOurDatabase
 			Staff.LastName
 		FROM
 			Staff
-		WHERE 
+		WHERE
 			Staff.StaffId               = '$sourceuid'
         AND Staff.SourceDatabaseSerNum  = '$sourcedbser'
 	";
@@ -304,7 +302,7 @@ sub inOurDatabase
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
 
 		$ser		        = $data[0];
@@ -342,13 +340,13 @@ sub insertStaffIntoOurDB
 	my $lastname	    = $staff->getStaffLastName();
 
 	my $insert_sql = "
-		INSERT INTO 
+		INSERT INTO
 			Staff (
-				StaffSerNum, 
+				StaffSerNum,
                 SourceDatabaseSerNum,
-				StaffId, 
-				FirstName, 	
-				LastName, 
+				StaffId,
+				FirstName,
+				LastName,
 				LastUpdated
 			)
 		VALUES (
@@ -408,7 +406,7 @@ sub updateDatabase
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 }
 
 #======================================================================================
@@ -428,7 +426,7 @@ sub compareWith
 	# Original staff....
 	my $Ofirstname	= $OriginalStaff->getStaffFirstName();
 	my $Olastname	= $OriginalStaff->getStaffLastName();
-	
+
 	# go through each parameter
 
 	if ($Sfirstname ne $Ofirstname) {
@@ -447,7 +445,7 @@ sub compareWith
 
 #======================================================================================
 # Subroutine to reassign our staff id to a staff serial. In the process, insert
-# staff into our database if it DNE. 
+# staff into our database if it DNE.
 #======================================================================================
 sub reassignStaff
 {
@@ -458,17 +456,17 @@ sub reassignStaff
 	}
 
 	else {
-	    
+
         my $Staff = new Staff(); # initialize staff object
-		
+
         $Staff->setStaffSourceUID($sourceuid); # assign our id
         $Staff->setStaffSourceDatabaseSer($sourcedbser);
 
-		# check if our staff exists in our database 
+		# check if our staff exists in our database
 		my $StaffExists = $Staff->inOurDatabase();
 
 		if ($StaffExists) {
-			
+
 			my $ExistingStaff = dclone($StaffExists); # reassign variable
 
 			my $staffSer = $ExistingStaff->getStaffSer(); # get serial
@@ -476,16 +474,16 @@ sub reassignStaff
 			return $staffSer;
 		}
 
-		else { # staff DNE 
+		else { # staff DNE
 
 			# get staff info from source database (ARIA)
 			$Staff = $Staff->getStaffInfoFromSourceDB();
 
 			# insert staff into our database
 			$Staff = $Staff->insertStaffIntoOurDB();
-		
+
 			# get serial
-			my $staffSer = $Staff->getStaffSer(); 
+			my $staffSer = $Staff->getStaffSer();
 
 			return $staffSer;
 		}
@@ -493,6 +491,4 @@ sub reassignStaff
 }
 
 # To exit/return always true (for the module itself)
-1;	
-
-
+1;

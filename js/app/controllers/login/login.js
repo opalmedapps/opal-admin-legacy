@@ -93,7 +93,7 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, $
 				} else {
 					$state.go('home');
 					Idle.watch();
-				}								
+				}
 			}).catch(function(err) {
 				$rootScope.$broadcast(AUTH_EVENTS.loginFailed);
 				switch(err.status) {
@@ -132,4 +132,3 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, $
 		}
 	};
 });
-

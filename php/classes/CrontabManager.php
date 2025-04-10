@@ -20,7 +20,7 @@ class CrontabManager {
 
 		/* Default directory for our temporary cron file */
 		$this->path = getcwd() . '/'; // Current directory for simplicity
-	
+
 		/* Dafault file name for the temp cron file */
 		$this->handle = 'crontab.txt';
 
@@ -28,11 +28,11 @@ class CrontabManager {
 		$this->cron_file = "{$this->path}{$this->handle}";
 
 	}
-		
+
 	/* Function to execute commands on the server */
 	public function exec () {
 
-		// Count the total number of arguments passed	
+		// Count the total number of arguments passed
 		$argument_count = func_num_args();
 
 		try {
@@ -66,7 +66,7 @@ class CrontabManager {
 
 	/* Function to remove the temporary cron file */
 	public function remove_file() {
-		
+
 		// Check for existdnce of temp cron file
 		// then execute rm to delete it
 		if ($this->crontab_file_exists()) $this->exec("rm {$this->cron_file}");
@@ -75,13 +75,13 @@ class CrontabManager {
 		return $this;
 	}
 
-	/* Function to write existing crontab to a temp file or create a blank temp 
+	/* Function to write existing crontab to a temp file or create a blank temp
 	 * should no cron jobs exist.
   	 */
 	public function write_to_file($path=NULL, $handle=NULL) {
 
 		// Check if the cron file exists
-		// If the file does exist, just return 
+		// If the file does exist, just return
 		if ( !$this->crontab_file_exists() ) { // File DNE
 
 			// Check the $path and $handle to determine whether or not they're NULL
@@ -89,11 +89,11 @@ class CrontabManager {
 			// constructor to define them
         		$this->handle = (is_null($handle)) ? $this->handle : $handle;
         		$this->path   = (is_null($path))   ? $this->path   : $path;
- 
+
 			// Concatenate these properties to represent the full path
 			// and file name for the temporary cron file
         		$this->cron_file = "{$this->path}{$this->handle}";
-			
+
 			// write existing jobs to file. If no jobs exists, the file is blank.
 			$this->exec("crontab -l > {$this->cron_file}");
 
@@ -103,20 +103,20 @@ class CrontabManager {
 		return $this;
 	}
 
-	/* Function for creating cron jobs by way of adding new jobs / lines to the temp cron 
+	/* Function for creating cron jobs by way of adding new jobs / lines to the temp cron
 	 * file and then executing the "crontab" command which will install all of the jobs
 	 * as a new crontab.
 	 */
 	public function append_cronjob($cron_jobs=NULL) {
 
 		// Determine if there are cron jobs from the argument
-		// If there aren't any, we halt any further executions 
+		// If there aren't any, we halt any further executions
 		// and display an error message.
 		if (is_null($cron_jobs)) $this->error_message("Nothing to append!  Please specify a cron job or an array of cron jobs.");
-     
+
 		/* Constructing a command */
 		$append_cronfile = "bash -c 'echo -e \"";
-		
+
 		// Populate the string with the cron jobs.
 		// Using the ternary operator, if there are multiple cron jobs,
 		// we implode that array of jobs. If not, we just concat that one job
@@ -128,7 +128,7 @@ class CrontabManager {
 		// String command to install the new cron file
 		$install_cron = "crontab {$this->cron_file}";
 
-		// Before executing these commands, we call "write_to_file()" to create 
+		// Before executing these commands, we call "write_to_file()" to create
 		// the temp cron file. Then whithin a chain, we execute these commands,
 		// and call "remove_file()" to delete the temp file. (Neat!)
 		$this->write_to_file()->exec($append_cronfile, $install_cron)->remove_file();
@@ -137,7 +137,7 @@ class CrontabManager {
 		return $this;
 	}
 
-		
+
 	/* Function to remove existing cron jobs */
 	public function remove_cronjob( $cron_jobs=NULL ) {
 
@@ -155,33 +155,33 @@ class CrontabManager {
 		// Should there be no cron jobs scheduled, this array will be empty.
 		// No reason to continue, halt execution if array is empty.
     		if (empty($cron_array)) $this->error_message("Nothing to remove!  The cronTab is already empty.");
-		
+
 		if (is_array($cron_jobs)) {
-	
+
 			// Note: preg_grep() returns an array of all the array elements
-			// that match the regular expressions. In this case, we want the 
+			// that match the regular expressions. In this case, we want the
 			// array of elements that don't match (PREG_GREP_INVERT).
-			// In other words, we need an array of all the cron jobs that 
-			// we're going to keep so that we can initialize the crontab with 
+			// In other words, we need an array of all the cron jobs that
+			// we're going to keep so that we can initialize the crontab with
 			// just these jobs.
         		foreach ($cron_jobs as $cron_regex) $cron_array = preg_grep($cron_regex, $cron_array, PREG_GREP_INVERT);
     		}
     		else
     		{
-			// $cron_jobs in not an array, we just proceed in the same manner 
+			// $cron_jobs in not an array, we just proceed in the same manner
 			// as the previous if statement.
         		$cron_array = preg_grep($cron_jobs, $cron_array, PREG_GREP_INVERT);
-    		}   
-		
-		// We check the count of the $cron_array. If the length is zero, 
-		// this means we've removed everything from the crontab, so we 
+    		}
+
+		// We check the count of the $cron_array. If the length is zero,
+		// this means we've removed everything from the crontab, so we
 		// simply remove the crontab. If not, then we remove
 		// the crontab AND we install a new one
 		return (count($cron_array) == 0) ? $this->remove_crontab() : $this->remove_crontab()->append_cronjob($cron_array);
 	}
 
 
-	/* Function to remove the entire crontab */ 
+	/* Function to remove the entire crontab */
 	public function remove_crontab() {
 
 		// Execute the crontab command with the "-r" flag
@@ -189,11 +189,11 @@ class CrontabManager {
 		// Since the crontab has been removed, might as well
 		// remove the temporary cron file as well, should it exist.
 		$this->exec("crontab -r")->remove_file();
-     
+
 		// Return this to preserve chainability!
 		return $this;
 	}
-		
+
 	/* Helper function to check if the crontab is empty */
 	public function crontab_exists() {
 
@@ -217,7 +217,7 @@ class CrontabManager {
 	private function crontab_file_exists() {
 		return file_exists($this->cron_file);
 	}
-	
+
 	/* Helper function to halt execution and display an error message */
 	private function error_message($error) {
 		$this->remove_file();

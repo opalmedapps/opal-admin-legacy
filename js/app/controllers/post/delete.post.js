@@ -7,7 +7,7 @@ angular.module('opalAdmin.controllers.post.delete', ['ngAnimate', 'ngSanitize', 
 	controller('post.delete', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, uiGridConstants, Session, ErrorHandler) {
 		// Submit delete
 		$scope.deletePost = function () {
-			// Log who updated post 
+			// Log who updated post
 			var currentUser = Session.retrieveObject('user');
 			$scope.postToDelete.OAUser = currentUser;
 

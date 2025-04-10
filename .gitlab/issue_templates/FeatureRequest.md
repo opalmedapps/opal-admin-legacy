@@ -20,4 +20,4 @@ Please search on the [issue track](../) before creating one.
 <!-- Paste any relevant screenshots -->
 
 <!-- Add label ~feature-request ~needs-investigation etc. -->
-<!-- /assign users @akimosupremo --> 
+<!-- /assign users @akimosupremo -->

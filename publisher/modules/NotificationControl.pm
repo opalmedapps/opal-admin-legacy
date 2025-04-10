@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # SPDX-FileCopyrightText: Copyright (C) 2016 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -16,7 +14,7 @@
 
 package NotificationControl; # Declaring package name
 
-use Database; 
+use Database;
 use Data::Dumper;
 
 #---------------------------------------------------------------------------------
@@ -25,7 +23,7 @@ use Data::Dumper;
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our notification class 
+# Constructor for our notification class
 #====================================================================================
 sub new
 {
@@ -173,7 +171,7 @@ sub getNotificationControlDetails
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
         $ser        = $data[0];
         $message    = {
@@ -196,7 +194,6 @@ sub getNotificationControlDetails
 }
 
 
-    
+
 # exit smoothly
 1;
-            

@@ -401,4 +401,3 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			}
 		});
 	});
-

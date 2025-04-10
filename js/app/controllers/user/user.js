@@ -13,7 +13,7 @@ controller('user', function ($scope, $uibModal, $filter, $state, userCollectionS
 	$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.user]) & (1 << 0)) !== 0);
 	$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.user]) & (1 << 1)) !== 0);
 	$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.user]) & (1 << 2)) !== 0);
-	
+
 	var OAUserId = Session.retrieveObject('user').id;
 	// Function to go to register new user
 	$scope.goToAddUser = function () {
@@ -209,4 +209,3 @@ controller('user', function ($scope, $uibModal, $filter, $state, userCollectionS
 		});
 	}
 });
-

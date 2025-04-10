@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # SPDX-FileCopyrightText: Copyright (C) 2015 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -451,7 +449,7 @@ sub getTasksFromSourceDB
 
 			# print $fh "$taskInfo_sql\n\n";
 			# close $fh;
-			
+
 			my $query = $sourceDatabase->prepare($taskInfo_sql)
 				or die "Could not prepare query: " . $sourceDatabase->errstr;
 

@@ -68,7 +68,7 @@ class Question extends QuestionnaireModule {
         // We need to cast our values so the comparison in the _validatePivotalIDs function doesn't fail
         $validatedQuestion["options"]["ID"] = (int)$options["ID"];
         $validatedQuestion["options"]["questionsId"] = (int)$options["questionsId"];
-        
+
         $numArraySubOptions=0;
         $subOptions = array();
         if(!empty($questionToSanitize["subOptions"])) {
@@ -90,7 +90,7 @@ class Question extends QuestionnaireModule {
                 $numArraySubOptions++;
             }
         }
-       
+
         if($validatedQuestion["typeId"] === SLIDERS) {
             $validatedQuestion["options"]["minValue"] = floatval($validatedQuestion["options"]["minValue"]);
             $validatedQuestion["options"]["maxValue"] = floatval($validatedQuestion["options"]["maxValue"]);
@@ -352,7 +352,7 @@ class Question extends QuestionnaireModule {
         $this->checkReadAccess($questionId);
         return $this->_getQuestionDetails($questionId);
     }
-    
+
     /*
      * Get question details. Protected method with no check access. Internal use only.
      * @param   question ID (int)

@@ -30,8 +30,7 @@ controller('patientReportHandler', function ($scope, $state, Session, ErrorHandl
 		$state.go('patients/report/group');
 	}
 
-	
 
-	
+
+
 });
-

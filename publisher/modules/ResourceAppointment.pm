@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # SPDX-FileCopyrightText: Copyright (C) 2015 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -215,7 +213,7 @@ sub getResourceAppointmentsFromSourceDB
 
                 IF OBJECT_ID('tempdb.dbo.#tempRA', 'U') IS NOT NULL
                 	DROP TABLE #tempRA;
-				
+
 				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
 					DROP TABLE #tempPatient;
 
@@ -227,7 +225,7 @@ sub getResourceAppointmentsFromSourceDB
 			from PatientInfo c;
 			Create Index temporaryindexRA1 on #tempRA (PatientAriaSer);
 			Create Index temporaryindexRA2 on #tempRA (PatientSerNum);
-			
+
 			Select p.PatientSer, p.PatientId into #tempPatient
 			from VARIAN.dbo.Patient p;
 			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
@@ -242,7 +240,7 @@ sub getResourceAppointmentsFromSourceDB
 						att.PrimaryFlag,
 						PatientInfo.PatientSerNum,
 						lt.Expression1
-					FROM						
+					FROM
 						VARIAN.dbo.Attendee att with(nolock),
 						VARIAN.dbo.ScheduledActivity sa with(nolock),
 						VARIAN.dbo.ActivityInstance ai with(nolock),

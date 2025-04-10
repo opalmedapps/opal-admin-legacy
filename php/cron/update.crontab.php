@@ -11,7 +11,7 @@
 
 	// The argument pass is the cronSer
 	$cronSer = $argv[1];
-		
+
 	// Call function
 	$cron->updateCrontab($cronSer);
 ?>

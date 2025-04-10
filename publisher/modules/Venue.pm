@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # SPDX-FileCopyrightText: Copyright (C) 2017 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -7,8 +5,8 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 26-Jul-2017 ++ File: Venue.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a venue class. This module calls a constructor to 
-# create a venue object that contains venue information stored as object 
+# Perl module that creates a venue class. This module calls a constructor to
+# create a venue object that contains venue information stored as object
 # variables.
 #
 # There exists various subroutines to set venue information, get venue information
@@ -26,7 +24,7 @@ use Storable qw(dclone); # for deep copies
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our Venue class 
+# Constructor for our Venue class
 #====================================================================================
 sub new
 {
@@ -41,7 +39,7 @@ sub new
 	# when a method is invoked on this object
 	bless $venue, $class;
 	return $venue;
-}	
+}
 
 #====================================================================================
 # Subroutine to set the venue serial
@@ -64,7 +62,7 @@ sub setVenueSourceDatabaseSer
 }
 
 #====================================================================================
-# Subroutine to set the venue source uid 
+# Subroutine to set the venue source uid
 #====================================================================================
 sub setVenueSourceUID
 {
@@ -102,7 +100,7 @@ sub getVenueSourceDatabaseSer
 }
 
 #======================================================================================
-# Subroutine to get the venue source uid 
+# Subroutine to get the venue source uid
 #======================================================================================
 sub getVenueSourceUID
 {
@@ -148,14 +146,14 @@ sub getVenueInfoFromSourceDB
 		# prepare query
     	my $query = $sourceDatabase->prepare($venue_sql)
 	    	or die "Could not prepare query: " . $sourceDatabase->errstr;
-    
+
 	    # execute query
     	$query->execute()
 	    	or die "Could not execute query: " . $query->errstr;
 
     	while (my @data = $query->fetchrow_array()) {
 
-			# query results 
+			# query results
 			$id = $data[0];
 
 			$Venue->setVenueId($id);
@@ -173,7 +171,7 @@ sub getVenueInfoFromSourceDB
         my $sourceDatabase = Database::connectToSourceDatabase($sourcedbser);
 
 		my $venue_sql = "
-			SELECT DISTINCT 
+			SELECT DISTINCT
 				Venue.VenueId
 			FROM
 				Venue
@@ -184,7 +182,7 @@ sub getVenueInfoFromSourceDB
 		# prepare query
     	my $query = $sourceDatabase->prepare($venue_sql)
 	    	or die "Could not prepare query: " . $sourceDatabase->errstr;
-    
+
 	    # execute query
     	$query->execute()
 	    	or die "Could not execute query: " . $query->errstr;
@@ -213,13 +211,13 @@ sub getVenueInfoFromSourceDB
     	# prepare query
     	my $query = $sourceDatabase->prepare($venue_sql)
 	    	or die "Could not prepare query: " . $sourceDatabase->errstr;
-    
+
 	    # execute query
     	$query->execute()
 	    	or die "Could not execute query: " . $query->errstr;
 
     	while (my @data = $query->fetchrow_array()) {
-    
+
     		# use setters to set appropriate resource information from query
 
     	}
@@ -242,7 +240,7 @@ sub inOurDatabase
 	my $sourcedbser = $venue->getVenueSourceDatabaseSer();
 
 	my $VenueSourceUIDInDB = 0; # false by default. Will be true if venue exists
-	my $ExistingVenue = (); # data to be entered if venue exists 
+	my $ExistingVenue = (); # data to be entered if venue exists
 
 	my ($ser, $id);
 
@@ -251,7 +249,7 @@ sub inOurDatabase
 			Venue.VenueSerNum,
 			Venue.SourceUID,
 			Venue.VenueId
-		FROM 
+		FROM
 			Venue
 		WHERE
 			Venue.SourceUID 			= $sourceuid
@@ -264,7 +262,7 @@ sub inOurDatabase
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
 
 		$ser 				= $data[0];
@@ -360,7 +358,7 @@ sub updateDatabase
 
 	# execute query
 	$query->execute()
-		or die "Could not execute query: " . $query->errstr;	
+		or die "Could not execute query: " . $query->errstr;
 }
 
 #======================================================================================
@@ -390,15 +388,15 @@ sub compareWith
 }
 
 #======================================================================================
-# Subroutine to reassign our venue serial in ARIA to a venue serial in MySQL. 
+# Subroutine to reassign our venue serial in ARIA to a venue serial in MySQL.
 # In the process, insert venue into our database if it DNE
 #======================================================================================
 sub reassignVenue
 {
-	my ($sourceuid, $sourcedbser) = @_; 
+	my ($sourceuid, $sourcedbser) = @_;
 
 	# first check if the venue serial is defined
-	# if not, return zero 
+	# if not, return zero
 	if (!$sourceuid) {
 		return 0;
 	}
@@ -428,7 +426,7 @@ sub reassignVenue
 		return $venueSer;
 	}
 	else { # venue DNE
-	
+
 		# insert venue into our DB
 		$Venue = $Venue->insertVenueIntoOurDB();
 

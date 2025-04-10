@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # SPDX-FileCopyrightText: Copyright (C) 2017 Opal Health Informatics Group at the Research Institute of the McGill University Health Centre <john.kildea@mcgill.ca>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -25,7 +23,7 @@ use MIME::Lite; # emailing
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our Email class 
+# Constructor for our Email class
 #====================================================================================
 sub new
 {
@@ -211,7 +209,7 @@ sub getEmailControlDetails
 	my $select_sql = "
 		SELECT DISTINCT
 			ec.EmailControlSerNum,
-			CASE 
+			CASE
 				WHEN pt.Language = 'EN' THEN ec.Subject_EN
 				WHEN pt.Language = 'FR' THEN ec.Subject_FR
 			END AS Subject,
@@ -236,7 +234,7 @@ sub getEmailControlDetails
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
 
 		$controlser 		= $data[0];
@@ -252,7 +250,7 @@ sub getEmailControlDetails
 }
 
 #====================================================================================
-# Subroutine to send an email 
+# Subroutine to send an email
 #====================================================================================
 sub sendEmail
 {
@@ -281,7 +279,7 @@ sub sendEmail
 	$email->setEmailStatus("T");
 	if (!$response) {$email->setEmailStatus("F");}
 
-	# insert email log 
+	# insert email log
 	$email->insertEmailLogIntoOurDB($patientser);
 
 }
@@ -293,13 +291,13 @@ sub insertEmailLogIntoOurDB
 {
 	my ($email, $patientser) = @_; # our email log and patient serial
 
-	# Retrieve necessary details 
+	# Retrieve necessary details
 	my $controlser = $email->getEmailControlSer();
 	my $status = $email->getEmailStatus();
 	my $cronlogser = $email->getEmailCronLogSer();
 
 	my $insert_sql = "
-		INSERT INTO 
+		INSERT INTO
 			EmailLog (
 				PatientSerNum,
 				CronLogSerNum,
@@ -328,5 +326,5 @@ sub insertEmailLogIntoOurDB
 
 }
 
-# exit smoothly 
+# exit smoothly
 1;
