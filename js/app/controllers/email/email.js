@@ -111,8 +111,8 @@ controller('email', function ($scope, $uibModal, $filter, $state, $sce, emailCol
 			// Call our API to get email logs
 			emailCollectionService.getEmailChartLogs().then(function (response) {
 				$scope.emailChartLogs = $scope.chartConfig.series = response.data;
-				angular.forEach($scope.emailChartLogs, function(serie) {
-					angular.forEach(serie.data, function(log) {
+				angular.forEach($scope.emailChartLogs, function(series) {
+					angular.forEach(series.data, function(log) {
 						log.x = new Date(log.x);
 					});
 				});

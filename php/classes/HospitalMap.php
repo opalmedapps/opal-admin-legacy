@@ -97,7 +97,7 @@ class HospitalMap extends Module {
     }
 
     /**
-     * Add new hospital map after vadlidatin its informations. In case of error in the validation, returns error 400
+     * Add new hospital map after vadlidatin its information. In case of error in the validation, returns error 400
      * with error validation.
      * @param $post array - contains the details of the hospital map
      */
@@ -137,7 +137,7 @@ class HospitalMap extends Module {
      * provided by the user is missing or invalid.
      * @param $post array - contains the ID of the hospital map
      * @param $hospitalMap array - will contain the hospital map if found
-     * Validation code :    Error validation code is coded as an int of 2 bits (value from 0 to 3). Bit informations
+     * Validation code :    Error validation code is coded as an int of 2 bits (value from 0 to 3). Bit information
      *                      are coded from right to left:
      *                      1: serial missing
      *                      2: no hospital map found
@@ -172,7 +172,7 @@ class HospitalMap extends Module {
 
     /**
      * Get the details of a specified hospital map
-     * @param $post - containts hospital map ID
+     * @param $post - contains hospital map ID
      * @return array $hospitalMap - contains hospital map found
      */
     public function getHospitalMapDetails($post) {

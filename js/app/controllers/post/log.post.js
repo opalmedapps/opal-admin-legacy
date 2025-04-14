@@ -11,8 +11,8 @@ angular.module('opalAdmin.controllers.post.log', ['ngAnimate', 'ngSanitize', 'ui
 controller('post.log', function ($scope, $uibModal, $filter, postCollectionService, Session, $uibModalInstance, ErrorHandler) {
 	postCollectionService.getPostChartLogs($scope.currentPost.serial, $scope.currentPost.type, Session.retrieveObject('user').id).then(function (response) {
 		$scope.postChartLogs = $scope.chartConfig.series = response.data;
-		angular.forEach($scope.postChartLogs, function(serie) {
-			angular.forEach(serie.data, function(log) {
+		angular.forEach($scope.postChartLogs, function(series) {
+			angular.forEach(series.data, function(log) {
 				log.x = new Date(log.x);
 			});
 		});

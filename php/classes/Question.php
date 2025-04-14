@@ -79,8 +79,8 @@ class Question extends QuestionnaireModule {
                         $newSub[strip_tags($key)] = strip_tags($value);
                 array_push($subOptions, $newSub);
                 // Send all the different Sub Options to validatedQuestion variable.
-                // We need to send the values seperatly so we don't get fatal errors.
-                // We also need to cast our values so the comparaison in the _validatePivotalIDs function doesn't fail.
+                // We need to send the values separately so we don't get fatal errors.
+                // We also need to cast our values so the comparison in the _validatePivotalIDs function doesn't fail.
                 $validatedQuestion["subOptions"][$numArraySubOptions]["ID"] = (int)$subOptions[$numArraySubOptions]["ID"];
                 $validatedQuestion["subOptions"][$numArraySubOptions]["parentTableId"] = (int)$subOptions[$numArraySubOptions]["parentTableId"];
                 $validatedQuestion["subOptions"][$numArraySubOptions]["description"] = (int)$subOptions[$numArraySubOptions]["description"];

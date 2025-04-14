@@ -390,7 +390,7 @@ sub inOurDatabase
 
     }
 
-    else {return $ExistingTTM;} # this is false (ie. ttm DNE)
+    else {return $ExistingTTM;} # this is false (ie. ttm DONE)
 
 }
 

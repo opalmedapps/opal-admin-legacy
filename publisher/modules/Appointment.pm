@@ -849,7 +849,7 @@ sub inOurDatabase
 		return $ExistingAppt; # this is true (ie. appt exists, return object)
 	}
 
-	else {return $ExistingAppt;} # this is false (ie. appt DNE, return empty)
+	else {return $ExistingAppt;} # this is false (ie. appt DONE, return empty)
 }
 
 #======================================================================================
@@ -1124,7 +1124,7 @@ sub compareWith
 		        time_zone => 'America/New_York'
 		    );
 
-			# 2019-03-25 YM: Removed the date tme format since it is already formated
+			# 2019-03-25 YM: Removed the date time format since it is already formatted
 			# $SStartDateTime = $timestamp->format_datetime($strp->parse_datetime($SStartDateTime)); # convert to timestamp
 
 			$patientSer = $OriginalAppt->getApptPatientSer();
@@ -1170,7 +1170,7 @@ sub compareWith
 
 #======================================================================================
 # Subroutine to reassign our appointment ser in ARIA to an appointment serial in MySQL.
-# In the process, insert appointment into our database if it DNE
+# In the process, insert appointment into our database if it DONE
 #======================================================================================
 sub reassignAppointment
 {
@@ -1194,7 +1194,7 @@ sub reassignAppointment
 
 		return $apptSerNum;
 	}
-	else { # appointment DNE
+	else { # appointment DONE
 
 		# get appt info from source database (ARIA)
 		$Appointment = $Appointment->getApptInfoFromSourceDB();

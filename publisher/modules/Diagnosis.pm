@@ -626,7 +626,7 @@ sub inOurDatabase
 		return $ExistingDiagnosis; # this is true (ie. diagnosis exists, return object)
 	}
 
-	else {return $ExistingDiagnosis;} # this is false (ie. diagnosis DNE, return 0)
+	else {return $ExistingDiagnosis;} # this is false (ie. diagnosis DONE, return 0)
 }
 
 #======================================================================================
@@ -733,7 +733,7 @@ sub updateDatabase
 
 
 #======================================================================================
-# Subroutine to compare two diagnosis objects. If different, use setter funtions
+# Subroutine to compare two diagnosis objects. If different, use setter functions
 # to update diagnosis object.
 #======================================================================================
 sub compareWith

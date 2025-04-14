@@ -97,7 +97,7 @@ class TriggerStaff extends Trigger
     }
 
     /**
-     * This function insert or update a staff informations after its validation.
+     * This function insert or update a staff information after its validation.
      * @param  $post : array - details of staff information to insert/update.
      * @return  void
      */

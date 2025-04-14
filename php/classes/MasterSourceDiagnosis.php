@@ -18,7 +18,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
     /**
      * Get the details of a source diagnosis.
      * Validation code :    in case of error returns code 422 with validation code. Error validation code is coded as
-     *                      an int of 4 bits (value from 0 to 15). Bit informations are from right to left:
+     *                      an int of 4 bits (value from 0 to 15). Bit information are from right to left:
      *                      1: source invalid or missing
      *                      2: externalId invalid or missing
      *                      3: code invalid or missing
@@ -96,7 +96,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
      * Used in the OpalAdmin to warn the user a master source diagnosis with the same external ID and source already
      * exists. Validation done on the incoming data.
      * Validation code :    in case of error returns code 422 with validation code. Error validation code is coded as
-     *                      an int of 3 bits (value from 0 to 7). Bit informations are coded from right to left:
+     *                      an int of 3 bits (value from 0 to 7). Bit information are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId invalid or missing
      *                      3: code invalid or missing
@@ -124,7 +124,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
      * Validate and sanitize a list of diagnoses before an insert.
      * Returns one array with proper data sanitized and ready, and another array with list of invalid diagnoses.
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 6 bits (value from 0 to 63). Bit informations
+     *                      Error validation code is coded as an int of 6 bits (value from 0 to 63). Bit information
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId invalid or missing
@@ -220,7 +220,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
      * Validate and sanitize a list of diagnoses before an update.
      * Returns one array with proper data sanitized and ready, and another array with list of invalid diagnoses.
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 6 bits (value from 0 to 63). Bit informations
+     *                      Error validation code is coded as an int of 6 bits (value from 0 to 63). Bit information
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId invalid or missing
@@ -292,7 +292,7 @@ class MasterSourceDiagnosis extends MasterSourceModule {
      * Validate and sanitize a list of diagnoses before a deletion.
      * Returns one array with proper data sanitized and ready, and another array with list of invalid diagnoses.
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit informations
+     *                      Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit information
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId invalid or missing

@@ -19,7 +19,7 @@ class MasterSourceTestResult extends MasterSourceModule {
     /*
      * Get the details of a source test result.
      * Validation code :    in case of error returns code 422 with validation code. Error validation code is coded as
-     *                      an int of 2 bits (value from 0 to 8). Bit informations are from right to left:
+     *                      an int of 2 bits (value from 0 to 8). Bit information are from right to left:
      *                      1: source invalid or missing
      *                      2: code invalid or missing
      *                      3: record not found
@@ -110,7 +110,7 @@ class MasterSourceTestResult extends MasterSourceModule {
      * Check if a specific test result exists. Used in the OpalAdmin to warn the user a master source test result with the
      * same external ID and source already exists. Validation done on the incoming data.
      * Validation code :    in case of error returns code 422 with validation code. Error validation code is coded as
-     *                      an int of 2 bits (value from 0 to 3). Bit informations are coded from right to left:
+     *                      an int of 2 bits (value from 0 to 3). Bit information are coded from right to left:
      *                      1: source invalid or missing
      *                      2: code invalid or missing
      * @params  $post - array. Contains source and externalId
@@ -157,7 +157,7 @@ class MasterSourceTestResult extends MasterSourceModule {
      *                          description : description of the test result (mandatory)
      *                          creationDate - creation date of the record in the source database (optional)
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 6 bits (value from 0 to 63). Bit informations
+     *                      Error validation code is coded as an int of 6 bits (value from 0 to 63). Bit information
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId (if present) invalid
@@ -270,7 +270,7 @@ class MasterSourceTestResult extends MasterSourceModule {
      *                          code : code of the test result (mandatory)
      *                          description : description of the test result (mandatory)
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 6 bits (value from 0 to 63). Bit informations
+     *                      Error validation code is coded as an int of 6 bits (value from 0 to 63). Bit information
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: externalId (if present) invalid
@@ -359,7 +359,7 @@ class MasterSourceTestResult extends MasterSourceModule {
      *                          code : code of the test result (mandatory)
      *                          description : description of the test result (mandatory)
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit informations
+     *                      Error validation code is coded as an int of 4 bits (value from 0 to 15). Bit information
      *                      are coded from right to left:
      *                      1: source invalid or missing
      *                      2: code invalid or missing

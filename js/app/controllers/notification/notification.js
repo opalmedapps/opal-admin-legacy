@@ -184,8 +184,8 @@ controller('notification', function ($scope, $uibModal, $filter, $state, notific
 			// Call our API to get notification logs
 			notificationCollectionService.getNotificationChartLogs().then(function (response) {
 				$scope.notificationChartLogs = $scope.chartConfig.series = response.data;
-				angular.forEach($scope.notificationChartLogs, function(serie) {
-					angular.forEach(serie.data, function(log) {
+				angular.forEach($scope.notificationChartLogs, function(series) {
+					angular.forEach(series.data, function(log) {
 						log.x = new Date(log.x);
 					});
 				});

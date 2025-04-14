@@ -55,7 +55,7 @@ class Study extends Module {
 
     /*
      * Sanitize, validate and insert a new study into the database.
-     * @params  $post (array) data received from the fron end.
+     * @params  $post (array) data received from the frontend.
      * @return  number of record inserted (should be one) or a code 500
      * */
     public function insertStudy($post) {
@@ -107,7 +107,7 @@ class Study extends Module {
      * Validate and sanitize a study.
      * @params  $post : array - data for the study to validate
      *          $isAnUpdate : array - if the validation must include the ID of the study or not
-     * Validation code :    Error validation code is coded as an int of 12 bits (value from 0 to 4095). Bit informations
+     * Validation code :    Error validation code is coded as an int of 12 bits (value from 0 to 4095). Bit information
      *                      are coded from right to left:
      *                      1: study code missing
      *                      2: english title missing

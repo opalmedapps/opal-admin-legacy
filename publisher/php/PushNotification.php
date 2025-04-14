@@ -165,7 +165,7 @@ class PushNotification {
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-			// Disabling SSL Certificate support temporarly
+			// Disabling SSL Certificate support temporarily
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 			if ($fields) {
 				curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
@@ -190,7 +190,7 @@ class PushNotification {
 	/**
 	*	(encodePayload($inTitle, $inBody)) receive message,
 	*	convert to utf8, and return message
-	*	Description: if the title or messsage is not utf8 then proceed to
+	*	Description: if the title or message is not utf8 then proceed to
 	*				to encode the title and/or message to utf8.
     *				Then proceed to strip slashes to the title and message
 	*   Requires: 	$inTitle -> title of the message

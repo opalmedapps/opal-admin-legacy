@@ -184,7 +184,7 @@ sub getResourceAppointmentsFromSourceDB
 
 				if ($sourceDBSer eq $aliasSourceDBSer) {
 					if (!exists $expressionHash{$sourceDBSer}) {
-						$expressionHash{$sourceDBSer} = {}; # intialize key value
+						$expressionHash{$sourceDBSer} = {}; # initialize key value
 					}
 
 					foreach my $Expression (@expressions) {
@@ -339,7 +339,7 @@ sub getResourceAppointmentsFromSourceDB
 
 				if ($sourceDBSer eq $aliasSourceDBSer) {
 					if (!exists $expressionHash{$sourceDBSer}) {
-						$expressionHash{$sourceDBSer} = {}; # intialize key value
+						$expressionHash{$sourceDBSer} = {}; # initialize key value
 					}
 
 					foreach my $Expression (@expressions) {
@@ -465,7 +465,7 @@ sub getResourceAppointmentsFromSourceDB
 
 				if ($sourceDBSer eq $aliasSourceDBSer) {
 					if (!exists $expressionHash{$sourceDBSer}) {
-						$expressionHash{$sourceDBSer} = {}; # intialize key value
+						$expressionHash{$sourceDBSer} = {}; # initialize key value
 					}
 
 					foreach my $Expression (@expressions) {
@@ -593,7 +593,7 @@ sub inOurDatabase
 
 	}
 
-	else {return $ExistingRA;} # this is false (ie. RA DNE, return empty)
+	else {return $ExistingRA;} # this is false (ie. RA DONE, return empty)
 }
 
 #======================================================================================

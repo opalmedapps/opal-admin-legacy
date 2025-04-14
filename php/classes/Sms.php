@@ -5,7 +5,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 /**
- * SMS class objet and methods. WARNING! Because of the nature of the ORMS API with its limited calls, some of them are
+ * SMS class object and methods. WARNING! Because of the nature of the ORMS API with its limited calls, some of them are
  * used multiple times, and they do not allow a full validation of the data to be sent back to the ORMS API. For more
  * info, please see your administrator.
  */

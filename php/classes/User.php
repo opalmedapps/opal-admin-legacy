@@ -24,13 +24,13 @@ class User extends Module {
      * */
     protected function _validateUserAuthentication($result, $username) {
         if(count($result) < 1) {
-            HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::getModuleMethodName($moduleName, $methodName);
+            $this->_insertAudit($moduleName, $methodName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Access denied");
         }
         else if(count($result) > 1) {
-            HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::getModuleMethodName($moduleName, $methodName);
+            $this->_insertAudit($moduleName, $methodName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Somethings's VERY wrong. There is too many entries!");
         }
         $result = $result[0];
@@ -60,8 +60,8 @@ class User extends Module {
 
         // login failed
         if ($backendApi->getHttpCode() == HTTP_STATUS_BAD_REQUEST_ERROR && $backendApi->getError()) {
-            HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $backendApi->getError());
+            HelpSetup::getModuleMethodName($moduleName, $methodName);
+            $this->_insertAudit($moduleName, $methodName, array("username"=>$username), ACCESS_DENIED, $backendApi->getError());
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Wrong username and/or password.");
         }
         // other errors
@@ -86,8 +86,8 @@ class User extends Module {
         // Ensure that the username exists
         $users = $this->opalDB->authenticateUserAD($username);
         if (count($users) != 1) {
-            HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::getModuleMethodName($moduleName, $methodName);
+            $this->_insertAudit($moduleName, $methodName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Wrong username and/or password.");
         }
 
@@ -106,7 +106,7 @@ class User extends Module {
     }
 
     /*
-     * Call Active Directory systen to check if the user exists prior to insertion when AD_ENABLED is `1`.
+     * Call Active Directory system to check if the user exists prior to insertion when AD_ENABLED is `1`.
      * The API is supposed to respond an error, based on the error this function return .
      * @params  $username (string)
      *          $password (string)
@@ -149,8 +149,8 @@ class User extends Module {
         $data = HelpSetup::arraySanitization($post);
 
         if(!is_array($data)) {
-            HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>"UNKNOWN USER"), ACCESS_DENIED, "UNKNOWN USER");
+            HelpSetup::getModuleMethodName($moduleName, $methodName);
+            $this->_insertAudit($moduleName, $methodName, array("username"=>"UNKNOWN USER"), ACCESS_DENIED, "UNKNOWN USER");
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
         }
 
@@ -159,8 +159,8 @@ class User extends Module {
 
         // if username is empty log an error, no need to call external system.
         if($username == "") {
-            HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::getModuleMethodName($moduleName, $methodName);
+            $this->_insertAudit($moduleName, $methodName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
         }
 
@@ -173,15 +173,15 @@ class User extends Module {
     /*
      * Validate the user, log its activity and build the nav menu to display.
      * @param   $post (array) contains username, password
-     * @return  $result (array) basic user informations
+     * @return  $result (array) basic user information
      * */
     public function userLogin($post) {
         $userAccess = array();
         $data = HelpSetup::arraySanitization($post);
 
         if(!is_array($data)) {
-            HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>"UNKNOWN USER"), ACCESS_DENIED, "UNKNOWN USER");
+            HelpSetup::getModuleMethodName($moduleName, $methodName);
+            $this->_insertAudit($moduleName, $methodName, array("username"=>"UNKNOWN USER"), ACCESS_DENIED, "UNKNOWN USER");
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
         }
 
@@ -189,8 +189,8 @@ class User extends Module {
         $password = $data["password"];
 
         if($username == "" || $password == "") {
-            HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::getModuleMethodName($moduleName, $methodName);
+            $this->_insertAudit($moduleName, $methodName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
         }
 
@@ -208,14 +208,14 @@ class User extends Module {
         $this->_connectAsMain();
         $tempAccess = $this->opalDB->getUserAccess($result["role"]);
         if(count($tempAccess) <= 0) {
-            HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::getModuleMethodName($moduleName, $methodName);
+            $this->_insertAudit($moduleName, $methodName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "No access found. Please contact your administrator.");
         }
         foreach($tempAccess as $access) {
             if(!HelpSetup::validateBitOperation($access["operation"],$access["access"])) {
-                HelpSetup::getModuleMethodName($moduleName, $methodeName);
-                $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+                HelpSetup::getModuleMethodName($moduleName, $methodName);
+                $this->_insertAudit($moduleName, $methodName, array("username"=>$username), ACCESS_DENIED, $username);
                 HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access violation role-module. Please contact your administrator.");
             }
             $userAccess[$access["ID"]] = array("ID"=>$access["ID"], "access"=>$access["access"]);
@@ -257,8 +257,8 @@ class User extends Module {
         $this->_logActivity($result["id"], $_SESSION['sessionId'], 'Login');
 
         //Insert in the audit table user was granted access and return nav menu
-        HelpSetup::getModuleMethodName($moduleName, $methodeName);
-        $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_GRANTED);
+        HelpSetup::getModuleMethodName($moduleName, $methodName);
+        $this->_insertAudit($moduleName, $methodName, array("username"=>$username), ACCESS_GRANTED);
 
         return $toReturn;
     }
@@ -274,8 +274,8 @@ class User extends Module {
         $data = HelpSetup::arraySanitization($post);
 
         if(!is_array($data)) {
-            HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>"UNKNOWN USER"), ACCESS_DENIED, "UNKNOWN USER");
+            HelpSetup::getModuleMethodName($moduleName, $methodName);
+            $this->_insertAudit($moduleName, $methodName, array("username"=>"UNKNOWN USER"), ACCESS_DENIED, "UNKNOWN USER");
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
         }
 
@@ -283,8 +283,8 @@ class User extends Module {
         $password = $data["password"];
 
         if($username == "" || $password == "") {
-            HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::getModuleMethodName($moduleName, $methodName);
+            $this->_insertAudit($moduleName, $methodName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
         }
 
@@ -304,14 +304,14 @@ class User extends Module {
         $this->_connectAsMain();
         $tempAccess = $this->opalDB->getUserAccess($result["role"]);
         if(count($tempAccess) <= 0) {
-            HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::getModuleMethodName($moduleName, $methodName);
+            $this->_insertAudit($moduleName, $methodName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "No access found. Please contact your administrator.");
         }
         foreach($tempAccess as $access) {
             if(!HelpSetup::validateBitOperation($access["operation"],$access["access"])) {
-                HelpSetup::getModuleMethodName($moduleName, $methodeName);
-                $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+                HelpSetup::getModuleMethodName($moduleName, $methodName);
+                $this->_insertAudit($moduleName, $methodName, array("username"=>$username), ACCESS_DENIED, $username);
                 HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access violation role-module. Please contact your administrator.");
             }
             $userAccess[$access["ID"]] = array("ID"=>$access["ID"], "access"=>$access["access"]);
@@ -323,8 +323,8 @@ class User extends Module {
         $this->_logActivity($result["id"], $_SESSION['sessionId'], 'Login');
 
         //Insert in the audit table user was granted access and return nav menu
-        HelpSetup::getModuleMethodName($moduleName, $methodeName);
-        $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_GRANTED);
+        HelpSetup::getModuleMethodName($moduleName, $methodName);
+        $this->_insertAudit($moduleName, $methodName, array("username"=>$username), ACCESS_GRANTED);
 
         return $result;
     }
@@ -335,8 +335,8 @@ class User extends Module {
      * @return  answer from the log activity
      * */
     public function userLogout() {
-        HelpSetup::getModuleMethodName($moduleName, $methodeName);
-        $this->_insertAudit($moduleName, $methodeName, array(), ACCESS_GRANTED);
+        HelpSetup::getModuleMethodName($moduleName, $methodName);
+        $this->_insertAudit($moduleName, $methodName, array(), ACCESS_GRANTED);
         $result = $this->_logActivity($_SESSION["ID"], $_SESSION["sessionId"], 'Logout');
         session_unset();     // unset $_SESSION variable for the run-time
         session_destroy();   // destroy session data in storage
@@ -361,9 +361,9 @@ class User extends Module {
      *          $confirmPassword (string) confirmation of the password
      * @return  $errMsg (array) array of error messages if any.
      * */
-    protected function _passwordValidation($password, $confimPassword) {
+    protected function _passwordValidation($password, $confirmPassword) {
         $errMsgs = array();
-        if($confimPassword != $password)
+        if($confirmPassword != $password)
             array_push($errMsgs, "Password and password confirmation do not match.");
 
         $length = (strlen($password) >= 12);
@@ -386,8 +386,8 @@ class User extends Module {
      * */
     public function updatePassword($post) {
         $post = HelpSetup::arraySanitization($post);
-        HelpSetup::getModuleMethodName($moduleName, $methodeName);
-        $this->_insertAudit($moduleName, $methodeName, $post, ACCESS_GRANTED);
+        HelpSetup::getModuleMethodName($moduleName, $methodName);
+        $this->_insertAudit($moduleName, $methodName, $post, ACCESS_GRANTED);
 
         $username = $_SESSION["username"];
         $oldPassword = $post["oldPassword"];
@@ -437,8 +437,8 @@ class User extends Module {
      * */
     public function updateLanguage($post) {
         $post = HelpSetup::arraySanitization($post);
-        HelpSetup::getModuleMethodName($moduleName, $methodeName);
-        $this->_insertAudit($moduleName, $methodeName, $post, ACCESS_GRANTED);
+        HelpSetup::getModuleMethodName($moduleName, $methodName);
+        $this->_insertAudit($moduleName, $methodName, $post, ACCESS_GRANTED);
 
         $post["language"] = strtoupper($post["language"]);
 
@@ -452,7 +452,7 @@ class User extends Module {
 
     /*
      * validate its password before updating it, updating the language and the role. All the updates are optionals.
-     * @oarams  $post (array) informations on the user and the id.
+     * @oarams  $post (array) information on the user and the id.
      * @return  true (boolean) means the update was successful.
      * */
     public function updateUser($post) {

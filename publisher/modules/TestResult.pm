@@ -507,7 +507,7 @@ sub inOurDatabase
         return $ExistingTR; # this is true (ie. TR exists)
     }
 
-    else {return $ExistingTR;} # this is false (ie. TR DNE)
+    else {return $ExistingTR;} # this is false (ie. TR DONE)
 }
 
 #======================================================================================

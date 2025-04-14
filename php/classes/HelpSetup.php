@@ -215,11 +215,11 @@ class HelpSetup {
      * function: the variables are passed through
      * reference.
      * @param $moduleName - name of the main module that made the call
-     * @param $methodeName - name of the method that made the call
+     * @param $methodName - name of the method that made the call
      */
-    public static function getModuleMethodName(&$moduleName, &$methodeName) {
+    public static function getModuleMethodName(&$moduleName, &$methodName) {
         $debugBackTrace = debug_backtrace();
-        $methodeName =  $debugBackTrace[count($debugBackTrace) - 1]["function"];
+        $methodName =  $debugBackTrace[count($debugBackTrace) - 1]["function"];
         $moduleName = $debugBackTrace[count($debugBackTrace) - 1]["class"];
     }
 

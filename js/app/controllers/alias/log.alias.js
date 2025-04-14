@@ -13,8 +13,8 @@ controller('alias.log', function ($scope, $uibModal, $filter, aliasCollectionSer
 	// Call our API to get alias logs
 	aliasCollectionService.getAliasChartLogs($scope.currentAlias.serial, $scope.currentAlias.type).then(function (response) {
 		$scope.aliasChartLogs = $scope.chartConfig.series = response.data;
-		angular.forEach($scope.aliasChartLogs, function(serie) {
-			angular.forEach(serie.data, function(log) {
+		angular.forEach($scope.aliasChartLogs, function(series) {
+			angular.forEach(series.data, function(log) {
 				log.x = new Date(log.x);
 			});
 		});

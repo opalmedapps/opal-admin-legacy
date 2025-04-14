@@ -13,7 +13,7 @@ header('Content-Type: application/javascript');
   $wsMRN          = HospitalPushNotification::sanitizeInput(isset($_GET["mrn"]) ? $_GET["mrn"] : "---NA---");
   $patientId      = HospitalPushNotification::getPatientIDorMRN($wsPatientID, $wsMRN);
 
-  // Meesage and appointment ID
+  // Message and appointment ID
   $room_EN        = HospitalPushNotification::sanitizeInput(isset($_GET['room_EN']) ? $_GET['room_EN'] : "");
   $room_FR        = HospitalPushNotification::sanitizeInput(isset($_GET['room_FR']) ? $_GET['room_FR'] : "");
   $apptSourceUID  = HospitalPushNotification::sanitizeInput(isset($_GET['appointment_ariaser']) ? $_GET['appointment_ariaser'] : "");

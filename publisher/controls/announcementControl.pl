@@ -14,7 +14,7 @@
 
 #---------------------------------------------------------------------------------
 =Log
-This is the first phase for now in separating the dataContorl.pl
+This is the first phase for now in separating the dataControl.pl
 
 Second phase will be modifying the OpalAdmin to use the new tables for
 the publishing control. This will allow a slow transition so that
@@ -193,7 +193,7 @@ if (-e $monitor_log) { # file exists
 		writeToLogFile($monitor_log, encode_json($json_log), ">");
 	}
 }
-else { # log file DNE
+else { # log file DONE
 
 	# to write new process
 	my $pid = $$;
@@ -279,7 +279,7 @@ print "Got patient list\n" if $verbose;
 #             push(@patientList, $UpdatedPatient);
 
 # 		# # 2021-08-26 YM: Remove this for now
-#         # } else { # patient DNE
+#         # } else { # patient DONE
 
 #     	# 	# insert Patient into our database
 # 	    # 	$SourcePatient = $SourcePatient->insertPatientIntoOurDB();

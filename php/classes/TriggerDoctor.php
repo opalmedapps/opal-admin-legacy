@@ -176,7 +176,7 @@ class TriggerDoctor extends Trigger
     }
 
     /**
-     * This function insert or update a doctor resource informations after its validation.
+     * This function insert or update a doctor resource information after its validation.
      * @param  $post : array - details of resource information to insert/update.
      * @param array<mixed> $post (Reference) - resource parameters
      * @param array<mixed> &$source (Reference) - source parameters
@@ -214,7 +214,7 @@ class TriggerDoctor extends Trigger
     }
 
     /**
-     * This function insert or update a doctor informations after its validation.
+     * This function insert or update a doctor information after its validation.
      * @param array<mixed> $post - details of doctor information to insert/update.
      * @return void
      */
@@ -269,7 +269,7 @@ class TriggerDoctor extends Trigger
     }
 
     /**
-     * This function insert or update a patient doctor informations after its validation.
+     * This function insert or update a patient doctor information after its validation.
      * @param array<mixed> $post - details of patient doctor information to insert/update.
      * @return void
      */

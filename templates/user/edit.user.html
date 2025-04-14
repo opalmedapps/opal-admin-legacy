@@ -92,7 +92,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
                             <select multiple="true" ng-disabled="roleDisabled" ng-model="user.selected_additionalprivileges" ng-change="roleUpdate()" ng-options="additionalprivilege as additionalprivilege.name for additionalprivilege in additionalprivileges track by additionalprivilege.pk" class="form-control">
                                 <option ng-hide="user.role" value="">{{'USERS.EDIT.SELECT_PRIVILEGES'|translate}}</option>
                             </select>
-                            <p style="margin-bottom: 0;"><em><small>{{'USERS.EDIT.MUTIPLE_SELECT_TIPS'|translate}}</small></em></p>
+                            <p style="margin-bottom: 0;"><em><small>{{'USERS.EDIT.MULTIPLE_SELECT_TIPS'|translate}}</small></em></p>
                         </div>
                     </div>
                 </div>

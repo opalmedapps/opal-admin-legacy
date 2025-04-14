@@ -38,7 +38,7 @@ class Diagnosis extends Module {
     /*
      * Get the list of current diagnosis with the codes already assigned.
      * @params  void
-     * @return  $resuts : array - list of current diagnostics with already assigned codes
+     * @return  $results : array - list of current diagnostics with already assigned codes
      * */
     public function getDiagnoses() {
         $this->checkReadAccess();
@@ -72,7 +72,7 @@ class Diagnosis extends Module {
         $listDiagnoses = array();
         $validatedDiagnosis = array();
         if(!$post["name_EN"] || !$post["name_FR"] || !$post["description_EN"] || !$post["description_FR"])
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing informations.");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing information.");
 
         $validatedDiagnosis["name_EN"] = strip_tags($post["name_EN"]);
         $validatedDiagnosis["name_FR"] = strip_tags($post["name_FR"]);
@@ -219,7 +219,7 @@ class Diagnosis extends Module {
     /*
      * Get the list of diagnosis for a specific patient after validating the data. MRN and site name are mandatory. If
      * there is no source, ignore it. If there is a source, add it in the SQL as = if include value is 1 or absent, and
-     * != if value is anthing else than 1. Start and end date use the proper value or current date if no value.
+     * != if value is anything else than 1. Start and end date use the proper value or current date if no value.
      *
      * @params  $post : array - contains the MRN of the patient, the site, source, include, start date and end date.
      * @return  array - contains all the diagnoses of a specific patient.
@@ -389,7 +389,7 @@ class Diagnosis extends Module {
      *                          source : Source database of the diagnosis (mandatory)
      *                          rowId : External ID of the diagnosis (mandatory)
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 5 bits (value from 0 to 31). Bit informations
+     *                      Error validation code is coded as an int of 5 bits (value from 0 to 31). Bit information
      *                      are coded from right to left:
      *                      1: MRN invalid or missing
      *                      2: site invalid or missing
@@ -441,7 +441,7 @@ class Diagnosis extends Module {
      *                          stage : no idea, but its for Aria (optional)
      *                          stageCriteria : no idea, but its for Aria (optional)
      * Validation code :    in case of error returns code 422 with array of invalid entries and validation code.
-     *                      Error validation code is coded as an int of 11 bits (value from 0 to 2047). Bit informations
+     *                      Error validation code is coded as an int of 11 bits (value from 0 to 2047). Bit information
      *                      are coded from right to left:
      *                      1: MRN invalid or missing
      *                      2: site invalid or missing

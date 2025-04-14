@@ -47,14 +47,14 @@ SPDX-License-Identifier: AGPL-3.0-or-later
         </div>
 
         <!-- SECTION: Alias Expression Logs -->
-        <div uib-accordion-group is-open="aliasExpressionLogSection.open" ng-if="userListLogs.aliasExpresssion.length">
+        <div uib-accordion-group is-open="aliasExpressionLogSection.open" ng-if="userListLogs.aliasExpression.length">
             <uib-accordion-heading>
                 <div>
                     <strong>{{'USERS.LOG.EXPRESSION'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': aliasExpressionLogSection.open, 'glyphicon-chevron-right': !aliasExpressionLogSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div id="data-table">
-                <div class="gridStyle" ui-grid="gridAliasExpressionLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (userListLogs.aliasExpresssion.length*gridAliasExpressionLogOptions.rowHeight)+32+'px'}"></div>
+                <div class="gridStyle" ui-grid="gridAliasExpressionLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (userListLogs.aliasExpression.length*gridAliasExpressionLogOptions.rowHeight)+32+'px'}"></div>
             </div>
         </div>
 

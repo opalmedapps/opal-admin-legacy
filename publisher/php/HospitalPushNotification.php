@@ -256,7 +256,7 @@ include_once "database.inc";
 
         /**
          * getPatientIDorMRN($patientId, $mrn)
-         * Description: This fucntion is to determine if it is to use PatientId or MRN and return
+         * Description: This function is to determine if it is to use PatientId or MRN and return
          * the value.
          *
          * Returns: returns patientId

@@ -255,7 +255,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 
 		$scope.appointmentTriggerList = response.data.appointments; // Assign value
 		// Casting for all IDs from int to string since the database stores the filter ID as a string
-		// This prevents the comparision in changeTriggers function from failing and creating a duplicate
+		// This prevents the comparison in changeTriggers function from failing and creating a duplicate
 		for(var i = 0; i < $scope.appointmentTriggerList.length; i++){
 			$scope.appointmentTriggerList[i].id = $scope.appointmentTriggerList[i].id.toString();
 		}

@@ -95,7 +95,7 @@ define("SQL_OPAL_BUILD_PUBLICATION_VIEW",
     "SELECT m.sqlPublicationList, m.sqlPublicationChartLog FROM ".OPAL_MODULE_TABLE." m WHERE m.active = ".ACTIVE_RECORD." AND m.publication = ".ACTIVE_RECORD." ORDER BY m.order"
 );
 
-define("SQL_OPAL_BUILD_CUSOM_CODE_VIEW",
+define("SQL_OPAL_BUILD_CUSTOM_CODE_VIEW",
     "SELECT m.sqlCustomCode FROM ".OPAL_MODULE_TABLE." m WHERE m.active = ".ACTIVE_RECORD." AND m.customCode = ".ACTIVE_RECORD." ORDER BY m.order"
 );
 

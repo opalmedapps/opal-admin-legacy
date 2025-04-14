@@ -26,7 +26,7 @@ class MasterSourceModule extends Module {
     /**
      * This method validate the three fields used to identify a record uniquely without the primary key.
      * @param $errCode string   error code. Error validation code is coded as an int of 3 bits (value from 0 to 7). Bit
-     *                          informations are coded from right to left:
+     *                          information are coded from right to left:
      *                          1: source invalid or missing
      *                          2: externalId invalid or missing
      *                          3: code invalid or missing

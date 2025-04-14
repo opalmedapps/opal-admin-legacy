@@ -45,7 +45,7 @@ class DatabaseOpal extends DatabaseAccess {
     /*
      * Get the user information based on the user ID
      * @params  user ID (int)
-     * @return  array of the user informations and roles
+     * @return  array of the user information and roles
      * */
     protected function _getUserInfoFromDB($newOAUserId) {
         $newOAUserId = strip_tags($newOAUserId);
@@ -117,7 +117,7 @@ class DatabaseOpal extends DatabaseAccess {
      * */
     function getCustomCodes() {
         $sqlModule = array();
-        $moduleSQLCode = $this->_fetchAll(SQL_OPAL_BUILD_CUSOM_CODE_VIEW, array());
+        $moduleSQLCode = $this->_fetchAll(SQL_OPAL_BUILD_CUSTOM_CODE_VIEW, array());
         foreach ($moduleSQLCode as $module)
             if (strip_tags($module["sqlCustomCode"]) != "")
                 array_push($sqlModule, $module["sqlCustomCode"]);
@@ -301,7 +301,7 @@ class DatabaseOpal extends DatabaseAccess {
 
 
     /*
-     * This function get the appropriate chart log sql query. It fills the tables name, locate the sql query and runn
+     * This function get the appropriate chart log sql query. It fills the tables name, locate the sql query and run
      * it before returning the results.
      * @params  $moduleId (int) ID of the module to get the logs
      *          $publicationId (int) ID of the publication of the module to get the chart logs
@@ -335,7 +335,7 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * This function get the appropriate list log sql query. It fills the tables name, locate the sql query and runn
+     * This function get the appropriate list log sql query. It fills the tables name, locate the sql query and run
      * it before returning the results.
      * @params  $moduleId (int) ID of the module to get the logs
      *          $publicationId (int) ID of the publication of the module to get the chart logs
@@ -1039,7 +1039,7 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Update a specific user informations and reactivate the account.
+     * Update a specific user information and reactivate the account.
      * @param $type int - type of account (user or system)
      * @param $username string - username of the account to update
      * @param $language string - preferred language of the account (en/fr)
@@ -1744,7 +1744,7 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Get the categories of the navigation meny
+     * Get the categories of the navigation menu
      * @params  void
      * @return  array - list of categories
      * */
@@ -2041,7 +2041,7 @@ class DatabaseOpal extends DatabaseAccess {
 
     /*
      * Get the list patient diagnoses. MRN and site name are mandatory. If there is no source, ignore it. If there is
-     * a source, add it in the SQL as = if include value is 1 or absent, and != if value is anthing else than 1. Start
+     * a source, add it in the SQL as = if include value is 1 or absent, and != if value is anything else than 1. Start
      * and end date use the proper value or current date if no value.
      * @params  $mrn : string - medical record number of the patient
      *          $site : string - name of the site
@@ -2254,7 +2254,7 @@ class DatabaseOpal extends DatabaseAccess {
     /**
      * Get patient notifications report
      * @params $pnum : int - target patient ser num
-     * @return array - patient notifiations details
+     * @return array - patient notifications details
      */
     function getPatientNotificationsReport($pnum){
         return $this->_fetchAll(OPAL_GET_NOTIFICATIONS_REPORT, array(
@@ -2562,7 +2562,7 @@ class DatabaseOpal extends DatabaseAccess {
         }*/
 
     /*
-     * Update a specific test restul additionnal link
+     * Update a specific test result additional link
      * @params  $toUpdate - array : contains all the additional links details
      * @return  int - number of records affected
      * */
@@ -2772,7 +2772,7 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Get the list of questionnaires of a specifc study
+     * Get the list of questionnaires of a specific study
      * @param $studyId - ID of the study
      * @return array - list of questionnaires associated to the study
      */
@@ -3266,7 +3266,7 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Update publish flag of a sepcific alias.
+     * Update publish flag of a specific alias.
      * @param $aliasId - ID of the alias
      * @param $statusFlag - status of the alias
      * @return int - number of records affected
@@ -3575,7 +3575,7 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Count the total of existing alises from a list of alias ID
+     * Count the total of existing aliases from a list of alias ID
      * @param $listIDs - list of alias IDs
      * @return array
      */
@@ -3860,7 +3860,7 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Delete from pivot table resourceAppointment ressource not attached to specific appointment
+     * Delete from pivot table resourceAppointment resource not attached to specific appointment
      * @param $appointmentId int - appointment ID
      * @param $resourceIdList array - list of resource IDs
      * @return int - number of rows affected
@@ -4113,7 +4113,7 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Get patient notificaton control detail
+     * Get patient notification control detail
      * @param $patientser string - patient ID
      * @param $notificationType string - notification description
      * @return array - data found if any
@@ -4147,7 +4147,7 @@ class DatabaseOpal extends DatabaseAccess {
 
     /**
     * Get Alias and alias expression information
-    * @param $expresionId - aliasExpressionSerNum
+    * @param $expressionId - aliasExpressionSerNum
     * @return array - data found if any
     */
     function getAliasExpressionDetail($expressionId){
@@ -4347,7 +4347,7 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /**
-     * Count resource occurence
+     * Count resource occurrence
      * @param array of the resource fields
      * @return int - Total of the entry
      */
