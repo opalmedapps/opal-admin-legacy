@@ -324,7 +324,7 @@ sub inOurDatabase
 		return $ExistingStaff; # this is truthful (ie. staff exists) return object
 	}
 
-	else {return $ExistingStaff;} # this is false (ie. staff DONE) return empty
+	else {return $ExistingStaff;} # this is false (ie. staff does not exist) return empty
 }
 
 #======================================================================================
@@ -445,7 +445,7 @@ sub compareWith
 
 #======================================================================================
 # Subroutine to reassign our staff id to a staff serial. In the process, insert
-# staff into our database if it DONE.
+# staff into our database if it does not exist.
 #======================================================================================
 sub reassignStaff
 {
@@ -474,7 +474,7 @@ sub reassignStaff
 			return $staffSer;
 		}
 
-		else { # staff DONE
+		else {
 
 			# get staff info from source database (ARIA)
 			$Staff = $Staff->getStaffInfoFromSourceDB();

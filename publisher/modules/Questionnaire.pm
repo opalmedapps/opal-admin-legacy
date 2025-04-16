@@ -428,7 +428,7 @@ sub inOurDatabase
 		return $ExistingQuestionnaire; # this is true (i.e. questionnaire exists. return object)
 	}
 
-	else {return $ExistingQuestionnaire}; # this is false (i.e. questionnaire DONE)
+	else {return $ExistingQuestionnaire}; # this is false (i.e. questionnaire does not exist)
 }
 
 #======================================================================================

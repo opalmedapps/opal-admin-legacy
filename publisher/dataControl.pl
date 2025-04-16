@@ -184,7 +184,7 @@ if (-e $monitor_log) { # file exists
 		writeToLogFile($monitor_log, encode_json($json_log), ">");
 	}
 }
-else { # log file DONE
+else {
 
 	# to write new process
 	my $pid = $$;

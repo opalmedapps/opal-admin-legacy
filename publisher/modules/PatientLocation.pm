@@ -907,7 +907,7 @@ sub inOurDatabase
 		return $ExistingPL; # this is true (i.e. PL exists, return object)
 	}
 
-	else {return $ExistingPL;} # this is false (i.e. PL DONE, return empty)
+	else {return $ExistingPL;} # this is false (i.e. PL does not exist, return empty)
 }
 
 #======================================================================================
@@ -981,7 +981,7 @@ sub inOurDatabaseMH
 		return $ExistingPL; # this is true (i.e. PL exists, return object)
 	}
 
-	else {return $ExistingPL;} # this is false (i.e. PL DONE, return empty)
+	else {return $ExistingPL;} # this is false (i.e. PL does not exist, return empty)
 }
 
 #======================================================================================

@@ -682,7 +682,7 @@ sub inOurDatabase
 		return $ExistingTask; # this is true (ie. task exists, return object)
 	}
 
-	else {return $ExistingTask;} # this is false (ie. task DONE, return empty)
+	else {return $ExistingTask;} # this is false (ie. task does not exist, return empty)
 }
 
 #======================================================================================

@@ -367,7 +367,7 @@ sub inOurDatabase
 		return $ExistingPD; # this is truthful (ie. PD exists, return object)
 	}
 
-	else {return $ExistingPD;} # this is falseful (ie. PD DONE, return empty)
+	else {return $ExistingPD;} # this is falseful (ie. PD does not exist, return empty)
 }
 
 #======================================================================================

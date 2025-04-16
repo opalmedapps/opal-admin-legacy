@@ -82,7 +82,7 @@ class CrontabManager {
 
 		// Check if the cron file exists
 		// If the file does exist, just return
-		if ( !$this->crontab_file_exists() ) { // File DONE
+		if ( !$this->crontab_file_exists() ) {
 
 			// Check the $path and $handle to determine whether or not they're NULL
 			// If either of them are NULL, we use the predefined fallbacks from our

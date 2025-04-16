@@ -521,7 +521,7 @@ sub inOurDatabase
 		return $ExistingLegacyQuestionnaire; # this is true (i.e. questionnaire exists. return object)
 	}
 
-	else {return $ExistingLegacyQuestionnaire}; # this is false (i.e. questionnaire DONE)
+	else {return $ExistingLegacyQuestionnaire}; # this is false (i.e. questionnaire does not exist)
 }
 
 #======================================================================================

@@ -849,7 +849,7 @@ sub inOurDatabase
 		return $ExistingAppt; # this is true (ie. appt exists, return object)
 	}
 
-	else {return $ExistingAppt;} # this is false (ie. appt DONE, return empty)
+	else {return $ExistingAppt;} # this is false (ie. appt does not exist, return empty)
 }
 
 #======================================================================================
@@ -1170,7 +1170,7 @@ sub compareWith
 
 #======================================================================================
 # Subroutine to reassign our appointment ser in ARIA to an appointment serial in MySQL.
-# In the process, insert appointment into our database if it DONE
+# In the process, insert appointment into our database if it does not exist.
 #======================================================================================
 sub reassignAppointment
 {
@@ -1194,7 +1194,7 @@ sub reassignAppointment
 
 		return $apptSerNum;
 	}
-	else { # appointment DONE
+	else {
 
 		# get appt info from source database (ARIA)
 		$Appointment = $Appointment->getApptInfoFromSourceDB();

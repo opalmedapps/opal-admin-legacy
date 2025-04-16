@@ -2962,19 +2962,19 @@
       "UPDATE_SECURITY_QUESTION": "Modify User Security Questions"
     },
     "EMAIL": {
-      "TITLE": "Change Patient Email",
-      "DESCRIPTION": "The email address will be used as the patient username when accessing Opal account.",
+      "TITLE": "Change User Email",
+      "DESCRIPTION": "The email address will be used as the user's username when accessing Opal account.",
       "NEW_EMAIL": "New email :",
       "EMAIL_CONFIRMED": " Confirm new email :",
       "EMAIL_NOT_SAME": "Email and email confirmation should match.",
       "EMAIL_NOT_VALID": "The email is not valid! please try again.",
       "SUBMIT": "Submit",
       "CANCEL": "Cancel",
-      "SUCCESS" : "Successfully update patient email!",
+      "SUCCESS" : "Successfully updated user email!",
       "ERROR": "An error occurred while changing email."
     },
     "PASSWORD": {
-      "TITLE": "Change Patient Password",
+      "TITLE": "Change User Password",
       "DESCRIPTION": "The password should be at least 8 characters long and should contain at least one number, one capital letter, one lower-case letter and one special character.",
       "NEW_PASSWORD": "New password :",
       "PASSWORD_CONFIRMED": "Confirm new password :",
@@ -2983,7 +2983,7 @@
       "PASSWORD_TOO_SHORT": "Your password is too short",
       "SUBMIT": "Submit",
       "CANCEL": "Cancel",
-      "SUCCESS" : "Successfully updated patient password!",
+      "SUCCESS" : "Successfully updated user password!",
       "ERROR": "An error occurred while changing password."
     },
     "ACCESS_LEVEL": {

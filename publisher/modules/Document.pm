@@ -799,7 +799,7 @@ sub inOurDatabase
 		return $ExistingDoc; # this is true (ie. document exists, return object)
 	}
 
-	else {return $ExistingDoc;} # this is false (ie. document DONE, return empty)
+	else {return $ExistingDoc;} # this is false (ie. document does not exist, return empty)
 }
 
 #======================================================================================
@@ -1027,7 +1027,7 @@ END
                 }
 
 
-			} else { # document DONE in our database
+			} else {
 
 				print "NEW DOCUMENT\n" if $verbose;
 
@@ -1182,8 +1182,6 @@ END
                 }
 			}
         }
-
-		# document file DONE
 		else
 		{
 			# set the transfer status to false
@@ -1202,7 +1200,7 @@ END
 				# simply update document log
 				$UpdatedDoc->updateDatabase();
 
-			} else { # document log DONE in our database
+			} else {
 
 				# insert Document log into our database
 				$Document = $Document->insertDocIntoOurDB();

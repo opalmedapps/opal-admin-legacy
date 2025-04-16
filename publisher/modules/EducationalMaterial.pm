@@ -441,7 +441,7 @@ sub inOurDatabase
         return $ExistingEduMat; # this is true (ie. edumat exists. return object)
     }
 
-    else {return $ExistingEduMat}; # this is false (ie. edumat DONE)
+    else {return $ExistingEduMat}; # this is false (ie. edumat does not exist)
 }
 
 #======================================================================================

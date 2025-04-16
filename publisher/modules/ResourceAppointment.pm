@@ -593,7 +593,7 @@ sub inOurDatabase
 
 	}
 
-	else {return $ExistingRA;} # this is false (ie. RA DONE, return empty)
+	else {return $ExistingRA;} # this is false (ie. RA does not exist, return empty)
 }
 
 #======================================================================================
