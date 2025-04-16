@@ -191,7 +191,7 @@ if (-e $monitor_log) { # file exists
 		writeToLogFile($monitor_log, encode_json($json_log), ">");
 	}
 }
-else { # log file DONE
+else {
 
 	# to write new process
 	my $pid = $$;
@@ -276,7 +276,7 @@ foreach my $Patient (@registeredPatients) {
             push(@patientList, $UpdatedPatient);
 
 		# # 2021-08-26 YM: Remove this for now
-        # } else { # patient DONE
+        # } else {
 
     	# 	# insert Patient into our database
 	    # 	$SourcePatient = $SourcePatient->insertPatientIntoOurDB();

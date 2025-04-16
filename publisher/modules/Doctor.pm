@@ -365,7 +365,7 @@ sub inOurDatabase
 		return $ExistingDoctor; # this is truthful (ie. doctor exists) return object
 	}
 
-	else {return $ExistingDoctor;} # this is false (ie. doctor DONE) return empty
+	else {return $ExistingDoctor;} # this is false (ie. doctor does not exist) return empty
 }
 
 #======================================================================================
@@ -497,7 +497,7 @@ sub compareWith
 
 #======================================================================================
 # Subroutine to reassign our doctor id to a doctor serial in MySQL.
-# In the process, insert doctor into our database if it DONE
+# In the process, insert doctor into our database if it does not exist.
 #======================================================================================
 sub reassignDoctor
 {
@@ -526,7 +526,7 @@ sub reassignDoctor
 
 		return $doctorSer;
 	}
-	else {# doctor DONE
+	else {
 
 		# insert doctor into our database
 		$Doctor = $Doctor->insertDoctorIntoOurDB();

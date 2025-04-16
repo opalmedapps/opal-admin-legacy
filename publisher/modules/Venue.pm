@@ -282,7 +282,7 @@ sub inOurDatabase
 		return $ExistingVenue; # this is true (i.e. venue exists) return object
 	}
 
-	else {return $ExistingVenue;} # this is false (i.e. venue DONE) return empty
+	else {return $ExistingVenue;} # this is false (i.e. venue does not exist) return empty
 }
 
 #======================================================================================
@@ -389,7 +389,7 @@ sub compareWith
 
 #======================================================================================
 # Subroutine to reassign our venue serial in ARIA to a venue serial in MySQL.
-# In the process, insert venue into our database if it DONE
+# In the process, insert venue into our database if it does not exist.
 #======================================================================================
 sub reassignVenue
 {
@@ -425,7 +425,7 @@ sub reassignVenue
 
 		return $venueSer;
 	}
-	else { # venue DONE
+	else {
 
 		# insert venue into our DB
 		$Venue = $Venue->insertVenueIntoOurDB();

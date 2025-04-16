@@ -626,7 +626,7 @@ sub inOurDatabase
 		return $ExistingDiagnosis; # this is true (ie. diagnosis exists, return object)
 	}
 
-	else {return $ExistingDiagnosis;} # this is false (ie. diagnosis DONE, return 0)
+	else {return $ExistingDiagnosis;} # this is false (ie. diagnosis does not exist, return 0)
 }
 
 #======================================================================================

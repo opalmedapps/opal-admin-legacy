@@ -397,7 +397,7 @@ sub inOurDatabase
         return $ExistingPatsForPats; # this is true (ie. patsforpats exists, return object)
     }
 
-    else {return $ExistingPatsForPats;} # this is false (ie. patsforpats DONE, return empty)
+    else {return $ExistingPatsForPats;} # this is false (ie. patsforpats does not exist, return empty)
 }
 
 #======================================================================================

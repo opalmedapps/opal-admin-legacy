@@ -1175,7 +1175,7 @@ sub inOurDatabase
         return $ExistingPatient; # this is true (ie. patient exists, return object)
 	}
 
-	else {return $ExistingPatient;} # this is false (ie. patient DONE, return empty)
+	else {return $ExistingPatient;} # this is false (ie. patient does not exist, return empty)
 }
 
 #======================================================================================
