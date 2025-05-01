@@ -42,7 +42,12 @@ const our $OPAL_DB_DSN          => 'DBI:MariaDB:database=' . $OPAL_DB_NAME . ';h
 const our $OPAL_DB_USERNAME     => $ENV{'OPAL_DB_USER'};
 const our $OPAL_DB_PASSWORD     => $ENV{'OPAL_DB_PASSWORD'};
 const our $USE_SSL              => $ENV{'DATABASE_USE_SSL'};
-const our $SSL_CA               => $ENV{'SSL_CA'};
+if ($USE_SSL eq '0') {
+    const our $SSL_CA           => '';
+}
+else {
+    const our $SSL_CA           => $ENV{'SSL_CA'};
+}
 const our $OPAL_DB_SSL_DSN      => 'DBI:MariaDB:database=' . $OPAL_DB_NAME . ';host=' . $OPAL_DB_HOST . ';port=' . $OPAL_DB_PORT . ';mariadb_ssl=1;mariadb_ssl_verify_server_cert=1;mariadb_ssl_ca_file=' . $SSL_CA;
 
 # Environment-specific variables
