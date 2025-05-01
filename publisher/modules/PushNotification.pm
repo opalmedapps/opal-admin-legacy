@@ -257,7 +257,7 @@ sub sendPushNotification
         my $ptdidser        = $PTDID->{ser};
         my $registrationid  = $PTDID->{registrationid};
         my $devicetype      = $PTDID->{devicetype};
-        my $language        = $userLanguageList->{$PTDID->{username}};
+        my $language        = $userLanguageList->{$PTDID->{username}}
         my $title           = $name->{$language};
         my $message         = $description->{$language};
 
