@@ -42,7 +42,7 @@ const our $OPAL_DB_DSN          => 'DBI:MariaDB:database=' . $OPAL_DB_NAME . ';h
 const our $OPAL_DB_USERNAME     => $ENV{'OPAL_DB_USER'};
 const our $OPAL_DB_PASSWORD     => $ENV{'OPAL_DB_PASSWORD'};
 const our $USE_SSL              => $ENV{'DATABASE_USE_SSL'};
-if ($USE_SSL eq '0') {
+if (!defined $USE_SSL || $USE_SSL eq '0') {
     const our $SSL_CA           => '';
 }
 else {
