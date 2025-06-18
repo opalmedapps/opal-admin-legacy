@@ -32,8 +32,8 @@ $dotenv->required('NEW_OPALADMIN_HOST_INTERNAL')->notEmpty();
 $dotenv->required('NEW_OPALADMIN_HOST_EXTERNAL')->notEmpty();
 $dotenv->required('NEW_OPALADMIN_TOKEN')->notEmpty();
 // SSL configurations
-$dotenv->required('DATABASE_USE_SSL')->notEmpty();
-if (getenv('DATABASE_USE_SSL')) {
+$dotenv->required('DATABASE_USE_SSL')->isBoolean();
+if ($_ENV['DATABASE_USE_SSL']) {
     $dotenv->required('SSL_CA')->notEmpty();
 }
 // Push notification configurations
@@ -49,9 +49,11 @@ $dotenv->required('FIREBASE_ADMIN_KEY_PATH')->notEmpty();
 // Path configurations
 $dotenv->required('CLINICAL_REPORTS_PATH')->notEmpty();
 // Active Directory configurations
-$dotenv->required('FEDAUTH_INSTITUTION')->notEmpty();
-$dotenv->required('FEDAUTH_API_ENDPOINT')->notEmpty();
-$dotenv->required('AD_ENABLED')->notEmpty();
+$dotenv->required('AD_ENABLED')->isBoolean();
+if ($_ENV['AD_ENABLED']) {
+    $dotenv->required('FEDAUTH_API_ENDPOINT')->notEmpty();
+    $dotenv->required('FEDAUTH_INSTITUTION')->notEmpty();
+}
 # ORMS
 $dotenv->required('ORMS_ENABLED')->isBoolean();
 // Labs configurations

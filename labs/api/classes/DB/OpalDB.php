@@ -26,7 +26,10 @@ class OpalDB
     {
         if(!isset(OpalDB::$instance)){
             $validator = new Validator($_ENV);
-            $validator->required(["OPAL_DB_HOST", "OPAL_DB_PORT", "OPAL_DB_PASSWORD", "OPAL_DB_USER", "DATABASE_USE_SSL", "SSL_CA"]);
+            $validator->required(["OPAL_DB_HOST", "OPAL_DB_PORT", "OPAL_DB_PASSWORD", "OPAL_DB_USER", "DATABASE_USE_SSL"]);
+            if ($_ENV['DATABASE_USE_SSL'] == "1") {
+                $validator->required(["SSL_CA"]);
+            };
             OpalDB::$instance = DB::getDBConnection(
                 $_ENV['OPAL_DB_HOST'],
                 $_ENV['OPAL_DB_PORT'],
@@ -34,7 +37,7 @@ class OpalDB
                 $_ENV['OPAL_DB_USER'],
                 $_ENV['OPAL_DB_PASSWORD'],
                 $_ENV['DATABASE_USE_SSL'],
-                $_ENV['SSL_CA'],
+                $_ENV['SSL_CA'] ?? '',
             );
         }
         return OpalDB::$instance;
