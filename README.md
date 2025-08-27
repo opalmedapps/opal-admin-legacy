@@ -30,12 +30,8 @@ If the database is enforcing secure transport (SSL/TLS traffic encryption), also
 ### Step 2: Add the `.npmrc` file
 
 This project uses [AngularJS](https://angularjs.org/) which reached end of life in January 2022.
-This project uses a long-term support version of AngularJS provided by [HeroDevs](https://www.herodevs.com/support/nes-angularjs).
+A long-term support version of AngularJS can be used instead, provided by [HeroDevs](https://www.herodevs.com/support/nes-angularjs).
 If you have an `npm` token to retrieve this version from their registry, place the `.npmrc` file containing the credentials in the root directory.
-
-You can also use the [last available version](https://www.npmjs.com/package/angular) of AngularJS (version 1.8.3).
-To do so, change the value for the `angular` dependency to `angular@1.8.3` in `package.json`.
-Also change all other auxiliary angular dependencies accessed through `neverendingsupport` to their latest default versions, as provided by npm.
 Then, run:
 
 ```shell
