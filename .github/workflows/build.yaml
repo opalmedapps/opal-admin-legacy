@@ -31,11 +31,6 @@ jobs:
       - uses: actions/checkout@v4.2.2
         with:
           persist-credentials: false
-      - name: Add npmrc
-        env:
-          NPMRC_FILE: ${{ secrets.NPMRC_FILE }}
-        run: |
-          echo "$NPMRC_FILE" > .npmrc
       - uses: opalmedapps/.github/.github/actions/docker-build@main
         id: build-image
         with:

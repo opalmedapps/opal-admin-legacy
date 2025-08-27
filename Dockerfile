@@ -12,7 +12,6 @@ WORKDIR /app
 # see: https://stackoverflow.com/questions/35774714/how-to-cache-the-run-npm-install-instruction-when-docker-build-a-dockerfile
 COPY package.json ./
 COPY package-lock.json ./
-COPY .npmrc ./
 RUN npm ci
 
 # Build/install PHP dependencies

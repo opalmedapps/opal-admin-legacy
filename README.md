@@ -27,16 +27,18 @@ cp .env.sample .env
 If the database is enforcing secure transport (SSL/TLS traffic encryption), also update the values for the SSL environment variables:
 `DATABASE_USE_SSL=1` and `SSL_CA=/var/www/html/certs/ca.pem` after copying the `ca.pem` file into the certs directory.
 
-### Step 2: Add the `.npmrc` file
-
-This project uses [AngularJS](https://angularjs.org/) which reached end of life in January 2022.
-A long-term support version of AngularJS can be used instead, provided by [HeroDevs](https://www.herodevs.com/support/nes-angularjs).
-If you have an `npm` token to retrieve this version from their registry, place the `.npmrc` file containing the credentials in the root directory.
-Then, run:
+### Step 2: Install the npm dependencies
 
 ```shell
 npm install
 ```
+
+This project uses [AngularJS](https://angularjs.org/) which reached end of life in January 2022.
+A long-term support version of AngularJS can be used instead, provided by [HeroDevs](https://www.herodevs.com/support/nes-angularjs).
+If you have an `npm` token to retrieve this version from their registry, place the `.npmrc` file containing the credentials in the root directory.
+
+Then, substitute the AngularJS dependencies in `package.json` with the packages provided by HeroDevs
+(see [their setup instructions here](https://docs.herodevs.com/angularjs/angularjs-1-8#detailed-instructions)).
 
 For a list of all dependencies, refer to [package.json](./package.json).
 
