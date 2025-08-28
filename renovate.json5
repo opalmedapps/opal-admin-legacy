@@ -35,9 +35,5 @@
       "matchDatasources": ["docker", "docker-compose"],
       "semanticCommitType": "build"
     },
-    {
-      "matchSourceUrlPrefixes": ["https://github.com/xlts-dev/"],
-      "groupName": "angularjs NES packages"
-    },
   ],
 }
