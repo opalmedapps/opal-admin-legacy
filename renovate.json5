@@ -35,16 +35,5 @@
       "matchDatasources": ["docker", "docker-compose"],
       "semanticCommitType": "build"
     },
-    // Group auxiliary angular-related updates
-    {
-      "matchPackagePatterns": ["^angular"],
-      "excludePackagePatterns": ["^@neverendingsupport/"],
-      "groupName": "auxiliary angular packages"
-    },
-    // Group AngularJS Never-Ending Support updates (from HeroDevs)
-    {
-      "matchSourceUrlPrefixes": ["https://github.com/xlts-dev/"],
-      "groupName": "angularjs NES packages"
-    },
   ],
 }
