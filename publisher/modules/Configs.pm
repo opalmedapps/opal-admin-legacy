@@ -70,7 +70,7 @@ const our $FTP_LOCAL_DIR        =>  $BACKEND_SHARED_URL . 'clinical/documents'; 
 const our $OFFICE_PATH_DIR      => $ENV{'OFFICE_DOCUMENT_PATH'}; # Location where office is installed
 
 #DEFINE PUSH NOTIFICATION URL HERE
-const our $PUSH_NOTIFICATION_URL     => $ENV{'PUSH_NOTIFICATION_URL'};
+const our $PUSH_NOTIFICATION_URL     => 'http://localhost:8080/publisher/php/sendPushNotification.php';
 #NEW BACKEND API URL AND TOKEN
 const our $NEW_BACKEND_HOST     => $ENV{'NEW_OPALADMIN_HOST_INTERNAL'};
 const our $NEW_BACKEND_TOKEN     => $ENV{'NEW_OPALADMIN_TOKEN'};

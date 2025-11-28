@@ -365,7 +365,8 @@ sub postNotification
         $returnStatus = decode_json($response->content);
     } catch {
         $sendstatus = $statusWarning;
-        $sendlog    = "Unknown status of push notification! Message: 'Failed to decode response: $_";
+        my $error = $response->content;
+        $sendlog    = "Unknown status of push notification! Message: 'Failed to decode response: $error, $_";
     };
 
     print "\n***** End Push Notification *****\n";

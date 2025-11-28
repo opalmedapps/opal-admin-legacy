@@ -37,7 +37,6 @@ if ($_ENV['DATABASE_USE_SSL']) {
     $dotenv->required('SSL_CA')->notEmpty();
 }
 // Push notification configurations
-$dotenv->required('PUSH_NOTIFICATION_URL')->notEmpty();
 $dotenv->required('PUSH_NOTIFICATION_ANDROID_URL')->notEmpty();
 $dotenv->required('APPLE_CERT_FILENAME')->notEmpty();
 $dotenv->required('APPLE_CERT_KEY')->notEmpty();
