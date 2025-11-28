@@ -298,8 +298,6 @@ sub getPatientCaregivers
     my $apiResponseStr = Api::apiPatientCaregiverDevices($patientser);
     $apiResponse = decode_json($apiResponseStr);
 
-    print "api response: $apiResponseStr\n";
-
     if ($apiResponse->{'data_access'} != 'ALL') {
         $sendlog        = "Patient has no data access.";
         insertPushNotificationInDB('NULL', $patientser, $controlser, $reftablerowser, $statusWarning, $sendlog);
@@ -316,8 +314,6 @@ sub getPatientCaregivers
             $userLanguageList->{$caregiver->{'username'}} = $caregiver->{'language'};
         }
     }
-
-    print "username list: @usernames\n";
 
     if (!@usernames) {
         $sendlog        = "Patient has no related caregivers.";
