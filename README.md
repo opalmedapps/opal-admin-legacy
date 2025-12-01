@@ -74,8 +74,7 @@ You can then log in with the test user credentials:
 1. Make sure your Firebase service account file is available inside the container.
 2. Make sure the following `.env` variables have been correctly set:
    1. `FIREBASE_ADMIN_KEY_PATH` (to the absolute path of the file inside the container).
-   2. `PUSH_NOTIFICATION_URL`
-   3. `PUSH_NOTIFICATION_ANDROID_URL` (if using Android)
+   2. `PUSH_NOTIFICATION_ANDROID_URL` (if using Android)
 3. Build a copy of your local Opal app and install it on a mobile device. Make sure to allow push notifications.
 
 After the above setup, you can test push notifications as follows using the test script.
