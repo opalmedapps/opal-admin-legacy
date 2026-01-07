@@ -222,7 +222,7 @@ include_once "database.inc";
        {
            global $pdo;
            $sendStatus  = $response['success'];
-           $sendLog     = $response['error'];
+           $sendLog     = json_encode($response['error']);
            if ($sendStatus == 0) {$sendStatus = 'F';}
            else {
                $sendStatus = 'T';
