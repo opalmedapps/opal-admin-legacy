@@ -44,17 +44,15 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 						<div ng-if="writeAccess" class="col-xs-12 col-sm-6 col-md-4">
 							<a href="{{newOpalAdminHost}}/patients/access-request/">
 								<div class="panel-container animated" ng-class="{pulse: hoverMenu}" ng-mouseenter="hoverMenu=true" ng-mouseleave="hoverMenu=false" style="cursor:pointer;">
-									<div class="panel-info">
-										<div class="panel-content">
-											<div class="icon-home clearfix">
-												<span class="fa fa-user-plus"></span>
-											</div>
+									<div class="panel panel-default">
+										<div class="panel-heading">
 											<div class="panel-title">
-												<h1>{{'PATIENTS.MENU.REGISTRATION'|translate}}</h1>
+												<span class="fa fa-wrench"></span>
+												{{'PATIENTS.MENU.REGISTRATION'|translate}}
 											</div>
-											<div class="panel-description">
-												<p>{{'PATIENTS.MENU.REGISTRATION_SUB'|translate}}</p>
-											</div>
+										</div>
+										<div class="panel-body">
+											<p>{{'PATIENTS.MENU.REGISTRATION_SUB'|translate}}</p>
 										</div>
 									</div>
 								</div>
@@ -62,17 +60,15 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 						</div>
 						<div class="col-xs-12 col-sm-6 col-md-4" ng-repeat="menu in navSubMenu">
 							<div class="panel-container animated" ng-class="{pulse: hoverMenu}" ng-mouseenter="hoverMenu=true" ng-mouseleave="hoverMenu=false" style="cursor:pointer;" ui-sref="{{menu.url}}">
-								<div class="panel-info">
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span class="{{menu.iconClass}}"></span>
-										</div>
+								<div class="panel panel-default">
+									<div class="panel-heading">
 										<div class="panel-title">
-											<h1>{{menu.name_display}}</h1>
+											<span class="fa fa-wrench"></span>
+											{{menu.name_display}}
 										</div>
-										<div class="panel-description">
-											<p>{{menu.description_display}}</p>
-										</div>
+									</div>
+									<div class="panel-body">
+										<p>{{menu.description_display}}</p>
 									</div>
 								</div>
 							</div>
@@ -80,17 +76,15 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 						<div class="col-xs-12 col-sm-6 col-md-4">
 							<a href="{{newOpalAdminHost}}/patients/relationships/">
 								<div class="panel-container animated" ng-class="{pulse: hoverAccess}" ng-mouseenter="hoverAccess=true" ng-mouseleave="hoverAccess=false" style="cursor:pointer;">
-									<div class="panel-info">
-										<div class="panel-content">
-											<div class="icon-home clearfix">
-												<span class="fa fa-universal-access"></span>
-											</div>
+									<div class="panel panel-default">
+										<div class="panel-heading">
 											<div class="panel-title">
-												<h1>{{'PATIENTS.MENU.CAREGIVER_ACCESS'|translate}}</h1>
+												<span class="fa fa-wrench"></span>
+												{{'PATIENTS.MENU.CAREGIVER_ACCESS'|translate}}
 											</div>
-											<div class="panel-description">
-												<p>{{'PATIENTS.MENU.CAREGIVER_ACCESS_SUB'|translate}}</p>
-											</div>
+										</div>
+										<div class="panel-body">
+											<p>{{'PATIENTS.MENU.CAREGIVER_ACCESS_SUB'|translate}}</p>
 										</div>
 									</div>
 								</div>

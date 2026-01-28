@@ -44,15 +44,15 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 						<div class="col-xs-12 col-sm-6 col-md-4">
 							<a href="{{ormsHost}}">
 								<div class="panel-container animated" ng-class="{pulse: hoverMenu}" ng-mouseenter="hoverMenu=true" ng-mouseleave="hoverMenu=false" style="cursor:pointer;">
-									<div class="panel-info">
-										<div class="panel-content">
-											<i class="fa fa-clock-o" aria-hidden="true" style="font-size:50px"></i>
+									<div class="panel panel-default">
+										<div class="panel-heading">
 											<div class="panel-title">
-												<h1>{{'CLINICIANS.MENU.CLINICAL_AREA'|translate}}</h1>
+												<span class="fa fa-wrench"></span>
+												{{'CLINICIANS.MENU.CLINICAL_AREA'|translate}}
 											</div>
-											<div class="panel-description">
-												<p>{{'CLINICIANS.MENU.CLINICAL_AREA_SUB'|translate}}</p>
-											</div>
+										</div>
+										<div class="panel-body">
+											<p>{{'CLINICIANS.MENU.CLINICAL_AREA_SUB'|translate}}</p>
 										</div>
 									</div>
 								</div>

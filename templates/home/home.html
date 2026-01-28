@@ -40,17 +40,15 @@ SPDX-License-Identifier: AGPL-3.0-or-later
                                 <div class="panel-container animated" ng-class="{pulse: hoverMenu}"
                                      ng-mouseenter="hoverMenu=true" ng-mouseleave="hoverMenu=false"
                                      style="cursor:pointer;" ui-sref="{{menu.url}}">
-                                    <div class="panel-info">
-                                        <div class="panel-content">
-                                            <div class="icon-home clearfix">
-                                                <span class="{{menu.iconClass}}"></span>
-                                            </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
                                             <div class="panel-title">
-                                                <h1>{{menu.name}}</h1>
+                                                <span class="{{menu.iconClass}}"></span>
+                                                {{menu.name}}
                                             </div>
-                                            <div class="panel-description">
-                                                <p>{{menu.sub}}</p>
-                                            </div>
+                                        </div>
+                                        <div class="panel-body">
+                                            <p>{{menu.sub}}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -75,17 +73,15 @@ SPDX-License-Identifier: AGPL-3.0-or-later
                             <div class="panel-container animated" ng-class="{pulse: hoverAccountMenu}"
                                  ng-mouseenter="hoverAccountMenu=true" ng-mouseleave="hoverAccountMenu=false"
                                  style="cursor:pointer;" ng-click="goToAccount()">
-                                <div class="panel-info">
-                                    <div class="panel-content">
-                                        <div class="icon-home clearfix">
-                                            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-                                        </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
                                         <div class="panel-title">
-                                            <h1>{{'NAVIGATION_MENU.ACCOUNT'|translate}}</h1>
+                                            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                                            {{'NAVIGATION_MENU.ACCOUNT'|translate}}
                                         </div>
-                                        <div class="panel-description">
-                                            <p>{{'NAVIGATION_MENU.ACCOUNT_SUB'|translate}}</p>
-                                        </div>
+                                    </div>
+                                    <div class="panel-body">
+                                        <p>{{'NAVIGATION_MENU.ACCOUNT_SUB'|translate}}</p>
                                     </div>
                                 </div>
                             </div>
@@ -96,17 +92,15 @@ SPDX-License-Identifier: AGPL-3.0-or-later
                             <div class="panel-container animated" ng-class="{pulse: hoverLogoutMenu}"
                                  ng-mouseenter="hoverLogoutMenu=true" ng-mouseleave="hoverLogoutMenu=false"
                                  style="cursor:pointer;" ng-click="goToLogout()">
-                                <div class="panel-info">
-                                    <div class="panel-content">
-                                        <div class="icon-home clearfix">
-                                            <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
-                                        </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
                                         <div class="panel-title">
-                                            <h1>{{'NAVIGATION_MENU.LOGOUT'|translate}}</h1>
+                                            <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                                            {{'NAVIGATION_MENU.LOGOUT'|translate}}
                                         </div>
-                                        <div class="panel-description">
-                                            <p></p>
-                                        </div>
+                                    </div>
+                                    <div class="panel-body">
+                                        <p></p>
                                     </div>
                                 </div>
                             </div>
