@@ -733,6 +733,10 @@ ul.no-list {
     font-weight: bold;
 }
 
+.panel-title {
+    font-size: 18px;
+}
+
 .side-logo {
     text-align: center;
     cursor: pointer;
