@@ -722,6 +722,17 @@ ul.no-list {
     font-size: 16px;
 }
 
+.panel-default {
+    min-height: 110px;
+}
+
+.panel-default .panel-heading {
+    color: #6f5499;
+    background-color: #fff;
+    border-bottom: none;
+    font-weight: bold;
+}
+
 .side-logo {
     text-align: center;
     cursor: pointer;
@@ -916,7 +927,6 @@ ul.no-list {
 
 .panel-container {
     position: relative;
-    text-align: center;
     margin-right: -7px;
     margin-left: -7px;
     vertical-align: middle;
