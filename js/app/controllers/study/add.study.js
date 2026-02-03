@@ -308,7 +308,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 
 		/**
 		 * Validate the investigator personal info fields before allowing user to continue
-		 * phone regex checks for standard 10 digit number with options for deliniation by space, hyphen, or period
+		 * phone regex checks for standard 10 digit number with options for delineation by space, hyphen, or period
 		 * 		User can optionally enter country code eg +1 or +44
 		 * email regex checks for standard RFC2822 email format
 		 * phoneExt regex checks for any number of digits 0-9 up to a maximum length of 6

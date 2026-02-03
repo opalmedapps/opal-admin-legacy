@@ -1787,7 +1787,7 @@ class DatabaseOpal extends DatabaseAccess {
 
     /*
      * Insert a new alert that was validated
-     * @params  $toSubmit : array - new allert to insert.
+     * @params  $toSubmit : array - new alert to insert.
      * @return int - ID of the record inserted
      * */
     function insertAlert($toSubmit) {
@@ -3566,7 +3566,7 @@ class DatabaseOpal extends DatabaseAccess {
     /**
      * Get the list of deactivated alias expression where the source in masterSourceAlias is marked as deleted
      * @param $aliasId int - ID of the alias
-     * @return array - list of alias expressions where the source mark tham as deleted
+     * @return array - list of alias expressions where the source mark than as deleted
      */
     function getDeactivatedAliasExpressions($aliasId) {
         return $this->_fetchAll(OPAL_GET_DELETED_ALIASES_EXPRESSION, array(
