@@ -6,13 +6,18 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
+    // Require dashboard approvals: https://docs.renovatebot.com/presets-default/#dependencydashboardapproval
+    ":dependencyDashboardApproval",
     // https://docs.renovatebot.com/presets-default/#pinallexceptpeerdependencies
     ":pinAllExceptPeerDependencies",
     // https://docs.renovatebot.com/presets-default/#separatemultiplemajorreleases
-    ":separateMultipleMajorReleases",
+    // ":separateMultipleMajorReleases",
     // https://docs.renovatebot.com/presets-default/#separatepatchreleases
-    ":separatePatchReleases",
+    // ":separatePatchReleases",
+    // https://docs.renovatebot.com/presets-helpers/#helperspingithubactiondigeststosemver
+    "helpers:pinGitHubActionDigestsToSemver",
     "gitlab>opalmedapps/renovate-bot//presets/docker-alpine.json5",
+    "github>mschoettle/renovate-presets//presets/pre-commit-hooks.json5",
   ],
   // Extra rules for node images. See: https://github.com/renovatebot/renovate/discussions/29501
   // Ensure that node docker versioning doesn't interfere with the custom managers.
@@ -23,7 +28,7 @@
   //
   // https://docs.renovatebot.com/configuration-options/#rebasewhen
   "rebaseWhen": "conflicted",
-  "assignees": ["Douzeyu"],
+  // "assignees": ["Douzeyu"],
   "labels": ["dependencies"],
   "ignoreDeps": [
     "bootstrap",
