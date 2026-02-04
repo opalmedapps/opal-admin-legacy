@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Build/install JS dependencies
-FROM node:24.11.1-alpine3.23 AS js-dependencies
+FROM node:24.13.0-alpine3.23 AS js-dependencies
 
 WORKDIR /app
 
