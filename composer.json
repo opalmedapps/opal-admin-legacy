@@ -14,7 +14,7 @@
         }
     ],
     "require": {
-        "google/auth": "1.46.0",
+        "google/auth": "1.50.0",
         "kreait/firebase-php": "8.1.0",
         "vlucas/phpdotenv": "5.6.3",
         "guzzlehttp/guzzle": "7.9.2"
