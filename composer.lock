@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a3b49a069742895275e1e239fdbe78dc",
+    "content-hash": "231c2195e0fdaa0a1650d6ce05b5ac31",
     "packages": [
         {
             "name": "beste/clock",
@@ -1331,16 +1331,16 @@
         },
         {
             "name": "kreait/firebase-php",
-            "version": "8.1.0",
+            "version": "8.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/beste/firebase-php.git",
-                "reference": "b85ca178aea541a9a6a4f21ee3fc84c4345d0260"
+                "reference": "7a1007c8151e1bf7be9f6b0f9a1e37b1f734f59e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/beste/firebase-php/zipball/b85ca178aea541a9a6a4f21ee3fc84c4345d0260",
-                "reference": "b85ca178aea541a9a6a4f21ee3fc84c4345d0260",
+                "url": "https://api.github.com/repos/beste/firebase-php/zipball/7a1007c8151e1bf7be9f6b0f9a1e37b1f734f59e",
+                "reference": "7a1007c8151e1bf7be9f6b0f9a1e37b1f734f59e",
                 "shasum": ""
             },
             "require": {
@@ -1370,20 +1370,10 @@
                 "psr/http-message": "^1.1 || ^2.0"
             },
             "require-dev": {
-                "google/cloud-firestore": "^1.54.3",
-                "php-cs-fixer/shim": "^3.91.2",
-                "phpstan/extension-installer": "^1.4.3",
-                "phpstan/phpstan": "^2.1.32",
-                "phpstan/phpstan-deprecation-rules": "^2.0.3",
-                "phpstan/phpstan-phpunit": "^2.0.8",
-                "phpstan/phpstan-strict-rules": "^2.0.7",
-                "phpunit/phpunit": "^12.4.5",
+                "google/cloud-firestore": "^1.55.0",
                 "psr/log": "^3.0.2",
-                "rector/rector": "^2.2.11",
-                "rector/type-perfect": "^2.1",
-                "shipmonk/composer-dependency-analyser": "^1.8.4",
-                "symfony/var-dumper": "^7.4.0",
-                "vlucas/phpdotenv": "^5.6.2"
+                "symfony/var-dumper": "^7.4.4 || ^8.0.4",
+                "vlucas/phpdotenv": "^5.6.3"
             },
             "suggest": {
                 "google/cloud-firestore": "^1.0 to use the Firestore component"
@@ -1411,7 +1401,7 @@
                 }
             ],
             "description": "Firebase Admin SDK",
-            "homepage": "https://github.com/kreait/firebase-php",
+            "homepage": "https://github.com/beste/firebase-php",
             "keywords": [
                 "api",
                 "database",
@@ -1421,8 +1411,8 @@
             ],
             "support": {
                 "docs": "https://firebase-php.readthedocs.io",
-                "issues": "https://github.com/kreait/firebase-php/issues",
-                "source": "https://github.com/kreait/firebase-php"
+                "issues": "https://github.com/beste/firebase-php/issues",
+                "source": "https://github.com/beste/firebase-php"
             },
             "funding": [
                 {
@@ -1430,7 +1420,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-01-23T00:44:28+00:00"
+            "time": "2026-03-04T12:06:19+00:00"
         },
         {
             "name": "kreait/firebase-tokens",
